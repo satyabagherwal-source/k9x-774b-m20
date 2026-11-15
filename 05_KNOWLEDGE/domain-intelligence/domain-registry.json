@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T21:16:18.259Z",
-  "total_records": 1124,
+  "last_updated": "2026-11-15T21:27:44.524Z",
+  "total_records": 1126,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 543,
+      "total": 545,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -581,7 +581,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c",
         "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-core-invariants",
         "DOM-D-37D23F0D",
-        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv"
       ]
     },
     "E": {
@@ -10200,8 +10202,8 @@
       "title": "Architecture Intelligence: Xudong-Huang/may Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-architecture-intelligence-xudong-huang-may-core-invariants.md",
       "repository": "Xudong-Huang/may",
-      "content_hash": "892dcf92df587534b3d2f46cfe6d4b5bc03d6d3cb2065f2e57fe6715ac36ea64",
-      "created_at": "2026-11-13T21:58:35.903Z"
+      "content_hash": "847971c478ece5df84d27517780b726dff2111b99047508ba0cb93e3d48e8bc0",
+      "created_at": "2026-11-15T21:27:34.317Z"
     },
     "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva",
@@ -10236,8 +10238,8 @@
       "title": "Architecture Intelligence: xudong-huang-may-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-learnings-architecture-intelligence-xudong-huang-may-learnings-.md",
       "repository": "xudong-huang-may-learnings",
-      "content_hash": "5ea64d234d1b5aa01a13087cada77bbd640d0fcf271494091b76ed21f56b583e",
-      "created_at": "2026-11-13T21:59:22.055Z"
+      "content_hash": "c4d753749ca6ff26766b8ecf56b72a112abf2e2ca23f6f390d94ec26183d649c",
+      "created_at": "2026-11-15T21:27:43.746Z"
     },
     "DOM-D-6F87F39B": {
       "record_id": "DOM-D-6F87F39B",
@@ -16774,8 +16776,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "b8c6cef8a58f42825b120d09a65f0e5838f3e4497cf6a19cebfb06cb8014e609",
-      "created_at": "2026-11-15T17:23:19.256Z"
+      "content_hash": "f8a587abec1f1c55fbfd28b7a4ca3019241bc0b85b8922e072665f7d64788ee1",
+      "created_at": "2026-11-15T21:27:44.524Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -21314,6 +21316,24 @@
       "repository": "maziyarpanahi-openmed-learnings",
       "content_hash": "dbbf1a86acbd5c839d460a9b37eec434957beb8698818779dad002277a7828ba",
       "created_at": "2026-11-15T21:16:18.259Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/MiniMax-H3-Image Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-image-research-knowledge-intelligence-comfy-org-minimax-.md",
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "content_hash": "6aea82d89c6843e7f26a521dc46a08d5a873101d6b42efd3560f8cde604d85e3",
+      "created_at": "2026-11-15T21:27:31.724Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-minimax-h3-image-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-image-learnings-research-knowledge-intelligence-hf-comfy.md",
+      "repository": "hf-comfy-org-minimax-h3-image-learnings",
+      "content_hash": "c3d88c398679178f2ceda8c5a53c0d8ee750d93147fcbd9a65e7253b4bbd46b3",
+      "created_at": "2026-11-15T21:27:44.055Z"
     }
   }
 }

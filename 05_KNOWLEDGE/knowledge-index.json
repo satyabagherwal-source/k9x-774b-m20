@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T21:16:18.385Z",
-  "total_verified_learnings": 8725,
+  "last_updated": "2026-11-15T21:27:44.524Z",
+  "total_verified_learnings": 8726,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18624,
+  "total_items": 18629,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216867,14 +216867,19 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "52489997",
-      "content_hash": "e88e8b5195a76c7ce3913fd16863afddb2a759dd8faec3ae841cb10b45950762",
+      "source_version": "bcbc907a",
+      "content_hash": "1d64b1b9e997291487e42d3097e8324fd92b4979503d308a69e71c7b094cd27f",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
         {
           "number": 8392,
           "title": "EpollTimeout overflow with large Duration values",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8655,
+          "title": "raise the default coroutine stack size to 64KB",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -216883,7 +216888,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:58:35.401Z",
+      "verified_at": "2026-11-15T21:27:33.949Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216925,10 +216930,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-architecture-intelligence-xudong-huang-may-core-invariants.md",
       "title": "Architecture Intelligence: Xudong-Huang/may Core Invariants",
       "repository": "Xudong-Huang/may",
-      "source_version": "52489997",
-      "content_hash": "892dcf92df587534b3d2f46cfe6d4b5bc03d6d3cb2065f2e57fe6715ac36ea64",
+      "source_version": "bcbc907a",
+      "content_hash": "847971c478ece5df84d27517780b726dff2111b99047508ba0cb93e3d48e8bc0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:58:35.903Z"
+      "persisted_at": "2026-11-15T21:27:34.317Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may",
@@ -216937,10 +216942,10 @@
       "relative_path": "08_VERIFICATION/xudong-huang-may-verification-protocol-empirical-defect-shield-for-xudong-huang-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Xudong-Huang/may",
       "repository": "Xudong-Huang/may",
-      "source_version": "52489997",
-      "content_hash": "99a4a4d8f8560c2cef8ffb29aba8b7a3fe807d4febc7aaf8e13fe7153485e358",
+      "source_version": "bcbc907a",
+      "content_hash": "68b25adae09db9cdc194ebf9234de61d84692965af5a51742632eca9acddcb79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:58:36.016Z"
+      "persisted_at": "2026-11-15T21:27:34.413Z"
     },
     "learn-github-faridsafi-react-native-gifted-chat": {
       "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
@@ -217140,9 +217145,9 @@
       "title": "Architecture Intelligence: xudong-huang-may-learnings Core Invariants",
       "repository": "xudong-huang-may-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ea64d234d1b5aa01a13087cada77bbd640d0fcf271494091b76ed21f56b583e",
+      "content_hash": "c4d753749ca6ff26766b8ecf56b72a112abf2e2ca23f6f390d94ec26183d649c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:59:22.055Z"
+      "persisted_at": "2026-11-15T21:27:43.746Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may-learnings",
@@ -217152,9 +217157,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for xudong-huang-may-learnings",
       "repository": "xudong-huang-may-learnings",
       "source_version": "HEAD",
-      "content_hash": "be0e2541a7222544fdb6e2b100857a1d57d899136ed7db934d704d8bb2dc5efe",
+      "content_hash": "6af5c38a612b2d0b69af61c121b57733fbf902784b4ba0ba5b950095ddfe7220",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:59:22.168Z"
+      "persisted_at": "2026-11-15T21:27:43.836Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants",
@@ -233879,9 +233884,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "b8c6cef8a58f42825b120d09a65f0e5838f3e4497cf6a19cebfb06cb8014e609",
+      "content_hash": "f8a587abec1f1c55fbfd28b7a4ca3019241bc0b85b8922e072665f7d64788ee1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:23:19.256Z"
+      "persisted_at": "2026-11-15T21:27:44.524Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -246813,6 +246818,83 @@
       "content_hash": "2d7ca468648cd1975c72088b6a0f24a362ae6e7c60bacda32c3cfeab31813294",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T21:16:18.385Z"
+    },
+    "learn-huggingface-comfy-org-minimax-h3-image": {
+      "learning_id": "learn-huggingface-comfy-org-minimax-h3-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/MiniMax-H3-Image",
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "slug": "hf-comfy-org-minimax-h3-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+      "source_version": "hf-comfy-org-minimax-h3-image",
+      "content_hash": "84157cd61f49d1bf89d10e141145d4919992a9aeed6af07a1045fd920840df40",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T21:27:31.435Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-image-research-knowledge-intelligence-comfy-org-minimax-.md",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/MiniMax-H3-Image Core Invariants",
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "source_version": "hf-comfy-org-minimax-h3-image",
+      "content_hash": "6aea82d89c6843e7f26a521dc46a08d5a873101d6b42efd3560f8cde604d85e3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T21:27:31.724Z"
+    },
+    "rule-8655": {
+      "learning_id": "rule-8655",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8655,
+      "title": "raise the default coroutine stack size to 64KB",
+      "source_url": "https://github.com/Xudong-Huang/may",
+      "source_version": "bcbc907a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T21:27:33.949Z"
+    },
+    "candidate_directive-raise-the-default-coroutine-stack-size-to-64kb": {
+      "item_id": "candidate_directive-raise-the-default-coroutine-stack-size-to-64kb",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IP0U-raise-the-default-coroutine-stack-size-to-64kb.md",
+      "title": "raise the default coroutine stack size to 64KB",
+      "repository": "xudong-huang-may-learnings",
+      "source_version": "HEAD",
+      "content_hash": "938b54d1260960e63ddf953d89e2a484867643eb3af73c354e620942ed40c854",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T21:27:43.666Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-image-learnings-research-knowledge-intelligence-hf-comfy.md",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-minimax-h3-image-learnings Core Invariants",
+      "repository": "hf-comfy-org-minimax-h3-image-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c3d88c398679178f2ceda8c5a53c0d8ee750d93147fcbd9a65e7253b4bbd46b3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T21:27:44.055Z"
     }
   },
   "ai-builder-brain": {

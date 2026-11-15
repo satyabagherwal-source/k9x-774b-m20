@@ -10160,3 +10160,5 @@
 | `CYCLE-20261115-379I` | `2026-11-15T21:15:40.806Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8653` | Yes (`ba798c26...`) |
 | `CYCLE-20261115-3928` | `2026-11-15T21:15:43.136Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8654` | Yes (`cdbcbbf0...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T21:16:17.469Z` | `hf-minimaxai-minimax-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-37D23F0D` [Domain D] | Yes (`0045e878...`) |
+| `CYCLE-20261115-IFP1` | `2026-11-15T21:27:31.573Z` | `Comfy-Org/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | Yes (`84157cd6...`) |
+| `CYCLE-20261115-IHMK` | `2026-11-15T21:27:34.076Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8655` | Yes (`1d64b1b9...`) |

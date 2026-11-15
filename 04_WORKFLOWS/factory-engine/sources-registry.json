@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T21:15:46.304Z",
-    "lastVerified": "2026-11-15T21:15:46.304Z",
+    "lastChecked": "2026-11-15T21:27:43.430Z",
+    "lastVerified": "2026-11-15T21:27:43.430Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-15T20:42:01.698Z",
-    "lastVerified": "2026-11-15T20:42:01.698Z",
+    "lastChecked": "2026-11-15T21:27:43.419Z",
+    "lastVerified": "2026-11-15T21:27:43.419Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1604,9 +1604,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-15T14:06:58.160Z",
+    "lastChecked": "2026-11-15T21:27:38.547Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-15T14:06:58.160Z"
+    "lastVerified": "2026-11-15T21:27:38.547Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -3790,12 +3790,12 @@
     "revisionIdentifier": "e3084ac5"
   },
   "okteto-okteto": {
-    "name": "okteto/okteto",
+    "name": "okteto",
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T11:04:30.370Z",
-    "lastVerified": "2026-11-14T11:04:30.370Z",
+    "lastChecked": "2026-11-15T21:27:36.117Z",
+    "lastVerified": "2026-11-15T21:27:36.117Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
@@ -3804,7 +3804,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cb2419f7"
   },
   "neuron-core-neuron-ai": {
     "name": "neuron-core/neuron-ai",
@@ -5064,12 +5065,12 @@
     "revisionIdentifier": "3e489c5f"
   },
   "typedb-typedb": {
-    "name": "typedb/typedb",
+    "name": "typedb",
     "officialUrl": "https://github.com/typedb/typedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T08:05:36.337Z",
-    "lastVerified": "2026-11-14T08:05:36.337Z",
+    "lastChecked": "2026-11-15T21:27:40.994Z",
+    "lastVerified": "2026-11-15T21:27:40.994Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-typedb-typedb",
@@ -5078,7 +5079,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "43f63ec0"
   },
   "transact-rs-sqlx": {
     "name": "sqlx",
@@ -6173,14 +6175,14 @@
     "officialUrl": "https://github.com/Xudong-Huang/may",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T21:58:34.397Z",
-    "lastVerified": "2026-11-13T21:58:34.397Z",
+    "lastChecked": "2026-11-15T21:27:33.351Z",
+    "lastVerified": "2026-11-15T21:27:33.351Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xudong-huang-may",
-    "contentHash": "e88e8b5195a76c7ce3913fd16863afddb2a759dd8faec3ae841cb10b45950762",
+    "contentHash": "1d64b1b9e997291487e42d3097e8324fd92b4979503d308a69e71c7b094cd27f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 24,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10279,9 +10281,9 @@
   "bernaferrari-figmatocode": {
     "name": "FigmaToCode",
     "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
-    "lastChecked": "2026-11-12T09:19:08.389Z",
+    "lastChecked": "2026-11-15T21:27:33.446Z",
     "revisionIdentifier": "f5c4831d",
-    "lastVerified": "2026-11-12T09:19:08.389Z"
+    "lastVerified": "2026-11-15T21:27:33.446Z"
   },
   "hf-diffuspace-clover-35b-a3b-preview": {
     "name": "Diffuspace/Clover-35B-A3B-Preview",
@@ -14971,12 +14973,12 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-11T06:13:24.806Z",
-    "lastVerified": "2026-11-11T06:13:24.806Z",
+    "lastChecked": "2026-11-15T21:27:31.092Z",
+    "lastVerified": "2026-11-15T21:27:31.092Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
-    "contentHash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
+    "contentHash": "84157cd61f49d1bf89d10e141145d4919992a9aeed6af07a1045fd920840df40",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

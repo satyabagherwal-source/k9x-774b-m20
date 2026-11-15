@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T21:16:17.955Z",
+  "updated_at": "2026-11-15T21:27:43.938Z",
   "stats": {
-    "total_discovered": 3863,
-    "approved_pending_harvest": 3643,
+    "total_discovered": 3864,
+    "approved_pending_harvest": 3644,
     "harvested_count": 0,
     "rejected_count": 220,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3623,
+      "COMMUNITY_AND_EXPERT": 3624,
       "OFFICIAL_DOCUMENTATION": 130,
       "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
@@ -83467,6 +83467,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
         "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-F8B99A0F6345": {
+      "id": "SRC-F8B99A0F6345",
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+      "title": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:27:43.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
+        "fileName": "hf-comfy-org-minimax-h3-image-learnings.md"
       }
     }
   }

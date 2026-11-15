@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T21:16:18.502Z",
+  "last_updated": "2026-11-15T21:27:44.609Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T21:06:41.941Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-15T17:23:18.754Z",
+      "processed_at": "2026-11-15T21:27:44.147Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -28,8 +28,8 @@
       "staged_for_review": 0
     },
     "hf-comfy-org-minimax-h3-image-learnings.md": {
-      "processed_at": "2026-11-11T06:16:41.048Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-15T21:27:43.923Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-conwayresearch-underdog-woof-learnings.md": {
@@ -1038,7 +1038,7 @@
       "staged_for_review": 1
     },
     "xudong-huang-may-learnings.md": {
-      "processed_at": "2026-11-13T21:59:21.731Z",
+      "processed_at": "2026-11-15T21:27:43.519Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3068,7 +3068,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1131,
+  "total_dossiers_evaluated": 1134,
   "total_canonical_promoted": 273,
-  "total_staged_for_review": 858
+  "total_staged_for_review": 860
 }

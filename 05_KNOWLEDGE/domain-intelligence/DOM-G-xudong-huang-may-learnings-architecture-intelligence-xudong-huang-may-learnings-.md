@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T21:59:21.823Z",
+  "timestamp": "2026-11-15T21:27:43.589Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-xudong-huang-may-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [xudong-huang-may-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T21:59:21.823Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T21:27:43.589Z`  
 > **Learning ID**: `LEARN-EVO-xudong-huang-may-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), B (Product Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from xudong-huang-may-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
-> **Source Version**: `52489997`  
+> **Source Version**: `bcbc907a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T21:58:34.573Z  
+> **Timestamp**: 2026-11-15T21:27:33.355Z  
 > **Learning ID**: `learn-github-xudong-huang-may`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:58:34.397Z  
+> **Harvest Timestamp**: 2026-11-15T21:27:33.351Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2174,549 +2174,508 @@ impl Cqueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2727c031` (2026-11-13)
-**Commit Message**: Fix EpollTimeout overflow with large Duration values
+### Incident Patch 1: `a9ef8881` (2026-11-14)
+**Commit Message**: fix: raise the default coroutine stack size to 64KB
 
-EpollTimeout::try_from() only accepts values up to i32.MAX milliseconds,
-but AtomicDuration can store values up to usize.MAX milliseconds. When
-users set very large timeouts (e.g., Duration::from_secs(30*24*3600)),
-the .unwrap() would panic the selector thread, causing a restart loop
-that would panic again on every wakeup.
+Cancellation is delivered by unwinding with a `Cancel` panic. On macOS
+arm64 in release builds the unwinder can spend roughly 43KB of coroutine
+stack when it has to parse the DWARF CFI of the io-wait frames: the 32KB
+default left no headroom, and the resulting guard-page fault abandoned
+the unwind without unwinding it, leaving the worker thread marked as
+panicking so later cancels on that worker hung.
 
-This fix clamps timeout values to i32.MAX milliseconds before conversion,
-allowing large timeouts to be safely handled without panicking.
+Raise DEFAULT_STACK_SIZE from 0x1000 to 0x2000 (64KB on 64-bit systems).
+The coroutine pool's virtual reservation grows from 48MB to 80MB, but
+resident memory for simple coroutines is unchanged: only the top and
+sentinel pages are touched.
 
-Added regression test to verify large timeouts don't cause panics.
+Pin 0x2000 in the read-cancel stress test so it keeps the required
+headroom even if the default is tuned down later, and update the docs
+and the stale 32KB comments in the sync primitives.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-**File**: `src/io/sys/unix/epoll.rs` (modified, +7/-1)
+**File**: `docs/tune_stack_size.md` (modified, +3/-1)
 ```diff
-@@ -90,7 +90,13 @@ impl Selector {
-         // non-blocking reactor poll; anything else keeps blocking forever
-         let timeout = _timeout.filter(|to| *to == 0);
-         let timeout_ms = timeout
--            .map(|to| EpollTimeout::try_from(to.div_ceil(1_000_000)).unwrap())
-+            .map(|to| {
-+                let ms = to.div_ceil(1_000_000);
-+                // Clamp to i32::MAX milliseconds if the timeout exceeds that.
-+                // EpollTimeout::try_from rejects values > i32::MAX, so we cap it.
-+                let ms_clamped = ms.min(i32::MAX as u64) as i32;
-+                EpollTimeout::try_from(ms_clamped).unwrap()
-+            })
-             .unwrap_or(EpollTimeout::NONE);
-         // info!("select; timeout={:?}", timeout_ms);
+@@ -1,6 +1,8 @@
+ Because [MAY][may] doesn't support automatic stack increasing, you have to determine the stack size of the coroutine before running your application. Read [this][caveat] for more information.
+ 
+-When creating coroutines in [MAY][may], the library would alloc a chunk of memory from heap as the stack for each coroutine. The default stack size is 4k words, in 64bit system it is 32k bytes. For most of the cases, this stack size is big enough for simple coroutines. Buf if you have a very complicated coroutine that need more stack size, or you want to shrink the stack size to save some memory usage, you can set the stack size explicitly to a reasonable value.
++When creating coroutines in [MAY][may], the library would alloc a chunk of memory from heap as the stack for each coroutine. The default stack size is 8k words, in 64bit system it is 64k bytes. For most of the cases, this stack size is big enough for simple coroutines. Buf if you have a very complicated coroutine that need more stack size, or you want to shrink the stack size to save some memory usage, you can set the stack size explicitly to a reasonable value.
++
++Keep in mind that cancelling a coroutine is delivered by unwinding a `Cancel` panic, and the unwinder itself needs stack. On some platforms (notably macOS arm64 in release builds) that can take tens of kilobytes. The default leaves room for cancelling a simple coroutine; if you shrink the stack, leave headroom for coroutines that may be cancelled.
+ 
+ ## Change default coroutine stack size
+ You can config the default stack size at the initialization stage. when create a coroutine and you not specify the stack size for it, it will use this default stack size.
+```
+
+**File**: `src/config.rs` (modified, +7/-1)
+```diff
+@@ -7,7 +7,13 @@ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+ 
+ // default stack size, in usize
+ // windows has a minimal size as 0x4a8!!!!
+-const DEFAULT_STACK_SIZE: usize = 0x1000;
++// 0x2000 words = 64KB on 64-bit systems. Cancellation is delivered by
++// unwinding with a `Cancel` panic, and on macOS arm64 a release build can
++// spend roughly 43KB of the coroutine stack in the unwinder alone (libunwind
++// falls back to parsing DWARF CFI with large frames for some io-wait frames).
++// The previous 32KB default left no headroom there: the guard-page fault
++// abandoned the unwind and left the worker thread marked as panicking.
++const DEFAULT_STACK_SIZE: usize = 0x2000;
+ const DEFAULT_POOL_CAPACITY: usize = 1000;
+ 
+ static WORKERS: AtomicUsize = AtomicUsize::new(0);
+```
+
+**File**: `src/sync/condvar.rs` (modified, +1/-1)
+```diff
+@@ -251,7 +251,7 @@ impl Condvar {
+         // canceled and won't take the lock), in which case the signal must
+         // be passed on to the next waiter. A cancel storm can queue many
+         // released blockers back to back, and a recursive call would
+-        // overflow the (small, 32KB default) coroutine stack and abort
++        // overflow the (small) default coroutine stack and abort
+         while let Some(w) = self.to_wake.pop() {
+             // `false` means the waiter had already left: pass the signal on
+             if w.try_hand_off() {
+```
+
+**File**: `src/sync/mutex.rs` (modified, +3/-3)
+```diff
+@@ -716,9 +716,9 @@ mod tests {
+         let m_holder = m.clone();
+         let (tx_held, rx_held) = channel();
+         let (tx_go, rx_go) = channel();
+-        // the holder is a coroutine so the release-chain walk runs on a
+-        // 32KB coroutine stack; it holds the lock until the test tells it
+-        // to release, so the waiters can never acquire the lock
++        // the holder is a coroutine so the release-chain walk runs on the
++        // (small) default coroutine stack; it holds the lock until the test
++        // tells it to release, so the waiters can never acquire the lock
+         let holder = go!(move || {
+             let _g = m_holder.lock().unwrap();
+             tx_held.send(()).unwrap(); // the lock is definitely held now
+```
+
+**File**: `src/sync/rwlock.rs` (modified, +4/-2)
+```diff
+@@ -1122,7 +1122,8 @@ mod tests {
+     /// Regression test for the hand-off chain: a cancel storm leaves many
+     /// released blockers queued, and unlocking must walk past all of them
+     /// iteratively. The old implementation recursed once per released
+-    /// waiter and overflowed the 32KB coroutine stack on a chain this long.
++    /// waiter and overflowed the coroutine stack (then 32KB by default) on a
++    /// chain this long.
+     #[test]
+     fn test_rwlock_unlock_skips_canceled_waiters() {
+         const N: usize = 500;
+@@ -1161,7 +1162,8 @@ mod tests {
+             assert!(w.join().is_err());
+         }
+ 
+-        // dropping the guard now walks the released chain on a 32KB stack
++        // dropping the guard now walks the released chain on the default
++        // coroutine stack
+         release_tx.send(()).unwrap();
+         holder.join().unwrap();
  
 ```
 
-**File**: `tests/park_timeout.rs` (modified, +29/-0)
+**File**: `src/sync/semphore.rs` (modified, +3/-3)
 ```diff
-@@ -51,3 +51,32 @@ fn park_timeout_returns_for_short_timeouts() {
-         "park_timeout did not return"
-     );
+@@ -84,7 +84,7 @@ impl Semaphore {
+     ///
+     /// Iterative on purpose: a cancel storm can leave many released blockers
+     /// back to back in the queue, and recursing through `post` would overflow
+-    /// the (small, 32KB default) coroutine stack and abort.
++    /// the (small) default coroutine stack and abort.
+     #[inline]
+     fn wakeup_one(&self) {
+         while let Some(w) = self.to_wake.pop() {
+@@ -455,8 +455,8 @@ mod tests {
+ 
+     /// Regression test for the wake-up chain: canceled waiters leave released
+     /// blockers queued, and a single `post` must walk past all of them. The
+-    /// old recursive implementation overflowed the 32KB coroutine stack on a
+-    /// chain this long.
++    /// old recursive implementation overflowed the coroutine stack (then
++    /// 32KB by default) on a chain this long.
+     #[test]
+     fn released_waiters_are_skipped_iteratively() {
+         use crate::sleep::sleep;
+```
+
+**File**: `src/sync/sync_flag.rs` (modified, +3/-2)
+```diff
+@@ -70,7 +70,7 @@ impl SyncFlag {
+     // there is no permit to forward past released blockers: just drain the
+     // queue. Iterative because a cancel storm can leave many released
+     // blockers queued, and re-entering `fire` recursively would overflow the
+-    // (small, 32KB default) coroutine stack.
++    // (small) default coroutine stack.
+     #[inline]
+     fn wakeup_all(&self) {
+         while let Some(w) = self.to_wake.pop() {
+@@ -279,7 +279,8 @@ mod tests {
+     /// Regression test for the release-forwarding chain: canceled waiters
+     /// leave released blockers queued, and a single `fire` must walk past all
+     /// of them. The old implementation re-entered `fire` recursively and
+-    /// overflowed the 32KB coroutine stack on a chain this long.
++    /// overflowed the coroutine stack (then 32KB by default) on a chain this
++    /// long.
+     #[test]
+     fn released_waiters_are_woken_iteratively() {
+         use crate::sleep::sleep;
+```
+
+**File**: `tests/cancel_stress.rs` (modified, +11/-2)
+```diff
+@@ -195,13 +195,21 @@ fn cancel_accept() {
+ 
+ /// Cancel a coroutine blocked in `read()` while the peer sends data at the
+ /// same time, racing a normal IO completion against the cancel.
++///
++/// The cancellation is delivered by unwinding with a `Cancel` panic. On
++/// macOS arm64 in release builds the unwinder can need roughly 40KB of stack
++/// to walk the io-read frames (libunwind parses the DWARF CFI with large
++/// frames). Pin the size here rather than relying on the default, so the
++/// stress test keeps working if the default is ever tuned down: a guard-page
++/// fault would abandon the panic unwind without unwinding it and leave the
++/// worker thread marked as panicking, hanging later cancel tests.
+ #[cfg(feature = "io_cancel")]
+ #[test]
+ fn cancel_read_racing_completion() {
+     for i in 0..300 {
+         let (tx, rx) = channel();
+         let (accepted_tx, accepted_rx) = channel();
+-        let j = go!(move || {
++        let j = go!(coroutine::Builder::new().stack_size(0x2000), move || {
+             let listener = TcpListener::bind(("127.0.0.1", 0)).unwrap();
+             tx.send(listener.local_addr().unwrap()).unwrap();
+             let (mut s, _) = listener.accept().unwrap();
+@@ -211,7 +219,8 @@ fn cancel_read_racing_completion() {
+                 let _ = s.read(&mut buf);
+                 coroutine::yield_now();
+             }
+-        });
++        })
++        .unwrap();
+ 
+         let addr = rx.recv().unwrap();
+         let mut client = std::net::TcpStream::connect(addr).unwrap();
+```
+
+---
+
+### Incident Patch 2: `5e24172a` (2026-11-15)
+**Commit Message**: fix: wake the selector that owns a deregistered fd
+
+del_fd pushed the Arc<EventData> into the shard's free queue but never woke
+its event loop. The queue is drained only at the end of that shard's select,
+and a deregistration raises no epoll/kqueue event, so an idle selector
+blocked in epoll_wait/kevent -- forever without io_timeout -- retained every
+closed fd's Arc until an unrelated event arrived.
+
+Wake the owning shard on the first push of a batch, coalesced with an atomic
+armed flag. The owner clears it with an RMW immediately before draining, so
+an arm ordered before the clear makes its push visible to the drain and one
+ordered after it sees false and issues a wakeup.
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+**File**: `src/io/sys/unix/epoll.rs` (modified, +65/-2)
+```diff
+@@ -1,7 +1,7 @@
+ use std::io;
+ use std::os::fd::AsFd;
+ use std::os::fd::BorrowedFd;
+-use std::sync::atomic::Ordering;
++use std::sync::atomic::{AtomicBool, Ordering};
+ use std::sync::Arc;
+ #[cfg(feature = "io_timeout")]
+ use std::time::Duration;
+@@ -29,6 +29,11 @@ struct SingleSelector {
+     #[cfg(feature = "io_timeout")]
+     timer_list: TimerList,
+     free_ev: Queue<Arc<EventData>>,
++    /// Set while a `free_ev` wakeup is in flight. Producers wake the owning
++    /// selector only off the `false -> true` transition, so a burst of
++    /// deregistrations costs at most one syscall; the owner clears it right
++    /// before draining the queue.
++    free_ev_armed: AtomicBool,
+ }
+ 
+ impl SingleSelector {
+@@ -46,6 +51,7 @@ impl SingleSelector {
+             epoll,
+             evfd,
+             free_ev: Queue::new(),
++            free_ev_armed: AtomicBool::new(false),
+             #[cfg(feature = "io_timeout")]
+             timer_list: TimerList::new(),
+         })
+@@ -290,13 +296,32 @@ impl Selector {
+ 
+         // after EpollCtlDel push the unused event data
+         single_selector.free_ev.push((*io_data).clone());
++        // The queue is drained only by the owning event loop, at the end of
++        // its `select`, and a deregistration raises no epoll event. An idle
++        // selector is blocked in `epoll_wait` (forever when the `io_timeout`
++        // poll is off), so without this wakeup every closed fd's
++        // `Arc<EventData>` would be retained until some unrelated event
++        // happened to arrive. Wake the owner, coalescing per shard: only the
++        // first push of a batch pays for the syscall.
++        if !single_selector.free_ev_armed.swap(true, Ordering::AcqRel) {
++            self.wakeup(id);
++        }
+     }
+ 
+     // we can't free the event data directly in the worker thread
+     // must free them before the next epoll_wait
+     #[inline]
+     fn free_unused_event_data(&self, id: usize) {
+-        let free_ev = &self.vec[id].free_ev;
++        let single_selector = &self.vec[id];
++        let free_ev = &single_selector.free_ev;
++        // Disarm with an RMW before draining, not a store. An arm ordered
++        // before this swap is read by it (the arm is a release operation),
++        // which makes the push preceding the arm visible to the drain below.
++        // An arm ordered after it observes `false` and wakes the selector,
++        // covering any push this drain misses. Clearing after the drain could
++        // instead swallow the wakeup for a push that races with it and leave
++        // the entry stranded.
++        single_selector.free_ev_armed.swap(false, Ordering::AcqRel);
+         while !free_ev.bulk_pop().is_empty() {}
+     }
+ 
+@@ -320,3 +345,41 @@ impl Selector {
+         io.timer.store(h);
+     }
  }
 +
-+#[cfg(unix)]
-+#[test]
-+fn large_timeout_does_not_panic() {
-+    // Test that very large timeouts don't cause panics in the epoll/kqueue selector.
-+    // This is a regression test for an issue where EpollTimeout::try_from would panic
-+    // on values > i32::MAX milliseconds (e.g., 30 days = 2,592,000,000 ms).
-+    let (tx, rx) = mpsc::channel();
-+    let co = unsafe {
-+        may::coroutine::Builder::new()
-+            .spawn_local(move || {
-+                // Very large timeout (30 days)
-+                let large_timeout = Duration::from_secs(30 * 24 * 3600);
-+                // Using a short timeout after the large one to ensure the test doesn't hang
-+                may::coroutine::park_timeout(large_timeout);
-+                println!("Large timeout completed by outside unpark");
-+                may::coroutine::park_timeout(Duration::from_millis(1));
-+                tx.send(()).unwrap();
-+            })
-+            .unwrap()
-+    };
-+    // don't wait that long for the large timeout, we will unpark it immediately
-+    co.coroutine().unpark();
-+    // Give it time to complete (should be quick since we don't actually wait 30 days)
-+    assert!(
-+        rx.recv().is_ok(),
-+        "park_timeout with large timeout did not complete"
-+    );
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    /// A deregistration from another thread must wake the selector that owns
++    /// the fd's shard. `free_ev` is drained only by that thread, at the end of
++    /// its `select`; `epoll_ctl(DEL)` raises no event, and an idle selector
++    /// blocks in `epoll_wait` with no timeout when the `io_timeout` poll is
++    /// off. Without the wakeup every closed fd's `Arc<EventData>` would be
++    /// retained until some unrelated event arrived.
++    #[test]
++    fn del_fd_wakes_the_owning_selector() {
++        let selector = Selector::new(1).unwrap();
++        let socket = std::net::UdpSocket::bind(("127.0.0.1", 0)).unwrap();
++        // never registered, so its `Drop` does not touch the global scheduler
++        let io_data = IoData::new(&socket);
++
++        std::thread::scope(|s| {
++            s.spawn(|| selector.del_fd(&io_data));
++        });
++
++        // the eventfd is the only registration in this selector, so a
++        // delivered event can only be the free-queue wakeup (data 0)
++        let mut events = [EpollEvent::new(EpollFlags::EPOLLIN, 0); 4];
++        let n = selector.vec[0]
++            .epoll
++            .wait(&mut events, EpollTimeout::ZERO)
++            .unwrap();
++        assert_eq!(n, 1, "del_fd did not wake the owning selector");
++        assert_eq!(events[0].data(), 0, "unexpected non-wakeup event");
++
++        assert_eq!(selector.vec[0].free_ev.len(), 1);
++        selector.free_unused_event_data(0);
++        assert!(selector.vec[0].free_ev.is_empty());
++        assert!(!selector.vec[0].free_ev_armed.load(Ordering::Acquire));
++    }
 +}
 ```
 
----
-
-### Incident Patch 2: `52489997` (2026-11-13)
-**Commit Message**: fix: make semaphore wake-ups advisory to stop phantom permits
-
-`post` handed its permit to a waiter implicitly: the +1 stayed in `cnt`
-while `wakeup_one` walked the waiter queue, and retiring a timed-out
-waiter raises `cnt` above zero. A concurrent fast-path `try_wait` could
-therefore consume that permit mid-walk, and the delayed hand-off then
-woke a newly registered receiver for a permit that no longer existed.
-`recv` saw `Acquired`, popped an empty queue, and tripped the
-"a semaphore permit had no queued item" assert (a release build returned
-a spurious `Disconnected` instead).
-
-Interleaving (single receiver, matches stress_recv_timeout_shared):
-
-1. a recv_timeout times out and leaves a released blocker S (cnt = -1);
-2. a sender pushes and posts: prev == -1, so wakeup_one starts;
-3. wakeup_one pops S, retires it (cnt = 1), and is preempted;
-4. the receiver's fast path consumes the permit and pops the value;
-5. the receiver registers a new blocker and parks;
-6. the delayed wakeup_one pops it and unparks it;
-7. recv returns Acquired, pops nothing, senders alive -> panic.
-
-Permits are now consumed only by `try_wait`: `post` increments the
-counter and wakes one waiter advisory-style,
-
-**File**: `src/sync/mpmc.rs` (modified, +17/-26)
+**File**: `src/io/sys/unix/kqueue.rs` (modified, +27/-2)
 ```diff
-@@ -23,7 +23,7 @@ use std::sync::Arc;
- use std::time::Duration;
- 
- use super::semphore::WaitStatus;
--use super::Semphore;
-+use super::Semaphore;
- use crossbeam::queue::SegQueue;
- 
- /// /////////////////////////////////////////////////////////////////////////////
-@@ -32,7 +32,7 @@ use crossbeam::queue::SegQueue;
- struct InnerQueue<T> {
-     queue: SegQueue<T>,
-     // thread/coroutine for wake up
--    sem: Semphore,
-+    sem: Semaphore,
-     // The number of tx channels which are currently using this queue.
-     tx_ports: AtomicUsize,
-     // if rx is dropped
-@@ -43,7 +43,7 @@ impl<T> InnerQueue<T> {
-     pub fn new() -> InnerQueue<T> {
-         InnerQueue {
-             queue: SegQueue::new(),
--            sem: Semphore::new(0),
-+            sem: Semaphore::new(0),
-             tx_ports: AtomicUsize::new(1),
-             rx_ports: AtomicUsize::new(1),
-         }
-@@ -66,9 +66,9 @@ impl<T> InnerQueue<T> {
-             Err(TryRecvError::Disconnected) => return Err(RecvTimeoutError::Disconnected),
-         }
- 
--        // The disconnect re-check is done *after* the waiter is registered
-+        // The disconnect re-check is done *after* the waiter is published
-         // (inside `wait_timeout_until`): a receiver that parks after the last
--        // sender's wakeup posts would otherwise never be woken again.
-+        // sender's wakeup would otherwise never be woken again.
-         match self
-             .sem
-             .wait_timeout_until(dur, || self.tx_ports.load(Ordering::Acquire) == 0)
-@@ -77,11 +77,9 @@ impl<T> InnerQueue<T> {
-             WaitStatus::Stopped => {
-                 // The wait ended on the disconnect. A sender may still have
-                 // published its last value before dropping its port, and the
--                // value's permit can race with the broadcast wakeup (the
--                // drain pops the blocker, but `leave_wait` wins the hand-off
--                // spin lock first), so `Stopped` does not imply that no value
--                // is buffered. Queued values must be delivered before the
--                // disconnect is reported.
-+                // disconnect wake-up is only advisory, so `Stopped` does not
-+                // imply that no value is buffered. Queued values must be
-+                // delivered before the disconnect is reported.
-                 return match self.queue.pop() {
-                     Some(data) => Ok(data),
-                     None => Err(RecvTimeoutError::Disconnected),
-@@ -154,20 +152,13 @@ impl<T> InnerQueue<T> {
-         match self.tx_ports.fetch_sub(1, Ordering::SeqCst) {
-             1 => {
-                 // There is no tx port any more; wake every parked receiver
--                // so it observes the disconnect.
--                //
--                // This must be a broadcast, not a "post while waiters exist"
--                // loop: a receiver pushes its blocker *before* decrementing
--                // the semaphore counter, and while it sits in that window the
--                // counter under-reports the parked receivers. Two receivers
--                // in that window can absorb the posts (and the spare permit)
--                // and make the loop stop while a fully registered receiver is
--                // still parked. Draining the waiter queue wakes everyone
--                // registered at this point regardless of the counter.
-+                // so it observes the disconnect. This must be a broadcast,
-+                // not a single wake: the stop predicate is permanently true
-+                // and every receiver has to re-check it.
-                 //
-                 // Receivers that register after the drain observe
--                // `tx_ports == 0` through `wait_timeout_until`, so no wakeup
--                // is lost.
-+                // `tx_ports == 0` through `wait_timeout_until`'s
-+                // post-registration check, so no wakeup is lost.
-                 self.sem.wake_all();
-             }
-             n if n > 1 => {}
-@@ -280,10 +271,10 @@ impl<T> Sender<T> {
-     /// Return a best-effort count of queued items not yet claimed by a
-     /// receiver.
-     ///
--    /// This is the semaphore's permit count, clamped at 0. It does not count
--    /// items already handed to a woken receiver, and it can transiently
--    /// include a permit returned by the release protocol after a receiver
--    /// timed out or was canceled.
-+    /// This is the semaphore's permit count: one permit is posted per send
-+    /// and consumed by `try_wait` when a receiver pops a value, so it can
-+    /// transiently over-report a value whose receiver has been woken but has
-+    /// not acquired the permit yet.
-     pub fn pressure(&self) -> usize {
-         self.inner.sem.get_value()
-     }
-```
-
-**File**: `src/sync/semphore.rs` (modified, +198/-187)
-```diff
-@@ -1,13 +1,16 @@
- use std::fmt;
- use std::sync::atomic::{AtomicIsize, Ordering};
+@@ -1,6 +1,6 @@
+ use std::os::fd::{AsRawFd, FromRawFd, RawFd};
+ use std::os::unix::io::OwnedFd;
+-use std::sync::atomic::Ordering;
++use std::sync::atomic::{AtomicBool, Ordering};
  use std::sync::Arc;
--use std::time::Duration;
-+use std::time::{Duration, Instant};
- 
- use super::blocking::{cancel_pending, SyncBlocker};
- use crate::cancel::trigger_cancel_panic;
- use crate::park::ParkError;
- use crossbeam::queue::SegQueue;
- 
-+/// Alias for [`Semaphore`] using the conventional spelling.
-+pub type Semphore = Semaphore;
-+
- /// Semphore primitive
- ///
- /// semaphores allow threads and coroutines to synchronize their actions.
-@@ -19,6 +22,12 @@ use crossbeam::queue::SegQueue;
- /// zero, then a wait() operation will block until the value becomes
- /// greater than zero.
- ///
-+/// A wake-up is advisory: it does not carry a permit. A woken waiter
-+/// re-checks the counter and blocks again if another waiter consumed the
-+/// permit first. This keeps the counter authoritative even when a `post`,
-+/// `try_wait` and a waiter leaving (timeout/cancel) race, so a permit can
-+/// never be handed out twice.
-+///
- /// # Examples
- ///
- /// ```rust
-@@ -29,7 +38,6 @@ use crossbeam::queue::SegQueue;
- /// let sem = Arc::new(Semphore::new(0));
- /// let sem2 = sem.clone();
- ///
--/// // spawn a coroutine, and then wait for it to start
- /// unsafe {
- ///     coroutine::spawn(move || {
- ///         sem2.post();
-@@ -39,101 +47,60 @@ use crossbeam::queue::SegQueue;
- /// // wait for the coroutine to start up
- /// sem.wait();
- /// ```
--pub struct Semphore {
--    // track how many resources available for the semphore
--    // if it's negative means how many threads are waiting for
-+pub struct Semaphore {
-+    // how many permits are available; only `try_wait` decrements it
-     cnt: AtomicIsize,
-     // the waiting blocker list, must be mpmc
-     to_wake: SegQueue<Arc<SyncBlocker>>,
+ use std::time::Duration;
+ use std::{io, ptr};
+@@ -51,6 +51,11 @@ struct SingleSelector {
+     #[cfg(feature = "io_timeout")]
+     timer_list: TimerList,
+     free_ev: Queue<Arc<EventData>>,
++    /// Set while a `free_ev` wakeup is in flight. Producers wake the owning
++    /// selector only off the `false -> true` transition, so a burst of
++    /// deregistrations costs at most one syscall; the owner clears it right
++    /// before draining the queue.
++    free_ev_armed: AtomicBool,
  }
  
--/// Alias for [`Semphore`] using the conventional spelling.
--pub type Semaphore = Semphore;
--
- /// Result of [`Semphore::wait_timeout_until`].
- pub(crate) enum WaitStatus {
--    /// A permit was acquired (or the wait was notified).
-+    /// A permit was acquired.
-     Acquired,
--    /// The `stop` predicate was true after the waiter registered; no permit
--    /// was consumed.
-+    /// The `stop` predicate was true; no permit was consumed.
-     Stopped,
-     /// The timeout expired.
-     Timeout,
- }
- 
--impl Semphore {
-+impl Semaphore {
-     /// create a semphore with the initial value
-     pub fn new(init: usize) -> Self {
-         assert!(init < isize::MAX as usize);
--        Semphore {
-+        Semaphore {
-             to_wake: SegQueue::new(),
-             cnt: AtomicIsize::new(init as isize),
-         }
+ impl AsRawFd for SingleSelector {
+@@ -81,6 +86,7 @@ impl SingleSelector {
+         Ok(SingleSelector {
+             kqfd,
+             free_ev: Queue::new(),
++            free_ev_armed: AtomicBool::new(false),
+             #[cfg(feature = "io_timeout")]
+             timer_list: TimerList::new(),
+         })
+@@ -366,13 +372,32 @@ impl Selector {
+         debug!("del fd from kqueue select, fd={:?}", fd);
+         // after EpollCtlDel push the unused event data
+         single_selector.free_ev.push((*io_data).clone());
++        // The queue is drained only by the owning event loop, at the end of
++        // its `select`, and a deregistration raises no kqueue event. An idle
++        // selector is blocked in `kevent` (forever when the `io_timeout` poll
++        // is off), so without this wakeup every closed fd's
++        // `Arc<EventData>` would be retained until some unrelated event
++        // happened to arrive. Wake the owner, coalescing per shard: only the
++        // first push of a batch pays for the syscall.
++        if !single_selector.free_ev_armed.swap(true, Ordering::AcqRel) {
++            self.wakeup(id);
++        }
      }
  
--    // wake up the first live waiter, forwarding the permit past waiters that
--    // have already timed out or been canceled (their `release` flag is set).
--    //
--    // Returns `true` if a live waiter took the permit and `false` if there
--    // was no live waiter queued, in which case the permit stays in `cnt`.
--    //
--    // The walk must not stop on a positive `cnt`: waiters that already
--    // registered (and are queued behind a released blocker) are covered by
--    // permits, so `cnt >= 0` does not mean that no live waiter is left.
--    //
--    // Iterative on purpose: a cancel storm can leave many released blockers
--    // back to back in the queue, and recursing through `post` would overflow
--    // the (small, 32KB default) coroutine stack and abort.
-+    /// Wake the first live waiter.
-+    ///
-+    /// The wake-up is advisory: the woken waiter re-checks the permit count,
-+    /// so it is harmless for the wake to race with [`try_wait`](Self::try_wait)
-+    /// or with a waiter that timed out. A waiter that has already left
-+    /// (timeout or cancel) only leaves a released blocker behind; it is
-+    /// skipped so it cannot swallow the wake-up meant for a waiter behind it.
-+    ///
-+    /// Iterative on purpose: a cancel storm can leave many released blockers
-+    /// back to back in the queue, and recursing through `post` would overflow
-+    /// the (small, 32KB default) coroutine stack and abort.
+     // we can't free the event data directly in the worker thread
+     // must free them before the next epoll_wait
      #[inline]
--    fn wakeup_one(&self) -> bool {
-+    fn wakeup_one(&self) {
-         while let Some(w) = self.to_wake.pop() {
--            // `true` means a live waiter took the permit
-             if w.try_hand_off() {
--                return true;
-+                return;
-             }
--
--            // the released waiter no longer counts as waiting (`cnt += 1`);
--            // keep looking for a live waiter to forward the permit to
--            self.cnt.fetch_add(1, Ordering::SeqCst);
--        }
--
--        // The queue is empty although the counter said otherwise. Receivers
--        // that pushed a blocker but have not yet decremented `cnt`, or that
--        // were already woken by a broadcast drain, are the common cause; the
--        // permit simply stays in `cnt`.
--        false
--    }
--
--    /// Account an already-pushed blocker as a waiter.
--    ///
--    /// A permit can be posted between the fast path and this reg
-```
-
-**File**: `tests/park_timeout.rs` (modified, +2/-2)
-```diff
-@@ -1,14 +1,14 @@
- //! Timed waits in a coroutine must return for any timeout, including ones
- //! shorter than the timer's resolution.
+     fn free_unused_event_data(&self, id: usize) {
+-        let free_ev = &&self.vec[id].free_ev;
++        let single_selector = &self.vec[id];
++        let free_ev = &single_selector.free_ev;
++        // Disarm with an RMW before draining, not a store. An arm ordered
++        // before this swap is read by it (the arm is a release operation),
++        // which makes the push preceding the arm visible to the drain below.
++        // An arm ordered after it observes `false` and wakes the selector,
++        // covering any push this drain misses. Clearing after the drain could
++        // instead swallow the wakeup for a push that races with it and leave
++        // the entry stranded.
++        single_selector.free_ev_armed.swap(false, Ordering::AcqRel);
+         while !free_ev.bulk_pop().is_empty() {}
+     }
  
--use may::sync::Semphore;
-+use may::sync::Semaphore;
- use std::sync::mpsc;
- use std::time::Duration;
- 
- fn returns_within(d: Duration, n: usize) -> bool {
-     let (tx, rx) = mpsc::channel();
-     may::go!(move || {
--        let s = Semphore::new(0);
-+        let s = Semaphore::new(0);
-         for _ in 0..n {
-             assert!(!s.wait_timeout(d));
-         }
 ```
 
 ---
 
-### Incident Patch 3: `1a30a504` (2026-11-12)
-**Commit Message**: fix: broadcast receiver wakeup on MPMC disconnect
+### Incident Patch 3: `822e8637` (2026-11-15)
+**Commit Message**: fix: address the io review's minor notes
 
-A receiver pushes its blocker into the semaphore's waiter queue before it
-decrements the counter, so it is briefly queued but not accounted. The
-disconnect path (`drop_tx`) posted permits until the counter reported no
-waiters; two receivers inside that window could absorb the posts and the
-spare permit, letting the loop exit while a fully registered receiver was
-still parked. The window receivers leave anyway (the post-registration
-`stop` re-check sees `tx_ports == 0`), so the parked one was stranded.
+- Process the windows io timer list before the local drain, matching the
+  unix selectors, so overdue timers are not stuck behind up to a budget
+  of locally queued coroutines. Recompute the next expiry after the
+  drain so a timer that became due meanwhile fires immediately and the
+  next select wait stays relative to the current time.
+- Document that connect address resolution runs blocking in the calling
+  worker or thread: a hostname stalls that worker's event loop, so
+  pre-resolve a `SocketAddr` or use `connect_timeout`, which takes one.
+  Offloading would require a `Send + 'static` bound on the public
+  `ToSocketAddrs` API. Remove the stale TODO.
+- Document that the windows `CoIo` Read/Write path uses
+  `ReadFile`/`WriteFile` and therefore does not work on socket handles;
+  direct socket users to the `net` types.
 
-- Add `Semphore::wake_all`, a broadcast drain of the waiter queue used by
-  `drop_tx`: each blocker is retired from the counter and its waiter is
-  unparked, regardless of the counter state. Receivers that register
-  after the drain are covered by the existing `stop` re-check.
-- Make `wakeup_one` tolerate an empty queue: a drained window receiver's
-  late `fetch_sub` used to panic with "got null blocker!".
-- Keep `wakeup_one` walking past released blockers instead of stopping on
-  a non-negative counter, which could skip a live waiter queued behind
-  them.
-- Drop the now-unused `post_and_check`.
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-Add a deterministic regression test f
-
-**File**: `src/sync/mpmc.rs` (modified, +14/-12)
+**File**: `src/io/sys/unix/net/tcp_stream_connect.rs` (modified, +4/-1)
 ```diff
-@@ -124,19 +124,21 @@ impl<T> InnerQueue<T> {
-         match self.tx_ports.fetch_sub(1, Ordering::SeqCst) {
-             1 => {
-                 // There is no tx port any more; wake every parked receiver
--                // so it observes the disconnect. No spare permit is left
--                // behind: receivers that register after this wakeup observe
--                // `tx_ports == 0` through `wait_timeout_until`.
-+                // so it observes the disconnect.
-                 //
--                // Keep posting until no more waiters are woken. This handles
--                // the race where a receiver can register after we check for
--                // waiters but before we post. By repeatedly posting until
--                // post_and_check returns false, we ensure all receivers
--                // (including those registering concurrently) observe the
--                // disconnect.
--                while self.sem.post_and_check() {
--                    // Keep posting
--                }
-+                // This must be a broadcast, not a "post while waiters exist"
-+                // loop: a receiver pushes its blocker *before* decrementing
-+                // the semaphore counter, and while it sits in that window the
-+                // counter under-reports the parked receivers. Two receivers
-+                // in that window can absorb the posts (and the spare permit)
-+                // and make the loop stop while a fully registered receiver is
-+                // still parked. Draining the waiter queue wakes everyone
-+                // registered at this point regardless of the counter.
-+                //
-+                // Receivers that register after the drain observe
-+                // `tx_ports == 0` through `wait_timeout_until`, so no wakeup
-+                // is lost.
-+                self.sem.wake_all();
-             }
-             n if n > 1 => {}
-             n => {
+@@ -30,7 +30,10 @@ impl TcpStreamConnect {
+     ) -> io::Result<Self> {
+         use socket2::{Domain, Type};
+ 
+-        // let err = io::Error::new(io::ErrorKind::Other, "no socket addresses resolved");
++        // Address resolution is blocking. A hostname lookup runs here, in the
++        // calling worker (or thread), before the connect is submitted, so it
++        // can stall that worker's event loop. Pre-resolved `SocketAddr`s (and
++        // `connect_timeout`, which takes one) do not invoke the resolver.
+         addr.to_socket_addrs()?
+             .next()
+             .ok_or_else(|| io::Error::other("no socket addresses resolved"))
 ```
 
-**File**: `src/sync/semphore.rs` (modified, +106/-39)
+**File**: `src/io/sys/windows/co_io.rs` (modified, +4/-0)
 ```diff
-@@ -74,24 +74,67 @@ impl Semphore {
-     // wake up the first live waiter, forwarding the permit past waiters that
-     // have already timed out or been canceled (their `release` flag is set).
-     //
-+    // Returns `true` if a live waiter took the permit and `false` if there
-+    // was no live waiter queued, in which case the permit stays in `cnt`.
-+    //
-+    // The walk must not stop on a positive `cnt`: waiters that already
-+    // registered (and are queued behind a released blocker) are covered by
-+    // permits, so `cnt >= 0` does not mean that no live waiter is left.
-+    //
-     // Iterative on purpose: a cancel storm can leave many released blockers
-     // back to back in the queue, and recursing through `post` would overflow
-     // the (small, 32KB default) coroutine stack and abort.
-     #[inline]
--    fn wakeup_one(&self) {
--        loop {
--            let w = self.to_wake.pop().expect("got null blocker!");
--
-+    fn wakeup_one(&self) -> bool {
-+        while let Some(w) = self.to_wake.pop() {
-             // `true` means a live waiter took the permit
-             if w.try_hand_off() {
--                break;
-+                return true;
-             }
+@@ -17,6 +17,10 @@ use crate::yield_now::yield_with_io;
  
-             // the released waiter no longer counts as waiting (`cnt += 1`);
--            // forward the permit if there are still waiters behind it
--            if self.cnt.fetch_add(1, Ordering::SeqCst) >= 0 {
--                break;
--            }
-+            // keep looking for a live waiter to forward the permit to
-+            self.cnt.fetch_add(1, Ordering::SeqCst);
-+        }
-+
-+        // The queue is empty although the counter said otherwise. Receivers
-+        // that pushed a blocker but have not yet decremented `cnt`, or that
-+        // were already woken by a broadcast drain, are the common cause; the
-+        // permit simply stays in `cnt`.
-+        false
-+    }
-+
-+    /// Account an already-pushed blocker as a waiter.
-+    ///
-+    /// A permit can be posted between the fast path and this registration.
-+    /// Hand it to the oldest waiter; if there is none, it stays available in
-+    /// `cnt`.
-+    #[inline]
-+    fn record_waiter(&self) {
-+        // dec the cnt, if it's positive, unpark one waiter
-+        if self.cnt.fetch_sub(1, Ordering::SeqCst) > 0 {
-+            self.wakeup_one();
-+        }
-+    }
-+
-+    /// Wake every queued waiter.
-+    ///
-+    /// This is a broadcast for a predicate that has become permanently true
-+    /// (an MPMC receiver observing a disconnect): each queued blocker is
-+    /// retired (`cnt += 1` undoes its registration) and its waiter is
-+    /// unparked. Receivers that pushed a blocker but have not yet run
-+    /// `record_waiter` are woken too; the same `+1` retires the registration
-+    /// they are about to add.
-+    ///
-+    /// Unlike [`post`](Self::post), the wakeup is not permit based, so
-+    /// waiters that were not yet accounted for cannot make it stop early.
-+    pub(crate) fn wake_all(&self) {
-+        while let Some(w) = self.to_wake.pop() {
-+            // retire the waiter's registration, exactly like the
-+            // released-blocker path in `wakeup_one`
-+            self.cnt.fetch_add(1, Ordering::SeqCst);
-+            // live waiters are unparked; released blockers are just dropped
-+            w.try_hand_off();
+ /// Generic wrapper for any type that can be converted to raw `fd/HANDLE`
+ /// this type can be used in coroutine context without blocking the thread
++///
++/// On Windows `Read`/`Write` go through `ReadFile`/`WriteFile`, which do not
++/// work on socket handles. Use the [`crate::net`] types for sockets; this
++/// wrapper is for files and pipes.
+ #[derive(Debug)]
+ pub struct CoIo<T: AsRawHandle> {
+     inner: T,
+```
+
+**File**: `src/io/sys/windows/iocp.rs` (modified, +12/-1)
+```diff
+@@ -229,13 +229,24 @@ impl Selector {
+             crate::coroutine_impl::run_coroutine(co);
          }
+ 
++        // Deal with the timer list before draining the local queue, matching
++        // the unix selectors. The timeout handler only issues `CancelIoEx`
++        // (the completion resumes the coroutine later), so it cannot enqueue
++        // local work, but overdue timers should still not wait behind the
++        // drain.
++        let _ = single_selector
++            .timer_list
++            .schedule_timer(now(), &timeout_handler);
++
+         // Run the local tasks. The drain is budgeted; if it stops with work
+         // left, `has_local_tasks` makes the event loop poll again with a zero
+         // timeout instead of blocking, so it must stay the last step before
+         // returning to `select`.
+         scheduler.run_queued_tasks(id);
+ 
+-        // deal with the timer list
++        // Recompute after the drain: this fires a timer that became due while
++        // the local tasks were running, and reports the wait relative to the
++        // current time instead of the start of the drain.
+         let next_expire = single_selector
+             .timer_list
+             .schedule_timer(now(), &timeout_handler);
+```
+
+**File**: `src/io/sys/windows/net/tcp_stream_connect.rs` (modified, +4/-3)
+```diff
+@@ -35,9 +35,10 @@ impl TcpStreamConnect {
+     ) -> io::Result<Self> {
+         use socket2::{Domain, Socket, Type};
+ 
+-        // TODO:
+-        // resolve addr is a blocking operation!
+-        // here we should use a thread to finish the resolve?
++        // Address resolution is blocking. A hostname lookup runs here, in the
++        // calling worker (or thread), before the connect is submitted, so it
++        // can stall that worker's event loop. Pre-resolved `SocketAddr`s (and
++        // `connect_timeout`, which takes one) do not invoke the resolver.
+         addr.to_socket_addrs()?
+             .next()
+             .ok_or_else(|| io::Error::other("no socket addresses resolved"))
+```
+
+**File**: `src/net/tcp.rs` (modified, +8/-0)
+```diff
+@@ -55,6 +55,14 @@ impl TcpStream {
+         &mut self.sys
      }
  
-@@ -119,10 +162,9 @@ impl Semphore {
-         let cur = SyncBlocker::current();
-         // register blocker first
-         self.to_wake.push(cur.clone());
--        // dec the cnt, if it's positive, unpark one waiter
--        if self.cnt.fetch_sub(1, Ordering::SeqCst) > 0 {
--            self.wakeup_one();
--        }
-+        // dec the cnt, and forward a permit that was posted in between to the
-+        // oldest waiter (which can end up being this one)
-+        self.record_waiter();
- 
-         // Re-check after registering; the fetch_sub above synchronizes with
-         // the producer's post through the SeqCst modification order of `cnt`.
-@@ -250,32 +292,6 @@ impl Semphore {
-         }
-     }
- 
--    /// Increment the semaphore and wake one waiter if any exist.
--    /// Returns `true` if a waiter was woken, `false` if there were no waiters.
--    pub(crate) fn post_and_check(&self) -> bool {
--        // CAS loop so the counter is not wrapped before the overflow check
--        // can fire
--        let prev = loop {
--            let cur = self.cnt.load(Ordering::SeqCst);
--            assert!(cur < isize::MAX, "semaphore permit count overflow");
--            match self
--                .cnt
--                .compare_exchange_weak(cur, cur + 1, Ordering::SeqCst, Ordering::SeqCst)
--            {
--                Ok(_) => break cur,
--                Err(_) => continue,
--            }
--        };
--
--        // try to wakeup one waiter first
--        if prev < 0 {
--            self.wakeup_one();
--            true
--        } else {
--            false
--        }
--    }
--
-     /// Return the current semaphore value.
-     ///
-     /// Queued w
++    /// Connect to a remote address.
++    ///
++    /// Address resolution happens before the connect is submitted, in the
++    /// calling context. A hostname therefore blocks the current worker (or OS
++    /// thread) in the resolver, and on a worker that stalls its event loop
++    /// until the lookup finishes. Pre-resolve and pass a `SocketAddr`, or use
++    /// `connect_timeout`, which takes a resolved `&SocketAddr`, when that
++    /// matters.
+     pub fn connect<A: ToSocketAddrs>(addr: A) -> io::Result<TcpStream> {
+         let mut c = net_impl::TcpStreamConnect::new(
+             addr,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2745,37 +2704,33 @@ Add a deterministic regression test f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. EpollTimeout overflow with large Duration values
+## X. raise the default coroutine stack size to 64KB
 
 **RULE**:
-When implementing operations in `src/io/sys/unix/epoll.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/tune_stack_size.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2727c031`: EpollTimeout overflow with large Duration values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a9ef8881`: raise the default coroutine stack size to 64KB. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/io/sys/unix/epoll.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tune_stack_size.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .map(|to| {
-                let ms = to.div_ceil(1_000_000);
-                // Clamp to i32::MAX milliseconds if the timeout exceeds that.
-                // EpollTimeout::try_from rejects values > i32::MAX, so we cap it.
-                let ms_clamped = ms.min(i32::MAX as u64) as i32;
-                EpollTimeout::try_from(ms_clamped).unwrap()
-            })
+When creating coroutines in [MAY][may], the library would alloc a chunk of memory from heap as the stack for each coroutine. The default stack size is 8k words, in 64bit system it is 64k bytes. For most of the cases, this stack size is big enough for simple coroutines. Buf if you have a very complicated coroutine that need more stack size, or you want to shrink the stack size to save some memory usage, you can set the stack size explicitly to a reasonable value.
+
+Keep in mind that cancelling a coroutine is delivered by unwinding a `Cancel` panic, and the unwinder itself needs stack. On some platforms (notably macOS arm64 in release builds) that can take tens of kilobytes. The default leaves room for cancelling a simple coroutine; if you shrink the stack, leave headroom for coroutines that may be cancelled.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            .map(|to| EpollTimeout::try_from(to.div_ceil(1_000_000)).unwrap())
+When creating coroutines in [MAY][may], the library would alloc a chunk of memory from heap as the stack for each coroutine. The default stack size is 4k words, in 64bit system it is 32k bytes. For most of the cases, this stack size is big enough for simple coroutines. Buf if you have a very complicated coroutine that need more stack size, or you want to shrink the stack size to save some memory usage, you can set the stack size explicitly to a reasonable value.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2727c031` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a9ef8881` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

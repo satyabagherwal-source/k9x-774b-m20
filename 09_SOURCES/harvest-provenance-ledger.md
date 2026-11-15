@@ -10193,3 +10193,5 @@ Every entry in this ledger must capture:
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `f83eb05b` | Multi-dimensional audit evidence | 2026-11-15T21:15:40.810Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `7f30b56d` | Multi-dimensional audit evidence | 2026-11-15T21:15:43.140Z |
 | `learn-dom-d-37d23f0d` | `project://hf-minimaxai-minimax-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | 2026-11-15T21:16:17.469Z |
+| `learn-huggingface-comfy-org-minimax-h3-image` | `https://huggingface.co/Comfy-Org/MiniMax-H3-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-15T21:27:31.576Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `bcbc907a` | Multi-dimensional audit evidence | 2026-11-15T21:27:34.079Z |

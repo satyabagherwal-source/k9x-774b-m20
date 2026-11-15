@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T21:15:43.149Z",
+  "last_updated": "2026-11-15T21:27:34.087Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "e88e8b5195a76c7ce3913fd16863afddb2a759dd8faec3ae841cb10b45950762",
-      "verified_at": "2026-11-13T21:58:35.583Z",
+      "content_hash": "1d64b1b9e997291487e42d3097e8324fd92b4979503d308a69e71c7b094cd27f",
+      "verified_at": "2026-11-15T21:27:34.087Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:58:35.583Z"
+      "last_updated": "2026-11-15T21:27:34.087Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",
@@ -18486,14 +18486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3-image",
-      "content_hash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
-      "verified_at": "2026-11-11T06:13:25.228Z",
+      "content_hash": "84157cd61f49d1bf89d10e141145d4919992a9aeed6af07a1045fd920840df40",
+      "verified_at": "2026-11-15T21:27:31.584Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T06:13:25.228Z"
+      "last_updated": "2026-11-15T21:27:31.584Z"
     },
     "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF": {
       "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",

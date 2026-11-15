@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T21:15:43.146Z",
-  "total_cycles_completed": 9765,
-  "total_learnings_persisted": 9765,
-  "total_rules_promoted": 9383,
+  "last_updated": "2026-11-15T21:27:34.084Z",
+  "total_cycles_completed": 9767,
+  "total_learnings_persisted": 9767,
+  "total_rules_promoted": 9384,
   "history": [
-    {
-      "timestamp": "2026-11-14T17:51:23.430Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T18:14:36.442Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T18:14:39.515Z",
       "repository": "meta/folly",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-15T21:15:43.146Z",
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T21:27:31.581Z",
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T21:27:34.084Z",
+      "repository": "Xudong-Huang/may",
+      "learningId": "learn-github-xudong-huang-may",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
