@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T04:05:32.330Z",
+  "last_updated": "2026-11-15T04:19:30.671Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T04:05:31.739Z",
+      "processed_at": "2026-11-15T04:19:29.899Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -503,7 +503,7 @@
       "staged_for_review": 1
     },
     "zeronsh-zeron-learnings.md": {
-      "processed_at": "2026-11-13T12:08:49.816Z",
+      "processed_at": "2026-11-15T04:19:28.306Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2871,9 +2871,14 @@
       "processed_at": "2026-11-15T04:05:31.446Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md": {
+      "processed_at": "2026-11-15T04:19:28.955Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 975,
+  "total_dossiers_evaluated": 978,
   "total_canonical_promoted": 239,
-  "total_staged_for_review": 736
+  "total_staged_for_review": 738
 }

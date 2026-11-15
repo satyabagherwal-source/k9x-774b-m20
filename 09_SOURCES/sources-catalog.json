@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "5eb17c45b35b8d1e458a4e00864c21a941f0c0544953ff748f4d8ce6497880a5",
-    "lastHarvestedAt": "2026-11-09T15:51:58.545Z",
+    "contentHash": "cc4ef726b77d09864ee80a85d6e0e724315971fcc78e1416ab038c5a0e636ed3",
+    "lastHarvestedAt": "2026-11-15T04:19:24.549Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "8065b000",
+    "sourceVersion": "68e460af",
     "license": "MIT",
-    "contentHash": "c7d37ab9c55fe32b7d2e2fc9f1ba27650b33852ec98b8d4fe300f7eaded76b85",
-    "lastHarvestedAt": "2026-11-13T12:08:24.188Z",
+    "contentHash": "066dc68059586ea40bc58f03292a91b6ddbdbe190e09fcd229fa5887f0f3b6e3",
+    "lastHarvestedAt": "2026-11-15T04:17:59.344Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {

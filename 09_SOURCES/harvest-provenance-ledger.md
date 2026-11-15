@@ -10054,3 +10054,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-15T04:04:53.081Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `c63ff393` | Multi-dimensional audit evidence | 2026-11-15T04:04:55.894Z |
 | `learn-dom-d-f3c53cd9` | `project://hf-black-forest-labs-flux-3-image-klein-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | 2026-11-15T04:05:31.446Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `68e460af` | Multi-dimensional audit evidence | 2026-11-15T04:17:59.344Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-15T04:19:24.549Z |

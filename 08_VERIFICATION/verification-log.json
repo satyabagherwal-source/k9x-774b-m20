@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-0610",
-    "timestamp": "2026-11-09T22:27:16.741Z",
-    "repository": "keybase/client",
-    "learningId": "learn-github-keybase-client",
-    "contentHash": "34324c1861dce80df7a2352c72627cd17a51484d2d2f35f314c8494d62ee18a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-94K4",
-    "timestamp": "2026-11-09T22:34:14.740Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "95fc660679c1d6db0fd5805c5cff4ab3660e0a872c26c5a6b00cab8cf28ddb36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-9FDH",
     "timestamp": "2026-11-09T22:34:28.757Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7492,6 +7462,36 @@
     "contentHash": "247f06dc7a1b4d4b153819ee6693e1d4ca256122a1746aed91a53f3a0cf92207",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-QFXN",
+    "timestamp": "2026-11-15T04:17:59.339Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "066dc68059586ea40bc58f03292a91b6ddbdbe190e09fcd229fa5887f0f3b6e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-S9OH",
+    "timestamp": "2026-11-15T04:19:24.545Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "cc4ef726b77d09864ee80a85d6e0e724315971fcc78e1416ab038c5a0e636ed3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

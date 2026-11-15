@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T04:04:55.904Z",
-  "total_cycles_completed": 9660,
-  "total_learnings_persisted": 9660,
-  "total_rules_promoted": 9298,
+  "last_updated": "2026-11-15T04:19:24.555Z",
+  "total_cycles_completed": 9662,
+  "total_learnings_persisted": 9662,
+  "total_rules_promoted": 9301,
   "history": [
-    {
-      "timestamp": "2026-11-14T04:50:27.724Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T04:50:35.535Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T05:05:33.407Z",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
@@ -1403,6 +1389,20 @@
       "repository": "Kuddev/pebrel",
       "learningId": "learn-github-kuddev-pebrel",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T04:17:59.350Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T04:19:24.555Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T04:04:55.908Z",
+  "last_updated": "2026-11-15T04:19:24.561Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2616,14 +2616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "content_hash": "5eb17c45b35b8d1e458a4e00864c21a941f0c0544953ff748f4d8ce6497880a5",
-      "verified_at": "2026-11-09T15:51:58.567Z",
+      "content_hash": "cc4ef726b77d09864ee80a85d6e0e724315971fcc78e1416ab038c5a0e636ed3",
+      "verified_at": "2026-11-15T04:19:24.560Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T15:51:58.567Z"
+      "last_updated": "2026-11-15T04:19:24.560Z"
     },
     "nvidia/Qwen3.8-Flash-Next-FP4-Local": {
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "c7d37ab9c55fe32b7d2e2fc9f1ba27650b33852ec98b8d4fe300f7eaded76b85",
-      "verified_at": "2026-11-13T12:08:24.213Z",
+      "content_hash": "066dc68059586ea40bc58f03292a91b6ddbdbe190e09fcd229fa5887f0f3b6e3",
+      "verified_at": "2026-11-15T04:17:59.355Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:08:24.213Z"
+      "last_updated": "2026-11-15T04:17:59.355Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",

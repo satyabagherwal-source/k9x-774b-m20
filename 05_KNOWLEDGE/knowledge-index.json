@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T04:05:32.237Z",
-  "total_verified_learnings": 8659,
+  "last_updated": "2026-11-15T04:19:30.549Z",
+  "total_verified_learnings": 8661,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18120,
+  "total_items": 18141,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AFBA-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-SE3X-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a68d39d6b37ce0748b51263913365e5154e6b8dd0f877fe143fd6b007ffcb9d",
+      "content_hash": "3ae0d7b23f5cb75b1b11c2ea6518bac9b758e4a6e9e4748c13c3cee5581ffaec",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T04:05:32.051Z"
+      "persisted_at": "2026-11-15T04:19:30.291Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "69a79fdda47c78ef9276ba25596cf6aafe38f56440ca02717adab30787ccae4a",
+      "content_hash": "2dd5ed1a4a8fed4b539a3a0e9cc847fef74252112c618c6f43c1d19876fc32f6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T04:05:32.138Z"
+      "persisted_at": "2026-11-15T04:19:30.419Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cdf857ce6209cd11d201967cbd14a2a303c42be1fc09b1a2daef4199e031c3d4",
+      "content_hash": "7dfe8e7851f3fab5a895f3b801778fdde5c65ff9c48741c4f83637e1a993acd2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T04:05:32.237Z"
+      "persisted_at": "2026-11-15T04:19:30.549Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -239161,6 +239161,311 @@
       "content_hash": "58d1d36bcacf46732563ff0fe4a18b3e87b5b70776fce97463394e290e9cb149",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T04:05:31.601Z"
+    },
+    "learn-github-zeronsh-zeron": {
+      "learning_id": "learn-github-zeronsh-zeron",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "zeronsh/zeron",
+      "repository": "zeronsh/zeron",
+      "slug": "zeronsh-zeron",
+      "platform": "github",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "68e460af",
+      "content_hash": "066dc68059586ea40bc58f03292a91b6ddbdbe190e09fcd229fa5887f0f3b6e3",
+      "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8575,
+          "title": "a sent pick is cleared by what it holds, not by table identity",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T04:17:59.153Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8575": {
+      "learning_id": "rule-8575",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8575,
+      "title": "a sent pick is cleared by what it holds, not by table identity",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "68e460af",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T04:17:59.153Z"
+    },
+    "candidate_directive-a-sent-pick-is-cleared-by-what-it-holds-not-by-table-identity": {
+      "item_id": "candidate_directive-a-sent-pick-is-cleared-by-what-it-holds-not-by-table-identity",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QG4F-a-sent-pick-is-cleared-by-what-it-holds-not-by-table-identity.md",
+      "title": "a sent pick is cleared by what it holds, not by table identity",
+      "repository": "zeronsh/zeron",
+      "source_version": "68e460af",
+      "content_hash": "cf0de3b8c09074bbe88b09b7fb305c49cf6c82fdc07a2eb2686f50140a7f8afb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T04:17:59.589Z"
+    },
+    "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-architecture-intelligence-zeronsh-zeron-core-invariants.md",
+      "title": "Architecture Intelligence: zeronsh/zeron Core Invariants",
+      "repository": "zeronsh/zeron",
+      "source_version": "68e460af",
+      "content_hash": "a15171fa19e3e930f4aca4e9cda3f073fcba86863e89c53e6a7c63d6057afdb9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T04:17:59.716Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
+      "repository": "zeronsh/zeron",
+      "source_version": "68e460af",
+      "content_hash": "4def9166be0ec24ae66250c2509df772f12fd28d34a1aff03b7ea0175d8b1024",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T04:17:59.851Z"
+    },
+    "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
+      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "slug": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "content_hash": "cc4ef726b77d09864ee80a85d6e0e724315971fcc78e1416ab038c5a0e636ed3",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8576,
+          "title": "Chat Template Mutation via GGUF Metadata Partitioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8577,
+          "title": "High-Precision Shared Multi-Modal Projection Weight Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T04:19:24.371Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8576": {
+      "learning_id": "rule-8576",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8576,
+      "title": "Chat Template Mutation via GGUF Metadata Partitioning",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T04:19:24.372Z"
+    },
+    "rule-8577": {
+      "learning_id": "rule-8577",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8577,
+      "title": "High-Precision Shared Multi-Modal Projection Weight Isolation",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T04:19:24.372Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-technical-construction-intelligence-openbm.md",
+      "title": "Technical Construction Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B-gguf Core Invariants",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "content_hash": "7675aa32c31db486a2e022e7db73f4c38b16eadd5768f1143035ce900efc789c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T04:19:24.939Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-adr-subsystem-boundary-modular-decoupling-.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "content_hash": "37110cd4dd259600814e34c6cf4d43be18073fea9da60410542c9707cabe3922",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T04:19:25.066Z"
+    },
+    "agent_contract-agent-contract-openbmb-minicpm-v-4-7-35b-a3b-gguf-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-openbmb-minicpm-v-4-7-35b-a3b-gguf-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-agent-contract-openbmb-minicpm-v-4-7-35b-a.md",
+      "title": "Agent Contract: openbmb/MiniCPM-V-4.7-35B-A3B-gguf Autonomous Specialist Persona",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "content_hash": "736c3e0b1cccc181d922c4e1ff0e64cdccf68853f7b1adc26982a91be24a537a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T04:19:25.185Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-openbmb-minicpm-v-4-7-35b-a3b-": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openbmb-minicpm-v-4-7-35b-a3b-",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "content_hash": "fe181f07778377d6e50a29f8e2f869ba24abd9d4cb96e63eba7f42ec2ee06070",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T04:19:25.304Z"
+    },
+    "candidate_directive-zgx-a-sent-pick-is-cleared-by-what-it-holds-not-by-table-identity": {
+      "item_id": "candidate_directive-zgx-a-sent-pick-is-cleared-by-what-it-holds-not-by-table-identity",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SCSA-zgx-a-sent-pick-is-cleared-by-what-it-holds-not-by-table-identity.md",
+      "title": "zgx): a sent pick is cleared by what it holds, not by table identity",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "830b4efca0e4ee71c12fc5edd6260424d8f6e0c2ca8b9c21a53e3a4835d929ba",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T04:19:28.576Z"
+    },
+    "domain_intelligence-architecture-intelligence-zeronsh-zeron-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-zeronsh-zeron-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-learnings-architecture-intelligence-zeronsh-zeron-learnings-core-i.md",
+      "title": "Architecture Intelligence: zeronsh-zeron-learnings Core Invariants",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef27319d7056c2f0cd3e3406e1e0417bd0cf4a8cd4ae6c6e4df5250217bdd0d8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T04:19:28.700Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zeronsh-zeron-learnings-verification-protocol-empirical-defect-shield-for-zerons.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9366b9a9fdd6634a993c52f3ee8066ad2363a2f74ad7e092a2a8cd0f8ff56c27",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T04:19:28.830Z"
+    },
+    "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
+      "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SD8H-chat-template-mutation-via-gguf-metadata-partitioning.md",
+      "title": "Chat Template Mutation via GGUF Metadata Partitioning",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e56aa5160433a4829493c53b538de27005ff2c3eaac20898db655f28d5fd883e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T04:19:29.154Z"
+    },
+    "candidate_directive-high-precision-shared-multi-modal-projection-weight-isolation": {
+      "item_id": "candidate_directive-high-precision-shared-multi-modal-projection-weight-isolation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SD8I-high-precision-shared-multi-modal-projection-weight-isolation.md",
+      "title": "High-Precision Shared Multi-Modal Projection Weight Isolation",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6edf5bdec9b4c57868322536b98c01e0524a8716b90890fd3091f9bb869c8c47",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T04:19:29.279Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-technical-construction-intellige.md",
+      "title": "Technical Construction Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings Core Invariants",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9aaaeaf1469fe43cb87bb7eb0784d34d610e03819d0c6ab238938f6864e00d76",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T04:19:29.404Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hf-openbmb-minicpm-v-4-7-35b-a3b-gg": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hf-openbmb-minicpm-v-4-7-35b-a3b-gg",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-adr-subsystem-boundary-modular-d.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "422d0bb3b1039f0f9cc4ad13acd1103f44fe60742317d462807bff64e83afa9c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T04:19:29.533Z"
+    },
+    "agent_contract-agent-contract-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-autonomous-specia": {
+      "item_id": "agent_contract-agent-contract-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-autonomous-specia",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-agent-contract-hf-openbmb-minicp.md",
+      "title": "Agent Contract: hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings Autonomous Specialist Persona",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ed343dd43dfdde6850f787b914d5c3c1f2c21d068f365ca3e58451124d6f97e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T04:19:29.652Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-openbmb-minicpm-v-4-7-35b-a": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-openbmb-minicpm-v-4-7-35b-a",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-verification-protocol-empirical-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "60db8ff456630d3077e6a573ba5cff0a02ef96bd119240898b80c3d3301fdfcd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T04:19:29.771Z"
     }
   },
   "ai-builder-brain": {

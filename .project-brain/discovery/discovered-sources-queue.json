@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T04:05:31.456Z",
+  "updated_at": "2026-11-15T04:19:28.968Z",
   "stats": {
-    "total_discovered": 3593,
-    "approved_pending_harvest": 3383,
+    "total_discovered": 3595,
+    "approved_pending_harvest": 3385,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3364,
+      "COMMUNITY_AND_EXPERT": 3366,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -77597,6 +77597,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
         "fileName": "hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md"
+      }
+    },
+    "SRC-C08FDB7B7F8A": {
+      "id": "SRC-C08FDB7B7F8A",
+      "url": "https://www.google.com/sorry/index",
+      "title": "https://www.google.com/sorry/index",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:19:28.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-4A670D2C2B90": {
+      "id": "SRC-4A670D2C2B90",
+      "url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "title": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:19:28.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
+        "fileName": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md"
       }
     }
   }

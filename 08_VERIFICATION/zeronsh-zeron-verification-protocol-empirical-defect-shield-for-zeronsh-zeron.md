@@ -4,45 +4,31 @@
 {
   "source_repository": "zeronsh/zeron",
   "source_url": "https://github.com/zeronsh/zeron",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "68e460af",
+  "license": "MIT",
+  "timestamp": "2026-11-15T04:17:59.588Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-zeronsh-zeron",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `68e460af`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T04:17:59.588Z`  
+> **Learning ID**: `learn-github-zeronsh-zeron`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zeronsh/zeron` (Commit: `historical`)
+- **Target Repository**: `zeronsh/zeron` (Commit: `68e460af`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
-> **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `7437e3e9`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:54:45.632Z  
-> **Learning ID**: `learn-github-zeronsh-zeron`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): zeronsh/zeron
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:54:45.448Z  
+> **Harvest Timestamp**: 2026-11-15T04:17:58.194Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3487 stars
+- **Stars / Engagement**: 3668 stars
 
 ---
 
@@ -149,6 +135,14 @@ data class LaunchOptions(
     val remoteVoice: Boolean = false,
     /** `--ez voice-selftest true`: log a host-less WebRTC offer (debuggable builds). */
     val voiceSelfTest: Boolean = false,
+    /** `--es dev-user <id> --es dev-org <id>`: a dev bearer for an `AUTH_MODE=dev` edge, not persisted (debuggable builds). */
+    val dev: Pair<String, String>? = null,
+    /** `--es edge <url>`: a local edge in place of production (debuggable builds). */
+    val edge: String? = null,
+    /** `--ez no-relay-layer true`: behave as a build without the relay layer does, an old phone in an account of new devices (debuggable builds). */
+    val noRelayLayer: Boolean = false,
+    /** `--es send-on-open <text>`: with `route chat:<id>`, send this once the session is open, for rigs (debuggable builds). */
+    val sendOnOpen: String? = null,
 )
 
 /**
@@ -284,17 +278,7 @@ class AppModel(private val app: Application) {
     fun boot(options: LaunchOptions) {
         launch = options
         if (_client.value != null) return
-        if (options.signedOut) credentials.clear()
-        // The demo starts from the in-memory defaults, never a real account's options.
-        if (options.demo) lastDraft = NewSessionDraft()
-        watchNetwork()
-        // `wallpaper <path>` / `wallpaper none` and `wallpaper-effect <name>`:
-        // set the wallpaper at launch (screenshots, tests).
-        options.wallpaper?.let { path ->
-            if (path == "none") wallpaper.remove() else scope.launch { wallpaper.set(File(path)) }
-        }
-        options.wallpaperEffect?.let { name ->
-            WallpaperStore.effects.firstOrNull { it.name.equals(name, ignoreCase = true) }?.let(wallpa
+        if (opti
 ```
 
 ### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/Cloud.kt`
@@ -859,6 +843,76 @@ class AndroidMeasurer : PlatformMeasurer {
 /** One process-wide text system shared by every transcript. */
 object TextEngine {
     val shared: TextSystem by lazy { TextSystem(Fonts.faceData, AndroidMeasurer()) }
+}
+
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/NetworkPath.kt`
+```
+package sh.zeron.android.core
+
+import android.net.Network
+import android.net.NetworkCapabilities
+
+/**
+ * What a direct connection's path depends on: which network, over what, and whether it's metered.
+ * Signal strength and bandwidth change all the time and leave this alone, so a re-delivered
+ * network doesn't tear down a healthy direct link.
+ */
+fun networkShape(network: Network, capabilities: NetworkCapabilities): String {
+    val transports = (0..TRANSPORT_MAX).filter(capabilities::hasTransport).joinToString(",")
+    val metered = !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
+    return "$network/$transports" + if (metered) "!" else ""
+}
+
+/** Past the highest transport the platform defines today. An unknown value just reads as absent. */
+private const val TRANSPORT_MAX = 15
+
+/**
+ * Turns what the OS says about the default network into the core's two calls, each only when it
+ * means something. Main thread only.
+ *
+ * Android says less than iOS's path monitor does, which is why this exists:
+ * - With no network at launch it says nothing at all, so [seed] reads the state first.
+ * - Moving between networks needn't pass through "lost".
+ * - In Doze, or with background data restricted, the network stays up and only this app is cut off.
+ *   Dials can't succeed then, so that counts as no path: they park instead of retrying.
+ */
+class NetworkPathTracker(
+    private val setOnline: (Boolean) -> Unit,
+    private val pathChanged: () -> Unit,
+) {
+    private var shape: String? = null
+    private var blocked = false
+
+    /** Whether this app can use a network right now. */
+    val online: Boolean get() = shape != null && !blocked
+
+    /** The state before the first callback. Reports nothing: a new client is told with [online]. */
+    fun seed(shape: String?) {
+        this.shape = shape
+    }
+
+    /** The default network's capabilities, or null when there's no default network any more. */
+    fun update(next: String?) {
+        val was = online
+        val last = shape
+        shape = next
+        if (next == null) blocked = false
+        report(was, moved = last != null && next != null && last != next)
+    }
+
+    fun setBlocked(blocked: Boolean) {
+        val was = online
+        this.blocked = blocked
+        report(was, moved = false)
+    }
+
+    private fun report(was: Boolean, moved: Boolean) {
+        val now = online
+        // Coming back online already counts as a path change in the core.
+        if (now != was) setOnline(now) else if (now && moved) pathChanged()
+    }
 }
 
 ```
@@ -1466,311 +1520,14 @@ class TranscriptState {
 
 ```
 
-### Core Architecture Module: `apps/ios/CoreFFI/zeron_coreFFI.h`
-```
-// This file was autogenerated by some hot garbage in the `uniffi` crate.
-// Trust me, you don't want to mess with it!
-
-#pragma once
-
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
-// The following structs are used to implement the lowest level
-// of the FFI, and thus useful to multiple uniffied crates.
-// We ensure they are declared exactly once, with a header guard, UNIFFI_SHARED_H.
-#ifdef UNIFFI_SHARED_H
-    // We also try to prevent mixing versions of shared uniffi header structs.
-    // If you add anything to the #else block, you must increment the version suffix in UNIFFI_SHARED_HEADER_V4
-    #ifndef UNIFFI_SHARED_HEADER_V4
-        #error Combining helper code from multiple versions of uniffi is not supported
-    #endif // ndef UNIFFI_SHARED_HEADER_V4
-#else
-#define UNIFFI_SHARED_H
-#define UNIFFI_SHARED_HEADER_V4
-// ⚠️ Attention: If you change this #else block (ending in `#endif // def UNIFFI_SHARED_H`) you *must* ⚠️
-// ⚠️ increment the version suffix in all instances of UNIFFI_SHARED_HEADER_V4 in this file.           ⚠️
-
-typedef struct RustBuffer
-{
-    uint64_t capacity;
-    uint64_t len;
-    uint8_t *_Nullable data;
-} RustBuffer;
-
-typedef struct ForeignBytes
-{
-    int32_t len;
-    const uint8_t *_Nullable data;
-} ForeignBytes;
-
-// Error definitions
-typedef struct RustCallStatus {
-    int8_t code;
-    RustBuffer errorBuf;
-} RustCallStatus;
-
-// ⚠️ Attention: If you change this #else block (ending in `#endif // def UNIFFI_SHARED_H`) you *must* ⚠️
-// ⚠️ increment the version suffix in all instances of UNIFFI_SHARED_HEADER_V4 in this file.           ⚠️
-#endif // def UNIFFI_SHARED_H
-#ifndef UNIFFI_FFIDEF_RUST_FUTURE_CONTINUATION_CALLBACK
-#define UNIFFI_FFIDEF_RUST_FUTURE_CONTINUATION_CALLBACK
-typedef void (*UniffiRustFutureContinuationCallback)(uint64_t, int8_t
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK
-typedef void (*UniffiForeignFutureDroppedCallback)(uint64_t
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_FREE
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_FREE
-typedef void (*UniffiCallbackInterfaceFree)(uint64_t
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_CLONE
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_CLONE
-typedef uint64_t (*UniffiCallbackInterfaceClone)(uint64_t
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK_STRUCT
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK_STRUCT
-typedef struct UniffiForeignFutureDroppedCallbackStruct {
-    uint64_t handle;
-    UniffiForeignFutureDroppedCallback _Nonnull free;
-} UniffiForeignFutureDroppedCallbackStruct;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U8
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U8
-typedef struct UniffiForeignFutureResultU8 {
-    uint8_t returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultU8;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U8
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U8
-typedef void (*UniffiForeignFutureCompleteU8)(uint64_t, UniffiForeignFutureResultU8
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I8
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I8
-typedef struct UniffiForeignFutureResultI8 {
-    int8_t returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultI8;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I8
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I8
-typedef void (*UniffiForeignFutureCompleteI8)(uint64_t, UniffiForeignFutureResultI8
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U16
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U16
-typedef struct UniffiForeignFutureResultU16 {
-    uint16_t returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultU16;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U16
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U16
-typedef void (*UniffiForeignFutureCompleteU16)(uint64_t, UniffiForeignFutureResultU16
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I16
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I16
-typedef struct UniffiForeignFutureResultI16 {
-    int16_t returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultI16;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I16
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I16
-typedef void (*UniffiForeignFutureCompleteI16)(uint64_t, UniffiForeignFutureResultI16
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U32
-typedef struct UniffiForeignFutureResultU32 {
-    uint32_t returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultU32;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U32
-typedef void (*UniffiForeignFutureCompleteU32)(uint64_t, UniffiForeignFutureResultU32
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I32
-typedef struct UniffiForeignFutureResultI32 {
-    int32_t returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultI32;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I32
-typedef void (*UniffiForeignFutureCompleteI32)(uint64_t, UniffiForeignFutureResultI32
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_U64
-typedef struct UniffiForeignFutureResultU64 {
-    uint64_t returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultU64;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U64
-typedef void (*UniffiForeignFutureCompleteU64)(uint64_t, UniffiForeignFutureResultU64
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_I64
-typedef struct UniffiForeignFutureResultI64 {
-    int64_t returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultI64;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I64
-typedef void (*UniffiForeignFutureCompleteI64)(uint64_t, UniffiForeignFutureResultI64
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_F32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_F32
-typedef struct UniffiForeignFutureResultF32 {
-    float returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultF32;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F32
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F32
-typedef void (*UniffiForeignFutureCompleteF32)(uint64_t, UniffiForeignFutureResultF32
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_F64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_F64
-typedef struct UniffiForeignFutureResultF64 {
-    double returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultF64;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F64
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F64
-typedef void (*UniffiForeignFutureCompleteF64)(uint64_t, UniffiForeignFutureResultF64
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_RUST_BUFFER
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_RUST_BUFFER
-typedef struct UniffiForeignFutureResultRustBuffer {
-    RustBuffer returnValue;
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultRustBuffer;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_RUST_BUFFER
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_RUST_BUFFER
-typedef void (*UniffiForeignFutureCompleteRustBuffer)(uint64_t, UniffiForeignFutureResultRustBuffer
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_VOID
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_RESULT_VOID
-typedef struct UniffiForeignFutureResultVoid {
-    RustCallStatus callStatus;
-} UniffiForeignFutureResultVoid;
-
-#endif
-#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_VOID
-#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_VOID
-typedef void (*UniffiForeignFutureCompleteVoid)(uint64_t, UniffiForeignFutureResultVoid
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_CLIENT_LISTENER_METHOD0
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_CLIENT_LISTENER_METHOD0
-typedef void (*UniffiCallbackInterfaceClientListenerMethod0)(uint64_t, RustBuffer, void* _Nonnull, 
-        RustCallStatus *_Nonnull uniffiCallStatus
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_UPLOAD_PROGRESS_METHOD0
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_UPLOAD_PROGRESS_METHOD0
-typedef void (*UniffiCallbackInterfaceUploadProgressMethod0)(uint64_t, double, void* _Nonnull, 
-        RustCallStatus *_Nonnull uniffiCallStatus
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_VOICE_MEDIA_LISTENER_METHOD0
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_VOICE_MEDIA_LISTENER_METHOD0
-typedef void (*UniffiCallbackInterfaceVoiceMediaListenerMethod0)(uint64_t, RustBuffer, void* _Nonnull, 
-        RustCallStatus *_Nonnull uniffiCallStatus
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_VOICE_SESSION_LISTENER_METHOD0
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_VOICE_SESSION_LISTENER_METHOD0
-typedef void (*UniffiCallbackInterfaceVoiceSessionListenerMethod0)(uint64_t, RustBuffer, void* _Nonnull, 
-        RustCallStatus *_Nonnull uniffiCallStatus
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_VOICE_SESSION_LISTENER_METHOD1
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_VOICE_SESSION_LISTENER_METHOD1
-typedef void (*UniffiCallbackInterfaceVoiceSessionListenerMethod1)(uint64_t, RustBuffer, void* _Nonnull, 
-        RustCallStatus *_Nonnull uniffiCallStatus
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_LAYOUT_LISTENER_METHOD0
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_LAYOUT_LISTENER_METHOD0
-typedef void (*UniffiCallbackInterfaceLayoutListenerMethod0)(uint64_t, uint64_t, void* _Nonnull, 
-        RustCallStatus *_Nonnull uniffiCallStatus
-    );
-
-#endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_PLATFORM_MEASURER_METHOD0
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_PLATFORM_MEASURER_METHOD0
-typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuffer, float, int8_t, RustBuffer,
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1352** (2026-11-11): **zgx: a folded row is held at its compressed length**
-  *Symptoms*: LZ4 writes a folded row into a buffer made for its worst case, about the row's own size, and `compressed()` shrank it with `into_boxed_slice`. That is a realloc. mimalloc (and macOS's malloc) keeps a block where it is when it shrinks by less than half, and real rows compress by only about a fifth (1.24×). So every folded row kept nearly its uncompressed size. A 15,443-row chat whose rows compress to 20.4 MB held 30.7 MB of them.  `compressed()` now copies the output into a box of its own length. The rows are identical, and nothing else changes.  **Measured** on the M5 Max (zgx-zz rig: d7df47220 against zgx 0bce8ef43 + #1945/#1960/#1981, isolated engine, kept-chats off). One launch per build, alternated, two launches each. The long chat is da5bd3cc's, 15,442 folded rows. Each rest is the new-chat page versus the long chat open, after 16 s.  | the long chat's cost at rest | before | after | |---|---|---| | heap in use (mimalloc) | +42.8, +42.5 MB | +35.1, +35.2 MB | | mimalloc dirty pages | +40.4, +41.1 MB | +33.6, +33.8 MB | | footprint | +39.0, +42.6 MB | +35.1, +35.5 MB |  The new-chat page at launch also drops (128–129 MB, against 130–138), since rows folded at launch shrink the same way.  **Test:** `chat::tests::a_folded_rows_bytes_take_their_own_length` checks mimalloc's usable size of a folded row with a real-like ratio. It fails without the change ("held 4096 for 2291 bytes").  This is step 1 of the plan sent to V3. Step 2 (zstd with an on-device dictionary, ~10 MB for 
-
-- **Issue #1349** (2026-11-11): **zgx: zgx-linux green (real causes, no skips)**
-  *Symptoms*: Work in progress: makes the `zgx / zgx-linux` job pass, each failure fixed at its cause.  So far (first commit): - SDK copies re-copied from `plugins-sdk/zeron.luau` (#1290 changed the canonical copy only). - Zeron v2's `.base.json` re-blessed (its copies already had the default's fixes). - **Bug, off a Mac only:** the shortcut recorder wrote Ctrl as `ctrl`, while commands spell the command key `cmd`. So Settings → Shortcuts let another command take Toggle sidebar's Ctrl+B. It now writes `cmd`. What it writes on a Mac is unchanged. - Tests that pressed a Mac's keys on every platform are now platform-aware: rival plugin keys, rebinding, the editor's line-edge keys, and the editor's secondary click.  Still to do: the GPU visuals test, the any-focus shortcuts test, the Linux UI tests, the flaky large-diff test, and the known Mac failures.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796977118&installation_model_id=425430&pr_number=1349&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1349&signature=c6071a7e60f33355ef726e99c057cec50c308e0c36cc61e105a091176354dfe8"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.s
+- **Issue #1369** (2026-11-12): **Engine: the headless engine holds up to 1.75 GB of GPU memory (Metal/Vision loaded)**
+  *Symptoms*: The background engine (`Zeron Engine`) has no UI, but it holds hundreds of MB of GPU memory. On the installed 0.3.0 app after 70 minutes, `footprint` showed:  | Category | Dirty | Reclaimable | |---|---|---| | IOAccelerator (GPU) | **819 MB** | 4,562 MB | | Rust heap (`MALLOC_*`) | about 20 MB | | | Phys footprint | 851 MB (peak **1,753 MB**) | |  `ps` RSS read 5.3 GB.  **What's loaded:** `vmmap` shows Metal, MetalPerformanceShaders (incl. MPSNeuralNetwork), Vision, CoreImage, QuartzCore, AppKit, IOSurface and SensitiveContentAnalysisML loaded at runtime. `otool -L` on the binary links none of them. Every engine process has some of this, even `Zeron Engine mcp` (13 MB IOAccelerator); the long-lived main engine grows it.  **Leads, unverified:** - `crates/notify` posts banners through `NSUserNotification` and swizzles `-[NSBundle bundleIdentifier]` to pose as the app. - The `zeron-engine` bin lives in `apps/zeron`, which depends on `zeron-ui`.  **Status:** under investigation (root cause, growth trigger, before/after numbers). The fix follows once the cause is proven.  **Done when:** an idle and a busy engine both show IOAccelerator at about 0 under `footprint`.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1787,345 +1544,584 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7437e3e9` (2026-11-11)
-**Commit Message**: Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)
+### Incident Patch 1: `6df5169d` (2026-11-14)
+**Commit Message**: fix(zgx): a sent pick is cleared by what it holds, not by table identity
 
-Chimes were played by an afplay child. While a game holds the foreground
-macOS keeps other apps' process coalitions in the background, and the
-child's CoreAudio assertion makes RunningBoard lift the app's coalition out
-and drop it back when the sound ends. On macOS 27.2 a coalition change that
-lands while a process of that coalition is in exec can deadlock in the
-kernel; runningboardd never returns, the window server blocks behind it and
-the watchdog panics the machine.
+After a send that carried a pick (model, effort, fast, options), the
+composer cleared the chat's pick only if `shared.picks:peek()[id]` was
+the very table read at send time. A state's snapshot read again needn't
+be the same table: after the composer metrics change it wasn't (no write
+to the picks in between; the effect's reads changed), and chat_actions
+"a pick goes with the message, and the session takes it then" failed
+with the pick left behind. Compare the drafted fields instead. (Main has
+the same identity check; it happens to hold there.)
 
-Play them through the System Sound server instead, which holds the
-assertion itself.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/ui/src/sound.rs` (modified, +117/-4)
+**File**: `apps/zgx/ui/screens/chat/composer.luau` (modified, +15/-1)
 ```diff
-@@ -5,9 +5,11 @@
- //!   the start and end of a voice call;
- //! - macOS Appshots use a preloaded native player; other cues write to a
- //!   temp file and use the system player on a
--//!   background thread: `afplay` (macOS), PowerShell `Media.SoundPlayer`
--//!   (Windows), first of `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux —
--//!   WAV, so even bare ALSA `aplay` decodes it);
-+//!   background thread: the System Sound server (macOS, see
-+//!   `macos_system_sound` for why not `afplay`), PowerShell
-+//!   `Media.SoundPlayer` (Windows), first of
-+//!   `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux — WAV, so even bare
-+//!   ALSA `aplay` decodes it);
- //! - `ZERON_DISABLE_SOUND` env kill-switch + the `soundEnabled` ui-setting;
- //! - failures are logged and swallowed — a missing player must never bother
- //!   the session flow.
-@@ -235,7 +237,97 @@ fn create_temp_file() -> std::io::Result<(std::fs::File, TempSoundFile)> {
- 
- #[cfg(target_os = "macos")]
- fn run_player(path: &Path) -> Result<(), String> {
--    run_checked("afplay", &[], path)
-+    macos_system_sound::play(path)
-+}
-+
-+/// Chimes play in the System Sound server, not in a process of ours.
-+///
-+/// Whoever plays audio holds a CoreAudio assertion for as long as it sounds.
-+/// While a game holds the foreground macOS keeps every other app's process
-+/// coalition in the background, and the assertion of an `afplay` child lifts
-+/// the whole coalition out and drops it back when the sound ends.
-+/// AVAudioPlayer and NSSound take the same assertion, in the app. On macOS
-+/// 27.2 such a change can deadlock in the kernel against a process of the
-+/// same coalition that is in `exec`, and agents exec all the time: the window
-+/// server hangs behind it and the machine needs a reboot. The sound server
-+/// holds the assertion itself, so a chime leaves this app's processes alone.
-+#[cfg(target_os = "macos")]
-+mod macos_system_sound {
-+    use core_foundation::base::TCFType;
-+    use core_foundation::url::{CFURL, CFURLRef};
-+    use std::ffi::c_void;
-+    use std::path::Path;
-+    use std::sync::mpsc;
-+    use std::time::Duration;
-+
-+    type SystemSoundId = u32;
-+
-+    const PROPERTY_IS_UI_SOUND: u32 = u32::from_be_bytes(*b"isui");
-+
-+    #[link(name = "AudioToolbox", kind = "framework")]
-+    unsafe extern "C" {
-+        fn AudioServicesCreateSystemSoundID(url: CFURLRef, id: *mut SystemSoundId) -> i32;
-+        fn AudioServicesDisposeSystemSoundID(id: SystemSoundId) -> i32;
-+        fn AudioServicesSetProperty(
-+            property: u32,
-+            specifier_size: u32,
-+            specifier: *const c_void,
-+            data_size: u32,
-+            data: *const c_void,
-+        ) -> i32;
-+        fn AudioServicesPlaySystemSoundWithCompletion(
-+            id: SystemSoundId,
-+            completion: &block2::Block<dyn Fn()>,
-+        );
-+    }
-+
-+    pub(super) struct SystemSound(SystemSoundId);
-+
-+    impl Drop for SystemSound {
-+        fn drop(&mut self) {
-+            unsafe {
-+                AudioServicesDisposeSystemSoundID(self.0);
-+            }
-+        }
-+    }
-+
-+    pub(super) fn register(path: &Path) -> Result<SystemSound, String> {
-+        let url = CFURL::from_path(path, false)
-+            .ok_or_else(|| format!("no file URL for {}", path.display()))?;
-+        let mut id: SystemSoundId = 0;
-+        let status = unsafe { AudioServicesCreateSystemSoundID(url.as_concrete_TypeRef(), &mut id) };
-+        if status != 0 {
-+            return Err(format!("system sound server refused the chime ({status})"));
-+        }
-+        let sound = SystemSound(id);
-+        // System sounds default to interface feedback, silent when the user
-+        // turns interface sound effects off. A chime has its own setting.
-+        let ui_sound: u32 = 0;
-+        unsafe {
-+            AudioServicesSetProperty(
-+                PROPERTY_IS_UI_SOUND,
-+                size_of::<SystemSoundId>() as u32,
-+                (&raw const sound.0).cast(),
-+                size_of::<u32>() as u32,
-+                (&raw const ui_sound).cast(),
-+            );
-+        }
-+        Ok(sound)
-+    }
-+
-+    pub(super) fn play(path: &Path) -> Result<(), String> {
-+        let sound = register(path)?;
-+        let (finished, wait) = mpsc::channel();
-+        let completion = block2::RcBlock::new(move || {
-+            let _ = finished.send(());
-+        });
-+        unsafe { AudioServicesPlaySystemSoundWithCompletion(sound.0, &completion) };
-+        // The caller deletes the file when this returns, so wait the chime
-+        // out. Bounded like the other players: a wedged sound server must not
-+        // accumulate threads.
-+        wait.recv_timeout(Duration::from_secs(10))
-+            .map_err(|_| "system sound timed out".to_string())
-+    }
- }
- 
- #[cfg(windows)]
-@@ -285,6 +377,7 @@ fn run_player(path: &Path) -> Result<(), String> {
-     Err(format!("no audio player available: {}", errors.join("; ")))
- }
- 
-+#[cfg(not(target_os = "macos"))]
- fn run_checked(prog
+@@ -118,6 +118,18 @@ local function equal(a: any, b: any): boolean
+ 	end
+ 	return a == b
+ end
++-- Whether two picks hold the same choices.
++local function same_pick(a: { [string]: any }?, b: { [string]: any }?): boolean
++	if a == nil or b == nil then
++		return a == b
++	end
++	for k in DRAFTED do
++		if not equal(a[k], b[k]) then
++			return false
++		end
++	end
++	return true
++end
+ -- The tray open behind the composer (its todos, tasks or queue), kept
+ -- across a reload.
+ local TRAY = ui.state("chat_tray", nil :: ("todos" | "tasks" | "queue")?)
+@@ -905,7 +917,9 @@ local function Composer(): Node
+ 					-- Sent with it: the session has it now; no pick left.
+ 					if req.model or req.effort or req.fast ~= nil or req.options then
+ 						local all = table.clone(shared.picks:peek())
+-						if all[id] == pick then
++						-- (By what it holds, not which table: a state's snapshot
++						-- read again needn't be the same table.)
++						if same_pick(all[id], pick) then
+ 							all[id] = nil
+ 							shared.picks:set(all)
+ 						end
+```
+
+**File**: `apps/zgx/ui/templates/zeron-v2/.base.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "ds/sidebar.luau": "f2abf7b60b5f4d00",
+   "ds/tokens.luau": "296d1ea72675de0c",
+-  "screens/chat/composer.luau": "89464272b39b1464",
++  "screens/chat/composer.luau": "9c0c79de53eae373",
+   "screens/chat/lane_tab.luau": "12c199c168515f49",
+   "screens/panel/init.luau": "3d5e0c712c4dda56",
+   "screens/shell/init.luau": "c7b26c3a1ccf9a32",
+```
+
+**File**: `apps/zgx/ui/templates/zeron-v2/screens/chat/composer.luau` (modified, +15/-1)
+```diff
+@@ -118,6 +118,18 @@ local function equal(a: any, b: any): boolean
+ 	end
+ 	return a == b
+ end
++-- Whether two picks hold the same choices.
++local function same_pick(a: { [string]: any }?, b: { [string]: any }?): boolean
++	if a == nil or b == nil then
++		return a == b
++	end
++	for k in DRAFTED do
++		if not equal(a[k], b[k]) then
++			return false
++		end
++	end
++	return true
++end
+ -- The tray open behind the composer (its todos, tasks or queue), kept
+ -- across a reload.
+ local TRAY = ui.state("chat_tray", nil :: ("todos" | "tasks" | "queue")?)
+@@ -914,7 +926,9 @@ local function Composer(): Node
+ 					-- Sent with it: the session has it now; no pick left.
+ 					if req.model or req.effort or req.fast ~= nil or req.options then
+ 						local all = table.clone(shared.picks:peek())
+-						if all[id] == pick then
++						-- (By what it holds, not which table: a state's snapshot
++						-- read again needn't be the same table.)
++						if same_pick(all[id], pick) then
+ 							all[id] = nil
+ 							shared.picks:set(all)
+ 						end
 ```
 
 ---
 
-### Incident Patch 2: `89b0d156` (2026-11-09)
-**Commit Message**: zgx: pin the scene3d change as it merged, with its review fixes
+### Incident Patch 2: `3de4a47b` (2026-11-14)
+**Commit Message**: docs(zgx): composer doc follows the pin and the fixes; preview keeps settings
 
-The pin was ce91055f plus #1760 as first written. #1760 merged with a
-fix commit on top (a079c236): a mesh with no triangles drew a panic
-(`buffer slices can not be empty`), which the CAD plugin hits when cuts
-leave nothing; non-finite numbers passed its checks; `flat` dropped
-`colors`; `double_sided` took any value as true; and a plugin's own
-geometry now counts against its memory limit. zeron/pin-scene3d-2 is
-the old pin plus that commit, so the pin carries #1760 as it landed and
-still moves nothing else in zgx.
+docs/composer.md: the API comes from zeronsh/zgx main (zgx#2148), not
+the fork; long drafts are estimated, metrics follow width only while a
+line wraps, targets publish only bound changes, side chats publish
+through Dock.Dock, and a send eases the composer's size as it glides.
+
+composer_transition_preview.luau wrote the persisted motion_reduce
+setting (and the theme) at load, changing a dev build's own settings.
+It no longer writes Reduce motion at load; its button still toggles it,
+and leaving the preview (a reload, the preview unmounted) puts back the
+setting and theme it found.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `apps/zgx/Cargo.lock` (modified, +22/-22)
+**File**: `apps/zgx/docs/composer.md` (modified, +36/-14)
 ```diff
-@@ -30,7 +30,7 @@ dependencies = [
- [[package]]
- name = "accesskit_atspi_common"
- version = "0.19.1"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -43,7 +43,7 @@ dependencies = [
- [[package]]
- name = "accesskit_consumer"
- version = "0.38.0"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "hashbrown 0.16.1",
-@@ -66,7 +66,7 @@ dependencies = [
- [[package]]
- name = "accesskit_macos"
- version = "0.26.3"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -79,7 +79,7 @@ dependencies = [
- [[package]]
- name = "accesskit_unix"
- version = "0.22.1"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "accesskit_atspi_common",
-@@ -96,7 +96,7 @@ dependencies = [
- [[package]]
- name = "accesskit_windows"
- version = "0.34.0"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -5539,7 +5539,7 @@ dependencies = [
- [[package]]
- name = "wgpu-hal"
- version = "29.0.4"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "android_system_properties",
-  "arrayvec",
-@@ -5911,7 +5911,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
- [[package]]
- name = "winit"
- version = "0.30.13"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "ahash",
-  "android-activity",
-@@ -6447,7 +6447,7 @@ dependencies = [
- [[package]]
- name = "zgx"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "fixed_decimal",
-  "foldhash 0.2.0",
-@@ -6473,7 +6473,7 @@ dependencies = [
- [[package]]
- name = "zgx-3d"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "bytemuck",
-  "zgx",
-@@ -6483,7 +6483,7 @@ dependencies = [
- [[package]]
- name = "zgx-alacritty-terminal"
- version = "0.26.1"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "base64 0.22.1",
-  "bitflags 2.13.2",
-@@ -6506,15 +6506,15 @@ dependencies = [
- [[package]]
- name = "zgx-components"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "zgx",
- ]
+@@ -76,9 +76,11 @@ next decision and target geometry together in a batch.
  
- [[package]]
- name = "zgx-cosmic-text"
- version = "0.19.10"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "bitflags 2.13.2",
-  "fontdb",
-@@ -653
+ ## Text metrics
+ 
+-`Metrics.use { value, width, editor, keep? }` returns a computed `result` and
+-a read-only `sample` state, and creates no measurement nodes. Geometry follows
+-the sample without subscribing to request/readiness-only changes. The visible
++`Metrics.use { value, width, editor, keep?, estimate? }` returns a computed
++`result` and a read-only `sample` state (the size alone: unwrapped width,
++wrapped height, line height), and creates no measurement nodes. Geometry follows
++the sample without subscribing to request/readiness-only changes: a new
++revision of an equal size wakes no layout. The visible
+ textarea supplies
+ `Element:text_metrics(content_width)` (Rust: `EditorHandle::text_metrics`).
+ It uses the editor's plain/rich shaping, spans, fonts and fallback, includes a
+@@ -98,8 +100,10 @@ next target geometry.
+ | `sample.wrapped_height`, `sample.line_height` | Natural wrapped height at the requested width and base line height. |
+ | `sample.width`, `sample.revision` | Width and request generation represented by the complete sample. |
+ 
+-Requests follow draft, width, theme and settled editor metrics, including
+-uncommitted IME. A width-only query publishes immediately when the mounted
++Requests follow draft, theme and settled editor metrics, including
++uncommitted IME. They follow width only while the widest line doesn't fit the
++requested width: a draft that fits measures the same at any width it fits, so
++a pane resized asks nothing of it. A width-only query publishes immediately when the mounted
+ editor, draft, theme and native metric revision match the last acknowledged
+ request. Mount generations distinguish editor replacement from fresh userdata
+ wrappers. Other requests retain deferred publication, checking request and
+@@ -111,23 +115,37 @@ publish a fresh sample.
+ With `keep`, the last complete sample survives reload but starts stale until
+ revalidated against the mounted editor. Layout retains the last sample while
+ waiting; before the first sample it uses its explicit geometry fallback.
+-The persistence namespace is `editor_text_metrics`.
++The persistence namespaces are `editor_text_metrics` and `editor_text_size`.
++
++`estimate(text, line_height)` stands in for the exact query where the caller
++knows the answer can't change its layout. The composer passes
++`Layout.estimate`: a draft with enough hard lines to fill the text box to its
++cap at the last measured line height has a newline (forced open, its unwrapped
++width unused) and is capped whatever it wraps to, so it is not measured again.
++Finding that out looks for at most a dozen newlines. An estimate is used only
++for the editor, theme and composer line-height token of the last exact
++measure; a repeated equal estimate is the same request and publishes nothing.
+ 
+ Framework metrics are exact. The first query per revision/width visits all
+-hard lines using retained shaping caches; unchanged queries are constant-time.
+-Full-document queries can be expensive for long drafts after edits. Focus,
++hard lines twice, past the editor's 4,096-line span cache; unchanged queries
++are constant-time. A full-document query after each edit cost a 5,000-line
++draft about 10,000 script calls (its highlighting) and 47 ms a keystroke,
++which is why long drafts are estimated. Focus,
+ selection, scroll, caret blink and viewport size alone do not change the
+ metric revision. The API is supplied by the immutable ZGX revision pinned in
+-[`Cargo.toml`](../Cargo.toml), currently from `jsgrrchg/zgx`.
++[`Cargo.toml`](../Cargo.toml), from `zeronsh/zgx` main (zgx#2148).
+ 
+ ## Geometry transitions and context changes
+ 
+ One controller keeps origin, destination and progress, with a 220 ms `out(3)`
+ animation. Every view binding derives from the same presented snapshot. A changed
+ destination cancels the previous animation and starts from the geometry
+ currently presented. An unchanged visual destination retains progress, even
+-if natural height above the cap or other metadata changes. Width-only changes
+-publish without starting an animation when height and anchors already match.
++if natural height above the cap or other metadata changes. The view publishes
++a new target only when a field it binds or the motion reads changes
++(`Layout.same_target`): the pill's and text's widths, which layout applies
++itself, and the natural height past the cap don't, so resizing a pane runs no
++motion, frame or binding.
+ View bindings share a projection of the complete presented snapshot, so changes
+ to width or measurement metadata alone do not wake unchanged controls/insets.
+ 
+@@ -166,13 +184,17 @@ A new chat stands near the page's middle, under the title bar. Its top is based
+ on `rest`, so typing grows the composer downward without moving that top. If
+ the presented box would overflow the page's foot, placement lifts it by the
+ required amount. A session anchors at the bottom with the dock's 8-point 
 ```
 
-**File**: `apps/zgx/Cargo.toml` (modified, +13/-13)
+**File**: `apps/zgx/ui/composer_transition_preview.luau` (modified, +17/-3)
 ```diff
-@@ -30,7 +30,7 @@ beta = []
- layout_probe = []
+@@ -1,11 +1,14 @@
+ -- Real composer for visual transition checks. All input is fixture-local;
+ -- the development host's engine/account updates cannot replace this draft.
++-- It leaves the build's own settings as it found them: Reduce motion is
++-- persisted (`motion_reduce`), so it is only changed by its button here and
++-- put back as the preview goes, as is the theme it shows in.
+ local ds = require("@ds")
+ local motion = require("@ds/motion")
+ ds.setup()
+-ui.theme.follow_system(false)
++local reduce_was = motion.reduce:peek()
++local theme_was = ui.theme.current:peek()
+ ui.theme.current:set("zeron-dark")
+-motion.reduce:set(false)
  
- [dependencies]
--zgx = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
-+zgx = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5" }
- # `mimalloc`: the program's allocator, in place of the system's. It hands
- # freed memory back to the system (the system's keeps the most it ever
- # held), and zgx measures 1-10% less CPU for script, text and layout work.
-@@ -41,26 +41,26 @@ zgx = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb9
- # none of it, and without it pages are placeholders ("Web view · <url>").
- # zgx-run turns it on by default, but this app takes zgx-run without its
- # defaults (below). Nothing on macOS or Windows.
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["mimalloc", "terminal", "webkitgtk"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["mimalloc", "terminal", "webkitgtk"] }
- # `inspect`: devtools for `zgx inspect` (and its MCP server), asked for
- # with `--inspect`. `i18n`: `ui.t`'s plurals and numbers by each locale's
- # own rules (ICU4X's data, about 90 KB), for ui/locales' translations.
- # `scene3d`: `ui.scene3d`, `ui.mesh`, `ui.light`, `ui.group` (zgx-3d on the
- # wgpu this app already links), for plugins that show 3D: the CAD plugin
- # hands it its own triangles (`geometry = { positions, indices, … }`). It
- # asks no grant; a scene draws a frame only when something in it changes.
--zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["inspect", "i18n", "scene3d"] }
-+zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["inspect", "i18n", "scene3d"] }
- # A picture's pixels for the clipboard (src/images.rs): zgx's own decoder,
- # the formats `ui.image` shows (no features of its own: the ones zgx-desktop
- # turns on).
--zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", default-features = false }
-+zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", default-features = false }
- # Each plugin's own database (`zeron.db`, src/plugins/db.rs): SQLite,
- # built in; `limits` to keep one from attaching any other file.
- rusqlite = { version = "0.32", features = ["bundled", "limits", "hooks"] }
- # `fetch`: zgx's own transport for `ui.fetch` and remote images (HTTP and
- # HTTPS, rustls), given to every window (src/main.rs): the app's scripts,
- # and plugins granted "network". Nothing else of the runner.
--zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", default-features = false, features = ["fetch"] }
-+zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", default-features = false, features = ["fetch"] }
- # `webp`: `ui.image` decodes through this crate, by what its features
- # allow, so turning WebP on here is all it takes (the member cards' art).
- # `ico`: sites' favicons (the browser tab's: src/favicons.rs), most of
-@@ -156,7 +156,7 @@ foreign-types = "0.5"
- # elements, box drawing and Powerline glyphs to the cell; zgx's own renderer
- # draws them from the font at its text line height, gapped. Builds Ghostty
- # with Zig 0.16 (cached in ~/Library/Caches/zgx-ghostty).
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["ghostty"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["ghostty"] }
+ local draft = ui.state("fixture_preview_draft", "short")
+ local focus = ui.state("fixture_preview_focus", 0)
+@@ -22,7 +25,14 @@ local function set_draft(text: string)
+ 	end)
+ end
  
- # Windows' Transparency effects (src/transparency.rs), read and watched in
- # the registry, until zgx reports them (zgx-asks/windows-transparency); a
-@@ -167,13 +167,13 @@ windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphic
- # zgx's own patches (its root Cargo.toml): a git dependency does not bring
- # them, so every consumer repeats them.
- [patch.crates-io]
--wgpu-hal = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--winit = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_macos = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_consumer = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_atspi_common = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_unix = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_windows = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
-+wgpu-hal = 
+-return ui.column {
++local Preview = ui.component(function(): Node
++	ui.on_cleanup(function()
++		if motion.reduce:peek() ~= reduce_was then
++			motion.reduce:set(reduce_was)
++		end
++		ui.theme.current:set(theme_was)
++	end)
++	return ui.column {
+ 	w_full = true, h_full = true, p = "$space.4", gap = "$space.4",
+ 	bg = "$background",
+ 	ui.row {
+@@ -34,6 +44,7 @@ return ui.column {
+ 			cargo:set(if #cargo:peek() == 0 then { { id = "f", kind = "file", name = "notes.md" } } else {})
+ 			focus:set(focus:peek() + 1)
+ 		end },
++		-- (scripts/composer_frames.py clicks these by place: keep the labels.)
+ 		ds.Button { "Reduce motion", on_click = function() motion.reduce:set(not motion.reduce:peek()) end },
+ 		ds.Button { "Wrap", on_click = function() set_draft(string.rep("W", 60)) end },
+ 	},
+@@ -49,3 +60,6 @@ return ui.column {
+ 		},
+ 	},
+ }
++end)
++
++return Preview {}
+```
+
+---
+
+### Incident Patch 3: `0f3118de` (2026-11-14)
+**Commit Message**: Browser: let a load error be dismissed to show what rendered
+
+A failure reported after the page's own document committed (WebView2
+calls a page with an HTTP error status, such as Google's 429 "unusual
+traffic" check, a failed navigation; WebKit's didFailNavigation) no longer
+covers the page with "Couldn't load this page". A real failure (one that
+never committed, or the page's process ending) still shows it, now with
+Dismiss beside Try again (Escape too), for that navigation only.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/zgx/ui/locales/en.json` (modified, +2/-1)
+```diff
+@@ -3220,7 +3220,8 @@
+         "show": "Show in Finder",
+         "dismiss": "Dismiss {name}",
+         "saving": "Saving…"
+-      }
++      },
++      "dismiss_error": "Dismiss"
+     },
+     "browser_api": {
+       "empty": "Enter a website or localhost address.",
+```
+
+**File**: `apps/zgx/ui/locales/zh-Hans.json` (modified, +2/-1)
+```diff
+@@ -3220,7 +3220,8 @@
+         "show": "在访达中显示",
+         "dismiss": "关闭 {name}",
+         "saving": "正在保存…"
+-      }
++      },
++      "dismiss_error": "关闭"
+     },
+     "browser_api": {
+       "empty": "输入网站或 localhost 地址。",
+```
+
+**File**: `apps/zgx/ui/screens/panel/browser.luau` (modified, +64/-5)
+```diff
+@@ -433,6 +433,32 @@ Page = ui.component(function(props: Props): Node
+ 	-- Annotation mode, as the bar's toggle shows it.
+ 	local mode = ui.use_state(annotating:peek()[id] == true)
+ 
++	-- This navigation, as the page tells it: whether its own document came
++	-- (committed: the page's content, not the host's error page), whether
++	-- its process ended after, and whether its failure was dismissed. Each
++	-- starts over with the next navigation (a reload, Try again).
++	-- A failure after the page committed is no page missing: the page drew,
++	-- and it's what to show (a 429 or 5xx page, Google's "unusual traffic"
++	-- check: WebView2 calls a page with an error status a failed
++	-- navigation; WebKit a load interrupted once the page was in).
++	local committed = ui.use_state(false)
++	local crashed = ui.use_state(false)
++	local dismissed = ui.use_state(false)
++	-- The page that didn't load, over where it would be (`trouble`).
++	local function failed(): boolean
++		if not has_page(web) or web.error == nil or dismissed:get() then
++			return false
++		end
++		return crashed:get() or not committed:get()
++	end
++	local function dismiss(): boolean
++		if not failed() then
++			return false
++		end
++		dismissed:set(true)
++		return true
++	end
++
+ 	-- Made with an address and no page yet (a saved tab, a link opened):
+ 	-- the page loads. (A reload finds the page where it was: nothing moves.)
+ 	-- A new tab with a home page set opens on it (once: the start page is
+@@ -556,7 +582,7 @@ Page = ui.component(function(props: Props): Node
+ 		end
+ 	end
+ 	local function start_annotating()
+-		if not has_page(web) or web.error then
++		if not has_page(web) or failed() then
+ 			if mode:peek() then
+ 				mode:set(false)
+ 			end
+@@ -969,6 +995,11 @@ Page = ui.component(function(props: Props): Node
+ 					return true
+ 				end
+ 				if e.key == "Escape" then
++					-- (Nothing typed to take back: the failure over the page
++					-- dismissed, as from anywhere else in the tab.)
++					if address:peek() == last_url and dismiss() then
++						return true
++					end
+ 					-- (Back to the page's address, as a browser's.)
+ 					suggestions.quiet(last_url)
+ 					address:set(last_url)
+@@ -1064,7 +1095,7 @@ Page = ui.component(function(props: Props): Node
+ 			tooltip = ui.t("panel.browser.annotate_tooltip", { key = ui.shortcut_text(if shell_keys then shell_keys.combo("panel.annotate") else "cmd+shift+i") }):get(),
+ 			tooltip_side = "bottom",
+ 			disabled = function(): boolean
+-				return not can_leave() or web.error ~= nil
++				return not can_leave() or failed()
+ 			end,
+ 			on_change = function(on: boolean)
+ 				if on then
+@@ -1533,7 +1564,21 @@ Page = ui.component(function(props: Props): Node
+ 					on_state(value.state)
+ 				end
+ 			end,
++			on_error = function(url: string, _why: string)
++				-- (The page's process ended: no navigation's, and nothing left
++				-- drawn, committed or not.)
++				if url == "" then
++					crashed:set(true)
++				end
++			end,
+ 			on_navigate = function(e: any)
++				if type(e) == "table" and e.kind == "started" then
++					committed:set(false)
++					crashed:set(false)
++					dismissed:set(false)
++				elseif type(e) == "table" and e.kind == "committed" then
++					committed:set(true)
++				end
+ 				-- Another page: its picker is gone with the last, so the mode
+ 				-- ends (the shipping app's; its marks come back by restore).
+ 				if type(e) == "table" and e.kind == "committed" and annotating:peek()[id] then
+@@ -1572,9 +1617,7 @@ Page = ui.component(function(props: Props): Node
+ 			or string.find(l, "internet connection", 1, true) ~= nil
+ 			or string.find(l, "not connected", 1, true) ~= nil
+ 	end
+-	local trouble = ui.show(function(): boolean
+-		return has_page(web) and web.error ~= nil
+-	end, ui.column {
++	local trouble = ui.show(failed, ui.column {
+ 		absolute = true,
+ 		left = 0,
+ 		right = 0,
+@@ -1623,6 +1666,14 @@ Page = ui.component(function(props: Props): Node
+ 						web:reload()
+ 					end,
+ 				},
++				-- What the page drew anyway, under (Escape too): until the
++				-- next navigation.
++				secondary = {
++					label = ui.t("panel.browser.dismiss_error") :: any,
++					on_click = function()
++						dismiss()
++					end,
++				},
+ 			}
+ 		end, { w_full = true, grow = 1, min_h = 0 }),
+ 	})
+@@ -1634,6 +1685,14 @@ Page = ui.component(function(props: Props): Node
+ 		w_full = true,
+ 		grow = 1,
+ 		min_h = 0,
++		-- A bare Escape nothing in the tab took (the error's buttons, the
++		-- bar's): the failure dismissed, the page under it shown.
++		on_key = function(e: any): boolean?
++			if e.key == "Escape" and not (e.shift or e.cmd or e.alt or e.ctrl) and dismiss() then
++				return true
++			end
++			return nil
++		end,
+ 		bar,
+ 		problem_line,
+ 		find_bar,
+```
+
+**File**: `apps/zgx/ui/tests/browser_load_error.test.luau` (added, +175/-0)
+```diff
+@@ -0,0 +1,175 @@
++-- The panel's browser tab when a load fails: a page that never came says
++-- so over where it would be, with Try again and Dismiss (Escape too), the
++-- page under it shown once dismissed, until the next navigation; a page
++-- that came and drew (Google's "unusual traffic" check, a 429 WebView2
++-- calls a failed navigation) shows as it is, no failure over it. On the
++-- panel in ui/panel_fixture.luau, its page stood in for.
++
++local FIELD = 'role:combobox "Address"'
++local FAILED = '"Couldn\'t load this page"'
++local DISMISS = 'role:button "Dismiss"'
++local RETRY = 'role:button "Try again"'
++
++local function eventually(app: any, ok: () -> boolean, ms: number?): boolean
++	for _ = 1, math.ceil((ms or 5000) / 50) do
++		if ok() then
++			return true
++		end
++		app:wait('"never shown, only waited past"', { timeout_ms = 50 })
++	end
++	return ok()
++end
++
++local function panel(): any
++	local app = mount("panel_fixture.luau")
++	app:resize(900, 640)
++	app:frames(10)
++	expect(app:error()).to_be_nil()
++	expect(app:wait("#panel-empty", { timeout_ms = 15000 })).to_be(true)
++	app:click("#panel-open-browser")
++	expect(app:wait(FIELD, { timeout_ms = 15000 })).to_be(true)
++	return app
++end
++
++local function calls(app: any): string
++	return app:state("test_web_calls") or ""
++end
++
++-- To google.com/sorry, the page loaded (the field shows its address).
++local URL = "https://www.google.com/sorry/index"
++local function go(app: any): string
++	app:click("#outside")
++	app:frames(2)
++	app:type(FIELD, URL)
++	app:key("Enter")
++	app:frames(10)
++	expect(eventually(app, function(): boolean
++		return app:tree(FIELD):find(`="{string.sub(URL, 1, 36)}`, 1, true) ~= nil
++	end)).to_be(true)
++	app:frames(5)
++	return app:state("test_web_last_id")
++end
++
++-- The page moving on, as the host tells it (`started`, `committed`).
++local function navigate(app: any, kind: string)
++	app:set_state("test_web_nav_kind", kind)
++	app:command("test.web_navigate")
++	app:frames(5)
++end
++
++-- The load failing, as the host has it: the error on the page's state.
++local function fail(app: any, id: string, why: string)
++	app:set_state(`test_web_error_{id}`, why)
++	app:frames(10)
++end
++
++-- The page under the overlay is the fixture's stand-in (`page <url>`).
++local function page_shown(app: any): boolean
++	return app:has("#stub-web")
++end
++
++test("browser load error: a page that never came shows the failure, Try again and Dismiss", function()
++	local app = panel()
++	local id = go(app)
++	navigate(app, "started")
++	fail(app, id, "A server with the specified hostname could not be found.")
++	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
++	expect(app:has(RETRY)).to_be(true)
++	expect(app:has(DISMISS)).to_be(true)
++	expect(app:tree('role:checkbox "Annotate"')).to_contain("disabled")
++end)
++
++test("browser load error: Dismiss hides the failure and the page stays", function()
++	local app = panel()
++	local id = go(app)
++	navigate(app, "started")
++	fail(app, id, "The page could not be loaded.")
++	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
++	app:click(DISMISS)
++	app:frames(10)
++	expect(app:has(FAILED)).to_be(false)
++	expect(app:has(RETRY)).to_be(false)
++	expect(page_shown(app)).to_be(true)
++	expect(app:has(`"page {URL}"`)).to_be(true)
++	-- Only this navigation's: the next one's failure shows again.
++	navigate(app, "started")
++	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
++end)
++
++test("browser load error: Escape dismisses", function()
++	local app = panel()
++	local id = go(app)
++	navigate(app, "started")
++	fail(app, id, "The page could not be loaded.")
++	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
++	-- (From the address field, nothing typed in it to take back.)
++	app:click(FIELD)
++	app:frames(2)
++	app:key("Escape")
++	app:frames(10)
++	expect(app:has(FAILED)).to_be(false)
++	expect(page_shown(app)).to_be(true)
++end)
++
++test("browser load error: Escape from the failure's own buttons dismisses", function()
++	local app = panel()
++	local id = go(app)
++	navigate(app, "started")
++	fail(app, id, "The page could not be loaded.")
++	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
++	-- (Tab from the field: past the bar's ⋯ to Try again.)
++	app:click(FIELD)
++	app:frames(2)
++	for _ = 1, 4 do
++		if app:tree(RETRY):find("focused", 1, true) then
++			break
++		end
++		app:key("Tab")
++		app:frames(2)
++	end
++	expect(app:tree(RETRY)).to_contain("focused")
++	app:key("Escape")
++	app:frames(10)
++	expect(app:has(FAILED)).to_be(false)
++	expect(page_shown(app)).to_be(true)
++	expect(calls(app)).never.to_contain("reload")
++end)
++
++test("browser load error: Try again reloads the page", function()
++	local app = panel()
++	local id = go(app)
++	navigate(app, "started")
++	fail(app, id, "Could not connect to the server.")
++	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
++	app:click(RETRY)
++	app:frames(5)
++	expect(calls(app)).to_contain("reload")
++end)
++
++test("browser load error: a page that came and drew, with an erro
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1352** (2026-11-11): zgx: a folded row is held at its compressed length (@wingleeio)
-- **PR #1349** (2026-11-11): zgx: zgx-linux green (real causes, no skips) (@wingleeio)
-- **PR #1347** (closed): engine: a big chat's threshold checkpoint waits for 8 MB of rows (@wingleeio)
-- **PR #1341** (2026-11-11): Relay: a frame the room's queue can't take yet waits, in order (@wingleeio)
-- **PR #1340** (2026-11-11): Relay: a heal the room's checkpoint already covers sends nothing (@wingleeio)
-- **PR #1336** (2026-11-11): zgx: a picked skill reaches Claude Code as its slash command (@wingleeio)
+- **PR #1457** (2026-11-15): main catches up with the release line (Zeron 0.3.6) (@wingleeio)
+- **PR #1456** (2026-11-15): Providers: Cloud is a choice again, its accounts and API keys managed there (@wingleeio)
+- **PR #1455** (2026-11-15): Cloud: the updater and the pre-sleep tidy keep zeron-engine (@wingleeio)
+- **PR #1454** (2026-11-15): Cloud: keep zeron-engine, and put it back before each start (@wingleeio)
+- **PR #1453** (2026-11-15): Plugins: compose can replace a draft's words or write another chat's; draft_of reads any chat's (@wingleeio)
+- **PR #1452** (2026-11-15): Plugins: the draft is written for plugins only while one may read it (@wingleeio)
 
 ---
 
@@ -2145,56 +2141,45 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)
+## X. zgx): a sent pick is cleared by what it holds, not by table identity
 
 **RULE**:
-When implementing operations in `crates/ui/src/sound.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/zgx/ui/screens/chat/composer.luau`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7437e3e9`: Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6df5169d`: zgx): a sent pick is cleared by what it holds, not by table identity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ui/src/sound.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/ui/screens/chat/composer.luau`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//!   background thread: the System Sound server (macOS, see
-//!   `macos_system_sound` for why not `afplay`), PowerShell
-//!   `Media.SoundPlayer` (Windows), first of
-//!   `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux — WAV, so even bare
-//!   ALSA `aplay` decodes it);
-    macos_system_sound::play(path)
-}
-
-/// Chimes play in the System Sound server, not in a process of ours.
-///
-/// Whoever plays audio holds a CoreAudio assertion for as long as it sounds.
-/// While a game holds the foreground macOS keeps every other app's process
-/// coalition in the background, and the assertion of an `afplay` child lifts
-/// the whole coalition out and drops it back when the sound ends.
-/// AVAudioPlayer and NSSound take the same assertion, in the app. On macOS
-/// 27.2 such a change can deadlock in the kernel against a process of the
-/// same coalition that is in `exec`, and agents exec all the time: the window
-/// server hangs behind it and the machine needs a reboot. The sound server
-/// holds the assertion itself, so a chime leaves this app's processes alone.
-#[cfg(target_os = "macos")]
-mod macos_system_sound {
-    use core_foundation::base::TCFType;
-    use core_foundation::url::{CFURL,
+-- Whether two picks hold the same choices.
+local function same_pick(a: { [string]: any }?, b: { [string]: any }?): boolean
+	if a == nil or b == nil then
+		return a == b
+	end
+	for k in DRAFTED do
+		if not equal(a[k], b[k]) then
+			return false
+		end
+	end
+	return true
+end
+						-- (By what it holds, not which table: a state's snapshot
+						-- read again needn't be the same table.)
+						if same_pick(all[id], pick) then
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-//!   background thread: `afplay` (macOS), PowerShell `Media.SoundPlayer`
-//!   (Windows), first of `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux —
-//!   WAV, so even bare ALSA `aplay` decodes it);
-    run_checked("afplay", &[], path)
+// Induced defect failure mode:
+						if all[id] == pick then
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7437e3e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6df5169d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

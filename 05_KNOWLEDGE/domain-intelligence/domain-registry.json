@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T04:05:32.138Z",
-  "total_records": 947,
+  "last_updated": "2026-11-15T04:19:30.419Z",
+  "total_records": 951,
   "domains": {
     "A": {
       "total": 6,
@@ -539,7 +539,7 @@
       ]
     },
     "G": {
-      "total": 158,
+      "total": 160,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -698,11 +698,13 @@
         "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-kuddev-pebrel-core-invariants",
-        "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants",
+        "domain_intelligence-architecture-intelligence-zeronsh-zeron-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 194,
+      "total": 196,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -897,7 +899,9 @@
         "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
         "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",
-        "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva",
+        "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni"
       ]
     },
     "I": {
@@ -7680,8 +7684,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "69a79fdda47c78ef9276ba25596cf6aafe38f56440ca02717adab30787ccae4a",
-      "created_at": "2026-11-15T04:05:32.138Z"
+      "content_hash": "2dd5ed1a4a8fed4b539a3a0e9cc847fef74252112c618c6f43c1d19876fc32f6",
+      "created_at": "2026-11-15T04:19:30.419Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18448,6 +18452,42 @@
       "repository": "hf-black-forest-labs-flux-3-image-klein-comfy-learnings",
       "content_hash": "58d1d36bcacf46732563ff0fe4a18b3e87b5b70776fce97463394e290e9cb149",
       "created_at": "2026-11-15T04:05:31.601Z"
+    },
+    "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zeronsh/zeron Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-architecture-intelligence-zeronsh-zeron-core-invariants.md",
+      "repository": "zeronsh/zeron",
+      "content_hash": "a15171fa19e3e930f4aca4e9cda3f073fcba86863e89c53e6a7c63d6057afdb9",
+      "created_at": "2026-11-15T04:17:59.716Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B-gguf Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-technical-construction-intelligence-openbm.md",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "content_hash": "7675aa32c31db486a2e022e7db73f4c38b16eadd5768f1143035ce900efc789c",
+      "created_at": "2026-11-15T04:19:24.939Z"
+    },
+    "domain_intelligence-architecture-intelligence-zeronsh-zeron-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zeronsh-zeron-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zeronsh-zeron-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-learnings-architecture-intelligence-zeronsh-zeron-learnings-core-i.md",
+      "repository": "zeronsh-zeron-learnings",
+      "content_hash": "ef27319d7056c2f0cd3e3406e1e0417bd0cf4a8cd4ae6c6e4df5250217bdd0d8",
+      "created_at": "2026-11-15T04:19:28.700Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-technical-construction-intellige.md",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "content_hash": "9aaaeaf1469fe43cb87bb7eb0784d34d610e03819d0c6ab238938f6864e00d76",
+      "created_at": "2026-11-15T04:19:29.404Z"
     }
   }
 }
