@@ -10162,3 +10162,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-bbc8733a` | `project://hf-mistralai-mistral-large-4-1t-a52b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md` | 2026-11-15T17:23:18.430Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `5f66aec1` | Multi-dimensional audit evidence | 2026-11-15T17:31:49.519Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `cac9a103` | Multi-dimensional audit evidence | 2026-11-15T17:31:55.231Z |
+| `learn-github-lottie-react-native-lottie-react-native` | `https://github.com/lottie-react-native/lottie-react-native` | `b0960c1d` | Multi-dimensional audit evidence | 2026-11-15T17:40:14.530Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `d52fcc0a` | Multi-dimensional audit evidence | 2026-11-15T17:40:17.343Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `633896fd` | Multi-dimensional audit evidence | 2026-11-15T17:40:21.529Z |
+| `learn-dom-h-4f755436` | `project://lottie-react-native-lottie-react-native` | `b0960c1d` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md` | 2026-11-15T17:40:51.427Z |

@@ -2623,10 +2623,10 @@
     "repository": "goodrain/rainbond",
     "platform": "github",
     "sourceUrl": "https://github.com/goodrain/rainbond",
-    "sourceVersion": "bbb1e5bd",
+    "sourceVersion": "d52fcc0a",
     "license": "NOASSERTION",
-    "contentHash": "e44b9b064a87a4d5edff8451ecaf20f65596e318b849003b1087c1b32aaef1a2",
-    "lastHarvestedAt": "2026-11-07T21:36:33.142Z",
+    "contentHash": "23645f09b166ce0ba05d5cdd5df5909fccad1fce49f7ab74abd7a8ac85758ebc",
+    "lastHarvestedAt": "2026-11-15T17:40:17.343Z",
     "learningId": "learn-github-goodrain-rainbond"
   },
   "bee-san-ciphey": {
@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "35e8e843",
+    "sourceVersion": "633896fd",
     "license": "Apache-2.0",
-    "contentHash": "b74e262b681734b1b799336f91e158c7933d2fbd59f2c393139d273dc15aa0e7",
-    "lastHarvestedAt": "2026-11-13T02:58:03.079Z",
+    "contentHash": "a7f92248a34991724ae7a87d162d2778fe02e065b21e5c114444e05d19aa157c",
+    "lastHarvestedAt": "2026-11-15T17:40:21.529Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -8103,10 +8103,10 @@
     "repository": "lottie-react-native/lottie-react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/lottie-react-native/lottie-react-native",
-    "sourceVersion": "7ac5e96c",
+    "sourceVersion": "b0960c1d",
     "license": "Apache-2.0",
-    "contentHash": "af403d4af6d39a91e05a4b0cc4c4b359f82a7ef289d7f7f3ba6155a92bbefc29",
-    "lastHarvestedAt": "2026-10-19T13:43:20.412Z",
+    "contentHash": "88d923065b59665cb85176e86d7c0bcf9da9ce4fec9c3616e441952f857f7945",
+    "lastHarvestedAt": "2026-11-15T17:40:14.530Z",
     "learningId": "learn-github-lottie-react-native-lottie-react-native"
   },
   "react-native-maps-react-native-maps": {

@@ -10129,3 +10129,7 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T17:23:18.430Z` | `hf-mistralai-mistral-large-4-1t-a52b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BBC8733A` [Domain D] | Yes (`5b149944...`) |
 | `CYCLE-20261115-3BM4` | `2026-11-15T17:31:49.516Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8634` | Yes (`f93038c0...`) |
 | `CYCLE-20261115-3G0S` | `2026-11-15T17:31:55.228Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8635` | Yes (`12804ed0...`) |
+| `CYCLE-20261115-E5A7` | `2026-11-15T17:40:14.527Z` | `lottie-react-native/lottie-react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8636` | Yes (`88d92306...`) |
+| `CYCLE-20261115-E7GB` | `2026-11-15T17:40:17.339Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8637` | Yes (`23645f09...`) |
+| `CYCLE-20261115-EAOL` | `2026-11-15T17:40:21.525Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`a7f92248...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T17:40:51.427Z` | `lottie-react-native-lottie-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-4F755436` [Domain H] | Yes (`5ab00fd4...`) |

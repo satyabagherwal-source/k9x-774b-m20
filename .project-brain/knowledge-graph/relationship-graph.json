@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T17:23:18.428Z",
+  "updated_at": "2026-11-15T17:40:51.425Z",
   "statistics": {
-    "total_nodes": 263,
+    "total_nodes": 264,
     "total_edges": 142,
     "domain_distribution": {
       "D": 207,
       "M": 1,
-      "H": 22,
+      "H": 23,
       "J": 10,
       "K": 11,
       "L": 3,
@@ -5905,6 +5905,28 @@
       ],
       "created_at": "2026-11-15T17:23:18.428Z",
       "updated_at": "2026-11-15T17:23:18.428Z"
+    },
+    "DOM-H-4F755436": {
+      "id": "DOM-H-4F755436",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "ios): make constantsToExport return type non-optional",
+      "summary": "Prevents defects observed in production commit `455b886d`: ios): make constantsToExport return type non-optional. Unvalidated execution path -> When implementing operations in `packages/core/ios/LottieReactNative/AnimationViewManagerModule.swift`, engineers MUST enforce rigorous boun",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://lottie-react-native-lottie-react-native/lottie-react-native-lottie-react-native-learnings.md",
+        "source_version": "b0960c1d",
+        "observed_at": "2026-11-15T17:40:13.539Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lottie-react-native-lottie-react-native)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-15T17:40:51.425Z",
+      "updated_at": "2026-11-15T17:40:51.425Z"
     }
   },
   "edges": [

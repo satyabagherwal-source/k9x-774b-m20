@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:31:55.235Z",
-  "total_cycles_completed": 9740,
-  "total_learnings_persisted": 9740,
-  "total_rules_promoted": 9363,
+  "last_updated": "2026-11-15T17:40:21.547Z",
+  "total_cycles_completed": 9743,
+  "total_learnings_persisted": 9743,
+  "total_rules_promoted": 9365,
   "history": [
-    {
-      "timestamp": "2026-11-14T15:34:30.271Z",
-      "repository": "jithin-sabu/purge-app",
-      "learningId": "learn-github-jithin-sabu-purge-app",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T15:34:44.364Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T15:49:27.895Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T15:49:31.065Z",
       "repository": "oxc-project/oxc",
@@ -1403,6 +1382,27 @@
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:40:14.535Z",
+      "repository": "lottie-react-native/lottie-react-native",
+      "learningId": "learn-github-lottie-react-native-lottie-react-native",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:40:17.348Z",
+      "repository": "goodrain/rainbond",
+      "learningId": "learn-github-goodrain-rainbond",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:40:21.547Z",
+      "repository": "SeekStorm/SeekStorm",
+      "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for lottie/react/native/lottie/react/native
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for lottie-react-native/lottie-react-native
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "lottie/react/native/lottie/react/native",
-  "source_url": "https://github.com/lottie/react/native/lottie/react/native",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "lottie-react-native/lottie-react-native",
+  "source_url": "https://github.com/lottie-react-native/lottie-react-native",
+  "source_version": "b0960c1d",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-15T17:40:14.719Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-lottie-react-native-lottie-react-native",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lottie/react/native/lottie/react/native](https://github.com/lottie/react/native/lottie/react/native) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [lottie-react-native/lottie-react-native](https://github.com/lottie-react-native/lottie-react-native) (Revision: `b0960c1d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T17:40:14.719Z`  
+> **Learning ID**: `learn-github-lottie-react-native-lottie-react-native`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lottie/react/native/lottie/react/native` (Commit: `historical`)
+- **Target Repository**: `lottie-react-native/lottie-react-native` (Commit: `b0960c1d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md`  
-> **Source**: github ([https://github.com/lottie-react-native/lottie-react-native](https://github.com/lottie-react-native/lottie-react-native))  
-> **Source Version**: `7ac5e96c`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:43:20.235Z  
-> **Learning ID**: `learn-github-lottie-react-native-lottie-react-native`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): lottie-react-native/lottie-react-native
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lottie-react-native/lottie-react-native](https://github.com/lottie-react-native/lottie-react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:43:19.997Z  
+> **Harvest Timestamp**: 2026-11-15T17:40:13.295Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Lottie wrapper for React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17206 stars
+- **Stars / Engagement**: 17215 stars
 
 ---
 
@@ -1353,426 +1339,37 @@ class LottieAnimationViewManager : SimpleViewManager<LottieAnimationView>() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `815fd4ee` (2026-08-05)
-**Commit Message**: feat: require React Native 0.84, upgrade react-native-test-app to 5.4.7 and fix iOS ci (#1453)
+### Incident Patch 1: `455b886d` (2026-11-13)
+**Commit Message**: fix(ios): make constantsToExport return type non-optional (#1486)
 
-* feat!: require React Native 0.84, upgrade react-native-test-app to 5.4.7
+React Native now annotates RCTBridgeModule.h with NS_ASSUME_NONNULL and
+declares constantsToExport as nonnull, so Swift imports it as returning
+[AnyHashable: Any] instead of [AnyHashable: Any]!. Overriding it with an
+implicitly unwrapped optional return type no longer compiles.
 
-Raises the minimum supported React Native version to 0.84, the oldest
-release still receiving upstream support (0.86/0.85 are Active, 0.84 is
-End of Cycle, 0.83 and earlier are Unsupported), and upgrades
-`react-native-test-app` from 4.1.4 to 5.4.7.
+Returning a non-optional dictionary is compatible with both older and
+newer React Native versions.
 
-These two bumps have to land together. RNTA 5.4.7 pins
-`androidx.camera:*` to 1.6.1, which requires compileSdk 36 and AGP
-8.9.1+; RNTA derives both from React Native's version catalog, and 0.78
-supplies compileSdk 35 / AGP 8.8.0, so the Android build fails in
-`checkDebugAarMetadata`. Conversely RNTA 4.1.4 caps `react-native` at
-0.78, so neither version can move on its own. RN 0.84 ships compileSdk
-36 and AGP 8.12.0, which clears the CameraX floor.
-
-The stale 3.8.7 devDependency is also dropped from the monorepo root;
-nothing outside `example/` referenced it, and keeping a second major
-around meant yarn installed two copies.
-
-Notable knock-on changes:
-
-- `example/tsconfig.json` extended
-  `@react-native/typescript-config/tsconfig.json`, but 0.84 added an
-  `exports` ma
-
-**File**: `.github/workflows/android-fabric-build.yml` (modified, +1/-1)
+**File**: `packages/core/ios/LottieReactNative/AnimationViewManagerModule.swift` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,7 @@ jobs:
-       - name: Set up Node.js
-         uses: actions/setup-node@v3
-         with:
--          node-version: 18
-+          node-version: 22
+@@ -19,7 +19,7 @@ class AnimationViewManagerModule: RCTViewManager {
+         return ContainerView()
+     }
  
-       - name: Enable corepack
-         run: corepack enable
-```
-
-**File**: `.github/workflows/android-paper-build.yml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ jobs:
-       - name: Set up Node.js
-         uses: actions/setup-node@v3
-         with:
--          node-version: 18
-+          node-version: 22
+-    @objc override func constantsToExport() -> [AnyHashable: Any]! {
++    @objc override func constantsToExport() -> [AnyHashable: Any] {
+         return ["VERSION": 1]
+     }
  
-       - name: Enable corepack
-         run: corepack enable
-```
-
-**File**: `.github/workflows/ios-fabric-build.yml` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-       - name: Set up Node.js
-         uses: actions/setup-node@v3
-         with:
--          node-version: 18
-+          node-version: 22
- 
-       - name: Enable corepack
-         run: corepack enable
-```
-
-**File**: `.github/workflows/ios-paper-build.yml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ jobs:
-       - name: Set up Node.js
-         uses: actions/setup-node@v3
-         with:
--          node-version: 18
-+          node-version: 22
- 
-       - name: Enable corepack
-         run: corepack enable
-```
-
-**File**: `.github/workflows/lint-test.yml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ jobs:
-       - name: Set up Node.js
-         uses: actions/setup-node@v3
-         with:
--          node-version: 18
-+          node-version: 22
- 
-       - name: Enable corepack
-         run: corepack enable
-```
-
-**File**: `.gitignore` (modified, +1/-0)
-```diff
-@@ -19,3 +19,4 @@ dist/
- !.yarn/versions
- 
- .npmrc
-+.idea
-\ No newline at end of file
-```
-
-**File**: `example/.gitignore` (modified, +1/-0)
-```diff
-@@ -15,3 +15,4 @@ local.properties
- msbuild.binlog
- node_modules/
- ios/Podfile.lock
-+vendor/bundle/
-```
-
-**File**: `example/Gemfile` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+source 'https://rubygems.org'
-+
-+# You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
-+ruby ">= 2.6.10"
-+
-+# Exclude problematic versions of cocoapods and activesupport that causes build failures.
-+gem 'cocoapods', '>= 1.13', '!= 1.15.0', '!= 1.15.1'
-+gem 'activesupport', '>= 6.1.7.5', '!= 7.1.0'
-+gem 'xcodeproj', '< 1.26.0'
-+gem 'concurrent-ruby', '< 1.3.4'
-+
-+# Ruby 3.4.0 has removed some libraries from the standard library.
-+gem 'bigdecimal'
-+gem 'logger'
-+gem 'benchmark'
-+gem 'mutex_m'
-+
-+# `kconv` also left the standard library in 3.4, and is provided by `nkf`.
-+# CFPropertyList requires it, so CocoaPods fails to even parse the Podfile with
-+# "cannot load such file -- kconv". xcodeproj declares this itself from 1.26
-+# onwards, but the pin above holds us below that.
-+gem 'nkf'
-```
-
----
-
-### Incident Patch 2: `6c265d7d` (2026-08-14)
-**Commit Message**: fix(android): skip explicit kotlin-android plugin when AGP 9 built-in Kotlin is enabled (#1463)
-
-* fix(android): skip explicit kotlin-android plugin when AGP 9 built-in Kotlin is enabled
-
-Android Gradle Plugin 9.0 compiles Kotlin sources itself and turns that
-built-in support on by default. Applying the standalone Kotlin Android
-plugin on top of it fails at configuration time, so every consumer app
-that upgrades to AGP 9 cannot build this library unless it opts out of
-built-in Kotlin globally.
-
-Apply 'kotlin-android' only when AGP's built-in Kotlin is not in effect,
-that is on AGP below 9 or when the consumer sets
-'android.builtInKotlin=false'. Behaviour is unchanged on every AGP the
-library supported before.
-
-* fix(android): apply the built-in Kotlin guard to the nitro package too
-
-Address review: drop the explanatory comment in `packages/core` and mirror the
-same conditional in `packages/nitro`, which applies
-`org.jetbrains.kotlin.android` and hits the identical AGP 9 failure.
-
----------
-
-Co-authored-by: kimchi-developer <[REDACTED_EMAIL]>
-
-**File**: `packages/core/android/build.gradle` (modified, +13/-1)
-```diff
-@@ -25,8 +25,20 @@ def isNewArchitectureEnabled() {
-     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
- }
- 
-+def isBuiltInKotlinEnabled() {
-+    def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
-+    if (agpMajorVersion < 9) {
-+        return false
-+    }
-+    def builtInKotlinProperty = project.findProperty('android.builtInKotlin')
-+    return builtInKotlinProperty == null || builtInKotlinProperty.toString().toBoolean()
-+}
-+
- apply plugin: 'com.android.library'
--apply plugin: 'kotlin-android'
-+
-+if (!isBuiltInKotlinEnabled()) {
-+    apply plugin: 'kotlin-android'
-+}
- 
- if (isNewArchitectureEnabled()) {
-     apply plugin: 'com.facebook.react'
-```
-
-**File**: `packages/nitro/android/build.gradle` (modified, +13/-1)
-```diff
-@@ -32,8 +32,20 @@ def getExtOrIntegerDefault(name) {
-         : (project.properties["LottieNitro_" + name]).toInteger()
- }
- 
-+def isBuiltInKotlinEnabled() {
-+    def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize(".")[0].toInteger()
-+    if (agpMajorVersion < 9) {
-+        return false
-+    }
-+    def builtInKotlinProperty = project.findProperty("android.builtInKotlin")
-+    return builtInKotlinProperty == null || builtInKotlinProperty.toString().toBoolean()
-+}
-+
- apply plugin: "com.android.library"
--apply plugin: "org.jetbrains.kotlin.android"
-+
-+if (!isBuiltInKotlinEnabled()) {
-+    apply plugin: "org.jetbrains.kotlin.android"
-+}
- 
- // Adds nitrogen/generated/android/kotlin to java.srcDirs. Without this the
- // generated HybridLottieViewSpec, HybridLottieViewManager and LottieNitroOnLoad
-```
-
----
-
-### Incident Patch 3: `d24463b1` (2026-08-05)
-**Commit Message**: ci: remove the Paper build jobs and scripts (#1454)
-
-* ci: remove the Paper build jobs and scripts
-
-The Paper jobs no longer test anything the Fabric jobs do not. As of React
-Native 0.82 the New Architecture can no longer be disabled, and
-`react-native-test-app` reflects that directly -- `isNewArchitectureEnabled`
-returns `true` unconditionally for 0.82 and above, and warns if a project
-still passes `newArchEnabled=false`:
-
-    if (version >= v(0, 82, 0)) {
-        if (newArchEnabled == "false") {
-            logger.warn("WARNING: As of 0.82, New Architecture can no longer be disabled")
-        }
-        return true
-    }
-
-So `ORG_GRADLE_PROJECT_newArchEnabled=true` and `RCT_NEW_ARCH_ENABLED=1` are
-now no-ops, and the Paper and Fabric jobs built byte-identical products.
-Running the Fabric Android build straight after the default one confirmed
-it: `assembleDebug` came back UP-TO-DATE with 88 of 98 tasks already
-current.
-
-Removes:
-
-- `.github/workflows/android-paper-build.yml`
-- `.github/workflows/ios-paper-build.yml`
-- `paper:build:android` and `paper:build:ios` from the root manifest
-- `ci:paper:android` and `ci:paper:ios` from the example app
-
-This halves the iOS CI time, which wa
-
-**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (modified, +1/-1)
-```diff
-@@ -107,7 +107,7 @@ body:
-     id: architecture
-     attributes:
-       label: Architecture
--      description: What React Native architecture your application is running on? Currently, the default architecture on React Native is Paper so if you haven't changed it in your application select this option.
-+      description: What React Native architecture your application is running on? The New Architecture is the default from React Native 0.76, and the only option from 0.82 onwards, so select Fabric unless you are reporting against an older React Native version.
-       options:
-         - Paper (Old Architecture)
-         - Fabric (New Architecture)
-```
-
-**File**: `.github/workflows/android-paper-build.yml` (removed, +0/-57)
-```diff
-@@ -1,57 +0,0 @@
--name: Build Android Paper Example
--
--on:
--  pull_request:
--    branches:
--      - master
--
--# Only run on the latest workflow run
--concurrency:
--  group: ${{ github.workflow }}-${{ github.ref }}
--  cancel-in-progress: true
--
--jobs:
--  build-android:
--    runs-on: ubuntu-latest
--
--    steps:
--      - name: Checkout Repository
--        uses: actions/checkout@v3
--
--      - name: Set up Node.js
--        uses: actions/setup-node@v3
--        with:
--          node-version: 22
--
--      - name: Enable corepack
--        run: corepack enable
--
--      - name: Install Dependencies
--        run: yarn install --immutable
--
--      - name: Install JDK
--        uses: actions/setup-java@v3
--        with:
--          distribution: "zulu"
--          java-version: "17"
--
--      - name: Finalize Android SDK
--        run: |
--          /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
--
--      - name: Cache Gradle
--        uses: actions/cache@v3
--        with:
--          path: |
--            ~/.gradle/wrapper
--            ~/.gradle/caches
--          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
--          restore-keys: |
--            ${{ runner.os }}-gradle-
--
--      - name: Start Packager
--        run: yarn run:bundler &
--
--      - name: Build and Lint Paper Android Example
--        run: |
--          yarn paper:build:android
-```
-
-**File**: `.github/workflows/ios-paper-build.yml` (removed, +0/-39)
-```diff
-@@ -1,39 +0,0 @@
--name: Build iOS Paper Example
--
--on:
--  pull_request:
--    branches:
--      - master
--
--# Only run on the latest workflow run
--concurrency:
--  group: ${{ github.workflow }}-${{ github.ref }}
--  cancel-in-progress: true
--
--jobs:
--  build-example:
--    runs-on: macos-latest
--
--    steps:
--      - name: Checkout Repository
--        uses: actions/checkout@v3
--
--      - name: Set up Node.js
--        uses: actions/setup-node@v3
--        with:
--          node-version: 22
--
--      - name: Enable corepack
--        run: corepack enable
--
--      - name: Install CocoaPods
--        run: sudo gem install cocoapods -v 1.14.3
--
--      - name: Install Dependencies
--        run: yarn install --immutable
--
--      - name: Start Packager
--        run: yarn run:bundler &
--
--      - name: Build Paper iOS Example
--        run: yarn paper:build:ios
-```
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ yarn setup
- Finally, you can run the demo. Then you can go to the link printed in the terminal to see the demo.
- 
- ```
--yarn paper:web
-+yarn run:web
- ```
- 
- ### Style & Linting
-```
-
-**File**: `example/package.json` (modified, +0/-2)
-```diff
-@@ -18,9 +18,7 @@
-     "test": "jest",
-     "web": "webpack serve",
-     "visionos": "npx react-native run-visionos",
--    "ci:paper:android": "npx react-native build-android",
-     "ci:fabric:android": "ORG_GRADLE_PROJECT_newArchEnabled=true npx react-native build-android",
--    "ci:paper:ios": "pod install --project-directory=ios && npx react-native run-ios --no-packager",
-     "ci:fabric:ios": "RCT_NEW_ARCH_ENABLED=1 pod install --project-directory=ios && npx react-native run-ios --no-packager",
-     "ci:fabric:ios-static-framework": "USE_FRAMEWORKS=static RCT_NEW_ARCH_ENABLED=1 pod install --project-directory=ios && npx react-native run-ios --no-packager",
-     "ci:fabric:ios-dynamic-framework": "USE_FRAMEWORKS=dynamic RCT_NEW_ARCH_ENABLED=1 pod install --project-directory=ios && npx react-native run-ios --no-packager"
-```
-
-**File**: `package.json` (modified, +0/-2)
-```diff
-@@ -13,8 +13,6 @@
-     "fabric:build:ios": "yarn workspace example ci:fabric:ios",
-     "fabric:build:ios-static-framework": "yarn workspace example ci:fabric:ios-static-framework",
-     "fabric:build:ios-dynamic-framework": "yarn workspace example ci:fabric:ios-dynamic-framework",
--    "paper:build:android": "yarn workspace example ci:paper:android",
--    "paper:build:ios": "yarn workspace example ci:paper:ios",
-     "run:bundler": "yarn workspace example start",
-     "run:web": "yarn workspace example web",
-     "lint:swift": "yarn workspace lottie-react-native lint:swift",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1486** (2026-11-13): fix(ios): make constantsToExport return type non-optional (@cipolleschi)
+- **PR #1484** (closed): chore(deps): bump follow-redirects from 1.16.0 to 1.16.1 (@dependabot[bot])
+- **PR #1481** (closed): chore(deps): bump fast-uri from 3.1.5 to 3.1.8 (@dependabot[bot])
 - **PR #1478** (2026-10-14): chore(deps): bump joi from 17.13.4 to 17.13.8 (@dependabot[bot])
 - **PR #1477** (2026-10-14): chore(deps): bump shell-quote from 1.10.0 to 1.12.0 (@dependabot[bot])
 - **PR #1474** (2026-10-14): chore(deps): bump proxy-addr from 2.0.7 to 2.0.8 (@dependabot[bot])
-- **PR #1473** (closed): chore(deps): bump brace-expansion from 1.1.18 to 1.1.21 (@dependabot[bot])
-- **PR #1469** (closed): chore(deps): bump joi from 17.13.4 to 17.13.7 (@dependabot[bot])
-- **PR #1468** (closed): chore(deps): bump fast-uri from 3.1.5 to 3.1.6 (@dependabot[bot])
 
 ---
 
@@ -1792,31 +1389,31 @@ This halves the iOS CI time, which wa
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. require React Native 0.84, upgrade react-native-test-app to 5.4.7 and fix iOS ci
+## X. ios): make constantsToExport return type non-optional
 
 **RULE**:
-When implementing operations in `.github/workflows/android-fabric-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lottie-react-native/lottie-react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/core/ios/LottieReactNative/AnimationViewManagerModule.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lottie-react-native/lottie-react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `815fd4ee`: require React Native 0.84, upgrade react-native-test-app to 5.4.7 and fix iOS ci (#1453). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `455b886d`: ios): make constantsToExport return type non-optional. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/android-fabric-build.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/ios/LottieReactNative/AnimationViewManagerModule.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          node-version: 22
+    @objc override func constantsToExport() -> [AnyHashable: Any] {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-          node-version: 18
+// Induced defect failure mode:
+    @objc override func constantsToExport() -> [AnyHashable: Any]! {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `815fd4ee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `455b886d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

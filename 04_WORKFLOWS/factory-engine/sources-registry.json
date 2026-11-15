@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T17:31:58.242Z",
-    "lastVerified": "2026-11-15T17:31:58.242Z",
+    "lastChecked": "2026-11-15T17:40:24.593Z",
+    "lastVerified": "2026-11-15T17:40:24.594Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -232,9 +232,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-15T08:07:10.465Z",
+    "lastChecked": "2026-11-15T17:40:14.381Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-15T08:07:10.465Z"
+    "lastVerified": "2026-11-15T17:40:14.381Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -372,8 +372,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T17:04:01.299Z",
-    "lastVerified": "2026-11-15T17:04:01.299Z",
+    "lastChecked": "2026-11-15T17:40:19.443Z",
+    "lastVerified": "2026-11-15T17:40:19.443Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -2833,22 +2833,21 @@
     "lastVerified": "2026-11-13T23:41:51.371Z"
   },
   "goodrain-rainbond": {
-    "name": "rainbond",
+    "name": "goodrain/rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T05:46:30.583Z",
-    "lastVerified": "2026-11-14T05:46:30.583Z",
+    "lastChecked": "2026-11-15T17:40:16.377Z",
+    "lastVerified": "2026-11-15T17:40:16.377Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goodrain-rainbond",
-    "contentHash": "e44b9b064a87a4d5edff8451ecaf20f65596e318b849003b1087c1b32aaef1a2",
+    "contentHash": "23645f09b166ce0ba05d5cdd5df5909fccad1fce49f7ab74abd7a8ac85758ebc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bbb1e5bd"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "caviraoss-longmemory": {
     "name": "LongMemory",
@@ -4119,22 +4118,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "seekstorm-seekstorm": {
-    "name": "SeekStorm",
+    "name": "SeekStorm/SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T04:06:17.831Z",
-    "lastVerified": "2026-11-14T04:06:17.831Z",
+    "lastChecked": "2026-11-15T17:40:21.124Z",
+    "lastVerified": "2026-11-15T17:40:21.124Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "b74e262b681734b1b799336f91e158c7933d2fbd59f2c393139d273dc15aa0e7",
-    "promotedRulesCount": 1,
+    "contentHash": "a7f92248a34991724ae7a87d162d2778fe02e065b21e5c114444e05d19aa157c",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "35e8e843"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -5138,12 +5136,12 @@
     "lastVerified": "2026-11-14T08:44:01.922Z"
   },
   "grpc-grpc-rust": {
-    "name": "grpc/grpc-rust",
+    "name": "grpc-rust",
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T19:27:18.583Z",
-    "lastVerified": "2026-11-13T19:27:18.583Z",
+    "lastChecked": "2026-11-15T17:40:04.432Z",
+    "lastVerified": "2026-11-15T17:40:04.432Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
@@ -5152,7 +5150,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "eee0da29"
   },
   "hf-openai-gpt-oss-120b": {
     "name": "openai/gpt-oss-120b",
@@ -9927,11 +9926,21 @@
     "lastVerified": "2026-11-15T14:25:42.803Z"
   },
   "lottie-react-native-lottie-react-native": {
-    "name": "lottie-react-native",
+    "name": "lottie-react-native/lottie-react-native",
     "officialUrl": "https://github.com/lottie-react-native/lottie-react-native",
-    "lastChecked": "2026-11-12T05:47:36.546Z",
-    "revisionIdentifier": "7ac5e96c",
-    "lastVerified": "2026-11-12T05:47:36.546Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-15T17:40:13.295Z",
+    "lastVerified": "2026-11-15T17:40:13.295Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-lottie-react-native-lottie-react-native",
+    "contentHash": "88d923065b59665cb85176e86d7c0bcf9da9ce4fec9c3616e441952f857f7945",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "serpapi-google-search-results-ruby": {
     "name": "google-search-results-ruby",
@@ -10185,9 +10194,9 @@
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",
     "officialUrl": "https://github.com/booltools/booltools-seo-crawler",
-    "lastChecked": "2026-11-10T02:43:45.742Z",
+    "lastChecked": "2026-11-15T17:40:06.887Z",
     "revisionIdentifier": "e5394ed024",
-    "lastVerified": "2026-11-10T02:43:45.742Z"
+    "lastVerified": "2026-11-15T17:40:06.887Z"
   },
   "modelcontextprotocol-kotlin-sdk": {
     "name": "modelcontextprotocol/kotlin-sdk",

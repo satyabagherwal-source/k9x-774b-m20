@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T17:31:59.073Z",
+  "updated_at": "2026-11-15T17:40:52.993Z",
   "stats": {
-    "total_discovered": 3806,
-    "approved_pending_harvest": 3588,
+    "total_discovered": 3818,
+    "approved_pending_harvest": 3600,
     "harvested_count": 0,
     "rejected_count": 218,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3573,
-      "OFFICIAL_DOCUMENTATION": 127,
+      "COMMUNITY_AND_EXPERT": 3583,
+      "OFFICIAL_DOCUMENTATION": 129,
       "STANDARDS_AND_SPECIFICATIONS": 89,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 11,
@@ -82227,6 +82227,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
         "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-D1CF6B6327E9": {
+      "id": "SRC-D1CF6B6327E9",
+      "url": "https://github.com/lottie-react-native/lottie-react-native",
+      "title": "https://github.com/lottie-react-native/lottie-react-native",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:51.446Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md",
+        "fileName": "lottie-react-native-lottie-react-native-learnings.md"
+      }
+    },
+    "SRC-6B3386DC9FF1": {
+      "id": "SRC-6B3386DC9FF1",
+      "url": "https://github.com/airbnb/lottie-spm.git",
+      "title": "https://github.com/airbnb/lottie-spm.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:51.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md",
+        "fileName": "lottie-react-native-lottie-react-native-learnings.md"
+      }
+    },
+    "SRC-D304BD31080E": {
+      "id": "SRC-D304BD31080E",
+      "url": "https://github.com/facebook/react-native/issues/24963",
+      "title": "https://github.com/facebook/react-native/issues/24963",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:51.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md",
+        "fileName": "lottie-react-native-lottie-react-native-learnings.md"
+      }
+    },
+    "SRC-5DDA3160E2BC": {
+      "id": "SRC-5DDA3160E2BC",
+      "url": "https://github.com/user-attachments/assets/bfcbe7cb-9ba3-4d01-bbf9-1fdcc1e092e8",
+      "title": "https://github.com/user-attachments/assets/bfcbe7cb-9ba3-4d01-bbf9-1fdcc1e092e8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:51.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md",
+        "fileName": "lottie-react-native-lottie-react-native-learnings.md"
+      }
+    },
+    "SRC-27D658ADC4AC": {
+      "id": "SRC-27D658ADC4AC",
+      "url": "https://github.com/freeboub/bug-lottie-react-native-background-border-radius/commit/e5c62bcb65530f8f7aa44949fa23e5084f39e8ec",
+      "title": "https://github.com/freeboub/bug-lottie-react-native-background-border-radius/commit/e5c62bcb65530f8f7aa44949fa23e5084f39e8ec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:51.562Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md",
+        "fileName": "lottie-react-native-lottie-react-native-learnings.md"
+      }
+    },
+    "SRC-FD1B798AE39A": {
+      "id": "SRC-FD1B798AE39A",
+      "url": "https://github.com/goodrain/rainbond",
+      "title": "https://github.com/goodrain/rainbond",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:52.145Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
+        "fileName": "goodrain-rainbond-learnings.md"
+      }
+    },
+    "SRC-54BC6D833B78": {
+      "id": "SRC-54BC6D833B78",
+      "url": "https://www.rainbond.com/docs/faq",
+      "title": "https://www.rainbond.com/docs/faq",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:52.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
+        "fileName": "goodrain-rainbond-learnings.md"
+      }
+    },
+    "SRC-8692B57DCB35": {
+      "id": "SRC-8692B57DCB35",
+      "url": "https://www.rainbond.com/docs/troubleshooting",
+      "title": "https://www.rainbond.com/docs/troubleshooting",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:52.207Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
+        "fileName": "goodrain-rainbond-learnings.md"
+      }
+    },
+    "SRC-40CF00053174": {
+      "id": "SRC-40CF00053174",
+      "url": "https://github.com/goodrain/rainbond/issues",
+      "title": "https://github.com/goodrain/rainbond/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:52.239Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
+        "fileName": "goodrain-rainbond-learnings.md"
+      }
+    },
+    "SRC-7A01D67D8A99": {
+      "id": "SRC-7A01D67D8A99",
+      "url": "https://github.com/goodrain/rainbond/releases",
+      "title": "https://github.com/goodrain/rainbond/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:52.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
+        "fileName": "goodrain-rainbond-learnings.md"
+      }
+    },
+    "SRC-BAC5FC81ABCC": {
+      "id": "SRC-BAC5FC81ABCC",
+      "url": "https://docs.rs/seekstorm/latest/seekstorm/index/struct.IndexConfig.html",
+      "title": "https://docs.rs/seekstorm/latest/seekstorm/index/struct.IndexConfig.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:52.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-78F78E8EB585": {
+      "id": "SRC-78F78E8EB585",
+      "url": "https://docs.rs/seekstorm/latest/seekstorm/search/struct.SearchRequest.html",
+      "title": "https://docs.rs/seekstorm/latest/seekstorm/search/struct.SearchRequest.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:40:52.993Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
       }
     }
   }

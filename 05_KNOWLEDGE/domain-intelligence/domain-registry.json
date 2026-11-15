@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T17:31:59.781Z",
-  "total_records": 1088,
+  "last_updated": "2026-11-15T17:40:53.304Z",
+  "total_records": 1095,
   "domains": {
     "A": {
       "total": 7,
@@ -795,7 +795,7 @@
       ]
     },
     "H": {
-      "total": 223,
+      "total": 228,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1019,7 +1019,12 @@
         "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-learnings-core-invari",
         "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i"
+        "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i",
+        "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",
+        "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-core-invariants",
+        "DOM-H-4F755436",
+        "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-lear",
+        "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-learnings-core-invariants"
       ]
     },
     "I": {
@@ -1069,7 +1074,7 @@
       ]
     },
     "J": {
-      "total": 14,
+      "total": 16,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1084,7 +1089,9 @@
         "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
         "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
         "DOM-J-6AB1B121",
-        "DOM-J-C5E210D6"
+        "DOM-J-C5E210D6",
+        "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants"
       ]
     },
     "K": {
@@ -20756,6 +20763,102 @@
       "repository": "doobidoo-mcp-memory-service-learnings",
       "content_hash": "f4b3690a96e8c4113c87fab6e9629296d9412cdc9ab05adc6320226419d62f5d",
       "created_at": "2026-11-15T17:31:59.303Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lottie-react-native/lottie-react-native Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lottie-react-native-lottie-react-native-technical-construction-intelligence-lott.md",
+      "repository": "lottie-react-native/lottie-react-native",
+      "content_hash": "e07d8a5921a7bd3d1c429cdf76439da4564997cf7a56768fa2c049a942227cd2",
+      "created_at": "2026-11-15T17:40:14.835Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: goodrain/rainbond Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-technical-construction-intelligence-goodrain-rainbond-core-inv.md",
+      "repository": "goodrain/rainbond",
+      "content_hash": "e1bc8680be6568d1f4362d068cb5f4ce0bea5d8d475fad07d417d446004da3f2",
+      "created_at": "2026-11-15T17:40:17.674Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: SeekStorm/SeekStorm Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-seekstorm-seekstorm-search-distribution-intelligence-seekstorm-seekstorm-core-in.md",
+      "repository": "SeekStorm/SeekStorm",
+      "content_hash": "29a952ddcb17e94627ffc7018136abb7fd9d0066131ac518ab713ea51f69100b",
+      "created_at": "2026-11-15T17:40:21.865Z"
+    },
+    "DOM-H-4F755436": {
+      "record_id": "DOM-H-4F755436",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "ios): make constantsToExport return type non-optional",
+      "content": "When implementing operations in `packages/core/ios/LottieReactNative/AnimationViewManagerModule.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lottie-react-native/lottie-react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "5ab00fd48c019aeb5f5949becd4072080b2e45e9c4d8978b68c6a21489c3cbc4",
+      "summary": "Prevents defects observed in production commit `455b886d`: ios): make constantsToExport return type non-optional. Unvalidated execution path -> When implementing operations in `packages/core/ios/LottieReactNative/AnimationViewManagerModule.swift`, engineers MUST enforce rigorous boun",
+      "provenance": {
+        "source_uri": "project://lottie-react-native-lottie-react-native/lottie-react-native-lottie-react-native-learnings.md",
+        "source_version": "b0960c1d",
+        "observed_at": "2026-11-15T17:40:13.539Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lottie-react-native-lottie-react-native)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of lottie-react-native-lottie-react-native"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T17:40:51.409Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-lear": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-lear",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lottie-react-native-lottie-react-native-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lottie-react-native-lottie-react-native-learnings-technical-construction-intelli.md",
+      "repository": "lottie-react-native-lottie-react-native-learnings",
+      "content_hash": "c8c0d761dabc91c89c856994870b25444d690ef90ae870aac602fea9008e187a",
+      "created_at": "2026-11-15T17:40:51.879Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: goodrain-rainbond-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-learnings-technical-construction-intelligence-goodrain-rainbon.md",
+      "repository": "goodrain-rainbond-learnings",
+      "content_hash": "e7a079196a9673dee4f7ed680039d84e0970085804ddd6a578466485b583e4b2",
+      "created_at": "2026-11-15T17:40:52.574Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: seekstorm-seekstorm-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-seekstorm-seekstorm-learnings-search-distribution-intelligence-seekstorm-seeksto.md",
+      "repository": "seekstorm-seekstorm-learnings",
+      "content_hash": "be71ee19ce3a03fe9c946ee6200caa881f4d5bdfa57f0c8f91509112ae68648a",
+      "created_at": "2026-11-15T17:40:53.304Z"
     }
   }
 }

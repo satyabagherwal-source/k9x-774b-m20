@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:36:14.752Z",
+  "timestamp": "2026-11-15T17:40:52.335Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-goodrain-rainbond-learnings",
+  "learning_id": "LEARN-EVO-goodrain-rainbond-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [goodrain-rainbond-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:36:14.752Z`  
-> **Learning ID**: `LEARN-REEXTRACT-goodrain-rainbond-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T17:40:52.335Z`  
+> **Learning ID**: `LEARN-EVO-goodrain-rainbond-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source**: github ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
-> **Source Version**: `bbb1e5bd`  
+> **Source Version**: `d52fcc0a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:36:31.553Z  
+> **Timestamp**: 2026-11-15T17:40:16.383Z  
 > **Learning ID**: `learn-github-goodrain-rainbond`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:36:31.147Z  
+> **Harvest Timestamp**: 2026-11-15T17:40:16.377Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Rainbond is an open-source container platform that requires no Kubernetes expertise. Its core capabilities are 100% open source.  It abstracts away infrastructure complexity and provides a unified way to deploy and manage business applications, AI-generated projects, open-source AI software, and large language model services. AI helps teams deploy 
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6294 stars
+- **Stars / Engagement**: 6305 stars
 
 ---
 
@@ -1262,41 +1262,256 @@ func NewBadRequest(msg string) Coder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bbb1e5bd` (2026-11-06)
-**Commit Message**: chore: record v6.10.3-release in upgrade feed
+### Incident Patch 1: `d52fcc0a` (2026-11-15)
+**Commit Message**: fix: isolate and retry release image registry sync (#2751)
 
-**File**: `hack/release/upgrade-versions.json` (modified, +16/-0)
+Signed-off-by: 张启航 <[REDACTED_EMAIL]>
+Co-authored-by: 张启航 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/pr-ci-build.yml` (modified, +3/-0)
 ```diff
-@@ -1,4 +1,20 @@
- [
-+  {
-+    "version": "v6.10.3-release",
-+    "detail": {
-+      "update_time": "2026-11-06",
-+      "html_url": "https://github.com/goodrain/rainbond/releases/tag/v6.10.3-release",
-+      "tag_name": "v6.10.3-release",
-+      "body": "For update details, reference: https://github.com/goodrain/rainbond/releases/tag/v6.10.3-release."
-+    },
-+    "images": {
-+      "rbd-api": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-api:v6.10.3-release",
-+      "rbd-app-ui": "registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:v6.10.3-release",
-+      "rbd-chaos": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-chaos:v6.10.3-release",
-+      "rbd-mq": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-mq:v6.10.3-release",
-+      "rbd-worker": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-worker:v6.10.3-release"
-+    }
-+  },
-   {
-     "version": "v6.10.2-release",
-     "detail": {
+@@ -28,6 +28,9 @@ jobs:
+       - name: Check test manifest
+         run: make test-manifest-check
+ 
++      - name: Test release automation
++        run: python3 -m unittest discover -s hack/release -p '*_test.py'
++
+   rainbond:
+     needs: unit-test
+     runs-on: ubuntu-latest
+```
+
+**File**: `.github/workflows/release-v6.yml` (modified, +150/-36)
+```diff
+@@ -90,7 +90,29 @@ env:
+ jobs:
+   rainbond-unit-test:
+     runs-on: ubuntu-latest
++    outputs:
++      sync-matrix: ${{ steps.sync-matrix.outputs.matrix }}
+     steps:
++      - name: Prepare Aliyun sync matrix
++        id: sync-matrix
++        env:
++          BUILD_WHO: ${{ inputs.build-who }}
++          PLATFORMS: ${{ inputs.platforms }}
++        run: |
++          python3 - <<'PYTHON' >> "$GITHUB_OUTPUT"
++          import json, os
++          groups = {
++              "region": ["rbd-api", "rbd-chaos", "rbd-worker", "rbd-init-probe", "rbd-mq"],
++              "operator": ["rainbond-operator"],
++              "console": ["rainbond"],
++          }
++          selected = os.environ["BUILD_WHO"]
++          images = sum(groups.values(), []) if selected == "all" else groups[selected]
++          arches = [platform.removeprefix("linux/") for platform in os.environ["PLATFORMS"].split(",")]
++          matrix = {"include": [{"image": image, "arch": arch} for image in images for arch in arches]}
++          print("matrix=" + json.dumps(matrix, separators=(",", ":")))
++          PYTHON
++
+       # An amd64-only build pushes the plain <version> tag, which would replace
+       # the published amd64+arm64 manifest and break arm64 installs.
+       # Forks may hold real registry credentials; a fork must never push a
+@@ -168,21 +190,15 @@ jobs:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+-      - name: Login to Aliyun Container Registry
+-        uses: docker/login-action@v3
+-        with:
+-          registry: registry.cn-hangzhou.aliyuncs.com
+-          username: ${{ secrets.DOMESTIC_DOCKER_USERNAME }}
+-          password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
+-
+       - name: Set release description
+         run: |
+           buildTime=$(date +%F-%H)
+           git_commit=$(git log -n 1 --pretty --format=%h)
+           release_desc="${{ env.VERSION }}-${git_commit}-${buildTime}"
+           echo "release_desc=${release_desc}" >> "${GITHUB_ENV}"
+ 
+-      - name: Build and push
++      - name: Build and push to Docker Hub
++        id: build
+         uses: docker/build-push-action@v6
+         with:
+           platforms: linux/${{ matrix.arch }}
+@@ -199,7 +215,19 @@ jobs:
+           provenance: false
+           tags: |
+             rainbond/rbd-${{ matrix.component }}:${{ env.VERSION }}${{ env.IS_MULTI_ARCH == 'true' && format('-{0}', matrix.arch) || '' }}
+-            registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-${{ matrix.component }}:${{ env.VERSION }}${{ env.IS_MULTI_ARCH == 'true' && format('-{0}', matrix.arch) || '' }}
++
++      - name: Save image digest for Aliyun sync
++        env:
++          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
++        run: printf '%s\n' "$IMAGE_DIGEST" > "$RUNNER_TEMP/image-digest"
++
++      - name: Upload image digest
++        uses: actions/upload-artifact@v4
++        with:
++          name: release-digest-rbd-${{ matrix.component }}-${{ matrix.arch }}
++          path: ${{ runner.temp }}/image-digest
++          if-no-files-found: error
++          overwrite: true
+ 
+   rainbond-operator:
+     needs: rainbond-unit-test
+@@ -227,14 +255,8 @@ jobs:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+-      - name: Login to Aliyun Container Registry
+-        uses: docker/login-action@v3
+-        with:
+-          registry: registry.cn-hangzhou.aliyuncs.com
+-          username: ${{ secrets.DOMESTIC_DOCKER_USERNAME }}
+-          password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
+-
+-      - name: Build and push
++      - name: Build and push to Docker Hub
++        id: build
+         uses: docker/build-push-action@v6
+         with:
+           platforms: linux/${{ matrix.arch }}
+@@ -245,7 +267,20 @@ jobs:
+           provenance: false
+           tags: |
+             rainbond/rainbond-operator:${{ env.VERSION }}${{ env.IS_MULTI_ARCH == 'true' && format('-{0}', matrix.arch) || '' }}
+-            registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond-operator:${{ env.VERSION }}${{ env.IS_MULTI_ARCH == 'true' && format('-{0}', matrix.arch) || '' }}
++
++      - name: Save image digest for Aliyun sync
++        env:
++          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
++        run: printf '%s\n' "$IMAGE_DIGEST" > "$RUNNER_TEMP/image-digest"
++
++      - name: Upload image digest
++        uses: actions/upload-artifact@v4
++        with:
++          name: release-digest-rainbond-operator-${{ matrix.arch }}
++          path: ${{ runner.temp }}/image-digest
++          if-no-files-found: error
++          overwrite: true
++
+   rainbond-ui:
+     needs: rainbond-unit-test
+     runs-on: ${{ matrix.arch == 'amd64' && 'ubuntu-latest' || 'ubuntu-24.04-arm' }}
+@@ -309,21 +344,15 @@ jobs:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+-      - name: Login to Aliyun Container Registry
+-        uses: docker/login-action@v3
+-        with:
+-          registry: regis
+```
+
+**File**: `hack/release/retry.sh` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++#!/usr/bin/env bash
++# Bound registry operations, including buildx's child process, on Linux runners.
++set -euo pipefail
++
++for attempt in 1 2 3; do
++  status=0
++  timeout --kill-after=10s "${RETRY_TIMEOUT:-5m}" "$@" || status=$?
++  if (( status == 0 )); then
++    exit 0
++  fi
++  echo "::warning::Registry command failed (exit ${status}, attempt ${attempt}/3)"
++  if (( attempt == 3 )); then
++    exit "$status"
++  fi
++  sleep "${RETRY_DELAY:-10}"
++done
+```
+
+**File**: `hack/release/retry_test.py` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++"""Exercise bounded release commands with a local fake registry client.
++
++Run on Linux (GNU timeout): python3 -m unittest discover -s hack/release -p '*_test.py'
++"""
++
++import json
++import os
++from pathlib import Path
++import subprocess
++import tempfile
++import unittest
++
++
++SCRIPT = Path(__file__).with_name("retry.sh")
++
++
++class RetryTest(unittest.TestCase):
++    def run_command(self, failures=0, hang=False):
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            client = root / "registry-client"
++            client.write_text(
++                "#!/usr/bin/env python3\n"
++                "import json, os, pathlib, subprocess, sys, time\n"
++                "root = pathlib.Path(os.environ['TEST_ROOT'])\n"
++                "state = root / 'attempts'\n"
++                "attempt = int(state.read_text()) + 1 if state.exists() else 1\n"
++                "state.write_text(str(attempt))\n"
++                "(root / 'args').write_text(json.dumps(sys.argv[1:]))\n"
++                "if os.environ['TEST_HANG'] == '1':\n"
++                "    subprocess.Popen([sys.executable, '-c', \"import os, pathlib, time; time.sleep(1.2); (pathlib.Path(os.environ['TEST_ROOT']) / 'escaped').touch()\"])\n"
++                "    time.sleep(30)\n"
++                "sys.exit(42 if attempt <= int(os.environ['TEST_FAILURES']) else 0)\n"
++            )
++            client.chmod(0o755)
++            result = subprocess.run(
++                ["bash", str(SCRIPT), str(client), "image@sha256:abc", "tag with spaces"],
++                env={**os.environ, "TEST_ROOT": directory,
++                     "TEST_FAILURES": str(failures), "TEST_HANG": str(int(hang)),
++                     "RETRY_TIMEOUT": "1s" if hang else "5s", "RETRY_DELAY": "0"},
++                capture_output=True, text=True, timeout=10,
++            )
++            attempts = int((root / "attempts").read_text()) if (root / "attempts").exists() else 0
++            args = json.loads((root / "args").read_text()) if (root / "args").exists() else []
++            return result, attempts, args, (root / "escaped").exists()
++
++    def test_success_runs_once_and_preserves_arguments(self):
++        result, attempts, args, _ = self.run_command()
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.assertEqual(attempts, 1)
++        self.assertEqual(args, ["image@sha256:abc", "tag with spaces"])
++
++    def test_transient_failures_recover_without_rebuilding(self):
++        result, attempts, _, _ = self.run_command(failures=2)
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.assertEqual(attempts, 3)
++
++    def test_exhausted_retries_fail_the_job(self):
++        result, attempts, _, _ = self.run_command(failures=5)
++        self.assertEqual(result.returncode, 42, result.stderr)
++        self.assertEqual(attempts, 3)
++
++    def test_stalled_upload_is_killed_and_retried(self):
++        result, attempts, _, escaped = self.run_command(hang=True)
++        self.assertEqual(result.returncode, 124, result.stderr)
++        self.assertEqual(attempts, 3)
++        self.assertFalse(escaped)
++
++
++if __name__ == "__main__":
++    unittest.main()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2751** (2026-11-15): fix: isolate and retry release image registry sync (@ZhangSetSail)
+- **PR #2749** (2026-11-08): feat: support template artifacts and precise team quotas (@RainBondsongyg)
 - **PR #2748** (2026-11-06): chore: sync latest main into disk cleanup branch (@RainBondsongyg)
 - **PR #2747** (2026-11-04): chore(release): add the other release approvers as code owners (@yangkaa)
 - **PR #2746** (2026-11-04): ci(release): test a fresh standalone install before publishing (@yangkaa)
 - **PR #2745** (2026-11-04): ci(release): convert release images to eStargz before publishing (@yangkaa)
-- **PR #2744** (2026-11-04): ci(release): build the standalone image during release-publish (@yangkaa)
-- **PR #2743** (2026-11-03): V6.10.3 dev (@ZhangSetSail)
 
 ---
 
@@ -1316,46 +1531,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. record v6.10.3-release in upgrade feed
+## X. isolate and retry release image registry sync
 
 **RULE**:
-When implementing operations in `hack/release/upgrade-versions.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/pr-ci-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bbb1e5bd`: record v6.10.3-release in upgrade feed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d52fcc0a`: isolate and retry release image registry sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/release/upgrade-versions.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pr-ci-build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  {
-    "version": "v6.10.3-release",
-    "detail": {
-      "update_time": "2026-11-06",
-      "html_url": "https://github.com/goodrain/rainbond/releases/tag/v6.10.3-release",
-      "tag_name": "v6.10.3-release",
-      "body": "For update details, reference: https://github.com/goodrain/rainbond/releases/tag/v6.10.3-release."
-    },
-    "images": {
-      "rbd-api": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-api:v6.10.3-release",
-      "rbd-app-ui": "registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:v6.10.3-release",
-      "rbd-chaos": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-chaos:v6.10.3-release",
-      "rbd-mq": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-mq:v6.10.3-release",
-      "rbd-worker": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-worker:v6.10.3-release"
-    }
-  },
+      - name: Test release automation
+        run: python3 -m unittest discover -s hack/release -p '*_test.py'
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bbb1e5bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d52fcc0a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

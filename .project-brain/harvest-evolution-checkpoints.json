@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:31:59.952Z",
+  "last_updated": "2026-11-15T17:40:53.533Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T15:47:58.797Z",
@@ -1468,7 +1468,7 @@
       "staged_for_review": 0
     },
     "seekstorm-seekstorm-learnings.md": {
-      "processed_at": "2026-11-13T03:03:22.540Z",
+      "processed_at": "2026-11-15T17:40:52.815Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3031,9 +3031,19 @@
       "processed_at": "2026-11-15T17:23:18.430Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "lottie-react-native-lottie-react-native-learnings.md": {
+      "processed_at": "2026-11-15T17:40:51.427Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "goodrain-rainbond-learnings.md": {
+      "processed_at": "2026-11-15T17:40:52.123Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1089,
-  "total_canonical_promoted": 267,
-  "total_staged_for_review": 823
+  "total_dossiers_evaluated": 1092,
+  "total_canonical_promoted": 268,
+  "total_staged_for_review": 825
 }

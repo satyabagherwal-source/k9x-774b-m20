@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-TNLU",
-    "timestamp": "2026-11-11T06:33:46.434Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-TPUE",
-    "timestamp": "2026-11-11T06:33:49.334Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-TQCP",
-    "timestamp": "2026-11-11T06:33:49.993Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-VFBQ",
     "timestamp": "2026-11-11T07:03:08.630Z",
     "repository": "Cactus-Compute/mirage",
@@ -7492,6 +7447,51 @@
     "contentHash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-E5A7",
+    "timestamp": "2026-11-15T17:40:14.527Z",
+    "repository": "lottie-react-native/lottie-react-native",
+    "learningId": "learn-github-lottie-react-native-lottie-react-native",
+    "contentHash": "88d923065b59665cb85176e86d7c0bcf9da9ce4fec9c3616e441952f857f7945",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-E7GB",
+    "timestamp": "2026-11-15T17:40:17.339Z",
+    "repository": "goodrain/rainbond",
+    "learningId": "learn-github-goodrain-rainbond",
+    "contentHash": "23645f09b166ce0ba05d5cdd5df5909fccad1fce49f7ab74abd7a8ac85758ebc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-EAOL",
+    "timestamp": "2026-11-15T17:40:21.525Z",
+    "repository": "SeekStorm/SeekStorm",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "a7f92248a34991724ae7a87d162d2778fe02e065b21e5c114444e05d19aa157c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
