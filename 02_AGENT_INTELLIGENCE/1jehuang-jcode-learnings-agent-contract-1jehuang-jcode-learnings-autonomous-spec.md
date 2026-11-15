@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:32:43.217Z",
+  "timestamp": "2026-11-15T05:36:48.501Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-1jehuang-jcode-learnings",
+  "learning_id": "LEARN-EVO-1jehuang-jcode-learnings",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [1jehuang-jcode-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:32:43.217Z`  
-> **Learning ID**: `LEARN-REEXTRACT-1jehuang-jcode-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T05:36:48.501Z`  
+> **Learning ID**: `LEARN-EVO-1jehuang-jcode-learnings`
 
 
 ## 1. Agent Role & Persona Contract
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `02152f3a`  
+> **Source Version**: `25b40def`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T19:46:03.274Z  
+> **Timestamp**: 2026-11-15T05:31:41.138Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T19:46:03.043Z  
+> **Harvest Timestamp**: 2026-11-15T05:31:40.924Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21701 stars
+- **Stars / Engagement**: 21778 stars
 
 ---
 
@@ -361,20 +361,23 @@ pub(super) fn stable_hash_str(value: &str) -> u64 {
     hasher.finish()
 }
 
+/// The one place cache signatures encode JSON. A value that cannot be
+/// serialized signs as the empty string, the same as before.
+fn encode_json<T: serde::Serialize + ?Sized>(value: &T) -> String {
+    serde_json::to_string(value).unwrap_or_default()
+}
+
 #[cfg(test)]
 fn stable_hash_json<T: serde::Serialize + ?Sized>(value: &T) -> u64 {
-    let encoded = serde_json::to_string(value).unwrap_or_default();
-    stable_hash_str(&encoded)
+    stable_hash_str(&encode_json(value))
 }
 
 pub(super) fn stable_json_len<T: serde::Serialize + ?Sized>(value: &T) -> usize {
-    serde_json::to_string(value)
-        .map(|encoded| encoded.len())
-        .unwrap_or_default()
+    encode_json(value).len()
 }
 
 fn json_hash_and_len<T: serde::Serialize + ?Sized>(value: &T) -> (u64, usize) {
-    let encoded = serde_json::to_string(value).unwrap_or_default();
+    let encoded = encode_json(value);
     (stable_hash_str(&encoded), encoded.len())
 }
 
@@ -390,7 +393,7 @@ fn projected_message_hashes(messages: &[Message]) -> (u64, Vec<u64>) {
             aggregate.write(b",");
         }
         let projected = crate::message::cache_relevant_message_value(message);
-        let encoded = serde_json::to_string(&projected).unwrap_or_default();
+        let encoded = encode_json(&projected);
         hashes.push(stable_hash_str(&encoded));
         aggregate.write(encoded.as_bytes());
     }
@@ -2329,11 +2332,11 @@ impl Agent {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2086** (2026-11-06): **tests/e2e: remote disconnect tests assert the pre-f21e0197a close contract and fail once e2e compiles again**
-  *Symptoms*: ## Problem  Once tests/e2e compiles again (see #2083 for the current E0063), the e2e suite fails 5 disconnect tests deterministically on both ubuntu-latest and macos-latest CI runners:  ``` disconnect::remote_disconnect_after_done_closes_session disconnect::remote_disconnect_finishes_without_reattach_and_closes_session disconnect::remote_disconnect_reattaches_and_cancels_original_turn disconnect::remote_disconnect_reattaches_twice_and_finishes_original_turn disconnect::remote_disconnect_while_idle_closes_session ```  Each fails with `Error: deadline has elapsed` after a 10s poll.  ## Cause  f21e0197a (fix(server): retain remote sessions after client disconnect) intentionally changed the `continue_on_disconnect` contract: cleanup now returns early and keeps idle sessions Active, per the new wire.rs doc ("Idle sessions remain available for swarm reports and wake turns"). The five e2e tests above subscribe with `continue_on_disconnect: true` and then poll `Session::load` until the session leaves `Active`, which is the pre-f21e0197a behavior.  The unit tests were updated (client_disconnect_grace_tests.rs gained continued_coordinator_survives_disconnect_without_reconnect_grace), but the e2e assertions in tests/e2e/disconnect.rs were not.  ## Evidence  These same five tests passed on the Nov-4 CI runs (e.g. run 41813836036, job 126519519348) and fail identically on trees that carry f21e0197a plus the e2e compile fix.  ## Fix  Update tests/e2e/disconnect.rs: the `remote_*` abrupt-di
+- **Issue #2151** (2026-11-13): **swarm: lane todo name uses the full spawn prompt (first 60 chars) instead of the short `label`**
+  *Symptoms*: **Type:** bug **Labels:** `bug`, `swarm`, `todo`  **Problem** When spawning a worker, the coordinator's lane todo is named with the **first 60 characters of the spawn prompt** (the full message), not the short `label`. Long prompts become unwieldy todo names that pollute the coordinator's plan and break `todo update` by short name (the plan already contains a todo named with the prompt text, so a different short name appears as a "duplicate todo name" error).  **Code** - `crates/jcode-app-core/src/tool/communicate.rs:1270-1283` — on `spawn`, `title` is computed as `prompt.lines().find(non-empty).chars().take(60)`; `label` is only used as a fallback when `title` is empty. `ensure_spawn_lane(&todos, &label, phase, &title, prompt, ...)` creates the lane with this long title as the todo name.  **Repro** 1. `swarm spawn` with `label: "providers-analyst"` and a long `initial_message` starting with "You are a codebase analyst. The repo root is /Users/mac/jcode ...". 2. The coordinator's todo plan now contains a todo named "You are a codebase analyst. The repo root is /Users/mac/jcode" (first 60 chars). 3. Trying `todo update` with the short name "providers-analyst" fails with "duplicate todo name" because the existing todo is named with the prompt text.  **Suggested fix** 1. Use `label` as the lane todo **name** (not the prompt). Keep the full prompt as the todo **description**/task body. 2. Concretely in `communicate.rs:1273-1277`: set `title = label`, and pass the prompt as the de
 
-- **Issue #2083** (2026-11-06): **tests/e2e: client_name missing in test support constructors breaks full-workspace builds**
-  *Symptoms*: ## Problem  A full-workspace `cargo test` fails to compile on current `master` (c22c4aa9):  ``` error[E0063]: missing field `client_name` in initializer of `Request`   --> tests/e2e/test_support/mod.rs:367    |    |             Request::Subscribe { ... }    |                                     ^^^ missing `client_name`  error[E0063]: missing field `client_name` in initializer of `Request`   --> tests/e2e/test_support/mod.rs:411    |    |             Request::ResumeSession { ... }    |                                        ^^^ missing `client_name` ```  ## Repro  ``` cargo test --workspace --no-run ```  ## Cause  `765f9e4c1` (client_name on wire requests) added the `client_name: Option<String>` field to `Request::Subscribe` and `Request::ResumeSession` in `crates/jcode-protocol/src/wire.rs` but did not update the e2e test support constructors in `tests/e2e/test_support/mod.rs`. The CI workflow compiles `--lib --bins`, so `tests/e2e` never compiles there and the breakage only shows on a local full workspace build.  ## Fix  Set `client_name: None` in both constructors in `tests/e2e/test_support/mod.rs`.  I have this ready as a one-line-per-request branch and can open a PR if wanted. 
+- **Issue #2139** (2026-11-13): **master: config_env_fingerprint test red since 5bfba140b, JCODE_RESUME_OPEN_ELSEWHERE missing from CONFIG_ENV_KEYS**
+  *Symptoms*: ### Summary `cargo test -p jcode-base --lib config_env_fingerprint_tracks_every_apply_env_override_var` fails on the current master tip: `Config::apply_env_overrides` reads `JCODE_RESUME_OPEN_ELSEWHERE` (added in 5bfba140b) but the constant `CONFIG_ENV_KEYS` in `crates/jcode-base/src/config.rs` was not updated.  ### Steps to reproduce 1. `cargo test -p jcode-base --lib config_env_fingerprint_tracks_every_apply_env_override_var`  ### Expected The fingerprint test passes: every env var read by `Config::apply_env_overrides` is listed in `CONFIG_ENV_KEYS`.  ### Actual ``` thread 'config::tests::config_env_fingerprint_tracks_every_apply_env_override_var' panicked at crates/jcode-base/src/config_tests.rs:990:5: CONFIG_ENV_KEYS must include every env var read by Config::apply_env_overrides; missing: ["JCODE_RESUME_OPEN_ELSEWHERE"] ``` The key is read in `crates/jcode-base/src/config/env_overrides.rs:303` next to `JCODE_RESUME_TIME`, but only `JCODE_RESUME_PROJECT_SCOPE` and `JCODE_RESUME_TIME` exist in the `CONFIG_ENV_KEYS` list in `crates/jcode-base/src/config.rs:122`.  ### Proposed fix Add `"JCODE_RESUME_OPEN_ELSEWHERE"` to `CONFIG_ENV_KEYS` in `crates/jcode-base/src/config.rs`, next to the other `JCODE_RESUME_*` entries.  Happy to open a PR if you want.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2350,509 +2353,441 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6234b21e` (2026-11-11)
-**Commit Message**: fix(tui): keep the terminal in TUI mode when a draw panic is recovered
+### Incident Patch 1: `0a3e25f7` (2026-11-14)
+**Commit Message**: perf(tui): retain unchanged cells in sparse frame snapshots
 
-ratatui::init installs a panic hook that restores the terminal on every
-panic, including draw panics that jcode catches and recovers from. After
-such a panic (for example a tmux pane squeezed to one row on older
-builds) jcode kept running in cooked mode on the primary screen with
-mouse reporting on, so the pane filled with escape sequences.
+Keep the vector-copy fast path for dense frames and resizes. Sparse synthetic frames: 44.17ms to 28.34ms across 500 updates. Verify Unicode/style/resize equivalence and unchanged heap-backed symbol reuse.
 
-Add jcode_tui_style::init_terminal with a hook that skips the restore
-inside catch_recoverable_panic scopes, and use it at every init site.
-Add regression tests for the hook, clear_area clipping, and tiny panes.
-
-**File**: `crates/jcode-tui-permissions/src/lib.rs` (modified, +2/-11)
+**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +21/-4)
 ```diff
-@@ -511,17 +511,8 @@ impl PermissionsApp {
-             anyhow::bail!("permissions viewer requires an interactive terminal");
-         }
- 
--        let mut terminal = std::panic::catch_unwind(std::panic::AssertUnwindSafe(ratatui::init))
--            .map_err(|payload| {
--                let msg = if let Some(s) = payload.downcast_ref::<&str>() {
--                    (*s).to_string()
--                } else if let Some(s) = payload.downcast_ref::<String>() {
--                    s.clone()
--                } else {
--                    "unknown panic".to_string()
--                };
--                anyhow::anyhow!("failed to initialize terminal: {}", msg)
--            })?;
-+        let mut terminal = jcode_tui_style::init_terminal()
-+            .map_err(|error| anyhow::anyhow!("failed to initialize terminal: {error}"))?;
- 
-         let result = loop {
-             terminal.draw(|frame| self.render(frame))?;
-```
-
-**File**: `crates/jcode-tui-render/src/chrome.rs` (modified, +32/-0)
-```diff
-@@ -100,3 +100,35 @@ pub fn align_if_unset(line: Line<'static>, align: Alignment) -> Line<'static> {
-         line.alignment(align)
+@@ -59,6 +59,25 @@ pub(super) fn coalesced_frame_timer(
      }
  }
+ 
++/// Keep the spinner/animation snapshot exact without cloning unchanged cells
++/// on sparse frames. Ratatui already counted flushed updates, so dense redraws
++/// retain the straight vector copy rather than paying another diff scan.
++pub(super) fn update_retained_frame(previous: &mut Buffer, rendered: &Buffer, updates: usize) {
++    let sparse = previous.area == rendered.area
++        && previous.content.len() == rendered.content.len()
++        && updates < rendered.content.len() / 4;
++    previous.area = rendered.area;
++    if sparse {
++        for (to, from) in previous.content.iter_mut().zip(&rendered.content) {
++            if to != from {
++                to.clone_from(from);
++            }
++        }
++    } else {
++        previous.content.clone_from(&rendered.content);
++    }
++}
 +
-+#[cfg(test)]
-+mod clear_area_tests {
-+    use super::clear_area;
-+    use ratatui::{Terminal, backend::TestBackend, layout::Rect};
-+
-+    /// A tmux pane squeezed to one row still gets bands laid out below row 0.
-+    /// Clearing them must clip to the buffer instead of indexing outside it.
-+    #[test]
-+    fn clear_area_clips_to_a_one_row_buffer() {
-+        let mut terminal = Terminal::new(TestBackend::new(54, 1)).unwrap();
-+        terminal
-+            .draw(|frame| {
-+                for x in 0..54 {
-+                    frame.buffer_mut()[(x, 0)].set_symbol("x");
+ pub(super) fn redraw_timer(period: Duration) -> tokio::time::Interval {
+     let mut interval = tokio::time::interval_at(tokio::time::Instant::now() + period, period);
+     // Redraw ticks represent visual liveness, not elapsed simulation steps. An
+@@ -615,10 +634,8 @@ impl StatusSpinnerRenderer {
+         let total_cells = Some(completed.buffer.content.len());
+         let completed_buffer = match stored_frame {
+             Some(mut buffer) => {
+-                // Derived `Buffer::clone_from` reallocates; `Vec::clone_from`
+-                // reuses the existing cell storage.
+-                buffer.area = completed.buffer.area;
+-                buffer.content.clone_from(&completed.buffer.content);
++                // Reuse the Vec and skip unchanged cells on sparse frames.
++                update_retained_frame(&mut buffer, completed.buffer, completed.flushed_updates);
+                 buffer
+             }
+             None => completed.buffer.clone(),
+```
+
+**File**: `crates/jcode-tui/src/tui/app/run_shell_tests.rs` (modified, +42/-8)
+```diff
+@@ -509,6 +509,46 @@ fn idle_animation_repaint_preserves_cells_outside_animation_after_swap() {
+     }
+ }
+ 
++#[test]
++fn retained_frame_update_matches_a_full_copy_for_sparse_dense_and_resized_frames() {
++    for old_area in [Rect::new(0, 0, 8, 4), Rect::new(3, 2, 7, 3)] {
++        for new_area in [old_area, Rect::new(0, 0, 10, 2), Rect::new(0, 0, 0, 0)] {
++            for reported_updates in [0, 1, 8, 100] {
++                let mut previous = Buffer::empty(old_area);
++                let mut rendered = Buffer::empty(new_area);
++                for (i, cell) in rendered.content.iter_mut().enumerate() {
++                    cell.set_symbol(["a", "日", "e\u{301}", "👩‍💻"][i % 4]);
++                    cell.set_fg(if i % 2 == 0 { Color::Red } else { Color::Cyan });
++                    cell.set_bg(Color::Blue);
++                    cell.skip = i % 3 == 0;
 +                }
-+                // Entirely below the buffer: the reported panic was (1, 1) in 54x1.
-+                clear_area(frame, Rect::new(1, 1, 53, 3));
-+                assert_eq!(frame.buffer_mut()[(1, 0)].symbol(), "x");
-+                // Partly inside: only the visible cells are cleared.
-+                clear_area(frame, Rect::new(1, 0, 10, 5));
-+                clear_area(frame, Rect::new(50, 0, 40, 1));
-+            })
-+            .unwrap();
-+        let buffer = terminal.backend().buffer();
-+        let row: String = (0..54).map(|x| buffer[(x, 0)].symbol()).collect();
-+        assert_eq!(
-+            row,
-+            format!("x{}{}{}", " ".repeat(10), "x".repeat(39), " ".repeat(4))
++                let capacity = previous.content.capacity();
++                let storage = previous.content.as_ptr();
++                update_retained_frame(&mut previous, &rendered, reported_updates);
++                assert_eq!(previous, rendered);
++                if old_area == new_area {
++                    assert_eq!(previous.content.as_ptr(), storage);
++                    assert_eq!(previous.content.capacity(), capacity);
++                }
++            }
++        }
++    }
++}
++
++#[test]
++fn sparse_retained_frame_keeps_unchanged_heap_backed_symbols() {
++    let mut cell = ratatui::buffer::Cell::EMPTY;
++    cell.set_symbol(&format!("a{}", "\u{301}".repeat(32)));
++    let source = Buffer::filled(Rect::new(0, 0, 8, 4), cell);
++    let mut previous = source.clone();
++    let symbol = previous.content[0].symbol().as_ptr();
++    let mut rendered = source;
++    rendered.content[1].set_fg(Color::Red);
++    update_retained_frame(&mut previous, &rendered, 1);
++    assert_eq!(previous, rendered);
++    assert_eq!(previous.content[0].symbol().as_ptr(), symbol);
++}
++
+ #[test]
+ #[ignore = "manual retained-frame copy timing probe"]
+ fn retained_frame_copy_probe() {
+@@ -536,25 +576,19 @@ fn retained_frame_copy_probe() {
+     let full_time = started.elapsed();
+     target.content.clone_from(&source.content);
+     let started = Instant::now();
+-    let mut copied = 0usize;
+     for frame in 0..frames {
+         source.content[frame % area.area() as usize].set_fg(if frame % 2 == 0 {
+             Color::Yellow
+         } else {
+             Color::Green
+         });
+-        for (to, from) in target.content.iter_mut().zip(black_box(&source.content)) {
+-            if to != from {
+-                to.clone_from(from);
+-                copied += 1;
+-            }
+-        }
++        update_retained_frame(&mut target, black_box(&source), 1);
+         black_box(&target);
+     }
+     let selective_time = started.elapsed();
+     assert_eq!(target, source);
+     eprintln!(
+-        "retained frame copy: {frames} frames, full {full_time:?} ({} copied cells), selective {selective_time:?} ({copied} copied cells)",
++        "retained frame copy: {frames} frames, full {full_time:?} ({} copied cells), selective {selective_time:?} ({frames} copied cells)",
+         frames * area.area() as usize
+     );
+ }
+```
+
+---
+
+### Incident Patch 2: `62abb68b` (2026-11-14)
+**Commit Message**: fix(tui): preserve newer drafts when held prompts fail delivery
+
+**File**: `crates/jcode-tui/src/tui/app/remote/input_dispatch.rs` (modified, +9/-1)
+```diff
+@@ -198,7 +198,15 @@ pub(in crate::tui::app) async fn submit_prepared_remote_input(
+         .await
+     {
+         app.remove_display_message(echo_index);
+-        restore_prepared_remote_input(app, prepared);
++        app.restore_failover_payload(super::super::FallbackResendPayload {
++            content: prepared.expanded,
++            images: prepared.images,
++            raw_input: Some(prepared.raw_input),
++            is_system: false,
++            system_reminder: None,
++            auto_retry: false,
++            retry_attempts: 0,
++        });
+         app.push_display_message(DisplayMessage::error(format!(
+             "Failed to send message: {error}"
+         )));
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/reload_recovery_replay.rs` (modified, +48/-2)
+```diff
+@@ -347,7 +347,7 @@ fn reload_recovery_prepared_send_failure_restores_draft_without_exiting() {
+     );
+     assert!(!app.is_processing);
+     assert!(app.current_message_id.is_none());
+-    assert_eq!(app.input, "Continue the interrupted work");
++    assert_eq!(app.input, "Continue the interrupted work [image 1]");
+     assert_eq!(app.cursor_pos, app.input.len());
+     assert_eq!(app.pending_images, images);
+     assert!(
+@@ -382,7 +382,7 @@ fn reload_recovery_keyboard_send_failure_keeps_client_and_draft_alive() {
+     let result =
+         rt.block_on(app.handle_remote_key(KeyCode::Enter, KeyModifiers::empty(), &mut connection));
+     assert!(result.is_ok());
+-    assert_eq!(app.input, "Keep this prompt");
++    assert_eq!(app.input, "Keep this prompt [image 1]");
+     assert_eq!(app.pending_images, images);
+     assert!(!app.is_processing);
+     assert!(
+@@ -392,6 +392,52 @@ fn reload_recovery_keyboard_send_failure_keeps_client_and_draft_alive() {
+     );
+ }
+ 
++#[test]
++fn reload_recovery_deferred_send_failure_preserves_newer_draft() {
++    let rt = tokio::runtime::Runtime::new().unwrap();
++    let _guard = rt.enter();
++    for after_model_switch in [false, true] {
++        let mut app = create_test_app();
++        app.is_remote = true;
++        app.auto_poke_incomplete_todos = false;
++        let mut connection = crate::tui::backend::RemoteConnection::dummy();
++        app.remote_model_switch_in_flight = after_model_switch;
++        let held_image = ("image/png".to_string(), "held-image".to_string());
++        rt.block_on(remote::submit_prepared_remote_input(
++            &mut app,
++            &mut connection,
++            input::PreparedInput {
++                raw_input: "Held prompt [image 1]".to_string(),
++                expanded: "Expanded held prompt".to_string(),
++                images: vec![held_image.clone()],
++            },
++        ))
++        .unwrap();
++        let new_image = ("image/png".to_string(), "new-image".to_string());
++        app.input = "Newer unsent draft [image 1]".to_string();
++        app.cursor_pos = app.input.len();
++        app.pending_images = vec![new_image.clone()];
++        connection.mark_history_loaded();
++        app.remote_model_switch_in_flight = false;
++        drop(connection.take_dummy_peer());
++        rt.block_on(remote::process_remote_followups(&mut app, &mut connection));
++        assert_eq!(app.input, "Newer unsent draft [image 1] [image 2]");
++        assert_eq!(app.pending_images, vec![new_image, held_image]);
++        assert!(!app.is_processing);
++        assert!(app.pending_prompt_after_model_switch.is_none());
++        assert!(app.pending_prompt_before_history.is_none());
++        assert!(app.display_messages().iter().any(|message| {
++            message.content.contains("Held prompt [image 1]")
++                && message.content.contains("draft text is preserved")
++        }));
++        assert!(
++            app.display_messages()
++                .iter()
++                .any(|message| message.content.contains("Failed to send message:"))
 +        );
 +    }
 +}
++
+ #[test]
+ fn reload_recovery_preserves_visible_turn_timer_through_dispatch() {
+     let _env_guard = crate::storage::lock_test_env();
 ```
 
-**File**: `crates/jcode-tui-style/src/lib.rs` (modified, +97/-0)
-```diff
-@@ -34,3 +34,100 @@ pub fn restore_terminal_quietly() {
-         jcode_logging::warn(&format!("failed to restore terminal: {error}"));
-     }
- }
-+
-+thread_local! {
-+    /// Nesting depth of `catch_recoverable_panic` scopes on this thread.
-+    static RECOVERABLE_PANIC_DEPTH: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
-+}
-+
-+/// Run `f` and catch a panic that the caller recovers from and keeps running.
-+///
-+/// The panic hook runs before unwinding starts, so it cannot tell a fatal
-+/// panic from one a `catch_unwind` is about to absorb. Without this scope the
-+/// hook restored the terminal for a draw panic the TUI then recovered from:
-+/// jcode kept running on the primary screen in cooked mode with mouse
-+/// reporting still on, so the pane filled with escape garbage and ignored
-+/// keys. A tmux pane squeezed to one row was enough to trigger it.
-+pub fn catch_recoverable_panic<R>(f: impl FnOnce() -> R) -> std::thread::Result<R> {
-+    struct Scope;
-+    impl Drop for Scope {
-+        fn drop(&mut self) {
-+            RECOVERABLE_PANIC_DEPTH.with(|depth| depth.set(depth.get().saturating_sub(1)));
-+        }
-+    }
-+    RECOVERABLE_PANIC_DEPTH.with(|depth| depth.set(depth.get() + 1));
-+    let _scope = Scope;
-+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(f))
-+}
-+
-+/// Whether a panic raised on this thread right now will be recovered.
-+pub fn panic_will_be_recovered() -> bool {
-+    RECOVERABLE_PANIC_DEPTH.with(|depth| depth.get() > 0)
-+}
-+
-+fn install_panic_hook_with(restore: fn()) {
-+    let previous = std::panic::take_hook();
-+    std::panic::set_hook(Box::new(move |info| {
-+        if panic_will_be_recovered() {
-+            // The TUI is still live on the alternate screen. Restoring the
-+            // terminal or printing a backtrace here would corrupt it.
-+            jcode_logging::error(&format!("recovered panic: {info}"));
-+            return;
-+        }
-+        restore();
-+        previous(info);
-+    }));
-+}
-+
-+/// Enter raw mode and the alternate screen, like `ratatui::init`.
-+///
-+/// Always use this instead of `ratatui::init`, whose panic hook restores the
-+/// terminal on every panic, including recovered ones (see
-+/// [`catch_recoverable_panic`]). The hook is installed once per process, so
-+/// re-entering the TUI after an editor handoff does not stack hooks.
-+pub fn init_terminal() -> std::io::Result<ratatui::DefaultTerminal> {
-+    use ratatui::crossterm::{execute, terminal};
-+
-+    static HOOK: std::sync::Once = std::sync::Once::new();
-+    HOOK.call_once(|| install_panic_hook_with(restore_terminal_quietly));
-+
-+    terminal::enable_raw_mode()?;
-+    execute!(std::io::stdout(), terminal::EnterAlternateScreen)?;
-+    ratatui::Terminal::new(ratatui::backend::CrosstermBackend::new(std::io::stdout()))
-+}
-+
-+#[cfg(test)]
-+mod panic_hook_tests {
-+    use super::*;
-+
-+    thread_local! {
-+        static RESTORES: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
-+    }
-+
-+    fn count_restore() {
-+        RESTORES.with(|restores| restores.set(restores.get() + 1));
-+    }
-+
-+    #[test]
-+    fn recovered_panics_do_not_restore_the_terminal() {
-+        // The hook runs on the panicking thread, so a thread-local counter
-+        // isolates this test from panics in tests running in parallel.
-+        install_panic_hook_with(count_restore);
-+
-+        assert!(!panic_will_be_recovered());
-+        let recovered = catch_recoverable_panic(|| {
-+            assert!(panic_will_be_recovered());
-+            panic!("draw outside buffer");
-+        });
-+        assert!(recovered.is_err());
-+        assert!(!panic_will_be_recovered(), "scope must end on unwind");
-+        assert_eq!(RESTORES.with(std::cell::Cell::get), 0);
-+
-+        assert_eq!(catch_recoverable_panic(|| 7).ok(), Some(7));
-+        assert!(!panic_will_be_recovered());
-+
-+        let fatal = std::panic::catch_unwind(|| panic!("fatal"));
-+        assert!(fatal.is_err());
-+        assert_eq!(RESTORES.with(std::cell::Cell::get), 1);
-+    }
-+}
-```
+---
 
-**File**: `crates/jcode-tui/src/tui/app/commands.rs` (modified, +5/-1)
-```diff
-@@ -3316,7 +3316,11 @@ fn resume_terminal_after_editor() {
-     // signal arriving while these modes are re-armed runs the full cleanup.
-     // Re-enter the TUI before returning to the event loop. The existing
-     // ratatui Terminal remains usable and the next loop iteration redraws it.
--    let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(ratatui::init));
-+    if let Err(error) = jcode_tui_style::init_terminal() {
-+        crate::logging::warn(&format!(
-+            "failed to re-enter the TUI after the editor: {error}"
-+        ));
-+    }
-     let policy = crate::perf::tui_policy();
-     let _ = crossterm::execute!(std::io::stdout(), EnableBracketedPaste);
-     if policy.enable_focus_change {
-```
+### Incident Patch 3: `f067b920` (2026-11-14)
+**Commit Message**: fix(tui): classify combined recovery retries and expose send failures
 
-**File**: `crates/jcode-tui/src/tui/session_picker.rs` (modified, +3/-11)
+**File**: `crates/jcode-tui/src/tui/app/remote/input_dispatch.rs` (modified, +16/-16)
 ```diff
-@@ -2425,17 +2425,9 @@ impl SessionPicker {
+@@ -25,6 +25,14 @@ pub(in crate::tui::app) async fn begin_remote_send(
+     // this as an execution retry. Do this at the shared send boundary so both
+     // fallback resends and same-route retries behave identically.
+     const EXECUTION_RETRY_PREFIX: &str = "<system-reminder>Retry the interrupted execution of the previous turn. Continue from the current conversation and completed tool results without repeating completed work.</system-reminder>\n\n";
++    let recovery = app.cloud_recovery_reminder();
++    let system_reminder = match (system_reminder, recovery.as_ref()) {
++        (Some(reminder), Some(recovery)) => Some(format!("{reminder}\n\n{recovery}")),
++        (None, Some(recovery)) => Some(recovery.clone()),
++        (reminder, None) => reminder,
++    };
++    // Classify the final wire reminder, including cloud recovery context. A
++    // cloud-only continuation otherwise bypasses the execution-retry marker.
+     let system_reminder = system_reminder.map(|reminder| {
+         if retry_attempts > 0
+             && is_system
+@@ -37,12 +45,6 @@ pub(in crate::tui::app) async fn begin_remote_send(
+             reminder
          }
-         // Detect light/dark terminal background before raw mode (OSC 11 query).
-         super::theme_detect::init_theme_mode();
--        let mut terminal = std::panic::catch_unwind(std::panic::AssertUnwindSafe(ratatui::init))
--            .map_err(|payload| {
--                let msg = if let Some(s) = payload.downcast_ref::<&str>() {
--                    (*s).to_string()
--                } else if let Some(s) = payload.downcast_ref::<String>() {
--                    s.clone()
--                } else {
--                    "unknown panic payload".to_string()
--                };
--                anyhow::anyhow!("failed to initialize session picker terminal: {}", msg)
--            })?;
-+        let mut terminal = jcode_tui_style::init_terminal().map_err(|error| {
-+            anyhow::anyhow!("failed to initialize session picker terminal: {error}")
-+        })?;
-         // Initialize mermaid image picker (fast default, optional probe via env)
-         super::mermaid::init_picker();
-         let perf_policy = crate::perf::tui_policy();
-```
-
-**File**: `crates/jcode-tui/src/tui/ui.rs` (modified, +2/-2)
-```diff
-@@ -2958,9 +2958,9 @@ pub fn draw(frame: &mut Frame, app: &dyn TuiState) {
-     // epoch here so the memo is scoped to exactly this frame.
-     app.advance_command_suggestions_epoch();
-     crate::tui::mermaid::begin_terminal_image_frame();
--    match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-+    match jcode_tui_style::catch_recoverable_panic(|| {
-         crate::tui::markdown::with_deferred_mermaid_render_context(|| draw_inner(frame, app))
--    })) {
-+    }) {
-         Ok(()) => layout_support::draw_side_panel_restore(frame, app),
-         Err(payload) => render_recovered_panic_frame(frame, &payload),
-     }
-```
-
-**File**: `crates/jcode-tui/src/tui/ui/draw_recovery.rs` (modified, +5/-0)
-```diff
-@@ -9,6 +9,11 @@ use super::theme_support::dim_color;
- /// Number of recovered panics while rendering the frame.
- static DRAW_PANIC_COUNT: AtomicUsize = AtomicUsize::new(0);
- 
-+#[cfg(test)]
-+pub(super) fn recovered_panic_count() -> usize {
-+    DRAW_PANIC_COUNT.load(Ordering::Relaxed)
-+}
-+
- pub(super) fn render_recovered_panic_frame(
-     frame: &mut Frame,
-     payload: &(dyn std::any::Any + Send),
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_tests/pinned_todo_regressions.rs` (modified, +31/-0)
-```diff
-@@ -383,3 +383,34 @@ fn pinned_todo_regression_hidden_message_has_zero_length_cache_boundary() {
-         );
      });
+-    let recovery = app.cloud_recovery_reminder();
+-    let system_reminder = match (system_reminder, recovery.as_ref()) {
+-        (Some(reminder), Some(recovery)) => Some(format!("{reminder}\n\n{recovery}")),
+-        (None, Some(recovery)) => Some(recovery.clone()),
+-        (reminder, None) => reminder,
+-    };
+     let msg_id = remote
+         .send_message_with_images_reminder_and_skill(
+             content.clone(),
+@@ -189,9 +191,8 @@ pub(in crate::tui::app) async fn submit_prepared_remote_input(
+         title: None,
+         tool_data: None,
+     });
+-    let _ = app
+-        .begin_remote_send(remote, prepared.expanded, prepared.images, false)
+-        .await;
++    app.begin_remote_send(remote, prepared.expanded, prepared.images, false)
++        .await?;
+     Ok(())
  }
-+
-+/// tmux users squeeze a pane to a row or two until they need it again. Every
-+/// such size must draw cleanly rather than rely on draw-panic recovery.
-+#[test]
-+fn tiny_panes_draw_without_a_recovered_panic() {
-+    with_pinned_todos_config(|| {
-+        let state = TestState {
-+            pinned_todos_payload: Some(todo_payload()),
-+            display_messages: vec![
-+                DisplayMessage::user("resize the tmux pane"),
-+                DisplayMessage::assistant("line\n".repeat(60)),
-+            ],
-+            ..Default::default()
-+        };
-+        for width in [1, 2, 8, 54, 120] {
-+            for height in 1..=6 {
-+                let before = draw_recovery::recovered_panic_count();
-+                let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
-+                terminal
-+                    .draw(|frame| crate::tui::ui::draw(frame, &state))
-+                    .unwrap();
-+                assert_eq!(
-+                    draw_recovery::recovered_panic_count(),
-+                    before,
-+                    "draw panicked at {width}x{height}:\n{}",
-+                    terminal_text(&terminal)
-+                );
-+            }
-+        }
-+    });
-+}
+ 
+@@ -890,13 +891,12 @@ mod ssh_slash_tests {
+                 .unwrap();
+                 assert!(app.pending_prompt_before_history.is_none(), "{command}");
+                 assert_eq!(remote.next_request_id_for_test(), next_id);
+-                assert!(
+-                    app.display_messages()
+-                        .last()
+-                        .unwrap()
+-                        .content
+-                        .contains("SSH")
+-                );
++                assert!(app
++                    .display_messages()
++                    .last()
++                    .unwrap()
++                    .content
++                    .contains("SSH"));
+             }
+             for command in [
+                 "/future remote skill /context",
 ```
 
----
-
-### Incident Patch 2: `8435b912` (2026-11-11)
-**Commit Message**: Respect terminal color capability in blocker rendering tests
-
-**File**: `crates/jcode-tui/src/tui/ui_tests/todo_blocker_notes.rs` (modified, +2/-2)
+**File**: `crates/jcode-tui/src/tui/app/tests/reload_recovery_replay.rs` (modified, +221/-8)
 ```diff
-@@ -16,7 +16,7 @@ fn blocker_footer_is_cell_bounded_and_clears_when_resolved() {
-         assert!(lines.iter().all(|line| line.width() <= usize::from(width)));
-         if width > 0 {
-             for line in &lines {
--                assert_eq!(line.style.fg, Some(Color::Rgb(225, 180, 80)));
-+                assert_eq!(line.style.fg, Some(rgb(225, 180, 80)));
-             }
-         }
-         if width >= 80 {
-@@ -66,7 +66,7 @@ fn blocker_footer_renders_immediately_above_input() {
+@@ -92,7 +92,11 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
+     ))
+     .unwrap();
+     assert_eq!(
+-        app.rate_limit_pending_message.as_ref().unwrap().system_reminder.as_deref(),
++        app.rate_limit_pending_message
++            .as_ref()
++            .unwrap()
++            .system_reminder
++            .as_deref(),
+         Some(original.as_str())
      );
-     let blocker_row = &terminal.backend().buffer().content[(input_row - 1) * 120..input_row * 120];
-     for cell in blocker_row.iter().take("Blocked".len()) {
--        assert_eq!(cell.fg, Color::Rgb(225, 180, 80));
-+        assert_eq!(cell.fg, rgb(225, 180, 80));
-     }
- }
  
-```
-
----
-
-### Incident Patch 3: `02152f3a` (2026-11-11)
-**Commit Message**: tui: show the account email on failover switches and drop repeated failover lines
-
-Binding a Claude account clears the token cache, so the switch notice had no
-email until the first request. Resolve it from the explicit binding instead.
-Collapse the in-flight switching line into the confirmed notice and stop
-repeating the provider error in the manual hint.
-
-**File**: `crates/jcode-provider-anthropic-runtime/src/account_binding_tests.rs` (modified, +25/-0)
-```diff
-@@ -115,6 +115,31 @@ async fn active_oauth_email_follows_cached_unbound_credentials_not_global_accoun
-     assert_eq!(provider.active_oauth_account_email(), None);
- }
- 
-+/// Switching to a saved account must identify it immediately, before the
-+/// first request repopulates the token cache.
-+#[test]
-+fn active_oauth_email_is_known_right_after_binding_an_account() {
-+    let _lock = jcode_base::storage::lock_test_env();
-+    let _sandbox = AccountSandbox::new();
-+    let personal = save_account("new-personal", "personal-access", "personal-refresh");
-+    let work = save_account("new-work", "work-access", "work-refresh");
-+    auth::claude::update_account_profile(&personal, Some("personal@example.com".into())).unwrap();
-+    auth::claude::update_account_profile(&work, Some("work@example.com".into())).unwrap();
-+    auth::claude::set_active_account(&personal).unwrap();
-+    let provider = AnthropicProvider::new();
-+    provider
-+        .set_credential_mode(AnthropicCredentialMode::OAuth)
-+        .unwrap();
-+    provider.set_oauth_account(Some(&work)).unwrap();
-+    assert_eq!(
-+        provider.active_oauth_account_email().as_deref(),
-+        Some("work@example.com")
+@@ -112,12 +116,21 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
+     assert!(app.is_processing);
+     assert!(app.pending_fallback_resend.is_none());
+     let pending = app.rate_limit_pending_message.as_ref().unwrap();
+-    assert!(pending.content.is_empty(), "do not echo another user prompt");
++    assert!(
++        pending.content.is_empty(),
++        "do not echo another user prompt"
 +    );
-+    // Unbinding returns to unknown rather than the global active account.
-+    provider.set_oauth_account(None).unwrap();
-+    assert_eq!(provider.active_oauth_account_email(), None);
-+}
-+
- #[tokio::test]
- #[allow(clippy::await_holding_lock)]
- async fn oauth_account_binding_survives_global_switch_refresh_and_fork() {
-```
-
-**File**: `crates/jcode-provider-anthropic-runtime/src/lib.rs` (modified, +11/-1)
-```diff
-@@ -1437,7 +1437,6 @@ impl Provider for AnthropicProvider {
-                 return None;
-             }
-         };
--        let cached = cached.as_ref()?;
-         let accounts = match auth::claude::list_accounts() {
-             Ok(accounts) => accounts,
-             Err(error) => {
-@@ -1447,6 +1446,17 @@ impl Provider for AnthropicProvider {
-                 return None;
-             }
-         };
-+        let Some(cached) = cached.as_ref() else {
-+            // Binding an account clears the token cache until the next request.
-+            // The explicit binding still names the exact account that will
-+            // serve, so a just-switched route can show its identity at once.
-+            // An unbound runtime stays unknown: never guess the global account.
-+            let label = self.oauth_account_label()?;
-+            return accounts
-+                .into_iter()
-+                .find(|account| account.label == label)
-+                .and_then(|account| account.email);
-+        };
-         accounts.into_iter().find_map(|account| {
-             let matches = (!cached.access_token.is_empty()
-                 && account.access == cached.access_token)
-```
-
-**File**: `crates/jcode-tui/src/tui/app/model_context.rs` (modified, +33/-8)
-```diff
-@@ -256,6 +256,22 @@ impl App {
-         format!("↪ Switching to {to_label} in 3s. Esc to cancel.")
-     }
+     assert_eq!(pending.retry_attempts, 1);
+     let retry = pending.system_reminder.clone().unwrap();
+-    assert_ne!(retry, original, "an exact replay is suppressed by the server");
++    assert_ne!(
++        retry, original,
++        "an exact replay is suppressed by the server"
++    );
+     assert!(retry.contains("Retry the interrupted execution"));
+-    assert!(retry.ends_with(&original), "preserve the recovery instructions");
++    assert!(
++        retry.ends_with(&original),
++        "preserve the recovery instructions"
++    );
  
-+    fn failover_switching_message(to_label: &str) -> String {
-+        format!("↪ Switching to {to_label} and retrying.")
-+    }
+     // Same-route retries share the fix and must not grow the reminder each time.
+     rt.block_on(remote::begin_remote_send(
+@@ -132,11 +145,213 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
+     ))
+     .unwrap();
+     assert_eq!(
+-        app.rate_limit_pending_message.as_ref().unwrap().system_reminder.as_deref(),
++        app.rate_limit_pending_message
++            .as_ref()
++            .unwrap()
++            .system_reminder
++            .as_deref(),
+         Some(retry.as_str())
+     );
+ }
+ 
++#[test]
++fn reload_recovery_cloud_retry_marks_final_wire_reminder() {
++    use tokio::io::AsyncBufReadExt;
 +
-+    /// The in-flight switch line is superseded by the confirmed
-+    /// "Switched to model" notice, which names the model and account.
-+    pub(super) fn remove_failover_switching_message(&mut self) {
-+        if let Some(idx) = self.display_messages.iter().rposition(|message| {
-+            message.role == "system"
-+                && message.content.starts_with("↪ Switching to ")
-+                && message.content.ends_with(" and retrying.")
-+        }) {
-+            self.remove_display_message(idx);
-+        }
-+    }
-+
-     /// The countdown line is only meaningful while the countdown runs. Once the
-     /// switch happens (or is canceled), drop it so the transcript keeps just the
-     /// outcome rather than how long we waited.
-@@ -389,10 +405,20 @@ impl App {
-         self.pending_automatic_failover_route = None;
-         self.clear_pending_fallback_offer();
-         let reason = Self::compact_provider_failure(&prompt.reason);
--        let manual_message = format!(
--            "{} unavailable: {}\nUse /model to switch to {} and resend.",
--            prompt.from_label, reason, prompt.to_label,
--        );
-+        // The caller often printed the provider error just above. Do not
-+        // repeat the same cause on the next line.
-+        let cause_already_shown = self
-+            .display_messages
-+            .last()
-+            .is_some_and(|message| message.role == "error" && message.content.contains(&reason));
-+        let manual_message = if cause_already_shown {
-+            format!("Use /model to switch to {} and resend.", prompt.to_label)
-+        } else {
-+            format!(
-+                "{} unavailable: {}\nUse /model to switch to {} and resend.",
-+                prompt.from_label, reason, prompt.to_label,
++    let rt = tokio::runtime::Runtime::new().unwrap();
++    let _guard = rt.enter();
++    for existing in [None, Some("Additional recovery instructions".to_string())] {
++        let mut app = create_test_app();
++        app.is_remote = true;
++        let session = super::commands::active_session_id(&app);
++        let original = ReloadContext::recovery_directive(
++            Some(&reload_replay_context(&session)),
++            true,
++            "",
++            None,
++        )
++        .unwrap()
++        .continuation_message;
++        app.cloud_recovery_context = Some((session, original.clone()));
++        app.cloud_recovery_auto_pending = true;
++        let mut connection = crate::tui::backend::RemoteConnection::dummy();
++        let mut peer = tokio::io::BufReader::new(connection.take_dummy_peer().unwrap());
++        rt.block_on(async {
++            remote::begin_remote_send(
++                &mut app,
++                &mut connection,
++                String::new(),
++                vec![],
++                true,
++                existing.clone(),
++                true,
++                1,
 +            )
-+        };
- 
-         let config = crate::config::Config::load().provider;
-         if remote_resend
-@@ -451,10 +477,9 @@ impl App {
-                     // and remote route acknowledgement before resending the payload.
-                     self.maybe_progress_provider_failover_countdown();
-                     if self.pending_automatic_failover_route.is_some() {
--                        self.push_display_message(DisplayMessage::system(format!(
--                            "↪ Switching to {}. Retrying after route confirmation.",
--                            prompt.to_label
--                        )));
-+                        self.push_display_message(DisplayMessage::system(
-+                            Self::failover_switching_message(&prompt.to_label),
-+                        ));
-                     }
-                     return;
-                 }
-```
-
-**File**: `crates/jcode-tui/src/tui/app/remote/server_events.rs` (modified, +11/-2)
-```diff
-@@ -2746,6 +2746,7 @@ fn handle_server_event_inner(
-                 if let Some(ref pname) = provider_name {
-                     app.remote_provider_name = Some(pname.clone());
-                 }
-+                let automatic_failover = automatic_route.is_some();
-                 if let Some(selection) = automatic_route {
-                     app.session.route_api_method = Some(selection.api_method);
-                 }
-@@ -2806,9 +2807,17 @@ fn handle_server_event_inner(
-                             .filter(|_| is_oauth)
-                             .map(|email| email.as_str()),
-                     );
-+                    // One line for an automatic failover: the confirmed route
-+                    // replaces the in-flight "Switching to" line.
-+                    let retrying = if automatic_failover {
-+                        app.remove_failover_switching_message();
-+                        ". Retrying."
-+                    } else {
-+                        ""
-+                    };
-                     app.push_display_message(DisplayMessage::system(format!(
--                        "✓ Switched to model: {}{}",
--                        model, suffix
-+                        "✓ Switched to model: {}{}{}",
-+                        model, suffix, retrying
-                     )));
-                 }
-                 if model_actually_changed {
++            .await
++            .unwrap();
++            let mut line = String::new();
++            tokio::time::timeout(Duration::from_secs(1), peer.read_line(&mut line))
++                .await
++                .unwrap()
++                .unwrap();
++            let wire: serde_json::Value = serde_json::from_str(&line).unwrap();
++            let reminder = wire["system_reminder"].as_str().unwrap();
++            assert!(reminder.starts_with("<system-reminder>Retry the interrupted execution"));
++            assert!(reminder.ends_with(&original));
++            if let Some(existing) = existing.as_ref() {
++                assert!(reminder.contains(existing));
++            }
++            assert!(app.cloud_recovery_context.is_none());
++            assert!(!app.cloud_recovery_auto_pending);
++            let pending = app.rate_limit_pending_message.clone().unwrap();
++            assert_eq!(pending.system_reminder.as_deref(), Some(reminder));
++
++            // A manual fallback can reset the retry budget. That must not
++            // strip execution identity or add another wrapper on the wire.
++            remote::begin_remote_send(
++                &mut app,
++                &mut connection,
++                pending.content,
++                pending.images,
++                pending.is_system,
++                pending.system_reminder,
++                pending.auto_retry,
++                0,
++            )
++            .await
++            .unwrap();
++            let mut retry_line = String::new();
++            tokio::time::timeout(Duration::from_secs(1), peer.read_line(&mut retry_line))
++                .await
++                .unwrap()
++                .unwrap();
++            let retry_wire: serde_json::Value = serde_json::from_str(&retry_line).unwrap();
++            assert_eq!(retry_wire["system_reminder"], wire["system_reminder"]);
++        });
++
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2130** (closed): style: cargo fmt on master (@alecuba16)
+- **PR #2125** (closed): fix(tui): match openpty pointer signature in libc 0.2.191 (@alecuba16)
+- **PR #2124** (closed): fix(tui): pin picker metadata and token badge test expectations (@alecuba16)
+- **PR #2123** (closed): fix(voice): compile niri socket helper only on unix (@alecuba16)
+- **PR #2122** (closed): fix(cli): requires_api_key is false for bare-IP compat endpoints (@alecuba16)
 - **PR #2098** (closed): fix(webfetch): Report truncation length in bytes (@tayoonabule)
-- **PR #2080** (closed): fix: preserve runtime context when opening swarm agents (@fardjad)
-- **PR #2078** (closed): fix(tui): emit OSC 52 before native clipboard in SSH sessions (@osmanaksu)
-- **PR #2072** (2026-11-06): fix(browser): keep requested browser across scoped handoff inputs (@ptlnextdoor)
-- **PR #2065** (closed): fix(build): sweep stale launcher backups on Windows publish (@gdamprint-cmyk)
-- **PR #2063** (closed): feat(tui): copy session ID from picker (@Aafimalek)
 
 ---
 
@@ -2872,42 +2807,54 @@ repeating the provider error in the manual hint.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): keep the terminal in TUI mode when a draw panic is recovered
+## X. tui): retain unchanged cells in sparse frame snapshots
 
 **RULE**:
-When implementing operations in `crates/jcode-tui-permissions/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-tui/src/tui/app/run_shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6234b21e`: tui): keep the terminal in TUI mode when a draw panic is recovered. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a3e25f7`: tui): retain unchanged cells in sparse frame snapshots. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui-permissions/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/app/run_shell.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let mut terminal = jcode_tui_style::init_terminal()
-            .map_err(|error| anyhow::anyhow!("failed to initialize terminal: {error}"))?;
+/// Keep the spinner/animation snapshot exact without cloning unchanged cells
+/// on sparse frames. Ratatui already counted flushed updates, so dense redraws
+/// retain the straight vector copy rather than paying another diff scan.
+pub(super) fn update_retained_frame(previous: &mut Buffer, rendered: &Buffer, updates: usize) {
+    let sparse = previous.area == rendered.area
+        && previous.content.len() == rendered.content.len()
+        && updates < rendered.content.len() / 4;
+    previous.area = rendered.area;
+    if sparse {
+        for (to, from) in previous.content.iter_mut().zip(&rendered.content) {
+            if to != from {
+                to.clone_from(from);
+            }
+        }
+    } else {
+        previous.content.clone_from(&rendered.content);
+    }
+}
+
+                // Reuse the Vec and skip unchanged cells on sparse frames.
+                update_retained_frame(&mut buffer, completed.buffer, completed.flushed_updates);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        let mut terminal = std::panic::catch_unwind(std::panic::AssertUnwindSafe(ratatui::init))
-            .map_err(|payload| {
-                let msg = if let Some(s) = payload.downcast_ref::<&str>() {
-                    (*s).to_string()
-                } else if let Some(s) = payload.downcast_ref::<String>() {
-                    s.clone()
-                } else {
-                    "unknown panic".to_string()
-                };
-                anyhow::anyhow!("failed to initialize terminal: {}", msg)
-            })?;
+// Induced defect failure mode:
+                // Derived `Buffer::clone_from` reallocates; `Vec::clone_from`
+                // reuses the existing cell storage.
+                buffer.area = completed.buffer.area;
+                buffer.content.clone_from(&completed.buffer.content);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6234b21e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a3e25f7` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

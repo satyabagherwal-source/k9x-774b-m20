@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T04:53:53.786Z",
-  "total_records": 962,
+  "last_updated": "2026-11-15T05:37:24.066Z",
+  "total_records": 967,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 472,
+      "total": 475,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -509,7 +509,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings",
         "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants",
         "DOM-D-5D6E0080",
-        "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-sft-core-invariants",
+        "DOM-D-C2638E7B",
+        "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i"
       ]
     },
     "E": {
@@ -916,7 +919,7 @@
       ]
     },
     "I": {
-      "total": 36,
+      "total": 38,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -953,7 +956,9 @@
         "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
         "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-kcl-lang-kcl-core-invariants",
-        "domain_intelligence-content-information-intelligence-kcl-lang-kcl-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-kcl-lang-kcl-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-1jehuang-jcode-core-invariants",
+        "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants"
       ]
     },
     "J": {
@@ -6705,8 +6710,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "ec68be447c92138e925f71a8c1d468c21ec19eff3090d5822c511b0aa7877a03",
-      "created_at": "2026-11-13T20:07:24.323Z"
+      "content_hash": "922c96e8fa194470555a2082b7c2b9ec918bb0d9df287b5929fe7aaea74b5e81",
+      "created_at": "2026-11-15T05:31:52.778Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -6723,8 +6728,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "4df0ae4eccf426307fb184c1bb54e00896e4fb9558cc32ad2c0ab68467b8def1",
-      "created_at": "2026-11-13T20:08:04.418Z"
+      "content_hash": "72ea8646d59f97a5544190ba20a37b00e45833824cfd1aa25f73ff5cc2debbfb",
+      "created_at": "2026-11-15T05:37:24.066Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -18697,6 +18702,84 @@
       "repository": "crosspaste-crosspaste-desktop-learnings",
       "content_hash": "3e6e570b951697c3b9c90bbc52f01ff8a7dd4c336bab80123434741c9ee42be2",
       "created_at": "2026-11-15T04:53:53.005Z"
+    },
+    "domain_intelligence-content-information-intelligence-1jehuang-jcode-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-1jehuang-jcode-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: 1jehuang/jcode Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-1jehuang-jcode-content-information-intelligence-1jehuang-jcode-core-invariants.md",
+      "repository": "1jehuang/jcode",
+      "content_hash": "5158016e3cd97212bd56a716f406a6794b2d36632ea39ffadc73836be3e884a7",
+      "created_at": "2026-11-15T05:31:42.522Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-sft-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-sft-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-SFT Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-sft-research-knowledge-intelligence-openmoss-team-mo.md",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "content_hash": "72ca526aa903d2a40968fb4ea9958fcb866c5fd282f98baacf4f8c2fdee9c00d",
+      "created_at": "2026-11-15T05:36:45.585Z"
+    },
+    "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: 1jehuang-jcode-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-1jehuang-jcode-learnings-content-information-intelligence-1jehuang-jcode-learnin.md",
+      "repository": "1jehuang-jcode-learnings",
+      "content_hash": "b4b571133f91e850d994903e1ffe63e7135748cd4c55310998f435e7a74a9b95",
+      "created_at": "2026-11-15T05:36:48.776Z"
+    },
+    "DOM-D-C2638E7B": {
+      "record_id": "DOM-D-C2638E7B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): OpenMOSS-Team/MOSS-Image-SFT",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT](https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT))  \n> **Source Version**: `hf-openmoss-`  \n> **License**: Open-",
+      "content_hash": "5f760e130375903cb65412419cc5c8c87dbbabf0e1ffeb68e503ab6d37d686de",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md`  \n> **Source**: huggingface ([https://",
+      "provenance": {
+        "source_uri": "project://hf-openmoss-team-moss-image-sft/hf-openmoss-team-moss-image-sft-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T05:36:49.206Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openmoss-team-moss-image-sft)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openmoss-team-moss-image-sft"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T05:37:22.716Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-sft-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-sft-learnings-research-knowledge-intelligence-hf-ope.md",
+      "repository": "hf-openmoss-team-moss-image-sft-learnings",
+      "content_hash": "a1bbc4d53c875ebac75c384809aa56ca6b7e66e87c8f78f22e868ff7db6b14c2",
+      "created_at": "2026-11-15T05:37:22.962Z"
     }
   }
 }

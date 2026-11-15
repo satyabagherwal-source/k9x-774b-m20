@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T04:53:53.902Z",
-  "total_verified_learnings": 8665,
+  "last_updated": "2026-11-15T05:37:24.211Z",
+  "total_verified_learnings": 8667,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18162,
+  "total_items": 18177,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111950,10 +111950,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "edc81e6f",
-      "content_hash": "ec68be447c92138e925f71a8c1d468c21ec19eff3090d5822c511b0aa7877a03",
+      "source_version": "ba8940f6",
+      "content_hash": "922c96e8fa194470555a2082b7c2b9ec918bb0d9df287b5929fe7aaea74b5e81",
       "domain_letter": "B",
-      "persisted_at": "2026-11-13T20:07:24.323Z"
+      "persisted_at": "2026-11-15T05:31:52.778Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -111962,10 +111962,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "edc81e6f",
-      "content_hash": "6e8845994366e000f4dfe53b4ce9c328ae0f805f9ea7bf7dba8bfcde51c6bc1d",
+      "source_version": "ba8940f6",
+      "content_hash": "a3053d179c26bc21558d11d42547f4a1a6e7ee348dcdfec8394137c47ba1b2ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:07:24.436Z"
+      "persisted_at": "2026-11-15T05:31:52.907Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -111987,9 +111987,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "4df0ae4eccf426307fb184c1bb54e00896e4fb9558cc32ad2c0ab68467b8def1",
+      "content_hash": "72ea8646d59f97a5544190ba20a37b00e45833824cfd1aa25f73ff5cc2debbfb",
       "domain_letter": "B",
-      "persisted_at": "2026-11-13T20:08:04.418Z"
+      "persisted_at": "2026-11-15T05:37:24.066Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -111999,9 +111999,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "417a1f26179964ab992a894ce19a8b8adb6e1f1618f71f947d33ff36814432b5",
+      "content_hash": "f50ad447a11eb3fc4b638baeb4feaaccd865e95565f588e32d501d74a0bf7a26",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:08:04.544Z"
+      "persisted_at": "2026-11-15T05:37:24.211Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -213876,8 +213876,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "edc81e6f",
-      "content_hash": "041e66a86946ffa02f3b70f132ef54b2406adcf9772e235375f9b016e2e63cd8",
+      "source_version": "ba8940f6",
+      "content_hash": "6a34b8686faf0e45dd4f28c7438fe437ed027905ae2288f0fb5163ee006a3f65",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -213885,6 +213885,11 @@
           "number": 8371,
           "title": "datapath/iptables: scope NOTRACK tunnel rules to local addresses",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "update all go dependencies main",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213892,7 +213897,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:07:23.853Z",
+      "verified_at": "2026-11-15T05:31:52.246Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239794,6 +239799,224 @@
       "content_hash": "47c63de8316152cc5fa76ac7563bac67c751fcc23d1e8b8286f2dad8690275ba",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T04:53:53.229Z"
+    },
+    "learn-github-1jehuang-jcode": {
+      "learning_id": "learn-github-1jehuang-jcode",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "1jehuang/jcode",
+      "repository": "1jehuang/jcode",
+      "slug": "1jehuang-jcode",
+      "platform": "github",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "25b40def",
+      "content_hash": "150f4452c76a5118a365199e86fd861c1b23e099c5933971f6c8a546789ec9b3",
+      "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8580,
+          "title": "retain unchanged cells in sparse frame snapshots",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T05:31:41.999Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8580": {
+      "learning_id": "rule-8580",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8580,
+      "title": "retain unchanged cells in sparse frame snapshots",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "25b40def",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T05:31:41.999Z"
+    },
+    "candidate_directive-retain-unchanged-cells-in-sparse-frame-snapshots": {
+      "item_id": "candidate_directive-retain-unchanged-cells-in-sparse-frame-snapshots",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D8S3-retain-unchanged-cells-in-sparse-frame-snapshots.md",
+      "title": "retain unchanged cells in sparse frame snapshots",
+      "repository": "1jehuang/jcode",
+      "source_version": "25b40def",
+      "content_hash": "664cc578675679f6173c035c186511950f967b64ede7f4d328830d5ff35128aa",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T05:31:42.394Z"
+    },
+    "domain_intelligence-content-information-intelligence-1jehuang-jcode-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-1jehuang-jcode-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-1jehuang-jcode-content-information-intelligence-1jehuang-jcode-core-invariants.md",
+      "title": "Content & Information Intelligence: 1jehuang/jcode Core Invariants",
+      "repository": "1jehuang/jcode",
+      "source_version": "25b40def",
+      "content_hash": "5158016e3cd97212bd56a716f406a6794b2d36632ea39ffadc73836be3e884a7",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T05:31:42.522Z"
+    },
+    "agent_contract-agent-contract-1jehuang-jcode-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-1jehuang-jcode-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
+      "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
+      "repository": "1jehuang/jcode",
+      "source_version": "25b40def",
+      "content_hash": "870a669f9dc28f0f94d9807448c2e93356f44764cc32db2e7044e71aa87708a0",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T05:31:42.654Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
+      "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
+      "repository": "1jehuang/jcode",
+      "source_version": "25b40def",
+      "content_hash": "83859e989b3f939656e1ac81d2e5d1ad7a8e0d3443a6697e8d1b676b30b30acb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T05:31:42.775Z"
+    },
+    "candidate_directive-update-all-go-dependencies-main": {
+      "item_id": "candidate_directive-update-all-go-dependencies-main",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DGP4-update-all-go-dependencies-main.md",
+      "title": "update all go dependencies main",
+      "repository": "cilium/cilium",
+      "source_version": "ba8940f6",
+      "content_hash": "bc57dec3ac2b0ae7724dab87c68d6eeaa91e59b3abb59f87637849eaf4c48e87",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-15T05:31:52.650Z"
+    },
+    "learn-huggingface-openmoss-team-moss-image-sft": {
+      "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "OpenMOSS-Team/MOSS-Image-SFT",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "slug": "hf-openmoss-team-moss-image-sft",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "content_hash": "defb48f51daa34ac53a8f9bbd9732e2be18161ccf7b32a709f0ec3e9af75fbb7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T05:36:45.198Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-sft-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-sft-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-sft-research-knowledge-intelligence-openmoss-team-mo.md",
+      "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-SFT Core Invariants",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "content_hash": "72ca526aa903d2a40968fb4ea9958fcb866c5fd282f98baacf4f8c2fdee9c00d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T05:36:45.585Z"
+    },
+    "candidate_directive-tui-retain-unchanged-cells-in-sparse-frame-snapshots": {
+      "item_id": "candidate_directive-tui-retain-unchanged-cells-in-sparse-frame-snapshots",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JT2I-tui-retain-unchanged-cells-in-sparse-frame-snapshots.md",
+      "title": "tui): retain unchanged cells in sparse frame snapshots",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bd765e11f2a22c8b09cc816d0eed88acabee622dc468ee82b5c6b36b78fd4985",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T05:36:48.624Z"
+    },
+    "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-1jehuang-jcode-learnings-content-information-intelligence-1jehuang-jcode-learnin.md",
+      "title": "Content & Information Intelligence: 1jehuang-jcode-learnings Core Invariants",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b4b571133f91e850d994903e1ffe63e7135748cd4c55310998f435e7a74a9b95",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T05:36:48.776Z"
+    },
+    "agent_contract-agent-contract-1jehuang-jcode-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-1jehuang-jcode-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-learnings-agent-contract-1jehuang-jcode-learnings-autonomous-spec.md",
+      "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "21e2f493d9c299c869b1f8d78fb3299c48a5d3c3259be2d17e861cd845e7e618",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T05:36:48.922Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/1jehuang-jcode-learnings-verification-protocol-empirical-defect-shield-for-1jehu.md",
+      "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "44c7858756a7f744dd95c91eafd5f0baed6801b1a8eb8b2ffd14dbff416f8f0a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T05:36:49.059Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-sft-learnings-research-knowledge-intelligence-hf-ope.md",
+      "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-sft-learnings Core Invariants",
+      "repository": "hf-openmoss-team-moss-image-sft-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a1bbc4d53c875ebac75c384809aa56ca6b7e66e87c8f78f22e868ff7db6b14c2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T05:37:22.962Z"
+    },
+    "candidate_directive-deps-update-all-go-dependencies-main": {
+      "item_id": "candidate_directive-deps-update-all-go-dependencies-main",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KKBJ-deps-update-all-go-dependencies-main.md",
+      "title": "deps): update all go dependencies main",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "893e5e58be650f583c8d577797bbf98a8e47308a91e25ed5e8498ecc5c247743",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-15T05:37:23.935Z"
     }
   },
   "ai-builder-brain": {

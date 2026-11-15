@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T04:53:19.400Z",
-  "total_cycles_completed": 9666,
-  "total_learnings_persisted": 9666,
-  "total_rules_promoted": 9303,
+  "last_updated": "2026-11-15T05:36:45.383Z",
+  "total_cycles_completed": 9669,
+  "total_learnings_persisted": 9669,
+  "total_rules_promoted": 9305,
   "history": [
-    {
-      "timestamp": "2026-11-14T05:46:26.560Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T05:46:33.557Z",
-      "repository": "BuilderIO/builder",
-      "learningId": "learn-github-builderio-builder",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T05:46:40.867Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T06:05:36.515Z",
       "repository": "FermionResearch/Phonon-2",
@@ -1403,6 +1382,27 @@
       "repository": "CrossPaste/crosspaste-desktop",
       "learningId": "learn-github-crosspaste-crosspaste-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T05:31:42.187Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T05:31:52.434Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T05:36:45.383Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

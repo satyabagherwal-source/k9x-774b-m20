@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `3e94495c`  
+> **Source Version**: `25b40def`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:32:32.546Z  
+> **Timestamp**: 2026-11-15T05:31:41.138Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:32:32.539Z  
+> **Harvest Timestamp**: 2026-11-15T05:31:40.924Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21747 stars
+- **Stars / Engagement**: 21778 stars
 
 ---
 
@@ -2306,11 +2306,11 @@ impl Agent {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2086** (2026-11-06): **tests/e2e: remote disconnect tests assert the pre-f21e0197a close contract and fail once e2e compiles again**
-  *Symptoms*: ## Problem  Once tests/e2e compiles again (see #2083 for the current E0063), the e2e suite fails 5 disconnect tests deterministically on both ubuntu-latest and macos-latest CI runners:  ``` disconnect::remote_disconnect_after_done_closes_session disconnect::remote_disconnect_finishes_without_reattach_and_closes_session disconnect::remote_disconnect_reattaches_and_cancels_original_turn disconnect::remote_disconnect_reattaches_twice_and_finishes_original_turn disconnect::remote_disconnect_while_idle_closes_session ```  Each fails with `Error: deadline has elapsed` after a 10s poll.  ## Cause  f21e0197a (fix(server): retain remote sessions after client disconnect) intentionally changed the `continue_on_disconnect` contract: cleanup now returns early and keeps idle sessions Active, per the new wire.rs doc ("Idle sessions remain available for swarm reports and wake turns"). The five e2e tests above subscribe with `continue_on_disconnect: true` and then poll `Session::load` until the session leaves `Active`, which is the pre-f21e0197a behavior.  The unit tests were updated (client_disconnect_grace_tests.rs gained continued_coordinator_survives_disconnect_without_reconnect_grace), but the e2e assertions in tests/e2e/disconnect.rs were not.  ## Evidence  These same five tests passed on the Nov-4 CI runs (e.g. run 41813836036, job 126519519348) and fail identically on trees that carry f21e0197a plus the e2e compile fix.  ## Fix  Update tests/e2e/disconnect.rs: the `remote_*` abrupt-di
+- **Issue #2151** (2026-11-13): **swarm: lane todo name uses the full spawn prompt (first 60 chars) instead of the short `label`**
+  *Symptoms*: **Type:** bug **Labels:** `bug`, `swarm`, `todo`  **Problem** When spawning a worker, the coordinator's lane todo is named with the **first 60 characters of the spawn prompt** (the full message), not the short `label`. Long prompts become unwieldy todo names that pollute the coordinator's plan and break `todo update` by short name (the plan already contains a todo named with the prompt text, so a different short name appears as a "duplicate todo name" error).  **Code** - `crates/jcode-app-core/src/tool/communicate.rs:1270-1283` — on `spawn`, `title` is computed as `prompt.lines().find(non-empty).chars().take(60)`; `label` is only used as a fallback when `title` is empty. `ensure_spawn_lane(&todos, &label, phase, &title, prompt, ...)` creates the lane with this long title as the todo name.  **Repro** 1. `swarm spawn` with `label: "providers-analyst"` and a long `initial_message` starting with "You are a codebase analyst. The repo root is /Users/mac/jcode ...". 2. The coordinator's todo plan now contains a todo named "You are a codebase analyst. The repo root is /Users/mac/jcode" (first 60 chars). 3. Trying `todo update` with the short name "providers-analyst" fails with "duplicate todo name" because the existing todo is named with the prompt text.  **Suggested fix** 1. Use `label` as the lane todo **name** (not the prompt). Keep the full prompt as the todo **description**/task body. 2. Concretely in `communicate.rs:1273-1277`: set `title = label`, and pass the prompt as the de
 
-- **Issue #2083** (2026-11-06): **tests/e2e: client_name missing in test support constructors breaks full-workspace builds**
-  *Symptoms*: ## Problem  A full-workspace `cargo test` fails to compile on current `master` (c22c4aa9):  ``` error[E0063]: missing field `client_name` in initializer of `Request`   --> tests/e2e/test_support/mod.rs:367    |    |             Request::Subscribe { ... }    |                                     ^^^ missing `client_name`  error[E0063]: missing field `client_name` in initializer of `Request`   --> tests/e2e/test_support/mod.rs:411    |    |             Request::ResumeSession { ... }    |                                        ^^^ missing `client_name` ```  ## Repro  ``` cargo test --workspace --no-run ```  ## Cause  `765f9e4c1` (client_name on wire requests) added the `client_name: Option<String>` field to `Request::Subscribe` and `Request::ResumeSession` in `crates/jcode-protocol/src/wire.rs` but did not update the e2e test support constructors in `tests/e2e/test_support/mod.rs`. The CI workflow compiles `--lib --bins`, so `tests/e2e` never compiles there and the breakage only shows on a local full workspace build.  ## Fix  Set `client_name: None` in both constructors in `tests/e2e/test_support/mod.rs`.  I have this ready as a one-line-per-request branch and can open a PR if wanted. 
+- **Issue #2139** (2026-11-13): **master: config_env_fingerprint test red since 5bfba140b, JCODE_RESUME_OPEN_ELSEWHERE missing from CONFIG_ENV_KEYS**
+  *Symptoms*: ### Summary `cargo test -p jcode-base --lib config_env_fingerprint_tracks_every_apply_env_override_var` fails on the current master tip: `Config::apply_env_overrides` reads `JCODE_RESUME_OPEN_ELSEWHERE` (added in 5bfba140b) but the constant `CONFIG_ENV_KEYS` in `crates/jcode-base/src/config.rs` was not updated.  ### Steps to reproduce 1. `cargo test -p jcode-base --lib config_env_fingerprint_tracks_every_apply_env_override_var`  ### Expected The fingerprint test passes: every env var read by `Config::apply_env_overrides` is listed in `CONFIG_ENV_KEYS`.  ### Actual ``` thread 'config::tests::config_env_fingerprint_tracks_every_apply_env_override_var' panicked at crates/jcode-base/src/config_tests.rs:990:5: CONFIG_ENV_KEYS must include every env var read by Config::apply_env_overrides; missing: ["JCODE_RESUME_OPEN_ELSEWHERE"] ``` The key is read in `crates/jcode-base/src/config/env_overrides.rs:303` next to `JCODE_RESUME_TIME`, but only `JCODE_RESUME_PROJECT_SCOPE` and `JCODE_RESUME_TIME` exist in the `CONFIG_ENV_KEYS` list in `crates/jcode-base/src/config.rs:122`.  ### Proposed fix Add `"JCODE_RESUME_OPEN_ELSEWHERE"` to `CONFIG_ENV_KEYS` in `crates/jcode-base/src/config.rs`, next to the other `JCODE_RESUME_*` entries.  Happy to open a PR if you want.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2327,388 +2327,441 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c33cd2f` (2026-11-13)
-**Commit Message**: tui: batch streamed text at 250ms on unfocused clients, keep the spinner at 80ms
+### Incident Patch 1: `0a3e25f7` (2026-11-14)
+**Commit Message**: perf(tui): retain unchanged cells in sparse frame snapshots
 
-An unfocused client that mirrors a streaming turn drew a full frame every
-100ms to reveal text. That frame was also the only thing moving the spinner,
-because the one-cell spinner repaint was disabled whenever streamed text was
-on screen.
+Keep the vector-copy fast path for dense frames and resizes. Sparse synthetic frames: 44.17ms to 28.34ms across 500 updates. Verify Unicode/style/resize equivalence and unchanged heap-backed symbol reuse.
 
-Unfocused text reveal now batches at 250ms, and the one-cell spinner repaint
-stays available while unfocused text streams, so the spinner keeps its 80ms
-motion between batches. Focused clients are unchanged.
-
-Measured on private sockets, unfocused client, 10s windows during an essay
-streaming turn, three alternating rounds against the previous build:
-
-  main thread CPU   89 to 108 ticks  ->  55 to 59 ticks
-  process CPU       10.5% (one round read)  ->  5.8% (one round read)
-  full-frame ticks  98 to 101  ->  37 to 40
-  spinner repaints  0  ->  120 to 121
-
-Total wakeups did not drop: 78.7/s before (one round read) and 77.8/s after
-(one round read). The server still delivers about 19 turn events a second and
-each one wakes the loop, and the spinner thread now adds 12.5/s.
-
-test_active_swarm_spinner_keeps_redrawing_at_deep_idle fails with and without
-this change.
-
-**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +4/-1)
+**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +21/-4)
 ```diff
-@@ -116,8 +116,11 @@ pub(super) fn status_spinner_only_symbol(app: &App) -> Option<&'static str> {
-     // responsive instead of choppy at the ~1 Hz passive-liveness redraw rate.
-     // When decorative animations are off it advances at the smooth liveness
-     // rate; otherwise it uses the full-rate spinner clock.
-+    // A focused client streams text as full frames fast enough to carry the
-+    // spinner. An unfocused one batches text slowly, so the spinner needs this
-+    // path to keep its normal 80ms motion between batches.
-     if !app.is_processing
--        || !app.streaming.streaming_text.is_empty()
-+        || (!app.streaming.streaming_text.is_empty() && app.client_focused())
-         || app.centered_mode()
-         || app.has_pending_mouse_scroll_animation()
-         || app.remote_startup_phase_active()
-```
-
-**File**: `crates/jcode-tui/src/tui/app/tests/spinner_slash_commands.rs` (modified, +24/-0)
-```diff
-@@ -24,3 +24,27 @@ fn slash_palette_remains_navigable_while_streaming_spinner_is_active() {
-     assert!(app.input.starts_with('/'));
-     assert!(!app.cancel_requested, "palette input must not interrupt the turn");
- }
-+
-+/// An unfocused client batches streamed text slowly, so the one-cell spinner
-+/// repaint has to stay available between batches. A focused client streams
-+/// full frames fast enough to carry the spinner and keeps the old behaviour.
-+#[test]
-+fn unfocused_streaming_keeps_the_one_cell_spinner_path() {
-+    let mut app = create_test_app();
-+    app.is_processing = true;
-+    app.status = ProcessingStatus::Streaming;
-+    app.processing_started = Some(Instant::now());
-+    app.streaming.streaming_text = "partial reply".to_string();
-+
-+    app.set_client_focused(true);
-+    assert!(
-+        super::run_shell::status_spinner_only_symbol(&app).is_none(),
-+        "focused streaming draws the spinner with its full frames"
-+    );
-+
-+    app.set_client_focused(false);
-+    assert!(
-+        super::run_shell::status_spinner_only_symbol(&app).is_some(),
-+        "unfocused streaming must keep the spinner moving between text batches"
-+    );
-+}
-```
-
-**File**: `crates/jcode-tui/src/tui/redraw_schedule.rs` (modified, +12/-4)
-```diff
-@@ -27,6 +27,12 @@ pub(crate) const REDRAW_STATIC_STREAM: Duration = Duration::from_millis(80);
- /// closely at a background pane, but agent swarms keep a dozen of them
- /// streaming at once, so full-rate repaints there are pure battery cost.
- pub(crate) const REDRAW_UNFOCUSED_MIN: Duration = Duration::from_millis(100);
-+/// Text batching rate for an unfocused client that is streaming a reply. Each
-+/// batch is a full frame, so this is the expensive part of a mirrored working
-+/// window: at 100ms it measured 10 full frames/s and about 9% of a core. The
-+/// spinner does not depend on this rate, it is repainted as a single cell on
-+/// its own 80ms clock (see `status_spinner_only_symbol`).
-+pub(crate) const REDRAW_UNFOCUSED_STREAM: Duration = Duration::from_millis(250);
- 
- /// Whether this session has been left alone long enough to be treated as
- /// dormant (deep idle): no stream activity *and* no user interaction for
-@@ -425,14 +431,16 @@ pub(crate) fn redraw_interval_with_policy_and_animation(
+@@ -59,6 +59,25 @@ pub(super) fn coalesced_frame_timer(
      }
  }
  
--/// Fastest tick for an unfocused client. Text that is still being revealed
--/// (or a scroll animation) keeps [`REDRAW_UNFOCUSED_MIN`] so a visible tiled
--/// pane still shows live output. A background turn that is only thinking or
-+/// Fastest tick for an unfocused client. A scroll animation keeps
-+/// [`REDRAW_UNFOCUSED_MIN`]. Text that is still being revealed is batched at
-+/// [`REDRAW_UNFOCUSED_STREAM`], so a visible tiled pane still shows live output. A background turn that is only thinking or
- /// running a tool has nothing but a spinner and timer to move, so it ticks at
- /// the passive liveness rate: measured 10 full frames/s per such session before.
- fn unfocused_redraw_min(state: &dyn TuiState) -> Duration {
--    if state.stream_reveal_pending() || state.has_pending_mouse_scroll_animation() {
-+    if state.has_pending_mouse_scroll_animation() {
-         REDRAW_UNFOCUSED_MIN
-+    } else if state.stream_reveal_pending() {
-+        REDRAW_UNFOCUSED_STREAM
-     } else {
-         REDRAW_PASSIVE_LIVENESS
-     }
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_tests/basic/redraw_cadence.rs` (modified, +1/-1)
-```diff
-@@ -367,7 +367,7 @@ fn unfocused_streaming_client_is_capped_but_focused_is_not() {
-     state.unfocused = true;
-     assert_eq!(
-         crate::tui::redraw_interval_with_policy(&state, &policy),
--        crate::tui::redraw_schedule::REDRAW_UNFOCUSED_MIN
-+        crate::tui::redraw_schedule::REDRAW_UNFOCUSED_STREAM
-     );
- }
- 
-```
-
----
-
-### Incident Patch 2: `3288e0ee` (2026-11-13)
-**Commit Message**: tui: read server events in batches on an unfocused client mirroring a turn
-
-An unfocused client that mirrors a streaming turn woke its event loop once
-per server event, about 19 to 26 times a second, although it only reveals
-text every 250ms. It now handles everything already delivered in one wakeup
-and then leaves the socket alone for one text batch. Focused clients and
-clients with no turn in flight read each event as it arrives, as before.
-
-Measured on private sockets, unfocused client, 10s windows during an essay
-streaming turn, three alternating rounds against the previous commit:
-
-  process wakeups   77.7 to 79.8/s  ->  65.0 to 69.3/s
-  main thread       32.2 to 33.5/s  ->  19.9 to 20.5/s
-  runtime worker    31.4 to 34.8/s  ->  32.4 to 36.1/s (unchanged)
-  spinner repaints  121 to 125 per 10s on both
-
-Process CPU did not improve in these runs: 2.4%, 5.4%, 4.1% before and 4.7%,
-4.3%, 5.2% after. The "before" windows each began in the thinking phase, so
-the CPU figures are not a like-for-like comparison.
-
-A turn's last event can now reach an unfocused window up to 250ms later.
-
-**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +67/-17)
-```diff
-@@ -70,6 +70,16 @@ pub(crate) fn refresh_preview_redraw_timer(
-     }
- }
- 
-+/// Most server events handled in one wakeup while they are being batched.
-+const SERVER_EVENT_DRAIN_MAX: usize = 256;
-+
-+/// Whether server events may be read in batches instead of one per wakeup:
-+/// only for an unfocused client that is mirroring a turn in flight. A focused
-+/// client, or one with nothing running, reads every event as it arrives.
-+pub(super) fn hold_server_events_while_unfocused(app: &App) -> bool {
-+    app.is_processing && !app.client_focused()
-+}
-+
- /// Spinner cadence. Not a runtime timer: see [`SpinnerTicker`] for why that
- /// cost four thread wakeups per frame.
- pub(super) fn status_spinner_interval() -> SpinnerTicker {
-@@ -941,6 +951,11 @@ impl App {
- 
-             let mut input_redraw = true;
-             let mut deferred_redraw_at: Option<tokio::time::Instant> = None;
-+            // While set, server events stay in the socket buffer. An unfocused
-+            // client mirroring a turn was woken about 19 times a second by
-+            // them, one event per wakeup, and nothing on screen needs that
-+            // rate: text is revealed in REDRAW_UNFOCUSED_STREAM batches.
-+            let mut server_events_held_until: Option<tokio::time::Instant> = None;
-             // Main event loop
-             loop {
-                 self.sync_sleep_guard();
-@@ -1072,24 +1087,59 @@ impl App {
-                         super::wake_stats::note("deferred_redraw");
-                         deferred_redraw_at = None;
-                     }
--                    event = remote_conn.next_event() => {
--                        match &event {
--                            crate::tui::backend::RemoteRead::Event(event) => super::wake_stats::note_debug("server", event),
--                            crate::tui::backend::RemoteRead::Disconnected(_) => super::wake_stats::note("server:closed"),
-+                    _ = async {
-+                        match server_events_held_until {
-+                            Some(at) => tokio::time::sleep_until(at).await,
-+                            None => futures::future::pending::<()>().await,
-                         }
--                        let (outcome, event_redraw) = remote::handle_remote_event(
--                            &mut self,
--                            &mut terminal,
--                            &mut remote_conn,
--                            &mut remote_state,
--                            event,
--                        )
--                        .await?;
--                        needs_redraw |= event_redraw;
--                        match outcome {
--                            remote::RemoteEventOutcome::Continue => {}
--                            remote::RemoteEventOutcome::Reconnect => continue 'outer,
--                            remote::RemoteEventOutcome::Quit => break 'outer,
-+                    } => {
-+                        super::wake_stats::note("server_events_released");
-+                        server_events_held_until = None;
-+                    }
-+                    event = remote_conn.next_event(), if server_events_held_until.is_none() || self.client_focused() => {
-+                        server_events_held_until = None;
-+                        let mut event = event;
-+                        let mut drained = 0usize;
-+                        loop {
-+                            match &event {
-+                                crate::tui::backend::RemoteRead::Event(event) => super::wake_stats::note_debug("server", event),
-+                                crate::tui::backend::RemoteRead::Disconnected(_) => super::wake_stats::note("server:closed"),
-+                            }
-+                            let (outcome, event_redraw) = remote::handle_remote_event(
-+                                &mut self,
-+                                &mut terminal,
-+                                &mut remote_conn,
-+                                &mut remote_state,
-+                                event,
-+                            )
-+                            .await?;
-+                            needs_redraw |= event_redraw;
-+                            match outcome {
-+                                remote::RemoteEventOutcome::Continue => {}
-+                                remote::RemoteEventOutcome::Reconnect => continue 'outer,
-+                                remote::RemoteEventOutcome::Quit => break 'outer,
-+                            }
-+                            // Unfocused mid-turn: take everything already
-+                            // delivered in this one wakeup, then leave the
-+                            // socket alone for one text batch. Bounded so a
-+                            // flood cannot starve input or drawing.
-+                            if !hold_server_events_while_unfocused(&self) {
-+                                break;
-+                            }
-+                            drained += 1;
-+                            if dra
-```
-
-**File**: `crates/jcode-tui/src/tui/app/tests/spinner_slash_commands.rs` (modified, +15/-0)
-```diff
-@@ -48,3 +48,18 @@ fn unfocused_streaming_keeps_the_one_cell_spinner_path() {
-         "unfocused streaming must keep the spinner moving between text batches"
-     );
- }
-+
-+/// Server events are batched only for an unfocused client with a turn in
-+/// flight. Focus, or an idle session, must read each event as it arrives.
-+#[test]
-+fn server_events_are_held_only_while_unfocused_and_processing() {
-+    let mut app = create_test_app();
-+    app.set_client_focused(false);
-+    assert!(!super::run_shell::hold_server_events_while_unfocused(&app));
-+
-+    app.is_processing = true;
-+    assert!(super::run_shell::hold_server_events_while_unfocused(&app));
-+
-+    app.set_client_focused(true);
-+    assert!(!super::run_shell::hold_server_events_while_unfocused(&app));
-+}
-```
-
----
-
-### Incident Patch 3: `eb539b77` (2026-11-12)
-**Commit Message**: tui: do not wake the spinner thread for a reset to the phase it already has
-
-Full frames call reset_after several times a second while a turn
-streams, and nearly all of them ask for the frame boundary the thread
-is already sleeping towards. Each one woke the thread to say so. A
-live mirrored window on the previous build showed the thread at 16.4
-wakeups/s against a 12.5/s frame rate.
-
-Covered by unit tests. Not measured in isolation: one private run on a
-build containing this change read 12.5/s on the thread.
-
-**File**: `crates/jcode-tui/src/tui/app/spinner_ticker.rs` (modified, +54/-4)
-```diff
-@@ -117,9 +117,16 @@ impl SpinnerTicker {
-             // Nobody is waiting for ticks. Remember the phase without waking
-             // the thread: an idle client repaints full frames too.
-             self.restart_delay = delay;
--        } else {
--            self.schedule(self.fallback_next);
-+            return;
-         }
-+        // Full frames arrive several times a second while a turn streams, and
-+        // nearly all of them ask for the frame boundary the thread is already
-+        // sleeping towards. Waking it to hear that costs a wakeup per frame.
-+        let current = lock(&self.shared.state).next;
-+        if current.is_some_and(|next| same_phase(next, self.fallback_next, self.period)) {
-+            return;
++/// Keep the spinner/animation snapshot exact without cloning unchanged cells
++/// on sparse frames. Ratatui already counted flushed updates, so dense redraws
++/// retain the straight vector copy rather than paying another diff scan.
++pub(super) fn update_retained_frame(previous: &mut Buffer, rendered: &Buffer, updates: usize) {
++    let sparse = previous.area == rendered.area
++        && previous.content.len() == rendered.content.len()
++        && updates < rendered.content.len() / 4;
++    previous.area = rendered.area;
++    if sparse {
++        for (to, from) in previous.content.iter_mut().zip(&rendered.content) {
++            if to != from {
++                to.clone_from(from);
++            }
 +        }
-+        self.schedule(self.fallback_next);
-     }
- 
-     fn schedule(&self, next: Instant) {
-@@ -144,6 +151,15 @@ fn lock(state: &Mutex<State>) -> std::sync::MutexGuard<'_, State> {
-         .unwrap_or_else(std::sync::PoisonError::into_inner)
- }
- 
-+/// Whether two deadlines sit on the same frame grid, give or take an eighth of
-+/// a frame. Scheduling jitter and the `f32` elapsed clock both move a deadline
-+/// by a millisecond or so, which is not worth a wakeup to correct.
-+fn same_phase(a: Instant, b: Instant, period: Duration) -> bool {
-+    let period = period.as_nanos().max(1);
-+    let apart = if a > b { a - b } else { b - a }.as_nanos() % period;
-+    apart.min(period - apart) <= period / 8
++    } else {
++        previous.content.clone_from(&rendered.content);
++    }
 +}
 +
- /// First point after `now` on the grid `previous + n * period`. Missed frames
- /// are skipped rather than replayed: the spinner is liveness, not simulated time.
- fn next_on_grid(previous: Instant, period: Duration, now: Instant) -> Instant {
-@@ -276,8 +292,8 @@ mod tests {
-             start.elapsed()
-         );
- 
--        // While running, it reschedules the thread.
--        ticker.reset_after(Duration::from_millis(10));
-+        // While running, a reset to a different phase reschedules the thread.
-+        ticker.reset_after(Duration::from_millis(100));
-         let start = Instant::now();
-         ticker.tick().await;
-         assert!(
-@@ -287,6 +303,40 @@ mod tests {
-         );
+ pub(super) fn redraw_timer(period: Duration) -> tokio::time::Interval {
+     let mut interval = tokio::time::interval_at(tokio::time::Instant::now() + period, period);
+     // Redraw ticks represent visual liveness, not elapsed simulation steps. An
+@@ -615,10 +634,8 @@ impl StatusSpinnerRenderer {
+         let total_cells = Some(completed.buffer.content.len());
+         let completed_buffer = match stored_frame {
+             Some(mut buffer) => {
+-                // Derived `Buffer::clone_from` reallocates; `Vec::clone_from`
+-                // reuses the existing cell storage.
+-                buffer.area = completed.buffer.area;
+-                buffer.content.clone_from(&completed.buffer.content);
++                // Reuse the Vec and skip unchanged cells on sparse frames.
++                update_retained_frame(&mut buffer, completed.buffer, completed.flushed_updates);
+                 buffer
+             }
+             None => completed.buffer.clone(),
+```
+
+**File**: `crates/jcode-tui/src/tui/app/run_shell_tests.rs` (modified, +42/-8)
+```diff
+@@ -509,6 +509,46 @@ fn idle_animation_repaint_preserves_cells_outside_animation_after_swap() {
      }
+ }
  
-+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+    async fn reset_to_the_same_phase_leaves_the_thread_asleep() {
-+        let period = Duration::from_millis(400);
-+        let mut ticker = SpinnerTicker::new(period, period);
-+        ticker.tick().await;
-+        let scheduled = lock(&ticker.shared.state).next.expect("running");
-+
-+        // A full frame asking for the boundary already scheduled, a little off.
-+        let delay = scheduled.saturating_duration_since(Instant::now()) + Duration::from_millis(3);
-+        ticker.reset_after(delay);
-+        assert_eq!(lock(&ticker.shared.state).next, Some(scheduled));
-+        // One whole frame later is still the same grid.
-+        ticker.reset_after(delay + period);
-+        assert_eq!(lock(&ticker.shared.state).next, Some(scheduled));
-+
-+        // Half a frame off is a real phase change.
-+        ticker.reset_after(delay + period / 2);
-+        assert_ne!(lock(&ticker.shared.state).next, Some(scheduled));
++#[test]
++fn retained_frame_update_matches_a_full_copy_for_sparse_dense_and_resized_frames() {
++    for old_area in [Rect::new(0, 0, 8, 4), Rect::new(3, 2, 7, 3)] {
++        for new_area in [old_area, Rect::new(0, 0, 10, 2), Rect::new(0, 0, 0, 0)] {
++            for reported_updates in [0, 1, 8, 100] {
++                let mut previous = Buffer::empty(old_area);
++                let mut rendered = Buffer::empty(new_area);
++                for (i, cell) in rendered.content.iter_mut().enumerate() {
++                    cell.set_symbol(["a", "日", "e\u{301}", "👩‍💻"][i % 4]);
++                    cell.set_fg(if i % 2 == 0 { Color::Red } else { Color::Cyan });
++                    cell.set_bg(Color::Blue);
++                    cell.skip = i % 3 == 0;
++                }
++                let capacity = previous.content.capacity();
++                let storage = previous.content.as_ptr();
++                update_retained_frame(&mut previous, &rendered, reported_updates);
++                assert_eq!(previous, rendered);
++                if old_area == new_area {
++                    assert_eq!(previous.content.as_ptr(), storage);
++                    assert_eq!(previous.content.capacity(), capacity);
++                }
++            }
++        }
 +    }
++}
 +
-+    #[test]
-+    fn same_phase_tolerates_jitter_and_whole_frames() {
-+        let period = Duration::from_millis(80);
-+        let base = Instant::now();
-+        let ms = Duration::from_millis;
-+        assert!(same_phase(base, base, period));
-+        assert!(same_phase(base, base + ms(9), period));
-+        assert!(same_phase(base + ms(9), base, period));
-+        assert!(same_phase(base, base + ms(160), period));
-+        assert!(same_phase(base, base + ms(75), period));
-+        assert!(!same_phase(base, base + ms(20), period));
-+        assert!(!same_phase(base, base + ms(120), period));
++#[test]
++fn sparse_retained_frame_keeps_unchanged_heap_backed_symbols() {
++    let mut cell = ratatui::buffer::Cell::EMPTY;
++    cell.set_symbol(&format!("a{}", "\u{301}".repeat(32)));
++    let source = Buffer::filled(Rect::new(0, 0, 8, 4), cell);
++    let mut previous = source.clone();
++    let symbol = previous.content[0].symbol().as_ptr();
++    let mut rendered = source;
++    rendered.content[1].set_fg(Color::Red);
++    update_retained_frame(&mut previous, &rendered, 1);
++    assert_eq!(previous, rendered);
++    assert_eq!(previous.content[0].symbol().as_ptr(), symbol);
++}
++
+ #[test]
+ #[ignore = "manual retained-frame copy timing probe"]
+ fn retained_frame_copy_probe() {
+@@ -536,25 +576,19 @@ fn retained_frame_copy_probe() {
+     let full_time = started.elapsed();
+     target.content.clone_from(&source.content);
+     let started = Instant::now();
+-    let mut copied = 0usize;
+     for frame in 0..frames {
+         source.content[frame % area.area() as usize].set_fg(if frame % 2 == 0 {
+             Color::Yellow
+         } else {
+             Color::Green
+         });
+-        for (to, from) in target.content.iter_mut().zip(black_box(&source.content)) {
+-            if to != from {
+-                to.clone_from(from);
+-                copied += 1;
+-            }
+-        }
++        update_retained_frame(&mut target, black_box(&source), 1);
+         black_box(&target);
+     }
+     let selective_time = started.elapsed();
+     assert_eq!(target, source);
+     eprintln!(
+-        "retained frame copy: {frames} frames, full {full_time:?} ({} copied cells), selective {selective_time:?} ({copied} copied cells)",
++        "retained frame copy: {frames} frames, full {full_time:?} ({} copied cells), selective {selective_time:?} ({frames} copied cells)",
+         frames * area.area() as usize
+     );
+ }
+```
+
+---
+
+### Incident Patch 2: `62abb68b` (2026-11-14)
+**Commit Message**: fix(tui): preserve newer drafts when held prompts fail delivery
+
+**File**: `crates/jcode-tui/src/tui/app/remote/input_dispatch.rs` (modified, +9/-1)
+```diff
+@@ -198,7 +198,15 @@ pub(in crate::tui::app) async fn submit_prepared_remote_input(
+         .await
+     {
+         app.remove_display_message(echo_index);
+-        restore_prepared_remote_input(app, prepared);
++        app.restore_failover_payload(super::super::FallbackResendPayload {
++            content: prepared.expanded,
++            images: prepared.images,
++            raw_input: Some(prepared.raw_input),
++            is_system: false,
++            system_reminder: None,
++            auto_retry: false,
++            retry_attempts: 0,
++        });
+         app.push_display_message(DisplayMessage::error(format!(
+             "Failed to send message: {error}"
+         )));
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/reload_recovery_replay.rs` (modified, +48/-2)
+```diff
+@@ -347,7 +347,7 @@ fn reload_recovery_prepared_send_failure_restores_draft_without_exiting() {
+     );
+     assert!(!app.is_processing);
+     assert!(app.current_message_id.is_none());
+-    assert_eq!(app.input, "Continue the interrupted work");
++    assert_eq!(app.input, "Continue the interrupted work [image 1]");
+     assert_eq!(app.cursor_pos, app.input.len());
+     assert_eq!(app.pending_images, images);
+     assert!(
+@@ -382,7 +382,7 @@ fn reload_recovery_keyboard_send_failure_keeps_client_and_draft_alive() {
+     let result =
+         rt.block_on(app.handle_remote_key(KeyCode::Enter, KeyModifiers::empty(), &mut connection));
+     assert!(result.is_ok());
+-    assert_eq!(app.input, "Keep this prompt");
++    assert_eq!(app.input, "Keep this prompt [image 1]");
+     assert_eq!(app.pending_images, images);
+     assert!(!app.is_processing);
+     assert!(
+@@ -392,6 +392,52 @@ fn reload_recovery_keyboard_send_failure_keeps_client_and_draft_alive() {
+     );
+ }
+ 
++#[test]
++fn reload_recovery_deferred_send_failure_preserves_newer_draft() {
++    let rt = tokio::runtime::Runtime::new().unwrap();
++    let _guard = rt.enter();
++    for after_model_switch in [false, true] {
++        let mut app = create_test_app();
++        app.is_remote = true;
++        app.auto_poke_incomplete_todos = false;
++        let mut connection = crate::tui::backend::RemoteConnection::dummy();
++        app.remote_model_switch_in_flight = after_model_switch;
++        let held_image = ("image/png".to_string(), "held-image".to_string());
++        rt.block_on(remote::submit_prepared_remote_input(
++            &mut app,
++            &mut connection,
++            input::PreparedInput {
++                raw_input: "Held prompt [image 1]".to_string(),
++                expanded: "Expanded held prompt".to_string(),
++                images: vec![held_image.clone()],
++            },
++        ))
++        .unwrap();
++        let new_image = ("image/png".to_string(), "new-image".to_string());
++        app.input = "Newer unsent draft [image 1]".to_string();
++        app.cursor_pos = app.input.len();
++        app.pending_images = vec![new_image.clone()];
++        connection.mark_history_loaded();
++        app.remote_model_switch_in_flight = false;
++        drop(connection.take_dummy_peer());
++        rt.block_on(remote::process_remote_followups(&mut app, &mut connection));
++        assert_eq!(app.input, "Newer unsent draft [image 1] [image 2]");
++        assert_eq!(app.pending_images, vec![new_image, held_image]);
++        assert!(!app.is_processing);
++        assert!(app.pending_prompt_after_model_switch.is_none());
++        assert!(app.pending_prompt_before_history.is_none());
++        assert!(app.display_messages().iter().any(|message| {
++            message.content.contains("Held prompt [image 1]")
++                && message.content.contains("draft text is preserved")
++        }));
++        assert!(
++            app.display_messages()
++                .iter()
++                .any(|message| message.content.contains("Failed to send message:"))
++        );
 +    }
++}
 +
-     #[test]
-     fn late_grid_points_are_skipped_not_replayed() {
-         let period = Duration::from_millis(80);
+ #[test]
+ fn reload_recovery_preserves_visible_turn_timer_through_dispatch() {
+     let _env_guard = crate::storage::lock_test_env();
+```
+
+---
+
+### Incident Patch 3: `f067b920` (2026-11-14)
+**Commit Message**: fix(tui): classify combined recovery retries and expose send failures
+
+**File**: `crates/jcode-tui/src/tui/app/remote/input_dispatch.rs` (modified, +16/-16)
+```diff
+@@ -25,6 +25,14 @@ pub(in crate::tui::app) async fn begin_remote_send(
+     // this as an execution retry. Do this at the shared send boundary so both
+     // fallback resends and same-route retries behave identically.
+     const EXECUTION_RETRY_PREFIX: &str = "<system-reminder>Retry the interrupted execution of the previous turn. Continue from the current conversation and completed tool results without repeating completed work.</system-reminder>\n\n";
++    let recovery = app.cloud_recovery_reminder();
++    let system_reminder = match (system_reminder, recovery.as_ref()) {
++        (Some(reminder), Some(recovery)) => Some(format!("{reminder}\n\n{recovery}")),
++        (None, Some(recovery)) => Some(recovery.clone()),
++        (reminder, None) => reminder,
++    };
++    // Classify the final wire reminder, including cloud recovery context. A
++    // cloud-only continuation otherwise bypasses the execution-retry marker.
+     let system_reminder = system_reminder.map(|reminder| {
+         if retry_attempts > 0
+             && is_system
+@@ -37,12 +45,6 @@ pub(in crate::tui::app) async fn begin_remote_send(
+             reminder
+         }
+     });
+-    let recovery = app.cloud_recovery_reminder();
+-    let system_reminder = match (system_reminder, recovery.as_ref()) {
+-        (Some(reminder), Some(recovery)) => Some(format!("{reminder}\n\n{recovery}")),
+-        (None, Some(recovery)) => Some(recovery.clone()),
+-        (reminder, None) => reminder,
+-    };
+     let msg_id = remote
+         .send_message_with_images_reminder_and_skill(
+             content.clone(),
+@@ -189,9 +191,8 @@ pub(in crate::tui::app) async fn submit_prepared_remote_input(
+         title: None,
+         tool_data: None,
+     });
+-    let _ = app
+-        .begin_remote_send(remote, prepared.expanded, prepared.images, false)
+-        .await;
++    app.begin_remote_send(remote, prepared.expanded, prepared.images, false)
++        .await?;
+     Ok(())
+ }
+ 
+@@ -890,13 +891,12 @@ mod ssh_slash_tests {
+                 .unwrap();
+                 assert!(app.pending_prompt_before_history.is_none(), "{command}");
+                 assert_eq!(remote.next_request_id_for_test(), next_id);
+-                assert!(
+-                    app.display_messages()
+-                        .last()
+-                        .unwrap()
+-                        .content
+-                        .contains("SSH")
+-                );
++                assert!(app
++                    .display_messages()
++                    .last()
++                    .unwrap()
++                    .content
++                    .contains("SSH"));
+             }
+             for command in [
+                 "/future remote skill /context",
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/reload_recovery_replay.rs` (modified, +221/-8)
+```diff
+@@ -92,7 +92,11 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
+     ))
+     .unwrap();
+     assert_eq!(
+-        app.rate_limit_pending_message.as_ref().unwrap().system_reminder.as_deref(),
++        app.rate_limit_pending_message
++            .as_ref()
++            .unwrap()
++            .system_reminder
++            .as_deref(),
+         Some(original.as_str())
+     );
+ 
+@@ -112,12 +116,21 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
+     assert!(app.is_processing);
+     assert!(app.pending_fallback_resend.is_none());
+     let pending = app.rate_limit_pending_message.as_ref().unwrap();
+-    assert!(pending.content.is_empty(), "do not echo another user prompt");
++    assert!(
++        pending.content.is_empty(),
++        "do not echo another user prompt"
++    );
+     assert_eq!(pending.retry_attempts, 1);
+     let retry = pending.system_reminder.clone().unwrap();
+-    assert_ne!(retry, original, "an exact replay is suppressed by the server");
++    assert_ne!(
++        retry, original,
++        "an exact replay is suppressed by the server"
++    );
+     assert!(retry.contains("Retry the interrupted execution"));
+-    assert!(retry.ends_with(&original), "preserve the recovery instructions");
++    assert!(
++        retry.ends_with(&original),
++        "preserve the recovery instructions"
++    );
+ 
+     // Same-route retries share the fix and must not grow the reminder each time.
+     rt.block_on(remote::begin_remote_send(
+@@ -132,11 +145,213 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
+     ))
+     .unwrap();
+     assert_eq!(
+-        app.rate_limit_pending_message.as_ref().unwrap().system_reminder.as_deref(),
++        app.rate_limit_pending_message
++            .as_ref()
++            .unwrap()
++            .system_reminder
++            .as_deref(),
+         Some(retry.as_str())
+     );
+ }
+ 
++#[test]
++fn reload_recovery_cloud_retry_marks_final_wire_reminder() {
++    use tokio::io::AsyncBufReadExt;
++
++    let rt = tokio::runtime::Runtime::new().unwrap();
++    let _guard = rt.enter();
++    for existing in [None, Some("Additional recovery instructions".to_string())] {
++        let mut app = create_test_app();
++        app.is_remote = true;
++        let session = super::commands::active_session_id(&app);
++        let original = ReloadContext::recovery_directive(
++            Some(&reload_replay_context(&session)),
++            true,
++            "",
++            None,
++        )
++        .unwrap()
++        .continuation_message;
++        app.cloud_recovery_context = Some((session, original.clone()));
++        app.cloud_recovery_auto_pending = true;
++        let mut connection = crate::tui::backend::RemoteConnection::dummy();
++        let mut peer = tokio::io::BufReader::new(connection.take_dummy_peer().unwrap());
++        rt.block_on(async {
++            remote::begin_remote_send(
++                &mut app,
++                &mut connection,
++                String::new(),
++                vec![],
++                true,
++                existing.clone(),
++                true,
++                1,
++            )
++            .await
++            .unwrap();
++            let mut line = String::new();
++            tokio::time::timeout(Duration::from_secs(1), peer.read_line(&mut line))
++                .await
++                .unwrap()
++                .unwrap();
++            let wire: serde_json::Value = serde_json::from_str(&line).unwrap();
++            let reminder = wire["system_reminder"].as_str().unwrap();
++            assert!(reminder.starts_with("<system-reminder>Retry the interrupted execution"));
++            assert!(reminder.ends_with(&original));
++            if let Some(existing) = existing.as_ref() {
++                assert!(reminder.contains(existing));
++            }
++            assert!(app.cloud_recovery_context.is_none());
++            assert!(!app.cloud_recovery_auto_pending);
++            let pending = app.rate_limit_pending_message.clone().unwrap();
++            assert_eq!(pending.system_reminder.as_deref(), Some(reminder));
++
++            // A manual fallback can reset the retry budget. That must not
++            // strip execution identity or add another wrapper on the wire.
++            remote::begin_remote_send(
++                &mut app,
++                &mut connection,
++                pending.content,
++                pending.images,
++                pending.is_system,
++                pending.system_reminder,
++                pending.auto_retry,
++                0,
++            )
++            .await
++            .unwrap();
++            let mut retry_line = String::new();
++            tokio::time::timeout(Duration::from_secs(1), peer.read_line(&mut retry_line))
++                .await
++                .unwrap()
++                .unwrap();
++            let retry_wire: serde_json::Value = serde_json::from_str(&retry_line).unwrap();
++            assert_eq!(retry_wire["system_reminder"], wire["system_reminder"]);
++        });
++
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2130** (closed): style: cargo fmt on master (@alecuba16)
+- **PR #2125** (closed): fix(tui): match openpty pointer signature in libc 0.2.191 (@alecuba16)
+- **PR #2124** (closed): fix(tui): pin picker metadata and token badge test expectations (@alecuba16)
+- **PR #2123** (closed): fix(voice): compile niri socket helper only on unix (@alecuba16)
+- **PR #2122** (closed): fix(cli): requires_api_key is false for bare-IP compat endpoints (@alecuba16)
 - **PR #2098** (closed): fix(webfetch): Report truncation length in bytes (@tayoonabule)
-- **PR #2080** (closed): fix: preserve runtime context when opening swarm agents (@fardjad)
-- **PR #2078** (closed): fix(tui): emit OSC 52 before native clipboard in SSH sessions (@osmanaksu)
-- **PR #2072** (2026-11-06): fix(browser): keep requested browser across scoped handoff inputs (@ptlnextdoor)
-- **PR #2065** (closed): fix(build): sweep stale launcher backups on Windows publish (@gdamprint-cmyk)
 
 ---
 
@@ -2728,13 +2781,13 @@ build containing this change read 12.5/s on the thread.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui: batch streamed text at 250ms on unfocused clients, keep the spinner at 80ms
+## X. tui): retain unchanged cells in sparse frame snapshots
 
 **RULE**:
 When implementing operations in `crates/jcode-tui/src/tui/app/run_shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c33cd2f`: tui: batch streamed text at 250ms on unfocused clients, keep the spinner at 80ms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a3e25f7`: tui): retain unchanged cells in sparse frame snapshots. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/app/run_shell.rs`.
@@ -2742,17 +2795,37 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // A focused client streams text as full frames fast enough to carry the
-    // spinner. An unfocused one batches text slowly, so the spinner needs this
-    // path to keep its normal 80ms motion between batches.
-        || (!app.streaming.streaming_text.is_empty() && app.client_focused())
+/// Keep the spinner/animation snapshot exact without cloning unchanged cells
+/// on sparse frames. Ratatui already counted flushed updates, so dense redraws
+/// retain the straight vector copy rather than paying another diff scan.
+pub(super) fn update_retained_frame(previous: &mut Buffer, rendered: &Buffer, updates: usize) {
+    let sparse = previous.area == rendered.area
+        && previous.content.len() == rendered.content.len()
+        && updates < rendered.content.len() / 4;
+    previous.area = rendered.area;
+    if sparse {
+        for (to, from) in previous.content.iter_mut().zip(&rendered.content) {
+            if to != from {
+                to.clone_from(from);
+            }
+        }
+    } else {
+        previous.content.clone_from(&rendered.content);
+    }
+}
+
+                // Reuse the Vec and skip unchanged cells on sparse frames.
+                update_retained_frame(&mut buffer, completed.buffer, completed.flushed_updates);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        || !app.streaming.streaming_text.is_empty()
+// Induced defect failure mode:
+                // Derived `Buffer::clone_from` reallocates; `Vec::clone_from`
+                // reuses the existing cell storage.
+                buffer.area = completed.buffer.area;
+                buffer.content.clone_from(&completed.buffer.content);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c33cd2f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a3e25f7` are properly handled with clean fallback behavior.

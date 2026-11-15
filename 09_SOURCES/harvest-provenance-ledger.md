@@ -10063,3 +10063,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-15T04:53:13.243Z |
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `bf971f9a` | Multi-dimensional audit evidence | 2026-11-15T04:53:19.395Z |
 | `learn-dom-d-5d6e0080` | `project://hf-openmoss-team-moss-image-base` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | 2026-11-15T04:53:52.300Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `25b40def` | Multi-dimensional audit evidence | 2026-11-15T05:31:42.181Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ba8940f6` | Multi-dimensional audit evidence | 2026-11-15T05:31:52.428Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-15T05:36:45.377Z |
+| `learn-dom-d-c2638e7b` | `project://hf-openmoss-team-moss-image-sft` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | 2026-11-15T05:37:22.734Z |

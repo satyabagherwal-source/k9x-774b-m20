@@ -10030,3 +10030,7 @@
 | `CYCLE-20261115-ZR13` | `2026-11-15T04:53:13.239Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`474e1c14...`) |
 | `CYCLE-20261115-ZVS0` | `2026-11-15T04:53:19.392Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8579` | Yes (`f5f81661...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T04:53:52.300Z` | `hf-openmoss-team-moss-image-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5D6E0080` [Domain D] | Yes (`a75b6def...`) |
+| `CYCLE-20261115-D8M9` | `2026-11-15T05:31:42.177Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8580` | Yes (`150f4452...`) |
+| `CYCLE-20261115-DGIW` | `2026-11-15T05:31:52.424Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`6a34b868...`) |
+| `CYCLE-20261115-JQKC` | `2026-11-15T05:36:45.372Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`defb48f5...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T05:37:22.734Z` | `hf-openmoss-team-moss-image-sft` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C2638E7B` [Domain D] | Yes (`5f760e13...`) |

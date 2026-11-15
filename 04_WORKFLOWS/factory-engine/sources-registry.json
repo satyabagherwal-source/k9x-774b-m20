@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T04:53:25.309Z",
-    "lastVerified": "2026-11-15T04:53:25.309Z",
+    "lastChecked": "2026-11-15T05:36:48.247Z",
+    "lastVerified": "2026-11-15T05:36:48.247Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -473,8 +473,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T04:05:05.059Z",
-    "lastVerified": "2026-11-15T04:05:05.059Z",
+    "lastChecked": "2026-11-15T05:31:51.276Z",
+    "lastVerified": "2026-11-15T05:31:51.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1328,12 +1328,12 @@
     "revisionIdentifier": "cfed3caa"
   },
   "clockworklabs-spacetimedb": {
-    "name": "clockworklabs/SpacetimeDB",
+    "name": "SpacetimeDB",
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T19:27:30.958Z",
-    "lastVerified": "2026-11-13T19:27:30.958Z",
+    "lastChecked": "2026-11-15T05:31:48.961Z",
+    "lastVerified": "2026-11-15T05:31:48.961Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
@@ -1342,7 +1342,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "07e99d13"
   },
   "sharkdp-fd": {
     "name": "sharkdp/fd",
@@ -2048,22 +2049,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T20:09:39.494Z",
-    "lastVerified": "2026-11-14T20:09:39.494Z",
+    "lastChecked": "2026-11-15T05:31:51.735Z",
+    "lastVerified": "2026-11-15T05:31:51.735Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "041e66a86946ffa02f3b70f132ef54b2406adcf9772e235375f9b016e2e63cd8",
+    "contentHash": "6a34b8686faf0e45dd4f28c7438fe437ed027905ae2288f0fb5163ee006a3f65",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "edc81e6f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -2939,14 +2939,14 @@
     "officialUrl": "https://github.com/1jehuang/jcode",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T12:32:32.539Z",
-    "lastVerified": "2026-11-13T12:32:32.539Z",
+    "lastChecked": "2026-11-15T05:31:40.924Z",
+    "lastVerified": "2026-11-15T05:31:40.924Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "0d3f6ab9ffbe3db056a4ea6999105bbd08e55081ae59cfce507a0f524fcf5344",
+    "contentHash": "150f4452c76a5118a365199e86fd861c1b23e099c5933971f6c8a546789ec9b3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7605,12 +7605,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "opentofu-opentofu": {
-    "name": "opentofu/opentofu",
+    "name": "opentofu",
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T20:36:52.758Z",
-    "lastVerified": "2026-11-13T20:36:52.758Z",
+    "lastChecked": "2026-11-15T05:31:43.963Z",
+    "lastVerified": "2026-11-15T05:31:43.963Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
@@ -7619,7 +7619,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7ca6e772"
   },
   "genkit-ai-genkit": {
     "name": "genkit-ai/genkit",
@@ -8734,9 +8735,9 @@
   "louiscad-splitties": {
     "name": "Splitties",
     "officialUrl": "https://github.com/LouisCAD/Splitties",
-    "lastChecked": "2026-11-11T18:03:33.669Z",
+    "lastChecked": "2026-11-15T05:31:41.257Z",
     "revisionIdentifier": "1ed56ba2",
-    "lastVerified": "2026-11-11T18:03:33.669Z"
+    "lastVerified": "2026-11-15T05:31:41.257Z"
   },
   "biomejs-biome": {
     "name": "biomejs/biome",
@@ -9589,12 +9590,12 @@
     "officialUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T16:18:17.963Z",
-    "lastVerified": "2026-11-09T16:18:17.963Z",
+    "lastChecked": "2026-11-15T05:31:39.037Z",
+    "lastVerified": "2026-11-15T05:31:39.037Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "b60390073ec57e5050150b2512867ec6ff6f890b91d751b5179104e2aa1c18bc",
+    "contentHash": "defb48f51daa34ac53a8f9bbd9732e2be18161ccf7b32a709f0ec3e9af75fbb7",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

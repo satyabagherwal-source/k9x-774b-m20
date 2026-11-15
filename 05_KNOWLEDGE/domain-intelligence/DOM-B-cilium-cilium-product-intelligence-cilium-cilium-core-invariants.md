@@ -4,24 +4,24 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "edc81e6f",
+  "source_version": "ba8940f6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T20:07:24.205Z",
+  "timestamp": "2026-11-15T05:31:52.649Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `edc81e6f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T20:07:24.205Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `ba8940f6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T05:31:52.649Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 84%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cilium/cilium:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:07:23.046Z  
+> **Harvest Timestamp**: 2026-11-15T05:31:51.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25829 stars
+- **Stars / Engagement**: 25837 stars
 
 ---
 
@@ -1273,16 +1273,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50008** (2026-11-13): **bgp: Sort attributes by type when printing**
-  *Symptoms*: Let's improve upon the previous fix by sorting the path attributes ourselves before printing them to have control over the order on our side.  AIL: 0 Fixes: 907d31116a0 ("bgp: Reorder expected path attribute in the pod-cidr.txtar") 
-  **Post-Mortem & Fix Analysis**:
-  > /test
+- **Issue #50028** (2026-11-15): **fix(deps): update all go dependencies main (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | Type | Update | Pending | |---|---|---|---|---|---|---| | [github.com/aws/aws-sdk-go-v2/config](https://redirect.github.com/aws/aws-sdk-go-v2) | `v1.33.16` → `v1.33.17` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2faws%2faws-sdk-go-v2%2fconfig/v1.33.17?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2faws%2faws-sdk-go-v2%2fconfig/v1.33.16/v1.33.17?slim=true) | require | patch | `v1.33.18` | | [github.com/aws/smithy-go](https://redirect.github.com/aws/smithy-go) | `v1.28.8` → `v1.28.9` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2faws%2fsmithy-go/v1.28.9?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2faws%2fsmithy-go/v1.28.8/v1.28.9?slim=true) | require | patch |  | | [github.com/klauspost/compress](https://redirect.github.com/klauspost/compress) | `v1.20.3` → `v1.20.4` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.4?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.20.3/v1.20.4?slim=true) | require | patch |  | | [github.com/tidwall/gjson](https://redirect.github.com/tidwall/gjson) | `v1.20.1` → `v1.20.2` | ![age](https://developer.mend.io/api/mc/ba
 
-- **Issue #49999** (2026-11-12): **fix(linux/adnr): reconcile direct routes before node table initialization**
-  *Symptoms*: This PR allows ADNR to publish direct routes while ClusterMesh initializes the node table. Waiting for node table initialization creates a dependency cycle: ClusterMesh waits for direct routes before completing its initializer, while ADNR waits for that initializer before reconciling the routes.  AIL:0  
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > /ci-kpr-aks
+- **Issue #50027** (2026-11-14): **fix(deps): update security updates to v1.47.0 [security] (v1.19) - autoclosed**
+  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [go.opentelemetry.io/otel/sdk](https://redirect.github.com/open-telemetry/opentelemetry-go) | `v1.45.0` → `v1.47.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2fsdk/v1.47.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2fsdk/v1.45.0/v1.47.0?slim=true) | | [go.opentelemetry.io/otel/trace](https://redirect.github.com/open-telemetry/opentelemetry-go) | `v1.45.0` → `v1.47.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2ftrace/v1.47.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2ftrace/v1.45.0/v1.47.0?slim=true) |  ---  ### opentelemetry-go: AttributeValueLengthLimit is fully bypassed by attribute values composed of valid U+FFFD runes [CVE-2026-128085](https://nvd.nist.gov/vuln/detail/CVE-2026-128085) / [GHSA-q7gw-24fr-5p69](https://redirect.github.com/advisories/GHSA-q7gw-24fr-5p69)  <details> <summary>More information</summary>  #### Details ##### Summary  The `AttributeValueLengthLimit` span/log-record limit can be bypassed entirely with attribute values that consist of valid U+FFFD (REPLACEMENT CHARACTER) runes. The
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1299,590 +1294,353 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `edc81e6f` (2026-10-28)
-**Commit Message**: datapath/iptables: scope NOTRACK tunnel rules to local addresses
+### Incident Patch 1: `ba8940f6` (2026-11-15)
+**Commit Message**: fix(deps): update all go dependencies main
 
-skipping conntrack and simply accepting packets
-for a flow based solely in the destination port
-might cause certain flows (ex: transit flows,
-and NATted flows that happen to pick a tunnel port)
-to not go over the normal path as other non-local traffic
+Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-this PR adds an extra argument to the iptables rules
-targeted at tunnel traffic terminated at the node
-to be more specific and only apply to local addresses.
-
-relies on addrtype iptables module
-
-added required modules to system requirements doc
-
-Signed-off-by: Bernardo Soares <[REDACTED_EMAIL]>
-
-**File**: `Documentation/operations/system_requirements.rst` (modified, +2/-1)
+**File**: `go.mod` (modified, +10/-10)
 ```diff
-@@ -194,7 +194,8 @@ The following kernel configuration options are required for proper operation:
-         CONFIG_VXLAN=y
-         CONFIG_GENEVE=y
-         CONFIG_FIB_RULES=y
--
-+        CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
-+        CONFIG_NETFILTER_XT_TARGET_CT=m
- 
- .. note::
- 
+@@ -11,10 +11,10 @@ require (
+ 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.1.0
+ 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
+ 	github.com/aws/aws-sdk-go-v2 v1.47.8
+-	github.com/aws/aws-sdk-go-v2/config v1.33.16
++	github.com/aws/aws-sdk-go-v2/config v1.33.17
+ 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8
+ 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.344.2
+-	github.com/aws/smithy-go v1.28.8
++	github.com/aws/smithy-go v1.28.9
+ 	github.com/blang/semver/v4 v4.0.0
+ 	github.com/cespare/xxhash/v2 v2.3.0
+ 	github.com/cilium/charts v0.0.0-20261102232526-70208ce5a396
+@@ -68,7 +68,7 @@ require (
+ 	github.com/jeremywohl/flatten v1.0.1
+ 	github.com/json-iterator/go v1.1.12
+ 	github.com/kevinburke/ssh_config v1.6.0
+-	github.com/klauspost/compress v1.20.3
++	github.com/klauspost/compress v1.20.4
+ 	github.com/lthibault/jitterbug/v2 v2.2.2
+ 	github.com/mackerelio/go-osstat v0.2.8
+ 	github.com/mattn/go-shellwords v1.0.16
+@@ -100,9 +100,9 @@ require (
+ 	github.com/spiffe/go-spiffe/v2 v2.9.0
+ 	github.com/spiffe/spire-api-sdk v1.16.0
+ 	github.com/stretchr/testify v1.12.1
+-	github.com/tidwall/gjson v1.20.1
+-	github.com/tidwall/sjson v1.2.7
+-	github.com/vishvananda/netlink v1.3.2-0.20261108183553-e0e26cd6138f
++	github.com/tidwall/gjson v1.20.2
++	github.com/tidwall/sjson v1.2.9
++	github.com/vishvananda/netlink v1.3.2-0.20261113171447-5a89637be57b
+ 	github.com/vishvananda/netns v0.0.5
+ 	go.etcd.io/etcd/api/v3 v3.7.3
+ 	go.etcd.io/etcd/client/pkg/v3 v3.7.3
+@@ -115,7 +115,7 @@ require (
+ 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb
+ 	golang.org/x/crypto v0.59.0
+ 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e
+-	golang.org/x/mod v0.42.0
++	golang.org/x/mod v0.43.0
+ 	golang.org/x/net v0.62.0
+ 	golang.org/x/sync v0.25.0
+ 	golang.org/x/sys v0.50.0
+@@ -169,13 +169,13 @@ require (
+ 	github.com/alecthomas/participle/v2 v2.1.0 // indirect
+ 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
+ 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+-	github.com/aws/aws-sdk-go-v2/credentials v1.20.16 // indirect
++	github.com/aws/aws-sdk-go-v2/credentials v1.20.17 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.11 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.11 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 // indirect
+@@ -293,7 +293,7 @@ require (
+ 	github.com/tetratelabs/wabin v0.0.0-20230304001439-f6f874872834 // indirect
+ 	github.com/tetratelabs/wazero v1.12.0 // indirect
+ 	github.com/tidwall/match v1.1.1 // indirect
+-	github.com/tidwall/pretty v1.2.1 // indirect
++	github.com/tidwall/pretty v1.3.0 // indirect
+ 	github.com/weppos/publicsuffix-go v0.30.0 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	github.com/xlab/treeprint v1.2.0 // indirect
 ```
 
-**File**: `pkg/datapath/iptables/iptables.go` (modified, +27/-27)
+**File**: `go.sum` (modified, +20/-20)
 ```diff
-@@ -791,41 +791,41 @@ func (m *manager) addCiliumAcceptTunnelRules(tunelPort uint16) (err error) {
- 	return nil
- }
- 
--// addCiliumAcceptTunnelRules adds the NOTRACK rule in the cilium raw prerouting
-+// installTunnelNoTrackRules adds the NOTRACK rule in the cilium raw prerouting
- // and output raw chains for udp destination port at `tunnelPort`.
- func (m *manager) installTunnelNoTrackRules(tunelPort uint16) error {
--	input := []string{
--		"-t", "raw",
--		"-A", ciliumPreRawChain,
--		"-p", "udp",
--		"--dport", strconv.Itoa(int(tunelPort)),
--		"-m", "comment", "--comment", "cilium: NOTRACK for tunnel traffic",
--		"-j", "CT", "--notrack",
--	}
--
--	output := []string{
--		"-t", "raw",
--		"-A", ciliumOutputRawChain,
--		"-p", "udp",
--		"--dport", strconv.Itoa(int(tunelPort)),
--		"-m", "comment", "--comment", "cilium: NOTRACK for tunnel traffic",
--		"-j", "CT", "--notrack",
--	}
-+	addRule := func(chain, localAddrDir string) error {
-+		cmd := []string{"-t", "raw",
-+			"-A", chain,
-+			"-p", "udp",
-+			"--dport", strconv.Itoa(int(tunelPort)),
-+			"-m", "addrtype", fmt.Sprintf("--%s-type", localAddrDir), "LOCAL",
-+			"-m", "comment", "--comment", "cilium: NOTRACK for tunnel traffic",
-+			"-j", "CT", "--notrack",
-+		}
- 
--	if m.sharedCfg.EnableIPv4 {
--		if err := m.ip4tables.runProg(input); err != nil {
--			return err
-+		if m.sharedCfg.EnableIPv4 {
-+			if err := m.ip4tables.runProg(cmd); err != nil {
-+				return err
-+			}
- 		}
--		if err := m.ip4tables.runProg(output); err != nil {
--			return err
-+
-+		if m.sharedCfg.EnableIPv6 {
-+			if err := m.ip6tables.runProg(cmd); err != nil {
-+				return err
-+			}
- 		}
-+
-+		return nil
- 	}
- 
--	if m.sharedCfg.EnableIPv6 {
--		if err := m.ip6tables.runProg(input); err != nil {
--			return err
-+	for _, chain := range []string{ciliumPreRawChain, ciliumOutputRawChain} {
-+		localAddrDir := "src"
-+		if chain == ciliumPreRawChain {
-+			localAddrDir = "dst"
- 		}
--		if err := m.ip6tables.runProg(output); err != nil {
-+
-+		if err := addRule(chain, localAddrDir); err != nil {
- 			return err
- 		}
- 	}
+@@ -76,10 +76,10 @@ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3d
+ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
+ github.com/aws/aws-sdk-go-v2 v1.47.8 h1:fuClo7Un+Bi0EDTnSIPWxVEoJcze+wkGzNA4Vo3jRcQ=
+ github.com/aws/aws-sdk-go-v2 v1.47.8/go.mod h1:I8lFSH4MGrZiw2m7miCrRYHsgpC1+HW8uiVGOiPYPcw=
+-github.com/aws/aws-sdk-go-v2/config v1.33.16 h1:fKRsu9Pj2IPIHzTcUdWB7JHY34q9+4XEGCy7WfZaLV4=
+-github.com/aws/aws-sdk-go-v2/config v1.33.16/go.mod h1:wdEdQ9RBH3fnD/vicCDUIJqv8Ck3zOpxNz8e3/NtkG8=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.16 h1:cqRWTY4fcctJGqZedMC1Khu4h2VsgRODUOIZwn39n3Y=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.16/go.mod h1:x8JgCOAnbnEVQOLVX6lOtsyTrG2EHgiRNqzku9jiVxA=
++github.com/aws/aws-sdk-go-v2/config v1.33.17 h1:5/Ahj9/efRCbHhZx0swd+rC2EqC8a2CE6/JnzYsJB70=
++github.com/aws/aws-sdk-go-v2/config v1.33.17/go.mod h1:H0TQmatulB8yoemlckKQrPDn8aMHqpMyO5QCkYaQH0w=
++github.com/aws/aws-sdk-go-v2/credentials v1.20.17 h1:n76tvnpRJUk/jwDBijhnuwHSus6VQuC8XXD1hB30F/0=
++github.com/aws/aws-sdk-go-v2/credentials v1.20.17/go.mod h1:Hzlq1/HGNzNpw1qP+5otW3+EwXhMrQdRnBYLBeJKEBU=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8 h1:1bCo9/cf7dlTlbrZnz7g1Bki72b5thfuzFZCjdWCfVk=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8/go.mod h1:mzPw75GydqddJpfuwYO/ZDIl6xNxKjK86apitdLmvV0=
+ github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 h1:LTxHSJ/rwTFfaXqi5mlKKHJOW+shFB+HQ7NrCa4OQ48=
+@@ -94,16 +94,16 @@ github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 h1:jGzHjc
+ github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24/go.mod h1:uJt75pK2cEyY80F5C+DK9YkCkJWsMkJViHxLYZRHl8Y=
+ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 h1:PO7Tx443ecMI00nIxDrT99DVcbeMBQ6BUtJlDMRnY24=
+ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11/go.mod h1:n/9RixikO12YvNomZLP8k4TgUSoEkT1W23QIrpFAPvw=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 h1:uo84u6f6YatFOBwk3DKM+ToqgVEB0cDjHQLsfrRm44A=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.4/go.mod h1:PCRJucC12nFWle7wRGhSj0cw3OKB84M0EBwTrv34dhg=
++github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 h1:1cHBtZSsEEvghtDyjtRoYZ4GdjJy9Sh45GglOWEEm5Q=
++github.com/aws/aws-sdk-go-v2/service/signin v1.13.0/go.mod h1:PCRJucC12nFWle7wRGhSj0cw3OKB84M0EBwTrv34dhg=
+ github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 h1:qQ97XqrlFGRRhhrcDbeqUVeezamo1a1F7lH4HczU7EA=
+ github.com/aws/aws-sdk-go-v2/service/sso v1.39.4/go.mod h1:mPM3sWIm0iUGl5OWkR9cG23PRFQ0Ir6y+3Hg0lKBAAE=
+ github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 h1:tbsL9+L+1SlD2W+9RjL7wD9ZVsxel7QXdQlIWt5tEi8=
+ github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4/go.mod h1:3L2pKVr2e3jaz9C26RXgjBIktSW1D7S0O38LhCdsAYc=
+ github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 h1:soG/8YBczEJwckK+e4HLt0RzfkvopGrdBjmbghG99Cc=
+ github.com/aws/aws-sdk-go-v2/service/sts v1.51.9/go.mod h1:We33qfrD3dQRAetZ+9qUH9w+ZjL1gwP2Qvp1YqQDdsk=
+-github.com/aws/smithy-go v1.28.8 h1:aEmdAq7gVCoGCnvf1NnELlu3I6D/nhqrC321FyFiQkQ=
+-github.com/aws/smithy-go v1.28.8/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
++github.com/aws/smithy-go v1.28.9 h1:zkZ058OpNX0iGTK24b+ZUEQSMc11CBA6oO7xtKZfzkY=
++github.com/aws/smithy-go v1.28.9/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
+ github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
+ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
+ github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
+@@ -473,8 +473,8 @@ github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRt
+ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
+-github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
++github.com/klauspost/compress v1.20.4 h1:dD0v/bvxtjCBqQu6sx1TNWkalEY5lNTIe+HY9w8TeNI=
++github.com/klauspost/compress v1.20.4/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/knqyf263/go-plugin v0.9.0 h1:CQs2+lOPIlkZVtcb835ZYDEoyyWJWLbSTWeCs0EwTwI=
+ github.com/knqyf263/go-plugin v0.9.0/go.mod h1:2z5lCO1/pez6qGo8CvCxSlBFSEat4MEp1DrnA+f7w8Q=
+ github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
+@@ -701,20 +701,20 @@ github.com/tetratelabs/wabin v0.0.0-20230304001439-f6f874872834 h1:ZF+QBjOI+tILZ
+ github.com/tetratelabs/wabin v0.0.0-20230304001439-f6f874872834/go.mod h1:m9ymHTgNSEjuxvw8E7WWe4Pl4hZQHXONY8wE6dMLaRk=
+ github.com/tetratelabs/wazero v1.12.0 h1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=
+ github.com/tetratelabs/wazero v1.1
 ```
 
-**File**: `pkg/datapath/iptables/iptables_test.go` (modified, +11/-4)
+**File**: `vendor/github.com/aws/aws-sdk-go-v2/config/CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -923,12 +923,19 @@ func testTunnelRulesTunnelingEnabled(t *testing.T, port uint16) {
- 		ip6tables: mockIp6tables,
- 	}
+@@ -1,3 +1,7 @@
++# v1.33.17 (2026-11-09)
++
++* **Dependency Update**: Updated to the latest SDK module versions
++
+ # v1.33.16 (2026-11-06)
  
--	expected := "%s -A %s -p udp --dport %d -m comment --comment %s"
-+	expectedFilter := "%s -A %s -p udp --dport %d -m comment --comment %s"
-+	expectedRaw := "%s -A %s -p udp --dport %d -m addrtype --%s-type LOCAL -m comment --comment %s"
+ * **Dependency Update**: Updated to the latest SDK module versions
+```
+
+**File**: `vendor/github.com/aws/aws-sdk-go-v2/config/go_module_metadata.go` (modified, +1/-1)
+```diff
+@@ -3,4 +3,4 @@
+ package config
  
- 	mockIp4tables.expectations = []expectation{
--		{args: fmt.Sprintf(expected, "-t filter", "CILIUM_OUTPUT", port, "cilium: ACCEPT for tunnel traffic -j ACCEPT")},
--		{args: fmt.Sprintf(expected, "-t raw", "CILIUM_PRE_raw", port, "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
--		{args: fmt.Sprintf(expected, "-t raw", "CILIUM_OUTPUT_raw", port, "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
-+		{args: fmt.Sprintf(expectedFilter, "-t filter", "CILIUM_OUTPUT", port, "cilium: ACCEPT for tunnel traffic -j ACCEPT")},
-+		{args: fmt.Sprintf(expectedRaw, "-t raw", "CILIUM_PRE_raw", port, "dst", "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
-+		{args: fmt.Sprintf(expectedRaw, "-t raw", "CILIUM_OUTPUT_raw", port, "src", "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
+ // goModuleVersion is the tagged release for this module
+-const goModuleVersion = "1.33.16"
++const goModuleVersion = "1.33.17"
+```
+
+**File**: `vendor/github.com/aws/aws-sdk-go-v2/credentials/CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -1,3 +1,7 @@
++# v1.20.17 (2026-11-09)
++
++* **Dependency Update**: Updated to the latest SDK module versions
++
+ # v1.20.16 (2026-11-06)
+ 
+ * **Dependency Update**: Updated to the latest SDK module versions
+```
+
+**File**: `vendor/github.com/aws/aws-sdk-go-v2/credentials/go_module_metadata.go` (modified, +1/-1)
+```diff
+@@ -3,4 +3,4 @@
+ package credentials
+ 
+ // goModuleVersion is the tagged release for this module
+-const goModuleVersion = "1.20.16"
++const goModuleVersion = "1.20.17"
+```
+
+**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/signin/CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -1,3 +1,7 @@
++# v1.13.0 (2026-11-09)
++
++* **Feature**: Adds the CreateBearerToken API, which exchanges your IAM credentials for a bearer token that can be used to access supported AWS services.
++
+ # v1.12.4 (2026-11-06)
+ 
+ * **Dependency Update**: Updated to the latest SDK module versions
+```
+
+**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/signin/api_op_CreateBearerToken.go` (added, +171/-0)
+```diff
+@@ -0,0 +1,171 @@
++// Code generated by smithy-go-codegen DO NOT EDIT.
++
++package signin
++
++import (
++	"context"
++	"github.com/aws/aws-sdk-go-v2/service/signin/schemas"
++	smithy "github.com/aws/smithy-go"
++	"github.com/aws/smithy-go/middleware"
++	"github.com/aws/smithy-go/ptr"
++)
++
++// Creates a bearer token that represents your IAM credentials and can be used to
++// access a supported AWS service. By default, the token is valid for 12 hours.
++func (c *Client) CreateBearerToken(ctx context.Context, params *CreateBearerTokenInput, optFns ...func(*Options)) (*CreateBearerTokenOutput, error) {
++	if params == nil {
++		params = &CreateBearerTokenInput{}
 +	}
 +
-+	mockIp6tables.expectations = []expectation{
-+		{args: fmt.Sprintf(expectedFilter, "-t filter", "CILIUM_OUTPUT", port, "cilium: ACCEPT for tunnel traffic -j ACCEPT")},
-+		{args: fmt.Sprintf(expectedRaw, "-t raw", "CILIUM_PRE_raw", port, "dst", "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
-+		{args: fmt.Sprintf(expectedRaw, "-t raw", "CILIUM_OUTPUT_raw", port, "src", "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
- 	}
- 	mockIp6tables.expectations = mockIp4tables.expectations
- 
-```
-
----
-
-### Incident Patch 2: `ec728c98` (2026-11-11)
-**Commit Message**: proxy,bpf: route MARK_MAGIC_PROXY_EGRESS_EPID traffic via cilium_host
-
-Handling of L7 LB traffic from Envoy is spread over three programs.
-cil_to_container picks it up for local backends behind per-endpoint
-routes, cil_to_netdev for remote backends reached through a direct route,
-and cil_from_host for everything else. All three do the same thing: clear
-the mark and tail call into the source endpoint's egress policy program,
-so that egress policy is enforced after the proxy.
-
-Install a routing rule (fwmark 0x0900/0x0f00, table 2005, priority 10)
-that pulls all MARK_MAGIC_PROXY_EGRESS_EPID traffic into cilium_host,
-ahead of both the per-endpoint routes (priority 20/110) and the direct
-routes in the main table. cil_from_host then becomes the path this traffic
-normally takes to re-enter the egress policy program. The previous
-commits prepared the egress path for it: local backends are delivered by
-the endpoint lookup, and anything else is handed back to the stack.
-
-The rule is installed for every Envoy configuration, not just for native
-routing or just when per-endpoint routes are enabled. The traffic has to
-be diverted wherever it would otherwise be steered straight at its
-destination
-
-**File**: `bpf/bpf_host.c` (modified, +12/-0)
-```diff
-@@ -1448,6 +1448,18 @@ int cil_to_netdev(struct __ctx_buff *ctx)
- 		}
- 	}
- 
-+	/* L7 LB traffic is normally pulled into cilium_host by the
-+	 * MARK_MAGIC_PROXY_EGRESS_EPID ip rule, so that cil_from_host is the
-+	 * single place that re-enters the source endpoint's egress policy. This
-+	 * is the fallback for when that rule is not in place: on upgrade from a
-+	 * version that did not install it, cilium-envoy keeps proxying while the
-+	 * agent reloads the datapath, and the rule is only installed at the end
-+	 * of Reinitialize(). Without this block a remote backend would be
-+	 * reached by a direct route with the egress policy never enforced.
-+	 *
-+	 * TODO: Remove in v1.22. The rule is installed since v1.21, and upgrades
-+	 * are only supported from the previous minor release.
-+	 */
- 	if (CONFIG(enable_l7_lb) && magic == MARK_MAGIC_PROXY_EGRESS_EPID) {
- 		__u32 lxc_id = get_epid(ctx);
- 
-```
-
-**File**: `bpf/bpf_lxc.c` (modified, +44/-17)
-```diff
-@@ -1171,13 +1171,17 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
- 	 * the ipv4_local_delivery() function to enforce ingress policies for
- 	 * that endpoint.
- 	 *
--	 * L7 LB traffic is looked up as well. With per-endpoint routes, its
--	 * egress policy program is tail called from cil_to_container for a
--	 * local backend, and from cil_to_netdev for a remote one. The lookup
--	 * delivers the former to the lxc device the ctx already sits on, so
--	 * that it re-enters cil_to_container with the mark cleared, as with the
--	 * redirect_self() at pass_to_stack. It misses for the latter, which
--	 * continues at pass_to_stack.
-+	 * L7 LB traffic is normally tail called here from cil_from_host, ie.
-+	 * the ctx sits on cilium_host's egress hook rather than on the device
-+	 * the packet is leaving by. Look the endpoint up for it as well, so
-+	 * that a local backend is delivered here instead of falling through to
-+	 * pass_to_stack, which cannot forward it from cilium_host. While the
-+	 * MARK_MAGIC_PROXY_EGRESS_EPID ip rule is not in place yet, it is tail
-+	 * called from the fallbacks in cil_to_container and cil_to_netdev
-+	 * instead: the lookup delivers a local backend the same way, and
-+	 * misses for a remote one, which continues at pass_to_stack.
-+	 *
-+	 * TODO: Remove in v1.22, together with those fallbacks.
- 	 */
- 	if (CONFIG(enable_bpf_routing) || hairpin_flow || from_l7lb ||
- 	    CONFIG(enable_bpf_host_routing)) {
-@@ -1336,17 +1340,21 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
- 	 * host. How it continues depends on which hook `cil_lxc_policy_egress`
- 	 * was tail called from.
- 	 *
--	 * From cil_from_host, returning CTX_ACT_OK on cilium_host's egress hook
--	 * would transmit the packet into the cilium_host/cilium_net veth pair
--	 * rather than route it, so hairpin it into cilium_host's ingress hook
--	 * instead and let the stack route it. Going through the stack also keeps
--	 * the ip rules that select an egress device by source address - the
--	 * per-ENI rules on AWS, for one - which a FIB lookup here would not
--	 * consult.
-+	 * Normally that is cil_from_host. Returning CTX_ACT_OK on cilium_host's
-+	 * egress hook would transmit the packet into the cilium_host/cilium_net
-+	 * veth pair rather than route it, so hairpin it into cilium_host's
-+	 * ingress hook instead and let the stack route it. Going through the
-+	 * stack also keeps the ip rules that select an egress device by source
-+	 * address - the per-ENI rules on AWS, for one - which a FIB lookup here
-+	 * would not consult.
-+	 *
-+	 * While the MARK_MAGIC_PROXY_EGRESS_EPID ip rule is not in place yet, it
-+	 * is the fallback in cil_to_container or cil_to_netdev instead. The ctx
-+	 * then already sits on the device the packet is leaving by, so loop it
-+	 * back out of that device, where the hook sees it again with the mark
-+	 * cleared.
- 	 *
--	 * From cil_to_container or cil_to_netdev, the ctx already sits on the
--	 * device the packet is leaving by, so loop it back out of that device,
--	 * where the hook sees it again with the mark cleared.
-+	 * TODO: Remove in v1.22, together with the redirect_self() call below.
- 	 */
- 	if (!CONFIG(enable_bpf_routing) && from_l7lb) {
- 		if (ctx_get_ifindex(ctx) == CONFIG(cilium_host_ifindex))
-@@ -2550,6 +2558,25 @@ int cil_to_container(struct __ctx_buff *ctx)
- 	bpf_clear_meta(ctx);
- 	check_and_store_ip_trace_id(ctx);
- 
-+	/* Fallback for when the MARK_MAGIC_PROXY_EGRESS_EPID ip rule is missing
-+	 * and a per-endpoint route steers L7 LB traffic straight at the backend's
-+	 * lxc device instead of into cilium_host. See the equivalent block in
-+	 * cil_to_netdev(), and note that inherit_identity_from_host() below has
-+	 * no case for this mark: without this block the source endpoint's egress
-+	 * policy would be skipped and ingress policy evaluated against WORLD_ID
-+	 * rather than the client's identity.
-+	 *
-+	 * Entering the egress policy program from here is equivalent to entering
-+	 * it from cil_from_host: the endpoint lookup opened for from_l7lb finds
-+	 * the backend and calls ipv{4,6}_local_delivery(), which ends in
-+	 * redirect_ep(ctx, ep->ifindex). As cil_to_container sits on that same
-+	 * lxc device's egress hook, the packet re-enters here with the mark
-+	 * cleared, as with the redirect_self() taken at pass_to_stack, and
-+	 * ingress policy is enforced.
-+	 *
-+	 * TODO: Remove in v1.22. The rule is installed since v1.21, and upgrades
-+	 * are only supported from the previous minor release.
-+	 */
- 	if (CONFIG(enable_l7_lb) &&
- 	    (ctx->mark & MARK_MAGIC_HOST_MASK) == MARK_MAGIC_PROXY_EGRESS_EPID) {
- 		__u16 lxc_id = get_epid(ctx);
-```
-
-**File**: `bpf/tests/l7_lb_local_backend.h` (modified, +14/-8)
-```diff
-@@ -10,7 +10,12 @@
-  * - PER_ENDPOINT_ROUTES: 1 for the per-endpoint routes configuration, which
-  *   turns enable_bpf_routing off, or 0 for BPF routing.
-  * - FROM_CIL_TO_CONTAINER: 1 to simulate the egress policy program being tail
-- *   called from cil_to_container, or 0 for the tail call from cil_from_host.
-+ *   called from cil_to_container, the fallback for when the
-+ *   MARK_MAGIC_PROXY_EGRESS_EPID ip rule is not in place yet, or 0 for the
-+ *   tail call from cil_from_host.
-+ *
-+ *   TODO: Remove in v1.22, together with the cil_to_container fallback. Then
-+ *   drop FROM_CIL_TO_CONTAINER and the variants that set it to 1.
-  */
- #if !defined(PER_ENDPOINT_ROUTES) || !defined(FROM_CIL_TO_CONTAINER)
- # error "Define PER_ENDPOINT_ROUTES and FROM_CIL_TO_CONTAINER before including this file"
-@@ -93,11 +98,11 @@ mock_tail_call_dynamic(struct __ctx_buff *ctx __maybe_unused,
- /* BPF_PROG_TEST_RUN are executed with `ctx->ifindex = 1` (loopback device) as in
-  * the kernel `bpf_prog_test_run_skb()` function.
-  * (see https://github.com/torvalds/linux/blob/0257f64bdac7fdca30fa3cae0df8b9ecbec7733a/net/bpf/test_run.c#L991)
-- * When tail called from cil_from_host, the ctx sits on cilium_host: set
-- * cilium_host_ifindex to the ifindex the test run gives us, given we cannot
-- * change ctx->ifindex. To simulate the tail call from cil_to_container
-- * instead, where the ctx sits on the backend's lxc device, give cilium_host
-- * any other ifindex.
-+ * L7 LB traffic is normally tail called from cil_from_host, so the ctx sits
-+ * on cilium_host: set cilium_host_ifindex to the ifindex the test run gives
-+ * us, given we cannot change ctx->ifindex. To simulate the tail call from
-+ * cil_to_container instead, where the ctx sits on the backend's lxc device,
-+ * give cilium_host any other ifindex.
-  */
- #if FROM_CIL_TO_CONTAINER
- ASSIGN_CONFIG(__u32, cilium_host_ifindex, 2)
-@@ -132,8 +137,9 @@ ASSIGN_CONFIG(bool, enable_bpf_routing, !PER_ENDPOINT_ROUTES)
-  * - in case of per-endpoint routes, packet tail calls from
-      cil_from_host, and is redirected into cilium_host's ingress hook so that
-      the stack routes it.
-- * - in case of per-endpoint routes, packet tail calls from
--     cil_to_container, and it will be hairpinned back to handle ingress policies.
-+ * - in case of per-endpoint routes without the ip rule in place, packet tail
-+     calls from cil_to_container, and is hairpinned back out of the lxc device
-+     so that cil_to_container enforces ingress policy.
-  * Given we cannot import both bpf_host and bpf_lxc, in our SETUP functions
-  * we will simulate hitting the `tail_call_egress_policy(ctx, lxc_id)` codepath.
-  */
-```
-
-**File**: `bpf/tests/l7_lb_local_backend_pod.c` (modified, +6/-0)
-```diff
-@@ -1,6 +1,12 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /* Copyright Authors of Cilium */
- 
-+/* Per-endpoint routes without the MARK_MAGIC_PROXY_EGRESS_EPID ip rule in
-+ * place yet, eg. while upgrading from a version that did not install it: the
-+ * per-endpoint route steers L7 LB traffic to the backend's lxc device, and the
-+ * egress policy program is tail called from cil_to_container.
-+ */
-+
- #define PER_ENDPOINT_ROUTES	1
- #define FROM_CIL_TO_CONTAINER	1
- 
-```
-
-**File**: `pkg/proxy/routes.go` (modified, +48/-8)
-```diff
-@@ -44,7 +44,7 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
- 		return fmt.Errorf("failed to retrieve local node: %w", err)
- 	}
- 
--	fromIngressProxy, fromEgressProxy, mtu := requireFromProxyRoutes(ipsecEnabled, wireguardEnabled, mtu)
-+	fromIngressProxy, fromEgressProxy, fromProxyEgressEPID, mtu := requireFromProxyRoutes(ipsecEnabled, wireguardEnabled, mtu)
- 
- 	rxn := p.db.ReadTxn()
- 	hostDevice, _, hostDeviceFound := p.devices.Get(rxn, tables.DeviceByName(defaults.HostDevice))
-@@ -59,12 +59,12 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
- 			return err
- 		}
- 
--		if fromIngressProxy || fromEgressProxy {
-+		if fromIngressProxy || fromEgressProxy || fromProxyEgressEPID {
- 			if !hostDeviceFound {
- 				return fmt.Errorf("failed to get host device %s", defaults.HostDevice)
- 			}
- 			internalIP := localNode.GetCiliumInternalIPv4()
--			if err := installFromProxyRoutesIPv4(p.routeManager, p.routeOwner, internalIP, hostDevice, fromIngressProxy, fromEgressProxy, mtu); err != nil {
-+			if err := installFromProxyRoutesIPv4(p.routeManager, p.routeOwner, internalIP, hostDevice, fromIngressProxy, fromEgressProxy, fromProxyEgressEPID, mtu); err != nil {
- 				return err
- 			}
- 		} else {
-@@ -86,7 +86,7 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
- 			return err
- 		}
- 
--		if fromIngressProxy || fromEgressProxy {
-+		if fromIngressProxy || fromEgressProxy || fromProxyEgressEPID {
- 			if !hostDeviceFound {
- 				return fmt.Errorf("failed to get host device %s", defaults.HostDevice)
- 			}
-@@ -97,7 +97,7 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
- 			if err != nil {
- 				return err
- 			}
--			if err := installFromProxyRoutesIPv6(p.routeOwner, p.routeManager, ipv6, hostDevice, fromIngressProxy, fromEgressProxy, mtu); err != nil {
-+			if err := installFromProxyRoutesIPv6(p.routeOwner, p.routeManager, ipv6, hostDevice, fromIngressProxy, fromEgressProxy, fromProxyEgressEPID, mtu); err != nil {
- 				return err
- 			}
- 		} else {
-@@ -127,7 +127,17 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
- //     as above, and also to account for XFRM overhead on proxy-to-proxy connections.
- //   - Native routing + WireGuard: install only Ingress routes to account for WireGuard
- //     overhead on reply packets from Ingress L7 proxy in proxy-to-proxy connections.
--func requireFromProxyRoutes(ipsecEnabled, wireguardEnabled bool, mtuIn int) (fromIngressProxy, fromEgressProxy bool, mtu int) {
-+//   - Envoy: also install the EPID rule, so that all
-+//     MARK_MAGIC_PROXY_EGRESS_EPID traffic is pulled into cilium_host and
-+//     cil_from_host becomes the single place that re-enters the source
-+//     endpoint's egress policy. Unlike the rules above this applies to every
-+//     routing mode, because the traffic would otherwise be steered straight to
-+//     its destination: to the backend's lxc device by a per-endpoint route, or
-+//     out a native device by a direct route to a remote backend.
-+func requireFromProxyRoutes(ipsecEnabled, wireguardEnabled bool, mtuIn int) (fromIngressProxy, fromEgressProxy, fromProxyEgressEPID bool, mtu int) {
-+	if option.Config.EnableEnvoyConfig {
-+		fromProxyEgressEPID = true
-+	}
- 	if option.Config.TunnelingEnabled() {
- 		return
- 	}
-@@ -241,6 +251,18 @@ var (
- 		Table:    linux_defaults.RouteTableFromProxy,
- 		Protocol: linux_defaults.RTProto,
- 	}
-+
-+	// Routing rule for L7 LB traffic marked with the source endpoint ID.
-+	// Pulls MARK_MAGIC_PROXY_EGRESS_EPID packets into cilium_host before
-+	// per-endpoint routes can redirect them directly to the lxc device,
-+	// so that egress policy enforcement always goes through cil_from_host.
-+	fromProxyEgressEPIDRule = route.Rule{
-+		Priority: linux_defaults.RulePriorityFromProxy,
-+		Mark:     uint32(linux_defaults.MagicMarkProxyEgressEPID),
-+		Mask:     linux_defaults.MagicMarkHostMask,
-+		Table:    linux_defaults.RouteTableFromProxy,
-+		Protocol: linux_defaults.RTProto,
-+	}
- )
- 
- // installFromProxyRoutesIPv4 configures routes and rules needed to redirect ingress
-@@ -250,7 +272,7 @@ func installFromProxyRoutesIPv4(
- 	routeOwner *reconciler.RouteOwner,
- 	ipv4 netip.Addr,
- 	device *tables.Device,
--	fromIngressProxy, fromEgressProxy bool,
-+	fromIngressProxy, fromEgressProxy, fromProxyEgressEPID bool,
- 	mtu int,
- ) error {
- 	prefix, _ := ipv4.Prefix(ipv4.BitLen())
-@@ -284,6 +306,11 @@ func installFromProxyRoutesIPv4(
- 			return fmt.Errorf("inserting ipv4 from egress proxy routing rule %v: %w", fromEgressProxyRule, err)
- 		}
- 	}
-+	if fromProxyEgressEPID {
-+		if err := route.ReplaceRule(fromProxyEgressEPIDRule); err != nil {
-+			return fmt.Errorf("inserting ipv4 from proxy egress EPID routing rule %v: %w", fromProxyEgressEPIDRule, err)
-+		}
-+	}
- 	if err := routeManager.UpsertRouteWait(fromProxyToCiliumHostRoute4); err != nil {
- 		return fmt.Errorf("inserting ipv4 from proxy to cilium_host rou
-```
-
-**File**: `pkg/proxy/routes_test.go` (modified, +159/-6)
-```diff
-@@ -50,6 +50,115 @@ func filterDefaultRouteIPv6(t *testing.T, rt []netlink.Route) netlink.Route {
- 	return rt[i]
- }
- 
-+func TestRequireFromProxyRoutes(t *testing.T) {
-+	saved := option.Config
-+	t.Cleanup(func() { option.Config = saved })
-+
-+	// enableEndpointRoutes is deliberately not read by requireFromProxyRoutes:
-+	// the EPID rule is needed whether or not per-endpoint routes are in use.
-+	// With them, a local backend is steered straight to its lxc device; without
-+	// them, a remote backend leaves by a direct route. Neither passes through
-+	// cilium_host, and neither cil_to_container nor cil_to_netdev intercepts
-+	// the mark any more, so both need the rule. It is varied across the paired
-+	// cases below so that they fail if the rule is ever gated on it.
-+	tests := []struct {
-+		name                 string
-+		routingMode          string
-+		enableEnvoyConfig    bool
-+		enableEndpointRoutes bool
-+		ipsecEnabled         bool
-+		wireguardEnabled     bool
-+		wantIngress          bool
-+		wantEgress           bool
-+		wantEPID             bool
-+	}{
-+		{
-+			// The EPID rule is not specific to native routing:
-+			// cil_from_host is the only remaining handler for the mark in
-+			// tunneling mode too.
-+			name:                 "tunneling, envoy with per-ep routes",
-+			routingMode:          option.RoutingModeTunnel,
-+			enableEnvoyConfig:    true,
-+			enableEndpointRoutes: true,
-+			wantEPID:             true,
-+		},
-+		{
-+			name:                 "tunneling, envoy without per-ep routes",
-+			routingMode:          option.RoutingModeTunnel,
-+			enableEnvoyConfig:    true,
-+			enableEndpointRoutes: false,
-+			wantEPID:             true,
-+		},
-+		{
-+			name:                 "tunneling, per-ep routes without envoy",
-+			routingMode:          option.RoutingModeTunnel,
-+			enableEnvoyConfig:    false,
-+			enableEndpointRoutes: true,
-+		},
-+		{
-+			name:        "native, no features",
-+			routingMode: option.RoutingModeNative,
-+		},
-+		{
-+			// Remote backends are reached by a direct route out a native
-+			// device, so they too must be pulled into cilium_host now that
-+			// cil_to_netdev no longer intercepts the mark.
-+			name:                 "native, envoy without per-ep routes",
-+			routingMode:          option.RoutingModeNative,
-+			enableEnvoyConfig:    true,
-+			enableEndpointRoutes: false,
-+			wantIngress:          true,
-+			wantEPID:             true,
-+		},
-+		{
-+			name:                 "native, envoy with per-ep routes",
-+			routingMode:          option.RoutingModeNative,
-+			enableEnvoyConfig:    true,
-+			enableEndpointRoutes: true,
-+			wantIngress:          true,
-+			wantEPID:             true,
-+		},
-+		{
-+			name:         "native, ipsec",
-+			routingMode:  option.RoutingModeNative,
-+			ipsecEnabled: true,
-+			wantIngress:  true,
-+			wantEgress:   true,
-+		},
-+		{
-+			name:             "native, wireguard",
-+			routingMode:      option.RoutingModeNative,
-+			wireguardEnabled: true,
-+			wantIngress:      true,
-+		},
-+		{
-+			name:                 "native, envoy + per-ep routes + ipsec",
-+			routingMode:          option.RoutingModeNative,
-+			enableEnvoyConfig:    true,
-+			enableEndpointRoutes: true,
-+			ipsecEnabled:         true,
-+			wantIngress:          true,
-+			wantEgress:           true,
-+			wantEPID:             true,
-+		},
++	result, metadata, err := c.invokeOperation(ctx, "CreateBearerToken", params, optFns, c.addOperationCreateBearerTokenMiddlewares)
++	if err != nil {
++		return nil, err
 +	}
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			option.Config = &option.DaemonConfig{
-+				RoutingMode:          tt.routingMode,
-+				EnableEnvoyConfig:    tt.enableEnvoyConfig,
-+				EnableEndpointRoutes: tt.enableEndpointRoutes,
-+			}
-+
-+			gotIngress, gotEgress, gotEPID, _ := requireFromProxyRoutes(tt.ipsecEnabled, tt.wireguardEnabled, 0)
-+			assert.Equal(t, tt.wantIngress, gotIngress, "fromIngressProxy")
-+			assert.Equal(t, tt.wantEgress, gotEgress, "fromEgressProxy")
-+			assert.Equal(t, tt.wantEPID, gotEPID, "fromProxyEgressEPID")
-+		})
-+	}
++	out := result.(*CreateBearerTokenOutput)
++	out.ResultMetadata = metadata
++	return out, nil
 +}
 +
- func TestPrivilegedRoutes(t *testing.T) {
- 	testutils.PrivilegedTest(t)
- 
-@@ -193,7 +302,7 @@ func TestPrivilegedRoutes(t *testing.T) {
- 				}
- 
- 				// Install routes and rules the first time.
--				assert.NoError(t, installFromProxyRoutesIPv4(routeManager, owner, testIPv4, dummyDevice, true, true, defaultMTU))
-+				assert.NoError(t, installFromProxyRoutesIPv4(routeManager, owner, testIPv4, dummyDevice, true, true, false, defaultMTU))
- 
- 				rules, err := route.ListRules(netlink.FAMILY_V4, &fromIngressProxyRule)
- 				assert.NoError(t, err)
-@@ -210,7 +319,7 @@ func TestPrivilegedRoutes(t *testing.T) {
- 				assert.Equal(t, defaultMTU, defaultRoute.MTU)
- 
- 				// Ensure idempotence.
--				assert.NoError(t, installFromProxyRoutesIPv4(routeManager, owner, testIPv4, dummyDevice, true, true, defaultMTU))
-+				assert.NoError(t, installFromProxyRoutesIPv4(routeManager, owner, testIPv4, dummyDevice, true, true, false, defaultMTU))
- 
- 				// Remove routes installed before.
- 				assert.NoError(t, removeFromProxyRulesIPv4())
-@@ -219,9 +328,31 @@ func TestPrivilegedRoutes(t *testing.T) {
- 				owner, err = routeManage
++// Input structure for CreateBearerToken operation
++type CreateBearerTokenInput struct {
++
++	// The grant type. Must be "client_credentials".
++	//
++	// This member is required.
++	GrantType *string
++
++	// The AWS service the bearer token is for. Example: "ecr.amazonaws.com".
++	//
++	// This member is required.
++	Resource *string
++
++	// The requested token lifetime in seconds, from 300 (5 minutes) up to the maximum
++	// allowed for the service, currently 43200 (12 hours). If omitted, the token is
++	// valid for 12 hours.
++	DurationSeconds *int32
++
++	noSmithyDocumentSerde
++}
++
++func (v *CreateBearerTokenInput) Serialize(s smithy.ShapeSerializer) {
++	s.WriteStruct(schemas.CreateBearerTokenRequest)
++	v.SerializeMembers(s)
++	s.CloseStruct()
++}
++
++func (v *CreateBearerTokenInput) SerializeMembers(s smithy.ShapeSerializer) {
++	if v.DurationSeconds != nil {
++		s.WriteInt32(schemas.CreateBearerTokenRequest_durationSeconds, *v.DurationSeconds)
++	}
++	if v.GrantType != nil {
++		s.WriteString(schemas.CreateBearerTokenRequest_grantType, *v.GrantType)
++	}
++	if v.Resource != nil {
++		s.WriteString(schemas.CreateBearerTokenRequest_resource, *v.Resource)
++	}
++}
++func (in *CreateBearerTokenInput) bindEndpointParams(p *EndpointParameters) {
++
++	p.IsOAuthEndpoint = ptr.Bool(true)
++}
++
++// Output structure for CreateBearerToken operation
++//
++// Contains the bearer token, its type, and its lifetime.
++type CreateBearerTokenOutput struct {
++
++	// The bearer token. Present it to the AWS service named in the request.
++	//
++	// This member is required.
++	AccessToken *string
++
++	// Token lifetime in seconds.
++	//
++	// This member is required.
++	ExpiresIn *int32
++
++	// The token type. Always "Bearer".
++	//
++	// This member is required.
++	TokenType *string
++
++	// Metadata pertaining to the operation's result.
++	ResultMetadata middleware.Metadata
++
++	noSmithyDocumentSerde
++}
++
++func (v *CreateBearerTokenOutput) Serialize(s smithy.ShapeSerializer) {
++	s.WriteStruct(schemas.CreateBearerTokenResponse)
++	v.SerializeMembers(s)
++	s.CloseStruct()
++}
++
++func (v *CreateBearerTokenOutput) SerializeMembers(s smithy.ShapeSerializer) {
++	if v.AccessToken != nil {
++		s.WriteString(schemas.CreateBearerTokenResponse_accessToken, *v.AccessToken)
++	}
++	if v.ExpiresIn != nil {
++		s.WriteInt32(schemas.CreateBearerTokenResponse_expiresIn, *v.ExpiresIn)
++	}
++	if v.TokenType != nil {
++		s.WriteString(schemas.CreateBearerTokenResponse_tokenType, *v.TokenType)
++	}
++}
++func (v *CreateBearerTokenOutput) Deserialize(d smithy.ShapeDeserializer) error {
++	return smithy.ReadStruct(d, schemas.CreateBearerTokenResponse, func(s *smithy.Schema) error {
++		switch s {
++		case schemas.CreateBearerTokenResponse_accessToken:
++			v.AccessToken = new(string)
++			return d.ReadString(schemas.CreateBearerTokenResponse_accessToken, v.AccessToken)
++		case schemas.CreateBearerTokenResponse_expiresIn:
++			v.ExpiresIn = new(int32)
++			return d.ReadInt32(schemas.CreateBearerTokenResponse_expiresIn, v.ExpiresIn)
++		case schemas.CreateBearerTokenResponse_tokenType:
++			v.TokenType = new(string)
++			return d.ReadString(schemas.CreateBearerTokenResponse_tokenType, v.TokenType)
++		}
++		return nil
++	})
++}
++func (c *Client) addOperationCreateBearerTokenMiddlewares(stack *middleware.Stack, options Options) (err error) {
++	if err := stack.Serialize.Add(&serializeRequestMiddleware{options: &options, operationSchema: smithy.NewOperationSchema(schemas.CreateBearerToken, schemas.CreateBearerTokenRequest, schemas.CreateBearerTokenResponse)}, middleware.After); err != nil {
++		return err
++	}
++	if err := stack.Deserialize.Add(&deserializeResponseMiddleware{options: &options, operationSchema: smithy.NewOperationSchema(schemas.CreateBearerToken, schemas.CreateBearerTokenRequest, schemas.CreateBearerTokenResponse), output: &CreateBearerTokenOutput{}}, middleware.After); err != nil {
++		return err
++	}
++
++	if err = addResolveEndpointMiddleware(stack, options); err != nil {
++		return err
++	}
++	if err = addComputePayloadSHA256(stack); err != nil {
++		return err
++	}
++	if err = addRecordResponseT
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #50008** (2026-11-13): bgp: Sort attributes by type when printing (@joamaki)
-- **PR #49999** (2026-11-12): fix(linux/adnr): reconcile direct routes before node table initialization (@andreaterzolo)
-- **PR #49998** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.19) (@cilium-renovate[bot])
-- **PR #49997** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.20) (@cilium-renovate[bot])
-- **PR #49995** (2026-11-13): gha: install the delegated IPAM conflist once Cilium is ready (@ekoops)
-- **PR #49994** (2026-11-13): rbac: restrict agents to only accessing their own Node and CiliumNodes (@squeed)
+- **PR #50028** (2026-11-15): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
+- **PR #50027** (closed): fix(deps): update security updates to v1.47.0 [security] (v1.19) - autoclosed (@cilium-renovate[bot])
+- **PR #50026** (2026-11-14): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
+- **PR #50025** (2026-11-14): chore(deps): update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
+- **PR #50020** (2026-11-14): fix(deps): update security updates to v1.47.0 [security] (v1.18) (@cilium-renovate[bot])
+- **PR #50019** (2026-11-14): fix(deps): update security updates to v1.47.0 [security] (v1.19) (@cilium-renovate[bot])
 
 ---
 
@@ -1902,32 +1660,49 @@ destination
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datapath/iptables: scope NOTRACK tunnel rules to local addresses
+## X. deps): update all go dependencies main
 
 **RULE**:
-When implementing operations in `Documentation/operations/system_requirements.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `edc81e6f`: datapath/iptables: scope NOTRACK tunnel rules to local addresses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba8940f6`: deps): update all go dependencies main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/operations/system_requirements.rst`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
-        CONFIG_NETFILTER_XT_TARGET_CT=m
+	github.com/aws/aws-sdk-go-v2/config v1.33.17
+	github.com/aws/smithy-go v1.28.9
+	github.com/klauspost/compress v1.20.4
+	github.com/tidwall/gjson v1.20.2
+	github.com/tidwall/sjson v1.2.9
+	github.com/vishvananda/netlink v1.3.2-0.20261113171447-5a89637be57b
+	golang.org/x/mod v0.43.0
+	github.com/aws/aws-sdk-go-v2/credentials v1.20.17 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
+	github.com/tidwall/pretty v1.3.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	github.com/aws/aws-sdk-go-v2/config v1.33.16
+	github.com/aws/smithy-go v1.28.8
+	github.com/klauspost/compress v1.20.3
+	github.com/tidwall/gjson v1.20.1
+	github.com/tidwall/sjson v1.2.7
+	github.com/vishvananda/netlink v1.3.2-0.20261108183553-e0e26cd6138f
+	golang.org/x/mod v0.42.0
+	github.com/aws/aws-sdk-go-v2/credentials v1.20.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 // indirect
+	github.com/tidwall/pretty v1.2.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `edc81e6f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba8940f6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

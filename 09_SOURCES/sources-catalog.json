@@ -1685,8 +1685,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceVersion": "hf-openmoss-team-moss-image-sft",
     "license": "Open-Source",
-    "contentHash": "b60390073ec57e5050150b2512867ec6ff6f890b91d751b5179104e2aa1c18bc",
-    "lastHarvestedAt": "2026-11-09T16:18:32.647Z",
+    "contentHash": "defb48f51daa34ac53a8f9bbd9732e2be18161ccf7b32a709f0ec3e9af75fbb7",
+    "lastHarvestedAt": "2026-11-15T05:36:45.377Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "edc81e6f",
+    "sourceVersion": "ba8940f6",
     "license": "Apache-2.0",
-    "contentHash": "041e66a86946ffa02f3b70f132ef54b2406adcf9772e235375f9b016e2e63cd8",
-    "lastHarvestedAt": "2026-11-13T20:07:24.011Z",
+    "contentHash": "6a34b8686faf0e45dd4f28c7438fe437ed027905ae2288f0fb5163ee006a3f65",
+    "lastHarvestedAt": "2026-11-15T05:31:52.428Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "3e94495c",
+    "sourceVersion": "25b40def",
     "license": "MIT",
-    "contentHash": "0d3f6ab9ffbe3db056a4ea6999105bbd08e55081ae59cfce507a0f524fcf5344",
-    "lastHarvestedAt": "2026-11-13T12:32:44.682Z",
+    "contentHash": "150f4452c76a5118a365199e86fd861c1b23e099c5933971f6c8a546789ec9b3",
+    "lastHarvestedAt": "2026-11-15T05:31:42.181Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {

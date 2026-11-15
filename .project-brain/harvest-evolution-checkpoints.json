@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T04:53:54.009Z",
+  "last_updated": "2026-11-15T05:37:24.345Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-13T20:08:04.087Z",
+      "processed_at": "2026-11-15T05:37:23.109Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -548,7 +548,7 @@
       "staged_for_review": 1
     },
     "1jehuang-jcode-learnings.md": {
-      "processed_at": "2026-11-13T12:32:55.946Z",
+      "processed_at": "2026-11-15T05:36:48.397Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2886,9 +2886,14 @@
       "processed_at": "2026-11-15T04:53:52.300Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-openmoss-team-moss-image-sft-learnings.md": {
+      "processed_at": "2026-11-15T05:37:22.734Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 984,
-  "total_canonical_promoted": 242,
-  "total_staged_for_review": 741
+  "total_dossiers_evaluated": 987,
+  "total_canonical_promoted": 243,
+  "total_staged_for_review": 743
 }
