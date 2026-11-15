@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T21:45:23.592Z",
+  "last_updated": "2026-11-15T21:53:34.753Z",
   "total_verified_learnings": 8727,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112032,9 +112032,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "682bc502939723c1ef4ed1f11ef7c04195d4120e750f178d9da9385cdc3f97e1",
+      "content_hash": "df0ebfa419decb4b53ab176469dac227087ba92fceeb83e26d5fe8f1d0f7f043",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:06:43.107Z"
+      "persisted_at": "2026-11-15T21:53:34.560Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112044,9 +112044,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b48eb63d29ab7a62968a51944dcc940eee47268059ea3e536a7c4892e5416998",
+      "content_hash": "4f87394cc1f5d9456426217c043dd5770d6cd1d1305242ded96d4c833b0a74b9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:06:43.291Z"
+      "persisted_at": "2026-11-15T21:53:34.660Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112056,9 +112056,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "db736d3e8eac81a6ba07cb205d065ef9afc6082c3c3aa3e26e248f94265753c9",
+      "content_hash": "d9846c0c02c82b8c823e5cc151a190fd87c0021ae3138bbbc50f289d999639e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:06:43.437Z"
+      "persisted_at": "2026-11-15T21:53:34.753Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112164,9 +112164,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b43f9f73517090b4fa284adb30b59d9b901a212b218dc74a8eff099f6b9d162c",
+      "content_hash": "574c71a59c06ea1900b72d07b2bd7396745ad78313fddbe70b3eb3927c60442e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T21:06:42.347Z"
+      "persisted_at": "2026-11-15T21:53:34.106Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112176,9 +112176,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6f34ef0824cdaf33c546171f33d7e6b23ade2ed31d4c1df8e65e141bf610cc6",
+      "content_hash": "105ea9d0d43eafff8cbe712603d3ac5193cf99ef823ab973f029971993b461f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:06:42.532Z"
+      "persisted_at": "2026-11-15T21:53:34.208Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113672,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RN1N-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FWXL-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d79c210d3f70a5b4424e53990a4923181d06f420b3f1cffefb41d92f9979cf02",
+      "content_hash": "c2e5a6e00893ba9035de46c0542e97a9168e6a83687a77aacb9eab29c9b0428c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:06:41.390Z"
+      "persisted_at": "2026-11-15T21:53:33.564Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113688,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f1fd83775a9d51d841a037cfd69f6d8742ff8e97de16616b8c9921ad9e4c47a",
+      "content_hash": "d7f9052ad9409f1f9b11c00918eaed5d0069f62549f4ca37285bf46965d906e4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:06:41.567Z"
+      "persisted_at": "2026-11-15T21:53:33.662Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113700,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "15526e193fa46383ef779613a97131990a4718a380a014e0755c2da8c6e27c94",
+      "content_hash": "92f9967f3015d9df54e170d205c695be8b9acc17fa1dac3c1a37116e383d37be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:06:41.747Z"
+      "persisted_at": "2026-11-15T21:53:33.760Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214811,13 +214811,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RNNJ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FX9X-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0b91c5da998b8b7ddd6b9a6eb6f96ceaa213e7ee33d1c3df9bbc3153e6a915b",
+      "content_hash": "25478702ee32c153b2f85c3bfe81c4a988fb6dfdef9ae9abc1a6a9a9e847fdf6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T21:06:42.178Z"
+      "persisted_at": "2026-11-15T21:53:34.007Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -224526,13 +224526,13 @@
       "item_id": "candidate_directive-watcher-filter-access-events-before-queueing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RO8L-watcher-filter-access-events-before-queueing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FXMO-watcher-filter-access-events-before-queueing.md",
       "title": "watcher): filter access events before queueing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd6f0a3bd004b6332bce9c3e3c4ab9951107a498bc2d2e23f2b14720d8470494",
+      "content_hash": "d53b230a6ec16f92dc6bf0856119912c64048dd3307ed97007e51fc111a35c8b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:06:42.937Z"
+      "persisted_at": "2026-11-15T21:53:34.467Z"
     },
     "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant": {
       "item_id": "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant",
