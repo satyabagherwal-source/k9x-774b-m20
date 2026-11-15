@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T11:13:55.010Z",
+  "updated_at": "2026-11-15T11:40:32.911Z",
   "stats": {
-    "total_discovered": 3675,
-    "approved_pending_harvest": 3465,
+    "total_discovered": 3678,
+    "approved_pending_harvest": 3468,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3444,
+      "COMMUNITY_AND_EXPERT": 3447,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79401,6 +79401,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
         "fileName": "hf-xiaomi-research-xiaomi-ocr-0-learnings.md"
+      }
+    },
+    "SRC-F4333956F72E": {
+      "id": "SRC-F4333956F72E",
+      "url": "https://app.greptile.com/api/retrigger?id=106898781&amp%3Bsig=ab084d94ab947b034e56ec2c080dadfa4cbaa347b7dba8ebf5056aa632063bca",
+      "title": "https://app.greptile.com/api/retrigger?id=106898781&amp%3Bsig=ab084d94ab947b034e56ec2c080dadfa4cbaa347b7dba8ebf5056aa632063bca",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T11:40:32.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-2F36179F516C": {
+      "id": "SRC-2F36179F516C",
+      "url": "https://app.greptile.com/-/switch-tenant?tenant=nasiko&amp%3Bnext=%2FNasiko-Labs%2Fnasiko%2Fpull%2F365&amp%3Butm_source=greptile_review&amp%3Butm_medium=github&amp%3Butm_campaign=view_in_greptile",
+      "title": "https://app.greptile.com/-/switch-tenant?tenant=nasiko&amp%3Bnext=%2FNasiko-Labs%2Fnasiko%2Fpull%2F365&amp%3Butm_source=greptile_review&amp%3Butm_medium=github&amp%3Butm_campaign=view_in_greptile",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T11:40:32.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-6D4B2C9278CD": {
+      "id": "SRC-6D4B2C9278CD",
+      "url": "https://greptile-static-assets.s3.amazona/",
+      "title": "https://greptile-static-assets.s3.amazona/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T11:40:32.911Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
       }
     }
   }

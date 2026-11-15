@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T11:12:46.858Z",
-  "total_cycles_completed": 9705,
-  "total_learnings_persisted": 9705,
-  "total_rules_promoted": 9337,
+  "last_updated": "2026-11-15T11:40:24.341Z",
+  "total_cycles_completed": 9706,
+  "total_learnings_persisted": 9706,
+  "total_rules_promoted": 9338,
   "history": [
-    {
-      "timestamp": "2026-11-14T11:04:31.368Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T11:04:34.791Z",
       "repository": "slatedb/slatedb",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-15T11:12:46.858Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T11:40:24.341Z",
+      "repository": "Nasiko-Labs/nasiko",
+      "learningId": "learn-github-nasiko-labs-nasiko",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

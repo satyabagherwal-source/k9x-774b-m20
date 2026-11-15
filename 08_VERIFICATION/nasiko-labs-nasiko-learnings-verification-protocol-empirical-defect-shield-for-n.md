@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:42:07.553Z",
+  "timestamp": "2026-11-15T11:40:33.015Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-nasiko-labs-nasiko-learnings",
+  "learning_id": "LEARN-EVO-nasiko-labs-nasiko-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nasiko-labs-nasiko-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:42:07.553Z`  
-> **Learning ID**: `LEARN-REEXTRACT-nasiko-labs-nasiko-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T11:40:33.015Z`  
+> **Learning ID**: `LEARN-EVO-nasiko-labs-nasiko-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source**: github ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
-> **Source Version**: `9f84200c`  
+> **Source Version**: `0ec91fb2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T02:33:18.504Z  
+> **Timestamp**: 2026-11-15T11:40:23.308Z  
 > **Learning ID**: `learn-github-nasiko-labs-nasiko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T02:33:18.260Z  
+> **Harvest Timestamp**: 2026-11-15T11:40:23.093Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The Open Runtime for AI Agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11961 stars
+- **Stars / Engagement**: 11939 stars
 
 ---
 
@@ -2255,14 +2255,14 @@ class _Operation:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #365** (2026-11-14): **Remove duplicate GitHub badges**
+  *Symptoms*: Removed duplicate GitHub badges from README.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=106898781&amp;sig=ab084d94ab947b034e56ec2c080dadfa4cbaa347b7dba8ebf5056aa632063bca"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=nasiko&amp;next=%2FNasiko-Labs%2Fnasiko%2Fpull%2F365&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazona
+  > <!-- nasiko-oss-pr-status --> @shrawansaproo01, this PR is now in the maintainers' review queue, and its checks passed against our full build. Thanks for cleaning up the README.  The change is clear and small. It removes the second, identical block of stars, commits and pull-request badges near the end of `README.md` and leaves the first set in place.  You'll get a comment here when the PR is merged or closed, and it will always include the reason. If you push new commits, the checks will re-run and this comment will update.
+
 - **Issue #356** (2026-10-24): **fix(llm-router): stop dropping tool_choice "none" and related tool controls**
   *Symptoms*: ## Issue Fixes Nasiko-Labs/nasiko#165  ## What changed Ten tool-control fields were being silently dropped in `llm-router` during cross-provider translation: every request succeeded, so a caller had no way to tell their restriction was never applied to the model. This PR fixes the cases that have a clear target representation:  - **`tool_choice: "none"`** (cases 1–3 in the issue): Anthropic Messages does define `{"type": "none"}` — the code's own comment claiming otherwise was out of date. `tool_choice_from_anthropic` (inbound) and `tool_choice_to_anthropic` (outbound) both now handle it, so a caller asking for no tool calls actually gets that, instead of the selector being omitted while both tools stayed declared. - **`function.strict`** (case 4 and its follow-up): `FunctionDef` gained a `strict: Option<bool>` field so it survives inbound parsing from both OpenAI (already passthrough) and Anthropic (`tool_from_anthropic` now copies it). It's forwarded where the target supports it (OpenAI, Anthropic) and naturally dropped where it has no equivalent (Gemini). - **`parallel_tool_calls` / `disable_parallel_tool_use`** (cases 5–6): `ChatRequest` gained a named `parallel_tool_calls: Option<bool>` field instead of leaving it to rot in the passthrough `extra` map. Anthropic's `tool_choice.disable_parallel_tool_use` maps onto it inbound, and back onto `disable_parallel_tool_use` outbound to Anthropic. - **`tool_choice.allowed_tools`** (cases 8, 10): now maps to Anthropic's named-tool
-
-- **Issue #344** (2026-10-16): **feat: add reproducible compaction and routing benchmarks**
-  *Symptoms*: ## Summary This PR adds a reproducible evidence harness (`evidence/`, stdlib-only, one command) around the compact tool-schema and request-classifier work. The default compact representation reduces serialized tool size by **57.0% on 56 real tools** (mean of per-tool reductions; 56.3% ratio of totals) with **100% normalized semantic preservation** and safe fail-closed fallback. An optional aggressive profile reaches 73.2% under the same safety invariants. The classifier evaluation infrastructure (strict train/validation/test separation, validation-only tuning, confusion matrices, fallback and cost measurement) is complete; its current datasets are synthetic, so no superiority over the human-labeled reference is claimed.  ## Key Results | Area | Result | |---|---| | Tool corpus | 56 real tools | | Default compaction | 57.0% average reduction (56.3% of totals) | | Median reduction | 59.1% | | Aggressive profile | 73.2% optional | | Semantic preservation | 100% normalized | | Safe fallback | 55/56 compacted | | Evidence tests | 17/17 passing | | Router estimate | ~36% lower routing cost |  ## What changed - Compact representation benchmark over 56 real agent tools (bytes exact, latency measured) - Fail-closed bypass behavior verified (1 unsupported case → native) - Benchmark harness: corpus extractor, 2 compact profiles, 2 classifier evals, 6 SVG charts - Realistic 1,200-example classifier evaluation with locked test set - Aggressive compact profile e
-  **Post-Mortem & Fix Analysis**:
-  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=75534638"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a>Confidence Score: 0/5</h2>  **[Low risk]** Adds benchmark and evaluation scripts with test data\.  The PR is not ready to merge because its corpus fidelity, semantic-preservation check, and classifier evaluation boundaries undermine the reported evidence.  <h2><a href="https://app.greptile.com/ide/claude-code?prompt=%23%23%23%20Issue%201%0Aevidence%2Fextract_corpus.py%3A69-74%0AWhen%20a%20Go%20tool%20has%20no%20%60required%60%20list%2C%20this%20code%20assigns%20the%20next%20tool%E2%80%99s%20list%20to%20it.%
-  > Thanks for the contribution, @AbhiramMandala. This PR is closed without merging because another submission for the same change was chosen: [#257](https://github.com/Nasiko-Labs/nasiko/pull/257). Only one implementation could be merged, and closing this one is not a judgement that the work was wrong. A maintainer will follow up here if anything needs more detail.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2279,125 +2279,61 @@ class _Operation:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfd8abed` (2026-11-11)
-**Commit Message**: Update SECURITY.md
+### Incident Patch 1: `b9f96008` (2026-11-14)
+**Commit Message**: docs(readme): add stop, logs and rebuild commands, and the agent key note
+
+Quick start shows how to follow logs, stop the stack and rebuild after a pull. Deploy explains that agents use the server's OPENAI_API_KEY unless given their own secret.
 [synced-from-private]
 
-**File**: `SECURITY.md` (modified, +1/-1)
+**File**: `README.md` (modified, +9/-0)
 ```diff
-@@ -32,7 +32,7 @@ Please include as much of the following as you can:
- |---|---|
- | Acknowledgement of your report | within 3 business days |
- | Initial assessment and severity | within 10 business days |
--| Status updates while we work on a fix | at least every 14 days |
-+| Status updates while we work on a fix | take upto 2 weeks |
+@@ -197,6 +197,12 @@ The `.env` defaults work on your own machine. Before anyone else can reach the s
+ After editing `.env`, run `docker compose up -d` again. Every variable is described in
+ [`server/.env.example`](server/.env.example).
  
- We will keep you informed while we investigate, tell you whether we accept the report, and agree a
- disclosure date with you. Once a fix is released, we publish a security advisory and credit you
++```sh
++docker compose logs -f server   # follow the server logs
++docker compose down             # stop everything
++docker compose up -d --build    # rebuild after pulling new changes
++```
++
+ **3. Connect the CLI**
+ 
+ ```sh
+@@ -297,6 +303,9 @@ nasiko deploy .                             # build, push and deploy
+ nasiko chat --agent my-agent "Hello there"
+ ```
+ 
++Deployed agents use the server's `OPENAI_API_KEY` unless you give them their own with
++`nasiko secrets set`, so set it in `.env` before you chat.
++
+ `nasiko deploy` builds locally with Docker. `nasiko upload` sends the source and the server builds it.
+ You can also deploy from the dashboard: upload source, import from GitHub, or pull from the registry.
+ 
 ```
 
 ---
 
-### Incident Patch 2: `4cb05ac6` (2026-11-11)
-**Commit Message**: docs: add a security policy
+### Incident Patch 2: `1fee19bf` (2026-11-14)
+**Commit Message**: Merge pull request #976 from Nasiko-Labs/docs/readme-quickstart
+
+Docs/readme quickstart
 [synced-from-private]
 
-**File**: `SECURITY.md` (added, +74/-0)
+**File**: `.sync-marker` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,74 @@
-+# Security Policy
-+
-+Nasiko runs in the call path of agents, coding harnesses and model providers, and it handles
-+credentials, provider keys and user data. We take security reports seriously and appreciate the
-+work of everyone who helps keep Nasiko and its users safe.
-+
-+## Reporting a vulnerability
-+
-+**Do not report security vulnerabilities through public GitHub issues, pull requests, discussions or
-+Discord channels.**
-+
-+Report them privately through GitHub's private vulnerability reporting:
-+[Report a vulnerability](https://github.com/Nasiko-Labs/nasiko/security/advisories/new).
-+
-+If you cannot use GitHub, contact a maintainer privately on
-+[Discord](https://discord.com/invite/HmnfkTfjFv) and ask for a private channel. Do not include
-+vulnerability details in the first message.
-+
-+Please include as much of the following as you can:
-+
-+- the type of issue (for example authentication bypass, privilege escalation, injection, secret
-+  exposure, server-side request forgery);
-+- the affected component, endpoint or file, and the version or commit;
-+- the configuration needed to reproduce it;
-+- step-by-step reproduction instructions;
-+- a proof of concept, if you have one;
-+- the impact, and how an attacker could exploit it.
-+
-+## What to expect
-+
-+| Step | Target |
-+|---|---|
-+| Acknowledgement of your report | within 3 business days |
-+| Initial assessment and severity | within 10 business days |
-+| Status updates while we work on a fix | at least every 14 days |
-+
-+We will keep you informed while we investigate, tell you whether we accept the report, and agree a
-+disclosure date with you. Once a fix is released, we publish a security advisory and credit you
-+unless you ask to remain anonymous.
-+
-+## Supported versions
-+
-+Security fixes are made on the `main` branch and included in the next release. We do not backport
-+fixes to older releases; upgrade to the latest release to receive them.
-+
-+## Scope
-+
-+In scope:
-+
-+- the Nasiko server: API, authentication and authorization, agent proxy, LLM router, MCP gateway,
-+  embedded registry and web UI;
-+- the `nasiko` CLI;
-+- the example agents and Docker images published from this repository.
-+
-+Out of scope:
-+
-+- vulnerabilities in third-party dependencies that have no demonstrated impact on Nasiko (report
-+  those to the upstream project);
-+- issues that require a compromised host, a malicious administrator, or physical access;
-+- denial of service through volumetric traffic;
-+- findings from automated scanners without a demonstrated, reproducible impact;
-+- missing security headers or best-practice recommendations with no exploitable impact;
-+- social engineering of Nasiko maintainers or users.
-+
-+## Safe harbor
-+
-+We will not pursue legal action against anyone who, in good faith:
-+
-+- reports a vulnerability through the channels above;
-+- tests only against their own installation or accounts they own;
-+- avoids privacy violations, data destruction, and degradation of service for others;
-+- gives us reasonable time to fix the issue before disclosing it publicly.
-+
-+Thank you for helping keep Nasiko secure.
+@@ -1 +1 @@
+-5c24f6a4ef9bb8f1f10b7c9294b93e9f0214ca86
++9e3cf17af23d7a928aa01b6cd3414c9082503c93
 ```
-
----
-
-### Incident Patch 3: `ee675e72` (2026-11-11)
-**Commit Message**: Merge pull request #928 from Nasiko-Labs/docs/contributing-guide
-
-Docs/contributing guide
-[synced-from-private]
-
-
 
 #### Recent Merged Pull Requests:
+- **PR #365** (closed): Remove duplicate GitHub badges (@shrawansaproo01)
 - **PR #356** (closed): fix(llm-router): stop dropping tool_choice "none" and related tool controls (@Prudhvi-Raj1806)
 - **PR #344** (closed): feat: add reproducible compaction and routing benchmarks (@AbhiramMandala)
 - **PR #338** (closed): [P2: request classifier] add request classifier and context integrity… (@SVaishnaviVasa)
 - **PR #337** (closed): [classifier] P2 request classifier with hosted model fallback, API endpoints, and interactive frontend console (@VrajeshChary)
 - **PR #336** (closed): feat(router): implement P2 request classifier, L2 cache bypass, evalu… (@Varshini2701)
-- **PR #333** (closed): feat: add compact tool decoder and streaming support (@ayeshazaara740)
 
 ---
 
@@ -2417,31 +2353,39 @@ Docs/contributing guide
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update SECURITY.md
+## X. docs(readme): add stop, logs and rebuild commands, and the agent key note
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfd8abed`: Update SECURITY.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9f96008`: docs(readme): add stop, logs and rebuild commands, and the agent key note. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| Status updates while we work on a fix | take upto 2 weeks |
+```sh
+docker compose logs -f server   # follow the server logs
+docker compose down             # stop everything
+docker compose up -d --build    # rebuild after pulling new changes
+```
+
+Deployed agents use the server's `OPENAI_API_KEY` unless you give them their own with
+`nasiko secrets set`, so set it in `.env` before you chat.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-| Status updates while we work on a fix | at least every 14 days |
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfd8abed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9f96008` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

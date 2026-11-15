@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-GTQ7",
-    "timestamp": "2026-11-10T02:24:10.879Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-QO3G",
     "timestamp": "2026-11-10T02:31:50.140Z",
     "repository": "mitmproxy/mitmproxy",
@@ -7490,6 +7475,21 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "910723abce1fbddad86ae0c0fd567fb41e218f8361685db29fe1d19eb3b25c6a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-JE6J",
+    "timestamp": "2026-11-15T11:40:24.331Z",
+    "repository": "Nasiko-Labs/nasiko",
+    "learningId": "learn-github-nasiko-labs-nasiko",
+    "contentHash": "ba1e71c66731667ae312eadf1eeaff065b0ae4386a8bf34b91dfdce5c5dd8d62",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
