@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T20:55:41.586Z",
+  "timestamp": "2026-11-15T06:19:33.224Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-envoyproxy-envoy-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [envoyproxy-envoy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T20:55:41.586Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T06:19:33.224Z`  
 > **Learning ID**: `LEARN-EVO-envoyproxy-envoy-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from envoyproxy-envoy-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `998221c8`  
+> **Source Version**: `2c6ea77a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T20:54:28.603Z  
+> **Timestamp**: 2026-11-15T06:18:18.967Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:54:28.597Z  
+> **Harvest Timestamp**: 2026-11-15T06:18:18.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29230 stars
+- **Stars / Engagement**: 29237 stars
 
 ---
 
@@ -1075,183 +1075,468 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d55d98c9` (2026-11-13)
-**Commit Message**: ci/gcc: Build and test with -c opt and no fission (#49236)
+### Incident Patch 1: `073a9f6c` (2026-11-13)
+**Commit Message**: test/sds_dynamic: Stop waiting out the SDS initial fetch timeout (#49073)
 
-The gcc build and test jobs ran with `-c fastbuild`, a configuration
-nothing ships: the clang release build and its tests use `-c opt`. They
-now use `-c opt` too.
+All four `SdsDynamicClusterIntegrationTest` cases that start a dynamic
+cluster whose transport socket uses SDS spent 15s in `initialize()`,
+waiting for the SDS `initial_fetch_timeout` to let the cluster warm:
 
-They use a new `gcc-ci` config: `--config=gcc` with `-c opt` and without
-debug info (`--fission=no` and `-g0`), so `--config=gcc` itself keeps
-its debug info for other builds. At `-c opt` fission adds `-gsplit-dwarf
--g` to every compile,
-test targets included, and with GCC that debug info pushed compiles
-over the small RBE pool (squeezed at its limit until they time out) and
-the kitchen-sink links (`envoy-static`, `config_test`, the
-router_check/config_load_check/schema_validator tools) to 12-13GB, on
-xlarge, with 1.2-1.3GB binaries. Without it, measured on `config_test`:
-compiles peak at 6.7GB, the link at 2.3GB with a 195MB binary
-(fastbuild:
-12.2GB and about 0.6GB). Nothing from these jobs is published.
+- `BasicSuccess` and `EdsBootStrapCluster` only serve the secret after
+`initialize()` returns, so the cluster could not warm on it. Defer
+listener finalization (as `ClusterWarmingWhileHealthCheckBlocksOnSds`
+already does) so the secret is served while the cluster warms.
+- `ClusterRefersNonExistentSdsCluster` and `CdsSdsCyclicDependency` are
+about starting when the secret can never be fetched, i.e. the fetch
+timeout is the path under test. Set it to 100ms for those.
 
-At `-c opt` the GCC toolchain links with `--gc-sections`, which drops
-the link array sections upb registers extensions in under GCC, leaving
-`__start_linkarr_upb_AllExts`/`__stop_linkarr_upb_AllExts` undefined.
-`--config=gcc` now links with `-z nostart-stop-g
+That is 32 cases at 15-20s each per run. Drop the test size.
 
-**File**: `.bazelrc` (modified, +19/-0)
+---------
+
+Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+
+**File**: `test/integration/BUILD` (modified, +0/-1)
 ```diff
-@@ -150,11 +150,21 @@ build:gcc --test_env=HEAPCHECK=
- # option not play well with fission:
- # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110885
- build:gcc --copt=-fno-debug-types-section
-+# With `--gc-sections` (`-c opt`), LLD drops the link array sections upb's GCC build registers
-+# extensions in, and their `__start_`/`__stop_` symbols are then undefined. Keep sections referenced
-+# by those symbols, as LLD did before 13.
-+# TODO(phlax): move this to the toolshed GCC toolchain's link flags.
-+build:gcc --linkopt=-Wl,-z,nostart-stop-gc
- # These trigger errors in multiple places both in Envoy dependecies
- # and in Envoy code itself when using GCC.
- # And in all cases the reports appear to be clear false positives.
- build:gcc --copt=-Wno-error=restrict
- build:gcc --copt=-Wno-error=uninitialized
-+# With optimization (`-c opt`), GCC inlines through null checks and casts and reports the null
-+# branch, eg a null source copied from in a death test, or a store through the result of a
-+# `dynamic_cast` it cannot prove non-null.
-+build:gcc --copt=-Wno-error=nonnull
-+build:gcc --copt=-Wno-error=stringop-overflow
- build:gcc --cxxopt=-Wno-missing-requires
- build:gcc --cxxopt=-Wno-dangling-reference
- build:gcc --cxxopt=-Wno-nonnull-compare
-@@ -186,6 +196,15 @@ build:gcc --host_per_file_copt=external/protobuf.*/src/google/protobuf/(port|mes
- build:gcc --per_file_copt=external/tcmalloc.*@-Wno-sign-compare
- build:gcc --per_file_copt=external/v8.*@-Wno-dangling-else
+@@ -2391,7 +2391,6 @@ envoy_cc_test(
  
-+# The GCC reference build as Envoy CI builds and tests it: with `-c opt`, as the Clang release build
-+# is, but without debug info. With GCC, the split debug info `-c opt` adds (and `-ggdb3` on
-+# libraries) takes compiles over the small RBE pool and the larger links over the large one, and
-+# makes the binaries about 6x the size, for output that CI never publishes.
-+build:gcc-ci --config=gcc
-+build:gcc-ci --compilation_mode=opt
-+build:gcc-ci --fission=no
-+build:gcc-ci --per_file_copt=.*@-g0
-+
- #############################################################################
- # tests
- #############################################################################
+ envoy_cc_test(
+     name = "sds_dynamic_integration_test",
+-    size = "large",
+     srcs = [
+         "sds_dynamic_integration_test.cc",
+     ],
 ```
 
-**File**: `changelogs/current/minor_behavior_changes/build__gcc-opt.rst` (added, +14/-0)
+**File**: `test/integration/sds_dynamic_integration_test.cc` (modified, +40/-3)
 ```diff
-@@ -0,0 +1,14 @@
-+The GCC reference build (``--config=gcc``) is now built and tested in Envoy CI with ``-c opt``, for
-+consistency with the Clang build, which is built and tested with ``-c opt``. The new ``gcc-ci``
-+config builds it as CI does, without debug information (``--fission=no`` and ``-g0``): with GCC, the
-+split debug information that ``-c opt`` adds took compiles and links over the memory of the RBE
-+pools they run on and made the binaries several times larger, and nothing from the GCC build is
-+published.
-+
-+``--config=gcc`` now links with ``-z nostart-stop-gc``, as ``-c opt`` links with ``--gc-sections``,
-+which otherwise drops the link array sections ``upb`` registers extensions in. It also no longer
-+treats ``-Wnonnull`` and ``-Wstringop-overflow`` as errors, as GCC reports false positives for them
-+with optimization.
-+
-+This has no effect on any production binaries produced by the project, but downstream projects that
-+build with GCC and wish to continue building with ``-c fastbuild`` may require some adjustment.
-```
-
-**File**: `ci/do_ci.sh` (modified, +3/-4)
-```diff
-@@ -975,8 +975,9 @@ case $CI_TARGET in
-         ;;
+@@ -1570,6 +1570,10 @@ class SdsDynamicClusterIntegrationTest : public SdsDynamicIntegrationBaseTest {
+       auto* secret_config =
+           tls_context.mutable_common_tls_context()->add_tls_certificate_sds_secret_configs();
+       setUpSdsConfig(secret_config, "client_cert", sds_cluster_name_);
++      if (sds_initial_fetch_timeout_.has_value()) {
++        secret_config->mutable_sds_config()->mutable_initial_fetch_timeout()->MergeFrom(
++            ProtobufUtil::TimeUtil::MillisecondsToDuration(sds_initial_fetch_timeout_->count()));
++      }
  
-     gcc|gcc.build|gcc.test)
--        BAZEL_BUILD_OPTIONS+=("--config=gcc")
--        echo "gcc toolchain configured: gcc"
-+        # `gcc-ci`: GCC with `-c opt`, as the release build and tests are, without debug info.
-+        BAZEL_BUILD_OPTIONS+=("--config=gcc-ci")
-+        echo "gcc toolchain configured: gcc-ci"
-         # Nothing built here is published, so the server and tools binaries are built in one
-         # invocation, with the tests if there are any, and are not downloaded.
-         GCC_BUILD_TARGETS=()
-@@ -991,15 +992,13 @@ case $CI_TARGET in
-         if [[ "$CI_TARGET" == "gcc.build" ]]; then
-             echo "Building ${GCC_BUILD_TARGETS[*]}"
-             bazel build "${BAZEL_BUILD_OPTIONS[@]}" \
--                -c fastbuild \
-                 --remote_download_minimal \
-                 -- "${GCC_BUILD_TARGETS[@]}"
-             collect_build_profile build
-         else
-             echo "Building ${GCC_BUILD_TARGETS[*]} and testing ${TEST_TARGETS[*]}"
-             bazel_with_collection \
-                 test "${BAZEL_BUILD_OPTIONS[@]}" \
--                -c fastbuild  \
-                 --remote_download_minimal \
-                 -- "${GCC_BUILD_TARGETS[@]}" "${TEST_TARGETS[@]}"
-         fi
+       transport_socket->set_name("envoy.transport_sockets.tls");
+       std::ignore = transport_socket->mutable_typed_config()->PackFrom(tls_context);
+@@ -1644,6 +1648,9 @@ class SdsDynamicClusterIntegrationTest : public SdsDynamicIntegrationBaseTest {
+   envoy::config::cluster::v3::Cluster sds_cluster_;
+   bool valid_sds_cluster_{true};
+   bool use_bootstrap_eds_{false};
++  // Tests where the secret can never be fetched warm the dynamic cluster on this timeout (15s by
++  // default) rather than on a secret.
++  std::optional<std::chrono::milliseconds> sds_initial_fetch_timeout_;
+   std::string sds_cluster_name_;
+   FakeHttpConnectionPtr sds_connection_;
+   FakeStreamPtr sds_stream_;
+@@ -1667,6 +1674,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, BasicSuccess) {
+     }
+   };
+   sds_cluster_name_ = "sds_dynamic_cluster.lyft.com";
++  // The dynamic cluster warms on the secret served below, so initialize() must not wait for the
++  // server to finish initializing (it would only return once the SDS initial_fetch_timeout fired).
++  defer_listener_finalization_ = true;
+   initialize();
+ 
+   {
+@@ -1680,6 +1690,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, BasicSuccess) {
+     sendSdsResponse2(getClientSecret(), *sds_stream_);
+   }
+ 
++  // The cluster warms on that secret and the listeners come up: the wait initialize() skipped.
++  test_server_->waitUntilListenersReady();
++
+   // Validate that Envoy accepts SDS as dynamic cluster and moves to Live state.
+   test_server_->waitForGauge("server.state", Ge(0));
+   test_server_->waitForGauge("server.live", Ge(1));
+@@ -1711,6 +1724,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, EdsBootStrapCluster) {
+   };
+   sds_cluster_name_ = "sds_bootstrap_cluster";
+   use_bootstrap_eds_ = true;
++  // The dynamic cluster warms on the secret served below, so initialize() must not wait for the
++  // server to finish initializing (it would only return once the SDS initial_fetch_timeout fired).
++  defer_listener_finalization_ = true;
+   initialize();
+ 
+   {
+@@ -1724,6 +1740,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, EdsBootStrapCluster) {
+     sendSdsResponse2(getClientSecret(), *sds_stream_);
+   }
+ 
++  // The cluster warms on that secret and the listeners come up: the wait initialize() skipped.
++  test_server_->waitUntilListenersReady();
++
+   // Validate that Envoy accepts SDS as dynamic cluster and moves to Live state.
+   test_server_->waitForGauge("server.state", Ge(0));
+   test_server_->waitForGauge("server.live", Ge(1));
+@@ -1755,14 +1774,23 @@ TEST_P(SdsDynamicClusterIntegrationTest, ClusterRefersNonExistentSdsCluster) {
+   };
+   sds_cluster_name_ = "non_existent_sds_cluster.lyft.com";
+   valid_sds_cluster_ = false;
++  // The secret can never be fetched: the dynamic cluster warms once the SDS initial fetch times
++  // out, which is what lets the server start. Keep that short.
++  sds_initial_fetch_timeout_ = std::chrono::milliseconds(100);
+   initialize();
+ 
+   // Validate that Envoy accepts SDS as dynamic cluster and moves to Live state.
+   test_server_->waitForGauge("server.state", Ge(0));
+   test_server_->waitForGauge("server.live", Ge(1));
+ 
+-  // Validate that the secret update failed because SDS cluster is not found.
+-  test_server_->waitForCounter("sds.client_cert.update_failure", Ge(1));
++  // The secret is never fetched, so the cluster warms on the fetch timeout. With Envoy gRPC the
++  // SDS stream goes to the non-existent cluster and fails. Google gRPC has no cluster to look up:
++  // it targets the fake upstream directly, which never answers, so there is no stream failure.
++  test_server_->waitForCounter("sds.client_cert.init_fetch_timeout", Ge(1));
++  if (clientType() == Grpc::ClientType::EnvoyGrpc) {
++    // Validate that the secret update failed because SDS cluster is not found.
++    test_server_->waitForCounter("sds.client_cert.update_failure", Ge(1));
++  }
+ 
+   // The 3 clusters are CDS, static and dynamic cluster.
+   test_server_->waitForGauge("cluster_manager.active_clusters", Ge(3));
+@@ -1789,12 +1817,21 @@ TEST_P(SdsDynamicClusterIntegrationTest, CdsSdsCyclicDependency) {
+   };
+   sds_cluster_name_ = "dynamic";
+   valid_sds_cluster_ = false;
++  // The secret can never be fetched: the dynamic cluster warms once the SDS initial fetch times
++  // out, which is what lets the server start. Keep that short.
++  sds_initial_fetch_timeout_ = std::chrono::milliseconds(100);
+   initialize();
+ 
+   // Validate that Envoy accepts SDS
 ```
 
 ---
 
-### Incident Patch 2: `bef6a20b` (2026-11-13)
-**Commit Message**: Fix //test/config_test/... on Windows (#49042)
+### Incident Patch 2: `f5f97e66` (2026-11-14)
+**Commit Message**: docs: Build the html on a large RBE pool (#49263)
 
-Risk Level: low
-Testing: unit tests
-Docs Changes: no
-Release Notes: no
-Platform Specific Features: windows only
+ 
+Sphinx builds the html in parallel (`-j auto`), but the `SphinxHtml`
+action sets no pool, so on EngFlow RBE it runs on the default pool
+(`linux_x64_xsmall`), where an action gets a single core and 3GiB. This
+is most of the docs job.
 
-Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
+Set `linux_x64_large` on both `sphinx_html` targets with
+`envoy_exec_properties` (so only for EngFlow RBE builds; local and other
+builds are unchanged).
 
-**File**: `configs/configgen.sh` (modified, +4/-4)
+Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+
+**File**: `docs/BUILD` (modified, +10/-0)
 ```diff
-@@ -23,18 +23,18 @@ fi
- for FILE in "$@"; do
-     case "$FILE" in
-         *.pem|*.der)
--            cp "$FILE" "$OUT_DIR/certs"
-+            cp -f "$FILE" "$OUT_DIR/certs"
-             ;;
-         *.lua|*.wasm|*.so)
--            cp "$FILE" "$OUT_DIR/lib"
-+            cp -f "$FILE" "$OUT_DIR/lib"
-             ;;
-         *.pb)
--            cp "$FILE" "$OUT_DIR/protos"
-+            cp -f "$FILE" "$OUT_DIR/protos"
-             ;;
-         *)
-             FILENAME="$(echo "$FILE" | sed -e 's/.*examples\///g')"
-             # Configuration filenames may conflict. To avoid this we use the full path.
--            cp "$FILE" "$OUT_DIR/${FILENAME//\//_}"
-+            cp -f "$FILE" "$OUT_DIR/${FILENAME//\//_}"
-             ;;
-     esac
- done
+@@ -1,4 +1,5 @@
+ load("@bazel_skylib//rules:common_settings.bzl", "bool_flag", "string_flag")
++load("@envoy//bazel:envoy_rbe.bzl", "envoy_exec_properties")
+ load("@envoy_toolshed//dependency:macros.bzl", "module_deps_json", "module_updater")
+ load("@rules_pkg//pkg:mappings.bzl", "pkg_filegroup", "pkg_files")
+ load("@rules_pkg//pkg:pkg.bzl", "pkg_tar")
+@@ -293,10 +294,18 @@ pkg_tar(
+     ],
+ )
+ 
++# Sphinx builds in parallel (`-j auto`), which needs more than the single core (and 3GiB) of an
++# action on the default pool.
++SPHINX_EXEC_PROPERTIES = envoy_exec_properties(
++    rbe_pool = "linux_x64_large",
++    test = False,
++)
++
+ sphinx_html(
+     name = "html_release",
+     out = "html_release.tar.gz",
+     descriptor_path = "@envoy_api//:v3_proto_set",
++    exec_properties = SPHINX_EXEC_PROPERTIES,
+     link_suffix_env = _LINK_SUFFIX_ENV,
+     # Build sha/tag may be supplied with --@envoy-docs//:build_sha=<sha> and
+     # --@envoy-docs//:docs_tag=<tag>. When unset, stamped builds fall back to workspace status
+@@ -314,6 +323,7 @@ sphinx_html(
+     name = "html",
+     out = "html.tar.gz",
+     descriptor_path = "@envoy_api//:v3_proto_set",
++    exec_properties = SPHINX_EXEC_PROPERTIES,
+     link_suffix_env = _LINK_SUFFIX_ENV,
+     rst = ":rst",
+     sphinx_runner = "//tools:sphinx_runner",
 ```
 
-**File**: `test/config_test/BUILD` (modified, +2/-0)
+---
+
+### Incident Patch 3: `cacf8e23` (2026-11-14)
+**Commit Message**: Fix/tcp proxy close empty fin on downstream data (#49149)
+
+Commit Message: tcp_proxy: close downstream on empty FIN in
+ON_DOWNSTREAM_DATA before upstream connect
+
+In upstream_connect_mode ON_DOWNSTREAM_DATA, a client that half-closes
+(FIN / end_stream)
+without sending any data never triggers the upstream connection, by
+design. Because half-close is
+enabled on the downstream connection, that FIN is not reported as
+RemoteClose, so nothing closed the
+session. It stayed open until idle_timeout, or indefinitely if
+idle_timeout is unset.
+
+This change closes the downstream connection in that case, with the
+local close reason
+tcp_proxy_downstream_closed_without_data. Other upstream connect modes
+are unchanged.
+
+Additional Description:
+- Behaviour before: in ON_DOWNSTREAM_DATA, an empty FIN before any data
+left the downstream connection
+  open until idle_timeout.
+- Behaviour after: the same input closes the downstream connection
+immediately (FlushWrite).
+- Scope: only when connect_mode is ON_DOWNSTREAM_DATA, no data has been
+received yet
+(initial_data_received_ is false), and the buffer is empty with
+end_stream set. IMMEDIATE and
+ON_DOWNSTREAM_TLS_HANDSHAKE are excluded, because they may ha
+
+**File**: `changelogs/current/bug_fixes/tcp_proxy__close-empty-fin-before-upstream.rst` (added, +6/-0)
 ```diff
-@@ -108,5 +108,7 @@ py_binary(
-         "//configs:files",
-         "@envoy_api//:v3_proto_set",
-     ],
-+    # envoy.base.utils depends on uvloop, which does not support Windows.
-+    tags = ["skip_on_windows"],
-     deps = [requirement("envoy.base.utils")],
- )
+@@ -0,0 +1,6 @@
++Fixed :ref:`tcp_proxy <config_network_filters_tcp_proxy>` in ``upstream_connect_mode: ON_DOWNSTREAM_DATA``
++leaving a downstream connection open until ``idle_timeout`` when the client half-closed without
++sending any data. Envoy now closes such a connection at once and records
++``tcp_proxy_downstream_closed_without_data`` as its downstream local close reason, shown by
++``%DOWNSTREAM_LOCAL_CLOSE_REASON%``, and counts it in ``downstream_cx_closed_without_data``. These
++connections no longer reach ``idle_timeout``. Other connect modes are unchanged.
+```
+
+**File**: `docs/root/configuration/listeners/network_filters/tcp_proxy_filter.rst` (modified, +3/-0)
+```diff
+@@ -69,6 +69,8 @@ and how early data is buffered.
+ * ``ON_DOWNSTREAM_DATA``: Wait for initial data from the downstream connection before establishing the upstream
+   connection. This allows preceding filters to inspect the initial data before the upstream connection is established.
+   This mode **requires** ``max_early_data_bytes`` to be set.
++  If the downstream half-closes without sending any data, the connection is closed immediately, without connecting upstream.
++  The close reason is ``tcp_proxy_downstream_closed_without_data``, and the connection is counted in ``downstream_cx_closed_without_data``.
+ * ``ON_DOWNSTREAM_TLS_HANDSHAKE``: Wait for the downstream TLS handshake to complete before establishing the upstream
+   connection. This allows access to the full TLS connection information, including client certificates and negotiated
+   parameters. This mode is only effective when the downstream connection uses TLS. For non-TLS connections, it behaves
+@@ -228,6 +230,7 @@ The downstream statistics are rooted at *tcp.<stat_prefix>.* with the following
+   downstream_cx_total, Counter, Total number of connections handled by the filter
+   downstream_cx_no_route, Counter, Number of connections for which no matching route was found or the cluster for the route was not found
+   downstream_cx_drain_close, Counter, Total number of connections closed due to drain close
++  downstream_cx_closed_without_data, Counter, "Total number of connections closed because the downstream half-closed without sending any data in ``ON_DOWNSTREAM_DATA`` mode before any upstream connection was attempted"
+   downstream_cx_overload_close, Counter, Total number of connections closed due to overload manager load shedding
+   downstream_cx_tx_bytes_total, Counter, Total bytes written to the downstream connection
+   downstream_cx_tx_bytes_buffered, Gauge, Total bytes currently buffered to the downstream connection
+```
+
+**File**: `envoy/stream_info/stream_info.h` (modified, +4/-0)
+```diff
+@@ -287,6 +287,10 @@ struct LocalCloseReasonValues {
+   const std::string TriggeredDelayedCloseTimeout = "triggered_delayed_close_timeout";
+   const std::string TcpProxyInitializationFailure = "tcp_initializion_failure:";
+   const std::string TcpProxyDrainClose = "tcp_proxy_drain_close";
++  // Downstream half-closed with no data while tcp_proxy had not yet established (and will not
++  // establish) an upstream connection, e.g. ON_DOWNSTREAM_DATA with an empty FIN.
++  const std::string TcpProxyDownstreamClosedWithoutData =
++      "tcp_proxy_downstream_closed_without_data";
+   const std::string TcpSessionIdleTimeout = "tcp_session_idle_timeout";
+   const std::string MaxConnectionDurationReached = "max_connection_duration_reached";
+   const std::string ClosingUpstreamTcpDueToDownstreamRemoteClose =
+```
+
+**File**: `source/common/tcp_proxy/tcp_proxy.cc` (modified, +17/-0)
+```diff
+@@ -1163,6 +1163,23 @@ Network::FilterStatus Filter::onData(Buffer::Instance& data, bool end_stream) {
+           return Network::FilterStatus::StopIteration;
+         }
+       }
++    } else if (connect_mode_ == UpstreamConnectMode::ON_DOWNSTREAM_DATA &&
++               !initial_data_received_ && end_stream && early_data_buffer_.length() == 0) {
++      // ON_DOWNSTREAM_DATA never connects upstream for a downstream that half-closes before
++      // sending data. Half-close is enabled, so that FIN is not a RemoteClose, and the session
++      // would otherwise stay open until idle_timeout or max_downstream_connection_duration ends
++      // it, or indefinitely when idle_timeout is 0s and no duration is set.
++      //
++      // Other modes have already started or scheduled an upstream connect, and they flush the
++      // buffered end_stream to it once it connects.
++      ENVOY_CONN_LOG(debug,
++                     "Downstream closed without data before upstream connect; closing connection",
++                     read_callbacks_->connection());
++      config_->stats().downstream_cx_closed_without_data_.inc();
++      read_callbacks_->connection().close(
++          Network::ConnectionCloseType::FlushWrite,
++          StreamInfo::LocalCloseReasons::get().TcpProxyDownstreamClosedWithoutData);
++      return Network::FilterStatus::StopIteration;
+     }
+ 
+     // Read-disable downstream when receiving early data to prevent excessive buffering.
+```
+
+**File**: `source/common/tcp_proxy/tcp_proxy.h` (modified, +1/-0)
+```diff
+@@ -62,6 +62,7 @@ constexpr absl::string_view ReceiveBeforeConnectKey = "envoy.tcp_proxy.receive_b
+  */
+ #define ALL_TCP_PROXY_STATS(COUNTER, GAUGE)                                                        \
+   COUNTER(downstream_cx_drain_close)                                                               \
++  COUNTER(downstream_cx_closed_without_data)                                                       \
+   COUNTER(downstream_cx_no_route)                                                                  \
+   COUNTER(downstream_cx_overload_close)                                                            \
+   COUNTER(downstream_cx_rx_bytes_total)                                                            \
+```
+
+**File**: `test/common/tcp_proxy/tcp_proxy_test.cc` (modified, +112/-5)
+```diff
+@@ -1045,9 +1045,11 @@ TEST_P(TcpProxyTest, ReceiveBeforeConnectEarlyDataWithEndStream) {
+ TEST_P(TcpProxyTest, ReceiveBeforeConnectDownstreamClosesWithoutData) {
+   setup(/*connections=*/1, /*set_redirect_records=*/false, /*receive_before_connect=*/true);
+ 
+-  // Downstream closes without sending any data.
++  // Downstream closes without sending any data. The upstream connect is already in flight
++  // (IMMEDIATE), so the downstream must not be closed here; the FIN is buffered for the upstream.
+   Buffer::OwnedImpl empty_buffer;
+   EXPECT_CALL(*upstream_connections_.at(0), write(_, _)).Times(0);
++  EXPECT_CALL(filter_callbacks_.connection_, close(_, _)).Times(0);
+   filter_->onData(empty_buffer, /*end_stream=*/true);
+ 
+   // When upstream connection is established, the end_stream signal should be sent even though
+@@ -2485,6 +2487,82 @@ TEST_P(TcpProxyTest, OdcdsClusterMissingCauseConnectionClose) {
+   ASSERT_FALSE(upstream_connection_establishment_latency.has_value());
+ }
+ 
++// An empty FIN that arrives while an on demand cluster lookup is pending in IMMEDIATE mode must not
++// close the downstream. It is buffered as end_stream and flushed upstream once the connection is
++// established. The close is limited to ON_DOWNSTREAM_DATA, which is the only mode that never
++// connects upstream on its own.
++TEST_P(TcpProxyTest, ImmediateEmptyFinWhileOnDemandClusterPendingIsFlushedUpstream) {
++  auto config = onDemandConfig();
++  config.mutable_max_early_data_bytes()->set_value(1024);
++  mock_odcds_api_handle_ = Upstream::MockOdCdsApiHandle::create().release();
++
++  // The first lookup finds no cluster and triggers on demand discovery. The second lookup, after
++  // discovery completes, finds the cluster.
++  EXPECT_CALL(factory_context_.server_factory_context_.cluster_manager_,
++              getThreadLocalCluster("fake_cluster"))
++      .WillOnce(Return(nullptr))
++      .WillOnce(
++          Return(&factory_context_.server_factory_context_.cluster_manager_.thread_local_cluster_))
++      .RetiresOnSaturation();
++
++  Upstream::ClusterDiscoveryCallbackPtr cluster_discovery_callback;
++  EXPECT_CALL(*mock_odcds_api_handle_, requestOnDemandClusterDiscovery("fake_cluster", _, _))
++      .WillOnce([&](auto&&, auto&& cb, auto&&) {
++        cluster_discovery_callback = std::move(cb);
++        return std::make_unique<Upstream::MockClusterDiscoveryCallbackHandle>();
++      });
++
++  // Use connections=0 so setup() does not call onNewConnection(). With ODCDS missing the cluster,
++  // onNewConnection returns StopIteration even though max_early_data_bytes enables
++  // receive_before_connect, so setup(1, ...) cannot reconcile those expectations.
++  setup(0, /*set_redirect_records=*/false, /*receive_before_connect=*/true, config);
++
++  upstream_connections_.push_back(std::make_unique<NiceMock<Network::MockClientConnection>>());
++  upstream_connection_data_.push_back(
++      std::make_unique<NiceMock<Tcp::ConnectionPool::MockConnectionData>>());
++  ON_CALL(*upstream_connection_data_.back(), connection())
++      .WillByDefault(ReturnRef(*upstream_connections_.back()));
++  upstream_hosts_.push_back(std::make_shared<NiceMock<Upstream::MockHost>>());
++  conn_pool_handles_.push_back(
++      std::make_unique<NiceMock<Envoy::ConnectionPool::MockCancellable>>());
++  ON_CALL(*upstream_hosts_.at(0), address())
++      .WillByDefault(Return(*Network::Utility::resolveUrl("tcp://127.0.0.1:80")));
++  EXPECT_CALL(*upstream_connections_.at(0), dispatcher())
++      .WillRepeatedly(ReturnRef(filter_callbacks_.connection_.dispatcher_));
++
++  {
++    testing::InSequence sequence;
++    EXPECT_CALL(factory_context_.server_factory_context_.cluster_manager_.thread_local_cluster_,
++                tcpConnPool(_, _, _))
++        .WillOnce(Return(Upstream::TcpPoolData([]() {}, &conn_pool_)))
++        .RetiresOnSaturation();
++    EXPECT_CALL(conn_pool_, newConnection(_))
++        .WillOnce(
++            [=, this](Tcp::ConnectionPool::Callbacks& cb) -> Tcp::ConnectionPool::Cancellable* {
++              conn_pool_callbacks_.push_back(&cb);
++              return onNewConnection(conn_pool_handles_.at(0).get());
++            })
++        .RetiresOnSaturation();
++    EXPECT_CALL(factory_context_.server_factory_context_.cluster_manager_.thread_local_cluster_,
++                tcpConnPool(_, _, _))
++        .WillRepeatedly(Return(std::nullopt));
++  }
++
++  // ODCDS is pending, so onNewConnection stops iteration even with receive_before_connect.
++  EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onNewConnection());
++
++  // The downstream half-closes while the lookup is still pending. Nothing may close it.
++  EXPECT_CALL(filter_callbacks_.connection_, close(_, _)).Times(0);
++  Buffer::OwnedImpl empty_data;
++  EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onData(empty_data, true));
++
++  // Discovery completes. The buffered end_stream must reach the upstream on connect.
++  std::invoke(*cluster_discovery_callback, Upstream::ClusterDiscoveryStatus::Availabl
+```
+
+**File**: `test/integration/tcp_proxy_integration_test.cc` (modified, +43/-0)
+```diff
+@@ -2974,6 +2974,49 @@ TEST_P(TcpProxyIntegrationTest, NoDataDoesNotTriggerConnection) {
+   tcp_client->close();
+ }
+ 
++// Verifies that a client which half-closes without sending any data is closed at once in
++// ON_DOWNSTREAM_DATA mode, without an upstream connection, and that the close reason is logged.
++TEST_P(TcpProxyIntegrationTest, OnDownstreamDataEmptyFinClosesWithoutUpstream) {
++  std::string access_log_path = TestEnvironment::temporaryPath(
++      fmt::format("access_log{}{}.txt", version_ == Network::Address::IpVersion::v4 ? "v4" : "v6",
++                  TestUtility::uniqueFilename()));
++  config_helper_.addConfigModifier([&](envoy::config::bootstrap::v3::Bootstrap& bootstrap) -> void {
++    auto* listener = bootstrap.mutable_static_resources()->mutable_listeners(0);
++    auto* filter_chain = listener->mutable_filter_chains(0);
++    auto* config_blob = filter_chain->mutable_filters(0)->mutable_typed_config();
++    ASSERT_TRUE(config_blob->Is<envoy::extensions::filters::network::tcp_proxy::v3::TcpProxy>());
++    auto tcp_proxy_config =
++        MessageUtil::anyConvert<envoy::extensions::filters::network::tcp_proxy::v3::TcpProxy>(
++            *config_blob);
++    tcp_proxy_config.set_upstream_connect_mode(
++        envoy::extensions::filters::network::tcp_proxy::v3::ON_DOWNSTREAM_DATA);
++    tcp_proxy_config.mutable_max_early_data_bytes()->set_value(8192);
++    auto* access_log = tcp_proxy_config.add_access_log();
++    access_log->set_name("accesslog");
++    envoy::extensions::access_loggers::file::v3::FileAccessLog access_log_config;
++    access_log_config.set_path(access_log_path);
++    access_log_config.mutable_log_format()->mutable_text_format_source()->set_inline_string(
++        "%DOWNSTREAM_LOCAL_CLOSE_REASON%");
++    std::ignore = access_log->mutable_typed_config()->PackFrom(access_log_config);
++    std::ignore = config_blob->PackFrom(tcp_proxy_config);
++  });
++  initialize();
++
++  IntegrationTcpClientPtr tcp_client = makeTcpConnection(lookupPort("tcp_proxy"));
++  // Half-close the downstream without sending any data.
++  ASSERT_TRUE(tcp_client->write("", /*end_stream=*/true));
++  // Envoy closes the downstream connection instead of leaving it open until idle_timeout.
++  tcp_client->waitForDisconnect();
++
++  // No upstream connection is made for a connection that never sent data.
++  FakeRawConnectionPtr fake_upstream_connection;
++  ASSERT_FALSE(fake_upstreams_[0]->waitForRawConnection(fake_upstream_connection,
++                                                        std::chrono::milliseconds(1000)));
++
++  EXPECT_EQ(waitForAccessLog(access_log_path), "tcp_proxy_downstream_closed_without_data");
++  test_server_->waitForCounter("tcp.tcpproxy_stats.downstream_cx_closed_without_data", Eq(1));
++}
++
+ // Test edge case where max_buffered_bytes=0 with ON_DOWNSTREAM_DATA mode.
+ TEST_P(TcpProxyIntegrationTest, ZeroBufferWithOnDownstreamData) {
+   config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49237** (2026-11-13): hot_restart: hold UDP forwarding listener configs as weakptrs attempt 2 (@filipcacky)
-- **PR #49236** (2026-11-13): ci/gcc: Build and test with -c opt and no fission (@phlax)
-- **PR #49233** (closed): [bp/1.40] flake stack (@phlax)
-- **PR #49232** (2026-11-13): test/ext_proc: Deflake the HTTP/1 streamed response body tests (@phlax)
-- **PR #49219** (2026-11-13): test/listener_ecds: Wait for the workers before connecting (@phlax)
-- **PR #49215** (2026-11-12): test/ext_proc: Deflake the HTTP client integration tests (@phlax)
+- **PR #49281** (2026-11-15): admin: Parse config dump field masks once (@gavinbunney)
+- **PR #49271** (2026-11-14): deps: Bump `bazel-registry` -> 174de77 (+envoy_toolshed) (@dependency-envoy[bot])
+- **PR #49268** (2026-11-14): protobuf: add a helper for deterministic serialization (@agrawroh)
+- **PR #49267** (2026-11-14): deps: Bump toolshed actions -> actions-v0.4.31 (@dependency-envoy[bot])
+- **PR #49266** (closed): deps: Bump toolshed actions -> actions-v0.4.31 (@dependency-envoy[bot])
+- **PR #49265** (2026-11-14): deps: Bump `bazel-registry` -> 8504117 (+envoy_toolshed) (@dependency-envoy[bot])
 
 ---
 
@@ -1265,55 +1550,6 @@ Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ci/gcc: Build and test with -c opt and no fission
-
-**RULE**:
-When implementing operations in `.bazelrc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `d55d98c9`: ci/gcc: Build and test with -c opt and no fission. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bazelrc`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c++
-// Verified production-grade fix pattern:
-# With `--gc-sections` (`-c opt`), LLD drops the link array sections upb's GCC build registers
-# extensions in, and their `__start_`/`__stop_` symbols are then undefined. Keep sections referenced
-# by those symbols, as LLD did before 13.
-# TODO(phlax): move this to the toolshed GCC toolchain's link flags.
-build:gcc --linkopt=-Wl,-z,nostart-stop-gc
-# With optimization (`-c opt`), GCC inlines through null checks and casts and reports the null
-# branch, eg a null source copied from in a death test, or a store through the result of a
-# `dynamic_cast` it cannot prove non-null.
-build:gcc --copt=-Wno-error=nonnull
-build:gcc --copt=-Wno-error=stringop-overflow
-# The GCC reference build as Envoy CI builds and tests it: with `-c opt`, as the Clang release build
-# is, but without debug info. With GCC, the split debug info `-c opt` adds (and `-ggdb3` on
-# libraries) takes compiles over the small RBE pool and the larger links over the large one, and
-# makes the binaries about 6x the size, for output that CI never publishes.
-build:gcc-ci --config=gcc
-build:gcc-ci --compilation_mode=opt
-build:gcc-ci --fission=no
-build:gcc-ci --per_file_copt=.*@-g0
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```c++
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d55d98c9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

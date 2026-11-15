@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T06:00:49.203Z",
+  "updated_at": "2026-11-15T06:19:33.118Z",
   "statistics": {
-    "total_nodes": 240,
-    "total_edges": 133,
+    "total_nodes": 242,
+    "total_edges": 134,
     "domain_distribution": {
-      "D": 189,
+      "D": 191,
       "M": 1,
       "H": 20,
       "J": 9,
@@ -19,7 +19,7 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 133
+      "CONSTRAINED_BY_ARCHITECTURE": 134
     }
   },
   "nodes": {
@@ -5390,6 +5390,51 @@
       ],
       "created_at": "2026-11-15T06:00:49.203Z",
       "updated_at": "2026-11-15T06:00:49.203Z"
+    },
+    "DOM-D-70830486": {
+      "id": "DOM-D-70830486",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-Omni-2B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-omni-2b/hf-liquidai-lfm3-omni-2b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T06:18:23.109Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-omni-2b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-15T06:18:53.941Z",
+      "updated_at": "2026-11-15T06:18:53.941Z"
+    },
+    "DOM-D-7DB1294C": {
+      "id": "DOM-D-7DB1294C",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): envoyproxy/envoy",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  \n> **Source**: github ([https://github.com/envoyprox -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  \n> **Source**: github ([https://github.com/envoyprox",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://envoyproxy-envoy/envoyproxy-envoy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T06:18:54.257Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (envoyproxy-envoy)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-15T06:19:33.118Z",
+      "updated_at": "2026-11-15T06:19:33.118Z"
     }
   },
   "edges": [
@@ -6722,6 +6767,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-E5AA5217 [H] with Domain G",
       "created_at": "2026-11-15T04:45:03.817Z"
+    },
+    {
+      "id": "EDGE-3CC673D08EF4",
+      "sourceId": "DOM-D-70830486",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-70830486 [D] with Domain M",
+      "created_at": "2026-11-15T06:18:53.941Z"
     }
   ]
 }

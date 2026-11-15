@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T06:00:50.847Z",
-  "total_verified_learnings": 8668,
+  "last_updated": "2026-11-15T06:19:33.338Z",
+  "total_verified_learnings": 8670,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18188,
+  "total_items": 18198,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215191,8 +215191,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "998221c8",
-      "content_hash": "fe9bfac98d4b2de803b2fe9c924aac493f1416ce1364b5582a16fa075ea4c14f",
+      "source_version": "2c6ea77a",
+      "content_hash": "19e6fb586854d3110ccb7b456f85ed9684d472b2218928469388acda95835133",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -215207,7 +215207,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:54:29.276Z",
+      "verified_at": "2026-11-15T06:18:19.159Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215249,10 +215249,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "repository": "envoyproxy/envoy",
-      "source_version": "998221c8",
-      "content_hash": "e8d99c3b2d1c7c318150339dcef1ab122c7bc62078fd3393bdfe2c8350a8c716",
+      "source_version": "2c6ea77a",
+      "content_hash": "0dcd0ccaf7d93444820310c6f8c3b6d44e1c62c16a099943e3c9ea01af93193f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T20:54:29.673Z"
+      "persisted_at": "2026-11-15T06:18:19.497Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy",
@@ -215440,9 +215440,9 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "fea654482ac5cffe1f4f68196edaf55b7db3fcae8a7e4b77cdb6f893d86748c6",
+      "content_hash": "227ea8193702840253538d9cc40d84a7ed208159c7fdaa3100a47b715ab207b3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T20:55:41.787Z"
+      "persisted_at": "2026-11-15T06:19:33.338Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings",
@@ -240178,6 +240178,164 @@
       "content_hash": "752b93f56abf9d52c87116f7687c0459ababa12dc9a9f9c127fc430185a06f88",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T06:00:50.847Z"
+    },
+    "learn-huggingface-liquidai-lfm3-omni-2b": {
+      "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM3-Omni-2B",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "slug": "hf-liquidai-lfm3-omni-2b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+      "source_version": "hf-liquidai-lfm3-omni-2b",
+      "content_hash": "e906a90dfd1747e119601f80ef95b18d332d5136244486fb663d490bd0693ef0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T06:18:10.073Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-omni-2b-research-knowledge-intelligence-liquidai-lfm3-omni-2b-c.md",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Omni-2B Core Invariants",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "source_version": "hf-liquidai-lfm3-omni-2b",
+      "content_hash": "0df4777aacc98df35dd024beaa98cd6b11329ca6a60e3bda1065bae7afaf1741",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T06:18:10.411Z"
+    },
+    "learn-github-orange-opensource-hurl": {
+      "learning_id": "learn-github-orange-opensource-hurl",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Orange-OpenSource/hurl",
+      "repository": "Orange-OpenSource/hurl",
+      "slug": "orange-opensource-hurl",
+      "platform": "github",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "cb4fa2d3",
+      "content_hash": "07b29fa0a5d8fb831de3345ed618c90f77d394a7e96c2907f83bac3613c02da0",
+      "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8582,
+          "title": "invertion content for cacert_file.option and clien_cert_file.option.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T06:18:11.283Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8582": {
+      "learning_id": "rule-8582",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8582,
+      "title": "invertion content for cacert_file.option and clien_cert_file.option.",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "cb4fa2d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T06:18:11.283Z"
+    },
+    "candidate_directive-invertion-content-for-cacert_file-option-and-clien_cert_file-option": {
+      "item_id": "candidate_directive-invertion-content-for-cacert_file-option-and-clien_cert_file-option",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-19KS-invertion-content-for-cacert_file-option-and-clien_cert_file-option.md",
+      "title": "invertion content for cacert_file.option and clien_cert_file.option.",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8a090573325b282da9626f5dcd507eb57cd709a519fd9cf25fee140b9fdbcdb0",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T06:18:22.784Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-orange-opensource-hurl-technical-construction-intelligence-orange-opensource-hur.md",
+      "title": "Technical Construction Intelligence: Orange-OpenSource/hurl Core Invariants",
+      "repository": "Orange-OpenSource/hurl",
+      "source_version": "cb4fa2d3",
+      "content_hash": "39d250ba6131af7afc65f4bfad94952fd45f8d55b13b98470f8b5f7455635c8b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T06:18:11.718Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-orange-opensource-hurl": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-orange-opensource-hurl",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/orange-opensource-hurl-verification-protocol-empirical-defect-shield-for-orange-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Orange-OpenSource/hurl",
+      "repository": "Orange-OpenSource/hurl",
+      "source_version": "cb4fa2d3",
+      "content_hash": "cfd360998d0c6ec5bf893c2f4f6e53ef4755a168aec1c014d4fc455d6701e5c6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T06:18:11.831Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-orange-opensource-hurl-learnings-technical-construction-intelligence-orange-open.md",
+      "title": "Technical Construction Intelligence: orange-opensource-hurl-learnings Core Invariants",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8d2349605198d186706d914a7b499a9e16f95198d58ef12375fda7ae9b79e544",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T06:18:22.892Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-orange-opensource-hurl-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-orange-opensource-hurl-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/orange-opensource-hurl-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for orange-opensource-hurl-learnings",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "83562c117d406b9bad8b19025f258fd1b4a19260822fa6a50db4c7817bba166a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T06:18:23.007Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-omni-2b-learnings-research-knowledge-intelligence-hf-liquidai-l.md",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-omni-2b-learnings Core Invariants",
+      "repository": "hf-liquidai-lfm3-omni-2b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a27ab278680b5ce4aebdaf3594c60be3eaebecdb12fb9f688776322f9509d12a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T06:18:54.140Z"
     }
   },
   "ai-builder-brain": {

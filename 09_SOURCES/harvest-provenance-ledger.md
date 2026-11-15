@@ -10072,3 +10072,8 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `fe3421e7` | Multi-dimensional audit evidence | 2026-11-15T06:00:12.030Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `c718b2ad` | Multi-dimensional audit evidence | 2026-11-15T06:00:14.649Z |
 | `learn-dom-d-3fa9ca89` | `project://hf-deepseek-ai-deepseek-v4.1-flash-1017` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | 2026-11-15T06:00:49.205Z |
+| `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-15T06:18:10.239Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `cb4fa2d3` | Multi-dimensional audit evidence | 2026-11-15T06:18:11.436Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `2c6ea77a` | Multi-dimensional audit evidence | 2026-11-15T06:18:19.324Z |
+| `learn-dom-d-70830486` | `project://hf-liquidai-lfm3-omni-2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | 2026-11-15T06:18:53.943Z |
+| `learn-dom-d-7db1294c` | `project://envoyproxy-envoy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | 2026-11-15T06:19:33.120Z |

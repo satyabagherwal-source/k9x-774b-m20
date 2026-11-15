@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T06:00:14.655Z",
-  "total_cycles_completed": 9673,
-  "total_learnings_persisted": 9673,
-  "total_rules_promoted": 9308,
+  "last_updated": "2026-11-15T06:18:19.329Z",
+  "total_cycles_completed": 9676,
+  "total_learnings_persisted": 9676,
+  "total_rules_promoted": 9309,
   "history": [
-    {
-      "timestamp": "2026-11-14T06:28:22.315Z",
-      "repository": "openbmb/MiniCPM-OCR-1.0",
-      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T06:56:52.972Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T06:56:54.241Z",
-      "repository": "Edge0/Edge0-145B-NVFP4",
-      "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T06:57:00.942Z",
       "repository": "wcandillon/react-native-skia",
@@ -1403,6 +1382,27 @@
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T06:18:10.244Z",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T06:18:11.441Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T06:18:19.329Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

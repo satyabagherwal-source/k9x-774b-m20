@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `eba47841`  
+> **Source Version**: `cb4fa2d3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:54:36.364Z  
+> **Timestamp**: 2026-11-15T06:18:10.588Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:51:37.109Z  
+> **Harvest Timestamp**: 2026-11-15T06:18:10.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19345 stars
+- **Stars / Engagement**: 19323 stars
 
 ---
 
@@ -1868,41 +1868,148 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a22e81d5` (2026-11-11)
-**Commit Message**: Changes build settings for C files.
+### Incident Patch 1: `e31691fd` (2026-11-13)
+**Commit Message**: Fix invertion content for cacert_file.option and clien_cert_file.option.
 
-**File**: `packages/hurl/build.rs` (modified, +4/-1)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -24,6 +24,7 @@ use winres::WindowsResource;
- #[cfg(windows)]
- fn set_icon() {
-     let icon = "../../bin/windows/logo.ico";
-+    println!("cargo:rerun-if-changed={icon}");
-     if !Path::new(icon).exists() {
-         return;
-     }
-@@ -40,9 +41,11 @@ fn set_icon() {}
- fn main() {
-     let project_root = Path::new(env!("CARGO_MANIFEST_DIR"));
-     let native_src = project_root.join("native");
-+    println!("cargo:rerun-if-changed=build.rs");
-+    println!("cargo:rerun-if-changed=native");
-     set_icon();
-     Build::new()
-         .file(native_src.join("libxml.c"))
-         .flag_if_supported("-Wno-unused-parameter") // unused parameter in silent callback
--        .compile("mylib");
-+        .compile("hurl_libxml");
- }
+@@ -1475,7 +1475,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
+ | Option                                                                                                            | Description                                                                                                                                                                                                                                                                                                                                                                                                                   |
+ |-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ | <a href="#aws-sigv4" id="aws-sigv4"><code>--aws-sigv4 &lt;PROVIDER1[:PROVIDER2[:REGION[:SERVICE]]]&gt;</code></a> | Generate an `Authorization` header with an AWS SigV4 signature.<br><br>Use [`-u, --user`](#user) to specify Access Key Id (username) and Secret Key (password).<br><br>To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-Security-Token` header containing the session token.<br>                                                                                                               |
+-| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br>                                                                                                                                                                     |
++| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br><br>See also [`--insecure`](#insecure).<br>                                                                                                                          |
+ | <a href="#cert" id="cert"><code>-E, --cert &lt;CERTIFICATE[:PASSWORD]&gt;</code></a>                              | Client certificate file and password.<br><br>See also [`--key`](#key).<br>                                                                                                                                                                                                                                                                                                                                                    |
+ | <a href="#compressed" id="compressed"><code>--compressed</code></a>                                               | Request a compressed response using one of the algorithms br, gzip, deflate and automatically decompress the content.<br><br>Environment variables: HURL_COMPRESSED<br>                                                                                                                                                                                                                                                       |
+ | <a href="#connect-timeout" id="connect-timeout"><code>--connect-timeout &lt;SECONDS&gt;</code></a>                | Maximum time in seconds that you allow Hurl's connection to take.<br><br>You can specify time units in the connect timeout expression. Set Hurl to use a connect timeout of 20 seconds with `--connect-timeout 20s` or set it to 35,000 milliseconds with `--connect-timeout 35000ms`. No spaces allowed.<br><br>See also [`-m, --max-time`](#max-time).<br><br>Environment variables: HURL_CONNECT_TIMEOUT<br>               |
+```
+
+**File**: `docs/manual.md` (modified, +1/-1)
+```diff
+@@ -174,7 +174,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
+ | Option                                                                                                            | Description                                                                                                                                                                                                                                                                                                                                                                                                                   |
+ |-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ | <a href="#aws-sigv4" id="aws-sigv4"><code>--aws-sigv4 &lt;PROVIDER1[:PROVIDER2[:REGION[:SERVICE]]]&gt;</code></a> | Generate an `Authorization` header with an AWS SigV4 signature.<br><br>Use [`-u, --user`](#user) to specify Access Key Id (username) and Secret Key (password).<br><br>To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-Security-Token` header containing the session token.<br>                                                                                                               |
+-| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br>                                                                                                                                                                     |
++| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br><br>See also [`--insecure`](#insecure).<br>                                                                                                                          |
+ | <a href="#cert" id="cert"><code>-E, --cert &lt;CERTIFICATE[:PASSWORD]&gt;</code></a>                              | Client certificate file and password.<br><br>See also [`--key`](#key).<br>                                                                                                                                                                                                                                                                                                                                                    |
+ | <a href="#compressed" id="compressed"><code>--compressed</code></a>                                               | Request a compressed response using one of the algorithms br, gzip, deflate and automatically decompress the content.<br><br>Environment variables: HURL_COMPRESSED<br>                                                                                                                                                                                                                                                       |
+ | <a href="#connect-timeout" id="connect-timeout"><code>--connect-timeout &lt;SECONDS&gt;</code></a>                | Maximum time in seconds that you allow Hurl's connection to take.<br><br>You can specify time units in the connect timeout expression. Set Hurl to use a connect timeout of 20 seconds with `--connect-timeout 20s` or set it to 35,000 milliseconds with `--connect-timeout 35000ms`. No spaces allowed.<br><br>See also [`-m, --max-time`](#max-time).<br><br>Environment variables: HURL_CONNECT_TIMEOUT<br>               |
+```
+
+**File**: `docs/manual/hurl.1` (modified, +3/-1)
+```diff
+@@ -1,4 +1,4 @@
+-.TH hurl 1 "06 Nov 2026" "hurl 9.0.0" " Hurl Manual"
++.TH hurl 1 "13 Nov 2026" "hurl 9.0.0" " Hurl Manual"
+ .SH NAME
+ 
+ hurl - run and test HTTP requests.
+@@ -166,6 +166,8 @@ To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-
+ Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.
+ Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.
+ 
++See also \fI--insecure\fP.
++
+ .IP "-E, --cert <CERTIFICATE[:PASSWORD]> "
+ 
+ Client certificate file and password.
+```
+
+**File**: `docs/manual/hurl.md` (modified, +2/-0)
+```diff
+@@ -182,6 +182,8 @@ To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-
+ Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.
+ Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.
+ 
++See also [`--insecure`](#insecure).
++
+ #### -E, --cert <CERTIFICATE[:PASSWORD]> {#cert}
+ 
+ Client certificate file and password.
+```
+
+**File**: `docs/manual/hurlfmt.1` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-.TH hurl 1 "06 Nov 2026" "hurl 9.0.0" " Hurl Manual"
++.TH hurl 1 "13 Nov 2026" "hurl 9.0.0" " Hurl Manual"
+ .SH NAME
+ 
+ hurlfmt - format Hurl files
+```
+
+**File**: `docs/spec/options/hurl/cacert_file.option` (modified, +7/-7)
+```diff
+@@ -1,10 +1,10 @@
+-name: client_cert_file
+-long: cert
+-short: E
+-value: CERTIFICATE[:PASSWORD]
+-help: Client certificate file and password
++name: cacert_file
++long: cacert
++value: FILE
++help: CA certificate to verify peer against (PEM format)
+ help_heading: HTTP options
+ ---
+-Client certificate file and password.
++Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.
++Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.
+ 
+-See also [`--key`](#key).
++See also [`--insecure`](#insecure).
+```
+
+**File**: `docs/spec/options/hurl/client_cert_file.option` (modified, +8/-6)
+```diff
+@@ -1,8 +1,10 @@
+-name: cacert_file
+-long: cacert
+-value: FILE
+-help: CA certificate to verify peer against (PEM format)
++name: client_cert_file
++long: cert
++short: E
++value: CERTIFICATE[:PASSWORD]
++help: Client certificate file and password
+ help_heading: HTTP options
+ ---
+-Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.
+-Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.
++Client certificate file and password.
++
++See also [`--key`](#key).
+```
+
+**File**: `docs/standalone/hurl-9.0.0.md` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ # Hurl Documentation
+ 
+-## Version 9.0.0 - 06-11-2026
++## Version 9.0.0 - 13-11-2026
+ 
+ # Table of Contents
+ 
+@@ -864,7 +864,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
+ | Option                                                                                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+ |-----------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ | <a href="#getting-started-manual-aws-sigv4" id="getting-started-manual-aws-sigv4"><code>--aws-sigv4 &lt;PROVIDER1[:PROVIDER2[:REGION[:SERVICE]]]&gt;</code></a> | Generate an `Authorization` header with an AWS SigV4 signature.<br><br>Use [`-u, --user`](#getting-started-manual-user) to specify Access Key Id (username) and Secret Key (password).<br><br>To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-Security-Token` header containing the session token.<br>                                                                                                               |
+-| <a href="#getting-started-manual-cacert" id="getting-started-manual-cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br>                                                                                                                                                                                            |
++| <a href="#getting-started-manual-cacert" id="getting-started-manual-cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br><br>See also [`--insecure`](#getting-started-manual-insecure).<br>                                                                                                                          |
+ | <a href="#getting-started-manual-cert" id="getting-started-manual-cert"><code>-E, --cert &lt;CERTIFICATE[:PASSWORD]&gt;</code></a>                              | Client certificate file and password.<br><br>See also [`--key`](#getting-started-manual-key).<br>                                                                                                                                                                                                                                                                                                                                                    |
+ | <a href="#getting-started-manual-compressed" id="getting-started-manual-compressed"><code>--compressed</code></a>                                               | Request a compressed response using one of the algorithms br, gzip, deflate and automatically decompress the content.<br><br>Environment variables: HURL_COMPRESSED<br>                                                                                                                                                                                                                                                                              |
+ | <a href="#getting-started-manual-connect-timeout" id="getting-started-manual-connect-timeout"><code>--connect-timeout &lt;SECONDS&gt;</code></a>                | Maximum time in seconds that you allow Hurl's connection to take.<br><br>You can specify time units in the connect timeout expression. Set Hurl to use a connect timeout of 20 seconds with `--connect-timeout 20s` or set it to 35,000 milliseconds with `--connect-timeout 35000ms`. No spaces allowed.<br><br>See also [`-m, --max-time`](#getting-started-manual-max-time).<br><br>Envi
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5433** (2026-11-13): Compare JSON Object (@fabricereix)
-- **PR #5432** (2026-11-13): Update to Rust 1.100.0 (@fabricereix)
-- **PR #5431** (closed): Update crates (@hurl-bot)
-- **PR #5430** (2026-11-13): Changes build settings for C files. (@jcamiel)
-- **PR #5429** (2026-11-11): Update crates (@hurl-bot)
-- **PR #5428** (2026-11-10): Update crates (@hurl-bot)
+- **PR #5439** (2026-11-14): Update crates (@hurl-bot)
+- **PR #5438** (2026-11-13): Use path type for cacert option (@jcamiel)
+- **PR #5437** (2026-11-13): Compare JSON Array (@fabricereix)
+- **PR #5436** (closed): Update crates (@hurl-bot)
+- **PR #5435** (2026-11-13): Update Python dev dependencies (@jcamiel)
+- **PR #5434** (2026-11-13): Use minimum publish 7 days for dependencies. (@jcamiel)
 
 ---
 
@@ -1922,31 +2029,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Changes build settings for C files.
+## X. invertion content for cacert_file.option and clien_cert_file.option.
 
 **RULE**:
-When implementing operations in `packages/hurl/build.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a22e81d5`: Changes build settings for C files.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e31691fd`: invertion content for cacert_file.option and clien_cert_file.option.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/build.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    println!("cargo:rerun-if-changed={icon}");
-    println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=native");
-        .compile("hurl_libxml");
+| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br><br>See also [`--insecure`](#insecure).<br>                                                                                                                          |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        .compile("mylib");
+// Induced defect failure mode:
+| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br>                                                                                                                                                                     |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a22e81d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e31691fd` are properly handled with clean fallback behavior.

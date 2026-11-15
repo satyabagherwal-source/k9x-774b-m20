@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T06:00:50.966Z",
+  "last_updated": "2026-11-15T06:19:33.490Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -228,9 +228,9 @@
       "staged_for_review": 0
     },
     "envoyproxy-envoy-learnings.md": {
-      "processed_at": "2026-11-13T20:55:41.451Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-15T06:19:33.120Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "sxyazi-yazi-learnings.md": {
       "processed_at": "2026-11-13T05:23:46.615Z",
@@ -568,7 +568,7 @@
       "staged_for_review": 1
     },
     "orange-opensource-hurl-learnings.md": {
-      "processed_at": "2026-11-13T12:54:54.164Z",
+      "processed_at": "2026-11-15T06:18:22.457Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2896,9 +2896,14 @@
       "processed_at": "2026-11-15T06:00:49.205Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-liquidai-lfm3-omni-2b-learnings.md": {
+      "processed_at": "2026-11-15T06:18:53.943Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 990,
-  "total_canonical_promoted": 244,
-  "total_staged_for_review": 745
+  "total_dossiers_evaluated": 993,
+  "total_canonical_promoted": 246,
+  "total_staged_for_review": 746
 }

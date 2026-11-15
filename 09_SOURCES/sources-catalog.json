@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "eba47841",
+    "sourceVersion": "cb4fa2d3",
     "license": "Apache-2.0",
-    "contentHash": "1aaa6cad4a3452bab5d7e76540d5caf32d04cd3b683319b4822ce8790867a5ce",
-    "lastHarvestedAt": "2026-11-13T12:54:48.800Z",
+    "contentHash": "07b29fa0a5d8fb831de3345ed618c90f77d394a7e96c2907f83bac3613c02da0",
+    "lastHarvestedAt": "2026-11-15T06:18:11.436Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "998221c8",
+    "sourceVersion": "2c6ea77a",
     "license": "Apache-2.0",
-    "contentHash": "fe9bfac98d4b2de803b2fe9c924aac493f1416ce1364b5582a16fa075ea4c14f",
-    "lastHarvestedAt": "2026-11-13T20:54:29.408Z",
+    "contentHash": "19e6fb586854d3110ccb7b456f85ed9684d472b2218928469388acda95835133",
+    "lastHarvestedAt": "2026-11-15T06:18:19.324Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -11435,8 +11435,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
     "sourceVersion": "hf-liquidai-lfm3-omni-2b",
     "license": "Open-Source",
-    "contentHash": "18ea9359dd429b6a53605f5ef3b62610424d3dad6fa9fe796fde878c74087d38",
-    "lastHarvestedAt": "2026-11-09T16:33:38.070Z",
+    "contentHash": "e906a90dfd1747e119601f80ef95b18d332d5136244486fb663d490bd0693ef0",
+    "lastHarvestedAt": "2026-11-15T06:18:10.239Z",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b"
   },
   "fabio-rovai-open-ontologies": {

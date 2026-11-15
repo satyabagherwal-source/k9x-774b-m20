@@ -10039,3 +10039,8 @@
 | `CYCLE-20261115-DVY2` | `2026-11-15T06:00:12.026Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7277` | Yes (`4738272a...`) |
 | `CYCLE-20261115-DXYT` | `2026-11-15T06:00:14.645Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8549` | Yes (`ab35ea80...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:00:49.205Z` | `hf-deepseek-ai-deepseek-v4.1-flash-1017` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3FA9CA89` [Domain D] | Yes (`fe5dd889...`) |
+| `CYCLE-20261115-0ZWB` | `2026-11-15T06:18:10.235Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | Yes (`e906a90d...`) |
+| `CYCLE-20261115-10TK` | `2026-11-15T06:18:11.432Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8582` | Yes (`07b29fa0...`) |
+| `CYCLE-20261115-16WN` | `2026-11-15T06:18:19.320Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | Yes (`19e6fb58...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:18:53.943Z` | `hf-liquidai-lfm3-omni-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-70830486` [Domain D] | Yes (`b92bd6c1...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:19:33.120Z` | `envoyproxy-envoy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7DB1294C` [Domain D] | Yes (`541e135b...`) |

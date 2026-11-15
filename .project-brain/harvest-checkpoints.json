@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T06:00:14.661Z",
+  "last_updated": "2026-11-15T06:18:19.333Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "1aaa6cad4a3452bab5d7e76540d5caf32d04cd3b683319b4822ce8790867a5ce",
-      "verified_at": "2026-11-13T12:54:48.823Z",
+      "content_hash": "07b29fa0a5d8fb831de3345ed618c90f77d394a7e96c2907f83bac3613c02da0",
+      "verified_at": "2026-11-15T06:18:11.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:54:48.823Z"
+      "last_updated": "2026-11-15T06:18:11.445Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "fe9bfac98d4b2de803b2fe9c924aac493f1416ce1364b5582a16fa075ea4c14f",
-      "verified_at": "2026-11-13T20:54:29.416Z",
+      "content_hash": "19e6fb586854d3110ccb7b456f85ed9684d472b2218928469388acda95835133",
+      "verified_at": "2026-11-15T06:18:19.332Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:54:29.416Z"
+      "last_updated": "2026-11-15T06:18:19.332Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -17196,14 +17196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
-      "content_hash": "18ea9359dd429b6a53605f5ef3b62610424d3dad6fa9fe796fde878c74087d38",
-      "verified_at": "2026-11-09T16:33:38.080Z",
+      "content_hash": "e906a90dfd1747e119601f80ef95b18d332d5136244486fb663d490bd0693ef0",
+      "verified_at": "2026-11-15T06:18:10.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:33:38.080Z"
+      "last_updated": "2026-11-15T06:18:10.247Z"
     },
     "fabio-rovai/open-ontologies": {
       "repository": "fabio-rovai/open-ontologies",

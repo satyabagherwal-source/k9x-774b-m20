@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T06:00:50.304Z",
+  "updated_at": "2026-11-15T06:18:53.955Z",
   "stats": {
-    "total_discovered": 3623,
-    "approved_pending_harvest": 3413,
+    "total_discovered": 3624,
+    "approved_pending_harvest": 3414,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3393,
+      "COMMUNITY_AND_EXPERT": 3394,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -78257,6 +78257,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
         "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-FAE087618C97": {
+      "id": "SRC-FAE087618C97",
+      "url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+      "title": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:18:53.955Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
+        "fileName": "hf-liquidai-lfm3-omni-2b-learnings.md"
       }
     }
   }

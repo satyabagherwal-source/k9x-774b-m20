@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T06:00:50.681Z",
-  "total_records": 973,
+  "last_updated": "2026-11-15T06:19:33.338Z",
+  "total_records": 979,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 478,
+      "total": 482,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -515,7 +515,11 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
         "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-1017-core-invari",
         "DOM-D-3FA9CA89",
-        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
+        "DOM-D-70830486",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
+        "DOM-D-7DB1294C"
       ]
     },
     "E": {
@@ -721,7 +725,7 @@
       ]
     },
     "H": {
-      "total": 199,
+      "total": 201,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -921,7 +925,9 @@
         "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni",
         "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-core-invarian",
         "DOM-H-E5AA5217",
-        "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor"
+        "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor",
+        "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari"
       ]
     },
     "I": {
@@ -9425,8 +9431,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "e8d99c3b2d1c7c318150339dcef1ab122c7bc62078fd3393bdfe2c8350a8c716",
-      "created_at": "2026-11-13T20:54:29.673Z"
+      "content_hash": "0dcd0ccaf7d93444820310c6f8c3b6d44e1c62c16a099943e3c9ea01af93193f",
+      "created_at": "2026-11-15T06:18:19.497Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -9545,8 +9551,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "fea654482ac5cffe1f4f68196edaf55b7db3fcae8a7e4b77cdb6f893d86748c6",
-      "created_at": "2026-11-13T20:55:41.787Z"
+      "content_hash": "227ea8193702840253538d9cc40d84a7ed208159c7fdaa3100a47b715ab207b3",
+      "created_at": "2026-11-15T06:19:33.338Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -18873,6 +18879,126 @@
       "repository": "projectdiscovery-nuclei-learnings",
       "content_hash": "30b20b3d17755f156ecd89b2a66987c4734a55a9b61fa23ada6e04e7da2325ad",
       "created_at": "2026-11-15T06:00:50.681Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Omni-2B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-omni-2b-research-knowledge-intelligence-liquidai-lfm3-omni-2b-c.md",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "content_hash": "0df4777aacc98df35dd024beaa98cd6b11329ca6a60e3bda1065bae7afaf1741",
+      "created_at": "2026-11-15T06:18:10.411Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Orange-OpenSource/hurl Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-orange-opensource-hurl-technical-construction-intelligence-orange-opensource-hur.md",
+      "repository": "Orange-OpenSource/hurl",
+      "content_hash": "39d250ba6131af7afc65f4bfad94952fd45f8d55b13b98470f8b5f7455635c8b",
+      "created_at": "2026-11-15T06:18:11.718Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: orange-opensource-hurl-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-orange-opensource-hurl-learnings-technical-construction-intelligence-orange-open.md",
+      "repository": "orange-opensource-hurl-learnings",
+      "content_hash": "8d2349605198d186706d914a7b499a9e16f95198d58ef12375fda7ae9b79e544",
+      "created_at": "2026-11-15T06:18:22.892Z"
+    },
+    "DOM-D-70830486": {
+      "record_id": "DOM-D-70830486",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-Omni-2B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/LFM3-Omni-2B](https://huggingface.co/LiquidAI/LFM3-Omni-2B))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "b92bd6c16771c9e704447f581598ed06aa4c7445f7df7b99c3863c2bdd49ad88",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-omni-2b/hf-liquidai-lfm3-omni-2b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T06:18:23.109Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-omni-2b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-lfm3-omni-2b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T06:18:53.929Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-omni-2b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-omni-2b-learnings-research-knowledge-intelligence-hf-liquidai-l.md",
+      "repository": "hf-liquidai-lfm3-omni-2b-learnings",
+      "content_hash": "a27ab278680b5ce4aebdaf3594c60be3eaebecdb12fb9f688776322f9509d12a",
+      "created_at": "2026-11-15T06:18:54.140Z"
+    },
+    "DOM-D-7DB1294C": {
+      "record_id": "DOM-D-7DB1294C",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): envoyproxy/envoy",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  \n> **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  \n> **Source Version**: `2c6ea77a`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synt",
+      "content_hash": "541e135b13720ac62d2d9e9c04b7c5ac018e3635e562c27bf6373afc5437f7ea",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  \n> **Source**: github ([https://github.com/envoyprox -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  \n> **Source**: github ([https://github.com/envoyprox",
+      "provenance": {
+        "source_uri": "project://envoyproxy-envoy/envoyproxy-envoy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T06:18:54.257Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (envoyproxy-envoy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of envoyproxy-envoy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T06:19:33.107Z"
     }
   }
 }
