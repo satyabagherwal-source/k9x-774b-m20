@@ -4,24 +4,24 @@
 {
   "source_repository": "trufflesecurity/trufflehog",
   "source_url": "https://github.com/trufflesecurity/trufflehog",
-  "source_version": "32e87f4f",
+  "source_version": "db665f0c",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-14T03:10:36.325Z",
+  "timestamp": "2026-11-15T22:46:49.375Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trufflesecurity-trufflehog",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `32e87f4f`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T03:10:36.325Z`  
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `db665f0c`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-15T22:46:49.375Z`  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from trufflesecurity/trufflehog:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:10:35.074Z  
+> **Harvest Timestamp**: 2026-11-15T22:46:48.421Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29299 stars
+- **Stars / Engagement**: 29375 stars
 
 ---
 
@@ -1154,365 +1154,162 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4cb316c` (2026-11-13)
-**Commit Message**: Add metrics and a follow-up log for detectors that ignore their timeout (#5550)
+### Incident Patch 1: `db665f0c` (2026-11-15)
+**Commit Message**: Lukem ts/update digitaloceanv2 detector (#5545)
 
-Detectors run on a fixed pool of workers. When a detector keeps
-working after its context timeout, it holds one of those workers, and
-enough held workers stall every source at once. Until now the only
-signal was one log line: it names the detector, but nothing counts
-the overruns, times them, or shows how many workers are held.
+* update DigitalOceanV2 detector to use oauth token info endpoint for verification
 
-Three metrics close that gap: a counter for overruns, a gauge of
-workers currently held, and a histogram of how long the held calls
-ran. The gauge and counter use the same detector-name label as the
-existing metrics, so the set of label values stays bounded. The
-histogram's buckets start at 10 seconds and reach about 85 minutes,
-because the existing duration histogram's buckets stop near 3 seconds
-and lose every overrun into its largest bucket.
+* add tests
 
-The gauge is counted up by the timeout's callback and counted down
-when the detector finishes. Those two moments happen in different
-goroutines, so the code pairs them through a channel: the callback
-closes the channel after counting up, and the return path waits for
-that close before counting down. That ordering keeps the gauge from
-dr
+* fix verification error
 
-**File**: `pkg/engine/engine.go` (modified, +34/-8)
+**File**: `pkg/detectors/digitaloceanv2/digitaloceanv2.go` (modified, +5/-3)
 ```diff
-@@ -1252,20 +1252,46 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
- 		detectBytesPerMatch.Observe(float64(len(matchBytes)))
+@@ -128,9 +128,10 @@ func verifyRefreshToken(ctx context.Context, client *http.Client, token string)
+ // If the token is invalid, it returns false and no error.
+ // If an error is encountered, it returns false along with the error.
+ func verifyAccessToken(ctx context.Context, client *http.Client, token string) (bool, error) {
+-	// Ref: https://docs.digitalocean.com/reference/api/digitalocean/#tag/Account
++	// Use the same token validation endpoint as doctl for API tokens and model access keys.
++	// Ref: https://github.com/digitalocean/doctl/blob/main/do/oauth.go
  
- 		ctx, cancel := context.WithTimeout(ctx, detectionTimeout)
-+		// The callback and the deferred release below hand the worker off through fired. t.Stop() returning false
-+		// means the callback started, not that it finished counting, so the release waits for the channel to close
-+		// before it decrements the gauge. The release is deferred inside the closure that owns the FromData call,
-+		// so it runs on normal return and on panic unwind alike (the common.Recover at the top of detectChunk
-+		// catches panics) and a panic inside FromData cannot leave the gauge high. The overrun histogram and the
-+		// return log stay on the normal-return path only: a panicked call never returns, so it has no duration to
-+		// record.
-+		fired := make(chan struct{})
- 		t := time.AfterFunc(detectionTimeout+1*time.Second, func() {
-+			detectorTimeoutIgnoredTotal.WithLabelValues(detectorNameStr).Inc()
-+			detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Inc()
-+			close(fired) // before the log: a slow log sink must not extend the worker hold
- 			ctx.Logger().Error(nil, "a detector ignored the context timeout")
- 		})
- 		// detectorExecutionDuration covers one detector run, which is this single FromData call, so it is timed here
- 		// regardless of printAvgDetectorTime.
- 		matchStart := time.Now()
--		results, err := e.verificationCache.FromData(
--			ctx,
--			data.detector.Detector,
--			data.verify,
--			data.chunk.SecretID != 0,
--			matchBytes)
--		matchElapsed := time.Since(matchStart)
--		t.Stop()
-+		var timerFired bool
-+		results, matchElapsed, err := func() (results []detectors.Result, matchElapsed time.Duration, err error) {
-+			defer func() {
-+				timerFired = !t.Stop()
-+				if timerFired {
-+					<-fired
-+					detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Dec()
-+				}
-+			}()
-+			results, err = e.verificationCache.FromData(
-+				ctx,
-+				data.detector.Detector,
-+				data.verify,
-+				data.chunk.SecretID != 0,
-+				matchBytes)
-+			matchElapsed = time.Since(matchStart)
-+			return results, matchElapsed, err
-+		}()
-+		if timerFired {
-+			detectorOverrunDuration.WithLabelValues(detectorNameStr).Observe(matchElapsed.Seconds())
-+			ctx.Logger().V(2).Info("detector returned after overrunning the context timeout",
-+				"duration", matchElapsed.String())
-+		}
- 		cancel()
- 		if err != nil {
- 			ctx.Logger().Error(err, "error finding results in chunk")
+-	url := "https://api.digitalocean.com/v2/account"
++	url := "https://cloud.digitalocean.com/v1/oauth/token/info"
+ 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+ 	if err != nil {
+ 		return false, fmt.Errorf("failed to create request: %w", err)
+@@ -146,7 +147,8 @@ func verifyAccessToken(ctx context.Context, client *http.Client, token string) (
+ 	switch res.StatusCode {
+ 	case http.StatusOK:
+ 		return true, nil
+-	case http.StatusUnauthorized:
++	case http.StatusBadRequest, http.StatusUnauthorized:
++		// The token-info endpoint can reject invalid tokens with either status.
+ 		return false, nil
+ 	default:
+ 		return false, fmt.Errorf("unexpected status code: %d", res.StatusCode)
 ```
 
-**File**: `pkg/engine/engine_overrun_test.go` (added, +252/-0)
+**File**: `pkg/detectors/digitaloceanv2/digitaloceanv2_test.go` (modified, +92/-0)
 ```diff
-@@ -0,0 +1,252 @@
-+package engine
-+
-+import (
-+	aCtx "context"
-+	"fmt"
-+	"os"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/go-logr/logr"
-+	"github.com/prometheus/client_golang/prometheus/testutil"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/decoders"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
+@@ -2,12 +2,17 @@ package digitaloceanv2
+ 
+ import (
+ 	"context"
++	"errors"
++	"io"
++	"net/http"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/google/go-cmp/cmp"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/engine/ahocorasick"
 +	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-+)
-+
-+// Fakes and log capture for the timeout-overrun metrics in detectChunk. The overrun test changes the
-+// package-global detectionTimeout, so neither test here may use t.Parallel(), and the overrun test must restore the
-+// previous value before returning.
-+
-+const (
-+	slowOverrunKeyword   = "slowoverruntest"
-+	fastNoOverrunKeyword = "fastnooverruntest"
-+)
-+
-+// slowOverrunDetector ignores its context on purpose: it sleeps past the detection timeout plus the one-second
-+// grace, which is the behavior the overrun metrics exist to observe. With the test's 10ms timeout the timer fires
-+// at about 1.01s and the sleep ends at 2s, so the callback always runs while FromData is still sleeping, with
-+// about a second of margin for CI scheduling jitter.
-+type slowOverrunDetector struct{}
-+
-+var _ detectors.Detector = (*slowOverrunDetector)(nil)
-+var _ detectors.Versioner = (*slowOverrunDetector)(nil)
-+
-+func (f slowOverrunDetector) FromData(_ aCtx.Context, _ bool, _ []byte) ([]detectors.Result, error) {
-+	time.Sleep(2 * time.Second)
-+	return nil, nil
-+}
-+
-+func (f slowOverrunDetector) Keywords() []string { return []string{slowOverrunKeyword} }
-+
-+func (f slowOverrunDetector) Type() detector_typepb.DetectorType {
-+	return detector_typepb.DetectorType_Test
-+}
-+
-+func (f slowOverrunDetector) Version() int { return 1 }
-+
-+func (f slowOverrunDetector) Description() string { return "slow detector for overrun tests" }
-+
-+// fastNoOverrunDetector returns immediately and stays well inside the default detection timeout.
-+type fastNoOverrunDetector struct{}
-+
-+var _ detectors.Detector = (*fastNoOverrunDetector)(nil)
-+var _ detectors.Versioner = (*fastNoOverrunDetector)(nil)
-+
-+func (f fastNoOverrunDetector) FromData(_ aCtx.Context, _ bool, _ []byte) ([]detectors.Result, error) {
-+	return nil, nil
-+}
-+
-+func (f fastNoOverrunDetector) Keywords() []string { return []string{fastNoOverrunKeyword} }
-+
-+func (f fastNoOverrunDetector) Type() detector_typepb.DetectorType {
-+	return detector_typepb.DetectorType_TestingBot
-+}
-+
-+func (f fastNoOverrunDetector) Version() int { return 1 }
-+
-+func (f fastNoOverrunDetector) Description() string { return "fast detector for overrun tests" }
-+
-+// logRecord is one entry captured by capturingLogSink.
-+type logRecord struct {
-+	msg   string
-+	level int
-+	isErr bool
-+	kv    []any
-+}
-+
-+// hasField reports whether the entry carries a key of the given name.
-+func (r logRecord) hasField(key string) bool {
-+	for i := 0; i+1 < len(r.kv); i += 2 {
-+		if r.kv[i] == key {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
-+// capturingLogSink records every entry a context logger emits so tests can assert on specific log lines. It
-+// reports every level as enabled and ignores the WithName/WithValues decorations, which the assertions do not
-+// need.
-+type capturingLogSink struct {
-+	mu      sync.Mutex
-+	records []logRecord
-+}
-+
-+func (s *capturingLogSink) Init(_ logr.RuntimeInfo) {}
-+
-+func (s *capturingLogSink) Enabled(_ int) bool { return true }
-+
-+func (s *capturingLogSink) WithName(_ string) logr.LogSink { return s }
-+
-+func (s *capturingLogSink) WithValues(_ ...any) logr.LogSink { return s }
-+
-+func (s *capturingLogSink) Info(level int, msg string, keysAndValues ...any) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	s.records = append(s.records, logRecord{msg: msg, level: level, kv: keysAndValues})
-+}
-+
-+func (s *capturingLogSink) Error(_ error, msg string, keysAndValues ...any) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	s.records = append(s.records, logRecord{msg: msg, isErr: true, kv: keysAndValues})
-+}
-+
-+// find returns the first entry captured with the given message.
-+func (s *capturingLogSink) find(msg string) (logRecord, bool) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	for _, r := range s.records {
-+		if r.msg == msg {
-+			return r, true
-+		}
-+	}
-+	return logRecord{}, false
-+}
-+
-+// TestEngine_DetectorOverrunsTimeout drives the overrun path end to end: a detector that keeps running past the
-+// detection timeout plus its one-second grace trips the timer callback (counter up, gauge up, Error log), and its
-+// return path brings the gauge back down, records the overrun duration, and logs the total hold time at V(2).
-+func TestEngine_DetectorOverrunsTimeout(t *testing.T) {
-+	previousTimeout := detectionTimeout
-+	SetDetectorTimeout(10 * time.Millisecond)
-+	defer SetDetectorTimeout(previousTimeout)
-+
-+	sink := &capturingLogSink{}
-+	ctx, cancel
-```
-
-**File**: `pkg/engine/metrics.go` (modified, +37/-0)
-```diff
-@@ -35,6 +35,43 @@ var (
- 		[]string{"detector_name"},
- 	)
+ )
  
-+	// Timeout-overrun metrics. The overrun timer in detectChunk arms at the detection timeout plus a one-second
-+	// grace, so these count calls that ran past that grace deadline, not merely past the bare timeout. The
-+	// histogram buckets start at 10 seconds because the execution-duration histogram above tops out near 3
-+	// seconds and would drop every overrun into +Inf. That floor assumes the default 10 s detection timeout:
-+	// SetDetectorTimeout is exported, and a smaller value lets overruns finish below 10 s, where they all land in
-+	// the first bucket with no resolution between them.
-+	detectorTimeoutIgnoredTotal = promauto.NewCounterVec(
-+		prometheus.CounterOpts{
-+			Namespace: common.MetricsNamespace,
-+			Subsystem: common.MetricsSubsystem,
-+			Name:      "detector_timeout_ignored_total",
-+			Help:      "Total number of FromData calls whose overrun timer fired.",
-+		},
-+		[]string{"detector_name"},
-+	)
+ var (
+@@ -97,3 +102,90 @@ func TestDigitalOceanV2_Pattern(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+	detectorWorkersOverTimeout = promauto.NewGaugeVec(
-+		prometheus.GaugeOpts{
-+			Namespace: common.MetricsNamespace,
-+			Subsystem: common.MetricsSubsystem,
-+			Name:      "detector_workers_over_timeout",
-+			Help:      "Workers currently inside a FromData call that kept running past the detection timeout plus its one-second grace.",
-+		},
-+		[]string{"detector_name"},
-+	)
++type roundTripFunc func(*http.Request) (*http.Response, error)
 +
-+	detectorOverrunDuration = promauto.NewHistogramVec(
-+		prometheus.HistogramOpts{
-+			Namespace: common.MetricsNamespace,
-+			Subsystem: common.MetricsSubsystem,
-+			Name:      "detector_overrun_duration_seconds",
-+			Help:      "Duration in seconds of FromData calls that overran the detection timeout grace (total call duration, not just the overhang).",
-+			Buckets:   prometheus.ExponentialBuckets(10, 2, 10),
-+		},
-+		[]string{"detector_name"},
-+	)
++func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) { return f(req) }
 +
- 	jobBytesScanned = promauto.NewCounterVec(prometheus.CounterOpts{
- 		Namespace: common.MetricsNamespace,
- 		Subsystem: common.MetricsSubsystem,
-```
-
----
-
-### Incident Patch 2: `32e87f4f` (2026-11-14)
-**Commit Message**: Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (#5559)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +6/-5)
-```diff
-@@ -302,12 +302,13 @@ require (
- 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-```
-
-**File**: `go.sum` (modified, +14/-12)
-```diff
-@@ -746,24 +746,26 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
- go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0/go.mod h1:ru6KHrNtNHxM4nD/vd6QrLVWgKhxPYgblq4VAtNawTQ=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0 h1:wpMfgF8E1rkrT1Z6meFh1NDtownE9Ii3n3X2GJYjsaU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0/go.mod h1:wAy0T/dUbs468uOlkT31xjvqQgEVXv58BRFWEgn5v/0=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
--go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
-+go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
++func TestDigitalOceanV2_AccessTokenVerification(t *testing.T) {
++	tests := []struct {
++		name                  string
++		token                 string
++		status                int
++		body                  string
++		requestErr            error
++		skipVerification      bool
++		wantVerified          bool
++		wantVerificationError bool
++	}{
++		{
++			name: "model access key", token: secrets[0], status: http.StatusOK,
++			body:         `{"resource_owner_id":123,"scopes":["inference:query"],"expires_in_seconds":null,"application":{"uid":"test-app"},"created_at":1700000000}`,
++			wantVerified: true,
++		},
++		{
++			name: "personal access token", token: secrets[1], status: http.StatusOK,
++			body:         `{"resource_owner_id":123,"scopes":["read"],"expires_in_seconds":7776000,"application":{"uid":"test-app"},"created_at":1700000000}`,
++			wantVerified: true,
++		},
++		{name: "success without metadata", token: secrets[0], status: http.StatusOK, wantVerified: true},
++		{name: "invalid OAuth token", token: secrets[0], status: http.StatusBadRequest, body: `{"error":"invalid_request"}`},
++		{name: "invalid personal access token", token: secrets[1], status: http.StatusBadRequest, body: `{"error":"invalid_request"}`},
++		{name: "unauthorized", token: secrets[0], status: http.StatusUnauthorized},
++		{name: "forbidden", token: secrets[1], status: http.StatusForbidden, wantVerificationError: true},
++		{name: "rate limited", token: secrets[0], status: http.StatusTooManyRequests, wantVerificationError: true},
++		{name: "server error", token: secrets[1], status: http.StatusInternalServerError, wantVerificationError: true},
++		{name: "network error", token: secrets[0], requestErr: errors.New("network unavailable"), wantVerificationError: true},
++		{name: "verification disabled", token: secrets[0], skipVerification: true},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			requests := 0
++			s := Scanner{client: &http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
++				requests++
++				if req.Method != http.MethodGet || req.URL.String() != "https://cloud.digitalocean.com/v1/oauth/token/info" {
++					t.Errorf("unexpected verification request: %s %s", req.Method, req.URL)
++				}
++				if got := req.Header.Get("Authorization"); got != "Bearer "+tt.token {
++					t.Error("unexpected authorization header")
++				}
++				if tt.requestErr != nil {
++					return nil, tt.requestErr
++				}
++				return &http.Response{StatusCode: tt.status, Body: io.NopCloser(strings.NewReader(tt.body)), Header: make(http.Header)}, nil
++			})}}
++
++			results, err := s.FromData(context.Background(), !tt.skipVerification, []byte(tt.token))
++			if err != nil {
++				t.Fatal(err)
++			}
++			wantRequests := 1
++			if tt.skipVerification {
++				wantRequests = 0
++			}
++			if requests != wantRequests {
++				t.Errorf("expected %d verification requests, got %d", wantRequests, requests)
++			}
++			if len(results) != 1 {
++				t.Fatalf("expected one result, got %d", len(results))
++			}
++			result := results[0]
++			if result.Verified != tt.wantVerified {
++				t.Errorf("Verified = %v, want %v", result.Verified, tt.wantVerified)
++			}
++			if (result.VerificationError() != nil) != tt.wantVerificationError {
++				t.Errorf("unexpected verification error: %v", result.VerificationError())
++			}
++			if result.ExtraData != nil {
++				t.Errorf("expected no extra data, got %v", result.ExtraData)
++			}
++			if result.DetectorType != detector_typepb.DetectorType_DigitalOceanV2 || string(result.Raw) != tt.token {
++				t.Error("unexpected detector type or raw token")
++			}
++			if diff := cmp.Diff(map[string]string{"key": tt.token}, result.SecretParts); diff != "" {
++				t.Errorf("SecretParts diff (-want +got):\n%s", diff)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
 - **PR #5559** (2026-11-14): Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (@renovate[bot])
 - **PR #5557** (closed): [DO NOT MERGE] Measure fork-PR timing for #5547 (@bryanbeverly)
+- **PR #5554** (2026-11-14): Clean up JSON enumerator source logging for per-source debug (@kashifkhan0771)
 - **PR #5553** (2026-11-12): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
 - **PR #5552** (closed): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
-- **PR #5550** (2026-11-13): Add metrics and a follow-up log for detectors that ignore their timeout (@martinlocklear)
 
 ---
 
@@ -1532,56 +1329,37 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add metrics and a follow-up log for detectors that ignore their timeout
+## X. Lukem ts/update digitaloceanv2 detector
 
 **RULE**:
-When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/detectors/digitaloceanv2/digitaloceanv2.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4cb316c`: Add metrics and a follow-up log for detectors that ignore their timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db665f0c`: Lukem ts/update digitaloceanv2 detector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/digitaloceanv2/digitaloceanv2.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// The callback and the deferred release below hand the worker off through fired. t.Stop() returning false
-		// means the callback started, not that it finished counting, so the release waits for the channel to close
-		// before it decrements the gauge. The release is deferred inside the closure that owns the FromData call,
-		// so it runs on normal return and on panic unwind alike (the common.Recover at the top of detectChunk
-		// catches panics) and a panic inside FromData cannot leave the gauge high. The overrun histogram and the
-		// return log stay on the normal-return path only: a panicked call never returns, so it has no duration to
-		// record.
-		fired := make(chan struct{})
-			detectorTimeoutIgnoredTotal.WithLabelValues(detectorNameStr).Inc()
-			detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Inc()
-			close(fired) // before the log: a slow log sink must not extend the worker hold
-		var timerFired bool
-		results, matchElapsed, err := func() (results []detectors.Result, matchElapsed time.Duration, err error) {
-			defer func() {
-				timerFired = !t.Stop()
-				if timerFired {
-					<-fired
-					detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Dec()
-				
+	// Use the same token validation endpoint as doctl for API tokens and model access keys.
+	// Ref: https://github.com/digitalocean/doctl/blob/main/do/oauth.go
+	url := "https://cloud.digitalocean.com/v1/oauth/token/info"
+	case http.StatusBadRequest, http.StatusUnauthorized:
+		// The token-info endpoint can reject invalid tokens with either status.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		results, err := e.verificationCache.FromData(
-			ctx,
-			data.detector.Detector,
-			data.verify,
-			data.chunk.SecretID != 0,
-			matchBytes)
-		matchElapsed := time.Since(matchStart)
-		t.Stop()
+	// Ref: https://docs.digitalocean.com/reference/api/digitalocean/#tag/Account
+	url := "https://api.digitalocean.com/v2/account"
+	case http.StatusUnauthorized:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4cb316c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db665f0c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

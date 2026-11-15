@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T22:40:00.935Z",
-  "total_records": 1142,
+  "last_updated": "2026-11-15T22:46:53.611Z",
+  "total_records": 1143,
   "domains": {
     "A": {
       "total": 7,
@@ -630,7 +630,7 @@
       ]
     },
     "G": {
-      "total": 198,
+      "total": 199,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -829,7 +829,8 @@
         "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-core-invar",
         "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-"
+        "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",
+        "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7875,8 +7876,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4b01bb61065888b2dc30d33f3b4b9b6e1afa4ac224790894dfc5ea7ecb5b5622",
-      "created_at": "2026-11-15T22:40:00.935Z"
+      "content_hash": "ee6a4f9e56dd11e387bba68235c6cf92de1f2cb921a6d3473fa2f46348770f18",
+      "created_at": "2026-11-15T22:46:53.611Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10533,8 +10534,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "0d2d31f4cb2cfd0c7276d11a74f10e5ac94fa2c3124d7ce51c86f44a5067fc33",
-      "created_at": "2026-11-15T19:04:45.679Z"
+      "content_hash": "87c8d7bc2cc9068bec9e718f82bc876e663e2b831b5e0281c1603aaea6e9450f",
+      "created_at": "2026-11-15T22:46:53.117Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -11856,8 +11857,8 @@
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "repository": "trufflesecurity/trufflehog",
-      "content_hash": "a43ca95b75ad105a05360de7a628a61d9a8cda8e39c3bb7b220eee01370ef9e8",
-      "created_at": "2026-11-14T03:10:36.454Z"
+      "content_hash": "09bcdca8533aa107d437723a1e75a3b0961e13846fe90bf58f44b663b1b7cc51",
+      "created_at": "2026-11-15T22:46:49.456Z"
     },
     "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
@@ -21593,6 +21594,15 @@
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
       "content_hash": "b689cc10346cdb2e6cbd83eddb056f6e5b286cb41bc68a510f3b48e6781f9fea",
       "created_at": "2026-11-15T22:40:00.027Z"
+    },
+    "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-learnings-architecture-intelligence-trufflesecurity-t.md",
+      "repository": "trufflesecurity-trufflehog-learnings",
+      "content_hash": "bb3e3da5075ddc5774ae81603bd134971d164c85517f348bd729e29b99c55dec",
+      "created_at": "2026-11-15T22:46:52.696Z"
     }
   }
 }

@@ -10205,3 +10205,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-15T22:24:37.552Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `37d14736` | Multi-dimensional audit evidence | 2026-11-15T22:39:45.406Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `8b688002` | Multi-dimensional audit evidence | 2026-11-15T22:39:55.617Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `db665f0c` | Multi-dimensional audit evidence | 2026-11-15T22:46:49.240Z |

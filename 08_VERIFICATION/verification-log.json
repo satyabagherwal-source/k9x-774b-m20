@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-6ABJ",
-    "timestamp": "2026-11-13T15:10:49.279Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "7b4bf42418fe70b421e7c60ede05c3293a6084ef10e83a9c62afc281d1c860eb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-6LJX",
     "timestamp": "2026-11-13T15:11:03.837Z",
     "repository": "dragonflydb/dragonfly",
@@ -7490,6 +7475,21 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "b6e26128b73c0d3ba0ad621009c66c3cda67d54ce249b7ae341ba968b9c63b18",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-CEQE",
+    "timestamp": "2026-11-15T22:46:49.238Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "ce8d173ba42fcdae0f3aa8ac376dd62dd1e9345244a1211042006d096c2a1ac3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

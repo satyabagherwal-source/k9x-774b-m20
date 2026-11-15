@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T22:39:59.686Z",
+  "updated_at": "2026-11-15T22:46:52.462Z",
   "stats": {
-    "total_discovered": 3870,
-    "approved_pending_harvest": 3650,
+    "total_discovered": 3874,
+    "approved_pending_harvest": 3654,
     "harvested_count": 0,
     "rejected_count": 220,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3630,
-      "OFFICIAL_DOCUMENTATION": 130,
+      "COMMUNITY_AND_EXPERT": 3633,
+      "OFFICIAL_DOCUMENTATION": 131,
       "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 11,
@@ -83621,6 +83621,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
         "fileName": "dicklesworthstone-destructive_command_guard-learnings.md"
+      }
+    },
+    "SRC-3062644F0B89": {
+      "id": "SRC-3062644F0B89",
+      "url": "https://docs.digitalocean.com/reference/api/digitalocean",
+      "title": "https://docs.digitalocean.com/reference/api/digitalocean",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:46:52.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-DA8054923D36": {
+      "id": "SRC-DA8054923D36",
+      "url": "https://github.com/digitalocean/doctl/blob/main/do/oauth.go",
+      "title": "https://github.com/digitalocean/doctl/blob/main/do/oauth.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:46:52.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-4E78C54D8C27": {
+      "id": "SRC-4E78C54D8C27",
+      "url": "https://api.digitalocean.com/v2/account",
+      "title": "https://api.digitalocean.com/v2/account",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:46:52.444Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-5812007976F4": {
+      "id": "SRC-5812007976F4",
+      "url": "https://cloud.digitalocean.com/v1/oauth/token/info",
+      "title": "https://cloud.digitalocean.com/v1/oauth/token/info",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:46:52.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
+        "fileName": "trufflesecurity-trufflehog-learnings.md"
       }
     }
   }

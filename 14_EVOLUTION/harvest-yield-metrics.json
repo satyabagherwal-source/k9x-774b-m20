@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T22:39:55.623Z",
-  "total_cycles_completed": 9774,
-  "total_learnings_persisted": 9774,
-  "total_rules_promoted": 9390,
+  "last_updated": "2026-11-15T22:46:49.245Z",
+  "total_cycles_completed": 9775,
+  "total_learnings_persisted": 9775,
+  "total_rules_promoted": 9391,
   "history": [
-    {
-      "timestamp": "2026-11-14T18:34:34.734Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T18:34:43.894Z",
       "repository": "hashicorp/terraform",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-15T22:39:55.623Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T22:46:49.245Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

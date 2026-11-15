@@ -4,22 +4,22 @@
 {
   "source_repository": "trufflesecurity/trufflehog",
   "source_url": "https://github.com/trufflesecurity/trufflehog",
-  "source_version": "72cae0fb",
+  "source_version": "db665f0c",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-14T12:57:37.937Z",
+  "timestamp": "2026-11-15T22:46:49.375Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trufflesecurity-trufflehog",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `72cae0fb`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T12:57:37.937Z`  
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `db665f0c`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-15T22:46:49.375Z`  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `72cae0fb`)
+- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `db665f0c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T12:57:37.399Z  
+> **Harvest Timestamp**: 2026-11-15T22:46:48.421Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29315 stars
+- **Stars / Engagement**: 29375 stars
 
 ---
 
@@ -1151,367 +1151,152 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72cae0fb` (2026-11-14)
-**Commit Message**: Clean up JSON enumerator source logging for per-source debug (#5554)
+### Incident Patch 1: `db665f0c` (2026-11-15)
+**Commit Message**: Lukem ts/update digitaloceanv2 detector (#5545)
 
-Log init and enumeration at V(1), each file's start and finish with entry
-count and duration at V(2), and each entry with its number and size at
-V(3). Metadata and data are never logged. Add the entry number to error
-lines and to decode errors, so support can find the entry that stopped a
-file. Add a debug logging test and a README for the source.
+* update DigitalOceanV2 detector to use oauth token info endpoint for verification
 
-**File**: `pkg/sources/json_enumerator/README.md` (added, +143/-0)
+* add tests
+
+* fix verification error
+
+**File**: `pkg/detectors/digitaloceanv2/digitaloceanv2.go` (modified, +5/-3)
 ```diff
-@@ -0,0 +1,143 @@
-+# JSON Enumerator Source
-+
-+## Overview
-+
-+The JSON enumerator source lets TruffleHog scan data that another tool has already collected, for secrets, credentials, and sensitive data. The data is written to one or more files as a stream of JSON entries, each holding some data to scan and some metadata about where it came from. TruffleHog scans the data and copies the metadata into each result.
-+
-+## JSON Enumerator Fundamentals
-+
-+### What does this source scan?
-+
-+This source reads the files given to it and scans the `data` of every entry in them. It does not connect to any service or need any credentials. It is useful when another tool fetches content from a system TruffleHog has no source for, and wants TruffleHog to do the scanning.
-+
-+### Key Terminology
-+
-+| Term | Description |
-+|------|-------------|
-+| **Enumerator file** | A file holding a stream of JSON entries, usually one per line |
-+| **Entry** | One JSON object in the file, with `metadata` and either `data` or `data_b64` |
-+| **Metadata** | Any JSON value describing where the data came from. It is copied into results as is |
-+
-+## Features
-+
-+- **Any Content**: Scan content from any system, as long as it can be written as JSON entries
-+- **Binary Data**: Data that is not valid UTF-8 can be sent base64 encoded in `data_b64`
-+- **Compressed Files**: Files ending in `.zst` or `.zstd` are decompressed with zstd while they are read
-+- **Archive Support**: Archives inside an entry's data are unpacked and their contents are scanned
-+- **Custom Result Metadata**: Each result carries the metadata of the entry it was found in
-+
-+## Configuration
-+
-+### File Format
-+
-+Each entry is a JSON object:
-+
-+```json
-+{"metadata": {"url": "https://example.com/page/1"}, "data": "text to scan"}
-+{"metadata": {"url": "https://example.com/file.bin"}, "data_b64": "AAECAwQ="}
-+```
-+
-+- `metadata` is required and can be any JSON value except `null`.
-+- Exactly one of `data` (a string) or `data_b64` (base64 encoded bytes) must be set.
-+
-+Entries are read one after another, so one per line works, but any whitespace between them is fine.
-+
-+### CLI Usage
-+
-+```bash
-+trufflehog json-enumerator entries.jsonl
-+```
-+
-+Several files can be given at once:
-+
-+```bash
-+trufflehog json-enumerator part1.jsonl part2.jsonl.zst
-+```
-+
-+### YAML Configuration
-+
-+```yaml
-+sources:
-+- connection:
-+    '@type': type.googleapis.com/sources.JSONEnumerator
-+    paths:
-+    - "/path/to/entries.jsonl"
-+  name: json-enumerator-scan
-+  type: SOURCE_TYPE_JSON_ENUMERATOR
-+  verify: true
-+```
-+
-+TruffleHog's global flags still apply, such as `--json`, `--no-verification`, `--concurrency`, and the archive flags.
-+
-+## How Scanning Works
-+
-+### Scanning Process
-+
-+1. **Enumeration**: Each path is one unit. Paths that cannot be opened are reported as errors
-+2. **Decompression**: Files ending in `.zst` or `.zstd` are decompressed while they are read
-+3. **Decoding**: Entries are decoded one at a time
-+4. **Scanning**: Each entry's data is checked for its type, archives are unpacked, and the content is split into pieces and sent to the detection engine with the entry's metadata
-+
-+### What Gets Scanned
-+
-+- The `data` or `data_b64` of every entry in every given file
-+- The contents of archives inside an entry's data, unless archive scanning is turned off with `--force-skip-archives`
-+
-+### What Doesn't Get Scanned
-+
-+- Files that cannot be opened
-+- Every entry after a bad one in the same file. A bad entry (invalid JSON, missing `metadata`, or neither or both of `data` and `data_b64`) stops the scan of that file, since TruffleHog cannot tell where the next entry starts. Entries before it are still scanned, and other files are not affected
-+- Entries with empty data
-+
-+## Usage Examples
-+
-+### Scanning One File
-+
-+```bash
-+trufflehog json-enumerator entries.jsonl
-+```
-+
-+### Scanning a Compressed File
-+
-+```bash
-+trufflehog json-enumerator entries.jsonl.zst
-+```
-+
-+### Scanning With JSON Output
-+
-+```bash
-+trufflehog json-enumerator entries.jsonl --json
-+```
-+
-+## Debug Logs
-+
-+With debug on for this source, the scan logs:
-+
-+- `V(1)`: `JSON enumerator source initialized` with the number of paths, and `Enumerated paths` with how many could be opened and how many could not.
-+- `V(2)`: `Scanning file` with its `path` and whether it is `zstd`, and `Finished scanning file` with the number of `entries` decoded and its `duration`. If `entries` is lower than expected, a bad entry stopped the file.
-+- `V(3)`: `Scanning entry` for each entry, with its `entry` number (counting from 0) and `data_bytes`.
-+- `V(5)`: `empty reader, skipping file` for an entry with empty data, and `skipping archive file` when archive data is skipped with `--force-skip-archives`.
-+
-+Entry metadata and data are never logged. Files that cannot be opened, a bad entry (`decoding entry N: ...`), and an entry that fails to scan are logged as errors at the default level, with the `entry` number where it applies.
-+
-+## Trouble
-```
-
-**File**: `pkg/sources/json_enumerator/json_enumerator.go` (modified, +26/-12)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"io"
- 	"os"
- 	"strings"
-+	"time"
- 	"unicode/utf8"
+@@ -128,9 +128,10 @@ func verifyRefreshToken(ctx context.Context, client *http.Client, token string)
+ // If the token is invalid, it returns false and no error.
+ // If an error is encountered, it returns false along with the error.
+ func verifyAccessToken(ctx context.Context, client *http.Client, token string) (bool, error) {
+-	// Ref: https://docs.digitalocean.com/reference/api/digitalocean/#tag/Account
++	// Use the same token validation endpoint as doctl for API tokens and model access keys.
++	// Ref: https://github.com/digitalocean/doctl/blob/main/do/oauth.go
  
- 	"github.com/klauspost/compress/zstd"
-@@ -63,6 +64,7 @@ func (s *Source) Init(
- 	}
- 	s.paths = conn.Paths
- 
-+	aCtx.Logger().V(1).Info("JSON enumerator source initialized", "paths", len(s.paths))
- 	return nil
- }
- 
-@@ -87,19 +89,23 @@ func (s *Source) Chunks(
- // Enumerate implements the SourceUnitEnumerator interface, reporting each
- // configured path as its own unit so paths can be chunked concurrently.
- func (s *Source) Enumerate(ctx context.Context, reporter sources.UnitReporter) error {
-+	var units, unreadable int
- 	for _, path := range s.paths {
- 		f, err := os.Open(path)
- 		if err != nil {
-+			unreadable++
- 			if err := reporter.UnitErr(ctx, err); err != nil {
- 				return err
- 			}
- 		} else {
- 			_ = f.Close()
-+			units++
- 			if err := reporter.UnitOk(ctx, sources.CommonSourceUnit{ID: path}); err != nil {
- 				return err
- 			}
- 		}
- 	}
-+	ctx.Logger().V(1).Info("Enumerated paths", "units", units, "unreadable", unreadable)
- 	return nil
- }
- 
-@@ -170,26 +176,31 @@ func (e *jsonEntry) UnmarshalJSON(data []byte) error {
- 	return nil
- }
- 
-+// chunkJSONEnumeratorReader scans every entry in input and returns how many entries it
-+// decoded. A bad entry stops the scan, since the decoder can't find where the next one
-+// starts.
- func (s *Source) chunkJSONEnumeratorReader(
- 	ctx context.Context,
- 	input io.Reader,
- 	reporter sources.ChunkReporter,
--) error {
-+) (int, error) {
- 	decoder := json.NewDecoder(input)
- 	var entry jsonEntry
- 
--	for {
-+	for i := 0; ; i++ {
- 		if err := decoder.Decode(&entry); err != nil {
- 			if errors.Is(err, io.EOF) {
- 				// enumerator file is done
--				return nil
-+				return i, nil
- 			}
--			return err
-+			return i, fmt.Errorf("decoding entry %d: %w", i, err)
- 		}
-+		// Never log the metadata or the data, they are user content.
-+		ctx.Logger().V(3).Info("Scanning entry", "entry", i, "data_bytes", len(entry.Data))
- 
- 		metadataJSON, err := entry.Metadata.MarshalJSON()
- 		if err != nil {
--			ctx.Logger().Error(err, "failed to convert metadata to JSON")
-+			ctx.Logger().Error(err, "failed to convert metadata to JSON", "entry", i)
- 			continue
- 		}
- 
-@@ -210,7 +221,7 @@ func (s *Source) chunkJSONEnumeratorReader(
- 
- 		err = handlers.HandleFile(ctx, bytes.NewReader(entry.Data), chunkSkel, reporter)
- 		if err != nil {
--			ctx.Logger().Error(err, "failed to scan data")
-+			ctx.Logger().Error(err, "failed to scan data", "entry", i)
- 			continue
- 		}
- 	}
-@@ -221,23 +232,26 @@ func (s *Source) chunkJSONEnumerator(
- 	path string,
- 	reporter sources.ChunkReporter,
- ) error {
--	ctx.Logger().V(3).Info("chunking JSON enumerator", "path", path)
-+	zstdFile := strings.HasSuffix(path, ".zst") || strings.HasSuffix(path, ".zstd")
-+	ctx.Logger().V(2).Info("Scanning file", "path", path, "zstd", zstdFile)
-+	start := time.Now()
- 
- 	enumeratorFile, err := os.Open(path)
+-	url := "https://api.digitalocean.com/v2/account"
++	url := "https://cloud.digitalocean.com/v1/oauth/token/info"
+ 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
  	if err != nil {
- 		return fmt.Errorf("unable to open file: %w", err)
- 	}
- 	defer func() { _ = enumeratorFile.Close() }()
- 
--	if strings.HasSuffix(path, ".zst") || strings.HasSuffix(path, ".zstd") {
-+	var input io.Reader = enumeratorFile
-+	if zstdFile {
- 		r, err := zstd.NewReader(enumeratorFile)
- 		if err != nil {
- 			return fmt.Errorf("unable to open zstd reader: %w", err)
- 		}
- 		defer r.Close()
--		return s.chunkJSONEnumeratorReader(ctx, r, reporter)
--	} else {
--		return s.chunkJSONEnumeratorReader(ctx, enumeratorFile, reporter)
-+		input = r
- 	}
--
-+	entries, err := s.chunkJSONEnumeratorReader(ctx, input, reporter)
-+	ctx.Logger().V(2).Info("Finished scanning file", "path", path, "entries", entries, "duration", time.Since(start))
-+	return err
- }
+ 		return false, fmt.Errorf("failed to create request: %w", err)
+@@ -146,7 +147,8 @@ func verifyAccessToken(ctx context.Context, client *http.Client, token string) (
+ 	switch res.StatusCode {
+ 	case http.StatusOK:
+ 		return true, nil
+-	case http.StatusUnauthorized:
++	case http.StatusBadRequest, http.StatusUnauthorized:
++		// The token-info endpoint can reject invalid tokens with either status.
+ 		return false, nil
+ 	default:
+ 		return false, fmt.Errorf("unexpected status code: %d", res.StatusCode)
 ```
 
-**File**: `pkg/sources/json_enumerator/json_enumerator_test.go` (modified, +64/-2)
+**File**: `pkg/detectors/digitaloceanv2/digitaloceanv2_test.go` (modified, +92/-0)
 ```diff
-@@ -5,6 +5,8 @@ import (
- 	"bytes"
- 	"encoding/json"
- 	"io"
-+	"os"
-+	"path/filepath"
- 	"strings"
- 	"sync"
+@@ -2,12 +2,17 @@ package digitaloceanv2
+ 
+ import (
+ 	"context"
++	"errors"
++	"io"
++	"net/http"
++	"strings"
  	"testing"
-@@ -13,8 +15,13 @@ import (
- 	"github.com/go-logr/logr"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap/zaptest/observer"
-+	"google.golang.org/protobuf/types/known/anypb"
-+
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/feature"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
+ 
+ 	"github.com/google/go-cmp/cmp"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/engine/ahocorasick"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
  )
  
-@@ -105,7 +112,7 @@ func TestScanEnumerator(t *testing.T) {
- 				defer close(chunksChan)
- 				ctx := context.WithLogger(t.Context(), logr.Discard())
- 				source := &Source{}
--				workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
-+				_, workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
- 			}()
- 
- 			enc := json.NewEncoder(writeJSON)
-@@ -190,7 +197,7 @@ func TestScanEnumeratorAPKContentRouting(t *testing.T) {
- 			defer close(chunksChan)
- 			ctx := context.WithLogger(t.Context(), logr.Discard())
- 			source := &Source{}
--			workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
-+			_, workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
- 		}()
- 
- 		// No filename is set on the record; routing is content-based only.
-@@ -214,3 +221,58 @@ func TestScanEnumeratorAPKContentRouting(t *testing.T) {
- 	require.NoError(t, err)
- 	assert.Contains(t, foundZip, secret, "non-APK zip should be handled generically and surface the secret")
+ var (
+@@ -97,3 +102,90 @@ func TestDigitalOceanV2_Pattern(t *testing.T) {
+ 		})
+ 	}
  }
 +
-+func TestSource_DebugLogging(t *testing.T) {
-+	const (
-+		testSecret     = "jsonenumdebuglogtestsecret"
-+		metadataSecret = "jsonenumdebuglogmetadatasecret"
-+	)
++type roundTripFunc func(*http.Request) (*http.Response, error)
 +
-+	dir := t.TempDir()
-+	good := filepath.Join(dir, "good.jsonl")
-+	require.NoError(t, os.WriteFile(good, []byte(
-+		`{"metadata":{"token":"`+metadataSecret+`"},"data":"token = `+testSecret+`"}`+"\n"+
-+			`{"metadata":{},"data":"nothing here"}`+"\n"), 0o600))
-+	// The second entry has no metadata, so decoding stops there and the source logs an error.
-+	bad := filepath.Join(dir, "bad.jsonl")
-+	require.NoError(t, os.WriteFile(bad, []byte(
-+		`{"metadata":{},"data":"first"}`+"\n"+`{"data":"`+testSecret+`"}`+"\n"), 0o600))
-+	missing := filepath.Join(dir, "missing.jsonl")
++func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) { return f(req) }
 +
-+	conn, err := anypb.New(&sourcespb.JSONEnumerator{Paths: []string{good, bad, missing}})
-+	require.NoError(t, err)
-+
-+	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
-+		t.Helper()
-+		ctx, logs := logtest.SourceContext(debug)
-+		s := new(Source)
-+		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
-+		if debug {
-+			logtest.CheckInitLine(t, logs.All())
-+		}
-+
-+		require.NoError(t, s.Enumerate(ctx, sources.VisitorReporter{
-+			VisitUnit: func(context.Context, sources.SourceUnit) error { return nil },
-+			VisitErr:  func(context.Context, error) error { return nil },
-+		}))
-+
-+		chunksCh := make(chan *sources.Chunk, 10)
-+		require.NoError(t, s.Chunks(ctx, chunksCh))
-+		close(chunksCh)
-+		var data strings.Builder
-+		for chunk := range chunksCh {
-+			data.Write(chunk.Data)
-+		}
-+		assert.Contains(t, data.String(), testSecret)
-+		assert.Contains(t, data.String(), "first")
-+		return logs.All()
++func TestDigitalOceanV2_AccessTokenVerification(t *testing.T) {
++	tests := []struct {
++		name                  string
++		token                 string
++		status                int
++		body                  string
++		requestErr            error
++		skipVerification      bool
++		wantVerified          bool
++		wantVerificationError bool
++	}{
++		{
++			name: "model access key", token: secrets[0], status: http.StatusOK,
++			body:         `{"resource_owner_id":123,"scopes":["inference:query"],"expires_in_seconds":null,"application":{"uid":"test-app"},"created_at":1700000000}`,
++			wantVerified: true,
++		},
++		{
++			name: "personal access token", token: secrets[1], status: http.StatusOK,
++			body:         `{"resource_owner_id":123,"scopes":["read"],"expires_in_seconds":7776000,"application":{"uid":"test-app"},"created_at":1700000000}`,
++			wantVerified: true,
++		},
++		{name: "success without metadata", token: secrets[0], status: http.StatusOK, wantVerified: true},
++		{name: "invalid OAuth token", token: secrets[0], status: http.StatusBadRequest, body: `{"error":"invalid_request"}`},
++		{name: "invalid personal access token", token: secrets[1], status: http.StatusBadRequest, body: `{"error":"invalid_request"}`},
++		{name: "unauthorized", token: secrets[0], status: http.StatusUnauthorized},
++		{name: "forbidden", token: secrets[1], status: http.StatusForbidden, wantVerificationError: true},
++		{name: "rate limited", token: secrets[0], status: http.StatusTooManyRequests, wantVerificationError: true},
++		{name: "server error", token: secrets[1], status: http.StatusInternalServerError, wantVerificationError: true},
++		{name: "network error", token: secrets[0], requestErr: errors.New("network unavailable"), wantVerificationError: true},
++		{name: "verification disabled", token: secrets[0], skipVerification: true},
 +	}
 +
-+	t.Run("debug on", func(t *testing.T) {
-+		logtest.CheckSourceLines(t, runSource(t, true), testSecret, metadataSecret)
-+	})
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			requests := 0
++			s := Scanner{client: &http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
++				requests++
++				if req.Method != http.MethodGet || req.URL.String() != "https://cloud.digitalocean.com/v1/oauth/token/info" {
++					t.Errorf("unexpected verification request: %s %s", req.Method, req.URL)
++				}
++				if got := req.Header.Get("Authorization"); got != "Bearer "+tt.token {
++					t.Error("unexpected authorization header")
++				}
++				if tt.requestErr != nil {
++					return nil, tt.requestErr
++				}
++				return &http.Response{StatusCode: tt.status, Body: io.NopCloser(strings.NewReader(tt.body)), Header: make(http.Header)}, nil
++			})}}
 +
-+	t.Run("debug off", func(t *testing.T) {
-+		logtest.CheckNoDebugLines(t, runSource(t, false))
-+	})
++			results, err := s.FromData(context.Background(), !tt.skipVerification, []byte(tt.token))
++			if err != nil {
++				t.Fatal(err)
++			}
++			wantRequests := 1
++			if tt.skipVerification {
++				wantRequests = 0
++			}
++			if requests != wantRequests {
++				t.Errorf("expected %d verification requests, got %d", wantRequests, requests)
++			}
++			if len(results) != 1 {
++				t.Fatalf("expected one result, got %d", len(results))
++			}
++			result := results[0]
++			if result.Verified != tt.wantVerified {
++				t.Errorf("Verified = %v, want %v", result.Verified, tt.wantVerified)
++			}
++			if (result.VerificationError() != nil) != tt.wantVerificationError {
++				t.Errorf("unexpected verification error: %v", result.VerificationError())
++			}
++			if result.ExtraData != nil {
++				t.Errorf("expected no extra data, got %v", result.ExtraData)
++			}
++			if result.DetectorType != detector_typepb.DetectorType_DigitalOceanV2 || string(result.Raw) != tt.token {
++				t.Error("unexpected detector type or raw token")
++			}
++			if diff := cmp.Diff(map[string]string{"key": tt.token}, result.SecretParts); diff != "" {
++				t.Errorf("SecretParts diff (-want +got):\n%s", diff)
++			}
++		})
++	}
 +}
 ```
 
@@ -1541,54 +1326,37 @@ file. Add a debug logging test and a README for the source.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clean up JSON enumerator source logging for per-source debug
+## X. Lukem ts/update digitaloceanv2 detector
 
 **RULE**:
-When implementing operations in `pkg/sources/json_enumerator/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/detectors/digitaloceanv2/digitaloceanv2.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72cae0fb`: Clean up JSON enumerator source logging for per-source debug. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db665f0c`: Lukem ts/update digitaloceanv2 detector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/json_enumerator/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/digitaloceanv2/digitaloceanv2.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# JSON Enumerator Source
-
-## Overview
-
-The JSON enumerator source lets TruffleHog scan data that another tool has already collected, for secrets, credentials, and sensitive data. The data is written to one or more files as a stream of JSON entries, each holding some data to scan and some metadata about where it came from. TruffleHog scans the data and copies the metadata into each result.
-
-## JSON Enumerator Fundamentals
-
-### What does this source scan?
-
-This source reads the files given to it and scans the `data` of every entry in them. It does not connect to any service or need any credentials. It is useful when another tool fetches content from a system TruffleHog has no source for, and wants TruffleHog to do the scanning.
-
-### Key Terminology
-
-| Term | Description |
-|------|-------------|
-| **Enumerator file** | A file holding a stream of JSON entries, usually one per line |
-| **Entry** | One JSON object in the file, with `metadata` and either `data` or `data_b64` |
-| **Metadata** | Any JSON value describing where the data came from. It is copied into results as is |
-
-## Features
-
-- **Any Content**: Scan content from any system, as long as it can be written as JSON entries
-- **
+	// Use the same token validation endpoint as doctl for API tokens and model access keys.
+	// Ref: https://github.com/digitalocean/doctl/blob/main/do/oauth.go
+	url := "https://cloud.digitalocean.com/v1/oauth/token/info"
+	case http.StatusBadRequest, http.StatusUnauthorized:
+		// The token-info endpoint can reject invalid tokens with either status.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	// Ref: https://docs.digitalocean.com/reference/api/digitalocean/#tag/Account
+	url := "https://api.digitalocean.com/v2/account"
+	case http.StatusUnauthorized:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72cae0fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db665f0c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

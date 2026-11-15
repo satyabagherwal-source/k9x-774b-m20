@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T22:39:58.804Z",
-    "lastVerified": "2026-11-15T22:39:58.804Z",
+    "lastChecked": "2026-11-15T22:46:52.156Z",
+    "lastVerified": "2026-11-15T22:46:52.156Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -474,8 +474,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T22:03:47.595Z",
-    "lastVerified": "2026-11-15T22:03:47.595Z",
+    "lastChecked": "2026-11-15T22:46:50.125Z",
+    "lastVerified": "2026-11-15T22:46:50.125Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2266,22 +2266,21 @@
     "revisionIdentifier": "0316bc90"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T16:30:44.739Z",
-    "lastVerified": "2026-11-15T16:30:44.739Z",
+    "lastChecked": "2026-11-15T22:46:48.421Z",
+    "lastVerified": "2026-11-15T22:46:48.421Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "ba09d283c837a42b98e42da1762cf5d9ac759a4b6de722e7961574e9d1ac13e4",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "ce8d173ba42fcdae0f3aa8ac376dd62dd1e9345244a1211042006d096c2a1ac3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "72cae0fb"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -4239,9 +4238,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-14T13:57:15.367Z",
+    "lastChecked": "2026-11-15T22:46:42.527Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-14T13:57:15.367Z"
+    "lastVerified": "2026-11-15T22:46:42.527Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -5544,9 +5543,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-14T11:29:08.454Z",
+    "lastChecked": "2026-11-15T22:46:47.529Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-14T11:29:08.454Z"
+    "lastVerified": "2026-11-15T22:46:47.529Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -6636,9 +6635,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-11-14T00:07:56.565Z",
+    "lastChecked": "2026-11-15T22:46:35.031Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-11-14T00:07:56.565Z"
+    "lastVerified": "2026-11-15T22:46:35.031Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -10449,16 +10448,16 @@
   "leetcode-mafia-cheetah": {
     "name": "cheetah",
     "officialUrl": "https://github.com/leetcode-mafia/cheetah",
-    "lastChecked": "2026-11-12T11:18:20.017Z",
+    "lastChecked": "2026-11-15T22:46:40.027Z",
     "revisionIdentifier": "e66db5be",
-    "lastVerified": "2026-11-12T11:18:20.017Z"
+    "lastVerified": "2026-11-15T22:46:40.027Z"
   },
   "janreges-siteone-crawler": {
     "name": "siteone-crawler",
     "officialUrl": "https://github.com/janreges/siteone-crawler",
-    "lastChecked": "2026-11-11T07:37:33.517Z",
+    "lastChecked": "2026-11-15T22:46:37.519Z",
     "revisionIdentifier": "f3d967b190",
-    "lastVerified": "2026-11-11T07:37:33.517Z"
+    "lastVerified": "2026-11-15T22:46:37.519Z"
   },
   "jellyfin-swiftfin": {
     "name": "jellyfin/Swiftfin",

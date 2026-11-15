@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T22:40:01.233Z",
+  "last_updated": "2026-11-15T22:46:53.774Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T22:24:50.387Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-15T19:04:45.316Z",
+      "processed_at": "2026-11-15T22:46:52.881Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -103,9 +103,9 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-14T12:58:48.306Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-15T22:46:52.234Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "pola-rs-polars-learnings.md": {
       "processed_at": "2026-11-14T17:40:13.040Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T22:40:00.432Z",
+      "processed_at": "2026-11-15T22:46:53.303Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3078,7 +3078,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1152,
+  "total_dossiers_evaluated": 1155,
   "total_canonical_promoted": 276,
-  "total_staged_for_review": 875
+  "total_staged_for_review": 878
 }

@@ -10172,3 +10172,4 @@
 | `CYCLE-20261115-JV71` | `2026-11-15T22:24:37.549Z` | `Cactus-Compute/mirage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | Yes (`02eb66ab...`) |
 | `CYCLE-20261115-3BP6` | `2026-11-15T22:39:45.402Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8660` | Yes (`f73dae4c...`) |
 | `CYCLE-20261115-3JKT` | `2026-11-15T22:39:55.613Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8661` | Yes (`b6e26128...`) |
+| `CYCLE-20261115-CEQE` | `2026-11-15T22:46:49.238Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8662` | Yes (`ce8d173b...`) |
