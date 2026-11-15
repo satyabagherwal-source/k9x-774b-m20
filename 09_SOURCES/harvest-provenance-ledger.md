@@ -10177,3 +10177,6 @@ Every entry in this ledger must capture:
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `890b85ab` | Multi-dimensional audit evidence | 2026-11-15T19:32:16.459Z |
 | `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-15T19:45:25.216Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6aa325ba` | Multi-dimensional audit evidence | 2026-11-15T19:45:45.243Z |
+| `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-15T20:22:37.208Z |
+| `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `43897a66` | Multi-dimensional audit evidence | 2026-11-15T20:22:43.978Z |
+| `learn-dom-d-fac11bec` | `project://hf-videorebirthai-hyperflow-h3-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md` | 2026-11-15T20:23:09.701Z |

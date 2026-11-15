@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T20:08:56.631Z",
-    "lastVerified": "2026-11-15T20:08:56.631Z",
+    "lastChecked": "2026-11-15T20:22:49.024Z",
+    "lastVerified": "2026-11-15T20:22:49.024Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -473,8 +473,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T19:12:12.410Z",
-    "lastVerified": "2026-11-15T19:12:12.410Z",
+    "lastChecked": "2026-11-15T20:22:49.015Z",
+    "lastVerified": "2026-11-15T20:22:49.016Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1133,9 +1133,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-15T12:31:24.324Z",
+    "lastChecked": "2026-11-15T20:22:44.073Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-15T12:31:24.324Z"
+    "lastVerified": "2026-11-15T20:22:44.073Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -3484,9 +3484,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-14T08:43:56.922Z",
+    "lastChecked": "2026-11-15T20:22:41.551Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-14T08:43:56.922Z"
+    "lastVerified": "2026-11-15T20:22:41.551Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -4736,9 +4736,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-14T06:57:02.434Z",
+    "lastChecked": "2026-11-15T20:22:46.562Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-14T06:57:02.434Z"
+    "lastVerified": "2026-11-15T20:22:46.562Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -5743,9 +5743,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-13T21:07:03.744Z",
+    "lastChecked": "2026-11-15T20:22:34.011Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-13T21:07:03.744Z"
+    "lastVerified": "2026-11-15T20:22:34.011Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -10165,14 +10165,14 @@
     "officialUrl": "https://github.com/nsh07/Tomato",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-12T07:54:09.901Z",
-    "lastVerified": "2026-11-12T07:54:09.901Z",
+    "lastChecked": "2026-11-15T20:22:43.312Z",
+    "lastVerified": "2026-11-15T20:22:43.312Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nsh07-tomato",
-    "contentHash": "0061fbcd3beac8249bb8a851d1ec129ffcb175154f644513e1c3a8adb758f0a0",
+    "contentHash": "31202766d1bf3fe11d5f8aac8011f8f7ed3da43a3b010c3358a5031ee3928fef",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14955,13 +14955,13 @@
     "officialUrl": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-10T06:05:02.175Z",
-    "lastVerified": "2026-11-10T06:05:02.175Z",
+    "lastChecked": "2026-11-15T20:22:36.731Z",
+    "lastVerified": "2026-11-15T20:22:36.731Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-    "contentHash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
-    "promotedRulesCount": 3,
+    "contentHash": "edd400731f1fafa351308d951cbc36a865e4f02a453e148b68d277923b10fdda",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

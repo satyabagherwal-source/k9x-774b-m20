@@ -8193,10 +8193,10 @@
     "repository": "nsh07/Tomato",
     "platform": "github",
     "sourceUrl": "https://github.com/nsh07/Tomato",
-    "sourceVersion": "518f6311",
+    "sourceVersion": "43897a66",
     "license": "GPL-3.0",
-    "contentHash": "0061fbcd3beac8249bb8a851d1ec129ffcb175154f644513e1c3a8adb758f0a0",
-    "lastHarvestedAt": "2026-11-12T07:54:24.209Z",
+    "contentHash": "31202766d1bf3fe11d5f8aac8011f8f7ed3da43a3b010c3358a5031ee3928fef",
+    "lastHarvestedAt": "2026-11-15T20:22:43.978Z",
     "learningId": "learn-github-nsh07-tomato"
   },
   "modelcontextprotocol-kotlin-sdk": {
@@ -12275,8 +12275,8 @@
     "sourceUrl": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
     "sourceVersion": "hf-videorebirthai-hyperflow-h3-flash",
     "license": "Open-Source",
-    "contentHash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
-    "lastHarvestedAt": "2026-11-10T06:05:22.262Z",
+    "contentHash": "edd400731f1fafa351308d951cbc36a865e4f02a453e148b68d277923b10fdda",
+    "lastHarvestedAt": "2026-11-15T20:22:37.208Z",
     "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash"
   },
   "hf-comfy-org-minimax-h3-image": {

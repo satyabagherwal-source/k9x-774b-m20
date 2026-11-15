@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T19:45:45.260Z",
-  "total_cycles_completed": 9752,
-  "total_learnings_persisted": 9752,
-  "total_rules_promoted": 9372,
+  "last_updated": "2026-11-15T20:22:43.983Z",
+  "total_cycles_completed": 9754,
+  "total_learnings_persisted": 9754,
+  "total_rules_promoted": 9373,
   "history": [
-    {
-      "timestamp": "2026-11-14T16:38:37.138Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T16:43:18.393Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T17:03:05.938Z",
       "repository": "oven-sh/bun",
@@ -1403,6 +1389,20 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T20:22:37.212Z",
+      "repository": "VideoRebirthAI/hyperflow-h3-flash",
+      "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T20:22:43.983Z",
+      "repository": "nsh07/Tomato",
+      "learningId": "learn-github-nsh07-tomato",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

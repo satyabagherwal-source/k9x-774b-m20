@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T19:45:45.265Z",
+  "last_updated": "2026-11-15T20:22:43.985Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12321,14 +12321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nsh07-tomato",
-      "content_hash": "0061fbcd3beac8249bb8a851d1ec129ffcb175154f644513e1c3a8adb758f0a0",
-      "verified_at": "2026-11-12T07:54:24.220Z",
+      "content_hash": "31202766d1bf3fe11d5f8aac8011f8f7ed3da43a3b010c3358a5031ee3928fef",
+      "verified_at": "2026-11-15T20:22:43.985Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T07:54:24.220Z"
+      "last_updated": "2026-11-15T20:22:43.985Z"
     },
     "modelcontextprotocol/kotlin-sdk": {
       "repository": "modelcontextprotocol/kotlin-sdk",
@@ -18471,14 +18471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-      "content_hash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
-      "verified_at": "2026-11-10T06:05:22.281Z",
+      "content_hash": "edd400731f1fafa351308d951cbc36a865e4f02a453e148b68d277923b10fdda",
+      "verified_at": "2026-11-15T20:22:37.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T06:05:22.281Z"
+      "last_updated": "2026-11-15T20:22:37.214Z"
     },
     "Comfy-Org/MiniMax-H3-Image": {
       "repository": "Comfy-Org/MiniMax-H3-Image",

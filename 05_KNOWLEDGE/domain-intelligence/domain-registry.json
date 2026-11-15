@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T20:08:58.061Z",
-  "total_records": 1108,
+  "last_updated": "2026-11-15T20:23:10.896Z",
+  "total_records": 1113,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 537,
+      "total": 540,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -575,7 +575,10 @@
         "DOM-D-6A7F4F3B",
         "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-3-1-learnings-co",
         "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",
-        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore"
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore",
+        "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant",
+        "DOM-D-FAC11BEC",
+        "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c"
       ]
     },
     "E": {
@@ -614,7 +617,7 @@
       ]
     },
     "G": {
-      "total": 186,
+      "total": 188,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -801,7 +804,9 @@
         "domain_intelligence-architecture-intelligence-tableproapp-tablepro-core-invariants",
         "domain_intelligence-architecture-intelligence-tableproapp-tablepro-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-llphant-llphant-core-invariants",
-        "domain_intelligence-architecture-intelligence-llphant-llphant-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-llphant-llphant-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants",
+        "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7841,8 +7846,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "c9960177cf279b6bd531e3df27f79418250cfa065b77f3ea2e71cbf602c983bf",
-      "created_at": "2026-11-15T20:08:57.122Z"
+      "content_hash": "4e89ddc58f7213242a791f1853022c6ee5cf524003ace840ce9c9225f73f5811",
+      "created_at": "2026-11-15T20:23:10.896Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -21055,6 +21060,84 @@
       "repository": "dathere-qsv-learnings",
       "content_hash": "9363878e1721f1ed9c03f0841528f029788aefda345cb93899ea28457a2ea754",
       "created_at": "2026-11-15T19:45:49.720Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: VideoRebirthAI/hyperflow-h3-flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-videorebirthai-hyperflow-h3-flash-research-knowledge-intelligence-videorebirt.md",
+      "repository": "VideoRebirthAI/hyperflow-h3-flash",
+      "content_hash": "c355e60f6a7c7e04996d88411f0c4d914615b4c8f7a1ba5a0cacad9366e320a3",
+      "created_at": "2026-11-15T20:22:37.333Z"
+    },
+    "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nsh07/Tomato Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-architecture-intelligence-nsh07-tomato-core-invariants.md",
+      "repository": "nsh07/Tomato",
+      "content_hash": "dac5dbccdf399f7a2211426bb6a3518475aa644c09d3e2b3fbb7022c66c71e71",
+      "created_at": "2026-11-15T20:22:44.205Z"
+    },
+    "DOM-D-FAC11BEC": {
+      "record_id": "DOM-D-FAC11BEC",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): VideoRebirthAI/hyperflow-h3-flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash](https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash))  \n> **Source Version**: `hf-videorebi`  \n> **L",
+      "content_hash": "6ecd1d2676ede9e0df0a474a4a57e3e6c528219cbcee921505a45a7e31d83b21",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md`  \n> **Source**: huggingface ([htt",
+      "provenance": {
+        "source_uri": "project://hf-videorebirthai-hyperflow-h3-flash/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T20:22:49.102Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-videorebirthai-hyperflow-h3-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-videorebirthai-hyperflow-h3-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T20:23:09.689Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-videorebirthai-hyperflow-h3-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-videorebirthai-hyperflow-h3-flash-learnings-research-knowledge-intelligence-h.md",
+      "repository": "hf-videorebirthai-hyperflow-h3-flash-learnings",
+      "content_hash": "4242489d79c9a517a139d8ae6ae860c9c3a15eeb3841c5f61cd750e17e3657b4",
+      "created_at": "2026-11-15T20:23:09.874Z"
+    },
+    "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nsh07-tomato-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-learnings-architecture-intelligence-nsh07-tomato-learnings-core-inv.md",
+      "repository": "nsh07-tomato-learnings",
+      "content_hash": "33e9a384c9776aed2ff9349e6bcada74f831341530d136301fda6ee69e122f66",
+      "created_at": "2026-11-15T20:23:10.336Z"
     }
   }
 }

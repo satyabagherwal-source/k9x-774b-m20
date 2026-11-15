@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T20:08:58.252Z",
-  "total_verified_learnings": 8719,
+  "last_updated": "2026-11-15T20:23:10.999Z",
+  "total_verified_learnings": 8721,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18568,
+  "total_items": 18579,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113672,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PDX4-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7OPC-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f20a8321102005854eb976d984be826360a2724dca52f088b6b21254caf4903b",
+      "content_hash": "20c846286b20978ee84174f63a20175b3510c7d4c3d3f4dd041dc6821679dbc7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T20:08:57.019Z"
+      "persisted_at": "2026-11-15T20:23:10.812Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113688,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9960177cf279b6bd531e3df27f79418250cfa065b77f3ea2e71cbf602c983bf",
+      "content_hash": "4e89ddc58f7213242a791f1853022c6ee5cf524003ace840ce9c9225f73f5811",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T20:08:57.122Z"
+      "persisted_at": "2026-11-15T20:23:10.896Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113700,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "060f7a9f14df12e0d18eb7fdde278fc3307cd2963008d78387f192ea9c941c9f",
+      "content_hash": "f2668fe20c6bad99b2aeb0acb556755542f88c1cbcb0c4047956c04db9d0f595",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T20:08:57.227Z"
+      "persisted_at": "2026-11-15T20:23:10.999Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -245970,6 +245970,176 @@
       "content_hash": "9363878e1721f1ed9c03f0841528f029788aefda345cb93899ea28457a2ea754",
       "domain_letter": "H",
       "persisted_at": "2026-11-15T19:45:49.720Z"
+    },
+    "learn-huggingface-videorebirthai-hyperflow-h3-flash": {
+      "learning_id": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "VideoRebirthAI/hyperflow-h3-flash",
+      "repository": "VideoRebirthAI/hyperflow-h3-flash",
+      "slug": "hf-videorebirthai-hyperflow-h3-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
+      "source_version": "hf-videorebirthai-hyperflow-h3-flash",
+      "content_hash": "edd400731f1fafa351308d951cbc36a865e4f02a453e148b68d277923b10fdda",
+      "dossier_path": "07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T20:22:37.086Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-videorebirthai-hyperflow-h3-flash-research-knowledge-intelligence-videorebirt.md",
+      "title": "Research & Knowledge Intelligence: VideoRebirthAI/hyperflow-h3-flash Core Invariants",
+      "repository": "VideoRebirthAI/hyperflow-h3-flash",
+      "source_version": "hf-videorebirthai-hyperflow-h3-flash",
+      "content_hash": "c355e60f6a7c7e04996d88411f0c4d914615b4c8f7a1ba5a0cacad9366e320a3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T20:22:37.333Z"
+    },
+    "learn-github-nsh07-tomato": {
+      "learning_id": "learn-github-nsh07-tomato",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nsh07/Tomato",
+      "repository": "nsh07/Tomato",
+      "slug": "nsh07-tomato",
+      "platform": "github",
+      "source_url": "https://github.com/nsh07/Tomato",
+      "source_version": "43897a66",
+      "content_hash": "31202766d1bf3fe11d5f8aac8011f8f7ed3da43a3b010c3358a5031ee3928fef",
+      "dossier_path": "07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8644,
+          "title": "remove state read on IO thread",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T20:22:43.863Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8644": {
+      "learning_id": "rule-8644",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8644,
+      "title": "remove state read on IO thread",
+      "source_url": "https://github.com/nsh07/Tomato",
+      "source_version": "43897a66",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T20:22:43.863Z"
+    },
+    "candidate_directive-remove-state-read-on-io-thread": {
+      "item_id": "candidate_directive-remove-state-read-on-io-thread",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-744B-remove-state-read-on-io-thread.md",
+      "title": "remove state read on IO thread",
+      "repository": "nsh07/Tomato",
+      "source_version": "43897a66",
+      "content_hash": "cadcc9e3007ea3db57e257442e1e3ef0555914fb050eeb76e3a406d40027bb97",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:22:44.124Z"
+    },
+    "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-architecture-intelligence-nsh07-tomato-core-invariants.md",
+      "title": "Architecture Intelligence: nsh07/Tomato Core Invariants",
+      "repository": "nsh07/Tomato",
+      "source_version": "43897a66",
+      "content_hash": "dac5dbccdf399f7a2211426bb6a3518475aa644c09d3e2b3fbb7022c66c71e71",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:22:44.205Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nsh07-tomato": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nsh07-tomato",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nsh07-tomato-verification-protocol-empirical-defect-shield-for-nsh07-tomato.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nsh07/Tomato",
+      "repository": "nsh07/Tomato",
+      "source_version": "43897a66",
+      "content_hash": "e3777dd17f0c9ae09864cfe46b556f37a46f0572661110ffa7a8970a991a5e70",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T20:22:44.291Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-videorebirthai-hyperflow-h3-flash-learnings-research-knowledge-intelligence-h.md",
+      "title": "Research & Knowledge Intelligence: hf-videorebirthai-hyperflow-h3-flash-learnings Core Invariants",
+      "repository": "hf-videorebirthai-hyperflow-h3-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4242489d79c9a517a139d8ae6ae860c9c3a15eeb3841c5f61cd750e17e3657b4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T20:23:09.874Z"
+    },
+    "candidate_directive-concurrency-remove-state-read-on-io-thread": {
+      "item_id": "candidate_directive-concurrency-remove-state-read-on-io-thread",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7O9L-concurrency-remove-state-read-on-io-thread.md",
+      "title": "concurrency): remove state read on IO thread",
+      "repository": "nsh07-tomato-learnings",
+      "source_version": "HEAD",
+      "content_hash": "39c0acb4f64a9d13a8fa5b198941bbe36762cf6c43fb06271c3e7552d729f7ca",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:23:10.233Z"
+    },
+    "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-learnings-architecture-intelligence-nsh07-tomato-learnings-core-inv.md",
+      "title": "Architecture Intelligence: nsh07-tomato-learnings Core Invariants",
+      "repository": "nsh07-tomato-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33e9a384c9776aed2ff9349e6bcada74f831341530d136301fda6ee69e122f66",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:23:10.336Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nsh07-tomato-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nsh07-tomato-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nsh07-tomato-learnings-verification-protocol-empirical-defect-shield-for-nsh07-t.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nsh07-tomato-learnings",
+      "repository": "nsh07-tomato-learnings",
+      "source_version": "HEAD",
+      "content_hash": "47ed60ec2e323eae02393725697bf4a0d82457484296c5971afbc98467e10833",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T20:23:10.433Z"
     }
   },
   "ai-builder-brain": {

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for nsh07/tomato
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for nsh07/Tomato
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "nsh07/tomato",
-  "source_url": "https://github.com/nsh07/tomato",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "nsh07/Tomato",
+  "source_url": "https://github.com/nsh07/Tomato",
+  "source_version": "43897a66",
+  "license": "GPL-3.0",
+  "timestamp": "2026-11-15T20:22:44.123Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-nsh07-tomato",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nsh07/tomato](https://github.com/nsh07/tomato) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [nsh07/Tomato](https://github.com/nsh07/Tomato) (Revision: `43897a66`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-15T20:22:44.123Z`  
+> **Learning ID**: `learn-github-nsh07-tomato`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nsh07/tomato` (Commit: `historical`)
+- **Target Repository**: `nsh07/Tomato` (Commit: `43897a66`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nsh07-tomato-learnings.md`  
-> **Source**: github ([https://github.com/nsh07/Tomato](https://github.com/nsh07/Tomato))  
-> **Source Version**: `518f6311`  
-> **License**: GPL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:54:10.085Z  
-> **Learning ID**: `learn-github-nsh07-tomato`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): nsh07/Tomato
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nsh07-tomato-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nsh07/Tomato](https://github.com/nsh07/Tomato))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:54:09.901Z  
+> **Harvest Timestamp**: 2026-11-15T20:22:43.312Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Minimalist, data-oriented pomodoro timer for Android and Desktop based on Material 3 Expressive
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1534 stars
+- **Stars / Engagement**: 1541 stars
 
 ---
 
@@ -1170,215 +1156,184 @@ expect val currentOS: OS
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `518f6311` (2026-11-11)
-**Commit Message**: fix(deps): migrate to latest compose version
+### Incident Patch 1: `9fae625b` (2026-11-12)
+**Commit Message**: fix(concurrency): remove state read on IO thread
 
-**File**: `androidApp/build.gradle.kts` (modified, +5/-1)
+**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/viewModel/SettingsViewModel.kt` (modified, +27/-20)
 ```diff
-@@ -38,7 +38,11 @@ tasks.withType(Test::class) {
+@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.updateAndGet
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.sync.Mutex
+ import kotlinx.coroutines.sync.withLock
++import kotlinx.coroutines.withContext
+ import org.nsh07.pomodoro.billing.BillingManager
+ import org.nsh07.pomodoro.data.PreferenceRepository
+ import org.nsh07.pomodoro.data.StatRepository
+@@ -202,16 +203,18 @@ class SettingsViewModel(
  
- android {
-     namespace = "org.nsh07.pomodoro"
--    compileSdk = libs.versions.app.targetSdk.get().toInt()
-+    compileSdk {
-+        version = release(libs.versions.app.targetSdk.get().toInt()) {
-+            minorApiLevel = libs.versions.app.minorApiLevel.get().toInt()
-+        }
-+    }
+     private fun deleteTopic(topic: Topic, deleteStats: Boolean) {
+         if (topic.id == Topic.DEFAULT_TOPIC_ID) return
+-        viewModelScope.launch(Dispatchers.IO) {
+-            if (deleteStats) topicRepository.deleteTopic(topic)
+-            else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
++        viewModelScope.launch {
++            withContext(Dispatchers.IO) {
++                if (deleteStats) topicRepository.deleteTopic(topic)
++                else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
  
-     defaultConfig {
-         applicationId = "org.nsh07.pomodoro"
-```
-
-**File**: `desktopApp/build.gradle.kts` (modified, +2/-1)
-```diff
-@@ -25,7 +25,8 @@ plugins {
+-            val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
++                val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
  
- dependencies {
-     implementation(project(":shared"))
--    implementation(compose.desktop.currentOs)
-+    implementation(libs.compose.ui)
-+    implementation(libs.androidx.material3)
- 
-     implementation(project.dependencies.platform(libs.koin.bom))
-     implementation(libs.koin.core)
-```
-
-**File**: `gradle/libs.versions.toml` (modified, +3/-2)
-```diff
-@@ -1,6 +1,7 @@
- [versions]
- app-minSdk = "26"
- app-targetSdk = "37"
-+app-minorApiLevel = "2"
- app-versionName = "2.0.1"
- app-versionCode = "40"
- 
-@@ -25,8 +26,8 @@ revenuecat = "10.22.0"
- room = "3.0.3"
- sqlite = "2.7.1"
- vico = "3.3.1"
--composeMultiplatform = "1.13.0-alpha01"
--composeMaterial3 = "1.13.0-alpha01"
-+composeMultiplatform = "1.13.0-beta02"
-+composeMaterial3 = "1.13.0-beta02"
- koinBom = "4.2.2"
- koinCompilerPlugin = "1.2.1"
- 
-```
-
-**File**: `shared/build.gradle.kts` (modified, +5/-5)
-```diff
-@@ -54,7 +54,11 @@ compose.resources {
- kotlin {
-     android {
-         namespace = "org.nsh07.pomodoro.shared"
--        compileSdk = libs.versions.app.targetSdk.get().toInt()
-+        compileSdk {
-+            version = release(libs.versions.app.targetSdk.get().toInt()) {
-+                minorApiLevel = libs.versions.app.minorApiLevel.get().toInt()
-+            }
-+        }
-         minSdk = libs.versions.app.minSdk.get().toInt()
- 
-         compilerOptions {
-@@ -116,8 +120,6 @@ kotlin {
+-            if (stateRepository.currentTopicId.value == topic.id) {
+-                stateRepository.setTopic(fallback)
++                if (stateRepository.currentTopicId.value == topic.id) {
++                    stateRepository.setTopic(fallback)
++                }
++                if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
+             }
+-            if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
          }
- 
-         jvmMain.dependencies {
--            implementation(compose.desktop.currentOs)
--
-             implementation(libs.kotlinx.coroutines.swing)
-             implementation(libs.androidx.sqlite.bundled)
- 
-@@ -126,8 +128,6 @@ kotlin {
-             implementation(libs.jlayer.player) // MP3 playback
-         }
- 
--        // Room's MigrationTestHelper is device-instrumented on Android, so migration tests are
--        // JVM-only. The migration itself lives in commonMain and is platform independent.
-         jvmTest.dependencies {
-             implementation(libs.androidx.room.testing)
-             implementation(libs.androidx.sqlite.bundled)
-```
-
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/components/CreateTopicBottomSheet.kt` (modified, +2/-2)
-```diff
-@@ -117,7 +117,7 @@ fun CreateTopicBottomSheet(
-     val sessionsSliderState = rememberSliderState(
-         value = defaultTopic.sessionLength.toFloat(),
-         steps = 8,
--        valueRange = 1f..10f
-+        trackRange = 1f..10f,
-     )
-     var autostartNextSession by remember { mutableStateOf(defaultTopic.autostartNextSession) }
-     var dndEnabled by remember { mutableStateOf(defaultTopic.dndEnabled) }
-@@ -419,7 +419,7 @@ private fun CreateTopicSheetContentPreview() {
-                     sessionsSliderState = rememberSliderState(
-                         value = 4f,
-                         steps = 8,
--                        valueRange = 1f..10f
-+                        trackRange = 1f..10f
-                     ),
-                     autostartNextSession = autostartNextSession,
-                     dndEnabled = dndEnabled,
-```
-
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/components/TopicTimerSettings.kt` (modified, +8/-4)
-```diff
-@@ -192,7 +192,8 @@ fun TopicTimerSettings(
-             },
-             onDndEnabledChange = { onAction(SettingsAction.SaveDndEnabled(it)) },
-             onShowColorShapeSheet = { showColorShapeSheet = it },
--            setShowDeleteDialog = { showDeleteDialog = it }
-+            setShowDeleteDialog = { showDeleteDialog = it },
-+            onSessionLengthChangeFinished = { onAction(SettingsAction.UpdateSessionLength) }
-         )
      }
  
-@@ -241,7 +242,8 @@ fun TopicTimerProperties(
-     showDeleteDialog: Boolean = false,
-     onShowColorShapeSheet: (Boolean) -> Unit = {},
-     setShowDeleteDialog: (Boolean) -> Unit = {},
--    showEditButtons: Boolean = true
-+    showEditButtons: Boolean = true,
-+    onSessionLengthChangeFinished: (() -> Unit)? = null
- ) {
-     val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
-     val haptic = LocalHapticFeedback.current
-@@ -342,6 +344,8 @@ fun TopicTimerProperties(
-                 SliderTickHaptics(sessionsSliderState)
-                 Slider(
-                     state = sessionsSliderState,
-+                    onValueChange = { sessionsSliderState.value = it },
-+                    onValueChangeFinished = onSessionLengthChangeFinished,
-                     enabled = !topicRunning,
-                     modifier = Modifier
-                         .padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
-@@ -500,7 +504,7 @@ fun TopicTimerSettingsPreview() {
-                 topics = sampleTopics,
-                 topicRunning = false,
-                 minuteInputs = MinuteInputs("25", "5", "15"),
--                sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
-+                sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
-                 onAction = {}
-             )
+@@ -236,60 +239,63 @@ class SettingsViewModel(
+             val topic = _editingTopic.updateAndGet(transform)
+             if (topic == previous) return
+ 
+-            if (!topicRepository.updateTopic(topic)) {
++            val success = withContext(Dispatchers.IO) {
++                topicRepository.updateTopic(topic)
++            }
++            if (!success) {
+                 // saving edit failed, roll back unless the topic being edited has since changed
+                 _editingTopic.update { if (it == topic) previous else it }
+             }
          }
-@@ -517,7 +521,7 @@ fun TopicTimerSettingsDarkPreview() {
-                 topics = sampleTopics,
-                 topicRunning = false,
-                 minuteInputs = MinuteInputs("25", "5", "15"),
--                sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
-+                sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
-                 onAction = {}
-             )
+     }
+ 
+     private fun setEditingTopicName(name: String) {
+-        viewModelScope.launch(Dispatchers.IO) {
++        viewModelScope.launch {
+             editTopic { it.copy(name = name) }
          }
+     }
+ 
+     private fun setEditingTopicColor(color: Color) {
+-        viewModelScope.launch(Dispatchers.IO) {
++        viewModelScope.launch {
+             editTopic { it.copy(color = color) }
+         }
+     }
+ 
+     private fun setEditingTopicShape(shape: TopicShape) {
+-        viewModelScope.launch(Dispatchers.IO) {
++        viewModelScope.launch {
+             editTopic { it.copy(shape = shape) }
+         }
+     }
+ 
+     private fun cancelEraseData() {
+-        viewModelScope.launch(Dispatchers.IO) {
++        viewModelScope.launch {
+             _settingsState.update { currentState ->
+                 currentState.copy(isShowingEraseDataDialog = false)
+             }
+         }
+     }
+ 
+     private fun askEraseData() {
+-        viewModelScope.launch(Dispatchers.IO) {
++        viewModelScope.launch {
+             _settingsState.update { currentState ->
+                 currentState.copy(isShowingEraseDataDialog = true)
+             }
+         }
+     }
+ 
+     private fun updateSessionLength() {
+-        viewModelScope.launch(Dispatchers.IO) {
++        viewModelScope.launch {
+             val value = sessionsSliderState.value.toInt()
+-
+             editTopic { it.copy(sessionLength = value) }
+         }
+     }
+ 
+     private fun deleteStats() {
+-        viewModelScope.launch(Dispatchers.IO) {
+-
++        viewModelScope.launch {
+             timerHelper.onAction(TimerAction.ResetTimer)
+-            statRepository.deleteAllStats()
++            withContext(Dispatchers.IO) {
++                statRepository.deleteAllStats()
++            }
+             _settingsState.update {
+                 it.copy(isShowingEraseDataDialog = false)
+             }
+@@ -301,7 +307,7 @@ class SettingsViewModel(
+         editingTopicChosen = true
+         minuteInputs = minutes
+         minutesWriteJob?.cancel()
+-        minutesWriteJob = viewModelScope.launch(Dispatchers.IO) {
++        minutesWriteJob = viewModelScope.launch {
+             delay(500.milliseconds)
+             saveMinutes(minutes)
+         }
+@@ -322,7 +328,8 @@ class SettingsViewModel(
+         // an edit still being debounced is saved rather than dropped
+         if (minutesWriteJob?.isActive == true) {
+             minutesWriteJob?.cancel()
+-            viewModelScope.launch(Dispatchers.IO) { saveMinutes(minuteInputs) }
++            val currentInputs = minuteInputs
++            viewModelScope.launch { saveMinutes(currentInputs) }
+         }
+ 
+         if (!isSessionActive)
 ```
 
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/screens/TimerSettings.kt` (modified, +2/-2)
-```diff
-@@ -530,8 +530,8 @@ fun TimerSettings(
- private fun TimerSettingsPreview() {
-     val sessionsSliderState = rememberSliderState(
-         value = 4f,
--        valueRange = 1f..10f,
--        steps = 8
-+        steps = 8,
-+        trackRange = 1f..10f,
-     )
-     TomatoTheme(dynamicColor = false) {
-         Surface(Modifier.fillMaxSize()) {
-```
+---
 
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/screens/TopicsSettings.kt` (modified, +2/-2)
+### Incident Patch 2: `b2170b2a` (2026-11-12)
+**Commit Message**: fix(permissions): remove unused permission in FOSS variant
+
+Closes: #327
+
+**File**: `androidApp/src/foss/AndroidManifest.xml` (added, +24/-0)
 ```diff
-@@ -468,7 +468,7 @@ fun TopicsSettingsPreview() {
-             sessionActive = false,
-             currentTopicId = editingTopic.id,
-             minuteInputs = MinuteInputs("25", "5", "15"),
--            sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
-+            sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
-             contentPadding = PaddingValues(0.dp),
-             onBack = {},
-             onAction = { action ->
-@@ -501,7 +501,7 @@ fun TopicsSettingsDarkPreview() {
-             sessionActive = false,
-             currentTopicId = editingTopic.id,
-             minuteInputs = MinuteInputs("25", "5", "15"),
--            sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
-+            sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
-             contentPadding = PaddingValues(0.dp),
-             onBack = {},
-             onAction = { action ->
+@@ -0,0 +1,24 @@
++<?xml version="1.0" encoding="utf-8"?><!--
++  ~ Copyright (c) 2026 Nishant Mishra
++  ~
++  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
++  ~
++  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
++  ~ General Public License as published by the Free Software Foundation, either version 3 of the
++  ~ License, or (at your option) any later version.
++  ~
++  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
++  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++  ~ Public License for more details.
++  ~
++  ~ You should have received a copy of the GNU General Public License along with Tomato.
++  ~ If not, see <https://www.gnu.org/licenses/>.
++  -->
++
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools">
++
++    <uses-permission
++        android:name="android.permission.ACCESS_NETWORK_STATE"
++        tools:node="remove" />
++</manifest>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #324** (closed): test: add end-to-end UI tests for the timer (@rahulj-123)
 - **PR #310** (2026-09-17): fix(deps): update all non-major dependencies (@renovate[bot])
 - **PR #308** (2026-09-10): fix(deps): update all non-major dependencies (@renovate[bot])
 - **PR #304** (2026-09-01): chore(deps): update actions/setup-java action to v6 (@renovate[bot])
 - **PR #303** (2026-09-10): Add Dimu under the Special Thanks section of the README (@pdimu)
 - **PR #300** (2026-09-01): fix(deps): update all non-major dependencies (@renovate[bot])
-- **PR #298** (2026-08-19): fix(deps): update all non-major dependencies (@renovate[bot])
 
 ---
 
@@ -1398,35 +1353,76 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): migrate to latest compose version
+## X. concurrency): remove state read on IO thread
 
 **RULE**:
-When implementing operations in `androidApp/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nsh07/Tomato. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/viewModel/SettingsViewModel.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nsh07/Tomato. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `518f6311`: deps): migrate to latest compose version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9fae625b`: concurrency): remove state read on IO thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/build.gradle.kts`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/viewModel/SettingsViewModel.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    compileSdk {
-        version = release(libs.versions.app.targetSdk.get().toInt()) {
-            minorApiLevel = libs.versions.app.minorApiLevel.get().toInt()
-        }
-    }
+import kotlinx.coroutines.withContext
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                if (deleteStats) topicRepository.deleteTopic(topic)
+                else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
+                val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
+                if (stateRepository.currentTopicId.value == topic.id) {
+                    stateRepository.setTopic(fallback)
+                }
+                if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
+            val success = withContext(Dispatchers.IO) {
+                topicRepository.updateTopic(topic)
+            }
+            if (!success) {
+        viewModelScope.launch {
+        viewModelScope.launch {
+        viewModelScope.launch {
+        viewModelScope.launch {
+        viewModelScope.launch {
+        viewModelScope.launch {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                statRepository.deleteAllStats()
+            }
+        minutesWriteJob = viewModelScope.launch {
+            val currentInputs = minuteInputs
+            viewModelScope.la
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-    compileSdk = libs.versions.app.targetSdk.get().toInt()
+// Induced defect failure mode:
+        viewModelScope.launch(Dispatchers.IO) {
+            if (deleteStats) topicRepository.deleteTopic(topic)
+            else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
+            val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
+            if (stateRepository.currentTopicId.value == topic.id) {
+                stateRepository.setTopic(fallback)
+            if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
+            if (!topicRepository.updateTopic(topic)) {
+        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            statRepository.deleteAllStats()
+        minutesWriteJob = viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.IO) { saveMinutes(minuteInputs) }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `518f6311` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9fae625b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-UTV2",
-    "timestamp": "2026-11-11T07:58:40.046Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "322415d5952821ad29b02a72d89a332f93eed589da857c69c4549070be9b4282",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-PUDL",
-    "timestamp": "2026-11-11T08:22:47.049Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "4cd111ae3b52589c0d5001c46ec3ab668dc87647602a94b005614093cef55379",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-WA17",
     "timestamp": "2026-11-11T08:27:47.275Z",
     "repository": "gkd-kit/gkd",
@@ -7492,6 +7462,36 @@
     "contentHash": "4f60503be7baf1cdb1d18d5c70fcf5606c37f3e4031187ef21b37e5b5690150d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-6YS5",
+    "timestamp": "2026-11-15T20:22:37.205Z",
+    "repository": "VideoRebirthAI/hyperflow-h3-flash",
+    "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+    "contentHash": "edd400731f1fafa351308d951cbc36a865e4f02a453e148b68d277923b10fdda",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-7408",
+    "timestamp": "2026-11-15T20:22:43.976Z",
+    "repository": "nsh07/Tomato",
+    "learningId": "learn-github-nsh07-tomato",
+    "contentHash": "31202766d1bf3fe11d5f8aac8011f8f7ed3da43a3b010c3358a5031ee3928fef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

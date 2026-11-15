@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T20:08:58.342Z",
+  "last_updated": "2026-11-15T20:23:11.090Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T20:08:57.329Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T20:08:56.734Z",
+      "processed_at": "2026-11-15T20:23:10.530Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -938,7 +938,7 @@
       "staged_for_review": 1
     },
     "nsh07-tomato-learnings.md": {
-      "processed_at": "2026-11-12T07:54:33.747Z",
+      "processed_at": "2026-11-15T20:23:09.993Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3056,9 +3056,14 @@
       "processed_at": "2026-11-15T19:45:48.579Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-videorebirthai-hyperflow-h3-flash-learnings.md": {
+      "processed_at": "2026-11-15T20:23:09.702Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1116,
-  "total_canonical_promoted": 270,
-  "total_staged_for_review": 846
+  "total_dossiers_evaluated": 1119,
+  "total_canonical_promoted": 271,
+  "total_staged_for_review": 848
 }

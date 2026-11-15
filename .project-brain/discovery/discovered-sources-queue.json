@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T19:45:49.340Z",
+  "updated_at": "2026-11-15T20:23:09.712Z",
   "stats": {
-    "total_discovered": 3835,
-    "approved_pending_harvest": 3616,
+    "total_discovered": 3836,
+    "approved_pending_harvest": 3617,
     "harvested_count": 0,
     "rejected_count": 219,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3598,
+      "COMMUNITY_AND_EXPERT": 3599,
       "OFFICIAL_DOCUMENTATION": 130,
       "STANDARDS_AND_SPECIFICATIONS": 90,
       "ENGINEERING_BLOGS": 2,
@@ -82858,6 +82858,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-0D64E297C739": {
+      "id": "SRC-0D64E297C739",
+      "url": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
+      "title": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T20:23:09.712Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
+        "fileName": "hf-videorebirthai-hyperflow-h3-flash-learnings.md"
       }
     }
   }

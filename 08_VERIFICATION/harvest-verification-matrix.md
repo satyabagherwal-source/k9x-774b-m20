@@ -10144,3 +10144,6 @@
 | `CYCLE-20261115-E7YF` | `2026-11-15T19:32:16.455Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8643` | Yes (`f1663694...`) |
 | `CYCLE-20261115-V4KB` | `2026-11-15T19:45:25.211Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md` | Yes (`0082134c...`) |
 | `CYCLE-20261115-VK0M` | `2026-11-15T19:45:45.238Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`4f60503b...`) |
+| `CYCLE-20261115-6YS5` | `2026-11-15T20:22:37.205Z` | `VideoRebirthAI/hyperflow-h3-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md` | Yes (`edd40073...`) |
+| `CYCLE-20261115-7408` | `2026-11-15T20:22:43.976Z` | `nsh07/Tomato` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8644` | Yes (`31202766...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T20:23:09.701Z` | `hf-videorebirthai-hyperflow-h3-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FAC11BEC` [Domain D] | Yes (`6ecd1d26...`) |
