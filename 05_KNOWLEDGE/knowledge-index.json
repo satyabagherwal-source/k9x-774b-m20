@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T17:40:53.425Z",
+  "last_updated": "2026-11-15T17:52:51.413Z",
   "total_verified_learnings": 8715,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112032,9 +112032,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a94b3feff768eb5cdbf346aad3e94ee85b7c213248a6a3699f79d80b23e3981",
+      "content_hash": "fd7b63274f03fcc56fa04ba3c5238c7fb5a41458d5f913b30c141737eef612c9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T16:30:50.059Z"
+      "persisted_at": "2026-11-15T17:52:51.241Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112044,9 +112044,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ee03346f93a7fefa3ca8369e85cff7f5eeb7d5fe10dc2c226488edb177c6e28",
+      "content_hash": "6e3f5fba9f626cb7e7d6bf125ae21a4c8202f442868c9c5de47cd6bda7fa2aaf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T16:30:50.159Z"
+      "persisted_at": "2026-11-15T17:52:51.329Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112056,9 +112056,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "857273c26d48fb853200ed743cd2dea262237ec47ca6a7debc9bd3132f0c6e21",
+      "content_hash": "a6e8f3605dfcab5dea424638058cd8ae22fae0d4d18ccde0d37c797c1fc266c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T16:30:50.253Z"
+      "persisted_at": "2026-11-15T17:52:51.413Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112164,9 +112164,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d457c2f9f38a51135d0f3a27f167950d8f461bd5799c61460415b5319058b6f",
+      "content_hash": "7b6dbe2ad576fdc95cce120fabd7f0e2e3196b566bc8b1a9062900dc90e9c030",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T15:47:59.241Z"
+      "persisted_at": "2026-11-15T17:52:50.809Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112176,9 +112176,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a89f5b11dfec7292bf94f1ee794211b5ff2d02ac7c7d65a138b0ba5ec9ddc65",
+      "content_hash": "17209beed2f287b1a657e5e4e7d25134aacb661501970e1fb58e121176e88840",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:47:59.405Z"
+      "persisted_at": "2026-11-15T17:52:50.900Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -212950,14 +212950,19 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "a96b178b",
-      "content_hash": "046becf7566120cff061cec5e68f18fbae4b106064620ac133237cad79691d53",
+      "source_version": "552c0412",
+      "content_hash": "39bf0f408236c78e4cfc371b25a77c7e1857cbbe2b2ce48bbc5413169344920b",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
         {
           "number": 7938,
           "title": "Empirical Invariant Guard in mod.rs",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8545,
+          "title": "Empirical Invariant Guard in CHANGELOG.md",
           "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
@@ -212966,7 +212971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:39:50.927Z",
+      "verified_at": "2026-11-15T17:52:40.514Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213008,10 +213013,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "repository": "embassy-rs/embassy",
-      "source_version": "a96b178b",
-      "content_hash": "2cd7a752b9427b51e0a3cf6991fcb4ed86785153ea914e5a7d4b666eb0db09f7",
+      "source_version": "552c0412",
+      "content_hash": "181dec6d4397ff84ef46af08568184abf41b3b383df8eb622755947e2f1faa08",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T19:39:51.442Z"
+      "persisted_at": "2026-11-15T17:52:40.874Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy",
@@ -213020,10 +213025,10 @@
       "relative_path": "08_VERIFICATION/embassy-rs-embassy-verification-protocol-empirical-defect-shield-for-embassy-rs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs/embassy",
       "repository": "embassy-rs/embassy",
-      "source_version": "a96b178b",
-      "content_hash": "931a7e968a527620693f3edb642434b856501da32d8bb56e1add15897c8c7913",
+      "source_version": "552c0412",
+      "content_hash": "daa8ab8967caf1deb2734c4150dc3f63e6a72f2b3e93b7b51812de5e7b47c397",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:39:51.556Z"
+      "persisted_at": "2026-11-15T17:52:40.962Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
@@ -213402,9 +213407,9 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f491cb3d71e2095dbddf495af274d22f8f744376be10b57cfcb11e66e6e4d95",
+      "content_hash": "53413a2e0de93844f6d2aae532ff78c3b576e03cae3bfed225b037b731ef37f0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T19:40:07.356Z"
+      "persisted_at": "2026-11-15T17:52:50.394Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings",
@@ -213414,9 +213419,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs-embassy-learnings",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ae20586ce001d502e75207e5696af822427d3b7622968d0078481f82f576dad",
+      "content_hash": "540a70fdecd5dadec35fd0d3c349a6b8a4c7dc61db26482784ad11511cc7d6e6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:40:07.472Z"
+      "persisted_at": "2026-11-15T17:52:50.484Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
@@ -214785,13 +214790,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DS53-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UCRM-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4484e36f4bd9f612667fbc8b36175d7f6dc78c19d7d4ea8c4d6d7c0fd9e1e01a",
+      "content_hash": "b334d2b69baf5671acda62c8b763c70c23a99c11e909e4c45c6adeea72c7a46d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T15:47:59.034Z"
+      "persisted_at": "2026-11-15T17:52:50.727Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -218981,13 +218986,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NB2G-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UCG3-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "sharkdp-fd-learnings",
+      "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "8838e6bfd6dde9932b7cd8ab694eb02fec4300d2b0fa6bfe49149a280ea1dd45",
+      "content_hash": "5536a33d428c7168f79231d83932b924a3b6a353cba8e8952f727c1cd4acd189",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T22:39:37.675Z"
+      "persisted_at": "2026-11-15T17:52:50.312Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -224455,13 +224460,13 @@
       "item_id": "candidate_directive-watcher-filter-access-events-before-queueing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WVVR-watcher-filter-access-events-before-queueing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UD3L-watcher-filter-access-events-before-queueing.md",
       "title": "watcher): filter access events before queueing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d76a3c3658c119292de7262de7c9790031a4b6ea672ff2b985662cc7947ae85",
+      "content_hash": "ad8b3b94a407563ebd9277292b85fae48175625777882452ef36c88f94cebc69",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T16:30:49.965Z"
+      "persisted_at": "2026-11-15T17:52:51.158Z"
     },
     "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant": {
       "item_id": "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant",
@@ -235808,14 +235813,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "6cf33028",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "552c0412",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-14T22:39:18.129Z"
+      "verified_at": "2026-11-15T17:52:40.514Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",

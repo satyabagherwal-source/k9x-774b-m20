@@ -4,24 +4,24 @@
 {
   "source_repository": "embassy-rs/embassy",
   "source_url": "https://github.com/embassy-rs/embassy",
-  "source_version": "a96b178b",
+  "source_version": "552c0412",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T19:39:51.322Z",
+  "timestamp": "2026-11-15T17:52:40.783Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-embassy-rs-embassy",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `a96b178b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T19:39:51.322Z`  
+> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `552c0412`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T17:52:40.783Z`  
 > **Learning ID**: `learn-github-embassy-rs-embassy`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: B (Product Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from embassy-rs/embassy:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:39:50.143Z  
+> **Harvest Timestamp**: 2026-11-15T17:52:39.970Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10109 stars
+- **Stars / Engagement**: 10120 stars
 
 ---
 
@@ -1449,11 +1449,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7537** (2026-11-13): **stm32: subghz: simplify the API after review**
-  *Symptoms*: Follow-up to #7524's review: removes the `Subghz` factory (construct `SubghzSpi` and `SubghzControl` directly) and the `RfSwitch` helpers, which are board-specific and now live in the examples. `SubghzRadio` is renamed to `SubghzControl`, since it handles reset, `RFBUSY` and interrupts and not the radio's commands.
+- **Issue #7550** (2026-11-15): **stm32/usb: apply the OUT packet errata delay on STM32C5 and STM32U535/545**
+  *Symptoms*: The errata sheets of every STM32C5 line and of the STM32U535/545 list the USB erratum "Buffer description table update completes after CTR interrupt triggers", which `wait_for_out_packet_memory()` already works around on STM32H5 and STM32U3 (#7232): the CTR interrupt of an OUT transaction fires slightly before the peripheral has finished writing the packet and its byte count to USB SRAM, so software must wait 800 ns at full speed before reading them.  | Chips | Errata sheet | Section | |---|---|---| | STM32C531/532/542 | ES0676 Rev 2 | 2.13.1 | | STM32C551/552/562 | ES0661 Rev 1 | 2.12.1 | | STM32C591/593/5A3 | ES0677 Rev 1 | 2.14.1 | | STM32U535/545 | ES0587 Rev 6 | 2.20.1 |  These chips have the same `usb_v4` peripheral and use the same driver, but the delay was compiled only for STM32H5 and STM32U3, so they read the packet memory without it. This adds `stm32c5` and `stm32u5` to its `cfg`. On the U5 only the U535/545 have this peripheral; the other U5 parts use the OTG driver. Like STM32H5 and STM32U3, they now busy-wait at least 1 µs before reading each received OUT packet.  Checked with `cargo check` on Rust 1.100 for stm32c5a3zg, stm32c552rc and stm32c531rc (dual-bank), stm32u545re and stm32u535re (dual-bank), and for stm32h523cc and stm32u385rg, which are unchanged. Nightly rustfmt passes. Not run on C5 or U5 hardware.
 
-- **Issue #7536** (2026-11-13): **wpan: reset WBA BLE platform state when the controller is dropped**
-  *Symptoms*: `HCI::deinit()` zeroes the host stack, but events the app never read stay in the event queue. So after `HCI::new()`, the new stack gets the old stack's events first.  here's a simple repro: ```rust // directed advertising to a peer that doesn't exist, times out after 1.28 s let params = AdvParams {     adv_type: AdvType::ConnectableDirectedHighDuty,     peer_addr: Some(BdAddrType::Random(BdAddr::new([1, 2, 3, 4, 5, 0xC0]))),     ..AdvParams::default() }; ble.start_advertising(params, AdvData::new(), None).await.unwrap(); Timer::after_secs(2).await; // timeout event is now in the queue, unread ble.deinit().await.unwrap();  let mut ble = HCI::new(platform, runtime, Irqs).await.unwrap(); let mut buf = EventBuffer::new(); info!("{:?}", ble.read_event(&mut buf).await); // LeEnhancedConnectionComplete { status: Advertising Timeout, .. } ```
+- **Issue #7549** (2026-11-14): **bump esp**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1470,269 +1470,691 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `798395dd` (2026-11-13)
-**Commit Message**: Merge pull request #7531 from OueslatiGhaith/wba-ble-adv-timeout
+### Incident Patch 1: `93589f9b` (2026-11-15)
+**Commit Message**: Merge pull request #7539 from nullcrimson/synopsys-otg-ep0-status-rearm
 
-wpan: clear WBA advertising state on directed advertising timeout
+synopsys-otg: do not re-arm EP0 OUT after the status stage of a control transfer
 
-**File**: `embassy-stm32-wpan/src/bluetooth/mod.rs` (modified, +15/-3)
+**File**: `embassy-usb-synopsys-otg/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -21,7 +21,7 @@ use bt_hci::event::le::{
-     LePhyUpdateComplete, LeRemoteConnectionParameterRequest,
- };
- use bt_hci::event::{DisconnectionComplete, Event, EventKind, EventPacket};
--use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions};
-+use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions, Status};
- use bt_hci::{ControllerToHostPacket, FromHciBytes};
- use embassy_futures::yield_now;
- use embassy_stm32::interrupt;
-@@ -633,7 +633,7 @@ impl<'d> HCI<'d, Normal> {
-                     let conn = Connection::new(*handle, *role, peer_address, interval);
-                     self.on_connected(conn).await
-                 } else {
--                    None
-+                    self.on_connection_failed(*status)
-                 }
+@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Fixed: A driver created after a previous one was dropped no longer panics at start.
+ - Fixed: An isochronous IN packet that the host did not poll for in its frame is now discarded, with the endpoint disabled and its TX FIFO flushed. Before, the endpoint was enabled again with the packet still in the FIFO, which left the FIFO and the core out of step, and the writer could wait for room in the FIFO for ever.
+ - Fixed: A bus reset or a new SETUP during a control transfer no longer leaves the device unresponsive.
++- Fixed: The status stage of a control transfer no longer clears NAK on EP0 OUT while the next SETUP is in the RX FIFO, which made the interrupt handler panic.
+ 
+ ## 0.4.0 - 2026-05-28
+ 
+```
+
+**File**: `embassy-usb-synopsys-otg/src/lib.rs` (modified, +60/-15)
+```diff
+@@ -82,6 +82,11 @@ where
+                 let data = &state.cp_state.setup_data;
+                 data[0].store(r.fifo(0).read().data(), Ordering::Relaxed);
+                 data[1].store(r.fifo(0).read().data(), Ordering::Relaxed);
++
++                // The core gives this SETUP to the software with STUP. Until then, and until
++                // `setup()` takes it, nothing must clear NAK on EP0 OUT.
++                state.cp_state.setup_ready.store(false, Ordering::Release);
++                state.cp_state.setup_pending.store(true, Ordering::Release);
              }
-             Event::Le(LeEvent::LeEnhancedConnectionComplete(LeEnhancedConnectionComplete {
-@@ -662,7 +662,7 @@ impl<'d> HCI<'d, Normal> {
-                     );
-                     self.on_connected(conn).await
-                 } else {
--                    None
-+                    self.on_connection_failed(*status)
-                 }
-             }
-             Event::DisconnectionComplete(DisconnectionComplete { status, handle, reason }) => {
-@@ -772,6 +772,18 @@ impl<'d> HCI<'d, Normal> {
-         Some(GapEvent::Connected(conn))
+             vals::Pktstsd::OUT_DATA_RX => {
+                 trace!("OUT_DATA_RX ep={} len={}", ep_num, len);
+@@ -355,6 +360,9 @@ struct ControlPipeSetupState {
+     /// Holds received SETUP packets. Available if [Ep0State::setup_ready] is true.
+     setup_data: [AtomicU32; 2],
+     setup_ready: AtomicBool,
++    /// Set when the data of a SETUP packet is read from the RX FIFO, which is before its STUP
++    /// interrupt sets `setup_ready`. Cleared when `setup()` takes the packet.
++    setup_pending: AtomicBool,
+ }
+ 
+ #[derive(Debug, Clone, Copy)]
+@@ -475,6 +483,7 @@ where
+             ep.out_enabled.store(false, Ordering::Release);
+         }
+         self.cp_state.setup_ready.store(false, Ordering::Release);
++        self.cp_state.setup_pending.store(false, Ordering::Release);
      }
  
-+    fn on_connection_failed(&mut self, status: Status) -> Option<GapEvent> {
-+        // High duty cycle directed advertising reports this status when no central
-+        // connected in time (Core Spec Vol 4, Part E, 7.7.65.1). The controller has stopped
-+        // advertising by then. Without clearing the flag, the next `start_advertising`
-+        // tries to stop it first, which the stack refuses.
-+        if status.to_result() == Err(bt_hci::param::Error::ADV_TIMEOUT) {
-+            self.is_advertising = false;
-+        }
+     /// # Safety
+@@ -509,6 +518,7 @@ where
+             cp_state: ControlPipeSetupState {
+                 setup_data: [const { AtomicU32::new(0) }; 2],
+                 setup_ready: AtomicBool::new(false),
++                setup_pending: AtomicBool::new(false),
+             },
+             ep_states: [const {
+                 EpState {
+@@ -1302,6 +1312,7 @@ where
+         // A packet or a SETUP in these buffers is from the previous session. If the software
+         // keeps this data, the stack receives it as data from after the reset.
+         st.cp_state.setup_ready.store(false, Ordering::Release);
++        st.cp_state.setup_pending.store(false, Ordering::Release);
+         for ep in st.ep_states {
+             ep.out_size.store(EP_OUT_BUFFER_EMPTY, Ordering::Release);
+         }
+@@ -2220,27 +2231,55 @@ where
+         poll_fn(|cx| {
+             self.ep_out.state.out_waker.register(cx.waker());
+ 
+-            if self.setup_state.setup_ready.load(Ordering::Acquire) {
++            if !self.setup_state.setup_ready.load(Ordering::Acquire) {
++                trace!("SETUP waiting");
++                return Poll::Pending;
++            }
 +
-+        None
-+    }
++            // Take the SETUP and arm EP0 OUT for its transfer in one critical section, so that the
++            // interrupt handler cannot read a newer SETUP from the RX FIFO in between.
++            let data = self.mutex.lock(|| {
++                // An entry that the interrupt handler did not read yet can be a newer SETUP.
++                if self.regs.gintsts().read().rxflvl() {
++                    return None;
++                }
 +
-     /// Convert a raw HCI event into a high-level GATT event when applicable.
-     pub fn process_gatt_event(&self, event: &BleEvent<'_>) -> Option<GattEvent> {
-         match event {
+                 let mut data = [0; 8];
+                 data[0..4].copy_from_slice(&self.setup_state.setup_data[0].load(Ordering::Relaxed).to_ne_bytes());
+                 data[4..8].copy_from_slice(&self.setup_state.setup_data[1].load(Ordering::Relaxed).to_ne_bytes());
+                 self.setup_state.setup_ready.store(false, Ordering::Release);
++                self.setup_state.setup_pending.store(false, Ordering::Release);
+ 
+-                // EP0 should not be controlled by `Bus` so this RMW does not need a critical section
+-                self.regs.doeptsiz(self.ep_out.info.addr.index()).modify(|w| {
++                // Discard a packet that an aborted stage of the previous transfer did not read.
++                self.ep_out.state.out_size.store(EP_OUT_BUFFER_EMPTY, Ordering::Release);
++
++                // Clear NAK to indicate we are ready to receive more data. This is the only place
++                // that arms EP0 OUT for the first packet of a transfer: the status stage does
++                // not arm it again.
++                let index = self.ep_out.info.addr.index();
++                self.regs.doeptsiz(index).modify(|w| {
+                     w.set_rxdpid_stupcnt(3);
++                    w.set_pktcnt(1);
++                    w.set_xfrsiz(u32::from(self.max_packet_size));
++                });
++                self.regs.doepctl(index).modify(|w| {
++                    w.set_epena(true);
++                    w.set_cnak(true);
+                 });
+ 
+-                // Clear NAK to indicate we are ready to receive more data
+-                self.regs
+-                    .doepctl(self.ep_out.info.addr.index())
+-                    .modify(|w| w.set_cnak(true));
++                Some(data)
++            });
+ 
+-                trace!("SETUP received: {:?}", Bytes(&data));
+-                Poll::Ready(data)
+-            } else {
+-                trace!("SETUP waiting");
+-                Poll::Pending
++            match data {
++                Some(data) => {
++                    trac
 ```
 
 ---
 
-### Incident Patch 2: `e41ae95a` (2026-11-13)
-**Commit Message**: wpan: clear WBA advertising state on directed advertising timeout
+### Incident Patch 2: `859d3525` (2026-11-14)
+**Commit Message**: Merge pull request #7526 from Finomnis/stm32-ucpd-pd-fixes
 
-**File**: `embassy-stm32-wpan/src/bluetooth/mod.rs` (modified, +15/-3)
+stm32/ucpd: fix RXORDSETEN bits for the debug SOPs
+
+**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -21,7 +21,7 @@ use bt_hci::event::le::{
-     LePhyUpdateComplete, LeRemoteConnectionParameterRequest,
- };
- use bt_hci::event::{DisconnectionComplete, Event, EventKind, EventPacket};
--use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions};
-+use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions, Status};
- use bt_hci::{ControllerToHostPacket, FromHciBytes};
- use embassy_futures::yield_now;
- use embassy_stm32::interrupt;
-@@ -633,7 +633,7 @@ impl<'d> HCI<'d, Normal> {
-                     let conn = Connection::new(*handle, *role, peer_address, interval);
-                     self.on_connected(conn).await
-                 } else {
--                    None
-+                    self.on_connection_failed(*status)
-                 }
-             }
-             Event::Le(LeEvent::LeEnhancedConnectionComplete(LeEnhancedConnectionComplete {
-@@ -662,7 +662,7 @@ impl<'d> HCI<'d, Normal> {
-                     );
-                     self.on_connected(conn).await
-                 } else {
--                    None
-+                    self.on_connection_failed(*status)
-                 }
-             }
-             Event::DisconnectionComplete(DisconnectionComplete { status, handle, reason }) => {
-@@ -772,6 +772,18 @@ impl<'d> HCI<'d, Normal> {
-         Some(GapEvent::Connected(conn))
-     }
- 
-+    fn on_connection_failed(&mut self, status: Status) -> Option<GapEvent> {
-+        // High duty cycle directed advertising reports this status when no central
-+        // connected in time (Core Spec Vol 4, Part E, 7.7.65.1). The controller has stopped
-+        // advertising by then. Without clearing the flag, the next `start_advertising`
-+        // tries to stop it first, which the stack refuses.
-+        if status.to_result() == Err(bt_hci::param::Error::ADV_TIMEOUT) {
-+            self.is_advertising = false;
-+        }
-+
-+        None
-+    }
-+
-     /// Convert a raw HCI event into a high-level GATT event when applicable.
-     pub fn process_gatt_event(&self, event: &BleEvent<'_>) -> Option<GattEvent> {
-         match event {
-```
-
----
-
-### Incident Patch 3: `97a3a529` (2026-11-13)
-**Commit Message**: Merge pull request #7471 from Finomnis/stm32-ucpd-races
-
-stm32/ucpd: fix races between CcPhy and PdPhy
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -17,6 +17,8 @@ UCPD:
- - fix: stm32/ucpd: `CcPhy::wait_for_vstate_change` no longer misses CC changes. It compared against a state read when it was called, so a change just before or at the start of the call was ignored, and so was a change that reverted before the task ran. It now uses the latched TYPECEVT flags, and returns immediately if a change happened since the previous call.
- - change: stm32/ucpd: `CcPhy::wait_for_vstate_change` takes `&mut self`. Two concurrent waits disabled each other's interrupt when the first one finished.
- - change: stm32/ucpd: `CcPhy::vstate` marks the state as seen, so `CcPhy::wait_for_vstate_change` reports changes since the last `vstate()` call instead of since its own last return ([#6394](https://github.com/embassy-rs/embassy/issues/6394)).
-+- fix: stm32/ucpd: when `CcPhy` and `PdPhy` were dropped at the same time from different priority levels, the peripheral could be left enabled.
-+- fix: stm32/ucpd: update the control register (CR) without lost updates or repeated commands. `CcPhy` and `PdPhy` could overwrite each other's settings, and any CR update could write back a `TXSEND` or `TXHRST` the hardware had just cleared, sending a message or Hard Reset twice.
+@@ -26,6 +26,7 @@ UCPD:
+ - fix: stm32/ucpd: when `CcPhy` and `PdPhy` were dropped at the same time from different priority levels, the peripheral could be left enabled.
+ - fix: stm32/ucpd: update the control register (CR) without lost updates or repeated commands. `CcPhy` and `PdPhy` could overwrite each other's settings, and any CR update could write back a `TXSEND` or `TXHRST` the hardware had just cleared, sending a message or Hard Reset twice.
+ - feat: stm32/ucpd: add `Ucpd::split_idle_pd_phy`, which keeps the `CcPhy` and an `IdlePdPhy` for the whole lifetime of the driver. `IdlePdPhy::activate` enables PD on a CC line and returns an `ActivePdPhy` guard that disables it again when dropped, so PD can be turned on and off on every attach and detach without recreating `Ucpd` or touching the CC terminations.
++- fix: stm32/ucpd: enable SOP'_Debug and SOP''_Debug reception on the right `RXORDSETEN` bits. `sop_prime_debug` enabled Cable Reset detection and `sop_double_prime_debug` enabled SOP'_Debug.
  
  VREFBUF:
  - feat: stm32/vrefbuf g0x1: enable the VREFBUF clock. On G0x1, including G0B1, it is `SYSCFGEN` in `RCC_APBENR2`, shared with SYSCFG and COMP (RM0444 5.4.16). Without it `VoltageReferenceBuffer::new` never sees `VRR` and waits forever.
 ```
 
-**File**: `embassy-stm32/src/ucpd.rs` (modified, +29/-18)
+**File**: `embassy-stm32/src/ucpd.rs` (modified, +5/-4)
 ```diff
-@@ -23,7 +23,7 @@ use embassy_hal_internal::PeripheralType;
- use embassy_hal_internal::drop::OnDrop;
- use embassy_sync::waitqueue::AtomicWaker;
+@@ -158,12 +158,12 @@ impl<'d, T: Instance> Ucpd<'d, T> {
+             w.set_hbitclkdiv(13 - 1);
  
--use crate::atomic::AtomicModify;
-+use crate::atomic::{AtomicClear, AtomicModify};
- use crate::dma::{ChannelAndRequest, TransferOptions};
- use crate::interrupt::typelevel::Interrupt;
- use crate::pac::ucpd::vals::{Anamode, Ccenable, PscUsbpdclk, Txmode};
-@@ -234,13 +234,13 @@ impl<'d, T: Instance> Ucpd<'d, T> {
-         let r = T::REGS;
+             // Time window for detecting non-idle (12-20us).
+-            // 1.75us * 8 = 14us.
++            // 1.625us * 8 = 13us.
+             w.set_transwin(8 - 1);
  
-         // Enable the receiver on one of the two CC lines.
--        r.cr().modify(|w| w.set_phyccsel(cc_sel));
-+        modify_cr::<T>(|w| w.set_phyccsel(cc_sel));
+             // Time from the end of last bit of a Frame until the start of the first bit of the
+             // next Preamble (min 25us).
+-            // 1.75us * 17 = ~30us
++            // 1.625us * 17 = ~27.6us
+             w.set_ifrgap(17 - 1);
  
-         // Enable hard reset receive interrupt.
-         r.imr().set_bits(|w| w.set_rxhrstdetie(true));
+             // UNDOCUMENTED: This register can only be written while UCPDEN=0 (found by testing).
+@@ -172,8 +172,9 @@ impl<'d, T: Instance> Ucpd<'d, T> {
+                 | (config.sop_double_prime as u16) << 2
+                 // Hard reset
+                 | 0x1 << 3
+-                | (config.sop_prime_debug as u16) << 4
+-                | (config.sop_double_prime_debug as u16) << 5;
++                // Bit 4 is Cable Reset, which is not enabled.
++                | (config.sop_prime_debug as u16) << 5
++                | (config.sop_double_prime_debug as u16) << 6;
+             w.set_rxordseten(rxordset);
  
-         // Enable PD packet reception
--        r.cr().modify(|w| w.set_phyrxen(true));
-+        modify_cr::<T>(|w| w.set_phyrxen(true));
+             // Enable DMA
+```
+
+---
+
+### Incident Patch 3: `9d117616` (2026-11-13)
+**Commit Message**: Merge pull request #7538 from felipebalbi/rtc-fixes
+
+[MCXA] more RTC fixes
+
+**File**: `embassy-mcxa/Cargo.toml` (modified, +0/-3)
+```diff
+@@ -220,9 +220,6 @@ trace = []
+ # If this feature is enabled, users should NOT enable `embassy-executor/platform-cortex-m` or any other executor platform.
+ executor-platform = []
  
-         // Both parts must be dropped before the peripheral can be disabled.
-         T::state().drop_not_ready.store(true, Ordering::Relaxed);
-@@ -266,17 +266,14 @@ pub struct CcPhy<'d, T: Instance> {
- impl<'d, T: Instance> Drop for CcPhy<'d, T> {
-     fn drop(&mut self) {
-         let r = T::REGS;
--        r.cr().modify(|w| {
-+        modify_cr::<T>(|w| {
-             w.set_cc1tcdis(true);
-             w.set_cc2tcdis(true);
-             w.set_ccenable(Ccenable::Disabled);
-         });
- 
-         // Check if the PdPhy part was dropped already.
--        let drop_not_ready = &T::state().drop_not_ready;
--        if drop_not_ready.load(Ordering::Relaxed) {
--            drop_not_ready.store(false, Ordering::Relaxed);
--        } else {
-+        if !T::state().drop_not_ready.clear() {
-             r.cfgr1().write(|w| w.set_ucpden(false));
-             rcc::disable::<T>();
-             T::Interrupt::disable();
-@@ -287,7 +284,7 @@ impl<'d, T: Instance> Drop for CcPhy<'d, T> {
- impl<'d, T: Instance> CcPhy<'d, T> {
-     /// Sets the pull-up/pull-down resistor values exposed on the CC pins.
-     pub fn set_pull(&mut self, cc_pull: CcPull) {
--        T::REGS.cr().modify(|w| {
-+        modify_cr::<T>(|w| {
-             w.set_anamode(if cc_pull == CcPull::Sink {
-                 Anamode::Sink
-             } else {
-@@ -483,12 +480,9 @@ pub struct PdPhy<'d, T: Instance> {
- impl<'d, T: Instance> Drop for PdPhy<'d, T> {
-     fn drop(&mut self) {
-         let r = T::REGS;
--        r.cr().modify(|w| w.set_phyrxen(false));
-+        modify_cr::<T>(|w| w.set_phyrxen(false));
-         // Check if the CcPhy part was dropped already.
--        let drop_not_ready = &T::state().drop_not_ready;
--        if drop_not_ready.load(Ordering::Relaxed) {
--            drop_not_ready.store(false, Ordering::Relaxed);
--        } else {
-+        if !T::state().drop_not_ready.clear() {
-             r.cfgr1().write(|w| w.set_ucpden(false));
-             rcc::disable::<T>();
-             T::Interrupt::disable();
-@@ -622,7 +616,7 @@ impl<'d, T: Instance> PdPhy<'d, T> {
- 
-         // Configure and start the transmission.
-         r.tx_payszr().write(|w| w.set_txpaysz(buf.len() as _));
--        r.cr().modify(|w| {
-+        modify_cr::<T>(|w| {
-             w.set_txmode(Txmode::Packet);
-             w.set_txsend(true);
-         });
-@@ -669,16 +663,14 @@ impl<'d, T: Instance> PdPhy<'d, T> {
- 
-     /// Transmit a hard reset.
-     pub async fn transmit_hardreset(&mut self) -> Result<(), TxError> {
--        let r = T::REGS;
+-# This feature is not done yet, don't use it!
+-unstable-osc32k = []
 -
-         // Clear the hardreset interrupt flags.
-         T::REGS.icr().write(|w| {
-             w.set_hrstdisccf(true);
-             w.set_hrstsentcf(true);
-         });
- 
-         // Trigger hard reset transmission.
--        r.cr().modify(|w| {
-+        modify_cr::<T>(|w| {
-             w.set_txhrst(true);
-         });
- 
-@@ -719,6 +711,25 @@ impl<'d, T: Instance> PdPhy<'d, T> {
+ #
+ # Chip selection
+ #
+```
+
+**File**: `embassy-mcxa/src/clkout.rs` (modified, +7/-4)
+```diff
+@@ -36,8 +36,11 @@ pub enum ClockOutSel {
+     /// 16KHz oscillator
+     #[cfg(feature = "_mcxa2xx")]
+     Clk16K,
+-    /// Either the 16K or 32K oscillator, depending on settings
+-    #[cfg(feature = "_mcxa5xx")]
++    /// RTC-selected low-power clock output.
++    ///
++    /// Unsupported: CLK_SEL and CLKO_DIS belong to the independently owned RTC,
++    /// so CLKOUT cannot guarantee this route's frequency or availability.
++    #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+     LpOsc,
+     /// Output of PLL1
+     #[cfg(feature = "_mcxa2xx")]
+@@ -162,8 +165,8 @@ fn check_sel(sel: ClockOutSel, level: PoweredClock, divisor: u32) -> Result<(u32
+                 ClockOutSel::FroHfDiv => (c.ensure_fro_hf_div_active(&level)?, Mux::I1ClkrootFircDiv),
+                 #[cfg(not(feature = "sosc-as-gpio"))]
+                 ClockOutSel::ClkIn => (c.ensure_clk_in_active(&level)?, Mux::I2ClkrootSosc),
+-                // TODO: we need this to be an lp_osc clock
+-                ClockOutSel::LpOsc => (c.ensure_clk_32k_vdd_core_active(&level)?, Mux::I3ClkrootLposc),
++                #[cfg(not(feature = "rosc-32k-as-gpio"))]
++                ClockOutSel::LpOsc => return Err(ClockError::NotImplemented { clock: "lp_osc" }),
+                 ClockOutSel::Pll1ClkDiv => (c.ensure_pll1_clk_div_active(&level)?, Mux::I5ClkrootSpllDiv),
+                 ClockOutSel::SlowClk => (c.ensure_slow_clk_active(&level)?, Mux::I6ClkrootSlow),
+             };
+```
+
+**File**: `embassy-mcxa/src/clocks/config.rs` (modified, +42/-38)
+```diff
+@@ -129,8 +129,8 @@ pub struct ClocksConfig {
+     pub sirc: SircConfig,
+     /// FRO16K clock source
+     pub fro16k: Option<Fro16KConfig>,
+-    /// OSC32K clock source
+-    #[cfg(all(feature = "_mcxa5xx", feature = "unstable-osc32k", not(feature = "rosc-32k-as-gpio")))]
++    /// LP OSC32K clock source. `None` preserves hardware without advertising it.
++    #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+     pub osc32k: Option<Osc32KConfig>,
+     /// SOSC, clk_in clock source
+     ///
+@@ -565,47 +565,31 @@ impl Default for Fro16KConfig {
      }
  }
  
-+/// Modifies CR.
+-/// OSC32K Operational Mode
+-#[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+-pub enum Osc32KMode {
+-    ///  low power switched oscillator mode
+-    LowPower {
+-        /// 32K Oscillator internal transconductance gain current
+-        coarse_amp_gain: Osc32KCoarseGain,
+-        /// Enable if Vbat exceeds 3.0v
+-        vbat_exceeds_3v0: bool,
+-    },
+-    /// high performance transconductance oscillator mode
+-    HighPower {
+-        /// 32K Oscillator internal transconductance gain current
+-        coarse_amp_gain: Osc32KCoarseGain,
+-        /// Configurable capacitance for XTAL pad
+-        xtal_cap_sel: Osc32KCapSel,
+-        /// Configurable capacitance for EXTAL pad
+-        extal_cap_sel: Osc32KCapSel,
+-    },
+-}
+-
+ /// Coarse Gain Amplification
+ ///
+-/// See datasheet table 4.2.1.4, "32 kHz oscillation gain setting"
++/// NXP specifies LP ESR limits of 50 kOhm for gain 00 and 70 kOhm for gain 01.
++/// Higher gain LP electrical limits require device/crystal qualification.
+ #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+ pub enum Osc32KCoarseGain {
+-    /// Max ESR 50kOhms, Max Cx 14pF
++    /// Gain 00: LP maximum ESR 50 kOhm.
+     EsrRange0,
+-    /// Max ESR 70kOhms, Max Cx 22pF
++    /// Gain 01: LP maximum ESR 70 kOhm.
+     EsrRange1,
+-    /// Max ESR 80kOhms, Max Cx 22pF
++    /// Gain 10: no LP ESR limit specified here.
+     EsrRange2,
+-    /// Max ESR 100kOhms, Max Cx 20pF
++    /// Gain 11: no LP ESR limit specified here.
+     EsrRange3,
+ }
+ 
++/// Per-pin startup capacitance, not effective crystal load capacitance.
 +///
-+/// CR is written by both the CC part and the PD part, which may run at different priorities, so
-+/// the read-modify-write runs in a critical section to keep them from overwriting each other.
++/// Only positive startup values are supported. Final LP capacitances are always zero.
+ #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
++#[derive(Clone, Copy)]
++#[repr(u8)]
+ pub enum Osc32KCapSel {
+-    // NOTE: 0pF is not supported in non-low-power-modes
+     /// 2pF
+-    Cap2PicoF,
++    Cap2PicoF = 1,
+     /// 4pF
+     Cap4PicoF,
+     /// 6pF
+@@ -636,12 +620,29 @@ pub enum Osc32KCapSel {
+     Cap30PicoF,
+ }
+ 
+-/// OSC32K Configuration Items
++/// LP-only OSC32K configuration.
 +///
-+/// TXSEND, TXHRST and FRSTX are commands that the hardware clears once it acts on them. A value
-+/// read while one of them was still set must not be written back, as that would issue the command
-+/// again (e.g. send a message twice), so they are written as 0 unless `f` sets them.
-+fn modify_cr<T: Instance>(f: impl FnOnce(&mut crate::pac::ucpd::regs::Cr)) {
-+    critical_section::with(|_| {
-+        T::REGS.cr().modify(|w| {
-+            w.set_txsend(false);
-+            w.set_txhrst(false);
-+            w.set_frstx(false);
-+            f(w);
-+        });
-+    });
-+}
++/// Startup loading must be qualified for the crystal and PCB parasitics; crystal C0
++/// is not the pad/PCB shunt capacitance. Readiness does not establish frequency accuracy
++/// or crystal drive compliance. Normal mode is not supported on this device family.
++/// A compatible retained LP source is adopted without replaying startup. Unrequested
++/// retained output gates remain enabled, but are not advertised in the clock cache.
+ #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+ #[non_exhaustive]
+ pub struct Osc32KConfig {
+-    /// Low/High Power Mode Selection
+-    pub mode: Osc32KMode,
++    /// XTAL pin capacitance used only during startup.
++    pub startup_xtal_cap_sel: Osc32KCapSel,
++    /// EXTAL pin capacitance used only during startup.
++    pub startup_extal_cap_sel: Osc32KCapSel,
++    /// Oscillator transconductance gain used during startup and LP operation.
++    pub coarse_amp_gain: Osc32KCoarseGain,
++    /// Select the LP supply detector setting for VBAT above 3.0 V.
++    pub vbat_exceeds_3v0: bool,
++    /// Maximum status polls per LDO/startup/LP readiness stage, before the time driver exists.
++    ///
++    /// The reference default is 100,000,000 polls, not a wall-clock duration. Tune for
++    /// CPU/bus speed and qualified worst-case crystal startup; it is always finite.
++    pub readiness_poll_budget: core::num::NonZeroU32,
+     /// is `clk_32k[0]` active?
+     pub vsys_domain_active: bool,
+     /// is `clk_32k[1]` active?
+@@ -652,12 +653,15 @@ pub struct Osc32KConfig {
+ 
+ #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+ impl Default for Osc32KConfig {
++    /// SDK 26.09 reference STARTUP profile (12 pF per pin, gain 01), followed by LP.
++    /// This is not universal crystal/board qualification. All three outputs are enabled.
+     fn default() -> Self {
+         Self {
+-            mode: Osc32KMode::LowPower {
+-                coarse_amp_gain: Osc32KCoarseGain::EsrRange0,
+-                vbat_exceeds_3v0: true,
+-            },
++            startup_xtal_cap_sel: Osc32KCapSel::Cap12PicoF,
++            startup_extal_cap_sel: Osc32KCapSel::Cap12PicoF,
++            coarse_amp_gain: Osc32KCoarseGain::EsrRange1,
++            vbat_exceeds_3v0: true,
++            readiness_poll_budget: core::num::NonZeroU32::new(100_000_0
+```
+
+**File**: `embassy-mcxa/src/clocks/mod.rs` (modified, +5/-1)
+```diff
+@@ -122,6 +122,10 @@ pub fn init(settings: ClocksConfig) -> Result<(), ClockError> {
+         cmc: pac::CMC,
+     };
+ 
++    // Reject incompatible retained VBAT state before changing any clock dependencies.
++    #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
++    operator.preflight_osc32k_clocks()?;
 +
- /// Interrupt handler.
- pub struct InterruptHandler<T: Instance> {
-     _marker: PhantomData<T>,
+     operator.unlock_mrcc();
+ 
+     // Before applying any requested clocks, apply the requested VDD_CORE
+@@ -135,7 +139,7 @@ pub fn init(settings: ClocksConfig) -> Result<(), ClockError> {
+     operator.configure_fro16k_clocks()?;
+ 
+     // NOTE: OSC32K must be configured AFTER FRO16K.
+-    #[cfg(all(feature = "_mcxa5xx", feature = "unstable-osc32k", not(feature = "rosc-32k-as-gpio")))]
++    #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+     operator.configure_osc32k_clocks()?;
+ 
+     #[cfg(not(feature = "sosc-as-gpio"))]
+```
+
+**File**: `embassy-mcxa/src/clocks/operator.rs` (modified, +204/-202)
+```diff
+@@ -444,229 +444,231 @@ impl ClockOperator<'_> {
+         Ok(())
+     }
+ 
+-    /// Configure the ROSC/OSC32K clock family
+-    #[cfg(all(feature = "_mcxa5xx", feature = "unstable-osc32k", not(feature = "rosc-32k-as-gpio")))]
++    /// Validate retained VBAT controls before changing the FRO16K dependency.
++    #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
++    pub(super) fn preflight_osc32k_clocks(&self) -> Result<(), ClockError> {
++        let Some(_) = self.config.osc32k.as_ref() else {
++            return Ok(());
++        };
++        if !self.config.fro16k.as_ref().is_some_and(|fro| fro.vbat_domain_active) {
++            return Err(ClockError::BadConfig {
++                clock: "osc32k",
++                reason: "FRO16K and its VBAT output must be requested",
++            });
++        }
++        if self.vbat0.frolcka().read().lock() && !self.vbat0.froctla().read().fro_en() {
++            return Err(ClockError::BadConfig {
++                clock: "osc32k",
++                reason: "FRO16K locked disabled; VBAT POR required",
++            });
++        }
++        // RM 31.7.1.17 requires at least one retained array whenever LDO_RAM is enabled.
++        // Retention policy belongs to the SRAM owner; reject rather than changing it.
++        let ram = self.vbat0.ldoramc().read();
++        if ram.ret0() && ram.ret1() && ram.ret2() && ram.ret3() {
++            return Err(ClockError::BadConfig {
++                clock: "osc32k",
++                reason: "LDO_RAM requires at least one retained SRAM array",
++            });
++        }
++        let ldo = self.vbat0.ldoctla().read();
++        if self.vbat0.ldolcka().read().lock() && !(ldo.ldo_en() && ldo.bg_en() && ldo.refresh_en()) {
++            return Err(ClockError::BadConfig {
++                clock: "osc32k",
++                reason: "LDO controls locked incompatible; VBAT POR required",
++            });
++        }
++        let osc = self.vbat0.oscctla().read();
++        if osc.osc_en() {
++            // Do not restart or retune an oscillator that may already supply the RTC.
++            if !self.osc32k_lp_controls_match() {
++                return Err(ClockError::BadConfig {
++                    clock: "osc32k",
++                    reason: "retained oscillator is not compatible LP; VBAT POR required",
++                });
++            }
++        } else if self.vbat0.osclcka().read().lock() {
++            return Err(ClockError::BadConfig {
++                clock: "osc32k",
++                reason: "oscillator locked disabled; VBAT POR required",
++            });
++        }
++        Ok(())
++    }
++
++    #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
++    fn osc32k_lp_controls_match(&self) -> bool {
++        use config::Osc32KCoarseGain;
++        use nxp_pac::vbat::{CoarseAmpGain, ExtalCapSel, InitTrim, ModeEn, SupplyDet, XtalCapSel};
++
++        let Some(cfg) = self.config.osc32k.as_ref() else {
++            return false;
++        };
++        let gain = match cfg.coarse_amp_gain {
++            Osc32KCoarseGain::EsrRange0 => CoarseAmpGain::Gain05,
++            Osc32KCoarseGain::EsrRange1 => CoarseAmpGain::Gain10,
++            Osc32KCoarseGain::EsrRange2 => CoarseAmpGain::Gain18,
++            Osc32KCoarseGain::EsrRange3 => CoarseAmpGain::Gain33,
++        };
++        let supply = if cfg.vbat_exceeds_3v0 {
++            SupplyDet::G3vsupply
++        } else {
++            SupplyDet::L3vsupply
++        };
++        let osc = self.vbat0.oscctla().read();
++        osc.osc_en()
++            && !osc.osc_byp_en()
++            && osc.cap_sel_en()
++            && osc.mode_en() == ModeEn::Sw
++            && osc.xtal_cap_sel() == XtalCapSel::Sel0
++            && osc.extal_cap_sel() == ExtalCapSel::Sel0
++            && osc.coarse_amp_gain() == gain
++            && osc.supply_det() == supply
++            && self.vbat0.osccfga().read().init_trim() == InitTrim::Sel0
++    }
++
++    /// Establish LP OSC32K or adopt a compatible retained source without restarting it.
++    #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+     pub(super) fn configure_osc32k_clocks(&mut self) -> Result<(), ClockError> {
+-        use config::{Osc32KCapSel, Osc32KCoarseGain, Osc32KMode};
++        use config::Osc32KCoarseGain;
+         use nxp_pac::vbat::{
+             CoarseAmpGain, ExtalCapSel, InitTrim, ModeEn, StatusaLdoRdy, StatusaOscRdy, SupplyDet, XtalCapSel,
+         };
+ 
+-        // Unlock the control first
+-        self.vbat0.ldolcka().modify(|w| w.set_lock(false));
+-
++        // None neither claims the source nor changes its controls, gates or locks.
+         let Some(cfg) = self.config.osc32k.as_ref() else {
+-            // TODO: how to ensure disabled?
+-            // ???
+-
+-            // Re-lock after disabling
+-            self.vbat0.ldolcka().modify(|w| w.set_lock(true));
+             return Ok(());
+         };
++        self.preflight_osc32k_clocks()?;
++        if !self.vbat0.froctla().read().fro_en() || !self.vbat0.froclke().rea
+```
+
+**File**: `embassy-mcxa/src/clocks/types.rs` (modified, +7/-3)
+```diff
+@@ -59,6 +59,8 @@ impl Drop for WakeGuard {
+ /// These values are configured by providing
+ /// [ClocksConfig](crate::clocks::config::ClocksConfig) to the
+ /// [`init()`](super::init) function at boot time.
++/// This is established configuration, not live clock-health monitoring. In particular,
++/// OSC32K readiness does not measure frequency accuracy or detect subsequent failure.
+ #[derive(Default, Debug, Clone)]
+ #[non_exhaustive]
+ pub struct Clocks {
+@@ -138,24 +140,26 @@ pub struct Clocks {
+     #[cfg(feature = "_mcxa5xx")]
+     pub clk_16k_vbat: Option<Clock>,
+ 
+-    /// `clk_32k_vsys` is one of two/three outputs of the `FRO16K` internal oscillator.
++    /// `clk_32k_vsys` is an output of the LP `OSC32K` crystal oscillator.
+     ///
+     /// Also referred to as `clk_32k[0]` in the datasheet, it feeds peripherals in
+     /// the system domain, such as the CMP. Note that it does NOT feed the RTC,
+     /// which is a VBAT-domain peripheral and uses `clk_32k[2]`.
+     #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+     pub clk_32k_vsys: Option<Clock>,
+ 
+-    /// `clk_32k_vdd_core` is one of two/three outputs of the `FRO16K` internal oscillator.
++    /// `clk_32k_vdd_core` is an output of the LP `OSC32K` crystal oscillator.
+     ///
+     /// Also referred to as `clk_32k[1]` in the datasheet, it feeds peripherals in
+     /// the VDD Core domain, such as the OSTimer or LPUarts.
+     #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+     pub clk_32k_vdd_core: Option<Clock>,
+ 
+-    /// `clk_32k_vbat` is one of three outputs of the `FRO16K` internal oscillator.
++    /// `clk_32k_vbat` is an output of the LP `OSC32K` crystal oscillator.
+     ///
+     /// Also referred to as `clk_32k[2]` in the datasheet.
++    /// LP operation retains the `AlwaysEnabled` contract for powered consumers;
++    /// this does not guarantee operation of unpowered system-domain consumers.
+     #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+     pub clk_32k_vbat: Option<Clock>,
+ 
+```
+
+**File**: `embassy-mcxa/src/rtc/mcxa5xx.rs` (modified, +128/-13)
+```diff
+@@ -8,7 +8,7 @@ use embassy_hal_internal::{Peri, PeripheralType};
+ use embedded_mcu_hal::time::{Datetime, DatetimeClock, DatetimeClockError, DatetimeFields, Month as HalMonth};
+ use maitake_sync::WaitCell;
+ 
+-use crate::clocks::{WakeGuard, with_clocks};
++use crate::clocks::{Clock, WakeGuard, with_clocks};
+ use crate::interrupt::typelevel::{Handler, Interrupt};
+ use crate::pac;
+ use crate::pac::rtc::Swr;
+@@ -385,7 +385,7 @@ const DESYNCED: u16 = 0xfffe;
+ ///
+ /// This is a distinct sentinel from [`DESYNCED`]: FFFFh means the counters are
+ /// mid-update and the read should simply be retried, whereas FFFEh means the
+-/// block has no clock at all and retrying will never succeed.
++/// register interface is synchronizing, possibly because its clock is stopped.
+ const INVALID: u16 = 0xffff;
+ 
+ /// Errors exclusive to HW initialization
+@@ -454,7 +454,29 @@ pub struct Rtc<'a> {
+ impl<'a> Rtc<'a> {
+     const BASE_YEAR: i16 = 2112;
+ 
++    fn selected_clock(clksel: ClkSel) -> Result<Clock, SetupError> {
++        // RTC uses the VBAT-domain outputs, not the system/core outputs.
++        // A retained but unadvertised source is not an initialization opt-in.
++        with_clocks(|c| match clksel {
++            ClkSel::Clk16384 => c.clk_16k_vbat.clone(),
++            ClkSel::Clk32768 => {
++                #[cfg(not(feature = "rosc-32k-as-gpio"))]
++                {
++                    c.clk_32k_vbat.clone()
++                }
++                #[cfg(feature = "rosc-32k-as-gpio")]
++                None
++            }
++        })
++        .flatten()
++        .ok_or(SetupError::ClockSetup)
++    }
++
+     /// Create an exclusive RTC handle and a cloneable, read-only time provider.
++    ///
++    /// Board clock setup must enable both the currently selected (possibly
++    /// retained) source and the requested source. This does not start oscillators;
++    /// it waits finitely for register synchronization before configuration.
+     pub fn new<T: Instance>(
+         _inst: Peri<'a, T>,
+         _irq: impl crate::interrupt::typelevel::Binding<T::Interrupt, InterruptHandler<T>> + 'a,
+@@ -470,13 +492,7 @@ impl<'a> Rtc<'a> {
+         // osc32k[2] (RM p.81527), not the system-domain [0] outputs. Measured
+         // on FRDM-MCXA577 with CLK_SEL=0: the counter runs with FROCLKE=0b100
+         // alone, and stops with 0b001 or 0b010.
+-        let clocks = if config.clksel == ClkSel::Clk16384 {
+-            with_clocks(|c| c.clk_16k_vbat.clone())
+-        } else {
+-            with_clocks(|c| c.clk_32k_vbat.clone())
+-        };
+-
+-        let clk = clocks.flatten().ok_or(SetupError::ClockSetup)?;
++        let clk = Self::selected_clock(config.clksel)?;
+ 
+         let mut inst = Self {
+             info,
+@@ -501,7 +517,26 @@ impl<'a> Rtc<'a> {
+     }
+ 
+     fn set_configuration(&mut self, config: &Config) -> Result<(), SetupError> {
+-        critical_section::with(|_| self.set_configuration_inner(config))
++        let clk = Self::selected_clock(config.clksel)?;
++        let wg = WakeGuard::for_power(&clk.power);
++
++        // RM 38.3.1.2-3: FFFEh is normal for two oscillator cycles after the
++        // selected clock becomes available. Wait outside the protected-write
++        // critical section; a stopped source must still fail finitely. This is
++        // a CPU/bus-dependent poll budget, not a wall-clock timeout.
++        let mut polls = 1_000_000u32;
++        while self.info.regs().ctrl().read().0 == DESYNCED {
++            if polls == 0 {
++                return Err(SetupError::RegisterAccess);
++            }
++            polls -= 1;
++            core::hint::spin_loop();
++        }
++
++        critical_section::with(|_| self.set_configuration_inner(config))?;
++        self._freq = clk.frequency;
++        self._wg = wg;
++        Ok(())
+     }
+ 
+     fn set_configuration_inner(&mut self, config: &Config) -> Result<(), SetupError> {
+@@ -512,7 +547,34 @@ impl<'a> Rtc<'a> {
+             return Err(SetupError::RegisterAccess);
+         }
+ 
+-        self.disable_write_protect();
++        // The block may still be in its power-on unlocked window, whose age is
++        // unknown. Lock first so configuration gets a fresh two-second window
++        // rather than racing the inherited window's expiry (RM 38.3.7).
++        let mut attempts = 8u8;
++        loop {
++            if attempts == 0 {
++                return Err(SetupError::RegisterAccess);
++            }
++            attempts -= 1;
++
++            self.enable_write_protect();
++            let status = self.info.regs().status().read();
++            if status.0 == DESYNCED {
++                return Err(SetupError::RegisterAccess);
++            }
++            if !status.write_prot_en() {
++                continue;
++            }
++
++            self.disable_write_protect();
++            let status = self.info.regs().status().read();
++            if status.0 == DESYNCED {
++                return Err(SetupError::RegisterAccess);
++            }
++            if !status.write_prot_en() {
++   
+```
+
+**File**: `examples/mcxa287/Cargo.toml` (modified, +2/-1)
+```diff
+@@ -13,6 +13,7 @@ defmt = "1.0"
+ defmt-rtt = "1.0"
+ embassy-embedded-hal = { version = "0.6.0", path = "../../embassy-embedded-hal" }
+ embassy-executor = { version = "0.10.0", path = "../../embassy-executor", default-features = false, features = ["executor-thread", "defmt"] }
++embassy-futures = { version = "0.1.2", path = "../../embassy-futures" }
+ embassy-mcxa = { version = "0.1.0", path = "../../embassy-mcxa", features = ["defmt", "unstable-pac", "mcxa287"] }
+ embassy-time = { version = "0.5.1", path = "../../embassy-time", features = ["defmt", "defmt-timestamp-uptime"] }
+ embedded-io-async = "0.7.0"
+@@ -37,5 +38,5 @@ debug = 2
+ 
+ [package.metadata.embassy]
+ build = [
+-  { target = "thumbv8m.main-none-eabihf", artifact-dir = "out/examples/mcxa287" }
++  { target = "thumbv8m.main-none-eabihf", artifact-dir = "out/examples/mcxa287" },
+ ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7550** (2026-11-15): stm32/usb: apply the OUT packet errata delay on STM32C5 and STM32U535/545 (@buda-gotivac)
+- **PR #7549** (2026-11-14): bump esp (@xoviat)
+- **PR #7548** (2026-11-15): Remove never type hack (@0e4ef622)
+- **PR #7539** (2026-11-15): synopsys-otg: do not re-arm EP0 OUT after the status stage of a control transfer (@nullcrimson)
+- **PR #7538** (2026-11-13): [MCXA] more RTC fixes (@felipebalbi)
 - **PR #7537** (2026-11-13): stm32: subghz: simplify the API after review (@leftger)
-- **PR #7536** (2026-11-13): wpan: reset WBA BLE platform state when the controller is dropped (@OueslatiGhaith)
-- **PR #7533** (2026-11-13): [MCXA] separate RTC clock reads from alarm ownership (@felipebalbi)
-- **PR #7531** (2026-11-13): wpan: clear WBA advertising state on directed advertising timeout (@OueslatiGhaith)
-- **PR #7528** (2026-11-13): chore: update rustc and use drop guard from core (@lulf)
-- **PR #7524** (2026-11-13): embassy-stm32: add native SUBGHZ radio driver for STM32WL / STM32WLE5 (@leftger)
 
 ---
 
@@ -1752,47 +2174,31 @@ stm32/ucpd: fix races between CcPhy and PdPhy
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in mod.rs
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
-When implementing operations in `embassy-stm32-wpan/src/bluetooth/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-usb-synopsys-otg/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `798395dd`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93589f9b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32-wpan/src/bluetooth/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-usb-synopsys-otg/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions, Status};
-                    self.on_connection_failed(*status)
-                    self.on_connection_failed(*status)
-    fn on_connection_failed(&mut self, status: Status) -> Option<GapEvent> {
-        // High duty cycle directed advertising reports this status when no central
-        // connected in time (Core Spec Vol 4, Part E, 7.7.65.1). The controller has stopped
-        // advertising by then. Without clearing the flag, the next `start_advertising`
-        // tries to stop it first, which the stack refuses.
-        if status.to_result() == Err(bt_hci::param::Error::ADV_TIMEOUT) {
-            self.is_advertising = false;
-        }
-
-        None
-    }
-
+- Fixed: The status stage of a control transfer no longer clears NAK on EP0 OUT while the next SETUP is in the RX FIFO, which made the interrupt handler panic.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions};
-                    None
-                    None
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `798395dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93589f9b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

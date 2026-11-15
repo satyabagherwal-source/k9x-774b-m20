@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-VFBQ",
-    "timestamp": "2026-11-11T07:03:08.630Z",
-    "repository": "Cactus-Compute/mirage",
-    "learningId": "learn-huggingface-cactus-compute-mirage",
-    "contentHash": "cee3ae7d63ad7be61edc5544a30b3799f1cd4db665512daa9ef8343f2b3c90ac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-1TQZ",
     "timestamp": "2026-11-11T07:08:07.259Z",
     "repository": "ConwayResearch/Underdog-Woof",
@@ -7492,6 +7477,21 @@
     "contentHash": "a7f92248a34991724ae7a87d162d2778fe02e065b21e5c114444e05d19aa157c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-U4ZD",
+    "timestamp": "2026-11-15T17:52:40.633Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "39bf0f408236c78e4cfc371b25a77c7e1857cbbe2b2ce48bbc5413169344920b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

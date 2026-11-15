@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:40:53.189Z",
+  "last_updated": "2026-11-15T17:52:51.158Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3678,14 +3678,14 @@
       "learning_id": "learn-github-prometheus-prometheus"
     },
     {
-      "id": "CD-NB2G",
+      "id": "CD-UCG3",
       "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_repo": "sharkdp-fd-learnings",
+      "source_repo": "embassy-rs-embassy-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-NB2G-empirical-invariant-guard-in-changelog-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-UCG3-empirical-invariant-guard-in-changelog-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-14",
+      "date_staged": "2026-11-15",
       "domain_letter": "D"
     },
     {
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-DS53",
+      "id": "CD-UCRM",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-DS53-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-UCRM-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -11821,11 +11821,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-WVVR",
+      "id": "CD-UD3L",
       "directive_title": "watcher): filter access events before queueing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-WVVR-watcher-filter-access-events-before-queueing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-UD3L-watcher-filter-access-events-before-queueing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -16083,6 +16083,33 @@
       "source_repo": "seekstorm-seekstorm",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EF4777-update-changelog-md.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-CA96BB",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "embassy-rs-embassy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CA96BB-empirical-invariant-guard-in-changelog-m.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-4D35BC",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D35BC-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-251016",
+      "directive_title": "watcher): filter access events before queueing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-251016-watcher-filter-access-events-before-queu.md",
       "staged_date": "2026-11-15"
     }
   ]

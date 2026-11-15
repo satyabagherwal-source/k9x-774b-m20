@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T17:40:21.552Z",
+  "last_updated": "2026-11-15T17:52:40.644Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "046becf7566120cff061cec5e68f18fbae4b106064620ac133237cad79691d53",
-      "verified_at": "2026-11-13T19:39:51.111Z",
+      "content_hash": "39bf0f408236c78e4cfc371b25a77c7e1857cbbe2b2ce48bbc5413169344920b",
+      "verified_at": "2026-11-15T17:52:40.643Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:39:51.111Z"
+      "last_updated": "2026-11-15T17:52:40.643Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T17:40:53.304Z",
+  "last_updated": "2026-11-15T17:52:51.241Z",
   "total_records": 1095,
   "domains": {
     "A": {
@@ -6865,8 +6865,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "6a94b3feff768eb5cdbf346aad3e94ee85b7c213248a6a3699f79d80b23e3981",
-      "created_at": "2026-11-15T16:30:50.059Z"
+      "content_hash": "fd7b63274f03fcc56fa04ba3c5238c7fb5a41458d5f913b30c141737eef612c9",
+      "created_at": "2026-11-15T17:52:51.241Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -6910,8 +6910,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "4d457c2f9f38a51135d0f3a27f167950d8f461bd5799c61460415b5319058b6f",
-      "created_at": "2026-11-15T15:47:59.241Z"
+      "content_hash": "7b6dbe2ad576fdc95cce120fabd7f0e2e3196b566bc8b1a9062900dc90e9c030",
+      "created_at": "2026-11-15T17:52:50.809Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8908,8 +8908,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "2cd7a752b9427b51e0a3cf6991fcb4ed86785153ea914e5a7d4b666eb0db09f7",
-      "created_at": "2026-11-13T19:39:51.442Z"
+      "content_hash": "181dec6d4397ff84ef46af08568184abf41b3b383df8eb622755947e2f1faa08",
+      "created_at": "2026-11-15T17:52:40.874Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -8953,8 +8953,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "4f491cb3d71e2095dbddf495af274d22f8f744376be10b57cfcb11e66e6e4d95",
-      "created_at": "2026-11-13T19:40:07.356Z"
+      "content_hash": "53413a2e0de93844f6d2aae532ff78c3b576e03cae3bfed225b037b731ef37f0",
+      "created_at": "2026-11-15T17:52:50.394Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
