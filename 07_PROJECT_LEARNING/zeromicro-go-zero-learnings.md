@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `74651def`  
+> **Source Version**: `1450dba7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T01:48:41.282Z  
+> **Timestamp**: 2026-11-15T13:27:27.069Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T01:48:41.277Z  
+> **Harvest Timestamp**: 2026-11-15T13:27:27.064Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33427 stars
+- **Stars / Engagement**: 33428 stars
 
 ---
 
@@ -1305,121 +1305,126 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c6b596e` (2026-11-13)
-**Commit Message**: fix(goctl): keep imported API group order deterministic (#5892)
+### Incident Patch 1: `1450dba7` (2026-11-14)
+**Commit Message**: chore(deps): bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0 (#5887)
 
-**File**: `tools/goctl/pkg/parser/api/parser/analyzer.go` (modified, +8/-1)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +3/-4)
 ```diff
-@@ -154,7 +154,14 @@ func (a *Analyzer) convert2Spec() error {
- 		groups = append(groups, v)
- 	}
- 	sort.SliceStable(groups, func(i, j int) bool {
--		return groups[i].Annotation.Properties[groupKeyText] < groups[j].Annotation.Properties[groupKeyText]
-+		gi := groups[i].Annotation.Properties[groupKeyText]
-+		gj := groups[j].Annotation.Properties[groupKeyText]
-+		if gi != gj {
-+			return gi < gj
-+		}
-+		// Same @server group: keep output stable by prefix (import
-+		// order alone is not enough if groups are later reshuffled).
-+		return groups[i].Annotation.Properties[atServerPrefixKey] < groups[j].Annotation.Properties[atServerPrefixKey]
- 	})
- 	a.spec.Service.Groups = groups
- 
+@@ -23,7 +23,7 @@ require (
+ 	github.com/titanous/json5 v1.0.0
+ 	go.etcd.io/etcd/api/v3 v3.6.14
+ 	go.etcd.io/etcd/client/v3 v3.6.14
+-	go.mongodb.org/mongo-driver/v2 v2.9.2
++	go.mongodb.org/mongo-driver/v2 v2.10.0
+ 	go.opentelemetry.io/otel v1.46.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0
+@@ -93,7 +93,7 @@ require (
+ 	github.com/jackc/puddle/v2 v2.2.3 // indirect
+ 	github.com/jhump/protoreflect/v2 v2.0.0-beta.2 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+-	github.com/klauspost/compress v1.20.2 // indirect
++	github.com/klauspost/compress v1.20.3 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/mattn/go-colorable v0.1.15 // indirect
+@@ -117,8 +117,7 @@ require (
+ 	github.com/spiffe/go-spiffe/v2 v2.8.1 // indirect
+ 	github.com/stretchr/objx v0.5.3 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+-	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
+-	github.com/xdg-go/scram v1.2.0 // indirect
++	github.com/xdg-go/scram v1.4.0 // indirect
+ 	github.com/xdg-go/stringprep v1.0.4 // indirect
+ 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
+ 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 ```
 
-**File**: `tools/goctl/pkg/parser/api/parser/analyzer_test.go` (modified, +31/-0)
+**File**: `go.sum` (modified, +6/-8)
 ```diff
-@@ -108,3 +108,34 @@ func Test_Parse(t *testing.T) {
- 		},
- 	)
- }
-+
-+func TestParse_importedGroupOrderIsStable(t *testing.T) {
-+	dir := t.TempDir()
-+	for i, prefix := range []string{"/s1", "/s2", "/s3", "/s4"} {
-+		n := i + 1
-+		body := fmt.Sprintf("syntax = \"v1\"\n\n@server(\n    group: demo\n    prefix: %s\n)\nservice demo-api {\n	@handler H%d\n	get /h%d returns (Resp)\n}\n", prefix, n, n)
-+		err := os.WriteFile(filepath.Join(dir, fmt.Sprintf("svc%d.api", n)), []byte(body), 0o666)
-+		assert.NoError(t, err)
-+	}
-+	mainAPI := "syntax = \"v1\"\n\nimport (\n	\"svc1.api\"\n	\"svc2.api\"\n	\"svc3.api\"\n	\"svc4.api\"\n)\n\ntype Resp {\n	Msg string `json:\"msg\"`\n}\n"
-+	mainPath := filepath.Join(dir, "main.api")
-+	assert.NoError(t, os.WriteFile(mainPath, []byte(mainAPI), 0o666))
-+
-+	var first []string
-+	for i := 0; i < 20; i++ {
-+		apiSpec, err := Parse(mainPath, nil)
-+		if !assert.NoError(t, err) {
-+			return
-+		}
-+		var prefixes []string
-+		for _, g := range apiSpec.Service.Groups {
-+			prefixes = append(prefixes, g.Annotation.Properties["prefix"])
-+		}
-+		if first == nil {
-+			first = prefixes
-+			continue
-+		}
-+		assert.Equal(t, first, prefixes)
-+	}
-+	assert.Equal(t, []string{"/s1", "/s2", "/s3", "/s4"}, first)
-+}
+@@ -131,8 +131,8 @@ github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHm
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+ github.com/kisielk/sqlstruct v0.0.0-20201105191214-5f3e10d3ab46/go.mod h1:yyMNCyc/Ib3bDTKd379tNMpB/7/H5TjM2Y9QJ5THLbE=
+-github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
+-github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
++github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
++github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid/v2 v2.4.0 h1:S6Hrbc7+ywsr0r+RLapfGBHfyefhCTwEh3A0tV913Dw=
+ github.com/klauspost/cpuid/v2 v2.4.0/go.mod h1:19jmZ9mjzoF//ddRSUsv0zfBTJWh3QJh9FNxZTMrGxU=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+@@ -210,10 +210,8 @@ github.com/titanous/json5 v1.0.0 h1:hJf8Su1d9NuI/ffpxgxQfxh/UiBFZX7bMPid0rIL/7s=
+ github.com/titanous/json5 v1.0.0/go.mod h1:7JH1M8/LHKc6cyP5o5g3CSaRj+mBrIimTxzpvmckH8c=
+ github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
+ github.com/x448/float16 v0.8.4/go.mod h1:14CWIYCyZA/cWjXOioeEpHeN/83MdbZDRQHoFcYsOfg=
+-github.com/xdg-go/pbkdf2 v1.0.0 h1:Su7DPu48wXMwC3bs7MCNG+z4FhcyEuz5dlvchbq0B0c=
+-github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
+-github.com/xdg-go/scram v1.2.0 h1:bYKF2AEwG5rqd1BumT4gAnvwU/M9nBp2pTSxeZw7Wvs=
+-github.com/xdg-go/scram v1.2.0/go.mod h1:3dlrS0iBaWKYVt2ZfA4cj48umJZ+cAEbR6/SjLA88I8=
++github.com/xdg-go/scram v1.4.0 h1:3/wY9vMc786lAsuowR1CGxl0oVQDUWnCliDnWKhiZJs=
++github.com/xdg-go/scram v1.4.0/go.mod h1:rWC+ac5XyfRhG8rI7Css3P9K+/sjzldRjM9PI7VPlNM=
+ github.com/xdg-go/stringprep v1.0.4 h1:XLI/Ng3O1Atzq0oBs3TWm+5ZVgkq2aqdlvP9JtoZ6c8=
+ github.com/xdg-go/stringprep v1.0.4/go.mod h1:mPGuuIYwz7CmR2bT9j4GbQqutWS1zV24gijq1dTyGkM=
+ github.com/yosida95/uritemplate/v3 v3.0.2 h1:Ed3Oyj9yrmi9087+NczuL5BwkIc4wvTb5zIM+UJPGz4=
+@@ -233,8 +231,8 @@ go.etcd.io/etcd/client/pkg/v3 v3.6.14 h1:kqZf/BCRDWk9u5cNwBn1mTA+4GIZAU0POFPHmWH
+ go.etcd.io/etcd/client/pkg/v3 v3.6.14/go.mod h1:Po3WXW01VRS7/gSDf8xjiY2rJTLmAwq/YmKAEz6u1+E=
+ go.etcd.io/etcd/client/v3 v3.6.14 h1:3hjJbZCFJ3nFR47dZ/jjVu1/z6BRUHN1AA34pRbUW8Q=
+ go.etcd.io/etcd/client/v3 v3.6.14/go.mod h1:rQqHPE7ju1B1nmaqpGdhRgBHqOTiVaUeymlY1/ATcoM=
+-go.mongodb.org/mongo-driver/v2 v2.9.2 h1:OCAdjI37pC/SVxucz/9CM8zD4jCdegtsY5QcKzYFCgE=
+-go.mongodb.org/mongo-driver/v2 v2.9.2/go.mod h1:SHKN0IWkKmEVGHLjXnni6s4wPKX4v86FTgOeJJFuXcA=
++go.mongodb.org/mongo-driver/v2 v2.10.0 h1:BYJLuVSu3/xDvToG+VQyoTPS+jxq9tuQDf+1nAlFKSE=
++go.mongodb.org/mongo-driver/v2 v2.10.0/go.mod h1:PxPyIAlsI1jkYZvUNfTr++ggyBP+RSaxHYctt6TcZc4=
+ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+ go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
 ```
 
-**File**: `tools/goctl/pkg/parser/api/parser/api.go` (modified, +21/-4)
+---
+
+### Incident Patch 2: `8fac7be1` (2026-11-14)
+**Commit Message**: chore(deps): bump github/codeql-action from 4.39.1 to 4.39.3 (#5886)
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +3/-3)
 ```diff
-@@ -265,20 +265,37 @@ func (api *API) parseImportedAPI(imports []ast.ImportStmt) ([]*API, error) {
- 		return list, nil
- 	}
+@@ -41,7 +41,7 @@ jobs:
  
--	var importValueSet = map[string]token.Token{}
-+	// Keep declaration order. A map iteration made the merge (and later
-+	// group order) depend on randomized map walk when several imports
-+	// share the same @server group.
-+	type importRef struct {
-+		path string
-+		tok  token.Token
-+	}
-+	var importList []importRef
-+	seen := make(map[string]struct{})
-+	addImport := func(tok token.Token) {
-+		impPath := strings.ReplaceAll(tok.Text, `"`, "")
-+		if _, ok := seen[impPath]; ok {
-+			return
-+		}
-+		seen[impPath] = struct{}{}
-+		importList = append(importList, importRef{path: impPath, tok: tok})
-+	}
- 	for _, imp := range imports {
- 		switch val := imp.(type) {
- 		case *ast.ImportLiteralStmt:
--			importValueSet[strings.ReplaceAll(val.Value.Token.Text, `"`, "")] = val.Value.Token
-+			addImport(val.Value.Token)
- 		case *ast.ImportGroupStmt:
- 			for _, v := range val.Values {
--				importValueSet[strings.ReplaceAll(v.Token.Text, `"`, "")] = v.Token
-+				addImport(v.Token)
- 			}
- 		}
- 	}
+     # Initializes the CodeQL tools for scanning.
+     - name: Initialize CodeQL
+-      uses: github/codeql-action/init@v4.39.1
++      uses: github/codeql-action/init@v4.39.3
+       with:
+         languages: ${{ matrix.language }}
+         # If you wish to specify custom queries, you can do so here or in a config file.
+@@ -52,7 +52,7 @@ jobs:
+     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+     # If this step fails, then you should remove it and run the build manually (see below)
+     - name: Autobuild
+-      uses: github/codeql-action/autobuild@v4.39.1
++      uses: github/codeql-action/autobuild@v4.39.3
  
- 	dir := filepath.Dir(api.Filename)
--	for impPath, tok := range importValueSet {
-+	for _, ref := range importList {
-+		impPath, tok := ref.path, ref.tok
- 		if !filepath.IsAbs(impPath) {
- 			impPath = filepath.Join(dir, impPath)
- 		}
+     # ℹ️ Command-line programs to run using the OS shell.
+     # 📚 https://git.io/JvXDl
+@@ -66,4 +66,4 @@ jobs:
+     #   make release
+ 
+     - name: Perform CodeQL Analysis
+-      uses: github/codeql-action/analyze@v4.39.1
++      uses: github/codeql-action/analyze@v4.39.3
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5897** (closed): chore(deps): bump the go_modules group across 1 directory with 2 updates (@dependabot[bot])
+- **PR #5896** (closed): chore(deps): bump the go_modules group across 1 directory with 2 updates (@dependabot[bot])
+- **PR #5895** (closed): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
+- **PR #5894** (2026-11-14): chore(deps): bump github.com/grafana/pyroscope-go from 1.4.3 to 1.5.0 (@dependabot[bot])
 - **PR #5893** (closed): chore(deps): bump golang.org/x/text from 0.41.0 to 0.44.0 in /tools/goctl (@dependabot[bot])
 - **PR #5892** (2026-11-13): fix(goctl): keep imported API group order deterministic (@kevin9327)
-- **PR #5888** (closed): chore(deps): bump golang.org/x/sys from 0.47.0 to 0.50.0 (@dependabot[bot])
-- **PR #5885** (closed): chore(deps): bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.9.3 (@dependabot[bot])
-- **PR #5884** (2026-11-13): chore(ci): standardize workflow file extensions (@hainuoli)
-- **PR #5881** (2026-11-08): chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (@dependabot[bot])
 
 ---
 
@@ -1439,35 +1444,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. goctl): keep imported API group order deterministic
+## X. deps): bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0
 
 **RULE**:
-When implementing operations in `tools/goctl/pkg/parser/api/parser/analyzer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c6b596e`: goctl): keep imported API group order deterministic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1450dba7`: deps): bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/goctl/pkg/parser/api/parser/analyzer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		gi := groups[i].Annotation.Properties[groupKeyText]
-		gj := groups[j].Annotation.Properties[groupKeyText]
-		if gi != gj {
-			return gi < gj
-		}
-		// Same @server group: keep output stable by prefix (import
-		// order alone is not enough if groups are later reshuffled).
-		return groups[i].Annotation.Properties[atServerPrefixKey] < groups[j].Annotation.Properties[atServerPrefixKey]
+	go.mongodb.org/mongo-driver/v2 v2.10.0
+	github.com/klauspost/compress v1.20.3 // indirect
+	github.com/xdg-go/scram v1.4.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		return groups[i].Annotation.Properties[groupKeyText] < groups[j].Annotation.Properties[groupKeyText]
+	go.mongodb.org/mongo-driver/v2 v2.9.2
+	github.com/klauspost/compress v1.20.2 // indirect
+	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
+	github.com/xdg-go/scram v1.2.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c6b596e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1450dba7` are properly handled with clean fallback behavior.

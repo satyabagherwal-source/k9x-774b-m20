@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T12:36:57.557Z",
+  "updated_at": "2026-11-15T13:27:57.284Z",
   "statistics": {
-    "total_nodes": 256,
-    "total_edges": 141,
+    "total_nodes": 257,
+    "total_edges": 142,
     "domain_distribution": {
-      "D": 201,
+      "D": 202,
       "M": 1,
       "H": 22,
       "J": 10,
@@ -19,7 +19,7 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 141
+      "CONSTRAINED_BY_ARCHITECTURE": 142
     }
   },
   "nodes": {
@@ -5750,6 +5750,29 @@
       ],
       "created_at": "2026-11-15T12:36:57.556Z",
       "updated_at": "2026-11-15T12:36:57.556Z"
+    },
+    "DOM-D-98B9F9F9": {
+      "id": "DOM-D-98B9F9F9",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-VL-2B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-vl-2b/hf-liquidai-lfm3-vl-2b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T13:27:30.947Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-vl-2b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-15T13:27:57.284Z",
+      "updated_at": "2026-11-15T13:27:57.284Z"
     }
   },
   "edges": [
@@ -7162,6 +7185,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-29746EF6 [D] with Domain M",
       "created_at": "2026-11-15T11:13:54.994Z"
+    },
+    {
+      "id": "EDGE-A1C1714B2275",
+      "sourceId": "DOM-D-98B9F9F9",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-98B9F9F9 [D] with Domain M",
+      "created_at": "2026-11-15T13:27:57.284Z"
     }
   ]
 }

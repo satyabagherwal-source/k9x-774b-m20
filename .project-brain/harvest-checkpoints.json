@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T13:09:06.688Z",
+  "last_updated": "2026-11-15T13:27:27.878Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "c58b3d29bd53a77cdb91ea087fbcda7e67caeec076ec97b37c1fd0db261a8eb0",
-      "verified_at": "2026-11-14T01:48:42.090Z",
+      "content_hash": "7f90b2af7ff56247c587a151bfcf35c953ef072682965115f513b1ee2077e30f",
+      "verified_at": "2026-11-15T13:27:27.877Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T01:48:42.090Z"
+      "last_updated": "2026-11-15T13:27:27.877Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",
@@ -17226,14 +17226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "content_hash": "02c31304519120660b66b6c170f61b0558ec5f167867a98ce159269d13036116",
-      "verified_at": "2026-11-09T23:10:18.948Z",
+      "content_hash": "0635b94793bfc6d3d2f28e87e82f2de9ac90d4478ae120c736c53d08bcd46c48",
+      "verified_at": "2026-11-15T13:27:18.688Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T23:10:18.948Z"
+      "last_updated": "2026-11-15T13:27:18.688Z"
     },
     "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF": {
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",

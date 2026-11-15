@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T13:09:11.286Z",
-  "total_verified_learnings": 8696,
+  "last_updated": "2026-11-15T13:27:58.775Z",
+  "total_verified_learnings": 8697,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18395,
+  "total_items": 18401,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219839,14 +219839,19 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "74651def",
-      "content_hash": "c58b3d29bd53a77cdb91ea087fbcda7e67caeec076ec97b37c1fd0db261a8eb0",
+      "source_version": "1450dba7",
+      "content_hash": "7f90b2af7ff56247c587a151bfcf35c953ef072682965115f513b1ee2077e30f",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
         {
           "number": 8417,
           "title": "keep imported API group order deterministic",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8618,
+          "title": "bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -219855,7 +219860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T01:48:41.946Z",
+      "verified_at": "2026-11-15T13:27:27.724Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219897,10 +219902,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-architecture-intelligence-zeromicro-go-zero-core-invariants.md",
       "title": "Architecture Intelligence: zeromicro/go-zero Core Invariants",
       "repository": "zeromicro/go-zero",
-      "source_version": "74651def",
-      "content_hash": "aa1ab6a36e5ea00b0f5722aef5439b612e82e0946f0f2cb20ab387cbf0a47f5b",
+      "source_version": "1450dba7",
+      "content_hash": "64bad08b7c9224e7b61deaa1e904b81c17133efcebec49ccaf731cad48be3332",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T01:48:42.342Z"
+      "persisted_at": "2026-11-15T13:27:28.147Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zeromicro-go-zero": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeromicro-go-zero",
@@ -219909,10 +219914,10 @@
       "relative_path": "08_VERIFICATION/zeromicro-go-zero-verification-protocol-empirical-defect-shield-for-zeromicro-go.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeromicro/go-zero",
       "repository": "zeromicro/go-zero",
-      "source_version": "74651def",
-      "content_hash": "b5db9610a78f9871deea2d555f49016a15a37ef67f1805bcb0a159f5b4686b1d",
+      "source_version": "1450dba7",
+      "content_hash": "f5ac2155ff56fe967f1084aaa4c1d83d3dc6051e7b140f069613ffbae6f54f88",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T01:48:42.430Z"
+      "persisted_at": "2026-11-15T13:27:28.250Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari",
@@ -219970,9 +219975,9 @@
       "title": "Architecture Intelligence: zeromicro-go-zero-learnings Core Invariants",
       "repository": "zeromicro-go-zero-learnings",
       "source_version": "HEAD",
-      "content_hash": "c5bb32b698fda011b1e29b700d5cbc54bff9115d6804b9e08a013456b4303912",
+      "content_hash": "b1878827aef7d92098f0e7d7a83896d93e821c2b03eb6a3ee9c15d73959a0849",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T01:49:14.371Z"
+      "persisted_at": "2026-11-15T13:27:58.055Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zeromicro-go-zero-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeromicro-go-zero-learnings",
@@ -219982,9 +219987,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeromicro-go-zero-learnings",
       "repository": "zeromicro-go-zero-learnings",
       "source_version": "HEAD",
-      "content_hash": "e52a339382ccca44f8919aa383947956d4fc5adee33c03137dcc2625abb7e097",
+      "content_hash": "52b8de16038c214fc69c19a8e7d8dab2019570ec9977340f89f90ddb7c528a5e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T01:49:14.477Z"
+      "persisted_at": "2026-11-15T13:27:58.174Z"
     },
     "learn-huggingface-deepseek-ai-deepseek-v4-pro": {
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
@@ -233759,9 +233764,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "29fb53ef99f28c4d397dcbbe343752de8b89317f8bcf297db35a02d64920f34f",
+      "content_hash": "dcbf43fcfcf120ba5df0ad38f628d699d29d3ab95b9c966b7f4232e0bffd8794",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T20:00:04.197Z"
+      "persisted_at": "2026-11-15T13:27:58.775Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -243355,6 +243360,95 @@
       "content_hash": "51c3d4276ed408020cd3fa913488c8249d3a7a91a1928b2b0a9fcf895403e867",
       "domain_letter": "I",
       "persisted_at": "2026-11-15T13:09:10.657Z"
+    },
+    "learn-huggingface-liquidai-lfm3-vl-2b": {
+      "learning_id": "learn-huggingface-liquidai-lfm3-vl-2b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM3-VL-2B",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "slug": "hf-liquidai-lfm3-vl-2b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
+      "source_version": "hf-liquidai-lfm3-vl-2b",
+      "content_hash": "0635b94793bfc6d3d2f28e87e82f2de9ac90d4478ae120c736c53d08bcd46c48",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T13:27:18.532Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-vl-2b-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-.md",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-VL-2B Core Invariants",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "source_version": "hf-liquidai-lfm3-vl-2b",
+      "content_hash": "ddb88b2629cba831618c94860ea641ecb63d1777ebf30c9b6e327ee0dd840957",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T13:27:18.844Z"
+    },
+    "rule-8618": {
+      "learning_id": "rule-8618",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8618,
+      "title": "bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "1450dba7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T13:27:27.724Z"
+    },
+    "candidate_directive-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0": {
+      "item_id": "candidate_directive-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D2QZ-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0.md",
+      "title": "bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0",
+      "repository": "zeromicro/go-zero",
+      "source_version": "1450dba7",
+      "content_hash": "a33a415ac47348bea61542d48a2d879b98c31ba98f19992074d71ba193b557b9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T13:27:28.044Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-vl-2b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-vl-2b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-vl-2b-learnings-research-knowledge-intelligence-hf-liquidai-lfm.md",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-vl-2b-learnings Core Invariants",
+      "repository": "hf-liquidai-lfm3-vl-2b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6ba2e50887d7fc28da8a48127ac7814e9451ba2da350ad97cd9f073d03c8fce8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T13:27:57.474Z"
+    },
+    "candidate_directive-deps-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0": {
+      "item_id": "candidate_directive-deps-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DPT8-deps-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0.md",
+      "title": "deps): bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0",
+      "repository": "zeromicro-go-zero-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d0bdee08dbd9e0859eb32cc30ef18ce56bb30897e9a471332ce0e7ae5b89db9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T13:27:57.933Z"
     }
   },
   "ai-builder-brain": {

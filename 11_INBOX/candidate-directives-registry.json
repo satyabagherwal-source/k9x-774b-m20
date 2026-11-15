@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T13:09:11.096Z",
+  "last_updated": "2026-11-15T13:27:58.290Z",
   "directives": [
     {
       "id": "CD-001",
@@ -15413,6 +15413,37 @@
       "source_repo": "ontos-ai-knowhere",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-97DF7D-potential-fix-for-pull-request-finding-c.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-D2QZ",
+      "directive_title": "bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0",
+      "source_repo": "zeromicro/go-zero",
+      "source_commit": "1450dba7",
+      "staged_file": "11_INBOX/candidate-directives/CD-D2QZ-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DPT8",
+      "directive_title": "deps): bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0",
+      "source_repo": "zeromicro-go-zero-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DPT8-deps-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-2C70C7",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2C70C7-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-15"
     }
   ]

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T13:09:10.507Z",
+  "updated_at": "2026-11-15T13:27:57.752Z",
   "stats": {
-    "total_discovered": 3705,
-    "approved_pending_harvest": 3495,
+    "total_discovered": 3707,
+    "approved_pending_harvest": 3497,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3474,
+      "COMMUNITY_AND_EXPERT": 3476,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -80061,6 +80061,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
         "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-D0BFFA67E51D": {
+      "id": "SRC-D0BFFA67E51D",
+      "url": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
+      "title": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:27:57.306Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
+        "fileName": "hf-liquidai-lfm3-vl-2b-learnings.md"
+      }
+    },
+    "SRC-B38C1BD48D9F": {
+      "id": "SRC-B38C1BD48D9F",
+      "url": "https://git.io/JvXDl",
+      "title": "https://git.io/JvXDl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:27:57.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
       }
     }
   }

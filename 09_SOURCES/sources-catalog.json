@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "74651def",
+    "sourceVersion": "1450dba7",
     "license": "MIT",
-    "contentHash": "c58b3d29bd53a77cdb91ea087fbcda7e67caeec076ec97b37c1fd0db261a8eb0",
-    "lastHarvestedAt": "2026-11-14T01:48:42.083Z",
+    "contentHash": "7f90b2af7ff56247c587a151bfcf35c953ef072682965115f513b1ee2077e30f",
+    "lastHarvestedAt": "2026-11-15T13:27:27.868Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {
@@ -11455,8 +11455,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
     "sourceVersion": "hf-liquidai-lfm3-vl-2b",
     "license": "Open-Source",
-    "contentHash": "02c31304519120660b66b6c170f61b0558ec5f167867a98ce159269d13036116",
-    "lastHarvestedAt": "2026-11-09T23:10:18.937Z",
+    "contentHash": "0635b94793bfc6d3d2f28e87e82f2de9ac90d4478ae120c736c53d08bcd46c48",
+    "lastHarvestedAt": "2026-11-15T13:27:18.681Z",
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b"
   },
   "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {

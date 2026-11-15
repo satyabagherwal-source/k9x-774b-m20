@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T13:09:11.191Z",
-  "total_records": 1050,
+  "last_updated": "2026-11-15T13:27:58.775Z",
+  "total_records": 1053,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 514,
+      "total": 517,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -552,7 +552,10 @@
         "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-preview-core-invaria",
         "DOM-D-20A9ABE9",
-        "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-preview-learnings"
+        "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-preview-learnings",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants",
+        "DOM-D-98B9F9F9",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-vl-2b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -11203,8 +11206,8 @@
       "title": "Architecture Intelligence: zeromicro/go-zero Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-architecture-intelligence-zeromicro-go-zero-core-invariants.md",
       "repository": "zeromicro/go-zero",
-      "content_hash": "aa1ab6a36e5ea00b0f5722aef5439b612e82e0946f0f2cb20ab387cbf0a47f5b",
-      "created_at": "2026-11-14T01:48:42.342Z"
+      "content_hash": "64bad08b7c9224e7b61deaa1e904b81c17133efcebec49ccaf731cad48be3332",
+      "created_at": "2026-11-15T13:27:28.147Z"
     },
     "DOM-D-79605CEE": {
       "record_id": "DOM-D-79605CEE",
@@ -11272,8 +11275,8 @@
       "title": "Architecture Intelligence: zeromicro-go-zero-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-learnings-architecture-intelligence-zeromicro-go-zero-learning.md",
       "repository": "zeromicro-go-zero-learnings",
-      "content_hash": "c5bb32b698fda011b1e29b700d5cbc54bff9115d6804b9e08a013456b4303912",
-      "created_at": "2026-11-14T01:49:14.371Z"
+      "content_hash": "b1878827aef7d92098f0e7d7a83896d93e821c2b03eb6a3ee9c15d73959a0849",
+      "created_at": "2026-11-15T13:27:58.055Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants",
@@ -16700,8 +16703,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "29fb53ef99f28c4d397dcbbe343752de8b89317f8bcf297db35a02d64920f34f",
-      "created_at": "2026-11-14T20:00:04.197Z"
+      "content_hash": "dcbf43fcfcf120ba5df0ad38f628d699d29d3ab95b9c966b7f4232e0bffd8794",
+      "created_at": "2026-11-15T13:27:58.775Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -20153,6 +20156,66 @@
       "repository": "fujiapple852-trippy-learnings",
       "content_hash": "6501cdb1f8ea33dcea57f6d3c4902212556db439ee6080e0e9a610a5b53d9be9",
       "created_at": "2026-11-15T13:09:10.169Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-VL-2B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-vl-2b-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-.md",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "content_hash": "ddb88b2629cba831618c94860ea641ecb63d1777ebf30c9b6e327ee0dd840957",
+      "created_at": "2026-11-15T13:27:18.844Z"
+    },
+    "DOM-D-98B9F9F9": {
+      "record_id": "DOM-D-98B9F9F9",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-VL-2B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/LFM3-VL-2B](https://huggingface.co/LiquidAI/LFM3-VL-2B))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-Source  \n> **Synthesized By",
+      "content_hash": "59705ab6fa330566490b9b9a7a3ee4cd170492adf0f2fb31f6949dbc2e587dd9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-vl-2b/hf-liquidai-lfm3-vl-2b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T13:27:30.947Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-vl-2b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-lfm3-vl-2b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T13:27:57.271Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-vl-2b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-vl-2b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-vl-2b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-vl-2b-learnings-research-knowledge-intelligence-hf-liquidai-lfm.md",
+      "repository": "hf-liquidai-lfm3-vl-2b-learnings",
+      "content_hash": "6ba2e50887d7fc28da8a48127ac7814e9451ba2da350ad97cd9f073d03c8fce8",
+      "created_at": "2026-11-15T13:27:57.474Z"
     }
   }
 }

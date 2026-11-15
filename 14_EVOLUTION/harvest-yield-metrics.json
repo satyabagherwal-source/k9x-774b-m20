@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T13:09:06.684Z",
-  "total_cycles_completed": 9714,
-  "total_learnings_persisted": 9714,
-  "total_rules_promoted": 9345,
+  "last_updated": "2026-11-15T13:27:27.873Z",
+  "total_cycles_completed": 9716,
+  "total_learnings_persisted": 9716,
+  "total_rules_promoted": 9346,
   "history": [
-    {
-      "timestamp": "2026-11-14T12:33:54.020Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T12:34:01.945Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T12:34:03.354Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-15T13:09:06.684Z",
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T13:27:18.686Z",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T13:27:27.873Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

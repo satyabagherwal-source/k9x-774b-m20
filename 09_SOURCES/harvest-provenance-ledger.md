@@ -10129,3 +10129,6 @@ Every entry in this ledger must capture:
 | `learn-github-fujiapple852-trippy` | `https://github.com/fujiapple852/trippy` | `2dd303a1` | Multi-dimensional audit evidence | 2026-11-15T13:08:57.210Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `eca4674a` | Multi-dimensional audit evidence | 2026-11-15T13:09:01.007Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `208f3fc1` | Multi-dimensional audit evidence | 2026-11-15T13:09:06.680Z |
+| `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-15T13:27:18.681Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `1450dba7` | Multi-dimensional audit evidence | 2026-11-15T13:27:27.868Z |
+| `learn-dom-d-98b9f9f9` | `project://hf-liquidai-lfm3-vl-2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | 2026-11-15T13:27:57.286Z |

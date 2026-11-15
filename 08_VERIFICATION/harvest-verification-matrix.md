@@ -10096,3 +10096,6 @@
 | `CYCLE-20261115-P9MF` | `2026-11-15T13:08:57.207Z` | `fujiapple852/trippy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8615` | Yes (`ef6b9855...`) |
 | `CYCLE-20261115-PCJV` | `2026-11-15T13:09:01.003Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8616` | Yes (`371369ef...`) |
 | `CYCLE-20261115-PGXG` | `2026-11-15T13:09:06.676Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8617` | Yes (`7e8cb2b2...`) |
+| `CYCLE-20261115-CVIT` | `2026-11-15T13:27:18.677Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | Yes (`0635b947...`) |
+| `CYCLE-20261115-D2M0` | `2026-11-15T13:27:27.864Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8618` | Yes (`7f90b2af...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T13:27:57.286Z` | `hf-liquidai-lfm3-vl-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-98B9F9F9` [Domain D] | Yes (`59705ab6...`) |
