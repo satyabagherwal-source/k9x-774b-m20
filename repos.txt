@@ -5096,3 +5096,7 @@ https://github.com/jithin-sabu/purge-app
 # --- Automatically Discovered by AI Scout Engine [2026-11-15T00:05:12.149Z] ---
 # [HUGGINGFACE-AI-MODELS] ConceptCountry/qwen-concept-27b (4590 score) - Verified Hugging Face Model: ConceptCountry/qwen-concept-27b (259 likes, 63439 d
 https://huggingface.co/ConceptCountry/qwen-concept-27b
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-15T11:12:23.422Z] ---
+# [HUGGINGFACE-AI-MODELS] Abiray/MiniMax-H3-Image-GGUF (4180 score) - Verified Hugging Face Model: Abiray/MiniMax-H3-Image-GGUF (218 likes, 127803 dow
+https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF

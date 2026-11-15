@@ -4,22 +4,22 @@
 {
   "source_repository": "paradedb/paradedb",
   "source_url": "https://github.com/paradedb/paradedb",
-  "source_version": "831a1ce2",
+  "source_version": "9e4744a6",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-13T21:58:48.492Z",
+  "timestamp": "2026-11-15T11:12:47.042Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-paradedb-paradedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `831a1ce2`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-13T21:58:48.492Z`  
+> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `9e4744a6`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-15T11:12:47.042Z`  
 > **Learning ID**: `learn-github-paradedb-paradedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `paradedb/paradedb` (Commit: `831a1ce2`)
+- **Target Repository**: `paradedb/paradedb` (Commit: `9e4744a6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:58:47.284Z  
+> **Harvest Timestamp**: 2026-11-15T11:12:45.935Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9511 stars
+- **Stars / Engagement**: 9513 stars
 
 ---
 
@@ -2236,492 +2236,747 @@ impl AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `831a1ce2` (2026-11-13)
-**Commit Message**: fix: exclude retired segments after cancelled vacuum (#7453)
+### Incident Patch 1: `9b5ad317` (2026-11-14)
+**Commit Message**: fix: retry native Stressgres cancellation during shutdown (#7416)
 
 ## What
 
-Prevent mergers with cached metadata from selecting segments that VACUUM
-or another merger has changed or retired.
+Publish real backend PIDs and connection `CancelToken`s when opening or
+replacing Stressgres connections, retry native PostgreSQL cancellation
+requests across workload and monitor jobs throughout shutdown, handle
+cancellation on `BEGIN` / `COMMIT` uniformly, and report active worker
+or teardown state if shutdown times out.
 
 ## Why
 
-VACUUM can publish segment retirements or updated deletion metadata and
-then be cancelled while waiting for readers or mergers to leave. Once
-its sentinel disappears, a merger with stale metadata can select those
-inputs and either fail on already-retired segments or overwrite updated
-deletion metadata. A cancelled concurrent merger can similarly leave
-cached inputs stale.
+Antithesis runs exposed three shutdown failure modes:
+
+* A job blocking on its first query (such as `Rotate join keys`) still
+had the initial `0` PID placeholder in `runtime_stats` because
+connection metadata was only recorded after a query returned, causing
+cancellation to target PID `0` (or a stale PID after reconnect).
+* A one-shot cancellation attempt could fail under network faults,
+leaving active queries uncanceled for the rest of the 60-second shutdown
+window.
+* Opening new SQL sessions for `pg_cancel_backend` is rejected during
+PostgreSQL smart shutdown (`57P03`) while existing workload queries
+remain active, and repeated shutdown cancellations can also land on
+`BEGIN` or `COMMIT`.
 
 ## How
 
-Compare cached merge candidates against the full current
-`SegmentMetaEntry`, while holding `MergeLock`. The controlled regression
-covers both mutable and immutable segments: pause merge selection, let
-VACUUM publish metadata changes, cancel VACUUM, then resume the merger.
-The test helper counts only retirements of its selected inputs,
-excluding concurrent VACUUM retirements.
+* Refresh `runtime_stats` backend PIDs and `CancelTarget`s once per
+`Conn` generat
 
-## Tests
-
-Locally on PostgreSQL 18.7 with pgrx 0.20.0:
-
-- The original mutable-segment regression failed on community main with
-the test/helper changes alone: `SegmentMetaEntry ... should not already
-be deleted` (SQLSTATE `XX000`).
-- The expa
-
-**File**: `index_write/src/index/merge_policy.rs` (modified, +12/-1)
+**File**: `stressgres/src/headless.rs` (modified, +29/-4)
 ```diff
-@@ -90,13 +90,24 @@ impl LayeredMergePolicy {
-             pgrx::debug1!("do_merge: non_mergeable_segments={non_mergeable_segments:?}");
-         }
+@@ -16,7 +16,7 @@
+ // along with this program. If not, see <http://www.gnu.org/licenses/>.
  
-+        // VACUUM or another merger can publish metadata changes and then be canceled while
-+        // this merger holds an older view. Their exclusions disappear on ERROR, so compare
-+        // full entries to catch both retired segments and updated deletion metadata.
-+        // The caller holds MergeLock, preventing a new VACUUM from starting during selection.
-+        let live_entries: HashMap<_, _> = unsafe { metadata.segment_metas().list(None) }
-+            .into_iter()
-+            .filter(|entry| entry.xmax() == pg_sys::InvalidTransactionId)
-+            .map(|entry| (entry.segment_id(), entry))
-+            .collect();
-+
-         // tell the MergePolicy which segments it's initially allowed to consider for merging
-         self.mergeable_segments = merger
-             .all_entries()
-             .into_iter()
--            .filter(|(segment_id, _)| {
-+            .filter(|(segment_id, entry)| {
-                 // skip segments that are already being vacuumed or merged
-                 !non_mergeable_segments.contains(segment_id)
-+                    && live_entries.get(segment_id) == Some(entry)
-             })
-             .collect();
+ use crate::MetricsLine;
+-use crate::runner::{HARDCODED_IGNORE_ERRORS, SuiteRunner};
++use crate::runner::{HARDCODED_IGNORE_ERRORS, SuiteRunner, WorkerState};
+ use postgres::Row;
+ use rust_decimal::Decimal;
+ use rust_decimal::prelude::ToPrimitive;
+@@ -161,11 +161,14 @@ pub fn run(
+         }
+     }
+ 
+-    suite_runner.terminate();
++    let terminate_start = std::time::Instant::now();
++    let shutdown_timeout = std::time::Duration::from_secs(60);
++    suite_runner.terminate_with_timeout(shutdown_timeout);
+ 
+     let finished = Arc::new(AtomicBool::new(false));
+     {
+         let finished = finished.clone();
++        let suite_runner = suite_runner.clone();
+         std::thread::spawn(move || {
+             let errors = suite_runner
+                 .wait_for_finish()
+@@ -198,15 +201,37 @@ pub fn run(
+         })
+     };
+ 
+-    let terminate_start = std::time::Instant::now();
+-    while terminate_start.elapsed() < std::time::Duration::from_secs(60) {
++    while terminate_start.elapsed() < shutdown_timeout {
+         if finished.load(std::sync::atomic::Ordering::Relaxed) {
+             break;
+         }
+         std::thread::sleep(std::time::Duration::from_millis(100));
+     }
+ 
+     if !finished.load(std::sync::atomic::Ordering::Relaxed) {
++        let mut any_worker_active = false;
++        for runner in suite_runner.runners().chain(suite_runner.monitor_runners()) {
++            match runner.worker_state() {
++                WorkerState::Stopped => {}
++                WorkerState::RunningQuery => {
++                    any_worker_active = true;
++                    eprintln!(
++                        "job still active at shutdown timeout (running query): {}",
++                        runner.title()
++                    );
++                }
++                WorkerState::Active => {
++                    any_worker_active = true;
++                    eprintln!(
++                        "job still active at shutdown timeout (connecting or idle): {}",
++                        runner.title()
++                    );
++                }
++            }
++        }
++        if !any_worker_active {
++            eprintln!("all job workers exited; suite still running teardown at shutdown timeout");
++        }
+         eprintln!("suite did not finish after 60 seconds");
+         std::process::exit(1);
      }
 ```
 
-**File**: `pg_search/src/postgres/coordination_test.rs` (modified, +8/-1)
+**File**: `stressgres/src/runner.rs` (modified, +298/-70)
 ```diff
-@@ -53,6 +53,10 @@ unsafe fn test_merge_index(index: PgRelation) -> i64 {
-         .into_iter()
-         .map(|(_, candidate)| candidate)
-         .collect::<Vec<_>>();
-+    let selected: HashSet<SegmentId> = candidates
-+        .iter()
-+        .flat_map(|candidate| candidate.0.iter().copied())
-+        .collect();
-     merge_index(
-         &index,
-         merger,
-@@ -67,7 +71,10 @@ unsafe fn test_merge_index(index: PgRelation) -> i64 {
-         .iter()
-         .map(SegmentMetaEntry::segment_id)
-         .collect();
--    before.difference(&after).count() as i64
-+    before
-+        .difference(&after)
-+        .filter(|id| selected.contains(*id))
-+        .count() as i64
+@@ -28,7 +28,7 @@ use std::collections::btree_map::Entry;
+ use std::collections::{BTreeMap, HashMap};
+ use std::str::FromStr;
+ use std::sync::Arc;
+-use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
++use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU64, AtomicUsize, Ordering};
+ use std::thread::JoinHandle;
+ use std::time::{Duration, Instant};
+ use sysinfo::{Pid, ProcessesToUpdate, System};
+@@ -85,7 +85,11 @@ struct ThreadHandle {
+     runner: Arc<JobRunner>,
  }
  
- #[pg_extern]
-```
-
-**File**: `pg_search/tests/merge_cleanup.rs` (modified, +35/-0)
-```diff
-@@ -390,6 +390,41 @@ fn merger_admission_and_vacuum_waits_remain_interruptible() {
-     fixture.assert_rows(500);
- }
- 
-+#[test]
-+fn cancelled_vacuum_does_not_make_retired_segments_mergeable() {
-+    let _schedule = SCHEDULE.lock().unwrap_or_else(|error| error.into_inner());
-+    for mutable in [false, true] {
-+        let mut fixture = Fixture::new("merge_cancelled_vacuum", mutable);
-+        let live_docs = if mutable { 300 } else { 500 };
-+        fixture.segments();
-+        let vacuum = fixture.actor("vacuum", format!("VACUUM {}", fixture.table));
-+        fixture.stage(&vacuum);
-+        let merger = fixture.actor(
-+            "selection",
-+            format!("SELECT paradedb.test_merge_index('{}')", fixture.index),
-+        );
-+        // The merger has cached the original segments but has not selected inputs.
-+        fixture.stage(&merger);
-+        fixture.release(&vacuum);
-+        wait_until("segment metadata publication", || {
-+            fixture.value::<i64>(&format!(
-+                "SELECT paradedb.test_live_docs('{}')",
-+                fixture.index
-+            )) == live_docs
-+        });
-+        fixture.waiting(&vacuum, "page");
-+        fixture.cancel(&vacuum, false);
-+        assert_error(vacuum.finish().1, "57014");
-+        assert!(!fixture.value::<bool>(&format!(
-+            "SELECT paradedb.test_vacuum_active('{}')",
-+            fixture.index
-+        )));
-+        fixture.release(&merger);
-+        assert_eq!(merger.finish().1.unwrap()[0].get::<_, i64>(0), 0);
-+        fixture.assert_rows(live_docs);
-+    }
-+}
++#[derive(Clone, Copy, PartialEq, Eq, Debug)]
++struct ConnGeneration(u64);
 +
- #[test]
- fn vacuum_exclusion_handoff_and_reader_barrier_are_preserved() {
-     let _schedule = SCHEDULE.lock().unwrap_or_else(|error| error.into_inner());
+ pub struct Conn {
++    generation: ConnGeneration,
+     server_lookup: Arc<HashMap<String, Server>>,
+     clients: Vec<(postgres::Client, Server, BackendPid)>,
+ }
+@@ -210,7 +214,9 @@ impl Conn {
+             })
+             .collect::<Result<Vec<_>>>()?;
+ 
++        static NEXT_GENERATION: AtomicU64 = AtomicU64::new(1);
+         Ok(Self {
++            generation: ConnGeneration(NEXT_GENERATION.fetch_add(1, Ordering::Relaxed)),
+             server_lookup: suite.server_lookup(),
+             clients,
+         })
+@@ -220,7 +226,7 @@ impl Conn {
+         &mut self.clients[0].0
+     }
+ 
+-    pub fn transaction(&mut self) -> Result<MultiTransaction<'_>> {
++    pub fn transaction(&mut self) -> std::result::Result<MultiTransaction<'_>, postgres::Error> {
+         Ok(MultiTransaction {
+             server_lookup: self.server_lookup.clone(),
+             transactions: self
+@@ -232,14 +238,15 @@ impl Conn {
+                         // `server` binds as `&mut` here under edition 2024 binding modes;
+                         // `MultiTransaction` only needs a shared reference.
+                         .map(|xact| (xact, &*server, *pid))
+-                        .map_err(Arc::new)
+                 })
+-                .collect::<PostgresResult<Vec<_>>>()?,
++                .collect::<std::result::Result<Vec<_>, postgres::Error>>()?,
+         })
+     }
+ 
+-    pub fn clients(&mut self) -> impl Iterator<Item = &mut postgres::Client> {
+-        self.clients.iter_mut().map(|(client, ..)| client)
++    fn rollback_best_effort(&mut self) {
++        for (client, ..) in &mut self.clients {
++            let _ = client.batch_execute("ROLLBACK");
++        }
+     }
+ 
+     pub fn query(
+@@ -260,16 +267,12 @@ impl Conn {
+         results
+     }
+ 
+-    pub fn execute(
+-        &mut self,
+-        query: &str,
+-        params: &[&(dyn ToSql + Sync)],
+-    ) -> Vec<PostgresResult<u64>> {
+-        let mut results = Vec::new();
+-        for client in self.clients() {
+-            results.push(client.execute(query, params).map_err(Arc::new));
+-        }
+-        results
++    fn tls_connector() -> postgres_openssl::MakeTlsConnector {
++        use openssl::ssl::{SslConnector, SslMethod};
++        let mut builder =
++            SslConnector::builder(SslMethod::tls()).expect("ssl builder should not fail");
++        builder.set_verify(openssl::ssl::SslVerifyMode::NONE);
++        postgres_openssl::MakeTlsConnector::new(builder.build())
+     }
+ 
+     #[doc(hidden)]
+@@ -281,14 +284,7 @@ impl Conn {
+             ServerStyle::With { .. } => server.connstr(),
+             _ => format!("{} application_name={}", server.connstr(), sanitized),
+         };
+-        let mut conn = postgres::Client::connect(&tokio_connstr(&connstr), {
+-            use openssl::ssl::{SslConnector, SslMethod};
+-            use postgres_openssl::MakeTlsConnector;
+-            let mut builder =
+-                SslConnector::builder(SslMethod::tls()).expect("ssl builder should not fail");
+-            builder.set_verify(openssl::ssl::SslVerifyMode::NONE);
+-            MakeTlsConnector::new(builder.build())
+-        })?;
++        let mut conn = postgres::Client::connect(&tokio_connstr(&connstr), Self::tls_connector())?;
+ 
+         for query in job.on_connect() {
+             conn.execute(query.sql, &[])?;
+@@ -344,11 +340,19 @@ impl MultiTransaction<'_> {
+         results
+     }
+ 
+-    pub fn commit(self) -> Result<()> {
++    pub fn commit(self) -> std::result::Result<(), postgres::Error> {
++        let mut first_err = None;
+         for (xact, ..) in self.transactions {
+-            xact.commit()?;
++            if first_err.is_some() {
++                drop(xact);
++            } else if let Err(e) = xact.commit() {
++                first_err = Some(e);
++            }
++        }
++        match first_err {
++            Some(e) => Err(e),
++            None => Ok(()),
+         }
+-        Ok(())
+     }
+ }
+ 
+@@ -649,13 +653,14 @@ impl SuiteRunner {
+         let reconnect_grace = self.reconnect_grace.clone();
+ 
+         // The actual thread loop
++        job_runner.state.store(WorkerState::Active);
+         let handle = {
+             let job_runner = job_runner.clone();
+             std::thread::spawn(move || {
++                let _worker = WorkerGuard(&job_runner.state);
+                 match Self::job_runner_worker(paused, refresh_ms, reconnect_grace, &job_runner) {
+                     Ok(()) => Ok(()),
+                     Err
 ```
 
 ---
 
-### Incident Patch 2: `3add723a` (2026-11-13)
-**Commit Message**: fix: keep serial Join Scan and Aggregate Scan streams across partial fetches (#7444)
+### Incident Patch 2: `9e4744a6` (2026-11-14)
+**Commit Message**: fix: read PL/pgSQL variables through paramFetch in generic plans (#7427)
 
 # Ticket(s) Closed
 
-- Part of #7443
+- Closes #7289
 
 ## What
 
-A Join Scan read in parts now resumes where the previous fetch stopped,
-and so does a DataFusion Aggregate Scan. This covers a cursor, a
-PL/pgSQL `FOR` loop, and a portal fetched in batches. Before, a Join
-Scan started over from its first row on every fetch, so a `FOR` loop
-over it never ended. An Aggregate Scan stopped after its first 8192
-groups.
+Once a PL/pgSQL statement switches to a generic plan, its variables now
+keep their values when used as `LIMIT`/`OFFSET`, as `pdb.snippet()`
+arguments, or as a vector `ORDER BY` operand. Before, the reporter's
+`LIMIT n` loop returned 0 rows, a snippet tag crashed the backend, and a
+vector operand could return wrong rows, raise an error, or crash.
 
 ## Why
 
-PostgreSQL calls `ExecShutdownNode` at the end of every `ExecutePlan`
-that cannot scan backward, then runs the same plan again for the next
-fetch. Both scans' `ShutdownCustomScan` call `shutdown_mpp_scan`, which
-dropped the DataFusion stream even when MPP had not launched. The Join
-Scan then rebuilt its plan from the start, and the Aggregate Scan read
-the missing stream as the end of its output.
+In a generic plan, PL/pgSQL variables are extern `Param`s. PL/pgSQL
+builds its `ParamListInfo` with `makeParamList(0)` in `pl_exec.c` and
+serves values only through the `paramFetch` hook, so the list has no
+`params[]` storage. `ParameterizedValue::resolve` read `params[param_id
+- 1]` anyway, which reads memory past the allocation.
+`QueryVector::resolve` read the same slot's flags before it tried the
+hook. `PREPARE`/`EXECUTE` fills a real `params[]` array, which is why
+the reporter's prepared statement worked.
 
 ## How
 
-- `shutdown_mpp_scan` now drops the stream and winds down the leader
-only when MPP launched. A serial scan keeps its stream until
-`EndCustomScan` or `ReScanCustomScan`, which still drop it and quiesce
-the runtime's tasks.
-- Not covered: an extended-protocol portal fetched in batches can still
-launch
+A new helper, `fetch_extern_param` in
+`common/src/postgres/customscan/parameterized_value.rs`, reads a
+parameter the way `ExecEvalParamExtern` does. It applies the same
+`1..=numParams` bounds check, c
 
-**File**: `docs/project/changelog/unreleased/7444.bugfix.mdx` (added, +5/-0)
+**File**: `common/src/api/mod.rs` (modified, +4/-30)
+```diff
+@@ -40,6 +40,7 @@ use std::fmt::{Debug, Display, Formatter};
+ use std::ops::Deref;
+ use tantivy::json_utils::split_json_path;
+ 
++use crate::postgres::customscan::parameterized_value::fetch_extern_param;
+ use crate::vector::PgVector;
+ use crate::vector::metric::VectorMetric;
+ 
+@@ -374,36 +375,9 @@ impl QueryVector {
+             QueryVector::Param(paramid) => *paramid,
+         };
+ 
+-        let param_list = (*estate).es_param_list_info;
+-        assert!(
+-            !param_list.is_null(),
+-            "es_param_list_info is NULL but vector ORDER BY references Param ${paramid}"
+-        );
+-        let idx = (paramid - 1) as usize;
+-        assert!(
+-            idx < (*param_list).numParams as usize,
+-            "vector ORDER BY param_id {paramid} out of range (numParams={})",
+-            (*param_list).numParams
+-        );
+-
+-        let slot = &(*param_list)
+-            .params
+-            .as_slice((*param_list).numParams as usize)[idx];
+-        let (value, isnull) = if (slot.pflags & pg_sys::PARAM_FLAG_CONST as u16) != 0 {
+-            (slot.value, slot.isnull)
+-        } else if let Some(fetch) = (*param_list).paramFetch {
+-            let mut prmdata = pg_sys::ParamExternData {
+-                value: pg_sys::Datum::null(),
+-                isnull: true,
+-                pflags: 0,
+-                ptype: pg_sys::InvalidOid,
+-            };
+-            let prm = fetch(param_list, paramid, false, &mut prmdata);
+-            assert!(!prm.is_null(), "paramFetch returned NULL for ${paramid}");
+-            ((*prm).value, (*prm).isnull)
+-        } else {
+-            (slot.value, slot.isnull)
+-        };
++        let pg_sys::ParamExternData { value, isnull, .. } =
++            fetch_extern_param((*estate).es_param_list_info, paramid)
++                .expect("es_param_list_info should hold the vector ORDER BY Param");
+         assert!(!isnull, "vector ORDER BY parameter ${paramid} is NULL");
+ 
+         let floats = PgVector::from_datum(value, false)
+```
+
+**File**: `common/src/postgres/customscan/parameterized_value.rs` (modified, +32/-13)
+```diff
+@@ -112,7 +112,8 @@ where
+     /// Resolve at execution time using the executor's parameter list.
+     ///
+     /// `Static(v)` returns `Some(v.clone())`.
+-    /// `Param { param_id }` looks up `estate.es_param_list_info.params[param_id - 1]`.
++    /// `Param { param_id }` reads the parameter from `estate.es_param_list_info`
++    /// with [`fetch_extern_param`].
+     /// Returns `None` if the parameter is null or out of range.
+     pub fn resolve(&self, estate: *mut pg_sys::EState) -> Option<T> {
+         match self {
+@@ -121,18 +122,8 @@ where
+                 if estate.is_null() {
+                     return None;
+                 }
+-                let param_list = unsafe { (*estate).es_param_list_info };
+-                if param_list.is_null() {
+-                    return None;
+-                }
+-                let param_list = unsafe { &*param_list };
+-                let num_params = param_list.numParams as usize;
+-                let idx = (*param_id - 1) as usize;
+-                if idx >= num_params {
+-                    return None;
+-                }
+-                let param_data = &unsafe { param_list.params.as_slice(num_params) }[idx];
+-                unsafe { T::from_datum(param_data.value, param_data.isnull) }
++                let param = fetch_extern_param(unsafe { (*estate).es_param_list_info }, *param_id)?;
++                unsafe { T::from_datum(param.value, param.isnull) }
+             }
+         }
+     }
+@@ -200,6 +191,34 @@ impl<T: Clone + Hash> Hash for ParameterizedValue<T> {
+     }
+ }
+ 
++/// Read extern parameter `param_id` from `param_list` the way PostgreSQL's
++/// `ExecEvalParamExtern` does: through the list's `paramFetch` hook when it
++/// has one, else from its `params` array. PL/pgSQL's list has the hook and no
++/// `params` array. Returns `None` if the list is null, `param_id` is out of
++/// range, or the hook returns no parameter.
++pub fn fetch_extern_param(
++    param_list: pg_sys::ParamListInfo,
++    param_id: i32,
++) -> Option<pg_sys::ParamExternData> {
++    if param_list.is_null() {
++        return None;
++    }
++    let num_params = unsafe { (*param_list).numParams };
++    if param_id < 1 || param_id > num_params {
++        return None;
++    }
++    match unsafe { (*param_list).paramFetch } {
++        Some(fetch) => {
++            let mut workspace = pg_sys::ParamExternData::default();
++            unsafe { fetch(param_list, param_id, false, &mut workspace).as_ref() }.copied()
++        }
++        None => {
++            let params = unsafe { (*param_list).params.as_slice(num_params as usize) };
++            Some(params[(param_id - 1) as usize])
++        }
++    }
++}
++
+ /// Walk through commonly-inserted coercion wrappers to find an extern Param's
+ /// `paramid`. Returns `None` if the node is not (or does not wrap) a Param of
+ /// kind `PARAM_EXTERN`.
+```
+
+**File**: `docs/project/changelog/unreleased/7427.bugfix.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+- Fixed Join Scans restarting from the first row on each cursor fetch, which could cause PL/pgSQL `FOR` loops to run indefinitely. Fixed cursors over DataFusion Aggregate Scans stopping after the first 8192 groups.
++- PL/pgSQL variables used as `LIMIT`/`OFFSET`, as `pdb.snippet()` arguments, or as a vector `ORDER BY` operand now keep their values once the statement switches to a generic plan, instead of returning wrong rows or crashing the backend.
 ```
 
-**File**: `joinscan/src/postgres/customscan/mpp/glue.rs` (modified, +8/-8)
+**File**: `pg_search/tests/pg_regress/expected/issue_7289.out` (added, +105/-0)
 ```diff
-@@ -392,23 +392,23 @@ fn warn_if_spilled(spilled_locally: &AtomicBool, finish: Option<&ParallelProcess
-     }
- }
- 
--/// Shared `ShutdownCustomScan` step for `JoinScan` and `AggregateScan`:
--/// drops `stream` (triggering `EndStreamNotifier` on `DistributedExec` so `c2w_stream` closes and
--/// workers flush their final `TaskMetrics`), shuts down the leader session or quiesces serial
--/// runtime tasks, joins the producer workers so their metrics land before `EXPLAIN ANALYZE`
--/// renders, and emits the spill warning if any operator spilled.
-+/// Shared `ShutdownCustomScan` step for `JoinScan` and `AggregateScan`. Postgres also calls it at
-+/// the end of every partial `ExecutePlan` (each `FETCH` of a cursor, each batch of a PL/pgSQL `FOR`
-+/// loop) and then resumes the scan, so a serial scan keeps its `stream` until `EndCustomScan` or
-+/// `ReScanCustomScan` tears it down. An MPP launch drops `stream` (triggering `EndStreamNotifier`
-+/// on `DistributedExec` so `c2w_stream` closes and workers flush their final `TaskMetrics`), shuts
-+/// down the leader session, and joins the producer workers so their metrics land before
-+/// `EXPLAIN ANALYZE` renders. Either way, emits the spill warning if any operator spilled.
- pub fn shutdown_mpp_scan(
-     stream: &mut Option<SendableRecordBatchStream>,
-     runtime: Option<&PgTokioRuntime>,
-     physical_plan: Option<&Arc<dyn ExecutionPlan>>,
-     mpp: &mut MppLifecycle,
-     spilled: &AtomicBool,
- ) {
--    *stream = None;
-     if let Some(leader) = mpp.leader() {
-+        *stream = None;
-         finish_leader_execution(runtime, physical_plan, leader);
--    } else if let Some(rt) = runtime {
--        rt.quiesce_tasks();
-     }
-     if let Some(leader) = mpp.leader_mut()
-         && let Some(finish) = leader.finish.as_mut()
-```
-
-**File**: `pg_search/tests/pg_regress/expected/issue_7443.out` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+-- A Join Scan or an Aggregate Scan that is read in parts, by a cursor or a PL/pgSQL
-+-- FOR loop, must go on from the row where the previous fetch stopped. Postgres shuts
-+-- the plan down at the end of each partial fetch and then runs it again (#7443).
-+\i common/common_setup.sql
+@@ -0,0 +1,105 @@
++-- In a generic plan, PL/pgSQL variables are extern Params. PL/pgSQL serves
++-- them only through the parameter list's paramFetch hook and allocates no
++-- params array, so LIMIT, pdb.snippet() arguments, and vector ORDER BY
++-- operands must be read through it.
++-- https://github.com/paradedb/paradedb/issues/7289
 +CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- Disable parallel workers to avoid differences in plans
-+SET max_parallel_workers_per_gather = 0;
-+SET enable_indexscan to OFF;
-+SET paradedb.enable_columnar_exec = true;
-+CREATE TABLE issue_7443_s (id int PRIMARY KEY, title text);
-+CREATE TABLE issue_7443_e (id int PRIMARY KEY, s_id int);
-+INSERT INTO issue_7443_s SELECT g, 'dragon ' || g FROM generate_series(1, 9000) g;
-+INSERT INTO issue_7443_e SELECT g, g FROM generate_series(1, 9000) g;
-+CREATE INDEX issue_7443_s_idx ON issue_7443_s USING paradedb (id, title);
-+CREATE INDEX issue_7443_e_idx ON issue_7443_e USING paradedb (id, s_id);
-+SET paradedb.enable_join_custom_scan = on;
-+SET paradedb.enable_aggregate_custom_scan = on;
-+EXPLAIN (COSTS OFF)
-+SELECT s.id, e.id AS e_id
-+FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+WHERE s.title ||| 'dragon'
-+ORDER BY s.id LIMIT 6;
-+                                                                                                                       QUERY PLAN                                                                                                                        
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Join Scan)
-+   Relation Tree: s INNER e
-+   Join Cond: e.s_id = s.id
-+   Limit: 6
-+   Order By: e.s_id asc
-+   DataFusion Physical Plan: 
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, ctid_0@0 as ctid_0, ctid_1@2 as ctid_1]
-+     :   SortExec: TopK(fetch=6), expr=[id@1 ASC NULLS LAST], preserve_partitioning=[false]
-+     :     VisibilityFilterExec: tables=[s, e]
-+     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, s_id@1)]
-+     :         CooperativeExec
-+     :           PgSearchScan: table=s, segments=1, dynamic_filters=1, query={"with_index":{"query":{"match":{"field":"title","value":"dragon","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
-+     :         CooperativeExec
-+     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
-+(14 rows)
-+
-+-- Join Scan: three fetches of 4 rows return rows 1-4, then 5-6, then none.
-+BEGIN;
-+DECLARE issue_7443_join CURSOR FOR
-+SELECT s.id, e.id AS e_id
-+FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+WHERE s.title ||| 'dragon'
-+ORDER BY s.id LIMIT 6;
-+FETCH 4 FROM issue_7443_join;
-+ id | e_id 
-+----+------
-+  1 |    1
-+  2 |    2
-+  3 |    3
-+  4 |    4
-+(4 rows)
-+
-+FETCH 4 FROM issue_7443_join;
-+ id | e_id 
-+----+------
-+  5 |    5
-+  6 |    6
-+(2 rows)
-+
-+FETCH 4 FROM issue_7443_join;
-+ id | e_id 
-+----+------
-+(0 rows)
-+
-+COMMIT;
-+-- Join Scan: a FOR loop in a procedure called at the top level fetches one row at
-+-- a time. It must see each of the 12 rows once and then end.
-+CREATE PROCEDURE issue_7443_join_loop(INOUT ids int[] DEFAULT '{}')
++CREATE TABLE issue_7289 (id int PRIMARY KEY, message text, severity int);
++INSERT INTO issue_7289 SELECT i, 'beer beverage', i FROM generate_series(1, 8) AS g(i);
++CREATE INDEX issue_7289_idx ON issue_7289 USING paradedb (id, message, severity);
++ANALYZE issue_7289;
++SET client_min_messages TO notice;
++-- The cached plan switches from custom to generic at n = 6
++SET plan_cache_mode = force_custom_plan;
++DO $$
++DECLARE
++    n int;
++    matched bigint;
++BEGIN
++    FOR n IN 1..8 LOOP
++        IF n = 6 THEN
++            PERFORM set_config('plan_cache_mode', 'force_generic_plan', false);
++        END IF;
++        SELECT count(*) INTO matched
++        FROM (
++            SELECT id FROM issue_7289
++            WHERE message @@@ 'beer'
++            ORDER BY severity LIMIT n
++        ) AS results;
++        RAISE NOTICE 'LIMIT %, matched %', n, matched;
++    END LOOP;
++END $$;
++NOTICE:  LIMIT 1, matched 1
++NOTICE:  LIMIT 2, matched 2
++NOTICE:  LIMIT 3, matched 3
++NOTICE:  LIMIT 4, matched 4
++NOTICE:  LIMIT 5, matched 5
++NOTICE:  LIMIT 6, matched 6
++NOTICE:  LIMIT 7, matched 7
++NOTICE:  LIMIT 8, matched 8
++SET plan_cache_mode = force_generic_plan;
++DO $$
++DECLARE
++    tag text := '<i>';
++    snippet text;
++BEGIN
++    SELECT pdb.snippet(message, start_tag => tag, end_tag => '</i>') INTO snippet
++    FROM issue_7289
++    WHERE message @@@ 'beer'
++    ORDER BY id LIMIT 1;
++    RAISE NOTICE 'snippet %', snippet;
++END $$;
++NOTICE:  snippet <i>beer</i> beverage
++CREATE TABLE issue_7289_vec (id int PRIMARY KEY, vec vector(3));
++INSERT INTO issue_7289_vec VALUES
++    (1, '[1, 0, 0]'),
++    (2, '[0.9, 0, 0.1]'),
++    (3, '[0, 1, 0]'),
++    (4, '[0, 0, 1]'),
++    (5, '[0.7, 0.7, 0]');
++CREATE INDEX issue_7289_vec_idx ON issue_7289_vec
++USING paradedb (id, vec vector_cosine_ops);
++DO $$
++DECLARE
++    q vector := '[0, 0, 1]';
++    label text := 'up';
++    nearest int[];
++BEGIN
++    SELECT array_agg(id) INTO nearest
++    FROM (
++        SELECT id FROM issue_7289_vec
++        WHERE id @@@ pdb.all()
++        ORDER BY vec <=> q LIMIT 2
++    ) AS results;
++    RAISE NOTICE 'nearest to % %', label, nearest;
++END $$;
++NOTICE:  nearest to up {4,2}
++CREATE FUNCTION issue_7289_nearest(k int, q vector) RETURNS int[]
 +LANGUAGE plpgsql AS $$
 +DECLARE
-+    r record;
++    nearest int[];
 +BEGIN
-+    FOR r IN
-+        SELECT s.id
-+        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+        WHERE s.title ||| 'dragon'
-+        ORDER BY s.id LIMIT 12
-+    LOOP
-+        ids := ids || r.id;
-+        EXIT WHEN cardinality(ids) > 30;
-+    END LOOP;
-+END
-+$$;
-+CALL issue_7443_join_loop();
-+             ids              
-+------------------------------
-+ {1,2,3,4,5,6,7,8,9,10,11,12}
++    SELECT array_agg(id) INTO nearest
++    FROM (
++        SELECT id FROM issue_7289_vec
++        WHERE id @@@ pdb.all()
++        ORDER BY vec <=> q LIMIT k
++    ) AS results;
++    RETURN nearest;
++END $$;
++SELECT issue_7289_nearest(2, '[0, 0, 1]');
++ issue_7289_nearest 
++--------------------
++ {4,2}
 +(1 row)
 +
-+EXPLAIN (COSTS OFF)
-+SELECT s.id, count(*)
-+FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+WHERE s.title ||| 'dragon'
-+GROUP BY s.id;
-+                                                                                                                     QUERY PLAN                                                                                                                     
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Aggregate Scan)
-+   Backend: DataFusion
-+   Indexes: issue_7443_s_idx (s), issue_7443_e_idx (e)
-+   Group By: id
-+   Aggregates: COUNT(*)
-+   DataFusion Physical Plan: 
-+     : AggregateExec: mode=Single, gby=[id@0 as id], aggr=[count(1) as agg_0]
-+     :   HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, s_id@0)], projection=[id@0]
-+     :     CooperativeExec
-+     :       PgSearchScan: table=s, segments=1, visibility=eager, query={"with_index":{"query":{"match":{"field":"title","value":"dragon","tok
++SELECT issue_7289_nearest(3, '[1, 0, 0]');
++ issue_7289_nearest 
++--------------------
++ {1,2,5}
++(1 row)
++
++RESET plan_cache_mode;
++RESET client_min_messages;
++DROP FUNCTION issue_7289_nearest;
++DROP TABLE issue_7289, issue_7289_vec;
 ```
 
-**File**: `pg_search/tests/pg_regress/sql/issue_7443.sql` (added, +89/-0)
+**File**: `pg_search/tests/pg_regress/sql/issue_7289.sql` (added, +94/-0)
 ```diff
-@@ -0,0 +1,89 @@
-+-- A Join Scan or an Aggregate Scan that is read in parts, by a cursor or a PL/pgSQL
-+-- FOR loop, must go on from the row where the previous fetch stopped. Postgres shuts
-+-- the plan down at the end of each partial fetch and then runs it again (#7443).
+@@ -0,0 +1,94 @@
++-- In a generic plan, PL/pgSQL variables are extern Params. PL/pgSQL serves
++-- them only through the parameter list's paramFetch hook and allocates no
++-- params array, so LIMIT, pdb.snippet() arguments, and vector ORDER BY
++-- operands must be read through it.
++-- https://github.com/paradedb/paradedb/issues/7289
 +
-+\i common/common_setup.sql
++CREATE EXTENSION IF NOT EXISTS pg_search;
 +
-+CREATE TABLE issue_7443_s (id int PRIMARY KEY, title text);
-+CREATE TABLE issue_7443_e (id int PRIMARY KEY, s_id int);
-+INSERT INTO issue_7443_s SELECT g, 'dragon ' || g FROM generate_series(1, 9000) g;
-+INSERT INTO issue_7443_e SELECT g, g FROM generate_series(1, 9000) g;
-+CREATE INDEX issue_7443_s_idx ON issue_7443_s USING paradedb (id, title);
-+CREATE INDEX issue_7443_e_idx ON issue_7443_e USING paradedb (id, s_id);
++CREATE TABLE issue_7289 (id int PRIMARY KEY, message text, severity int);
++INSERT INTO issue_7289 SELECT i, 'beer beverage', i FROM generate_series(1, 8) AS g(i);
++CREATE INDEX issue_7289_idx ON issue_7289 USING paradedb (id, message, severity);
++ANALYZE issue_7289;
 +
-+SET paradedb.enable_join_custom_scan = on;
-+SET paradedb.enable_aggregate_custom_scan = on;
++SET client_min_messages TO notice;
 +
-+EXPLAIN (COSTS OFF)
-+SELECT s.id, e.id AS e_id
-+FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+WHERE s.title ||| 'dragon'
-+ORDER BY s.id LIMIT 6;
++-- The cached plan switches from custom to generic at n = 6
++SET plan_cache_mode = force_custom_plan;
++DO $$
++DECLARE
++    n int;
++    matched bigint;
++BEGIN
++    FOR n IN 1..8 LOOP
++        IF n = 6 THEN
++            PERFORM set_config('plan_cache_mode', 'force_generic_plan', false);
++        END IF;
++        SELECT count(*) INTO matched
++        FROM (
++            SELECT id FROM issue_7289
++            WHERE message @@@ 'beer'
++            ORDER BY severity LIMIT n
++        ) AS results;
++        RAISE NOTICE 'LIMIT %, matched %', n, matched;
++    END LOOP;
++END $$;
 +
-+-- Join Scan: three fetches of 4 rows return rows 1-4, then 5-6, then none.
-+BEGIN;
-+DECLARE issue_7443_join CURSOR FOR
-+SELECT s.id, e.id AS e_id
-+FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+WHERE s.title ||| 'dragon'
-+ORDER BY s.id LIMIT 6;
-+FETCH 4 FROM issue_7443_join;
-+FETCH 4 FROM issue_7443_join;
-+FETCH 4 FROM issue_7443_join;
-+COMMIT;
++SET plan_cache_mode = force_generic_plan;
++DO $$
++DECLARE
++    tag text := '<i>';
++    snippet text;
++BEGIN
++    SELECT pdb.snippet(message, start_tag => tag, end_tag => '</i>') INTO snippet
++    FROM issue_7289
++    WHERE message @@@ 'beer'
++    ORDER BY id LIMIT 1;
++    RAISE NOTICE 'snippet %', snippet;
++END $$;
 +
-+-- Join Scan: a FOR loop in a procedure called at the top level fetches one row at
-+-- a time. It must see each of the 12 rows once and then end.
-+CREATE PROCEDURE issue_7443_join_loop(INOUT ids int[] DEFAULT '{}')
++CREATE TABLE issue_7289_vec (id int PRIMARY KEY, vec vector(3));
++INSERT INTO issue_7289_vec VALUES
++    (1, '[1, 0, 0]'),
++    (2, '[0.9, 0, 0.1]'),
++    (3, '[0, 1, 0]'),
++    (4, '[0, 0, 1]'),
++    (5, '[0.7, 0.7, 0]');
++CREATE INDEX issue_7289_vec_idx ON issue_7289_vec
++USING paradedb (id, vec vector_cosine_ops);
++
++DO $$
++DECLARE
++    q vector := '[0, 0, 1]';
++    label text := 'up';
++    nearest int[];
++BEGIN
++    SELECT array_agg(id) INTO nearest
++    FROM (
++        SELECT id FROM issue_7289_vec
++        WHERE id @@@ pdb.all()
++        ORDER BY vec <=> q LIMIT 2
++    ) AS results;
++    RAISE NOTICE 'nearest to % %', label, nearest;
++END $$;
++
++CREATE FUNCTION issue_7289_nearest(k int, q vector) RETURNS int[]
 +LANGUAGE plpgsql AS $$
 +DECLARE
-+    r record;
++    nearest int[];
 +BEGIN
-+    FOR r IN
-+        SELECT s.id
-+        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+        WHERE s.title ||| 'dragon'
-+        ORDER BY s.id LIMIT 12
-+    LOOP
-+        ids := ids || r.id;
-+        EXIT WHEN cardinality(ids) > 30;
-+    END LOOP;
-+END
-+$$;
-+CALL issue_7443_join_loop();
++    SELECT array_agg(id) INTO nearest
++    FROM (
++        SELECT id FROM issue_7289_vec
++        WHERE id @@@ pdb.all()
++        ORDER BY vec <=> q LIMIT k
++    ) AS results;
++    RETURN nearest;
++END $$;
++SELECT issue_7289_nearest(2, '[0, 0, 1]');
++SELECT issue_7289_nearest(3, '[1, 0, 0]');
 +
-+EXPLAIN (COSTS OFF)
-+SELECT s.id, count(*)
-+FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+WHERE s.title ||| 'dragon'
-+GROUP BY s.id;
-+
-+-- Aggregate Scan: a FOR loop in a function fetches 10 rows, then 50 at a time. The
-+-- 9000 groups are more than one DataFusion batch (8192 rows), and the loop must
-+-- see all of them.
-+CREATE FUNCTION issue_7443_agg_loop() RETURNS bigint
-+LANGUAGE plpgsql AS $$
-+DECLARE
-+    r record;
-+    n bigint := 0;
-+BEGIN
-+    FOR r IN
-+        SELECT s.id, count(*)
-+        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
-+        WHERE s.title ||| 'dragon'
-+        GROUP BY s.id
-+    LOOP
-+        n := n + 1;
-+    END LOOP;
-+    RETURN n;
-+END
-+$$;
-+SELECT issue_7443_agg_loop();
-+
-+RESET paradedb.enable_join_custom_scan;
-+RESET paradedb.enable_aggregate_custom_scan;
-+
-+DROP PROCEDURE issue_7443_join_loop;
-+DROP FUNCTION issue_7443_agg_loop;
-+DROP TABLE issue_7443_s;
-+DROP TABLE issue_7443_e;
++RESET plan_cache_mode;
++RESET client_min_messages;
++DROP FUNCTION issue_7289_nearest;
++DROP TABLE issue_7289, issue_7289_vec;
 ```
 
 ---
 
-### Incident Patch 3: `2159270d` (2026-11-13)
-**Commit Message**: docs: explain that BM25 scores can depend on rows hidden by row-level security (#7419)
+### Incident Patch 3: `fbd45288` (2026-11-13)
+**Commit Message**: fix: deparse nested score expressions without placeholder errors (#7282)
 
 # Ticket(s) Closed
 
-- None. Follow-up to an email exchange with the ParadeDB team.
+Closes #7264
 
 ## What
 
-Adds a short "Scores and Row-Level Security" section to the BM25 scoring
-page, after "Score Refresh".
+Queries that use `pdb.score()` inside an arithmetic or text expression
+in a join predicate or an aggregate filter can fail with an
+"unrecognized node type" error when the plan is deparsed.
 
 ## Why
 
-Row-level security filters the rows a query returns, but BM25 statistics
-are computed over every row in the index, so a score returned to a
-restricted role can depend on rows that role cannot read. The page
-already says that a row scores the same for every user (#7366). The new
-section states the consequence and two ways to avoid it.
+Nested score expressions can carry `PlaceHolderVar` nodes, and
+PostgreSQL's SQL deparser cannot render them. Both deparse entry points
+passed those wrappers straight through.
 
 ## How
 
-Documentation only, in docs/reference/full-text/score.mdx.
+`deparse_expr` and `deparse_planner_expr` now strip `PlaceHolderVar`
+nodes recursively from a display copy of the expression before
+deparsing. The planner's own expression and the score wrappers are left
+untouched.
 
 ## Tests
 
-None. No code change.
+- New pg_regress case `score_expression_deparse`: an `EXPLAIN` of an
+aggregate filter with score arithmetic, with the deparsed heap filter in
+the expected output.
+- The pg_search test jobs on this PR pass on PostgreSQL 15, 16, 17 and
+18.
+- Locally, the full `cargo test -p pg_search` run hit a 300-second
+timeout, so it is not claimed here.
 
----------
+A stability changelog entry is included. AI was used for assistance.
 
-Signed-off-by: ionuthrubaru <[REDACTED_EMAIL]>
-Signed-off-by: Philippe Noël <[REDACTED_EMAIL]>
-Co-authored-by: Philippe Noël <[REDACTED_EMAIL]>
+Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 
-**File**: `docs/reference/full-text/score.mdx` (modified, +6/-0)
+**File**: `docs/project/changelog/unreleased/7264.stability.mdx` (added, +5/-0)
 ```diff
-@@ -354,3 +354,9 @@ VACUUM mock_items;
- ```
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++- Fixed an `unrecognized node type` error when using `pdb.score()` inside arithmetic or text expressions in join predicates and aggregate filters.
+```
+
+**File**: `pg_search/tests/pg_regress/expected/score_expression_deparse.out` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++-- Regression for #7264: nested score expressions must deparse without placeholder errors.
++SET max_parallel_workers_per_gather = 0;
++CREATE TABLE score_expression_sa (id bigint PRIMARY KEY, body text);
++INSERT INTO score_expression_sa SELECT i, 'hello world' FROM generate_series(1, 5) i;
++CREATE INDEX score_expression_sa_idx ON score_expression_sa USING bm25 (id, body);
++EXPLAIN (COSTS OFF, TIMING OFF)
++SELECT count(*) FILTER (WHERE id + pdb.score(id)::bigint > 0)
++FROM score_expression_sa
++WHERE body ||| 'hello';
++                                                                                                       QUERY PLAN                                                                                                        
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Aggregate Scan) on score_expression_sa
++   Index: score_expression_sa_idx
++   Tantivy Query: {"with_index":{"query":{"match":{"field":"body","value":"hello","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
++     Applies to Aggregates: COUNT(*)
++     Aggregate Definition: {"0":{"aggs":{"0":{"filter":"*"}},"filter":{"query":{"heap_filter":{"always_filters":[{"heap_filter":"((id + (pdb.score(id))::bigint) > 0)"}],"indexed_query":"all"}},"type":"FilterQuery"}}}
++(5 rows)
++
++RESET max_parallel_workers_per_gather;
++DROP TABLE score_expression_sa;
+```
+
+**File**: `pg_search/tests/pg_regress/sql/score_expression_deparse.sql` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++-- Regression for #7264: nested score expressions must deparse without placeholder errors.
++SET max_parallel_workers_per_gather = 0;
++
++CREATE TABLE score_expression_sa (id bigint PRIMARY KEY, body text);
++INSERT INTO score_expression_sa SELECT i, 'hello world' FROM generate_series(1, 5) i;
++CREATE INDEX score_expression_sa_idx ON score_expression_sa USING bm25 (id, body);
++
++EXPLAIN (COSTS OFF, TIMING OFF)
++SELECT count(*) FILTER (WHERE id + pdb.score(id)::bigint > 0)
++FROM score_expression_sa
++WHERE body ||| 'hello';
++
++RESET max_parallel_workers_per_gather;
++DROP TABLE score_expression_sa;
+```
+
+**File**: `storage/src/postgres/deparse.rs` (modified, +5/-0)
+```diff
+@@ -105,6 +105,10 @@ pub fn deparse_expr(
+         return "<null>".to_string();
+     }
  
- This can be automated with [autovacuum](/operate/performance-tuning/overview).
++    // PostgreSQL's SQL deparser cannot render PlaceHolderVar nodes. Strip them
++    // from a display copy, preserving the planner's expression and score wrappers.
++    let expr = unsafe { crate::postgres::utils::strip_placeholder_vars_deep(expr) };
 +
-+## Scores and Row-Level Security
-+
-+BM25 scores are computed from statistics over every row in the index, including rows that a row-level security policy hides from the current role. Row-level security filters which rows a query returns, but not the statistics behind their scores, so a score returned to a restricted role can depend on rows that role cannot read.
-+
-+If scores must not depend on rows a role cannot read, keep those rows in a separate table with its own ParadeDB index, or do not return scores to that role.
+     // For expressions containing PARAM_EXEC nodes (correlated subquery params),
+     // clone and replace them with placeholder constants, then deparse
+     // Note: PARAM_EXTERN (prepared statement params like $1, $2) are safe and will be
+@@ -217,6 +221,7 @@ pub fn deparse_planner_expr(
+     {
+         return None;
+     }
++    let expr = unsafe { crate::postgres::utils::strip_placeholder_vars_deep(expr) };
+     let root = unsafe { &*root };
+ 
+     let rtable = unsafe { (*root.parse).rtable };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7463** (closed): perf: cost scalar-filtered vector scans before parallelizing (@rebasedming)
+- **PR #7462** (2026-11-14): docs: clarify contribution and review expectations (@philippemnoel)
+- **PR #7461** (2026-11-13): chore: Upgrade to Rust `1.100` (@stuhood)
+- **PR #7460** (2026-11-14): ci: profile vector k6 benchmarks with host perf (@rebasedming)
 - **PR #7455** (closed): chore: benchmark unfiltered vector FastScan (@rebasedming)
 - **PR #7454** (2026-11-13): fix: exclude retired segments after cancelled vacuum (@paradedb-github-bot[bot])
-- **PR #7453** (2026-11-13): fix: exclude retired segments after cancelled vacuum (@philippemnoel)
-- **PR #7452** (2026-11-13): fix: Remove "autoscaling" from the cloud docs (@isaacvando)
-- **PR #7451** (2026-11-13): docs: Fix Homebrew installation instructions for icu4c (@philippemnoel)
-- **PR #7446** (2026-11-13): fix: store columnar section lengths as u64 (@paradedb-github-bot[bot])
 
 ---
 
@@ -2741,42 +2996,61 @@ Co-authored-by: Philippe Noël <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. exclude retired segments after cancelled vacuum
+## X. retry native Stressgres cancellation during shutdown
 
 **RULE**:
-When implementing operations in `index_write/src/index/merge_policy.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `stressgres/src/headless.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `831a1ce2`: exclude retired segments after cancelled vacuum. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b5ad317`: retry native Stressgres cancellation during shutdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `index_write/src/index/merge_policy.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `stressgres/src/headless.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // VACUUM or another merger can publish metadata changes and then be canceled while
-        // this merger holds an older view. Their exclusions disappear on ERROR, so compare
-        // full entries to catch both retired segments and updated deletion metadata.
-        // The caller holds MergeLock, preventing a new VACUUM from starting during selection.
-        let live_entries: HashMap<_, _> = unsafe { metadata.segment_metas().list(None) }
-            .into_iter()
-            .filter(|entry| entry.xmax() == pg_sys::InvalidTransactionId)
-            .map(|entry| (entry.segment_id(), entry))
-            .collect();
-
-            .filter(|(segment_id, entry)| {
-                    && live_entries.get(segment_id) == Some(entry)
+use crate::runner::{HARDCODED_IGNORE_ERRORS, SuiteRunner, WorkerState};
+    let terminate_start = std::time::Instant::now();
+    let shutdown_timeout = std::time::Duration::from_secs(60);
+    suite_runner.terminate_with_timeout(shutdown_timeout);
+        let suite_runner = suite_runner.clone();
+    while terminate_start.elapsed() < shutdown_timeout {
+        let mut any_worker_active = false;
+        for runner in suite_runner.runners().chain(suite_runner.monitor_runners()) {
+            match runner.worker_state() {
+                WorkerState::Stopped => {}
+                WorkerState::RunningQuery => {
+                    any_worker_active = true;
+                    eprintln!(
+                        "job still active at shutdown timeout (running query): {}",
+                        runner.title()
+                    );
+                }
+                WorkerState::Active => {
+                    any_worker_active = true;
+                    eprintln!(
+                        "job still active at shutdown timeout (connecting or idle): {}",
+                        runner.title()
+                    );
+                }
+            }
+        }
+        if !any_worker_active {
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            .filter(|(segment_id, _)| {
+use crate::runner::{HARDCODED_IGNORE_ERRORS, SuiteRunner};
+    suite_runner.terminate();
+    let terminate_start = std::time::Instant::now();
+    while terminate_start.elapsed() < std::time::Duration::from_secs(60) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `831a1ce2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b5ad317` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

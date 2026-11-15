@@ -10111,3 +10111,11 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `4fc66b82` | Multi-dimensional audit evidence | 2026-11-15T10:48:14.768Z |
 | `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-15T10:53:00.243Z |
 | `learn-dom-d-51dd327c` | `project://hf-fusioncow-sulphur-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | 2026-11-15T10:53:36.123Z |
+| `learn-huggingface-abiray-minimax-h3-image-gguf` | `https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF` | `hf-abiray-` | Multi-dimensional audit evidence | 2026-11-15T11:12:30.217Z |
+| `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-15T11:12:32.602Z |
+| `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `67be75e4` | Multi-dimensional audit evidence | 2026-11-15T11:12:38.834Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `195c21fb` | Multi-dimensional audit evidence | 2026-11-15T11:12:42.395Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `9e4744a6` | Multi-dimensional audit evidence | 2026-11-15T11:12:46.853Z |
+| `learn-dom-d-53ab726c` | `project://hf-abiray-minimax-h3-image-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md` | 2026-11-15T11:13:18.666Z |
+| `learn-dom-d-29746ef6` | `project://hf-xiaomi-research-xiaomi-ocr-0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md` | 2026-11-15T11:13:54.995Z |
+| `learn-dom-d-f3c32546` | `project://darrylmorley-whatcable` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md` | 2026-11-15T11:14:39.611Z |

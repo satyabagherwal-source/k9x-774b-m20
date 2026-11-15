@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T10:53:37.694Z",
-  "total_records": 1029,
+  "last_updated": "2026-11-15T11:14:39.867Z",
+  "total_records": 1039,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 502,
+      "total": 511,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -540,7 +540,16 @@
         "domain_intelligence-research-knowledge-intelligence-hf-tencent-qwen3-8-27b-dspine-b16-learnings-core",
         "domain_intelligence-research-knowledge-intelligence-fusioncow-sulphur-3-core-invariants",
         "DOM-D-51DD327C",
-        "domain_intelligence-research-knowledge-intelligence-hf-fusioncow-sulphur-3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-fusioncow-sulphur-3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-xiaomi-research-xiaomi-ocr-0-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-core-invariants",
+        "DOM-D-53AB726C",
+        "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
+        "DOM-D-29746EF6",
+        "domain_intelligence-research-knowledge-intelligence-hf-xiaomi-research-xiaomi-ocr-0-learnings-core-i",
+        "DOM-D-F3C32546",
+        "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-learnings-core-invariants"
       ]
     },
     "E": {
@@ -579,7 +588,7 @@
       ]
     },
     "G": {
-      "total": 173,
+      "total": 174,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -753,7 +762,8 @@
         "domain_intelligence-architecture-intelligence-tuist-tuist-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-learnings-core-invar",
         "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-core-invariants",
-        "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants"
       ]
     },
     "H": {
@@ -10618,8 +10628,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "68de3ffe27222ea9a910e8728d8ead1145f7755e4661d80d5090ccd8ec6f76db",
-      "created_at": "2026-11-13T23:42:00.882Z"
+      "content_hash": "bb55103c5489189fe574739fb31830ec51ff8a7a1ca9782ba17ba8a328747a37",
+      "created_at": "2026-11-15T11:12:42.692Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -19811,6 +19821,195 @@
       "repository": "databendlabs-databend-learnings",
       "content_hash": "877a38bb7d8431b3f939164e1eee3b77a968ca170dcf0c4d1606cef92bd2cb4e",
       "created_at": "2026-11-15T10:53:36.993Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Abiray/MiniMax-H3-Image-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abiray-minimax-h3-image-gguf-research-knowledge-intelligence-abiray-minimax-h.md",
+      "repository": "Abiray/MiniMax-H3-Image-GGUF",
+      "content_hash": "2757b11aee94b9ce65deaa52969dd6188062387da99d5ce70205a9ad877358c4",
+      "created_at": "2026-11-15T11:12:30.391Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xiaomi-research-xiaomi-ocr-0-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomi-research-xiaomi-ocr-0-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: xiaomi-research/Xiaomi-OCR-0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomi-research-xiaomi-ocr-0-research-knowledge-intelligence-xiaomi-research-.md",
+      "repository": "xiaomi-research/Xiaomi-OCR-0",
+      "content_hash": "1572b8dead618391b88e02299ac2c536d21aacd4145dc9f9f0a55accdc881fa4",
+      "created_at": "2026-11-15T11:12:32.778Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: darrylmorley/whatcable Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-research-knowledge-intelligence-darrylmorley-whatcable-co.md",
+      "repository": "darrylmorley/whatcable",
+      "content_hash": "8f1cde6889256ec9cf63edbd3040384d9ee658f49f673fe84bc9ac6c00c94262",
+      "created_at": "2026-11-15T11:12:39.052Z"
+    },
+    "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
+      "repository": "paradedb/paradedb",
+      "content_hash": "1465b67065b3d576d00e9c328238993f84e24aa98331521c33e73c7daf022c91",
+      "created_at": "2026-11-15T11:12:47.152Z"
+    },
+    "DOM-D-53AB726C": {
+      "record_id": "DOM-D-53AB726C",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Abiray/MiniMax-H3-Image-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF](https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF))  \n> **Source Version**: `hf-abiray-mi`  \n> **License**: Open-",
+      "content_hash": "bd580ea8d7a5357613cf63995a0f6c3bd68086c67931f235fa4efc0a1d6be770",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md`  \n> **Source**: huggingface ([https://",
+      "provenance": {
+        "source_uri": "project://hf-abiray-minimax-h3-image-gguf/hf-abiray-minimax-h3-image-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T11:12:50.047Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-abiray-minimax-h3-image-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-abiray-minimax-h3-image-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T11:13:18.642Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-abiray-minimax-h3-image-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abiray-minimax-h3-image-gguf-learnings-research-knowledge-intelligence-hf-abi.md",
+      "repository": "hf-abiray-minimax-h3-image-gguf-learnings",
+      "content_hash": "c032c3993ae9930792efb48dd30c2c4c14b099fdd1e3685dd8bd385cf4867547",
+      "created_at": "2026-11-15T11:13:18.874Z"
+    },
+    "DOM-D-29746EF6": {
+      "record_id": "DOM-D-29746EF6",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): xiaomi-research/Xiaomi-OCR-0",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/xiaomi-research/Xiaomi-OCR-0](https://huggingface.co/xiaomi-research/Xiaomi-OCR-0))  \n> **Source Version**: `hf-xiaomi-re`  \n> **License**: Open-",
+      "content_hash": "7945c5cf3af5f20e8cb6d2198342692494c888a3587a8f5512afd147b905b03f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md`  \n> **Source**: huggingface ([https://",
+      "provenance": {
+        "source_uri": "project://hf-xiaomi-research-xiaomi-ocr-0/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T11:13:19.027Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xiaomi-research-xiaomi-ocr-0)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-xiaomi-research-xiaomi-ocr-0"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T11:13:54.981Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xiaomi-research-xiaomi-ocr-0-learnings-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomi-research-xiaomi-ocr-0-learnings-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-xiaomi-research-xiaomi-ocr-0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomi-research-xiaomi-ocr-0-learnings-research-knowledge-intelligence-hf-xia.md",
+      "repository": "hf-xiaomi-research-xiaomi-ocr-0-learnings",
+      "content_hash": "0daf57f97b09d992b9ca2539584c53d3658f7ccb76061d9de546492dcea19d18",
+      "created_at": "2026-11-15T11:13:55.239Z"
+    },
+    "DOM-D-F3C32546": {
+      "record_id": "DOM-D-F3C32546",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): darrylmorley/whatcable",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  \n> **Source**: github ([https://github.com/darrylmorley/whatcable](https://github.com/darrylmorley/whatcable))  \n> **Source Version**: `67be75e4`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-cl",
+      "content_hash": "1ead0fbbad70ec0c1028f53a4ce8b9d1897f71f7cf39f4daa9e988de3eb5c05a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  \n> **Source**: github ([https://github.com/dar -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  \n> **Source**: github ([https://github.com/dar",
+      "provenance": {
+        "source_uri": "project://darrylmorley-whatcable/darrylmorley-whatcable-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T11:13:55.393Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (darrylmorley-whatcable)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of darrylmorley-whatcable"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T11:14:39.596Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: darrylmorley-whatcable-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-learnings-research-knowledge-intelligence-darrylmorley-wh.md",
+      "repository": "darrylmorley-whatcable-learnings",
+      "content_hash": "577d735487391ab30c763e3a2cae5502978d68385eb1f47c7f9b70b460a1be6d",
+      "created_at": "2026-11-15T11:14:39.867Z"
     }
   }
 }

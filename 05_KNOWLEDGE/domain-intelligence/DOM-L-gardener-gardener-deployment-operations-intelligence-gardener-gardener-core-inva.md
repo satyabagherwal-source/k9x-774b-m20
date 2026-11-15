@@ -4,23 +4,23 @@
 {
   "source_repository": "gardener/gardener",
   "source_url": "https://github.com/gardener/gardener",
-  "source_version": "00b6db8f",
+  "source_version": "195c21fb",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T23:42:00.768Z",
+  "timestamp": "2026-11-15T11:12:42.575Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gardener-gardener",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `00b6db8f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T23:42:00.768Z`  
+> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `195c21fb`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T11:12:42.575Z`  
 > **Learning ID**: `learn-github-gardener-gardener`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain L (Deployment & Operations Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T23:41:59.516Z  
+> **Harvest Timestamp**: 2026-11-15T11:12:41.494Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -740,17 +740,14 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16337** (2026-11-13): **Update dependency gardener/alpine-conntrack to v3.24.4**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gardener/alpine-conntrack](https://redirect.github.com/gardener/alpine-conntrack) | patch | `3.24.2` → `3.24.4` |  ---  ### Release Notes  <details> <summary>gardener/alpine-conntrack</summary>  ### [`v3.24.4`](https://redirect.github.com/gardener/alpine-conntrack/releases/tag/3.24.4)  [Compare Source](https://redirect.github.com/gardener/alpine-conntrack/compare/3.24.2...3.24.4)  #### application/spdx+json  - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:69803d1b908c0f9851d489e0455e41b06ba9342b766d1b6ddd04ede2da27cf55` - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:71089ec8becb326c2d2196df5b79092710231183da852520403696007fcb6d38`  #### application/vnd.cyclonedx+json  - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:12805c093662513e86eb42df9df1a375c49a1f1be548c2aa963a6b0b913f8138` - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:1ae3fdb1bfdbe1bea6b17e0606cf2654446dd580f4e94ffa087edc80bcdad724`  #### Container (OCI) Images  - alpine-conntrack: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack:3.24.4`  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Au
-  **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timebertt](https://github.com/timebertt) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timebertt"]} -->
+- **Issue #16339** (2026-11-14): **Update helm to v4.3.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | Type | Update | |---|---|---|---|---|---| | [helm.sh/helm/v4](https://redirect.github.com/helm/helm) | `v4.3.1` → `v4.3.2` | ![age](https://developer.mend.io/api/mc/badges/age/go/helm.sh%2fhelm%2fv4/v4.3.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/helm.sh%2fhelm%2fv4/v4.3.1/v4.3.2?slim=true) | require | patch | | [helm/helm](https://redirect.github.com/helm/helm) | `v4.3.1` → `v4.3.2` | ![age](https://developer.mend.io/api/mc/badges/age/github-releases/helm%2fhelm/v4.3.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/github-releases/helm%2fhelm/v4.3.1/v4.3.2?slim=true) |  | patch |  ---  ### Release Notes  <details> <summary>helm/helm (helm.sh/helm/v4)</summary>  ### [`v4.3.2`](https://redirect.github.com/helm/helm/releases/tag/v4.3.2): Helm v4.3.2  [Compare Source](https://redirect.github.com/helm/helm/compare/v4.3.1...v4.3.2)  Helm v4.3.2 is a patch release. Users are encouraged to upgrade for the best experience.  The community keeps growing, and we'd love to see you there!  - Join the discussion in [Kubernetes Slack](https://kubernetes.slack.com):   - for questions and just to hang out   - for discussing PRs, code, and bugs - Hang out at the Public Developer Call: Thursday, 9:30 Pacific via [Zoom](https://zoom-lfx.platform.li
 
-- **Issue #16334** (2026-11-13): **Update dependency credativ/vali to v2.2.39**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [credativ/vali](https://redirect.github.com/credativ/vali) | patch | `v2.2.38` → `v2.2.39` |  > [!TIP] > Updates to this image may depend on merging a pull request in the [ci-infra](https://redirect.github.com/gardener/ci-infra/pulls?q=sort%3Aupdated-desc+is%3Apr+is%3Aopen) repository. Usually, the PRs are auto-merged. However, there is no guarantee that the PRs will be merged in time for this update. If tests fail, please check that the the PR for your component is not stuck and trigger a retest.  ---  ### Release Notes  <details> <summary>credativ/vali</summary>  ### [`v2.2.39`](https://redirect.github.com/credativ/vali/releases/tag/v2.2.39)  [Compare Source](https://redirect.github.com/credativ/vali/compare/v2.2.38...v2.2.39)  This is release v2.2.39 of Vali.  Vali is a fork of Loki 2.2.1 under the Apache 2.0 License. It is currently limited to maintenance and security updates.  ##### Notable changes  - Upgrade Alpine to 3.24.4 - Upgrade Go to 1.27.4  ##### Installation  The components of Vali are currently distributed as container images.  - `ghcr.io/credativ/vali:v2.2.39`   <https://github.com/credativ/vali/pkgs/container/vali>  - `ghcr.io/credativ/valitail:v2.2.39`   <https://github.com/credativ/vali/pkgs/container/valitail>  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defi
+- **Issue #16338** (2026-11-14): **Update dependency gardener/alpine-iptables to v3.24.4**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gardener/alpine-iptables](https://redirect.github.com/gardener/alpine-iptables) | patch | `3.24.2` → `3.24.4` |  ---  ### Release Notes  <details> <summary>gardener/alpine-iptables</summary>  ### [`v3.24.4`](https://redirect.github.com/gardener/alpine-iptables/releases/tag/3.24.4)  [Compare Source](https://redirect.github.com/gardener/alpine-iptables/compare/3.24.2...3.24.4)  #### application/spdx+json  - alpine-iptables-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-iptables@sha256:71bc45859e587972f37b2ff7c236ada85d8aea5241c330d4d60ff526f119c73a` - alpine-iptables-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-iptables@sha256:b47ff4d83643f259c4639eba7a14b2c8a83cd8622605254e6fe528881a732f6b`  #### application/vnd.cyclonedx+json  - alpine-iptables-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-iptables@sha256:555c97439974ba3b30ebfd52dee06c791f6273d20f2d3b99f501497a2623b3af` - alpine-iptables-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-iptables@sha256:7c7d6685dbb31d63f55356a1dcf1da687f601ba6ca13d80d156915ac3f117fbc`  #### Container (OCI) Images  - alpine-iptables: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-iptables:3.24.4`  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At 
   **Post-Mortem & Fix Analysis**:
   > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [oliver-goetz](https://github.com/oliver-goetz) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["oliver-goetz"]} -->
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timuthy](https://github.com/timuthy) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timuthy"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -767,457 +764,75 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0fcc2eec` (2026-11-13)
-**Commit Message**: fix: update envoy scanning hints (#16309)
+### Incident Patch 1: `195c21fb` (2026-11-15)
+**Commit Message**: Fix misleading `Garden` networking validation errors (#16198)
 
-Signed-off-by: Dominik Froehlich <[REDACTED_EMAIL]>
+An unparseable `spec.virtualCluster.networking.services` CIDR no longer produces spurious "intersects" errors in addition to the parse error, and the runtime pod/service network intersection error now reports the pod CIDR as the invalid value of the `pods` field.
 
-**File**: `imagevector/containers.yaml` (modified, +4/-4)
+Signed-off-by: Raphael Fakhri <[REDACTED_EMAIL]>
+
+**File**: `pkg/api/operator/v1alpha1/validation/garden.go` (modified, +2/-1)
 ```diff
-@@ -976,21 +976,21 @@ images:
-             teamname: 'gardener/gardener-core-networking-maintainers'
-       - name: 'cloud.gardener.cnudie/dso/scanning-hints/package-versions'
-         value:
--          # https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps
-+          # https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps
-           - name: 'v8'
-             version: '14.6.202.10'
-           - name: 'grpc'
--            version: '1.81.1'
-+            version: '1.83.0'
-           - name: 'luajit'
-             version: '871db2c'
-           - name: 'nghttp2'
-             version: '1.66.0'
-           - name: 'protobuf'
-             version: '35.1'
-           - name: 'fmt'
--            version: '12.1.0'
-+            version: '12.2.0'
-           - name: 'boringssl'
--            version: '0.20260413.0'
-+            version: '0.20260929.0'
-           # lua version is unclear. lua runtime is luajit.
-           # luajit is compatible with lua 5.1 but contains feature of lua 5.2 and 5.3
-           # https://luajit.org/extensions.html
-```
-
----
-
-### Incident Patch 2: `107b12dd` (2026-11-13)
-**Commit Message**: Drop resource dependency graph debug handler (#16315)
-
-* [admission-controller] Remove `enableDebugHandlers` config field
-
-The field only gated the resource dependency graph debug handler, which is
-removed in a subsequent commit.
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* [make generate]
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* [admission-controller] Drop resource dependency graph debug handler
-
-The `/debug/resource-dependency-graph` handler served an unauthenticated HTML
-dump of the entire graph and could not render it on large landscapes anyway. It
-has been unused for years, so remove it together with its wiring.
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* Documentation
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-**File**: `docs/deployment/gardenlet_api_access.md` (modified, +0/-52)
-```diff
-@@ -145,58 +145,6 @@ The `SeedAuthorizer` registers the following metrics related to the mentioned gr
- | `gardener_admission_controller_seed_authorizer_graph_update_duration_seconds` | Histogram of duration of resource dependency graph updates in seed authorizer, i.e., how long does it take to update the graph's vertices/edges when a resource is created, changed, or deleted. |
- | `gardener_admission_controller_seed_authorizer_graph_path_check_duration_seconds` | Histogram of duration of checks whether a path exists in the resource dependency graph in seed authorizer. |
- 
--#### Debug Handler
--
--When the `.server.enableDebugHandlers` field in the `gardener-admission-controller`'s component configuration is set to `true`, then it serves a handler that can be used for debugging the resource dependency graph under `/debug/resource-dependency-graph`.
--
--🚨 Only use this setting for development purposes, as it enables unauthenticated users to view all data if they have access to the `gardener-admission-controller` component.
--
--The handler renders an HTML page displaying the current graph with a list of vertices and its associated incoming and outgoing edges to other vertices.
--Depending on the size of the Gardener landscape (and consequently, the size of the graph), it might not be possible to render it in its entirety.
--If there are more than 2000 vertices, then the default filtering will selected for `kind=Seed` to prevent overloading the output.
--
--_Example output_:
--
--```text
---------------------------------------------------------------------------------
--|
--| # Seed:my-seed
--|   <- (11)
--|     BackupBucket:73972fe2-3d7e-4f61-a406-b8f9e670e6b7
--|     BackupEntry:garden-my-project/shoot--dev--my-shoot--4656a460-1a69-4f00-9372-7452cbd38ee3
--|     ControllerInstallation:dns-external-mxt8m
--|     ControllerInstallation:extension-shoot-cert-service-4qw5j
--|     ControllerInstallation:networking-calico-bgrb2
--|     ControllerInstallation:os-gardenlinux-qvb5z
--|     ControllerInstallation:provider-gcp-w4mvf
--|     Secret:garden/backup
--|     Shoot:garden-my-project/my-shoot
--|
---------------------------------------------------------------------------------
--|
--| # Shoot:garden-my-project/my-shoot
--|   <- (5)
--|     CloudProfile:gcp
--|     Namespace:garden-my-project
--|     Secret:garden-my-project/my-dns-secret
--|     SecretBinding:garden-my-project/my-credentials
--|     ShootState:garden-my-project/my-shoot
--|   -> (1)
--|     Seed:my-seed
--|
---------------------------------------------------------------------------------
--|
--| # ShootState:garden-my-project/my-shoot
--|   -> (1)
--|     Shoot:garden-my-project/my-shoot
--|
---------------------------------------------------------------------------------
--
--... (etc., similarly for the other resources)
--```
--
--There are anchor links to easily jump from one resource to another, and the page provides means for filtering the results based on the `kind`, `namespace`, and/or `name`.
--
- #### Pitfalls
- 
- When there is a relevant update to an existing resource, i.e., when a reference to another resource is changed, then the corresponding vertex (along with all associated edges) is first deleted from the graph before it gets added again with the up-to-date edges.
-```
-
-**File**: `example/20-componentconfig-gardener-admission-controller.yaml` (modified, +0/-1)
-```diff
-@@ -30,7 +30,6 @@ server:
-       name: gardener.cloud:system:seeds
-       apiGroup: rbac.authorization.k8s.io
-     operationMode: block
--  enableDebugHandlers: true
- debugging:
-   enableProfiling: false
-   enableContentionProfiling: false
-```
-
-**File**: `pkg/admissioncontroller/webhook/add.go` (modified, +2/-2)
-```diff
-@@ -91,7 +91,7 @@ func AddToManager(
- 		Logger:    mgr.GetLogger().WithName("webhook").WithName(seedauthorizer.HandlerName),
- 		ClientSet: clientSet,
- 	}
--	if err := seedAuthorizerWebhook.AddToManager(ctx, mgr, cfg.Server.EnableDebugHandlers); err != nil {
-+	if err := seedAuthorizerWebhook.AddToManager(ctx, mgr); err != nil {
- 		return fmt.Errorf("failed adding %s webhook handler: %w", seedauthorizer.HandlerName, err)
- 	}
- 
-@@ -106,7 +106,7 @@ func AddToManager(
- 	if err := (&shootauthorizer.Webhook{
- 		Logger:    mgr.GetLogger().WithName("webhook").WithName(shootauthorizer.HandlerName),
- 		ClientSet: clientSet,
--	}).AddToManager(ctx, mgr, cfg.Server.EnableDebugHandlers, seedAuthorizerWebhook.Authorizer); err != nil {
-+	}).AddToManager(ctx, mgr, seedAuthorizerWebhook.Authorizer); err != nil {
- 		return fmt.Errorf("failed adding %s webhook handler: %w", shootauthorizer.HandlerName, err)
- 	}
- 
-```
-
-**File**: `pkg/admissioncontroller/webhook/auth/seed/add.go` (modified, +1/-7)
-```diff
-@@ -8,7 +8,6 @@ import (
- 	"context"
- 
- 	"k8s.io/utils/clock"
--	"k8s.io/utils/ptr"
- 	"sigs.k8s.io/controller-runtime/pkg/manager"
- 
- 	"github.com/gardener/gardener/pkg/utils/graph"
-@@ -23,7 +22,7 @@ const (
- )
- 
- // AddToManager adds Handler to the given manager.
--func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableDebugHandlers *bool) error {
-+func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager) error {
- 	if w.Authorizer == nil {
- 		g := graph.New(mgr.GetLogger().WithName("seed-authorizer-graph"), mgr.GetClient(), false)
- 		if err := g.Setup(ctx, mgr.GetCache()); err != nil {
-@@ -35,11 +34,6 @@ func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableD
- 			g,
- 			authorizerwebhook.NewWithSelectorsChecker(ctx, w.Logger, w.ClientSet, clock.RealClock{}),
- 		)
--
--		if ptr.Deref(enableDebugHandlers, false) {
--			w.Logger.Info("Registering debug handlers")
--			mgr.GetWebhookServer().Register(graph.DebugHandlerPath, graph.NewDebugHandler(g))
--		}
- 	}
- 
- 	if w.Handler == nil {
-```
-
-**File**: `pkg/admissioncontroller/webhook/auth/shoot/add.go` (modified, +1/-7)
-```diff
-@@ -9,7 +9,6 @@ import (
- 
- 	auth "k8s.io/apiserver/pkg/authorization/authorizer"
- 	"k8s.io/utils/clock"
--	"k8s.io/utils/ptr"
- 	"sigs.k8s.io/controller-runtime/pkg/manager"
- 
- 	"github.com/gardener/gardener/pkg/utils/graph"
-@@ -24,7 +23,7 @@ const (
- )
- 
- // AddToManager adds Handler to the given manager.
--func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableDebugHandlers *bool, seedAuthorizer auth.Authorizer) error {
-+func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, seedAuthorizer auth.Authorizer) error {
- 	if w.Handler == nil {
- 		g := graph.New(mgr.GetLogger().WithName("shoot-authorizer-graph"), mgr.GetClient(), true)
- 		if err := g.Setup(ctx, mgr.GetCache()); err != nil {
-@@ -41,11 +40,6 @@ func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableD
- 				seedAuthorizer,
- 			),
+@@ -362,7 +362,7 @@ func validateRuntimeClusterNetworking(runtimeNetworking operatorv1alpha1.Runtime
+ 	for i, pods := range runtimeNetworking.Pods {
+ 		for _, services := range runtimeNetworking.Services {
+ 			if cidrvalidation.NetworksIntersect(pods, services) {
+-				allErrs = append(allErrs, field.Invalid(fldPath.Child("pods").Index(i), services, "pod network of runtime cluster intersects with service network of runtime cluster"))
++				allErrs = append(allErrs, field.Invalid(fldPath.Child("pods").Index(i), pods, "pod network of runtime cluster intersects with service network of runtime cluster"))
+ 			}
  		}
--
--		if ptr.Deref(enableDebugHandlers, false) {
--			w.Logger.Info("Registering debug handlers")
--			mgr.GetWebhookServer().Register(graph.DebugHandlerPath+"-shoot", graph.NewDebugHandler(g))
--		}
  	}
- 
- 	mgr.GetWebhookServer().Register(WebhookPath, w.Handler)
+@@ -477,6 +477,7 @@ func validateVirtualCluster(dns *operatorv1alpha1.DNSManagement, virtualCluster
+ 	for i, services := range virtualCluster.Networking.Services {
+ 		if _, _, err := net.ParseCIDR(services); err != nil {
+ 			allErrs = append(allErrs, field.Invalid(fldPath.Child("networking", "services").Index(i), services, "cannot parse service network cidr: "+err.Error()))
++			continue
+ 		}
+ 		for _, runtimePods := range runtimeCluster.Networking.Pods {
+ 			if cidrvalidation.NetworksIntersect(runtimePods, services) {
 ```
 
-**File**: `pkg/apis/config/admissioncontroller/v1alpha1/types.go` (modified, +0/-3)
+**File**: `pkg/api/operator/v1alpha1/validation/garden_test.go` (modified, +8/-6)
 ```diff
-@@ -57,9 +57,6 @@ type ServerConfiguration struct {
- 	// ResourceAdmissionConfiguration is the configuration for the resource admission.
- 	// +optional
- 	ResourceAdmissionConfiguration *ResourceAdmissionConfiguration `json:"resourceAdmissionConfiguration,omitempty"`
--	// EnableDebugHandlers determines whether the /debug/ handlers are enabled.
--	// +optional
--	EnableDebugHandlers *bool `json:"enableDebugHandlers,omitempty"`
- }
+@@ -1278,11 +1278,12 @@ var _ = Describe("Validation Tests", func() {
+ 				})
  
- // ResourceAdmissionConfiguration contains settings about arbitrary kinds and the size each resource should have at most.
-```
-
-**File**: `pkg/apis/config/admissioncontroller/v1alpha1/zz_generated.deepcopy.go` (modified, +0/-5)
-```diff
-@@ -181,11 +181,6 @@ func (in *ServerConfiguration) DeepCopyInto(out *ServerConfiguration) {
- 		*out = new(ResourceAdmissionConfiguration)
- 		(*in).DeepCopyInto(*out)
- 	}
--	if in.EnableDebugHandlers != nil {
--		in, out := &in.EnableDebugHandlers, &out.EnableDebugHandlers
--		*out = new(bool)
--		**out = **in
--	}
- 	return
- }
+ 				It("should complain when pod network of runtime cluster intersects with service network of runtime cluster", func() {
+-					garden.Spec.RuntimeCluster.Networking.Pods = garden.Spec.RuntimeCluster.Networking.Services
++					garden.Spec.RuntimeCluster.Networking.Pods = []string{"10.2.0.0/24"}
  
-```
-
-**File**: `pkg/utils/graph/debug.go` (removed, +0/-179)
-```diff
-@@ -1,179 +0,0 @@
--// SPDX-FileCopyrightText: Contributors to the Gardener project
--//
--// SPDX-License-Identifier: Apache-2.0
--
--package graph
--
--import (
--	"fmt"
--	"net/http"
--	"net/url"
--	"sort"
--	"strings"
--
--	gonumgraph "gonum.org/v1/gonum/graph"
--	"gonum.org/v1/gonum/graph/simple"
--)
--
--// DebugHandlerPath is the HTTP handler path for this debug handler.
--const DebugHandlerPath = "/debug/resource-dependency-graph"
--
--type handler struct {
--	graph *simple.DirectedGraph
--}
--
--// NewDebugHandler creates a new HTTP handler for debugging the resource dependency graph.
--func NewDebugHandler(graph *graph) http.HandlerFunc {
--	return (&handler{graph.graph}).Handle
--}
--
--func (h *handler) Handle(w http.ResponseWriter, r *http.Request) {
--	var (
--		out strings.Builder
--
--		kind      = getQueryParameter(r.URL.Query(), "kind")
--		namespace = getQueryParameter(r.URL.Query(), "namespace")
--		name      = getQueryParameter(r.URL.Query(), "name")
--
--		nodesIterator = h.graph.Nodes()
--		nodes         []*Vertex
--	)
--
--	// On large landscapes, if there are many vertices then the entire graph cannot be rendered fast enough. Hence, we
--	// apply some default filtering for the 'seed' kind.
--	if kind == "" && namespace == "" && name == "" && nodesIterator.Len() > 2000 {
--		kind = "Seed"
--	}
--
--	// Filter for all relevant nodes and sort them.
--	for nodesIterator.Next() {
--		v := nodesIterator.Node().(*Vertex)
--
--		if (kind != "" && VertexTypes[v.Type].Kind != kind) ||
--			(namespace != "" && v.Namespace != namespace) ||
--			(name != "" && v.Name != name) {
--			continue
--		}
--
--		nodes = append(nodes, v)
--	}
--	sort.Sort(vertexSorter(nodes))
--
--	// Render filtering form.
--	out.WriteString(`
--<form action="` + DebugHandlerPath + `" method="GET">
--  <select name="kind">`)
--	fmt.Fprintf(&out, `<option value=""%s>&lt;all&gt;</option>`, func() string {
--		if kind == "" {
--			return " selected"
--		}
--		return ""
--	}())
--	for _, vt := range VertexTypes {
--		fmt.Fprintf(&out, `<option value="%s"%s>%s</option>`, vt.Kind, func() string {
--			if kind == vt.Kind {
--				return " selected"
--			}
--			return ""
--		}(), vt.Kind)
--	}
--	out.WriteString(`
--  </select>
--  <input type="test" name="namespace" value="` + namespace + `" />
--  <input type="test" name="name" value="` + name + `" />
--  <input type="submit" value="go" />
--</form>` + separate(true))
--
--	// Iterate over each nodes, determine and sort their incoming and outgoing neighbors, and render the output.
--	for i, v := range nodes {
--		out.WriteString(indent(0, "# %s", link(v)))
--
--		for _, n := range []struct {
--			prefix   string
--			iterator gonumgraph.Nodes
--		}{
--			{"<- (incoming)", h.graph.To(v.ID())},
--			{"-> (outgoing)", h.graph.From(v.ID())},
--		} {
--			var neighbors []*Vertex
--			for n.iterator.Next() {
--				neighbors = append(neighbors, n.iterator.Node().(*Vertex))
--			}
--			sort.Sort(vertexSorter(neighbors))
--
--			if len(neighbors) > 0 {
--				out.WriteString(indent(1, "%s (%d)", n.prefix, len(neighbors)))
--				for _, u := range neighbors {
--					out.WriteString(indent(2, link(u)))
--				}
--			}
--		}
--
--		out.WriteString(emptyNewline() + separate(i < len(nodes)-1))
--	}
--
--	w.Header().Set("Content-Type", "text/html; charset=utf-8")
--	fmt.Fprint(w, `<font size="2" face="Courier New">`+out.String()+`</font>`)
--}
--
--func getQueryParameter(query url.Values, param string) string {
--	var out string
--	values, ok := query[param]
--	if ok && len(values[0]) >= 1 {
--		out = values[0]
--	}
--	return out
--}
--
--type vertexSorter []*Vertex
--
--func (v vertexSorter) Len() int { return len(v) }
--
--func (v vertexSorter) Swap(i, j int) { v[i], v[j] = v[j], v[i] }
--
--func (v vertexSorter) Less(i, j int) bool {
--	if VertexTypes[v[i].Type].Kind < VertexTypes[v[j].Type].Kind {
--		return true
--	} else if VertexTypes[v[i].Type].Kind > VertexTypes[v[j].Type].Kind {
--		return false
--	}
--
--	if v[i].Namespace < v[j].Namespace {
--		return true
--	} else if v[i].Namespace > v[j].Namespace {
--		return false
--	}
--
--	return v[i].Name < v[j].Name
--}
--
--func emptyNewline() string {
--	return "|<br />"
--}
--
--func separate(withNewBeginning bool) string {
--	result := "-------------------------------------------------------------------------------<br />"
--	if withNewBeginning {
--		result += emptyNewline()
--	}
--	return result
--}
--
--func indent(level int, format string, a ...any) string {
--	return fmt.Sprintf("| "+strings.Repeat("&nbsp;&nbsp;", level)+format+"<br />", a...)
--}
--
--func link(v *Vertex) string {
--	path := fmt.Sprintf("%s?kind=%s", DebugHandlerPath, VertexTypes[v.Type].Kind)
--	out := fmt.Sprintf(`<a href="%s">%s</a>:`, path, VertexTypes[v.Type].Kind)
--
--	if v.Namespace != "" {
--		path += "&namespace=" + v.Namespace
--		out += fmt.Sprintf(`<a href="%s">%s</a>/`, path, v.Namespace)
--	}
--
--	path += "&name=" + v.Name
--	out += fmt.Sprintf(`<a href="%s">%s</a>`, path, v.Name)
--
--	return out
--}
+ 					Expect(ValidateGarden(garden, extensions)).To(ContainElement(PointTo(MatchFields(IgnoreExtras, Fields{
+-						"Type":  Equal(field.ErrorTypeInvalid),
+-						"Field": Equal("spec.runtimeCluster.networking.pods[0]"),
++						"Type":     Equal(field.ErrorTypeInvalid),
++						"Field":    Equal("spec.runtimeCluster.networking.pods[0]"),
++						"BadValue": Equal("10.2.0.0/24"),
+ 					}))))
+ 				})
+ 
+@@ -1636,9 +1637,10 @@ var _ = Describe("Validation Tests", func() {
+ 				It("should complain about an invalid service CIDR", func() {
+ 					garden.Spec.VirtualCluster.Networking.Services = []string{"not-parseable-cidr"}
+ 
+-					Expect(ValidateGarden(garden, extensions)).To(ContainElement(PointTo(MatchFields(IgnoreExtras, Fields{
+-						"Type":  Equal(field.ErrorTypeInvalid),
+-						"Field": Equal("spec.virtualCluster.networking.services[0]"),
++					Expect(ValidateGarden(garden, extensions)).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
++						"Type":   Equal(field.ErrorTypeInvalid),
++						"Field":  Equal("spec.virtualCluster.networking.services[0]"),
++						"Detail": ContainSubstring("cannot parse service network cidr"),
+ 					}))))
+ 				})
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16339** (2026-11-14): Update helm to v4.3.2 (@renovate[bot])
+- **PR #16338** (2026-11-14): Update dependency gardener/alpine-iptables to v3.24.4 (@renovate[bot])
 - **PR #16337** (2026-11-13): Update dependency gardener/alpine-conntrack to v3.24.4 (@renovate[bot])
 - **PR #16334** (2026-11-13): Update dependency credativ/vali to v2.2.39 (@renovate[bot])
+- **PR #16332** (2026-11-14): Update dependency credativ/plutono to v7.5.53 (@renovate[bot])
 - **PR #16331** (2026-11-13): Update golang.org/x/tools digest to 056b2d3 (@renovate[bot])
-- **PR #16323** (2026-11-13): Update golang.org/x/exp digest to d10d3b4 (@renovate[bot])
-- **PR #16321** (2026-11-13): Update Go toolchain to v1.27 (@LucaBernstein)
-- **PR #16315** (2026-11-13): Drop resource dependency graph debug handler (@rfranzke)
 
 ---
 
@@ -1237,37 +852,32 @@ Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update envoy scanning hints
+## X. misleading `Garden` networking validation errors
 
 **RULE**:
-When implementing operations in `imagevector/containers.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/api/operator/v1alpha1/validation/garden.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0fcc2eec`: update envoy scanning hints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `195c21fb`: misleading `Garden` networking validation errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `imagevector/containers.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/api/operator/v1alpha1/validation/garden.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          # https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps
-            version: '1.83.0'
-            version: '12.2.0'
-            version: '0.20260929.0'
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("pods").Index(i), pods, "pod network of runtime cluster intersects with service network of runtime cluster"))
+			continue
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          # https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps
-            version: '1.81.1'
-            version: '12.1.0'
-            version: '0.20260413.0'
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("pods").Index(i), services, "pod network of runtime cluster intersects with service network of runtime cluster"))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0fcc2eec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `195c21fb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

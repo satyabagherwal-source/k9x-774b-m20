@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T10:53:00.249Z",
-  "total_cycles_completed": 9700,
-  "total_learnings_persisted": 9700,
-  "total_rules_promoted": 9335,
+  "last_updated": "2026-11-15T11:12:46.858Z",
+  "total_cycles_completed": 9705,
+  "total_learnings_persisted": 9705,
+  "total_rules_promoted": 9337,
   "history": [
-    {
-      "timestamp": "2026-11-14T10:30:01.053Z",
-      "repository": "deepseek-ai/DeepSeek-V3.2",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T10:30:03.432Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T10:30:13.003Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T11:04:20.737Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T11:04:22.048Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T11:04:31.368Z",
       "repository": "okteto/okteto",
@@ -1403,6 +1368,41 @@
       "repository": "FusionCow/Sulphur-3",
       "learningId": "learn-huggingface-fusioncow-sulphur-3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T11:12:30.223Z",
+      "repository": "Abiray/MiniMax-H3-Image-GGUF",
+      "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T11:12:32.608Z",
+      "repository": "xiaomi-research/Xiaomi-OCR-0",
+      "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T11:12:38.840Z",
+      "repository": "darrylmorley/whatcable",
+      "learningId": "learn-github-darrylmorley-whatcable",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T11:12:42.401Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T11:12:46.858Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

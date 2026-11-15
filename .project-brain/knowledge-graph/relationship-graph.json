@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T10:53:36.121Z",
+  "updated_at": "2026-11-15T11:14:39.609Z",
   "statistics": {
-    "total_nodes": 252,
-    "total_edges": 140,
+    "total_nodes": 255,
+    "total_edges": 141,
     "domain_distribution": {
-      "D": 197,
+      "D": 200,
       "M": 1,
       "H": 22,
       "J": 10,
@@ -19,7 +19,7 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 140
+      "CONSTRAINED_BY_ARCHITECTURE": 141
     }
   },
   "nodes": {
@@ -5661,6 +5661,73 @@
       ],
       "created_at": "2026-11-15T10:53:36.121Z",
       "updated_at": "2026-11-15T10:53:36.121Z"
+    },
+    "DOM-D-53AB726C": {
+      "id": "DOM-D-53AB726C",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Abiray/MiniMax-H3-Image-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md`  \n> **Source**: huggingface ([https://",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-abiray-minimax-h3-image-gguf/hf-abiray-minimax-h3-image-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T11:12:50.047Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-abiray-minimax-h3-image-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-15T11:13:18.665Z",
+      "updated_at": "2026-11-15T11:13:18.665Z"
+    },
+    "DOM-D-29746EF6": {
+      "id": "DOM-D-29746EF6",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): xiaomi-research/Xiaomi-OCR-0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md`  \n> **Source**: huggingface ([https://",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-xiaomi-research-xiaomi-ocr-0/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T11:13:19.027Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xiaomi-research-xiaomi-ocr-0)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-15T11:13:54.993Z",
+      "updated_at": "2026-11-15T11:13:54.993Z"
+    },
+    "DOM-D-F3C32546": {
+      "id": "DOM-D-F3C32546",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): darrylmorley/whatcable",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  \n> **Source**: github ([https://github.com/dar -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  \n> **Source**: github ([https://github.com/dar",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://darrylmorley-whatcable/darrylmorley-whatcable-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T11:13:55.393Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (darrylmorley-whatcable)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-15T11:14:39.609Z",
+      "updated_at": "2026-11-15T11:14:39.609Z"
     }
   },
   "edges": [
@@ -7063,6 +7130,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-51DD327C [D] with Domain M",
       "created_at": "2026-11-15T10:53:36.121Z"
+    },
+    {
+      "id": "EDGE-C41EC4F16A13",
+      "sourceId": "DOM-D-29746EF6",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-29746EF6 [D] with Domain M",
+      "created_at": "2026-11-15T11:13:54.994Z"
     }
   ]
 }

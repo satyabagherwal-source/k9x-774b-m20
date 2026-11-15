@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-UHWH",
-    "timestamp": "2026-11-10T02:06:49.121Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-0SH3",
-    "timestamp": "2026-11-10T02:11:42.759Z",
-    "repository": "crate-ci/typos",
-    "learningId": "learn-github-crate-ci-typos",
-    "contentHash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-0UYS",
-    "timestamp": "2026-11-10T02:11:45.988Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-BAY3",
-    "timestamp": "2026-11-10T02:19:53.259Z",
-    "repository": "mistralai/Mistral-Large-4-1T-A52B",
-    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-    "contentHash": "e7c29efdf68fc4ad91dbbbb1c70e4cc06b892a553295066738532bb3faa4df56",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-GS0M",
-    "timestamp": "2026-11-10T02:24:08.662Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-GTQ7",
     "timestamp": "2026-11-10T02:24:10.879Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7417,81 @@
     "contentHash": "99952ab2f72cdc7e7524db333db8a7c98703ea38e88d943a741ab1ba2525fe1a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-JIFA",
+    "timestamp": "2026-11-15T11:12:30.214Z",
+    "repository": "Abiray/MiniMax-H3-Image-GGUF",
+    "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
+    "contentHash": "b0a7f55bab89eec331e9727ff2d676e21a5a566c44a5cebc3b7a528ed2592b45",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-JK9J",
+    "timestamp": "2026-11-15T11:12:32.599Z",
+    "repository": "xiaomi-research/Xiaomi-OCR-0",
+    "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+    "contentHash": "5ff1e181b825d5d9690614eff7f7b5470198e6abc7ae39273f278b5aef8786d4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-JP2M",
+    "timestamp": "2026-11-15T11:12:38.830Z",
+    "repository": "darrylmorley/whatcable",
+    "learningId": "learn-github-darrylmorley-whatcable",
+    "contentHash": "76f0494454a7cb26562cde4d5a02a16c08cbe5bd9c23d36edeaa21e964a8c0db",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-JRTJ",
+    "timestamp": "2026-11-15T11:12:42.391Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "8c50138dadd3753e0a7c39eb942b3d0e2a1e1a5935a66b09cb95c1f60fcb790c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-JV9D",
+    "timestamp": "2026-11-15T11:12:46.849Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "910723abce1fbddad86ae0c0fd567fb41e218f8361685db29fe1d19eb3b25c6a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

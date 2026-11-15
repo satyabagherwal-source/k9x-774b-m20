@@ -10078,3 +10078,11 @@
 | `CYCLE-20261115-OBE4` | `2026-11-15T10:48:14.764Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8608` | Yes (`cda1e338...`) |
 | `CYCLE-20261115-UFNZ` | `2026-11-15T10:53:00.239Z` | `FusionCow/Sulphur-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | Yes (`99952ab2...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T10:53:36.123Z` | `hf-fusioncow-sulphur-3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-51DD327C` [Domain D] | Yes (`99c4a04c...`) |
+| `CYCLE-20261115-JIFA` | `2026-11-15T11:12:30.214Z` | `Abiray/MiniMax-H3-Image-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md` | Yes (`b0a7f55b...`) |
+| `CYCLE-20261115-JK9J` | `2026-11-15T11:12:32.599Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md` | Yes (`5ff1e181...`) |
+| `CYCLE-20261115-JP2M` | `2026-11-15T11:12:38.830Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md` | Yes (`76f04944...`) |
+| `CYCLE-20261115-JRTJ` | `2026-11-15T11:12:42.391Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8609` | Yes (`8c50138d...`) |
+| `CYCLE-20261115-JV9D` | `2026-11-15T11:12:46.849Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8610` | Yes (`910723ab...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T11:13:18.666Z` | `hf-abiray-minimax-h3-image-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-53AB726C` [Domain D] | Yes (`bd580ea8...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T11:13:54.995Z` | `hf-xiaomi-research-xiaomi-ocr-0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-29746EF6` [Domain D] | Yes (`7945c5cf...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T11:14:39.611Z` | `darrylmorley-whatcable` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F3C32546` [Domain D] | Yes (`1ead0fbb...`) |

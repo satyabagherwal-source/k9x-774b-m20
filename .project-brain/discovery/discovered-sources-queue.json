@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T10:53:36.616Z",
+  "updated_at": "2026-11-15T11:13:55.010Z",
   "stats": {
-    "total_discovered": 3673,
-    "approved_pending_harvest": 3463,
+    "total_discovered": 3675,
+    "approved_pending_harvest": 3465,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3442,
+      "COMMUNITY_AND_EXPERT": 3444,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79357,6 +79357,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
         "fileName": "databendlabs-databend-learnings.md"
+      }
+    },
+    "SRC-DFDFE0510CAA": {
+      "id": "SRC-DFDFE0510CAA",
+      "url": "https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF",
+      "title": "https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T11:13:18.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md",
+        "fileName": "hf-abiray-minimax-h3-image-gguf-learnings.md"
+      }
+    },
+    "SRC-11D232DD0389": {
+      "id": "SRC-11D232DD0389",
+      "url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+      "title": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T11:13:55.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
+        "fileName": "hf-xiaomi-research-xiaomi-ocr-0-learnings.md"
       }
     }
   }

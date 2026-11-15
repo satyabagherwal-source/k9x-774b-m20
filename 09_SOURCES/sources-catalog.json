@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "00b6db8f",
+    "sourceVersion": "195c21fb",
     "license": "Apache-2.0",
-    "contentHash": "2eb75347f7602cfdc1211830314db921707241cef1f6a83ed4b53fa9ad747c63",
-    "lastHarvestedAt": "2026-11-13T23:42:00.584Z",
+    "contentHash": "8c50138dadd3753e0a7c39eb942b3d0e2a1e1a5935a66b09cb95c1f60fcb790c",
+    "lastHarvestedAt": "2026-11-15T11:12:42.395Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "831a1ce2",
+    "sourceVersion": "9e4744a6",
     "license": "AGPL-3.0",
-    "contentHash": "78a04f292e2b84aee5de9bbbb739bb9a310f75a7d8e6969da4a03945b15e054c",
-    "lastHarvestedAt": "2026-11-13T21:58:48.274Z",
+    "contentHash": "910723abce1fbddad86ae0c0fd567fb41e218f8361685db29fe1d19eb3b25c6a",
+    "lastHarvestedAt": "2026-11-15T11:12:46.853Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -7893,10 +7893,10 @@
     "repository": "darrylmorley/whatcable",
     "platform": "github",
     "sourceUrl": "https://github.com/darrylmorley/whatcable",
-    "sourceVersion": "6d8580a0",
+    "sourceVersion": "67be75e4",
     "license": "NOASSERTION",
-    "contentHash": "3789f30ef3bcb7d8fca6eb9d66b50d22d1d4c1c7b3b4e3db99f0ed34cf2b93f7",
-    "lastHarvestedAt": "2026-11-12T01:12:06.365Z",
+    "contentHash": "76f0494454a7cb26562cde4d5a02a16c08cbe5bd9c23d36edeaa21e964a8c0db",
+    "lastHarvestedAt": "2026-11-15T11:12:38.834Z",
     "learningId": "learn-github-darrylmorley-whatcable"
   },
   "xcodesorg-xcodesapp": {
@@ -11725,8 +11725,8 @@
     "sourceUrl": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
     "sourceVersion": "hf-xiaomi-research-xiaomi-ocr-0",
     "license": "Open-Source",
-    "contentHash": "2f70e81c46fcda9f0f160776b762950140775452b5baf9736571caf552578577",
-    "lastHarvestedAt": "2026-11-09T22:14:51.340Z",
+    "contentHash": "5ff1e181b825d5d9690614eff7f7b5470198e6abc7ae39273f278b5aef8786d4",
+    "lastHarvestedAt": "2026-11-15T11:12:32.602Z",
     "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0"
   },
   "hf-liquidai-d1-2b": {
@@ -12598,5 +12598,15 @@
     "contentHash": "ae94b3e76a9776789459b18f1d7dbebecbca20c1185ffb0f4945ef536c7766fd",
     "lastHarvestedAt": "2026-11-15T00:05:27.873Z",
     "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b"
+  },
+  "hf-abiray-minimax-h3-image-gguf": {
+    "repository": "Abiray/MiniMax-H3-Image-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF",
+    "sourceVersion": "hf-abiray-minimax-h3-image-gguf",
+    "license": "Open-Source",
+    "contentHash": "b0a7f55bab89eec331e9727ff2d676e21a5a566c44a5cebc3b7a528ed2592b45",
+    "lastHarvestedAt": "2026-11-15T11:12:30.217Z",
+    "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf"
   }
 }
