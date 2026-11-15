@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T05:37:24.345Z",
+  "last_updated": "2026-11-15T06:00:50.966Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -88,7 +88,7 @@
       "staged_for_review": 1
     },
     "projectdiscovery-nuclei-learnings.md": {
-      "processed_at": "2026-11-11T09:41:14.932Z",
+      "processed_at": "2026-11-15T06:00:50.251Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -213,7 +213,7 @@
       "staged_for_review": 1
     },
     "temporalio-temporal-learnings.md": {
-      "processed_at": "2026-11-13T20:47:20.216Z",
+      "processed_at": "2026-11-15T06:00:49.548Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2891,9 +2891,14 @@
       "processed_at": "2026-11-15T05:37:22.734Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md": {
+      "processed_at": "2026-11-15T06:00:49.205Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 987,
-  "total_canonical_promoted": 243,
-  "total_staged_for_review": 743
+  "total_dossiers_evaluated": 990,
+  "total_canonical_promoted": 244,
+  "total_staged_for_review": 745
 }

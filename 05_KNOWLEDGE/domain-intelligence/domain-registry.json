@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T05:37:24.066Z",
-  "total_records": 967,
+  "last_updated": "2026-11-15T06:00:50.681Z",
+  "total_records": 973,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 475,
+      "total": 478,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -512,7 +512,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-sft-core-invariants",
         "DOM-D-C2638E7B",
-        "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i"
+        "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
+        "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-1017-core-invari",
+        "DOM-D-3FA9CA89",
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning"
       ]
     },
     "E": {
@@ -550,7 +553,7 @@
       ]
     },
     "G": {
-      "total": 160,
+      "total": 163,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -711,7 +714,10 @@
         "domain_intelligence-architecture-intelligence-kuddev-pebrel-core-invariants",
         "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants",
-        "domain_intelligence-architecture-intelligence-zeronsh-zeron-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-zeronsh-zeron-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-temporalio-temporal-core-invariants",
+        "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7176,10 +7182,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "6952d996df5001b71ace36a921974c5540044646b78fbabed78fe4601abacf69",
-      "created_at": "2026-11-14T22:57:50.480Z"
+      "content_hash": "922e01ed542407758e6e33ebdaa7fcf86876d001149d642cd16bf41166e1062f",
+      "created_at": "2026-11-15T06:00:14.968Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -14316,8 +14322,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "bd316659a3b625225e916f5c6376586fb89ee6d888dcadd49a67e7cb66b17755",
-      "created_at": "2026-11-14T12:34:03.625Z"
+      "content_hash": "12cd4647434ddc833954dab7090002a79df5ffbed7e42b326b5be6b40b868595",
+      "created_at": "2026-11-15T06:00:12.354Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -18780,6 +18786,93 @@
       "repository": "hf-openmoss-team-moss-image-sft-learnings",
       "content_hash": "a1bbc4d53c875ebac75c384809aa56ca6b7e66e87c8f78f22e868ff7db6b14c2",
       "created_at": "2026-11-15T05:37:22.962Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-1017-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-1017-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash-1017 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-1017-research-knowledge-intelligence-deepseek.md",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "content_hash": "19554dc738bbcddeec5767c6181dcf0ce16023bcc0618769d1524f99dfbc7c31",
+      "created_at": "2026-11-15T06:00:00.748Z"
+    },
+    "domain_intelligence-architecture-intelligence-temporalio-temporal-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-temporalio-temporal-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: temporalio/temporal Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-architecture-intelligence-temporalio-temporal-core-invariant.md",
+      "repository": "temporalio/temporal",
+      "content_hash": "82accb0f703c2dc7f178142e7053e7ae0b79411a82cef7a903a103df348d4763",
+      "created_at": "2026-11-15T06:00:10.565Z"
+    },
+    "DOM-D-3FA9CA89": {
+      "record_id": "DOM-D-3FA9CA89",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017))  \n> **Source Version**: `hf-deepseek-",
+      "content_hash": "fe5dd88982ea2eef090a359629ce157162d9f16de41b5ea5976f3fac1487917d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-v4.1-flash-1017/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T06:00:17.872Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-v4.1-flash-1017)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-deepseek-ai-deepseek-v4.1-flash-1017"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T06:00:49.124Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-1017-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings",
+      "content_hash": "9c6d1bf7ca5baa3bdee8e55b22db7cade55a627f8dbf823af6874c4300ebaeb9",
+      "created_at": "2026-11-15T06:00:49.430Z"
+    },
+    "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: temporalio-temporal-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-learnings-architecture-intelligence-temporalio-temporal-lear.md",
+      "repository": "temporalio-temporal-learnings",
+      "content_hash": "dbc25bdadf081e2f709540653f7a97c20937896530f1c69da7c69afd974134d4",
+      "created_at": "2026-11-15T06:00:49.991Z"
+    },
+    "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "content_hash": "30b20b3d17755f156ecd89b2a66987c4734a55a9b61fa23ada6e04e7da2325ad",
+      "created_at": "2026-11-15T06:00:50.681Z"
     }
   }
 }

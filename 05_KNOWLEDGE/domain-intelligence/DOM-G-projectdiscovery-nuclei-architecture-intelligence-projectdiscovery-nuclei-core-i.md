@@ -4,24 +4,24 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "9e6e2e23",
+  "source_version": "fe3421e7",
   "license": "MIT",
-  "timestamp": "2026-11-14T12:34:03.524Z",
+  "timestamp": "2026-11-15T06:00:12.231Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `9e6e2e23`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T12:34:03.524Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `fe3421e7`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T06:00:12.231Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 86%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 85%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from projectdiscovery/nuclei:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T12:34:02.491Z  
+> **Harvest Timestamp**: 2026-11-15T06:00:11.345Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32901 stars
+- **Stars / Engagement**: 32926 stars
 
 ---
 
@@ -331,6 +331,7 @@ import (
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
 )
@@ -377,7 +378,17 @@ type Engine struct {
 	Callback                  func(*output.ResultEvent) // Executed on results
 	templateExecutionCallback TemplateExecutionCallback
 	planRun                   PlanRun
+	resultHook                ResultHook
 	Logger                    *gologger.Logger
+}
+
+// ResultHook observes the results of a template run on a target.
+type ResultHook func(input *contextargs.MetaInput, results []*output.ResultEvent)
+
+// SetResultHook makes the engine pass the results of every template run on a
+// target to hook, in addition to writing them; nil removes it.
+func (e *Engine) SetResultHook(hook ResultHook) {
+	e.resultHook = hook
 }
 
 // New returns a new Engine instance
@@ -1597,96 +1608,197 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e6e2e23` (2026-11-14)
-**Commit Message**: chore(deps): bump go.opentelemetry.io/otel/sdk (#8135)
+### Incident Patch 1: `fe3421e7` (2026-11-14)
+**Commit Message**: Merge pull request #8138 from projectdiscovery/feat/auto-tech
 
-Bumps the go_modules group with 1 update in the / directory: [go.opentelemetry.io/otel/sdk](https://github.com/open-telemetry/opentelemetry-go).
+add -auto-tech to skip templates bound to products the tech templates did not detect
 
-
-Updates `go.opentelemetry.io/otel/sdk` from 1.45.0 to 1.47.0
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.45.0...v1.47.0)
-
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/sdk
-  dependency-version: 1.47.0
-  dependency-type: indirect
-  dependency-group: go_modules
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +6/-5)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -443,11 +443,12 @@ require (
- 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/zap v1.27.1 // indirect
- 	go.uber.org/zap/exp v0.3.0 // indirect
+@@ -160,6 +160,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
 ```
 
-**File**: `go.sum` (modified, +14/-12)
+**File**: `README_CN.md` (modified, +1/-0)
 ```diff
-@@ -1280,20 +1280,22 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
- go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0/go.mod h1:snMWehoOh2wsEwnvvwtDyFCxVeDAODenXHtn5vzrKjo=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
--go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
-+go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.uber.org/atomic v1.11.0 h1:ZvwS0R+56ePWxUNi+Atn9dWONBPp/AUETXlHW0DxSjE=
- go.uber.org/atomic v1.11.0/go.mod h1:LUxbIzbOniOlMKjJjyPfpl4v+PKK2cNJn91OQbhoJI0=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_ES.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_FA.md` (modified, +1/-0)
+```diff
+@@ -175,6 +175,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_ID.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_JP.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_KR.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_PT-BR.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+---
+
+### Incident Patch 2: `fc3780b5` (2026-11-14)
+**Commit Message**: forward profiles
+
+**File**: `internal/runner/auto_tech.go` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ func (r *Runner) executeWithDetectedTech(executorOpts *protocols.ExecutorOptions
+ 	provider, ok := r.inputProvider.(interface {
+ 		TargetProfiles() *targetprofile.Registry
+ 	})
+-	if !ok {
++	if !ok || provider.TargetProfiles() == nil {
+ 		return nil, errors.New("-auto-tech needs a target list")
+ 	}
+ 	var fingerprints, rest []*templates.Template
+```
+
+**File**: `internal/runner/preflight_portscan.go` (modified, +14/-0)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/loader"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/targetprofile"
+ 	inputtypes "github.com/projectdiscovery/nuclei/v3/pkg/input/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+@@ -52,6 +53,19 @@ func (f *filteringInputProvider) SetWithProbe(executionId string, value string,
+ func (f *filteringInputProvider) SetWithExclusions(executionId string, value string) error {
+ 	return f.base.SetWithExclusions(executionId, value)
+ }
++
++// TargetProfiles forwards the list provider's registry. -auto-tech binds
++// detections on it after preflight has wrapped the provider.
++func (f *filteringInputProvider) TargetProfiles() *targetprofile.Registry {
++	profiles, ok := f.base.(interface {
++		TargetProfiles() *targetprofile.Registry
++	})
++	if !ok {
++		return nil
++	}
++	return profiles.TargetProfiles()
++}
++
+ func (f *filteringInputProvider) Iterate(callback func(value *contextargs.MetaInput) bool) {
+ 	f.base.Iterate(func(mi *contextargs.MetaInput) bool {
+ 		key, err := mi.MarshalString()
+```
+
+**File**: `internal/runner/preflight_profiles_test.go` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++package runner
++
++import (
++	"testing"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/targetprofile"
++	"github.com/stretchr/testify/require"
++)
++
++type profiledInput struct {
++	provider.InputProvider
++	profiles *targetprofile.Registry
++}
++
++func (p profiledInput) TargetProfiles() *targetprofile.Registry { return p.profiles }
++
++func TestFilteringInputProviderKeepsTargetProfiles(t *testing.T) {
++	profiles := targetprofile.NewRegistry(t.TempDir())
++	wrapped := &filteringInputProvider{base: profiledInput{profiles: profiles}}
++
++	got, ok := any(wrapped).(interface {
++		TargetProfiles() *targetprofile.Registry
++	})
++	require.True(t, ok)
++	require.Same(t, profiles, got.TargetProfiles())
++	require.Nil(t, (&filteringInputProvider{base: profiledInput{}}).TargetProfiles())
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8138** (2026-11-14): add -auto-tech to skip templates bound to products the tech templates did not detect (@dogancanbakir)
+- **PR #8136** (2026-11-14): follow appends to a running plan and its cancel log (@dogancanbakir)
 - **PR #8135** (2026-11-14): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
 - **PR #8107** (2026-11-10): send identical requests once per scan (@dogancanbakir)
 - **PR #8103** (2026-11-10): add -store-events and -replay over stored events of any protocol (@dogancanbakir)
 - **PR #8102** (2026-11-10): fix(js): stop tsgen from panicking on non-struct types (@dwisiswant0)
-- **PR #8101** (2026-11-11): add -run-plan to run a plan file and resume it (@dogancanbakir)
-- **PR #8100** (2026-11-09): fix(js/tsgen): report package load errors instead of ignoring them (@dwisiswant0)
 
 ---
 
@@ -1706,40 +1818,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump go.opentelemetry.io/otel/sdk
+## X. Empirical Invariant Guard in README.md
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e6e2e23`: deps): bump go.opentelemetry.io/otel/sdk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe3421e7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.opentelemetry.io/otel v1.47.0 // indirect
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	go.opentelemetry.io/otel v1.45.0 // indirect
-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e6e2e23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe3421e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

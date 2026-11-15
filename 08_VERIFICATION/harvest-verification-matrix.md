@@ -10034,3 +10034,8 @@
 | `CYCLE-20261115-DGIW` | `2026-11-15T05:31:52.424Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`6a34b868...`) |
 | `CYCLE-20261115-JQKC` | `2026-11-15T05:36:45.372Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`defb48f5...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T05:37:22.734Z` | `hf-openmoss-team-moss-image-sft` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C2638E7B` [Domain D] | Yes (`5f760e13...`) |
+| `CYCLE-20261115-DN3P` | `2026-11-15T06:00:00.565Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`c29e5332...`) |
+| `CYCLE-20261115-DUJZ` | `2026-11-15T06:00:10.223Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8581` | Yes (`6ba19f9d...`) |
+| `CYCLE-20261115-DVY2` | `2026-11-15T06:00:12.026Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7277` | Yes (`4738272a...`) |
+| `CYCLE-20261115-DXYT` | `2026-11-15T06:00:14.645Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8549` | Yes (`ab35ea80...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:00:49.205Z` | `hf-deepseek-ai-deepseek-v4.1-flash-1017` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3FA9CA89` [Domain D] | Yes (`fe5dd889...`) |

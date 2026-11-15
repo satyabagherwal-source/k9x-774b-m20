@@ -4,22 +4,22 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/turso",
-  "source_version": "13626c16",
+  "source_version": "c718b2ad",
   "license": "MIT",
-  "timestamp": "2026-11-13T19:40:03.949Z",
+  "timestamp": "2026-11-15T06:00:14.853Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `13626c16`).  
-> **License**: MIT | **Timestamp**: `2026-11-13T19:40:03.949Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `c718b2ad`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T06:00:14.853Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tursodatabase/turso` (Commit: `13626c16`)
+- **Target Repository**: `tursodatabase/turso` (Commit: `c718b2ad`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:40:02.721Z  
+> **Harvest Timestamp**: 2026-11-15T06:00:14.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25246 stars
+- **Stars / Engagement**: 25259 stars
 
 ---
 
@@ -1443,14 +1443,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11820** (2026-11-13): **core: keep the sequences of every namespace across VACUUM**
-  *Symptoms*: Some VACUUM paths reparse the schema and keep the sequence descriptors it had before, but they kept only the sequences of the root namespace. PostgreSQL sequences live in the namespace of their schema, so the reparsed schema lost them. The copy SELECT of a `bigserial` or `smallserial` column (a custom integer type) reads it through its encoded default, and with the sequence gone it could no longer resolve the `nextval()` default and failed with `sequence "__turso_ns1_t_id_seq" does not exist`.  The descriptors are now kept for every namespace, both for the reparse of the source and for the schema installed after the copy.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `0933a948955c` is [here](https://github.com/tursodatabase/turso/pull/11820#pullrequestreview-5895672097).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:0933a948955cb50132bb5e56050b136fc4be6334 --> <!-- autofixer:contributor-review-recommends:0933a948955cb50132bb5e56050b136fc4be6334 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiMDkzM2E5NDg5NTVjYjUwMTMyYmI1ZTU2MDUwYjEzNmZjNGJlNjMzNCIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMTNUMTc6NDU6MjAuMjQ0WiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
-  > ### Autofixer follow-ups  - Not filed: VACUUM of any database that has __turso_internal_classes leaves out the empty…. The input cannot be run with the shipped tools: tursodb refuses to open a database that tursopg created, and tursopg rejects VACUUM, so the SQLite-connection-then-PostgreSQL-connection sequence needs a Rust test written for it.  <!-- autofixer:follow-ups-done -->
+- **Issue #11844** (2026-11-14): **core/mvcc: read-only accessors for tests, and move the tests that only read store state**
+  *Symptoms*: Unit tests in core that open a database keep the SQL parser inside core, so they have to move to `tests/integration/mvcc/`. Some of them read private fields of `MvStore`, `Transaction`, `Connection`, `Database` and `Pager` to check internal state. This PR gives those tests a small read-only API, changes them to use it, and moves the ones that then need nothing private.  It is an alternative to the field part of #11822: no field becomes public, no module becomes public, and there is no macro or feature that widens visibility. Follow-up to #11839.  ## What changes in core  All of it is read-only. No logic changes.  - `MvStore::tx_snapshot(tx_id) -> Option<TxSnapshot>`: state, begin timestamp, number of transactions it waits for, `abort_now` and `log_appended` of one transaction. Replaces lookups in `txs` and reads of `Transaction` fields. `TransactionState` is public because the snapshot returns it. - `MvStore::watermarks() -> Watermarks`: `last_committed_tx_ts` and `durable_txid_max`. Replaces loads of the two atomics. - `MvStore::debug_gc_snapshot()` and `GcDebugSnapshot` are public, and the snapshot has three new values: `finalized_tx_states` (replaces `finalized_tx_states.len()`), `table_sweep_unfinished` and `index_sweep_unfinished` (replace `gc_table_cursor` / `gc_index_cursor` `.lock().is_some()`). Its `active_txs` replaces `txs.is_empty()`. - `MvStore::should_checkpoint()`: replaces `storage.should_checkpoint()`. - `Database::clone_schema()` is public: replaces `Databas
 
-- **Issue #11819** (2026-11-13): **tests: move blob I/O, native extension and statement lifecycle tests out of core**
-  *Symptoms*: Unit tests in core that open a database or run SQL need a dialect that can parse SQL. In core that is `EngineDialect`, which exists mostly for those tests and keeps the SQL parser inside core. This is the first of five PRs that move such tests out of core, so that the engine dialect can be removed afterwards in a small PR (#11816) that touches almost no tests.  This PR moves three test files to the integration tests, where they open databases with `SqliteDialect`:  - `core/vdbe/blob_io_tests.rs` to `tests/integration/blob_io.rs` - `core/vdbe/native_extension_tests.rs` to `tests/integration/native_extension.rs` - `core/vdbe/statement_lifecycle_tests.rs` to `tests/integration/statement_lifecycle.rs`  The test bodies change only in their paths: `crate::` becomes `turso_core::`, and `EngineDialect` becomes `SqliteDialect`.  ## What changes in core  - The tests use items of `turso_core` that were private to the crate, so those become public: a few modules (`connection`, `function`, `vtab`, `attach`, `sync`) and some functions, fields and types. No logic changes. - A few hooks that were compiled only for the crate's own tests (`#[cfg(test)]`) are now also compiled with the `test_helper` feature.  ## What changes in the integration test crate  - It gets the features core enables by default (`json`, `series`, `uuid` and so on), so the feature checks in the moved tests keep their meaning. - It gets `branches` as a dev-dependency, because the `return_if_io!` macro expands to a call int
+- **Issue #11840** (2026-11-14): **tests: move MVCC checkpoint tests out of core**
+  *Symptoms*: Unit tests in core that open a database or run SQL keep the SQL parser inside core. This PR moves MVCC checkpoint tests to `tests/integration/mvcc/checkpoint.rs`. It is an alternative to the MVCC part of #11822: instead of making the fields of `MvStore`, `RowVersion` and the checkpoint state machine public under `test_helper`, the tests stop reading fields.  Follow-up to #11839.  ## The approach  The unit tests in `core/mvcc/database/checkpoint.rs` built a `CheckpointStateMachine` over an empty database, pushed hand-made row versions into the private maps of the store, called one private step, and read the private write sets. None of them ran SQL.  The new tests commit rows with SQL, step a real checkpoint with the already public `step()`, and read what it collected through a few new read-only methods. A test that needs a commit in the middle of a checkpoint uses a passive checkpoint and a second connection, which is how that happens for real.  ## What changes in core  - `checkpointable_versions()` is a free function now. Which versions of a row a checkpoint writes depends on three inputs only, so its tests need no database and stay in core. - `CheckpointStateMachine` gets `state()`, `bounds()`, `collected_table_rows()`, `collected_index_rows()` and `collected_table_drop()`. The first two replace test-only methods. - `COLLECT_PREEMPTION_THRESHOLD` is public. - `CheckpointYieldPoint`, `CommitYieldPoint`, `ExclusiveTxYieldPoint` and `TransactionYieldPoint` are public, like `Cur
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1467,598 +1464,935 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13626c16` (2026-11-13)
-**Commit Message**: Merge 'core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE' from Glauber Costa
+### Incident Patch 1: `c718b2ad` (2026-11-14)
+**Commit Message**: Merge 'tests: move the MVCC tests that need only the public API out of core' from Pekka Enberg
 
-The PostgreSQL translator already turns `UPDATE ... SET col = DEFAULT`
-into `Expr::Default`, but UPDATE and upsert never replaced it. Binding
-rejected it for every column with "DEFAULT is only valid in INSERT
-VALUES". Both paths now replace it with the column default, the same
-value `VALUES (DEFAULT)` uses, through a helper shared with INSERT.
+Core will stop parsing SQL by itself, and opening a database parses SQL,
+so a test that opens a database cannot stay in core. This moves the 216
+MVCC tests that compile against core as it is on main to
+`tests/integration/mvcc/`. They use SQL and the public methods of
+`MvStore`, `Connection` and `Database`, including the read-only
+accessors from #11844.
 
-`DEFAULT` must be the whole expression of the assignment, or one element
-of a row value, so `SET (a, c) = (DEFAULT, 5)` works in UPDATE and in
-`ON CONFLICT DO UPDATE`. An expression that contains it still fails with
-the same error.
+Core itself does not change: no item becomes public, no `cfg` is
+widened, and there is no visibility macro.
 
-**Both dialects.** sqlite3 does not accept `DEFAULT` in `VALUES` either,
-and Turso accepts it there on purpose as a documented extension that
-follows the SQL standard. This extends the same extension to `SET`, so
-the engine resolves `Expr::Default` wherever the AST holds one and no
-dialect decision is needed. The SQLite-runner tests are marked `@skip-if
-sqlite`, and `update.mdx` and `insert.mdx` mark the new form as a Turso
-extension. Maintainers should decide whether they want it in the SQLite
-dialect or only in PostgreSQL.
+- `core/mvcc/database/tests.rs`: 187 tests move to `database.rs`, 166
+stay.
+- `core/mvcc/database/hermitage_tests.rs`: all 17 tests move to
+`hermitage.rs`.
+- `core/mvcc/database/group_commit_tests.rs`: 11 tests move to
+`group_commit.rs`, 9 stay.
+- `core/mvcc/mod.rs`: 1 test moves to `store.rs`.
 
-**File**: `core/translate/insert.rs` (modified, +21/-12)
+The tests keep their names and assertions; only paths and fixture calls
+change. The set of test names under `core/mvcc` and
+`tests/integration/mvcc` is the same before and after (624). Helpers
+that both sides need are in both places. The fixture gains
+`new_encrypted` and `set_encryption`.
+
+122 tests that open a database and also use private
+
+**File**: `Cargo.lock` (modified, +2/-0)
 ```diff
-@@ -7,6 +7,7 @@ use crate::translate::emitter::RegisterColumn;
- use crate::translate::emitter::{
-     emit_index_column_value_old_image, emit_partial_index_where_old_image, gencol,
+@@ -1203,9 +1203,11 @@ dependencies = [
+  "rand 0.9.4",
+  "rand_chacha 0.9.0",
+  "rusqlite",
++ "rustc-hash 2.1.1",
+  "serde_json",
+  "serial_test",
+  "similar-asserts",
++ "sorted-vec",
+  "sql_generation",
+  "tempfile",
+  "test-log",
+```
+
+**File**: `core/mvcc/database/group_commit_tests.rs` (modified, +1/-226)
+```diff
+@@ -1,21 +1,11 @@
+ use super::{get_rows, FixedYieldInjector, MvccTestDbNoConn};
+ use crate::mvcc::database::{CommitCoordinator, CommitYieldPoint, GroupWork, LogRecord};
+ use crate::mvcc::yield_hooks::YieldPointMarker;
+-use crate::security::roles::SessionRole;
+ use crate::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+-use crate::{ConnectOpts, Connection, Database, LimboError, StepResult, SyncMode, Value};
++use crate::{Connection, LimboError, StepResult, SyncMode, Value};
+ use std::sync::{Arc, Barrier};
+ use std::time::{Duration, Instant};
+ 
+-fn pragma_int(conn: &Arc<Connection>, query: &str) -> i64 {
+-    let rows = get_rows(conn, query);
+-    assert_eq!(rows.len(), 1, "{query} returned {rows:?}");
+-    match rows[0][0] {
+-        Value::Numeric(crate::Numeric::Integer(n)) => n,
+-        ref other => panic!("{query} returned {other:?}"),
+-    }
+-}
+-
+ fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
+     for _ in 0..100_000 {
+         match conn.execute(sql) {
+@@ -27,113 +17,6 @@ fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
+     Err(LimboError::Busy)
+ }
+ 
+-#[test]
+-fn group_commit_pragma_defaults_on_and_round_trips() {
+-    let db = MvccTestDbNoConn::new_with_random_db();
+-    let conn = db.connect();
+-
+-    assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
+-
+-    for off in ["no", "off", "false", "0"] {
+-        conn.execute(format!("PRAGMA mvcc_group_commit = {off}"))
+-            .unwrap();
+-        assert_eq!(
+-            pragma_int(&conn, "PRAGMA mvcc_group_commit"),
+-            0,
+-            "`= {off}` should disable group commit"
+-        );
+-        conn.execute("PRAGMA mvcc_group_commit = on").unwrap();
+-        assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
+-    }
+-}
+-
+-#[test]
+-fn group_commit_pragma_is_store_wide() {
+-    let db = MvccTestDbNoConn::new_with_random_db();
+-    let setter = db.connect();
+-    let observer = db.connect();
+-
+-    setter.execute("PRAGMA mvcc_group_commit = yes").unwrap();
+-    assert_eq!(pragma_int(&observer, "PRAGMA mvcc_group_commit"), 1);
+-}
+-
+-#[test]
+-fn group_commit_pragma_needs_mvcc() {
+-    let io = Arc::new(crate::io::MemoryIO::new());
+-    let db = Database::open_file(io, ":memory:", Arc::new(crate::EngineDialect)).unwrap();
+-    let conn = db
+-        .connect(ConnectOpts::new(SessionRole::Superuser))
+-        .unwrap();
+-
+-    let err = conn
+-        .execute("PRAGMA mvcc_group_commit = yes")
+-        .expect_err("group commit needs an MVCC store");
+-    assert!(
+-        err.to_string().contains("MVCC not enabled"),
+-        "unexpected error: {err}"
+-    );
+-    let err = conn
+-        .prepare("PRAGMA mvcc_group_commit")
+-        .expect_err("querying group commit needs an MVCC store");
+-    assert!(
+-        err.to_string().contains("MVCC not enabled"),
+-        "unexpected error: {err}"
+-    );
+-}
+-
+-fn two_writers_both_commit(db: MvccTestDbNoConn, group_commit: bool) {
+-    let setup = db.connect();
+-    setup
+-        .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
+-        .unwrap();
+-    if group_commit {
+-        setup.execute("PRAGMA mvcc_group_commit = yes").unwrap();
+-    }
+-    setup.close().unwrap();
+-
+-    let conn_a = db.connect();
+-    let conn_b = db.connect();
+-    let rounds = 40i64;
+-    for round in 0..rounds {
+-        conn_a.execute("BEGIN CONCURRENT").unwrap();
+-        conn_b.execute("BEGIN CONCURRENT").unwrap();
+-        exec_retry(&conn_a, &format!("INSERT INTO t VALUES ({}, 1)", round * 2)).unwrap();
+-        exec_retry(
+-            &conn_b,
+-            &format!("INSERT INTO t VALUES ({}, 1)", round * 2 + 1),
+-        )
+-        .unwrap();
+-        exec_retry(&conn_a, "COMMIT").unwrap();
+-        exec_retry(&conn_b, "COMMIT").unwrap();
+-    }
+-
+-    let reader = db.connect();
+-    assert_eq!(
+-        get_rows(&reader, "SELECT COUNT(*) FROM t"),
+-        vec![vec![Value::from_i64(rounds * 2)]]
+-    );
+-}
+-
+-#[test]
+-fn two_writers_both_commit_with_group_commit_truncate() {
+-    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), true);
+-}
+-
+-#[test]
+-fn two_writers_both_commit_with_group_commit_passive() {
+-    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), true);
+-}
+-
+-#[test]
+-fn two_writers_both_commit_with_group_commit_off_truncate() {
+-    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), false);
+-}
+-
+-#[test]
+-fn two_writers_both_commit_with_group_commit_off_passive() {
+-    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), false);
+-}
+-
+ #[test]
+ fn commits_batch_into_one_group() {
+     let db = MvccTestDbNoConn::new_with_random_db();
+@@ -205,56 +88,6 @@ fn commits_batch_into_one_group() {
+     );
+ }
+ 
+-#[test]
+-fn batched_records_survive_a_restart() {
+-    let mut db = MvccTestDbNoConn::new_with_random_db();
+-    const WRITERS: usize = 4;
+-    let rounds = 25usize;
+-    {
+-        let setup = db.connect();
+-        setup
+-            .exec
+```
+
+**File**: `core/mvcc/database/mod.rs` (modified, +0/-2)
+```diff
+@@ -82,8 +82,6 @@ use super::portable_logical::{
+     portable_schema_row_from_record, PortableLogicalBuilder, PortableObjectMapEntry,
  };
-+use crate::translate::update::bind_set_expr;
- use crate::translate::{roles, row_security};
- use crate::turso_debug_assert;
- use crate::{
-@@ -1762,7 +1763,7 @@ fn resolve_upserts(
-         } = upsert.do_clause
-         {
-             // Normalize SET pairs once
--            let mut rewritten_sets = collect_set_clauses_for_upsert(table, sets)?;
-+            let mut rewritten_sets = collect_set_clauses_for_upsert(table, sets, resolver)?;
-             let set_column_names: Vec<_> = sets
-                 .iter()
-                 .flat_map(|set| set.col_names.iter().cloned())
-@@ -2179,19 +2180,28 @@ fn resolve_defaults_in_row(
-             })
-         };
-         *expr = match col {
--            Some(col) => col.default.clone().unwrap_or_else(|| {
--                if let Ok(Some(resolved)) = resolver.schema().resolve_type(&col.ty_str, is_strict) {
--                    if let Some(default_expr) = resolved.default_expr() {
--                        return Box::new(default_expr.clone());
--                    }
--                }
--                Box::new(ast::Expr::Literal(ast::Literal::Null))
--            }),
-+            Some(col) => column_default_expr(col, is_strict, resolver),
-             None => Box::new(ast::Expr::Literal(ast::Literal::Null)),
-         };
-     }
- }
  
-+/// The value a column takes when a statement writes DEFAULT to it.
-+pub(crate) fn column_default_expr(
-+    column: &Column,
-+    is_strict: bool,
-+    resolver: &Resolver,
-+) -> Box<Expr> {
-+    column.default.clone().unwrap_or_else(|| {
-+        if let Ok(Some(resolved)) = resolver.schema().resolve_type(&column.ty_str, is_strict) {
-+            if let Some(default_expr) = resolved.default_expr() {
-+                return Box::new(default_expr.clone());
-+            }
-+        }
-+        Box::new(ast::Expr::Literal(ast::Literal::Null))
-+    })
-+}
-+
- #[turso_macros::trace_stack]
- fn bind_insert(
-     program: &mut ProgramBuilder,
-@@ -2314,12 +2324,11 @@ fn bind_insert(
-         } = &mut upsert_opt.do_clause
-         {
-             for set in sets.iter_mut() {
--                bind_and_rewrite_expr(
-+                bind_set_expr(
-                     &mut set.expr,
-                     None,
--                    None,
--                    resolver,
-                     BindingBehavior::AllowUnboundIdentifiers,
-+                    resolver,
-                 )?;
-             }
-             if let Some(ref mut where_expr) = where_clause {
+-#[cfg(test)]
+-pub mod hermitage_tests;
+ #[cfg(test)]
+ pub mod tests;
+ 
 ```
 
-**File**: `core/translate/update.rs` (modified, +37/-6)
+**File**: `core/mvcc/mod.rs` (modified, +0/-44)
 ```diff
-@@ -21,6 +21,7 @@ use turso_parser::ast::{self, Expr};
- 
- use super::emitter::emit_program;
- use super::expr::process_returning_clause;
-+use super::insert::column_default_expr;
- use super::optimizer::optimize_plan;
- use super::plan::{
-     ColumnUsedMask, DmlSafety, JoinedTable, Plan, TableReferences, UpdatePlan, UpdateSetClause,
-@@ -472,12 +473,11 @@ fn prepare_update_plan(
-     read_scope_tables.extend(from_tables);
- 
-     for set in &mut body.sets {
--        bind_and_rewrite_expr(
-+        bind_set_expr(
-             &mut set.expr,
-             Some(&mut read_scope_tables),
--            None,
--            resolver,
-             BindingBehavior::ResultColumnsNotAllowed,
-+            resolver,
-         )?;
-     }
- 
-@@ -490,7 +490,7 @@ fn prepare_update_plan(
-         connection,
-     )?;
- 
--    let set_clauses = collect_update_set_clauses(&mut body.sets, &table, table_name)?;
-+    let set_clauses = collect_update_set_clauses(&mut body.sets, &table, table_name, resolver)?;
- 
-     let result_columns = if !body.returning.is_empty() {
-         // Plan subqueries in RETURNING expressions before processing
-@@ -573,10 +573,37 @@ fn prepare_update_plan(
-     })
- }
- 
-+pub(super) fn bind_set_expr(
-+    expr: &mut Box<Expr>,
-+    mut read_scope_tables: Option<&mut TableReferences>,
-+    behavior: BindingBehavior,
-+    resolver: &Resolver,
-+) -> crate::Result<()> {
-+    if matches!(expr.as_ref(), Expr::Default) {
-+        return Ok(());
-+    }
-+    if let Expr::Parenthesized(exprs) = expr.as_mut() {
-+        if exprs.len() > 1 {
-+            for expr in exprs.iter_mut() {
-+                bind_set_expr(
-+                    expr,
-+                    read_scope_tables.as_deref_mut(),
-+                    behavior.clone(),
-+                    resolver,
-+                )?;
-+            }
-+            return Ok(());
-+        }
-+    }
-+    bind_and_rewrite_expr(expr, read_scope_tables, None, resolver, behavior)?;
-+    Ok(())
-+}
-+
- fn collect_update_set_clauses(
-     sets: &mut [ast::Set],
-     table: &Table,
-     table_name: &str,
-+    resolver: &Resolver,
- ) -> crate::Result<Vec<UpdateSetClause>> {
-     let column_lookup: HashMap<String, usize> = table
-         .columns()
-@@ -591,12 +618,16 @@ fn collect_update_set_clauses(
-         let values = split_update_set_values(*expr, set.col_names.len())?;
- 
-         for (col_name, expr) in set.col_names.iter().zip(values.into_iter()) {
--            let expr = Box::new(expr);
-+            let mut expr = Box::new(expr);
-             let ident = normalize_ident(col_name.as_str());
- 
-             let col_index = match column_lookup.get(&ident) {
-                 Some(idx) => {
--                    table.columns()[*idx].ensure_not_generated("UPDATE", col_name.as_str())?;
-+                    let col = &table.columns()[*idx];
-+                    col.ensure_not_generated("UPDATE", col_name.as_str())?;
-+                    if matches!(expr.as_ref(), Expr::Default) {
-+                        expr = column_default_expr(col, table.is_strict(), resolver);
-+                    }
-                     *idx
-                 }
-                 None => match rowid_name_column_index(table, &ident) {
-```
-
-**File**: `core/translate/upsert.rs` (modified, +8/-3)
-```diff
-@@ -7,6 +7,7 @@ use std::sync::Arc;
- use turso_parser::ast::{self, TriggerEvent, TriggerTime, Upsert};
- 
- use super::emitter::gencol::compute_generated_columns;
-+use super::insert::column_default_expr;
- use crate::alloc::{TryClone, TursoIteratorExt};
- use crate::error::{SQLITE_CONSTRAINT_PRIMARYKEY, SQLITE_ERROR};
- use crate::namespace::{NamespaceId, NamespaceRef};
-@@ -1790,6 +1791,7 @@ fn emit_generated_column_notnull_checks(
- pub fn collect_set_clauses_for_upsert(
-     table: &Table,
-     set_items: &mut [ast::Set],
-+    resolver: &Resolver,
- ) -> crate::Result<Vec<(usize, Box<ast::Expr>)>> {
-     let lookup: HashMap<String, usize> = table
-         .columns()
-@@ -1812,12 +1814,15 @@ pub fn collect_set_clauses_for_upsert(
-                 values.len()
-             );
+@@ -312,48 +312,4 @@ mod tests {
+             th.join().unwrap();
          }
--        for (cn, e) in set.col_names.iter().zip(values.into_iter()) {
-+        for (cn, mut e) in set.col_names.iter().zip(values.into_iter()) {
-             let ident = normalize_ident(cn.as_str());
-             let idx = match lookup.get(&ident) {
-                 Some(idx) => {
--                    // cannot upsert generated column
--                    table.columns()[*idx].ensure_not_generated("UPDATE", cn.as_str())?;
-+                    let col = &table.columns()[*idx];
-+                    col.ensure_not_generated("UPDATE", cn.as_str())?;
-+                    if matches!(e.as_ref(), ast::Expr::Default) {
-+                        e = column_default_expr(col, table.is_strict(), resolver);
-+                    }
-                     *idx
-                 }
-                 None => match rowid_name_column_index(table, &ident) {
-```
-
-**File**: `docs/sql-reference/statements/insert.mdx` (modified, +1/-1)
-```diff
-@@ -155,7 +155,7 @@ INSERT INTO tasks (id, title, status, priority) VALUES
- --          (3, 'Code review', 'in_progress', 0)
- ```
- 
--The `DEFAULT` keyword is only valid inside INSERT VALUES lists. Using it in other contexts (SELECT, WHERE, UPDATE) produces an error.
-+The `DEFAULT` keyword is valid inside INSERT VALUES lists and as the whole expression of an assignment in the `SET` clause of an [UPDATE](/docs/sql-reference/statements/update#default-keyword-in-set) or of `ON CONFLICT DO UPDATE`. Using it in other contexts (SELECT, WHERE) produces an error.
- 
- ## Conflict Handling
- 
-```
-
-**File**: `docs/sql-reference/statements/update.mdx` (modified, +22/-0)
-```diff
-@@ -57,6 +57,28 @@ UPDATE products
- SET (price, updated_at) = (price * 1.10, datetime('now'));
- ```
- 
-+### DEFAULT Keyword in SET
-+
-+<Info>
-+**Turso extension** -- This feature follows the SQL standard (SQL:2016) but is not supported by SQLite. It is the same extension as [`DEFAULT` in INSERT VALUES](/docs/sql-reference/statements/insert#default-keyword-in-values).
-+</Info>
-+
-+The `DEFAULT` keyword can be used in place of the whole expression of an assignment. It sets the column to its default value as defined in the CREATE TABLE statement, or to NULL if no default is defined. It works in the single-column form and for a column in a parenthesized column list, and also in the `DO UPDATE SET` clause of an `ON CONFLICT` upsert.
-+
-+```sql
-+CREATE TABLE tasks (
-+  id INTEGER PRIMARY KEY,
-+  status TEXT DEFAULT 'pending',
-+  priority INTEGER DEFAULT 0
-+);
-+
-+UPDATE tasks SET status = DEFAULT WHERE id = 1;
-+
-+UPDATE tasks SET (status, priority) = (DEFAULT, 5) WHERE id = 2;
-+```
-+
-+`DEFAULT` is only accepted as the whole expression. An expression that contains it, such as `priority = DEFAULT + 1`, produces an error.
-+
- ### FROM Clause
- 
- The `FROM` clause allows the `UPDATE` to reference other tables. Columns from the joined tables can be used in `SET` expressions and the `WHERE` clause. This is useful for updating a table based on matching rows from another table.
-```
-
-**File**: `postgres/conformance/pg-sqltests/table.sqltest` (modified, +22/-0)
-```diff
-@@ -926,3 +926,25 @@ test alter-table-rename-constraint-is-not-supported {
- expect error {
-     ALTER TABLE ... RENAME CONSTRAINT is not supported
+     }
+-
+-    #[test]
+-    fn test_mvcc_dual_cursor_transaction_isolation() {
+-        let res = tracing_subscriber::fmt::try_init();
+-        drop(res);
+-        let mut db = MvccTestDbNoConn::new_with_random_db();
+-
+-        {
+-            let conn = db.connect();
+-            conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, val INTEGER)")
+-                .unwrap();
+-            conn.execute("INSERT INTO t VALUES (1, 100)").unwrap();
+-            conn.execute("INSERT INTO t VALUES (2, 200)").unwrap();
+-            conn.execute("PRAGMA wal_checkpoint(TRUNCATE)").unwrap();
+-        }
+-
+-        db.restart();
+-
+-        // Tx1: Update B-tree row
+-        let conn1 = db.connect();
+-        conn1.execute("BEGIN CONCURRENT").unwrap();
+-        conn1
+-            .execute("UPDATE t SET val = 999 WHERE id = 1")
+-            .unwrap();
+-
+-        // Tx2: Should see old B-tree value, not Tx1's MVCC change
+-        let conn2 = db.connect();
+-        conn2.execute("BEGIN CONCURRENT").unwrap();
+-        let rows = get_rows(&conn2, "SELECT val FROM t WHERE id = 1");
+-        assert_eq!(rows[0][0].as_int().unwrap(), 100); // Original B-tree value
+-
+-        conn1.execute("COMMIT").unwrap();
+-        conn2.execute("COMMIT").unwrap();
+-    }
+-    fn get_rows(conn: &Arc<crate::Connection>, sql: &str) -> Vec<Vec<crate::Value>> {
+-        let mut stmt = conn.prepare(sql).unwrap();
+-        let mut rows = Vec::new();
+-        stmt.run_with_row_callback(|row| {
+-            rows.push(row.get_values().cloned().collect());
+-            Ok(())
+-        })
+-        .unwrap();
+-        rows
+-    }
  }
-+
-+test update-set-default-uses-column-default {
-+    DROP TABLE IF EXISTS defaults_t;
-+    CREATE TABLE defaults_t (a int DEFAULT 7, b text);
-+    INSERT INTO defaults_t (a, b) VALUES (1, 'x');
-+    UPDATE defaults_t SET a = DEFAULT;
-+    SELECT a, b FROM defaults_t;
-+}
-+expect {
-+    7|x
-+}
-+
-+test update-set-default-without-column-default-sets-null {
-+    DROP TABLE IF EXISTS defaults_t;
-+    CREATE TABLE defaults_t (a int, b text);
-+    INSERT INTO defaults_t (a, b) VALUES (1, 'x');
-+    UPDATE defaults_t SET a = DEFAULT;
-+    SELECT CASE WHEN a IS NULL THEN 1 ELSE 0 END, b FROM defaults_t;
-+}
-+expect {
-+    1|x
-+}
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/default_value.sqltest` (modified, +62/-0)
+**File**: `tests/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -133,3 +133,65 @@ test scalar-function-in-default-control {
- expect {
-     1
- }
+@@ -61,6 +61,8 @@ serial_test = { version = "3", features = ["file_locks"] }
+ test-log = { version = "0.2.17", features = ["trace"] }
+ turso_macros.workspace = true
+ crossbeam-epoch = "0.9.18"
++rustc-hash = "2.0"
++sorted-vec = "0.8.6"
+ 
+ [features]
+ default = [
+```
+
+**File**: `tests/integration/mvcc/group_commit.rs` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++use super::checkpoint::{get_rows, FixedYieldInjector};
++use super::test_db::MvccTestDbNoConn;
++use crate::mvcc::SqliteDialect;
++use std::sync::{Arc, Barrier};
++use turso_core::mvcc::database::CommitYieldPoint;
++use turso_core::mvcc::yield_hooks::YieldPointMarker;
++use turso_core::security::roles::SessionRole;
++use turso_core::{ConnectOpts, Connection, Database, LimboError, StepResult, Value};
 +
-+@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
-+test update-set-default-writes-the-column-default {
-+    CREATE TABLE ud1 (a INTEGER DEFAULT 7, b INTEGER);
-+    INSERT INTO ud1 VALUES (1, 2);
-+    UPDATE ud1 SET a = DEFAULT;
-+    SELECT a, b FROM ud1;
-+}
-+expect {
-+    7|2
-+}
-+
-+@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
-+test update-set-default-without-a-column-default-writes-null {
-+    CREATE TABLE ud4 (a INTEGER, b INTEGER);
-+    INSERT INTO ud4 VALUES (1, 2);
-+    UPDATE ud4 SET a = DEFAULT;
-+    SELECT a IS NULL, b FROM ud4;
-+}
-+expect {
-+    1|2
-+}
-+
-+@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
-+test update-set-row-value-default-writes-the-column-default {
-+    CREATE TABLE ud2 (a INTEGER DEFAULT 7, b INTEGER);
-+    INSERT INTO ud2 VALUES (1, 2);
-+    UPDATE ud2 SET (a, b) = (DEFAULT, 3);
-+    SELECT a, b FROM ud2;
-+}
-+expect {
-+    7|3
++fn pragma_int(conn: &Arc<Connection>, query: &str) -> i64 {
++    let rows = get_rows(conn, query);
++    assert_eq!(rows.len(), 1, "{query} returned {rows:?}");
++    match rows[0][0] {
++        Value::Numeric(turso_core::Numeric::Integer(n)) => n,
++        ref other => panic!("{query} returned {other:?}"),
++    }
 +}
 +
-+@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
-+test upsert-set-default-writes-the-column-default {
-+    CREATE TABLE ud3 (a INTEGER DEFAULT 7, b INTEGER UNIQUE);
-+    INSERT INTO ud3 VALUES (1, 2);
-+    INSERT INTO ud3 VALUES (3, 2) ON CONFLICT (b) DO UPDATE SET a = DEFAULT;
-+    SELECT a, b FROM ud3;
-+}
-+expect {
-+    7|2
-+}
-+
-+@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
-+test upsert-set-default-inside-a-row-value {
-+    CREATE TABLE ud4 (a INTEGER DEFAULT 7, b INTEGER UNIQUE, c INTEGER);
-+    INSERT INTO ud4 VALUES (1, 2, 3);
-+    INSERT INTO ud4 VALUES (4, 2, 5) ON CONFLICT (b) DO UPDATE SET (a, c) = (DEFAULT, 9);
-+    SELECT a, b, c FROM ud4;
-+}
-+expect {
-+    7|2|9
++fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
++    for _ in 0..100_000 {
++        match conn.execute(sql) {
++            Ok(()) => return Ok(()),
++            Err(LimboError::Busy) => std::thread::yield_now(),
++            Err(err) => return Err(err),
++        }
++    }
++    Err(LimboError::Busy)
 +}
 +
-+test update-set-expression-containing-default-is-rejected {
-+    CREATE TABLE ud5 (a INTEGER DEFAULT 7);
-+    INSERT INTO ud5 VALUES (1);
-+    UPDATE ud5 SET a = DEFAULT + 1;
++#[test]
++fn group_commit_pragma_defaults_on_and_round_trips() {
++    let db = MvccTestDbNoConn::new_with_random_db();
++    let conn = db.connect();
++
++    assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
++
++    for off in ["no", "off", "false", "0"] {
++        conn.execute(format!("PRAGMA mvcc_group_commit = {off}"))
++            .unwrap();
++        assert_eq!(
++            pragma_int(&conn, "PRAGMA mvcc_group_commit"),
++            0,
++            "`= {off}` should disable group commit"
++        );
++        conn.execute("PRAGMA mvcc_group_commit = on").unwrap();
++        assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
++    }
 +}
-+expect error {}
++
++#[test]
++fn group_commit_pragma_is_store_wide() {
++    let db = MvccTestDbNoConn::new_with_random_db();
++    let setter = db.connect();
++    let observer = db.connect();
++
++    setter.execute("PRAGMA mvcc_group_commit = yes").unwrap();
++    assert_eq!(pragma_int(&observer, "PRAGMA mvcc_group_commit"), 1);
++}
++
++#[test]
++fn group_commit_pragma_needs_mvcc() {
++    let io = Arc::new(turso_core::io::MemoryIO::new());
++    let db = Database::open_file(io, ":memory:", Arc::new(SqliteDialect)).unwrap();
++    let conn = db
++        .connect(ConnectOpts::new(SessionRole::Superuser))
++        .unwrap();
++
++    let err = conn
++        .execute("PRAGMA mvcc_group_commit = yes")
++        .expect_err("group commit needs an MVCC store");
++    assert!(
++        err.to_string().contains("MVCC not enabled"),
++        "unexpected error: {err}"
++    );
++    let err = conn
++        .prepare("PRAGMA mvcc_group_commit")
++        .expect_err("querying group commit needs an MVCC store");
++    assert!(
++        err.to_string().contains("MVCC not enabled"),
++        "unexpected error: {err}"
++    );
++}
++
++fn two_writers_both_commit(db: MvccTestDbNoConn, group_commit: bool) {
++    let setup = db.connect();
++    setup
++        .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
++        .unwrap();
++    if group_commit {
++        setup.execute("PRAGMA mvcc_group_commit = yes").unwrap();
++    }
++    setup.close().unwrap();
++
++    let conn_a = db.connect();
++    let conn_b = db.connect();
++    let rounds = 40i64;
++    for round in 0..rounds {
++        conn_a.execute("BEGIN CONCURRENT").unwrap();
++        conn_b.execute("BEGIN CONCURRENT").unwrap();
++        exec_retry(&conn_a, &format!("INSERT INTO t VALUES ({}, 1)", round * 2)).unwrap();
++        exec_retry(
++            &conn_b,
++            &format!("INSERT INTO t VALUES ({}, 1)", round * 2 + 1),
++        )
++        .unwrap();
++        exec_retry(&conn_a, "COMMIT").unwrap();
++        exec_retry(&conn_b, "COMMIT").unwrap();
++    }
++
++    let reader = db.connect();
++    assert_eq!(
++        get_rows(&reader, "SELECT COUNT(*) FROM t"),
++        vec![vec![Value::from_i64(rounds * 2)]]
++    );
++}
++
++#[test]
++fn two_writers_both_commit_with_group_commit_truncate() {
++    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), true);
++}
++
++#[test]
++fn two_writers_both_commit_with_group_commit_passive() {
++    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), true);
++}
++
++#[test]
++fn two_writers_both_commit_with_group_commit_off_truncate() {
++    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), false);
++}
++
++#[test]
++fn two_writers_both_commit_with_group_commit_off_passive() {
++    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), false);
++}
++
++#[test]
++fn batched_records_survive_a_restart() {
++    let mut db = MvccTestDbNoConn::new_with_random_db();
++    const WRITERS: usize = 4;
++    let rounds = 25usize;
++    {
++        let setup = db.connect();
++        setup
++            .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
++            .unwrap();
++        setup
++            .execute("PRAGMA mvcc_checkpoint_threshold = -1")
++            .unwrap();
++        setup.execute("PRAGMA mvcc_group_commit = 
+```
+
+**File**: `tests/integration/mvcc/hermitage.rs` (renamed, +4/-4)
+```diff
+@@ -1,8 +1,8 @@
+-use crate::mvcc::database::tests::MvccTestDbNoConn;
+-use crate::Connection;
+-use crate::LimboError;
+-use crate::Value;
++use super::test_db::MvccTestDbNoConn;
+ use std::sync::Arc;
++use turso_core::Connection;
++use turso_core::LimboError;
++use turso_core::Value;
+ 
+ //        /\
+ //       /  \
+```
+
+**File**: `tests/integration/mvcc/mod.rs` (modified, +3/-0)
+```diff
+@@ -1,5 +1,8 @@
+ mod checkpoint;
+ mod database;
++mod group_commit;
++mod hermitage;
++mod store;
+ mod test_db;
+ 
+ use crate::common::{ExecRows, TempDatabase};
 ```
 
 ---
 
-### Incident Patch 2: `65d61c2e` (2026-11-13)
-**Commit Message**: Merge 'core: keep the sequences of every namespace across VACUUM' from Glauber Costa
+### Incident Patch 2: `1e1ebeaa` (2026-11-14)
+**Commit Message**: tests: move the MVCC tests that need only the public API out of core
 
-Some VACUUM paths reparse the schema and keep the sequence descriptors
-it had before, but they kept only the sequences of the root namespace.
-PostgreSQL sequences live in the namespace of their schema, so the
-reparsed schema lost them. The copy SELECT of a `bigserial` or
-`smallserial` column (a custom integer type) reads it through its
-encoded default, and with the sequence gone it could no longer resolve
-the `nextval()` default and failed with `sequence "__turso_ns1_t_id_seq"
-does not exist`.
+Core will stop parsing SQL by itself, and opening a database parses SQL,
+so a test that opens a database cannot stay in core. Move the 216 MVCC
+tests that compile against core as it is: they use SQL and the public
+methods of MvStore, Connection and Database.
 
-The descriptors are now kept for every namespace, both for the reparse
-of the source and for the schema installed after the copy.
+Core itself does not change. No item becomes public and no cfg is
+widened. The 122 tests that open a database and also use private parts
+of core stay where they are for now. Most of them start transactions
+with MvStore::begin_tx, which exists only in test builds, or write to
+private fields of MvStore.
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+The tests keep their names and assertions; only paths and fixture calls
+change. Helpers that both sides need are
+in both places; helpers that only the moved tests used are deleted from
+core. The fixture gains new_encrypted and set_encryption, which the core
+fixture had.
 
-Closes #11820
+Tests: cargo test -p turso_core --lib,
+cargo test -p core_tester --test integration_tests mvcc::
 
-**File**: `core/connection.rs` (modified, +5/-4)
+**File**: `Cargo.lock` (modified, +2/-0)
 ```diff
-@@ -4,6 +4,7 @@ use crate::error::io_error;
- #[cfg(any(test, injected_yields))]
- use crate::mvcc::yield_points::{FailureInjector, YieldInjector};
- use crate::namespace::{NamespaceId, NamespaceRef, Qualifier, Qualifiers};
-+use crate::schema::SequencesByNamespace;
- use crate::security::roles::RoleId;
- use crate::state_machine::StateMachine;
- use crate::statement::StatementOrigin;
-@@ -212,7 +213,7 @@ pub struct ReparseSchemaInner {
-     /// VACUUM-supplied sequence descriptors to graft onto the rebuilt schema
-     /// instead of re-reading each backing table. `None` for a normal reparse,
-     /// which recovers descriptors from disk in the `PopulateSequences` phase.
--    preserved_sequences: Option<rustc_hash::FxHashMap<String, Arc<crate::schema::Sequence>>>,
-+    preserved_sequences: Option<SequencesByNamespace>,
-     /// The `sqlite_schema` scan, which also collects the indexes and
-     /// materialized views that are built once the types are loaded.
-     parse: Box<crate::util::ParseSchemaRowsState>,
-@@ -1458,7 +1459,7 @@ impl Connection {
-     pub(crate) fn reparse_schema_with_cookie_keeping_sequences(
-         self: &Arc<Connection>,
-         cookie: u32,
--        sequences: rustc_hash::FxHashMap<String, Arc<crate::schema::Sequence>>,
-+        sequences: SequencesByNamespace,
-     ) -> Result<()> {
-         let io = self.pager.load().io.clone();
-         let mut state = ReparseSchemaState::default();
-@@ -1502,7 +1503,7 @@ impl Connection {
-     fn init_reparse_building(
-         self: &Arc<Connection>,
-         cookie: u32,
--        preserved_sequences: Option<rustc_hash::FxHashMap<String, Arc<crate::schema::Sequence>>>,
-+        preserved_sequences: Option<SequencesByNamespace>,
-     ) -> Result<ReparseSchemaInner> {
-         let guard = self.schema_reparse_guard();
-         self.pager.load().set_schema_cookie(Some(cookie));
-@@ -1613,7 +1614,7 @@ impl Connection {
-                     // descriptor SELECTs can resolve the backing tables.
-                     if pending.is_none() {
-                         if let Some(sequences) = inner.preserved_sequences.take() {
--                            inner.fresh.set_sequences(NamespaceId::ROOT, sequences);
-+                            inner.fresh.set_sequences_by_namespace(sequences);
-                             *pending = Some(crate::alloc::vec![]);
-                         } else {
-                             let work = inner.fresh.sequence_backing_table_names();
+@@ -1203,9 +1203,11 @@ dependencies = [
+  "rand 0.9.4",
+  "rand_chacha 0.9.0",
+  "rusqlite",
++ "rustc-hash 2.1.1",
+  "serde_json",
+  "serial_test",
+  "similar-asserts",
++ "sorted-vec",
+  "sql_generation",
+  "tempfile",
+  "test-log",
 ```
 
-**File**: `core/schema.rs` (modified, +18/-8)
+**File**: `core/mvcc/database/group_commit_tests.rs` (modified, +1/-226)
 ```diff
-@@ -1208,6 +1208,9 @@ pub struct Sequence {
-     pub cycle: bool,
+@@ -1,21 +1,11 @@
+ use super::{get_rows, FixedYieldInjector, MvccTestDbNoConn};
+ use crate::mvcc::database::{CommitCoordinator, CommitYieldPoint, GroupWork, LogRecord};
+ use crate::mvcc::yield_hooks::YieldPointMarker;
+-use crate::security::roles::SessionRole;
+ use crate::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+-use crate::{ConnectOpts, Connection, Database, LimboError, StepResult, SyncMode, Value};
++use crate::{Connection, LimboError, StepResult, SyncMode, Value};
+ use std::sync::{Arc, Barrier};
+ use std::time::{Duration, Instant};
+ 
+-fn pragma_int(conn: &Arc<Connection>, query: &str) -> i64 {
+-    let rows = get_rows(conn, query);
+-    assert_eq!(rows.len(), 1, "{query} returned {rows:?}");
+-    match rows[0][0] {
+-        Value::Numeric(crate::Numeric::Integer(n)) => n,
+-        ref other => panic!("{query} returned {other:?}"),
+-    }
+-}
+-
+ fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
+     for _ in 0..100_000 {
+         match conn.execute(sql) {
+@@ -27,113 +17,6 @@ fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
+     Err(LimboError::Busy)
  }
  
-+/// Sequences grouped by namespace, each by normalized name.
-+pub type SequencesByNamespace = std::vec::Vec<(NamespaceId, HashMap<String, Arc<Sequence>>)>;
-+
- impl Sequence {
-     pub fn new(
-         name: String,
-@@ -2067,14 +2070,21 @@ impl Schema {
-         &self.namespace(namespace).sequences
-     }
+-#[test]
+-fn group_commit_pragma_defaults_on_and_round_trips() {
+-    let db = MvccTestDbNoConn::new_with_random_db();
+-    let conn = db.connect();
+-
+-    assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
+-
+-    for off in ["no", "off", "false", "0"] {
+-        conn.execute(format!("PRAGMA mvcc_group_commit = {off}"))
+-            .unwrap();
+-        assert_eq!(
+-            pragma_int(&conn, "PRAGMA mvcc_group_commit"),
+-            0,
+-            "`= {off}` should disable group commit"
+-        );
+-        conn.execute("PRAGMA mvcc_group_commit = on").unwrap();
+-        assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
+-    }
+-}
+-
+-#[test]
+-fn group_commit_pragma_is_store_wide() {
+-    let db = MvccTestDbNoConn::new_with_random_db();
+-    let setter = db.connect();
+-    let observer = db.connect();
+-
+-    setter.execute("PRAGMA mvcc_group_commit = yes").unwrap();
+-    assert_eq!(pragma_int(&observer, "PRAGMA mvcc_group_commit"), 1);
+-}
+-
+-#[test]
+-fn group_commit_pragma_needs_mvcc() {
+-    let io = Arc::new(crate::io::MemoryIO::new());
+-    let db = Database::open_file(io, ":memory:", Arc::new(crate::EngineDialect)).unwrap();
+-    let conn = db
+-        .connect(ConnectOpts::new(SessionRole::Superuser))
+-        .unwrap();
+-
+-    let err = conn
+-        .execute("PRAGMA mvcc_group_commit = yes")
+-        .expect_err("group commit needs an MVCC store");
+-    assert!(
+-        err.to_string().contains("MVCC not enabled"),
+-        "unexpected error: {err}"
+-    );
+-    let err = conn
+-        .prepare("PRAGMA mvcc_group_commit")
+-        .expect_err("querying group commit needs an MVCC store");
+-    assert!(
+-        err.to_string().contains("MVCC not enabled"),
+-        "unexpected error: {err}"
+-    );
+-}
+-
+-fn two_writers_both_commit(db: MvccTestDbNoConn, group_commit: bool) {
+-    let setup = db.connect();
+-    setup
+-        .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
+-        .unwrap();
+-    if group_commit {
+-        setup.execute("PRAGMA mvcc_group_commit = yes").unwrap();
+-    }
+-    setup.close().unwrap();
+-
+-    let conn_a = db.connect();
+-    let conn_b = db.connect();
+-    let rounds = 40i64;
+-    for round in 0..rounds {
+-        conn_a.execute("BEGIN CONCURRENT").unwrap();
+-        conn_b.execute("BEGIN CONCURRENT").unwrap();
+-        exec_retry(&conn_a, &format!("INSERT INTO t VALUES ({}, 1)", round * 2)).unwrap();
+-        exec_retry(
+-            &conn_b,
+-            &format!("INSERT INTO t VALUES ({}, 1)", round * 2 + 1),
+-        )
+-        .unwrap();
+-        exec_retry(&conn_a, "COMMIT").unwrap();
+-        exec_retry(&conn_b, "COMMIT").unwrap();
+-    }
+-
+-    let reader = db.connect();
+-    assert_eq!(
+-        get_rows(&reader, "SELECT COUNT(*) FROM t"),
+-        vec![vec![Value::from_i64(rounds * 2)]]
+-    );
+-}
+-
+-#[test]
+-fn two_writers_both_commit_with_group_commit_truncate() {
+-    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), true);
+-}
+-
+-#[test]
+-fn two_writers_both_commit_with_group_commit_passive() {
+-    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), true);
+-}
+-
+-#[test]
+-fn two_writers_both_commit_with_group_commit_off_truncate() {
+-    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), false);
+-}
+-
+-#[test]
+-fn two_writers_both_commit_with_group_commit_off_passive() {
+-    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), false);
+-}
+-
+ #[test]
+ fn commits_batch_into_one_group() {
+     let db = MvccTestDbNoConn::new_with_random_db();
+@@ -205,56 +88,6 @@ fn commits_batch_into_one_group() {
+     );
+ }
  
--    /// Replaces the sequences of the namespace with `sequences`, by
--    /// normalized name.
--    pub fn set_sequences(
--        &mut self,
--        namespace: NamespaceId,
--        sequences: HashMap<String, Arc<Sequence>>,
--    ) {
--        self.namespace_mut(namespace).sequences = sequences;
-+    /// The sequences of every namespace that has any, by namespace and normalized name.
-+    pub fn sequences_by_namespace(&self) -> SequencesByNamespace {
-+        self.namespaces
-+            .iter()
-+            .filter(|(_, objects)| !objects.sequences.is_empty())
-+            .map(|(namespace, objects)| (*namespace, objects.sequences.clone()))
-+            .collect()
-+    }
-+
-+    /// Replaces the sequences of each namespace in `sequences`.
-+    pub fn set_sequences_by_namespace(&mut self, sequences: SequencesByNamespace) {
-+        for (namespace, sequences) in sequences {
-+            self.add_namespace_of_object(namespace);
-+            self.namespace_mut(namespace).sequences = sequences;
-+        }
-     }
- 
-     pub fn add_sequence(&mut self, namespace: NamespaceId, sequence: Sequence) {
+-#[test]
+-fn batched_records_survive_a_restart() {
+-    let mut db = MvccTestDbNoConn::new_with_random_db();
+-    const WRITERS: usize = 4;
+-    let rounds = 25usize;
+-    {
+-        let setup = db.connect();
+-        setup
+-            .exec
 ```
 
-**File**: `core/vdbe/vacuum.rs` (modified, +5/-14)
+**File**: `core/mvcc/database/mod.rs` (modified, +0/-2)
 ```diff
-@@ -1,11 +1,10 @@
- use crate::namespace::NamespaceId;
- use crate::types::IOResultOr;
--use rustc_hash::FxHashMap;
- use std::sync::{atomic::Ordering, Arc};
+@@ -82,8 +82,6 @@ use super::portable_logical::{
+     portable_schema_row_from_record, PortableLogicalBuilder, PortableObjectMapEntry,
+ };
  
- use crate::error::LimboError;
- use crate::io::{Buffer, Completion, CompletionGroup, WriteBatch as IOWriteBatch};
--use crate::schema::{BTreeTable, Schema, TypeDef};
-+use crate::schema::{BTreeTable, Schema, SequencesByNamespace, TypeDef};
- use crate::security::roles::SessionRole;
- use crate::storage::pager::{AutoVacuumMode, Page, PageRef, Pager};
- use crate::storage::sqlite3_ondisk::{
-@@ -1781,7 +1780,7 @@ fn install_mvcc_state_after_vacuum_commit(
- /// state machine.
- fn capture_target_metadata(
-     temp_db: &VacuumTempDb,
--    source_sequences: FxHashMap<String, Arc<crate::schema::Sequence>>,
-+    source_sequences: SequencesByNamespace,
- ) -> Result<VacuumCommittedImageMeta> {
-     let temp_conn = &temp_db.conn;
-     let temp_pager = temp_conn.get_pager();
-@@ -1850,11 +1849,7 @@ fn reload_physical_schema_for_mvcc_vacuum(
-     // blocking `Schema::populate_sequences` and `populate_sequences_via_sql`
-     // helpers, which violate the vdbe async contract from inside the
-     // VACUUM state machine.
--    let preserved_sequences = connection
--        .schema
--        .read()
--        .sequences_by_name(NamespaceId::ROOT)
--        .clone();
-+    let preserved_sequences = connection.schema.read().sequences_by_namespace();
-     let reparse_result = connection.read_current_schema_cookie().and_then(|cookie| {
-         connection.reparse_schema_with_cookie_keeping_sequences(cookie, preserved_sequences)
-     });
-@@ -2069,11 +2064,7 @@ fn vacuum_in_place_step(
-                 let temp_db_ref = temp_db
-                     .as_ref()
-                     .expect("VACUUM CaptureTargetMetadata phase requires temp db");
--                let source_sequences = connection
--                    .schema
--                    .read()
--                    .sequences_by_name(NamespaceId::ROOT)
--                    .clone();
-+                let source_sequences = connection.schema.read().sequences_by_namespace();
-                 *committed_image = Some(capture_target_metadata(temp_db_ref, source_sequences)?);
-                 *phase = VacuumInPlacePhase::BeginTempReadTx;
-                 continue;
-@@ -3058,7 +3049,7 @@ mod tests {
+-#[cfg(test)]
+-pub mod hermitage_tests;
+ #[cfg(test)]
+ pub mod tests;
+ 
+```
+
+**File**: `core/mvcc/mod.rs` (modified, +0/-44)
+```diff
+@@ -312,48 +312,4 @@ mod tests {
+             th.join().unwrap();
          }
-         temp.conn.execute("COMMIT")?;
- 
--        let committed = capture_target_metadata(&temp, FxHashMap::default())?;
-+        let committed = capture_target_metadata(&temp, SequencesByNamespace::new())?;
- 
-         assert_eq!(committed.header.schema_cookie.get(), 42);
-         assert_eq!(committed.header.read_version, mvcc_version);
+     }
+-
+-    #[test]
+-    fn test_mvcc_dual_cursor_transaction_isolation() {
+-        let res = tracing_subscriber::fmt::try_init();
+-        drop(res);
+-        let mut db = MvccTestDbNoConn::new_with_random_db();
+-
+-        {
+-            let conn = db.connect();
+-            conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, val INTEGER)")
+-                .unwrap();
+-            conn.execute("INSERT INTO t VALUES (1, 100)").unwrap();
+-            conn.execute("INSERT INTO t VALUES (2, 200)").unwrap();
+-            conn.execute("PRAGMA wal_checkpoint(TRUNCATE)").unwrap();
+-        }
+-
+-        db.restart();
+-
+-        // Tx1: Update B-tree row
+-        let conn1 = db.connect();
+-        conn1.execute("BEGIN CONCURRENT").unwrap();
+-        conn1
+-            .execute("UPDATE t SET val = 999 WHERE id = 1")
+-            .unwrap();
+-
+-        // Tx2: Should see old B-tree value, not Tx1's MVCC change
+-        let conn2 = db.connect();
+-        conn2.execute("BEGIN CONCURRENT").unwrap();
+-        let rows = get_rows(&conn2, "SELECT val FROM t WHERE id = 1");
+-        assert_eq!(rows[0][0].as_int().unwrap(), 100); // Original B-tree value
+-
+-        conn1.execute("COMMIT").unwrap();
+-        conn2.execute("COMMIT").unwrap();
+-    }
+-    fn get_rows(conn: &Arc<crate::Connection>, sql: &str) -> Vec<Vec<crate::Value>> {
+-        let mut stmt = conn.prepare(sql).unwrap();
+-        let mut rows = Vec::new();
+-        stmt.run_with_row_callback(|row| {
+-            rows.push(row.get_values().cloned().collect());
+-            Ok(())
+-        })
+-        .unwrap();
+-        rows
+-    }
+ }
 ```
 
-**File**: `postgres/tests/integration/postgres/namespace.rs` (modified, +26/-0)
+**File**: `tests/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -494,6 +494,32 @@ fn serial_tables_of_two_schemas_keep_their_sequences(db: TempDatabase) {
-     }
- }
+@@ -61,6 +61,8 @@ serial_test = { version = "3", features = ["file_locks"] }
+ test-log = { version = "0.2.17", features = ["trace"] }
+ turso_macros.workspace = true
+ crossbeam-epoch = "0.9.18"
++rustc-hash = "2.0"
++sorted-vec = "0.8.6"
  
-+#[turso_macros::test(mvcc)]
-+fn vacuum_keeps_the_sequences_of_bigserial_columns_of_a_namespace(db: TempDatabase) {
-+    let conn = db.connect_postgres();
-+    conn.execute("CREATE SCHEMA app").unwrap();
-+    conn.execute("CREATE TABLE t (id bigserial, v text)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE app.t (id smallserial, v text)")
-+        .unwrap();
-+    conn.execute("INSERT INTO t (v) VALUES ('a'), ('b')")
-+        .unwrap();
-+    conn.execute("INSERT INTO app.t (v) VALUES ('c')").unwrap();
-+    conn.inner()
-+        .execute("PRAGMA wal_checkpoint(TRUNCATE)")
-+        .unwrap();
-+    conn.inner().execute("VACUUM").unwrap();
+ [features]
+ default = [
+```
+
+**File**: `tests/integration/mvcc/group_commit.rs` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++use super::checkpoint::{get_rows, FixedYieldInjector};
++use super::test_db::MvccTestDbNoConn;
++use crate::mvcc::SqliteDialect;
++use std::sync::{Arc, Barrier};
++use turso_core::mvcc::database::CommitYieldPoint;
++use turso_core::mvcc::yield_hooks::YieldPointMarker;
++use turso_core::security::roles::SessionRole;
++use turso_core::{ConnectOpts, Connection, Database, LimboError, StepResult, Value};
 +
-+    assert_eq!(
-+        pg_query_i64(&conn, "INSERT INTO t (v) VALUES ('d') RETURNING id"),
-+        3
++fn pragma_int(conn: &Arc<Connection>, query: &str) -> i64 {
++    let rows = get_rows(conn, query);
++    assert_eq!(rows.len(), 1, "{query} returned {rows:?}");
++    match rows[0][0] {
++        Value::Numeric(turso_core::Numeric::Integer(n)) => n,
++        ref other => panic!("{query} returned {other:?}"),
++    }
++}
++
++fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
++    for _ in 0..100_000 {
++        match conn.execute(sql) {
++            Ok(()) => return Ok(()),
++            Err(LimboError::Busy) => std::thread::yield_now(),
++            Err(err) => return Err(err),
++        }
++    }
++    Err(LimboError::Busy)
++}
++
++#[test]
++fn group_commit_pragma_defaults_on_and_round_trips() {
++    let db = MvccTestDbNoConn::new_with_random_db();
++    let conn = db.connect();
++
++    assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
++
++    for off in ["no", "off", "false", "0"] {
++        conn.execute(format!("PRAGMA mvcc_group_commit = {off}"))
++            .unwrap();
++        assert_eq!(
++            pragma_int(&conn, "PRAGMA mvcc_group_commit"),
++            0,
++            "`= {off}` should disable group commit"
++        );
++        conn.execute("PRAGMA mvcc_group_commit = on").unwrap();
++        assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
++    }
++}
++
++#[test]
++fn group_commit_pragma_is_store_wide() {
++    let db = MvccTestDbNoConn::new_with_random_db();
++    let setter = db.connect();
++    let observer = db.connect();
++
++    setter.execute("PRAGMA mvcc_group_commit = yes").unwrap();
++    assert_eq!(pragma_int(&observer, "PRAGMA mvcc_group_commit"), 1);
++}
++
++#[test]
++fn group_commit_pragma_needs_mvcc() {
++    let io = Arc::new(turso_core::io::MemoryIO::new());
++    let db = Database::open_file(io, ":memory:", Arc::new(SqliteDialect)).unwrap();
++    let conn = db
++        .connect(ConnectOpts::new(SessionRole::Superuser))
++        .unwrap();
++
++    let err = conn
++        .execute("PRAGMA mvcc_group_commit = yes")
++        .expect_err("group commit needs an MVCC store");
++    assert!(
++        err.to_string().contains("MVCC not enabled"),
++        "unexpected error: {err}"
 +    );
-+    assert_eq!(
-+        pg_query_i64(&conn, "INSERT INTO app.t (v) VALUES ('e') RETURNING id"),
-+        2
++    let err = conn
++        .prepare("PRAGMA mvcc_group_commit")
++        .expect_err("querying group commit needs an MVCC store");
++    assert!(
++        err.to_string().contains("MVCC not enabled"),
++        "unexpected error: {err}"
 +    );
 +}
 +
- /// VACUUM INTO copies the indexes of the tables of every schema, public
- /// included, whose stored text names the table by its mangled name.
- #[turso_macros::test]
++fn two_writers_both_commit(db: MvccTestDbNoConn, group_commit: bool) {
++    let setup = db.connect();
++    setup
++        .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
++        .unwrap();
++    if group_commit {
++        setup.execute("PRAGMA mvcc_group_commit = yes").unwrap();
++    }
++    setup.close().unwrap();
++
++    let conn_a = db.connect();
++    let conn_b = db.connect();
++    let rounds = 40i64;
++    for round in 0..rounds {
++        conn_a.execute("BEGIN CONCURRENT").unwrap();
++        conn_b.execute("BEGIN CONCURRENT").unwrap();
++        exec_retry(&conn_a, &format!("INSERT INTO t VALUES ({}, 1)", round * 2)).unwrap();
++        exec_retry(
++            &conn_b,
++            &format!("INSERT INTO t VALUES ({}, 1)", round * 2 + 1),
++        )
++        .unwrap();
++        exec_retry(&conn_a, "COMMIT").unwrap();
++        exec_retry(&conn_b, "COMMIT").unwrap();
++    }
++
++    let reader = db.connect();
++    assert_eq!(
++        get_rows(&reader, "SELECT COUNT(*) FROM t"),
++        vec![vec![Value::from_i64(rounds * 2)]]
++    );
++}
++
++#[test]
++fn two_writers_both_commit_with_group_commit_truncate() {
++    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), true);
++}
++
++#[test]
++fn two_writers_both_commit_with_group_commit_passive() {
++    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), true);
++}
++
++#[test]
++fn two_writers_both_commit_with_group_commit_off_truncate() {
++    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), false);
++}
++
++#[test]
++fn two_writers_both_commit_with_group_commit_off_passive() {
++    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), false);
++}
++
++#[test]
++fn batched_records_survive_a_restart() {
++    let mut db = MvccTestDbNoConn::new_with_random_db();
++    const WRITERS: usize = 4;
++    let rounds = 25usize;
++    {
++        let setup = db.connect();
++        setup
++            .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
++            .unwrap();
++        setup
++            .execute("PRAGMA mvcc_checkpoint_threshold = -1")
++            .unwrap();
++        setup.execute("PRAGMA mvcc_group_commit = 
+```
+
+**File**: `tests/integration/mvcc/hermitage.rs` (renamed, +4/-4)
+```diff
+@@ -1,8 +1,8 @@
+-use crate::mvcc::database::tests::MvccTestDbNoConn;
+-use crate::Connection;
+-use crate::LimboError;
+-use crate::Value;
++use super::test_db::MvccTestDbNoConn;
+ use std::sync::Arc;
++use turso_core::Connection;
++use turso_core::LimboError;
++use turso_core::Value;
+ 
+ //        /\
+ //       /  \
+```
+
+**File**: `tests/integration/mvcc/mod.rs` (modified, +3/-0)
+```diff
+@@ -1,5 +1,8 @@
+ mod checkpoint;
+ mod database;
++mod group_commit;
++mod hermitage;
++mod store;
+ mod test_db;
+ 
+ use crate::common::{ExecRows, TempDatabase};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11820** (2026-11-13): core: keep the sequences of every namespace across VACUUM (@glommer)
-- **PR #11819** (2026-11-13): tests: move blob I/O, native extension and statement lifecycle tests out of core (@penberg)
-- **PR #11818** (2026-11-13): core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE (@glommer)
-- **PR #11813** (2026-11-13): core: parse SQL only in the engine dialect module (@penberg)
-- **PR #11807** (2026-11-13): core/pragma: keep schema-only constraints from naming a table (@syntrydy)
-- **PR #11801** (2026-11-13): postgres: support INHERIT and NOINHERIT roles (@penberg)
+- **PR #11844** (2026-11-14): core/mvcc: read-only accessors for tests, and move the tests that only read store state (@penberg)
+- **PR #11840** (2026-11-14): tests: move MVCC checkpoint tests out of core (@penberg)
+- **PR #11839** (2026-11-14): core/mvcc: rename checkpoint_state_machine.rs to checkpoint.rs (@penberg)
+- **PR #11838** (2026-11-14): core/optimizer: skip DISTINCT when rows are already unique (@iarymov)
+- **PR #11826** (2026-11-13): core: add connection APIs for storage stats and disabling MVCC checkpoints (@pedrocarlo)
+- **PR #11822** (2026-11-14): tests: move the MVCC tests that need only the public API out of core (@penberg)
 
 ---
 
@@ -2078,62 +2412,32 @@ Closes #11820
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE' from Glaub
+## X. Merge 'tests: move the MVCC tests that need only the public API out of core' fro
 
 **RULE**:
-When implementing operations in `core/translate/insert.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13626c16`: Merge 'core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE' from Glauber Costa. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c718b2ad`: Merge 'tests: move the MVCC tests that need only the public API out of core' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/insert.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::translate::update::bind_set_expr;
-            let mut rewritten_sets = collect_set_clauses_for_upsert(table, sets, resolver)?;
-            Some(col) => column_default_expr(col, is_strict, resolver),
-/// The value a column takes when a statement writes DEFAULT to it.
-pub(crate) fn column_default_expr(
-    column: &Column,
-    is_strict: bool,
-    resolver: &Resolver,
-) -> Box<Expr> {
-    column.default.clone().unwrap_or_else(|| {
-        if let Ok(Some(resolved)) = resolver.schema().resolve_type(&column.ty_str, is_strict) {
-            if let Some(default_expr) = resolved.default_expr() {
-                return Box::new(default_expr.clone());
-            }
-        }
-        Box::new(ast::Expr::Literal(ast::Literal::Null))
-    })
-}
-
-                bind_set_expr(
-                    resolver,
+ "rustc-hash 2.1.1",
+ "sorted-vec",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            let mut rewritten_sets = collect_set_clauses_for_upsert(table, sets)?;
-            Some(col) => col.default.clone().unwrap_or_else(|| {
-                if let Ok(Some(resolved)) = resolver.schema().resolve_type(&col.ty_str, is_strict) {
-                    if let Some(default_expr) = resolved.default_expr() {
-                        return Box::new(default_expr.clone());
-                    }
-                }
-                Box::new(ast::Expr::Literal(ast::Literal::Null))
-            }),
-                bind_and_rewrite_expr(
-                    None,
-                    resolver,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13626c16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c718b2ad` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `73f1acad`  
+> **Source Version**: `170fb83d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T20:47:09.875Z  
+> **Timestamp**: 2026-11-15T06:00:09.286Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:47:09.868Z  
+> **Harvest Timestamp**: 2026-11-15T06:00:09.280Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24383 stars
+- **Stars / Engagement**: 24404 stars
 
 ---
 
@@ -2121,272 +2121,468 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cbeb97f4` (2026-11-13)
-**Commit Message**: Require matching request IDs for Nexus completions (#13077)
+### Incident Patch 1: `623e5f17` (2026-11-14)
+**Commit Message**: Expose Nexus caller RPS throttle status in Describe (#13000)
 
 ## What changed?
-Require asynchronous Nexus completions to carry a request ID matching
-the pending operation in both HSM and CHASM. Frontend rejects a
-completion token with an empty request ID as an invalid callback token
-(BadRequest). History also rejects empty or mismatched IDs with NotFound
-before applying a completion transition, covering direct internal
-requests.
+
+Report scheduled Nexus operations and cancellations as BLOCKED when the
+shared caller-RPS throttle state tracks their namespace and destination.
+Covers HSM and CHASM Describe responses and preserves circuit-breaker
+precedence. Re-lands #12953, which merged into #12928's branch but was
+reverted before #12928 reached main.
 
 ## Why?
-An empty request ID previously skipped the operation identity check,
-allowing a completion token to be retargeted to another pending
-operation. The Frontend check treats a missing required token field as
-an invalid request; the History checks prevent an invalid completion
-from changing operation state.
+
+Make in-memory throttling visible to users without persisting a failure
+or retry timer.
 
 ## How did you test it?
-- [x] built
-- [ ] run locally and tested manually
-- [x] covered by existing tests
-- [x] added new unit test(s)
-- [x] added new functional test(s)
 
-## Potential risks
-Completion tokens issued without a request ID will now be rejected if
-their operations remain pending, which may affect long-running
-operations in older self-hosted deployments. HTTP callbacks with an
-empty request ID now receive BadRequest.
+- [x] Added unit tests; affected queue, history, and CHASM packages pass
+with `-tags test_dep`.
 
-**File**: `chasm/lib/nexusoperation/operation.go` (modified, +1/-1)
+**File**: `chasm/lib/nexusoperation/library.go` (modified, +15/-6)
 ```diff
-@@ -307,7 +307,7 @@ func (o *Operation) HandleNexusCompletion(
- 	completion *persistencespb.ChasmNexusCompletion,
- ) error {
- 	// Request ID lets us reject a stale or misrouted completion.
--	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
-+	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
- 		return serviceerror.NewNotFound("operation not found")
- 	}
- 
-```
-
-**File**: `chasm/lib/nexusoperation/operation_test.go` (modified, +19/-0)
-```diff
-@@ -10,6 +10,7 @@ import (
- 	commonpb "go.temporal.io/api/common/v1"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	failurepb "go.temporal.io/api/failure/v1"
-+	"go.temporal.io/api/serviceerror"
- 	"go.temporal.io/api/workflowservice/v1"
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
+@@ -5,6 +5,7 @@ import (
  	"go.temporal.io/server/chasm"
-@@ -249,6 +250,24 @@ func TestHandleNexusCompletion(t *testing.T) {
- 		}
- 	}
- 
-+	t.Run("InvalidRequestID", func(t *testing.T) {
-+		for _, tc := range []struct{ name, requestID string }{
-+			{"empty", ""},
-+			{"mismatched", "other-request-id"},
-+		} {
-+			t.Run(tc.name, func(t *testing.T) {
-+				ctx := newCtx()
-+				op := newScheduledTestOperation(t, ctx)
-+				err := op.HandleNexusCompletion(ctx, &persistencespb.ChasmNexusCompletion{
-+					RequestId: tc.requestID,
-+					Outcome:   &persistencespb.ChasmNexusCompletion_Success{Success: mustToPayload(t, "result")},
-+				})
-+				require.ErrorAs(t, err, new(*serviceerror.NotFound))
-+				require.Equal(t, nexusoperationpb.OPERATION_STATUS_SCHEDULED, op.GetStatus())
-+			})
-+		}
-+	})
-+
- 	t.Run("Success", func(t *testing.T) {
- 		t.Run("AfterStarted", func(t *testing.T) {
- 			ctx := newCtx()
-```
-
-**File**: `service/frontend/nexus_completion_http_handler.go` (modified, +3/-0)
-```diff
-@@ -135,6 +135,9 @@ func (h *nexusCompletionHandler) CompleteOperation(ctx context.Context, r *nexus
- 		h.Logger.Error("failed to decode completion from token", tag.Error(err))
- 		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
- 	}
-+	if completion.GetRequestId() == "" {
-+		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
-+	}
- 
- 	// Determine the target namespace, workflow, and run ID from the completion token. The CHASM
- 	// ComponentRef is canonical when present; otherwise the top-level HSM fields are used. Shared
-```
-
-**File**: `service/history/hsm/nexusoperations/completion.go` (modified, +8/-8)
-```diff
-@@ -179,9 +179,10 @@ func (h *CompletionHandler) Handle(
- 	result *commonpb.Payload,
- 	opFailedError *nexus.OperationError,
- ) error {
--	// The initial version of the completion token did not include a request ID.
--	// Only retry Access without a run ID if the request ID is not empty.
--	isRetryableNotFoundErr := requestID != ""
-+	if requestID == "" {
-+		return serviceerror.NewNotFound("operation not found")
-+	}
-+	isRetryableNotFoundErr := true
- 	// emitMetrics is populated inside the Access closure and invoked only after the write
- 	// transaction commits successfully, so a failed commit (which retries the completion) does not
- 	// double-count the metric. See operationMetricsHandler's doc comment.
-@@ -194,18 +195,17 @@ func (h *CompletionHandler) Handle(
- 		if err != nil {
- 			return err
- 		}
-+		if operation.RequestId != requestID {
-+			isRetryableNotFoundErr = false
-+			return serviceerror.NewNotFound("operation not found")
-+		}
- 		// If the operation has not started yet, this completion arrived before the start response and
- 		// fabricateStartedEventIfMissing will transition it to started below; the executor never emitted
- 		// schedule-to-start in that case, so we emit it here.
- 		fabricatedStart := TransitionStarted.Possible(operation)
- 		if err := fabricateStartedEventIfMissing(node, requestID, operationToken, startTime, links); err != nil {
- 			return err
- 		}
--		if requestID != "" && operation.RequestId != requestID {
--			isRetryableNotFoundErr = false
--			return serviceerror.NewNotFound("operation not found")
--		}
--
- 		if opFailedError != nil {
- 			err = handleOperationError(node, operation, opFailedError)
- 		} else {
-```
-
-**File**: `service/history/hsm/nexusoperations/completion_test.go` (modified, +33/-8)
-```diff
-@@ -9,6 +9,8 @@ import (
- 	"github.com/stretchr/testify/require"
- 	commonpb "go.temporal.io/api/common/v1"
- 	historypb "go.temporal.io/api/history/v1"
-+	"go.temporal.io/api/serviceerror"
-+	enumsspb "go.temporal.io/server/api/enums/v1"
- 	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
+ 	nexusoperationpb "go.temporal.io/server/chasm/lib/nexusoperation/gen/nexusoperationpb/v1"
  	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/metrics/metricstest"
-@@ -18,6 +20,27 @@ import (
- 	"google.golang.org/protobuf/types/known/durationpb"
++	"go.temporal.io/server/common/namespace"
+ 	"go.uber.org/fx"
+ 	"google.golang.org/grpc"
  )
+@@ -28,10 +29,14 @@ var OperationContextKey = operationContextKeyType{}
+ // DestinationBlockedFn reports whether the outbound queue is blocking an endpoint.
+ type DestinationBlockedFn func(namespaceID string, destination string) bool
  
-+func TestCompletionHandlerRejectsInvalidRequestID(t *testing.T) {
++// DestinationThrottledFn reports whether the caller RPS budget is limiting a destination.
++type DestinationThrottledFn func(namespaceName namespace.Name, destination string) bool
++
+ // OperationContext holds dependencies injected into the chasm.Context for use by Operation methods.
+ type OperationContext struct {
+-	DestinationBlocked DestinationBlockedFn
+-	MetricTagConfig    dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
++	DestinationBlocked   DestinationBlockedFn
++	DestinationThrottled DestinationThrottledFn
++	MetricTagConfig      dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
+ }
+ 
+ // Library registers the Nexus operation components and tasks. The history service builds it with newLibrary, which
+@@ -41,8 +46,9 @@ type OperationContext struct {
+ type Library struct {
+ 	chasm.UnimplementedLibrary
+ 
+-	destinationBlocked DestinationBlockedFn
+-	metricTagConfig    dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
++	destinationBlocked   DestinationBlockedFn
++	destinationThrottled DestinationThrottledFn
++	metricTagConfig      dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
+ 
+ 	handler *handler
+ 
+@@ -69,12 +75,14 @@ type libraryParams struct {
+ 	CancellationBackoffTaskHandler             *cancellationBackoffTaskHandler
+ 	DynamicConfig                              *dynamicconfig.Collection
+ 	DestinationBlocked                         DestinationBlockedFn
++	DestinationThrottled                       DestinationThrottledFn `optional:"true"`
+ }
+ 
+ func newLibrary(params libraryParams) *Library {
+ 	return &Library{
+ 		metricTagConfig:                            MetricTagConfiguration.Get(params.DynamicConfig),
+ 		destinationBlocked:                         params.DestinationBlocked,
++		destinationThrottled:                       params.DestinationThrottled,
+ 		handler:                                    params.Handler,
+ 		operationBackoffTaskHandler:                params.OperationBackoffTaskHandler,
+ 		operationInvocationTaskHandler:             params.OperationInvocationTaskHandler,
+@@ -108,8 +116,9 @@ func (l *Library) Components() []*chasm.RegistrableComponent {
+ 			chasm.WithBusinessIDAlias("OperationId"),
+ 			chasm.WithContextValues(map[any]any{
+ 				OperationContextKey: &OperationContext{
+-					MetricTagConfig:    l.metricTagConfig,
+-					DestinationBlocked: l.destinationBlocked,
++					MetricTagConfig:      l.metricTagConfig,
++					DestinationBlocked:   l.destinationBlocked,
++					DestinationThrottled: l.destinationThrottled,
+ 				},
+ 			}),
+ 		),
+```
+
+**File**: `chasm/lib/nexusoperation/operation.go` (modified, +15/-0)
+```diff
+@@ -693,6 +693,14 @@ func (o *Operation) DestinationBlocked(ctx chasm.Context) bool {
+ 	return opCtx.DestinationBlocked(ctx.ExecutionKey().NamespaceID, o.Endpoint)
+ }
+ 
++// DestinationThrottled reports whether the caller RPS budget is holding this operation.
++func (o *Operation) DestinationThrottled(ctx chasm.Context) bool {
++	//nolint:revive // unchecked-type-assertion: intentional panic on missing context value
++	opCtx := ctx.Value(OperationContextKey).(*OperationContext)
++	return opCtx.DestinationThrottled != nil &&
++		opCtx.DestinationThrottled(ctx.NamespaceEntry().Name(), taskDestination(o.Endpoint))
++}
++
+ func (o *Operation) buildExecutionInfo(ctx chasm.Context) *nexuspb.NexusOperationExecutionInfo {
+ 	requestData := o.RequestData.Get(ctx)
+ 	key := ctx.ExecutionKey()
+@@ -753,11 +761,18 @@ func (o *Operation) buildExecutionInfo(ctx chasm.Context) *nexuspb.NexusOperatio
+ 	if info.State == enumspb.PENDING_NEXUS_OPERATION_STATE_SCHEDULED && o.DestinationBlocked(ctx) {
+ 		info.State = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
+ 		info.BlockedReason = "The circuit breaker is open."
++	} else if info.State == enumspb.PENDING_NEXUS_OPERATION_STATE_SCHEDULED && o.DestinationThrottled(ctx) {
++		info.State = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
++		info.BlockedReason = "Requests from this namespace to the endpoint are being rate limited."
+ 	}
+ 	if info.GetCancellationInfo().GetState() == enumspb.NEXUS_OPERATION_CANCELLATION_STATE_SCHEDULED &&
+ 		o.DestinationBlocked(ctx) {
+ 		info.CancellationInfo.State = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
+ 		info.CancellationInfo.BlockedReason = "The circuit breaker is open."
++	} else if info.GetCancellationInfo().GetState() == enumspb.NEXUS_OPERATION_CANCELLATION_STATE_SCHEDULED &&
++		o.DestinationThrottled(ctx) {
++		info.CancellationInfo.State = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
++		info.CancellationInfo.BlockedReason = "Requests from this namespace to the endpoint are being rate limited."
+ 	}
+ 
+ 	return info
+```
+
+**File**: `chasm/lib/nexusoperation/operation_test.go` (modified, +49/-0)
+```diff
+@@ -638,3 +638,52 @@ func TestOperation_BuildExecutionInfo_ReturnsIsolatedSearchAttributes(t *testing
+ 	require.NotContains(t, op.Visibility.Get(ctx).CustomSearchAttributes(ctx), "injected",
+ 		"DescribeNexusOperation response SearchAttributes must be a copy, not the live Visibility map")
+ }
++
++func TestDescribeCallerRPSThrottled(t *testing.T) {
 +	t.Parallel()
-+	for _, tc := range []struct{ name, requestID string }{
-+		{"empty", ""},
-+		{"mismatched", "other-request-id"},
++	for _, tc := range []struct {
++		name        string
++		breakerOpen bool
++		backingOff  bool
++		wantReason  string
++	}{
++		{name: "throttled", wantReason: "Requests from this namespace to the endpoint are being rate limited."},
++		{name: "breaker takes precedence", breakerOpen: true, wantReason: "The circuit breaker is open."},
++		{name: "backing off", backingOff: true},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
 +			t.Parallel()
-+			node := newOperationNode(t, &hsmtest.NodeBackend{}, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
-+				RequestId: "request-id", ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+			}))
-+			handler := nexusoperations.NewCompletionHandler(metricstest.NewCaptureHandler(), &nexusoperations.Config{})
-+			err := handler.Handle(context.Background(), fakeEnv{node: node}, hsm.Ref{}, tc.requestID, "token", nil, nil, &commonpb.Payload{}, nil)
-+			require.ErrorAs(t, err, new(*serviceerror.NotFound))
-+			op, err := hsm.MachineData[nexusoperations.Operation](node)
-+			require.NoError(t, err)
-+			require.Equal(t, enumsspb.NEXUS_OPERATION_STATE_SCHEDULED, op.NexusOperationInfo.State)
++			ctx := newCallbackTestContext()
++			ctx.GoCtx = context.WithValue(t.Context(), OperationContextKey, &OperationContext{
++				DestinationBlocked: func(string, string) bool { return tc.breakerOpen },
++				DestinationThrottled: func(ns namespace.Name, destination string) bool {
++					require.Equal(t, namespace.Name("ns-name"), ns)
++					require.Equal(t, "endpoint", destination)
++					return true
++				},
++			})
++			op := newTestOperation()
++			op.Endpoint = "endpoint"
++			op.Status = nexusoperationpb.OPERATION_STATUS_SCHEDULED
++			cancel := newCancellation(&nexusoperationpb.CancellationState{Status: nexusoperationpb.CANCELLATION_STATUS_SCHEDULED})
++			if tc.backingOff {
++				op.Status = nexusoperationpb.OPERATION_STATUS_BACKING_OFF
++				cancel.Status = nexusoperationpb.CANCELLATION_STATUS_BACKING_OFF
++			}
++			op.Cancellation = chasm.NewComponentField(ctx, cancel)
++			op.RequestData = chasm.NewDataField(ctx, &nexusoperationpb.OperationRequestData{})
++			op.Visibility = chasm.NewComponentField(ctx, chasm.NewVisibility(ctx))
++			opStatus, cancelStatus := op.Status, cancel.Status
++			info := op.buildExecutionInfo(ctx)
++			wantState, wantCancelState := PendingOperationState(opStatus), CancellationAPIState(cancelStatus)
++			if tc.wantReason != "" {
++				wantState = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
++				wantCancelState = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
++			}
++			require.Equal(t, wantState, info.State)
++			require.Equal(t, wantCancelState, info.CancellationInfo.State)
++			require.Equal(t, tc.wantReason, info.BlockedReason)
++			require.Equal(t, tc.wantReason, info.CancellationInfo.BlockedReason)
++		})
++	}
++}
+```
+
+**File**: `chasm/lib/workflow/nexus_methods.go` (modified, +6/-0)
+```diff
+@@ -286,6 +286,9 @@ func (w *Workflow) BuildPendingNexusOperationInfos(
+ 		if state == enumspb.PENDING_NEXUS_OPERATION_STATE_SCHEDULED && op.DestinationBlocked(ctx) {
+ 			state = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
+ 			blockedReason = "The circuit breaker is open."
++		} else if state == enumspb.PENDING_NEXUS_OPERATION_STATE_SCHEDULED && op.DestinationThrottled(ctx) {
++			state = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
++			blockedReason = "Requests from this namespace to the endpoint are being rate limited."
+ 		}
+ 
+ 		info := &workflowpb.PendingNexusOperationInfo{
+@@ -314,6 +317,9 @@ func (w *Workflow) BuildPendingNexusOperationInfos(
+ 			if state == enumspb.NEXUS_OPERATION_CANCELLATION_STATE_SCHEDULED && op.DestinationBlocked(ctx) {
+ 				state = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
+ 				blockedReason = "The circuit breaker is open."
++			} else if state == enumspb.NEXUS_OPERATION_CANCELLATION_STATE_SCHEDULED && op.DestinationThrottled(ctx) {
++				state = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
++				blockedReason = "Requests from this namespace to the endpoint are being rate limited."
+ 			}
+ 
+ 			info.CancellationInfo = &workflowpb.NexusOperationCancellationInfo{
+```
+
+**File**: `chasm/lib/workflow/nexus_methods_test.go` (modified, +27/-0)
+```diff
+@@ -8,9 +8,11 @@ import (
+ 	"github.com/stretchr/testify/require"
+ 	commandpb "go.temporal.io/api/command/v1"
+ 	enumspb "go.temporal.io/api/enums/v1"
++	"go.temporal.io/server/chasm"
+ 	"go.temporal.io/server/chasm/lib/nexusoperation"
+ 	nexusoperationpb "go.temporal.io/server/chasm/lib/nexusoperation/gen/nexusoperationpb/v1"
+ 	"go.temporal.io/server/common/dynamicconfig"
++	"go.temporal.io/server/common/namespace"
+ 	commonnexus "go.temporal.io/server/common/nexus"
+ 	"go.temporal.io/server/service/history/tests"
+ )
+@@ -102,3 +104,28 @@ func TestBuildPendingNexusOperationInfos_CircuitBreaker(t *testing.T) {
+ 		}
+ 	}
+ }
++
++func TestBuildPendingNexusOperationInfosCallerRPSThrottled(t *testing.T) {
++	t.Parallel()
++	tcx := newTestContext(t, defaultConfig)
++	_, key := scheduleOperation(t, tcx)
++	op := tcx.wf.Operations[key].Get(tcx.chasmCtx)
++	op.Cancellation = chasm.NewComponentField(tcx.chasmCtx, &nexusoperation.Cancellation{
++		CancellationState: &nexusoperationpb.CancellationState{Status: nexusoperationpb.CANCELLATION_STATUS_SCHEDULED},
++	})
++	tcx.chasmCtx.GoCtx = context.WithValue(t.Context(), nexusoperation.OperationContextKey, &nexusoperation.OperationContext{
++		DestinationBlocked: func(string, string) bool { return false },
++		DestinationThrottled: func(ns namespace.Name, destination string) bool {
++			require.Equal(t, tests.GlobalNamespaceEntry.Name(), ns)
++			require.Equal(t, op.Endpoint, destination)
++			return true
++		},
++	})
++	infos, err := tcx.wf.BuildPendingNexusOperationInfos(tcx.chasmCtx)
++	require.NoError(t, err)
++	require.Len(t, infos, 1)
++	require.Equal(t, enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED, infos[0].State)
++	require.Equal(t, "Requests from this namespace to the endpoint are being rate limited.", infos[0].BlockedReason)
++	require.Equal(t, enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED, infos[0].CancellationInfo.State)
++	require.Equal(t, "Requests from this namespace to the endpoint are being rate limited.", infos[0].CancellationInfo.BlockedReason)
++}
+```
+
+**File**: `service/history/api/describeworkflow/api.go` (modified, +17/-2)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
+ 	"go.temporal.io/server/chasm"
+ 	chasmcallback "go.temporal.io/server/chasm/lib/callback"
++	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
+ 	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
+ 	"go.temporal.io/server/common"
+ 	"go.temporal.io/server/common/definition"
+@@ -65,6 +66,7 @@ func Invoke(
+ 	workflowConsistencyChecker api.WorkflowConsistencyChecker,
+ 	persistenceVisibilityMgr manager.VisibilityManager,
+ 	outboundQueueCBPool *circuitbreakerpool.OutboundQueueCircuitBreakerPool,
++	destinationThrottled chasmnexus.DestinationThrottledFn,
+ ) (_ *historyservice.DescribeWorkflowExecutionResponse, retError error) {
+ 	namespaceID := namespace.ID(req.GetNamespaceId())
+ 	err := api.ValidateNamespaceUUID(namespaceID)
+@@ -361,6 +363,7 @@ func Invoke(
+ 		executionInfo,
+ 		executionState,
+ 		outboundQueueCBPool,
++		destinationThrottled,
+ 		shard.GetLogger(),
+ 	)
+ 	if err != nil {
+@@ -592,8 +595,10 @@ func buildPendingNexusOperationInfosFromHSM(
+ 	executionInfo *persistencespb.WorkflowExecutionInfo,
+ 	executionState *persistencespb.WorkflowExecutionState,
+ 	outboundQueueCBPool *circuitbreakerpool.OutboundQueueCircuitBreakerPool,
++	destinationThrottled chasmnexus.DestinationThrottledFn,
+ 	logger log.Logger,
+ ) ([]*workflowpb.PendingNexusOperationInfo, error) {
++	namespaceName := mutableState.GetNamespaceEntry().Name()
+ 	opColl := nexusoperations.MachineCollection(mutableState.HSM())
+ 	ops := opColl.List()
+ 	result := make([]*workflowpb.PendingNexusOperationInfo, 0, len(ops))
+@@ -610,7 +615,7 @@ func buildPendingNexusOperationInfosFromHSM(
+ 			return nil, serviceerror.NewInternal("failed to construct describe response")
+ 		}
+ 
+-		operationInfo, err := buildPendingNexusOperationInfo(namespaceID, node, op, outboundQueueCBPool)
++		operationInfo, err := buildPendingNexusOperationInfo(namespaceID, namespaceName, node, op, outboundQueueCBPool, destinationThrottled)
+ 		if err != nil {
+ 			logger.Error(
+ 				"failed to build Nexus operation info while building describe response",
+@@ -633,9 +638,11 @@ func buildPendingNexusOperationInfosFromHSM(
+ 
+ func buildPendingNexusOperationInfo(
+ 	namespaceID namespace.ID,
++	namespaceName namespace.Name,
+ 	node *hsm.Node,
+ 	op nexusoperations.Operation,
+ 	outboundQueueCBPool *circuitbreakerpool.OutboundQueueCircuitBreakerPool,
++	destinationThrottled chasmnexus.DestinationThrottledFn,
+ ) (*workflowpb.PendingNexusOperationInfo, error) {
+ 	var state enumspb.PendingNexusOperationState
+ 	switch op.State() {
+@@ -665,10 +672,13 @@ func buildPendingNexusOperationInfo(
+ 		if cb.State() != gobreaker.StateClosed {
+ 			state = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
+ 			blockedReason = "The circuit breaker is open."
++		} else if destinationThrottled != nil && destinationThrottled(namespaceName, op.Endpoint) {
++			state = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
++			blockedReason = "Requests from this namespace to the endpoint are being rate limited."
+ 		}
+ 	}
+ 
+-	cancellationInfo, err := buildNexusOperationCancellationInfo(namespaceID, node, op, outboundQueueCBPool)
++	cancellationInfo, err := buildNexusOperationCancellationInfo(namespaceID, namespaceName, node, op, outboundQueueCBPool, destinationThrottled)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -703,9 +713,11 @@ func buildPendingNexusOperationInfo(
+ 
+ func buildNexusOperationCancellationInfo(
+ 	namespaceID namespace.ID,
++	namespaceName namespace.Name,
+ 	node *hsm.Node,
+ 	op nexusoperations.Operation,
+ 	outboundQueueCBPool *circuitbreakerpool.OutboundQueueCircuitBreakerPool,
++	destinationThrottled chasmnexus.DestinationThrottledFn,
+ ) (*workflowpb.NexusOperationCancellationInfo, error) {
+ 	cancelation, err := op.Cancelation(node)
+ 	if err != nil {
+@@ -726,6 +738,9 @@ func buildNexusOperationCancellationInfo(
+ 		if cb.State() != gobreaker.StateClosed {
+ 			state = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
+ 			blockedReason = "The circuit breaker is open."
++		} else if destinationThrottled != nil && destinationThrottled(namespaceName, op.Endpoint) {
++			state = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
++			blockedReason = "Requests from this namespace to the endpoint are being rate limited."
+ 		}
+ 	}
+ 
+```
+
+**File**: `service/history/fx.go` (modified, +15/-0)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 
+ 	"github.com/nexus-rpc/sdk-go/nexus"
+ 	"github.com/sony/gobreaker"
++	enumspb "go.temporal.io/api/enums/v1"
+ 	"go.temporal.io/server/api/historyservice/v1"
+ 	"go.temporal.io/server/chasm"
+ 	"go.temporal.io/server/chasm/lib/activity"
+@@ -49,6 +50,7 @@ import (
+ 	"go.temporal.io/server/service/history/hsm/callbacks"
+ 	hsmnexusoperations "go.temporal.io/server/service/history/hsm/nexusoperations"
+ 	hsmnexusworkflow "go.temporal.io/server/service/history/hsm/nexusoperations/workflow"
++	"go.temporal.io/server/service/history/queues"
+ 	"go.temporal.io/server/service/history/replication"
+ 	"go.temporal.io/server/service/history/shard"
+ 	"go.temporal.io/server/service/history/tasks"
+@@ -75,6 +77,7 @@ var Module = fx.Options(
+ 	fx.Provide(CallbackDestinationBlockedProvider),
+ 	fx.Provide(CallbackValidatorProvider),
+ 	fx.Provide(NexusOperationDestinationBlockedProvider),
++	fx.Provide(NexusOperationDestinationThrottledProvider),
+ 	fx.Provide(ConfigProvider), // might be worth just using provider for configs.Config directly
+ 	fx.Provide(workflow.NewCommandHandlerRegistry),
+ 	fx.Provide(ServiceErrorInterceptorProvider),
+@@ -166,6 +169,18 @@ func NexusOperationDestinationBlockedProvider(
+ 	}
+ }
+ 
++func NexusOperationDestinationThrottledProvider(
++	throttleState *queues.ThrottleState,
++) chasmnexus.DestinationThrottledFn {
++	return func(namespaceName namespace.Name, destination string) bool {
++		return throttleState.IsThrottled(queues.ThrottleKey{
++			Cause:         enumspb.RESOURCE_EXHAUSTED_CAUSE_CALLER_RPS_LIMIT,
++			NamespaceName: namespaceName,
++			Destination:   destination,
 +		})
 +	}
 +}
 +
- func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 	// All cases drive a completion that arrives before the start response, so the handler
- 	// fabricates the started transition (emitting schedule-to-start) and then resolves the
-@@ -66,6 +89,7 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 			backend := &hsmtest.NodeBackend{}
- 			node := newOperationNode(t, backend, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
- 				ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+				RequestId:              "request-id",
- 			}))
- 
- 			captureHandler := metricstest.NewCaptureHandler()
-@@ -79,10 +103,10 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 				context.Background(),
- 				fakeEnv{node: node},
- 				hsm.Ref{},
--				"",      // requestID (empty skips the request-id match check)
--				"token", // operationToken
--				nil,     // startTime
--				nil,     // links
-+				"request-id", // requestID
-+				"token",      // operationToken
-+				nil,          // startTime
-+				nil,          // links
- 				tc.result,
- 				tc.opErr,
- 			))
-@@ -130,6 +154,7 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
- 	backend := &hsmtest.NodeBackend{WorkflowTimeFn: func() time.Time { return workflowNow }}
- 	node := newOperationNode(t, backend, mustNewScheduledEvent(scheduledTime, &historypb.NexusOperationScheduledEventAttributes{
- 		ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+		RequestId:              "request-id",
- 	}))
- 	require.NoError(t, hsm.MachineTransition(node, func(operation nexusoperations.Operation) (hsm.TransitionOutput, error) {
- 		return nexusoperations.TransitionStarted.Apply(operation, nexusoperations.EventStarted{
-@@ -150,10 +175,10 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
- 		context.Background(),
- 		fakeEnv{node: node, nowFn: func() time.Time { return wallNow }},
- 		hsm.Ref{},
--		"",      // requestID (empty skips the request-id match check)
--		"token", // operationToken
--		nil,     // startTime
--		nil,     // links
-+		"request-id", // requestID
-+		"token",      // operationToken
-+		nil,          // startTime
-+		nil,          // links
- 		&commonpb.Payload{},
- 		nil,
- 	))
+ // CallbackValidatorProvider creates a callback Validator using the production dynamic config keys
+ // so that existing operator configurations (callback.allowedAddresses) are honored.
+ func CallbackValidatorProvider(dc *dynamicconfig.Collection, namespaceRegistry namespace.Registry) (commoncallbacks.Validator, error) {
 ```
 
-**File**: `tests/nexus_workflow_test.go` (modified, +25/-0)
+**File**: `service/history/history_engine.go` (modified, +12/-0)
 ```diff
-@@ -2019,6 +2019,31 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationAsyncCompletionErrors(chasmEn
- 		s.Contains(handlerErr.Error(), "invalid callback token", "Response should indicate invalid callback token")
- 	})
+@@ -14,6 +14,7 @@ import (
+ 	replicationspb "go.temporal.io/server/api/replication/v1"
+ 	workflowspb "go.temporal.io/server/api/workflow/v1"
+ 	"go.temporal.io/server/chasm"
++	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
+ 	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
+ 	"go.temporal.io/server/client"
+ 	"go.temporal.io/server/common"
+@@ -106,6 +107,7 @@ import (
+ type (
+ 	engineOptions struct {
+ 		workflowResendScheduler workflowresend.Scheduler
++		destinationThrottled    chasmnexus.DestinationThrottledFn
+ 	}
  
-+	s.Run("CallbackTokenWithoutRequestID", func(s *NexusWorkflowTestSuite) {
-+		env := s.newTestEnv(chasmEnabled)
-+		gen := &commonnexus.CallbackTokenGenerator{}
-+		validToken, err := s.generateValidCallbackToken(env.NamespaceID().String(), testcore.RandomizeStr("workflow"), uuid.NewString())
-+		s.NoError(err)
-+		decodedToken, err := commonnexus.DecodeCallbackToken(validToken)
-+		s.NoError(err)
-+		completionToken, err := gen.DecodeCompletion(decodedToken)
-+		s.NoError(err)
-+		completionToken.RequestId = ""
-+		invalidToken, err := gen.Tokenize(completionToken)
-+		s.NoError(err)
+ 	// EngineOption adds optional history engine dependencies without adding required parameters.
+@@ -159,6 +161,7 @@ type (
+ 		replicationProgressCache   replication.ProgressCache
+ 		syncStateRetriever         replication.SyncStateRetriever
+ 		outboundQueueCBPool        *circuitbreakerpool.OutboundQueueCircuitBreakerPool
++		destinationThrottled       chasmnexus.DestinationThrottledFn
+ 		testHooks                  testhooks.TestHooks
+ 	}
+ )
+@@ -170,6 +173,13 @@ func WithWorkflowResendScheduler(scheduler workflowresend.Scheduler) EngineOptio
+ 	}
+ }
+ 
++// WithDestinationThrottled reports caller RPS throttling in Describe responses.
++func WithDestinationThrottled(fn chasmnexus.DestinationThrottledFn) EngineOption {
++	return func(options *engineOptions) {
++		options.destinationThrottled = fn
++	}
++}
 +
-+		completion := nexusrpc.CompleteOperationOptions{
-+			Result: testcore.MustToPayload(s.T(), "result"),
-+			Header: nexus.Header{commonnexus.CallbackTokenHeader: invalidToken},
-+		}
-+		publicCallbackURL := "http://" + env.HttpAPIAddress() + "/" + commonnexus.RouteCompletionCallback.Path(env.Namespace().String())
-+		err = s.sendNexusCompletionRequest(s.Context(), publicCallbackURL, completion)
-+		var handlerErr *nexus.HandlerError
-+		s.ErrorAs(err, &handlerErr)
-+		s.Equal(nexus.HandlerErrorTypeBadRequest, handlerErr.Type)
-+		s.Contains(handlerErr.Error(), "invalid callback token")
-+	})
-+
- 	s.Run("InvalidCallbackTokenNoIdentifier", func(s *NexusWorkflowTestSuite) {
- 		env := s.newTestEnv(chasmEnabled)
- 		completion := nexusrpc.CompleteOperationOptions{
+ func applyEngineOptions(options []EngineOption) engineOptions {
+ 	var result engineOptions
+ 	for _, option := range options {
+@@ -262,6 +272,7 @@ func NewEngineWithShardContext(
+ 		replicationProgressCache:   replicationProgressCache,
+ 		syncStateRetriever:         syncStateRetriever,
+ 		outboundQueueCBPool:        outboundQueueCBPool,
++		destinationThrottled:       engineOptions.destinationThrottled,
+ 		testHooks:                  testHooks,
+ 		chasmEngine:                chasmEngine,
+ 		versionCache:               versionCache,
+@@ -566,6 +577,7 @@ func (e *historyEngineImpl) DescribeWorkflowExecution(
+ 		e.workflowConsistencyChecker,
+ 		e.persistenceVisibilityMgr,
+ 		e.outboundQueueCBPool,
++		e.destinationThrottled,
+ 	)
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13091** (2026-11-14): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13090** (closed): Add standalone lintconditions analyzer module (@stephanos)
 - **PR #13077** (2026-11-13): Require matching request IDs for Nexus completions (@tekkaya)
 - **PR #13075** (2026-11-13): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13070** (2026-11-14): Use CHASM UpdateWithStart in SANO. (@chanric)
 - **PR #13069** (2026-11-13): Keep CHASM schedule buffers progressing after discarded or failed starts (@chaptersix)
-- **PR #13068** (2026-11-12): Fix flakes: `TestWorkerRegistry_CountWorkers` (@carlydf)
-- **PR #13058** (closed): Add Zap integration for the shared testlogger (@stephanos)
-- **PR #13052** (2026-11-12): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 
 ---
 
@@ -2406,28 +2602,47 @@ empty request ID now receive BadRequest.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require matching request IDs for Nexus completions
+## X. Expose Nexus caller RPS throttle status in Describe
 
 **RULE**:
-When implementing operations in `chasm/lib/nexusoperation/operation.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chasm/lib/nexusoperation/library.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cbeb97f4`: Require matching request IDs for Nexus completions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `623e5f17`: Expose Nexus caller RPS throttle status in Describe. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/nexusoperation/operation.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/nexusoperation/library.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
+	"go.temporal.io/server/common/namespace"
+// DestinationThrottledFn reports whether the caller RPS budget is limiting a destination.
+type DestinationThrottledFn func(namespaceName namespace.Name, destination string) bool
+
+	DestinationBlocked   DestinationBlockedFn
+	DestinationThrottled DestinationThrottledFn
+	MetricTagConfig      dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
+	destinationBlocked   DestinationBlockedFn
+	destinationThrottled DestinationThrottledFn
+	metricTagConfig      dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
+	DestinationThrottled                       DestinationThrottledFn `optional:"true"`
+		destinationThrottled:                       params.DestinationThrottled,
+					MetricTagConfig:      l.metricTagConfig,
+					DestinationBlocked:   l.destinationBlocked,
+					DestinationThrottled: l.destinationThrottled,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
+	DestinationBlocked DestinationBlockedFn
+	MetricTagConfig    dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
+	destinationBlocked DestinationBlockedFn
+	metricTagConfig    dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
+					MetricTagConfig:    l.metricTagConfig,
+					DestinationBlocked: l.destinationBlocked,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cbeb97f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `623e5f17` are properly handled with clean fallback behavior.

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T05:37:23.721Z",
+  "updated_at": "2026-11-15T06:00:50.304Z",
   "stats": {
-    "total_discovered": 3620,
-    "approved_pending_harvest": 3410,
+    "total_discovered": 3623,
+    "approved_pending_harvest": 3413,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3390,
+      "COMMUNITY_AND_EXPERT": 3393,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -78191,6 +78191,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-CAC24968E5AA": {
+      "id": "SRC-CAC24968E5AA",
+      "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "title": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:00:49.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
+        "fileName": "hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md"
+      }
+    },
+    "SRC-219D2170AA24": {
+      "id": "SRC-219D2170AA24",
+      "url": "https://github.com/projectdiscovery/nuclei",
+      "title": "https://github.com/projectdiscovery/nuclei",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:00:50.264Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-D6B6FA0BC7E8": {
+      "id": "SRC-D6B6FA0BC7E8",
+      "url": "https://github.com/projectdiscovery/nuclei/pull/7018",
+      "title": "https://github.com/projectdiscovery/nuclei/pull/7018",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:00:50.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
       }
     }
   }

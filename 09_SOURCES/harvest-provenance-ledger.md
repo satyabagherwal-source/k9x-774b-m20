@@ -10067,3 +10067,8 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ba8940f6` | Multi-dimensional audit evidence | 2026-11-15T05:31:52.428Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-15T05:36:45.377Z |
 | `learn-dom-d-c2638e7b` | `project://hf-openmoss-team-moss-image-sft` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | 2026-11-15T05:37:22.734Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-15T06:00:00.569Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `170fb83d` | Multi-dimensional audit evidence | 2026-11-15T06:00:10.228Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `fe3421e7` | Multi-dimensional audit evidence | 2026-11-15T06:00:12.030Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `c718b2ad` | Multi-dimensional audit evidence | 2026-11-15T06:00:14.649Z |
+| `learn-dom-d-3fa9ca89` | `project://hf-deepseek-ai-deepseek-v4.1-flash-1017` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | 2026-11-15T06:00:49.205Z |

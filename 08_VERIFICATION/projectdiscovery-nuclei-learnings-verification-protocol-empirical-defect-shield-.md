@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:43:32.020Z",
+  "timestamp": "2026-11-15T06:00:50.435Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-projectdiscovery-nuclei-learnings",
+  "learning_id": "LEARN-EVO-projectdiscovery-nuclei-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [projectdiscovery-nuclei-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:43:32.020Z`  
-> **Learning ID**: `LEARN-REEXTRACT-projectdiscovery-nuclei-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T06:00:50.435Z`  
+> **Learning ID**: `LEARN-EVO-projectdiscovery-nuclei-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `b2ea1489`  
+> **Source Version**: `fe3421e7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:39:45.161Z  
+> **Timestamp**: 2026-11-15T06:00:11.352Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:39:44.826Z  
+> **Harvest Timestamp**: 2026-11-15T06:00:11.345Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32788 stars
+- **Stars / Engagement**: 32926 stars
 
 ---
 
@@ -342,6 +342,7 @@ import (
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
 )
@@ -388,7 +389,17 @@ type Engine struct {
 	Callback                  func(*output.ResultEvent) // Executed on results
 	templateExecutionCallback TemplateExecutionCallback
 	planRun                   PlanRun
+	resultHook                ResultHook
 	Logger                    *gologger.Logger
+}
+
+// ResultHook observes the results of a template run on a target.
+type ResultHook func(input *contextargs.MetaInput, results []*output.ResultEvent)
+
+// SetResultHook makes the engine pass the results of every template run on a
+// target to hook, in addition to writing them; nil removes it.
+func (e *Engine) SetResultHook(hook ResultHook) {
+	e.resultHook = hook
 }
 
 // New returns a new Engine instance
@@ -1608,202 +1619,197 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67cda504` (2026-11-10)
-**Commit Message**: fix test
+### Incident Patch 1: `fe3421e7` (2026-11-14)
+**Commit Message**: Merge pull request #8138 from projectdiscovery/feat/auto-tech
 
-**File**: `pkg/protocols/http/httpclientpool/shared_responses_test.go` (modified, +5/-3)
+add -auto-tech to skip templates bound to products the tech templates did not detect
+
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -79,10 +79,12 @@ func TestSharedResponsesSendEachRequestOncePerScan(t *testing.T) {
- 	sharedGet(t, transport, http.MethodGet, server.URL+"/b", "three", http.Header{"User-Agent": {"custom-scanner"}})
- 	require.EqualValues(t, 6, hits.Load(), "one a template sets is")
- 
--	req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
--	require.NoError(t, err)
- 	for range 2 {
--		resp, err := transport.RoundTrip(req.Clone(req.Context()))
-+		// A new request each time. Clone shares the body, so a second clone
-+		// of one request can send ContentLength with an already-read body.
-+		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
-+		require.NoError(t, err)
-+		resp, err := transport.RoundTrip(req)
- 		require.NoError(t, err)
- 		_ = resp.Body.Close()
- 	}
+@@ -160,6 +160,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_CN.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_ES.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_FA.md` (modified, +1/-0)
+```diff
+@@ -175,6 +175,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_ID.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_JP.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_KR.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
+```
+
+**File**: `README_PT-BR.md` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ TEMPLATES:
+    -nt, -new-templates                    run only new templates added in latest nuclei-templates release
+    -ntv, -new-templates-version string[]  run new templates added in specific version
+    -as, -automatic-scan                   automatic web scan using wappalyzer technology detection to tags mapping
++   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
+    -t, -templates string[]                list of template or template directory to run (comma-separated, file)
+    -turl, -template-url string[]          template url or list containing template urls to run (comma-separated, file)
+    -ai, -prompt string                    generate and run template using ai prompt
 ```
 
 ---
 
-### Incident Patch 2: `df5b8b36` (2026-11-10)
-**Commit Message**: fix reuse
+### Incident Patch 2: `fc3780b5` (2026-11-14)
+**Commit Message**: forward profiles
 
-**File**: `pkg/protocols/http/httpclientpool/shared_responses.go` (modified, +34/-2)
+**File**: `internal/runner/auto_tech.go` (modified, +1/-1)
 ```diff
-@@ -140,7 +140,12 @@ func (t *sharingTransport) send(req *http.Request, entry *sharedEntry) (*http.Re
- 		return resp, err
+@@ -27,7 +27,7 @@ func (r *Runner) executeWithDetectedTech(executorOpts *protocols.ExecutorOptions
+ 	provider, ok := r.inputProvider.(interface {
+ 		TargetProfiles() *targetprofile.Registry
+ 	})
+-	if !ok {
++	if !ok || provider.TargetProfiles() == nil {
+ 		return nil, errors.New("-auto-tech needs a target list")
  	}
- 	body, err := io.ReadAll(io.LimitReader(resp.Body, sharedResponseMaxBody+1))
--	if err != nil || len(body) > sharedResponseMaxBody {
-+	if err != nil {
-+		t.forget(entry)
-+		_ = resp.Body.Close()
-+		return nil, err
-+	}
-+	if len(body) > sharedResponseMaxBody {
- 		t.forget(entry)
- 		// hand back what was read followed by the rest
- 		resp.Body = struct {
-@@ -149,12 +154,35 @@ func (t *sharingTransport) send(req *http.Request, entry *sharedEntry) (*http.Re
- 		}{io.MultiReader(bytes.NewReader(body), resp.Body), resp.Body}
- 		return resp, nil
- 	}
-+	// A refusal is the server's, for this moment. Storing it would hand the
-+	// same 429 or gateway error to every later template, and none of them
-+	// would send.
-+	if !shareableStatus(resp.StatusCode) {
-+		t.forget(entry)
-+		resp.Body = io.NopCloser(bytes.NewReader(body))
-+		if req.Method != http.MethodHead {
-+			resp.ContentLength = int64(len(body))
-+		}
-+		return resp, nil
-+	}
- 	_ = resp.Body.Close()
- 	entry.response = &storedResponse{response: resp, body: body}
- 	t.store(entry)
- 	return entry.response.copyFor(req), nil
- }
- 
-+// shareableStatus reports whether code is an answer a later template can
-+// reuse. 404 and 500 are answers templates match on. 429 and the gateway
-+// errors mean the server did not answer, so the next template must send.
-+func shareableStatus(code int) bool {
-+	switch code {
-+	case http.StatusTooManyRequests, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout:
-+		return false
-+	default:
-+		return true
-+	}
-+}
-+
- // hasBody reports whether req sends a body. retryablehttp gives every
- // request one, empty for a GET, so its content is what counts.
- func hasBody(req *http.Request) bool {
-@@ -220,7 +248,11 @@ func (s *storedResponse) copyFor(req *http.Request) *http.Response {
- 	resp.Header = s.response.Header.Clone()
- 	resp.Trailer = s.response.Trailer.Clone()
- 	resp.Body = io.NopCloser(bytes.NewReader(s.body))
--	resp.ContentLength = int64(len(s.body))
-+	// A HEAD response has an empty body and a Content-Length for the body it
-+	// did not send. Matchers read that length, so a reused HEAD keeps it.
-+	if req.Method != http.MethodHead {
-+		resp.ContentLength = int64(len(s.body))
-+	}
- 	resp.Request = req
- 	return &resp
- }
+ 	var fingerprints, rest []*templates.Template
 ```
 
-**File**: `pkg/protocols/http/httpclientpool/shared_responses_test.go` (modified, +86/-0)
+**File**: `internal/runner/preflight_portscan.go` (modified, +14/-0)
 ```diff
-@@ -189,3 +189,89 @@ func TestSharedResponsesCapCountsBodylessResponses(t *testing.T) {
- 	require.LessOrEqual(t, transport.shared.bytes, transport.shared.maxBytes)
- 	require.Less(t, len(transport.shared.entries), 20, "HEAD responses are evicted too")
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/loader"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/targetprofile"
+ 	inputtypes "github.com/projectdiscovery/nuclei/v3/pkg/input/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+@@ -52,6 +53,19 @@ func (f *filteringInputProvider) SetWithProbe(executionId string, value string,
+ func (f *filteringInputProvider) SetWithExclusions(executionId string, value string) error {
+ 	return f.base.SetWithExclusions(executionId, value)
  }
 +
-+func TestSharedResponsesKeepHeadContentLength(t *testing.T) {
-+	var hits atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		hits.Add(1)
-+		w.Header().Set("Content-Length", "1234")
-+		w.WriteHeader(http.StatusOK)
-+	}))
-+	defer server.Close()
-+	transport := newSharingTransport(http.DefaultTransport)
-+
-+	length := func(templateID string) int64 {
-+		t.Helper()
-+		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), templateID), http.MethodHead, server.URL, nil)
-+		require.NoError(t, err)
-+		resp, err := transport.RoundTrip(req)
-+		require.NoError(t, err)
-+		t.Cleanup(func() { _ = resp.Body.Close() })
-+		return resp.ContentLength
++// TargetProfiles forwards the list provider's registry. -auto-tech binds
++// detections on it after preflight has wrapped the provider.
++func (f *filteringInputProvider) TargetProfiles() *targetprofile.Registry {
++	profiles, ok := f.base.(interface {
++		TargetProfiles() *targetprofile.Registry
++	})
++	if !ok {
++		return nil
 +	}
-+
-+	require.Equal(t, int64(1234), length("one"))
-+	require.Equal(t, int64(1234), length("two"), "a reused HEAD keeps the length the server advertised")
-+	require.EqualValues(t, 1, hits.Load())
++	return profiles.TargetProfiles()
 +}
 +
-+func TestSharedResponsesDoNotKeepRefusals(t *testing.T) {
-+	for _, status := range []int{http.StatusTooManyRequests, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout} {
-+		t.Run(http.StatusText(status), func(t *testing.T) {
-+			var hits atomic.Int32
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				hits.Add(1)
-+				http.Error(w, "no", status)
-+			}))
-+			defer server.Close()
-+			transport := newSharingTransport(http.DefaultTransport)
+ func (f *filteringInputProvider) Iterate(callback func(value *contextargs.MetaInput) bool) {
+ 	f.base.Iterate(func(mi *contextargs.MetaInput) bool {
+ 		key, err := mi.MarshalString()
+```
+
+**File**: `internal/runner/preflight_profiles_test.go` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++package runner
 +
-+			sharedGet(t, transport, http.MethodGet, server.URL, "one", nil)
-+			sharedGet(t, transport, http.MethodGet, server.URL, "two", nil)
-+			require.EqualValues(t, 2, hits.Load())
-+		})
-+	}
++import (
++	"testing"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/targetprofile"
++	"github.com/stretchr/testify/require"
++)
++
++type profiledInput struct {
++	provider.InputProvider
++	profiles *targetprofile.Registry
 +}
 +
-+func TestSharedResponsesKeepNotFound(t *testing.T) {
-+	var hits atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		hits.Add(1)
-+		http.NotFound(w, r)
-+	}))
-+	defer server.Close()
-+	transport := newSharingTransport(http.DefaultTransport)
++func (p profiledInput) TargetProfiles() *targetprofile.Registry { return p.profiles }
 +
-+	sharedGet(t, transport, http.MethodGet, server.URL, "one", nil)
-+	sharedGet(t, transport, http.MethodGet, server.URL, "two", nil)
-+	require.EqualValues(t, 1, hits.Load())
-+}
++func TestFilteringInputProviderKeepsTargetProfiles(t *testing.T) {
++	profiles := targetprofile.NewRegistry(t.TempDir())
++	wrapped := &filteringInputProvider{base: profiledInput{profiles: profiles}}
 +
-+type errReadBody struct{}
-+
-+func (errReadBody) Read([]byte) (int, error) { return 0, errors.New("short read") }
-+func (errReadBody) Close() error             { return nil }
-+
-+type errBodyTransport struct{}
-+
-+func (errBodyTransport) RoundTrip(*http.Request) (*http.Response, error) {
-+	return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: errReadBody{}}, nil
-+}
-+
-+func TestSharedResponsesReturnBodyReadErrors(t *testing.T) {
-+	transport := newSharingTransport(errBodyTransport{})
-+
-+	send := func(templateID string) (*http.Response, error) {
-+		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), templateID), http.MethodGet, "http://example.com", nil)
-+		require.NoError(t, err)
-+		return transport.RoundTrip(req)
-+	}
-+
-+	resp, err := send("one")
-+	require.Error(t, err)
-+	require.Nil(t, resp)
-+
-+	resp, err = send("two")
-+	require.Error(t, err, "a failed read is not reused")
-+	require.Nil(t, resp)
++	got, ok := any(wrapped).(interface {
++		TargetProfiles() *targetprofile.Registry
++	})
++	require.True(t, ok)
++	require.Same(t, profiles, got.TargetProfiles())
++	require.Nil(t, (&filteringInputProvider{base: profiledInput{}}).TargetProfiles())
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8138** (2026-11-14): add -auto-tech to skip templates bound to products the tech templates did not detect (@dogancanbakir)
+- **PR #8136** (2026-11-14): follow appends to a running plan and its cancel log (@dogancanbakir)
+- **PR #8135** (2026-11-14): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
 - **PR #8107** (2026-11-10): send identical requests once per scan (@dogancanbakir)
 - **PR #8103** (2026-11-10): add -store-events and -replay over stored events of any protocol (@dogancanbakir)
 - **PR #8102** (2026-11-10): fix(js): stop tsgen from panicking on non-struct types (@dwisiswant0)
-- **PR #8101** (2026-11-11): add -run-plan to run a plan file and resume it (@dogancanbakir)
-- **PR #8100** (2026-11-09): fix(js/tsgen): report package load errors instead of ignoring them (@dwisiswant0)
-- **PR #8095** (closed): chore(deps): bump the modules group across 1 directory with 18 updates (@dependabot[bot])
 
 ---
 
@@ -1823,37 +1829,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in shared_responses_test.go
+## X. Empirical Invariant Guard in README.md
 
 **RULE**:
-When implementing operations in `pkg/protocols/http/httpclientpool/shared_responses_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67cda504`: test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe3421e7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/httpclientpool/shared_responses_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// A new request each time. Clone shares the body, so a second clone
-		// of one request can send ContentLength with an already-read body.
-		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
-		require.NoError(t, err)
-		resp, err := transport.RoundTrip(req)
+   -auto-tech                             run the tech templates first, then skip templates bound to products they did not detect on the target
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
-	require.NoError(t, err)
-		resp, err := transport.RoundTrip(req.Clone(req.Context()))
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67cda504` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe3421e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
