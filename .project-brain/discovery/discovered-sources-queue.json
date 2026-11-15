@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T06:45:49.233Z",
+  "updated_at": "2026-11-15T07:32:59.016Z",
   "stats": {
-    "total_discovered": 3654,
-    "approved_pending_harvest": 3444,
+    "total_discovered": 3655,
+    "approved_pending_harvest": 3445,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3424,
+      "COMMUNITY_AND_EXPERT": 3425,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -78939,6 +78939,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
         "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-BE88E8F6A7EC": {
+      "id": "SRC-BE88E8F6A7EC",
+      "url": "https://huggingface.co/burner22/numbat",
+      "title": "https://huggingface.co/burner22/numbat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T07:32:59.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md",
+        "fileName": "hf-burner22-numbat-learnings.md"
       }
     }
   }

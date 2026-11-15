@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T07:04:14.358Z",
-  "total_records": 988,
+  "last_updated": "2026-11-15T07:33:00.343Z",
+  "total_records": 991,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 487,
+      "total": 490,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -524,7 +524,10 @@
         "DOM-D-1138A8F2",
         "domain_intelligence-research-knowledge-intelligence-hf-datalab-to-indra-ocr-learnings-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-memory-30b-a3b-learnings-core-inva"
+        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-memory-30b-a3b-learnings-core-inva",
+        "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
+        "DOM-D-E891AC55",
+        "domain_intelligence-research-knowledge-intelligence-hf-burner22-numbat-learnings-core-invariants"
       ]
     },
     "E": {
@@ -6803,8 +6806,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "ae9dc3de5072f5271b93cf193fd2a63167f3c7aacf15d9fe016f98dfc7e24627",
-      "created_at": "2026-11-15T07:04:14.358Z"
+      "content_hash": "183ac9c295971bf2661b7c806930c571fcbb3437542dc9e880febf5e8232f1c4",
+      "created_at": "2026-11-15T07:33:00.343Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7721,8 +7724,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b3ecad4390ed70d0400951ca72aa51901b45924aef811fbfc5d6bbda57405144",
-      "created_at": "2026-11-15T07:04:13.967Z"
+      "content_hash": "c66ca429d36bf861e571d394aa2720788533f894cacc81d3629a016a00e5db75",
+      "created_at": "2026-11-15T07:32:59.787Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -19161,6 +19164,66 @@
       "repository": "clementtsang-bottom-learnings",
       "content_hash": "4799242cb43b0f68db8f7e3c9f62acbca59daef6dc2b024547ac960b81c92bd3",
       "created_at": "2026-11-15T07:04:13.492Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: burner22/numbat Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-burner22-numbat-research-knowledge-intelligence-burner22-numbat-core-invarian.md",
+      "repository": "burner22/numbat",
+      "content_hash": "bbca8cccc9904faea32765633bd6d01f99b71c4410a7cd815c96afc1261b266e",
+      "created_at": "2026-11-15T07:32:18.451Z"
+    },
+    "DOM-D-E891AC55": {
+      "record_id": "DOM-D-E891AC55",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): burner22/numbat",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/burner22/numbat](https://huggingface.co/burner22/numbat))  \n> **Source Version**: `hf-burner22-`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clo",
+      "content_hash": "dad1b5d030da3e13b7dea495391da27796ac6f261fb8030eba1536b3a8124103",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "provenance": {
+        "source_uri": "project://hf-burner22-numbat/hf-burner22-numbat-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T07:32:30.390Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-burner22-numbat)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-burner22-numbat"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T07:32:58.988Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-burner22-numbat-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-burner22-numbat-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-burner22-numbat-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-burner22-numbat-learnings-research-knowledge-intelligence-hf-burner22-numbat-.md",
+      "repository": "hf-burner22-numbat-learnings",
+      "content_hash": "2da1c4523020265d2d35a1a113761ee37ae8efc0e4166f855883f1cd2ea8e59d",
+      "created_at": "2026-11-15T07:32:59.188Z"
     }
   }
 }

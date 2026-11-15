@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T07:04:02.235Z",
-  "total_cycles_completed": 9682,
-  "total_learnings_persisted": 9682,
+  "last_updated": "2026-11-15T07:32:18.296Z",
+  "total_cycles_completed": 9683,
+  "total_learnings_persisted": 9683,
   "total_rules_promoted": 9313,
   "history": [
-    {
-      "timestamp": "2026-11-14T07:30:51.307Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T07:39:20.731Z",
       "repository": "lingyired/status-trio",
@@ -1403,6 +1396,13 @@
       "repository": "ClementTsang/bottom",
       "learningId": "learn-github-clementtsang-bottom",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T07:32:18.296Z",
+      "repository": "burner22/numbat",
+      "learningId": "learn-huggingface-burner22-numbat",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

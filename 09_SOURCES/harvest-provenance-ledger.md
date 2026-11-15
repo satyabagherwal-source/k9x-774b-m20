@@ -10085,3 +10085,5 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `f7701d5f` | Multi-dimensional audit evidence | 2026-11-15T06:45:15.877Z |
 | `learn-dom-h-8c16206c` | `project://hf-tencent-hy-memory-30b-a3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | 2026-11-15T06:45:47.842Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `a5da65c6` | Multi-dimensional audit evidence | 2026-11-15T07:04:02.231Z |
+| `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-15T07:32:18.290Z |
+| `learn-dom-d-e891ac55` | `project://hf-burner22-numbat` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md` | 2026-11-15T07:32:59.003Z |
