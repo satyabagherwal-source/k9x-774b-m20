@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T01:52:54.213Z",
-  "total_verified_learnings": 8751,
+  "last_updated": "2026-11-16T02:06:38.236Z",
+  "total_verified_learnings": 8752,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18824,
+  "total_items": 18836,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -231887,14 +231887,19 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "ded6b58d",
-      "content_hash": "66e4803fcf43bdb062ae2c20fdf1bfef78639e4e817caac7b6bf009b3e9a3005",
+      "source_version": "0a3328bd",
+      "content_hash": "5024bf64f16a00eb9c0d216ad37064ee9a22d3021231313c6491a698eba702f7",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
         {
           "number": 8513,
           "title": "[PLAT-23867] Add AI review guide for YBA",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8689,
+          "title": "[#37541] Build: Add a script to remove old thirdparty directories",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -231903,7 +231908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:40:09.498Z",
+      "verified_at": "2026-11-16T02:06:24.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231945,10 +231950,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-yugabyte-yugabyte-db-content-information-intelligence-yugabyte-yugabyte-db-core-.md",
       "title": "Content & Information Intelligence: yugabyte/yugabyte-db Core Invariants",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "ded6b58d",
-      "content_hash": "fff632619c6136b0d7b492946b6f1711f80758d3c8c0c80f1421fd8960df53a8",
+      "source_version": "0a3328bd",
+      "content_hash": "4ad95c963184ae8f3921f07bbbe6ab6e87c72f21b8fb58a1f4eca2b877b7604b",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T17:40:10.022Z"
+      "persisted_at": "2026-11-16T02:06:24.887Z"
     },
     "agent_contract-agent-contract-yugabyte-yugabyte-db-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-yugabyte-yugabyte-db-autonomous-specialist-persona",
@@ -231969,10 +231974,10 @@
       "relative_path": "08_VERIFICATION/yugabyte-yugabyte-db-verification-protocol-empirical-defect-shield-for-yugabyte-.md",
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte/yugabyte-db",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "ded6b58d",
-      "content_hash": "5ea5e5683c2ae4d64d5357ab7bc530ae212015dd51c4f61ad824e20b9a009fdc",
+      "source_version": "0a3328bd",
+      "content_hash": "f15b412886b8468c20854f4fee2f55a214b58ae76d55a636ac76b599daab7174",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:40:10.263Z"
+      "persisted_at": "2026-11-16T02:06:25.003Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
@@ -232018,9 +232023,9 @@
       "title": "Content & Information Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "repository": "yugabyte-yugabyte-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "d33e519bfe81a3bd6100a4829b2c9e1420d609e89bb278970f0ca3b108dd0b63",
+      "content_hash": "c8281027f9450ca2bc7389eec23eba96ff69a5f8ef6e976426a14f0c14f337ec",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T17:40:48.772Z"
+      "persisted_at": "2026-11-16T02:06:38.123Z"
     },
     "agent_contract-agent-contract-yugabyte-yugabyte-db-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-yugabyte-yugabyte-db-learnings-autonomous-specialist-persona",
@@ -232042,9 +232047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte-yugabyte-db-learnings",
       "repository": "yugabyte-yugabyte-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa7047b8c115772dcb6e0c7d236687b2ffb4ab5c2bb549dff3c2f16b75694a5d",
+      "content_hash": "f036806e2a68203a9a9a1892a40efde78c9eac51313a34bdf164e3f04ce959f9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:40:49.040Z"
+      "persisted_at": "2026-11-16T02:06:38.236Z"
     },
     "learn-huggingface-unsloth-embeddinggemma-2-gguf": {
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
@@ -233480,14 +233485,19 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "97d0b4f2",
-      "content_hash": "8806504cd6257cef57c3cb998d6a627b96d83f2033be60ff3e2ef6e5e27b3fb3",
+      "source_version": "9dd4c570",
+      "content_hash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
         {
           "number": 8525,
           "title": "Markdown rendering of `pulumi package publish` help text",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8688,
+          "title": "silent `up --plan` failure for whole-resource stack outputs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -233496,7 +233506,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:20:45.654Z",
+      "verified_at": "2026-11-16T02:06:19.571Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233538,10 +233548,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "repository": "pulumi/pulumi",
-      "source_version": "97d0b4f2",
-      "content_hash": "980ba6faf88849e72e70cb1d35a92d0a3f3f1ee24a5598bfbba7caec0c6296e3",
+      "source_version": "9dd4c570",
+      "content_hash": "fc4088b8c7ab3d0a91e6ceccf9f656137b5cc52d6e040a8dcc08ad30f5236f2c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T19:20:46.083Z"
+      "persisted_at": "2026-11-16T02:06:20.009Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi",
@@ -233550,10 +233560,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "97d0b4f2",
-      "content_hash": "9f3901b660fc79e545e47410386f1b3bd3d75da3e6f2cdfd9206e9d810da3b30",
+      "source_version": "9dd4c570",
+      "content_hash": "402496f3fb5c121a7a3500e86144f730f339308964944cba5b47268644859d42",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:20:46.185Z"
+      "persisted_at": "2026-11-16T02:06:20.126Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -233658,9 +233668,9 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9090d12cbd832db2e1361f6d69fd0d3b48826cb782c1e4765647e6b8e69188b",
+      "content_hash": "d83b7bf92502d4559be6df079c9f1129b996b5fae62e3f3203fed83eca8ca306",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T19:21:23.960Z"
+      "persisted_at": "2026-11-16T02:06:37.382Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings",
@@ -233670,9 +233680,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "b494f979e014c0fcee9cd45afa8b82c1296094db9830d10cd13276ce6f2ebff7",
+      "content_hash": "83adefae6fd0e0032647a1e8361cb53bd3457cb69320a994cc3d1b56ebe37a0f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:21:24.080Z"
+      "persisted_at": "2026-11-16T02:06:37.495Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -249842,6 +249852,177 @@
       "content_hash": "6b6b8ef70c2b771660306691ea527db49de6744fa134ae91bf50a66d9007a191",
       "domain_letter": "H",
       "persisted_at": "2026-11-16T01:52:53.487Z"
+    },
+    "rule-8688": {
+      "learning_id": "rule-8688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8688,
+      "title": "silent `up --plan` failure for whole-resource stack outputs",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "9dd4c570",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T02:06:19.571Z"
+    },
+    "candidate_directive-silent-up-plan-failure-for-whole-resource-stack-outputs": {
+      "item_id": "candidate_directive-silent-up-plan-failure-for-whole-resource-stack-outputs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HCR9-silent-up-plan-failure-for-whole-resource-stack-outputs.md",
+      "title": "silent `up --plan` failure for whole-resource stack outputs",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bfd671168522af9fcb567f233ea6238e6cc44a512288305fb8a07016a54ab421",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T02:06:37.272Z"
+    },
+    "rule-8689": {
+      "learning_id": "rule-8689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8689,
+      "title": "[#37541] Build: Add a script to remove old thirdparty directories",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "0a3328bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T02:06:24.448Z"
+    },
+    "candidate_directive-37541-build-add-a-script-to-remove-old-thirdparty-directories": {
+      "item_id": "candidate_directive-37541-build-add-a-script-to-remove-old-thirdparty-directories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HDBW-37541-build-add-a-script-to-remove-old-thirdparty-directories.md",
+      "title": "[#37541] Build: Add a script to remove old thirdparty directories",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "66703760f84fe45c4538b244943301178a66bf0acb5f22d9f4dbef171deb490c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T02:06:38.016Z"
+    },
+    "learn-github-crawlcove-hreflang-checker": {
+      "learning_id": "learn-github-crawlcove-hreflang-checker",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "CrawlCove/hreflang-checker",
+      "repository": "CrawlCove/hreflang-checker",
+      "slug": "crawlcove-crawlcove-hreflang-checker",
+      "platform": "github",
+      "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+      "source_version": "a05c6bc3",
+      "content_hash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8690,
+          "title": "Crawl Cove banner",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T02:06:33.073Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8690": {
+      "learning_id": "rule-8690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8690,
+      "title": "Crawl Cove banner",
+      "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+      "source_version": "a05c6bc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T02:06:33.073Z"
+    },
+    "candidate_directive-crawl-cove-banner": {
+      "item_id": "candidate_directive-crawl-cove-banner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H9RG-crawl-cove-banner.md",
+      "title": "Crawl Cove banner",
+      "repository": "CrawlCove/hreflang-checker",
+      "source_version": "a05c6bc3",
+      "content_hash": "92978731563c96834363c91ed013dba23482143e058bae61f32313eca30a5669",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T02:06:33.389Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-hreflang-checker-technical-construction-intelligence-crawlco.md",
+      "title": "Technical Construction Intelligence: CrawlCove/hreflang-checker Core Invariants",
+      "repository": "CrawlCove/hreflang-checker",
+      "source_version": "a05c6bc3",
+      "content_hash": "ed938524d9c7844187b296abdf8c303cf9b79acba84a4c580a976d5e3ebe048b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T02:06:33.498Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-hreflang-checker": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-hreflang-checker",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crawlcove-crawlcove-hreflang-checker-verification-protocol-empirical-defect-shie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for CrawlCove/hreflang-checker",
+      "repository": "CrawlCove/hreflang-checker",
+      "source_version": "a05c6bc3",
+      "content_hash": "b2d2ecb141c25be92969a934f8ac96df026a05490ad5b9cf0831313ee1ebcfaf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T02:06:33.606Z"
+    },
+    "candidate_directive-readme-crawl-cove-banner": {
+      "item_id": "candidate_directive-readme-crawl-cove-banner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HC8Z-readme-crawl-cove-banner.md",
+      "title": "README: Crawl Cove banner",
+      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7ac00676b4a3c0ccfaab2a0dacda2ffccc1eaa49b144c5e93af786f065686ba7",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T02:06:36.611Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-hreflang-checker-learnings-technical-construction-intelligen.md",
+      "title": "Technical Construction Intelligence: crawlcove-crawlcove-hreflang-checker-learnings Core Invariants",
+      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "91f141930798129ec2d7942081124561d040cfa5875bd7d92c83cf57d1e7df20",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T02:06:36.721Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-crawlcove-hreflang-c": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-crawlcove-hreflang-c",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crawlcove-crawlcove-hreflang-checker-learnings-verification-protocol-empirical-d.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crawlcove-crawlcove-hreflang-checker-learnings",
+      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7e3103a15641fcecf7d9988489d707d0916b14e500c7bcd083776a27cda22a05",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T02:06:36.835Z"
     }
   },
   "ai-builder-brain": {

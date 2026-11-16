@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T01:52:49.648Z",
+  "last_updated": "2026-11-16T02:06:33.236Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2946,14 +2946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-hreflang-checker",
-      "content_hash": "ea19ae4aa5282aead3722213c0f9eb0888e6b2f01d76f78b4628aac4f8793525",
-      "verified_at": "2026-10-28T00:19:32.080Z",
+      "content_hash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
+      "verified_at": "2026-11-16T02:06:33.235Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:19:32.080Z"
+      "last_updated": "2026-11-16T02:06:33.235Z"
     },
     "alecxe/scrapy-fake-useragent": {
       "repository": "alecxe/scrapy-fake-useragent",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "8806504cd6257cef57c3cb998d6a627b96d83f2033be60ff3e2ef6e5e27b3fb3",
-      "verified_at": "2026-11-14T19:20:45.810Z",
+      "content_hash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
+      "verified_at": "2026-11-16T02:06:19.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T19:20:45.810Z"
+      "last_updated": "2026-11-16T02:06:19.742Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "66e4803fcf43bdb062ae2c20fdf1bfef78639e4e817caac7b6bf009b3e9a3005",
-      "verified_at": "2026-11-14T17:40:09.692Z",
+      "content_hash": "5024bf64f16a00eb9c0d216ad37064ee9a22d3021231313c6491a698eba702f7",
+      "verified_at": "2026-11-16T02:06:24.607Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T17:40:09.692Z"
+      "last_updated": "2026-11-16T02:06:24.607Z"
     },
     "React95/React95": {
       "repository": "React95/React95",

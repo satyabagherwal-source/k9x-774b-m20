@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T01:52:54.098Z",
-  "total_records": 1190,
+  "last_updated": "2026-11-16T02:06:38.123Z",
+  "total_records": 1192,
   "domains": {
     "A": {
       "total": 7,
@@ -865,7 +865,7 @@
       ]
     },
     "H": {
-      "total": 244,
+      "total": 246,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1110,7 +1110,9 @@
         "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants",
         "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-learnings-core-inv",
         "domain_intelligence-technical-construction-intelligence-medialab-xan-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-medialab-xan-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-medialab-xan-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin"
       ]
     },
     "I": {
@@ -16081,8 +16083,8 @@
       "title": "Content & Information Intelligence: yugabyte/yugabyte-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-yugabyte-yugabyte-db-content-information-intelligence-yugabyte-yugabyte-db-core-.md",
       "repository": "yugabyte/yugabyte-db",
-      "content_hash": "fff632619c6136b0d7b492946b6f1711f80758d3c8c0c80f1421fd8960df53a8",
-      "created_at": "2026-11-14T17:40:10.022Z"
+      "content_hash": "4ad95c963184ae8f3921f07bbbe6ab6e87c72f21b8fb58a1f4eca2b877b7604b",
+      "created_at": "2026-11-16T02:06:24.887Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
@@ -16150,8 +16152,8 @@
       "title": "Content & Information Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-yugabyte-yugabyte-db-learnings-content-information-intelligence-yugabyte-yugabyt.md",
       "repository": "yugabyte-yugabyte-db-learnings",
-      "content_hash": "d33e519bfe81a3bd6100a4829b2c9e1420d609e89bb278970f0ca3b108dd0b63",
-      "created_at": "2026-11-14T17:40:48.772Z"
+      "content_hash": "c8281027f9450ca2bc7389eec23eba96ff69a5f8ef6e976426a14f0c14f337ec",
+      "created_at": "2026-11-16T02:06:38.123Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-embeddinggemma-2-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-embeddinggemma-2-gguf-core-invariants",
@@ -16597,8 +16599,8 @@
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "repository": "pulumi/pulumi",
-      "content_hash": "980ba6faf88849e72e70cb1d35a92d0a3f3f1ee24a5598bfbba7caec0c6296e3",
-      "created_at": "2026-11-14T19:20:46.083Z"
+      "content_hash": "fc4088b8c7ab3d0a91e6ceccf9f656137b5cc52d6e040a8dcc08ad30f5236f2c",
+      "created_at": "2026-11-16T02:06:20.009Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -16666,8 +16668,8 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-learnings-content-information-intelligence-pulumi-pulumi-learnings.md",
       "repository": "pulumi-pulumi-learnings",
-      "content_hash": "c9090d12cbd832db2e1361f6d69fd0d3b48826cb782c1e4765647e6b8e69188b",
-      "created_at": "2026-11-14T19:21:23.960Z"
+      "content_hash": "d83b7bf92502d4559be6df079c9f1129b996b5fae62e3f3203fed83eca8ca306",
+      "created_at": "2026-11-16T02:06:37.382Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -22222,6 +22224,24 @@
       "repository": "rickclephas-kmp-nativecoroutines-learnings",
       "content_hash": "4893ea1757182d1ff27503466f7a76e0465a2258af8d644b7a6864980e79491a",
       "created_at": "2026-11-16T01:45:26.411Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: CrawlCove/hreflang-checker Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-hreflang-checker-technical-construction-intelligence-crawlco.md",
+      "repository": "CrawlCove/hreflang-checker",
+      "content_hash": "ed938524d9c7844187b296abdf8c303cf9b79acba84a4c580a976d5e3ebe048b",
+      "created_at": "2026-11-16T02:06:33.498Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: crawlcove-crawlcove-hreflang-checker-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-hreflang-checker-learnings-technical-construction-intelligen.md",
+      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "content_hash": "91f141930798129ec2d7942081124561d040cfa5875bd7d92c83cf57d1e7df20",
+      "created_at": "2026-11-16T02:06:36.721Z"
     }
   }
 }

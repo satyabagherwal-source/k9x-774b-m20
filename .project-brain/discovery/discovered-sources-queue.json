@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T01:45:26.166Z",
+  "updated_at": "2026-11-16T02:06:37.822Z",
   "stats": {
-    "total_discovered": 4033,
-    "approved_pending_harvest": 3789,
+    "total_discovered": 4042,
+    "approved_pending_harvest": 3798,
     "harvested_count": 0,
     "rejected_count": 244,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3786,
-      "OFFICIAL_DOCUMENTATION": 132,
+      "COMMUNITY_AND_EXPERT": 3794,
+      "OFFICIAL_DOCUMENTATION": 133,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 15,
@@ -87039,6 +87039,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md",
         "fileName": "rickclephas-kmp-nativecoroutines-learnings.md"
+      }
+    },
+    "SRC-6251B628D5D0": {
+      "id": "SRC-6251B628D5D0",
+      "url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+      "title": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:36.361Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-EEEE7FFE98D9": {
+      "id": "SRC-EEEE7FFE98D9",
+      "url": "https://crawlcove.com/tools/hreflang-checker",
+      "title": "https://crawlcove.com/tools/hreflang-checker",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:36.388Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-533AF074D33F": {
+      "id": "SRC-533AF074D33F",
+      "url": "https://crawlcove.com/download",
+      "title": "https://crawlcove.com/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:36.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-56E7BF77B351": {
+      "id": "SRC-56E7BF77B351",
+      "url": "https://raw.githubusercontent.com/CrawlCove/.github/main/banners/hreflang-checker.svg",
+      "title": "https://raw.githubusercontent.com/CrawlCove/.github/main/banners/hreflang-checker.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:36.440Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-CBEF338BB778": {
+      "id": "SRC-CBEF338BB778",
+      "url": "https://communityinviter.com/apps/yugabyte-db/register%60",
+      "title": "https://communityinviter.com/apps/yugabyte-db/register%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:37.703Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-54D4526F2AB3": {
+      "id": "SRC-54D4526F2AB3",
+      "url": "https://docs.yugabyte.com/stable/stable/explore/transactions/explicit-locking",
+      "title": "https://docs.yugabyte.com/stable/stable/explore/transactions/explicit-locking",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:37.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-8228CBA2E7F2": {
+      "id": "SRC-8228CBA2E7F2",
+      "url": "https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=37980",
+      "title": "https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=37980",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:37.762Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-23D84615953F": {
+      "id": "SRC-23D84615953F",
+      "url": "https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=37980",
+      "title": "https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=37980",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:37.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-D64978BA80DB": {
+      "id": "SRC-D64978BA80DB",
+      "url": "https://reviewable.io/reviews/yugabyte/yugabyte-db/37980",
+      "title": "https://reviewable.io/reviews/yugabyte/yugabyte-db/37980",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:06:37.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
       }
     }
   }

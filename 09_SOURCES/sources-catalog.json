@@ -1873,10 +1873,10 @@
     "repository": "CrawlCove/hreflang-checker",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-    "sourceVersion": "3e8c680f",
+    "sourceVersion": "a05c6bc3",
     "license": "MIT",
-    "contentHash": "ea19ae4aa5282aead3722213c0f9eb0888e6b2f01d76f78b4628aac4f8793525",
-    "lastHarvestedAt": "2026-10-28T00:19:32.071Z",
+    "contentHash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
+    "lastHarvestedAt": "2026-11-16T02:06:33.227Z",
     "learningId": "learn-github-crawlcove-hreflang-checker"
   },
   "alecxe-scrapy-fake-useragent": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "97d0b4f2",
+    "sourceVersion": "9dd4c570",
     "license": "Apache-2.0",
-    "contentHash": "8806504cd6257cef57c3cb998d6a627b96d83f2033be60ff3e2ef6e5e27b3fb3",
-    "lastHarvestedAt": "2026-11-14T19:20:45.800Z",
+    "contentHash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
+    "lastHarvestedAt": "2026-11-16T02:06:19.734Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "ded6b58d",
+    "sourceVersion": "0a3328bd",
     "license": "NOASSERTION",
-    "contentHash": "66e4803fcf43bdb062ae2c20fdf1bfef78639e4e817caac7b6bf009b3e9a3005",
-    "lastHarvestedAt": "2026-11-14T17:40:09.683Z",
+    "contentHash": "5024bf64f16a00eb9c0d216ad37064ee9a22d3021231313c6491a698eba702f7",
+    "lastHarvestedAt": "2026-11-16T02:06:24.599Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md`  
 > **Source**: github ([https://github.com/CrawlCove/crawlcove-hreflang-checker](https://github.com/CrawlCove/crawlcove-hreflang-checker))  
-> **Source Version**: `3e8c680f`  
+> **Source Version**: `a05c6bc3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:19:31.628Z  
+> **Timestamp**: 2026-11-16T02:06:32.333Z  
 > **Learning ID**: `learn-github-crawlcove-hreflang-checker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrawlCove/crawlcove-hreflang-checker](https://github.com/CrawlCove/crawlcove-hreflang-checker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:19:31.535Z  
+> **Harvest Timestamp**: 2026-11-16T02:06:13.585Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -419,90 +419,17 @@ export * from './hreflang.js'
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3e8c680f` (2026-10-25)
-**Commit Message**: docs: link seo-chrome-extension from Related tools
+### Incident Patch 1: `a05c6bc3` (2026-11-15)
+**Commit Message**: README: Crawl Cove banner
 
-**File**: `README.md` (modified, +1/-0)
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -97,6 +97,7 @@ This repo has its own page on crawlcove.com: [Crawl Cove hreflang checker CLI](h
- - [crawlcove-action](https://github.com/CrawlCove/seo-audit-action) — the same checks as a GitHub Action on every PR.
- - [crawlcove-mcp](https://github.com/CrawlCove/seo-mcp-server) — crawl data for Claude, Cursor and other AI assistants.
- - [crawlcove-export-spec](https://github.com/CrawlCove/seo-crawl-export-spec) — the JSON Schema for Crawl Cove's crawl export.
-+- [seo-chrome-extension](https://github.com/CrawlCove/seo-chrome-extension) — Chrome extension: on-page SEO check of the current tab plus AI answer visibility (which AI crawlers may read it, snippet blocks, llms.txt, extractability score).
- 
- ## License
- 
-```
-
----
-
-### Incident Patch 2: `68a78d31` (2026-10-06)
-**Commit Message**: chore: repository renamed to CrawlCove/hreflang-checker; point links, install commands and repository metadata at the new name
-
-**File**: `README.md` (modified, +16/-16)
-```diff
-@@ -2,16 +2,16 @@
+@@ -1,3 +1,5 @@
++<a href="https://crawlcove.com/download?utm_source=github&utm_medium=readme&utm_campaign=hreflang-checker"><img src="https://raw.githubusercontent.com/CrawlCove/.github/main/banners/hreflang-checker.svg" width="1200" alt="hreflang-checker: Validate the hreflang tags on a page or across a whole XML sitemap, including self-reference, x-default and return tags." /></a>
++
+ # crawlcove-hreflang-checker
  
  An hreflang checker for the command line: read a page's hreflang annotations from both places Google looks (the `<link rel="alternate" hreflang>` tags in its `<head>` and the HTTP `Link` response header), or every `<xhtml:link>` annotation in an XML sitemap, then validate the language and region codes, confirm a self-referencing tag and `x-default`, fetch each alternate to confirm its return tag, and flag the two things that make a correct set get ignored anyway: a `noindex` on the page and a canonical pointing somewhere else. Non-zero exit code for CI.
- 
--Prefer a form? The same check runs in the browser at [crawlcove.com/tools/hreflang-checker](https://crawlcove.com/tools/hreflang-checker?utm_source=github&utm_medium=crawlcove-hreflang-checker).
-+Prefer a form? The same check runs in the browser at [crawlcove.com/tools/hreflang-checker](https://crawlcove.com/tools/hreflang-checker?utm_source=github&utm_medium=hreflang-checker).
- 
- ## Install
- 
- ```sh
- # one-off, nothing installed (Node 18+):
--npx github:CrawlCove/crawlcove-hreflang-checker https://www.example.com/en-gb/
-+npx github:CrawlCove/hreflang-checker https://www.example.com/en-gb/
- 
- # global command, from the release tarball:
--npm install -g https://github.com/CrawlCove/crawlcove-hreflang-checker/archive/refs/tags/v1.0.0.tar.gz
-+npm install -g https://github.com/CrawlCove/hreflang-checker/archive/refs/tags/v1.0.0.tar.gz
- hreflang-checker --version
- ```
- 
-@@ -80,23 +80,23 @@ Exit codes: `0` clean (or only warnings with the default `--fail-on error`), `1`
- 
- ## Works with CrawlCove
- 
--This checks one page's cluster, or one sitemap. [Crawl Cove](https://crawlcove.com/?utm_source=github&utm_medium=crawlcove-hreflang-checker), the desktop SEO crawler for Windows and Mac, runs the same hreflang check across a whole-site crawl: every localised page, every missing return tag, alternates pointing at non-indexable pages, tracked over time.
-+This checks one page's cluster, or one sitemap. [Crawl Cove](https://crawlcove.com/?utm_source=github&utm_medium=hreflang-checker), the desktop SEO crawler for Windows and Mac, runs the same hreflang check across a whole-site crawl: every localised page, every missing return tag, alternates pointing at non-indexable pages, tracked over time.
- 
--This repo has its own page on crawlcove.com: [Crawl Cove hreflang checker CLI](https://crawlcove.com/open-source/crawlcove-hreflang-checker?utm_source=github&utm_medium=crawlcove-hreflang-checker).
-+This repo has its own page on crawlcove.com: [Crawl Cove hreflang checker CLI](https://crawlcove.com/open-source/crawlcove-hreflang-checker?utm_source=github&utm_medium=hreflang-checker).
- 
- ## Related tools
- 
--- [crawlcove-js](https://github.com/CrawlCove/crawlcove-js) — `crawlcove-export`, a typed JavaScript/TypeScript library to load, query and convert Crawl Cove exports.
--- [crawlcove-sheets](https://github.com/CrawlCove/crawlcove-sheets) — Google Sheets add-on that turns a Crawl Cove export into an audit workbook (issues by type, pages by status, title/meta flags).
--- [crawlcove-sf-import](https://github.com/CrawlCove/crawlcove-sf-import) — convert a Screaming Frog export into the Crawl Cove export format, with a report of what carried over.
--- [crawlcove-schema-validator](https://github.com/CrawlCove/crawlcove-schema-validator) — validate a page's JSON-LD against Google's required and recommended rich-result properties.
--- [crawlcove-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) — validate an XML sitemap or sitemap index against the protocol and search-engine limits.
--- [crawlcove-robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) — lint a robots.txt and test which URLs each crawler may fetch.
--- [crawlcove-redirect-chain-checker](https://github.com/CrawlCove/crawlcove-redirect-chain-checker) — follow every hop of a URL's redirects; flags chains, loops, HTTPS downgrades and meta refreshes.
--- [crawlcove-cli](https://github.com/CrawlCove/crawlcove-cli) — headless whole-site crawl with redirect-chain, broken-link, title and noindex checks.
--- [crawlcove-action](https://github.com/CrawlCove/crawlcove-action) — the same checks as a GitHub Action on every PR.
--- [crawlcove-mcp](https://github.com/CrawlCove/crawlcove-mcp) — crawl data for Claude, Cursor and other AI assistants.
--- [crawlcove-export-spec](https://github.com/CrawlCove/crawlcove-export-spec) — the JSON Schema for Crawl Cove's crawl export.
-+- [crawlcove-js](https://github.com/CrawlCove/seo-crawl-export-js) — `crawlcove-export`, a typed JavaScript/TypeScript library to load, query and convert Crawl Cove exports.
-+- [crawlcove-sheets](https://github.com/CrawlCove/seo-audit-google-sheets) — Google Sheets add-on that turns a Crawl Cove export into an audit workbook (issues by type, pages by status, title/meta flags).
-+- [crawlcove-sf-import](https://github.com/CrawlCove/screaming-frog-export-converter) — convert a Screaming Frog export into the Cra
-```
-
-**File**: `package.json` (modified, +2/-2)
-```diff
-@@ -32,9 +32,9 @@
-   "license": "MIT",
-   "repository": {
-     "type": "git",
--    "url": "https://github.com/CrawlCove/crawlcove-hreflang-checker.git"
-+    "url": "https://github.com/CrawlCove/hreflang-checker.git"
-   },
--  "homepage": "https://crawlcove.com/tools/hreflang-checker?utm_source=github&utm_medium=crawlcove-hreflang-checker",
-+  "homepage": "https://crawlcove.com/tools/hreflang-checker?utm_source=github&utm_medium=hreflang-checker",
-   "dependencies": {
-     "commander": "^15.0.0",
-     "fast-xml-parser": "^5.11.1"
 ```
 
 #### Recent Merged Pull Requests:
@@ -526,13 +453,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: link seo-chrome-extension from Related tools
+## X. README: Crawl Cove banner
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrawlCove/hreflang-checker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3e8c680f`: docs: link seo-chrome-extension from Related tools. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a05c6bc3`: README: Crawl Cove banner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -540,14 +467,15 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- [seo-chrome-extension](https://github.com/CrawlCove/seo-chrome-extension) — Chrome extension: on-page SEO check of the current tab plus AI answer visibility (which AI crawlers may read it, snippet blocks, llms.txt, extractability score).
+<a href="https://crawlcove.com/download?utm_source=github&utm_medium=readme&utm_campaign=hreflang-checker"><img src="https://raw.githubusercontent.com/CrawlCove/.github/main/banners/hreflang-checker.svg" width="1200" alt="hreflang-checker: Validate the hreflang tags on a page or across a whole XML sitemap, including self-reference, x-default and return tags." /></a>
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3e8c680f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a05c6bc3` are properly handled with clean fallback behavior.

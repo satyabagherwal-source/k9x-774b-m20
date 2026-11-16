@@ -10210,3 +10210,6 @@
 | `CYCLE-20261116-Q0W2` | `2026-11-16T01:45:22.178Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8685` | Yes (`123f1b48...`) |
 | `CYCLE-20261116-ZEXI` | `2026-11-16T01:52:40.278Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8686` | Yes (`e9c4f18b...`) |
 | `CYCLE-20261116-ZM5H` | `2026-11-16T01:52:49.637Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8687` | Yes (`4d0a93b3...`) |
+| `CYCLE-20261116-GZ82` | `2026-11-16T02:06:19.730Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8688` | Yes (`9ed3fc04...`) |
+| `CYCLE-20261116-H2Z8` | `2026-11-16T02:06:24.596Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8689` | Yes (`5024bf64...`) |
+| `CYCLE-20261116-H9MV` | `2026-11-16T02:06:33.223Z` | `CrawlCove/hreflang-checker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8690` | Yes (`84963a5a...`) |

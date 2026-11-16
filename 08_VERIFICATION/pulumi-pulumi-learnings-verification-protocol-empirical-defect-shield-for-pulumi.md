@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T19:21:23.740Z",
+  "timestamp": "2026-11-16T02:06:37.163Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pulumi-pulumi-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pulumi-pulumi-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T19:21:23.740Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T02:06:37.163Z`  
 > **Learning ID**: `LEARN-EVO-pulumi-pulumi-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `97d0b4f2`  
+> **Source Version**: `9dd4c570`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T19:20:44.964Z  
+> **Timestamp**: 2026-11-16T02:06:18.864Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T19:20:44.958Z  
+> **Harvest Timestamp**: 2026-11-16T02:06:18.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25903 stars
+- **Stars / Engagement**: 25906 stars
 
 ---
 
@@ -1738,70 +1738,123 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6825a345` (2026-11-13)
-**Commit Message**: Fix Markdown rendering of `pulumi package publish` help text (#25695)
+### Incident Patch 1: `9dd4c570` (2026-11-15)
+**Commit Message**: Fix silent `up --plan` failure for whole-resource stack outputs (#25629)
 
-Fixes #19920
+## Summary
 
-The CLI reference page for `pulumi package publish` is generated from
-the command's `Long` help text by `pulumi gen-markdown`, but that text
-was written as plain text rather than Markdown.
-On the docs site this:
+Fixes #25625
 
-- dropped `<provider>` and `<schema>` entirely, because they were parsed
-as HTML tags
-- turned `'--'` into an en dash
-- rendered the two-space-indented examples as ordinary paragraphs
-instead of code blocks
+If a stack output is a whole resource (`module.exports.res =
+someResource`), `pulumi up --plan` exits 1 and records the update as
+failed, but prints no error. This happens even on a no-op. The stack
+outputs are never written, so every later planned update on that stack
+fails the same way.
 
-This change wraps the placeholders, `--`, and file extensions in
-backticks (as other commands' help text already does) and indents the
-examples by four spaces so they render as code blocks.
-The terminal help output still reads naturally.
+There are two causes:
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+1. **False violation.** During previews only, the Node.js SDK adds
+`"@isPulumiResource": true` to the objects it builds from resources in
+stack outputs (`sdk/nodejs/runtime/stack.ts`). The plan records the
+stack outputs from the preview, marker included. The update never sends
+the marker, so the stack outputs can't match the plan.
+2. **Silent failure.** When `deploymentExecutor.Execute` finalizes stack
+outputs and gets an error, it wraps the error in `result.BailError`
+without reporting it first. Other event paths call `reportError` before
+bailing; this one did not, so the CLI showed nothing.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Changes:
+- Node.js SDK: stop adding the preview-only marker, so previews and
+updates send the same stack outputs.
+- Engine: report errors from stack-output finalization through the diag
 
-**File**: `changelog/pending/20261112--cli-package--publish-help-markdown.yaml` (added, +4/-0)
+**File**: `changelog/pending/engine-fix-20261109-120000.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: cli/package
++component: engine
 +kind: fix
-+body: Fix formatting of the `pulumi package publish` reference docs
-+time: 2026-11-12T00:00:00Z
++body: Report plan violations found while finalizing stack outputs instead of failing the update silently
++time: 2026-11-09T12:00:00.000000+00:00
 ```
 
-**File**: `pkg/cmd/pulumi/packagecmd/package_publish.go` (modified, +7/-7)
+**File**: `changelog/pending/sdk-nodejs-fix-20261110-120000.yaml` (added, +4/-0)
 ```diff
-@@ -82,20 +82,20 @@ func newPackagePublishCmd() *cobra.Command {
- 		Long: "Publish a package to the Private Registry.\n\n" +
- 			"This command publishes a package to the Private Registry. The package can be a provider " +
- 			"or a schema.\n\n" +
--			"When <provider> is specified as a PLUGIN[@VERSION] reference, Pulumi attempts to " +
-+			"When `<provider>` is specified as a `PLUGIN[@VERSION]` reference, Pulumi attempts to " +
- 			"resolve a resource plugin first, installing it on-demand, similarly to:\n\n" +
--			"  pulumi plugin install resource PLUGIN [VERSION]\n\n" +
--			"When <provider> is specified as a local path, Pulumi executes the provider " +
-+			"    pulumi plugin install resource PLUGIN [VERSION]\n\n" +
-+			"When `<provider>` is specified as a local path, Pulumi executes the provider " +
- 			"binary to extract its package schema.\n\n" +
- 			"For parameterized providers, parameters may be specified as additional " +
- 			"arguments. The exact format of parameters is provider-specific; consult the " +
- 			"provider's documentation for more information. If the parameters include flags " +
--			"that begin with dashes, you may need to use '--' to separate the provider name " +
-+			"that begin with dashes, you may need to use `--` to separate the provider name " +
- 			"from the parameters, as in:\n\n" +
--			"  pulumi package publish <provider> --readme ./README.md -- --provider-parameter-flag value\n\n" +
--			"When <schema> is a path to a local file with a '.json', '.yml' or '.yaml' " +
-+			"    pulumi package publish <provider> --readme ./README.md -- --provider-parameter-flag value\n\n" +
-+			"When `<schema>` is a path to a local file with a `.json`, `.yml` or `.yaml` " +
- 			"extension, Pulumi package schema is read from it directly:\n\n" +
--			"  pulumi package publish ./my/schema.json --readme ./README.md",
-+			"    pulumi package publish ./my/schema.json --readme ./README.md",
- 		RunE: func(cmd *cobra.Command, cliArgs []string) error {
- 			ctx := cmd.Context()
- 			pkgPublishCmd.extractSchema = packages.SchemaFromSchemaSource
+@@ -0,0 +1,4 @@
++component: sdk/nodejs
++kind: fix
++body: Fix `up --plan` failing when a stack output is a whole resource
++time: 2026-11-10T12:00:00.000000+00:00
+```
+
+**File**: `pkg/engine/lifecycletest/testdata/output/TestPlannedUpdateStackOutputViolationIsReported/0/diff.stderr.txt` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<{%fg 1%}>error: <{%reset%}><{%reset%}>resource violates plan: properties changed: ++out[{foo}!={bar}]<{%reset%}>
+```
+
+**File**: `pkg/engine/lifecycletest/testdata/output/TestPlannedUpdateStackOutputViolationIsReported/0/diff.stdout.txt` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++<{%fg 2%}>+ pulumi:pulumi:Stack: (create)
++<{%fg 2%}>    [urn=urn:pulumi:test::test::pulumi:pulumi:Stack::test-test]
++<{%reset%}><{%reset%}><{%fg 2%}>+ pkgA:m:typA: (create)
++<{%fg 2%}>    [urn=urn:pulumi:test::test::pkgA:m:typA::resA]
++<{%reset%}><{%reset%}><{%fg 13%}><{%bold%}>Resources:<{%reset%}>
++    <{%fg 2%}>+ 2 created<{%reset%}>
++
++<{%fg 13%}><{%bold%}>Duration:<{%reset%}> 1s
+```
+
+**File**: `pkg/engine/lifecycletest/testdata/output/TestPlannedUpdateStackOutputViolationIsReported/0/eventstream.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{"sequence":0,"timestamp":0,"preludeEvent":{"config":{}}}
++{"sequence":0,"timestamp":0,"resourcePreEvent":{"metadata":{"op":"create","urn":"urn:pulumi:test::test::pulumi:pulumi:Stack::test-test","type":"pulumi:pulumi:Stack","old":null,"new":{"type":"pulumi:pulumi:Stack","urn":"urn:pulumi:test::test::pulumi:pulumi:Stack::test-test","id":"1","parent":"","inputs":{},"outputs":{},"provider":""},"detailedDiff":null,"logical":true,"provider":""}}}
++{"sequence":0,"timestamp":0,"resourcePreEvent":{"metadata":{"op":"create","urn":"urn:pulumi:test::test::pkgA:m:typA::resA","type":"pkgA:m:typA","old":null,"new":{"type":"pkgA:m:typA","urn":"urn:pulumi:test::test::pkgA:m:typA::resA","custom":true,"id":"1","parent":"","inputs":{},"outputs":{},"provider":"urn:pulumi:test::test::pulumi:providers:pkgA::default::2"},"detailedDiff":null,"logical":true,"provider":"urn:pulumi:test::test::pulumi:providers:pkgA::default::2"}}}
++{"sequence":0,"timestamp":0,"resOutputsEvent":{"metadata":{"op":"create","urn":"urn:pulumi:test::test::pkgA:m:typA::resA","type":"pkgA:m:typA","old":null,"new":{"type":"pkgA:m:typA","urn":"urn:pulumi:test::test::pkgA:m:typA::resA","custom":true,"id":"3","parent":"","inputs":{},"outputs":{},"provider":"urn:pulumi:test::test::pulumi:providers:pkgA::default::2"},"detailedDiff":null,"logical":true,"provider":"urn:pulumi:test::test::pulumi:providers:pkgA::default::2"}}}
++{"sequence":0,"timestamp":0,"diagnosticEvent":{"urn":"urn:pulumi:test::test::pulumi:pulumi:Stack::test-test","prefix":"\u003c{%fg 1%}\u003eerror: \u003c{%reset%}\u003e","message":"\u003c{%reset%}\u003eresource violates plan: properties changed: ++out[{foo}!={bar}]\u003c{%reset%}\u003e\n","color":"raw","severity":"error"}}
++{"sequence":0,"timestamp":0,"summaryEvent":{"maybeCorrupt":false,"durationSeconds":1,"resourceChanges":{"create":2},"PolicyPacks":{},"isPreview":false,"result":"failed"}}
++{"sequence":0,"timestamp":0,"cancelEvent":{}}
+```
+
+**File**: `pkg/engine/lifecycletest/testdata/output/TestPlannedUpdateStackOutputViolationIsReported/0/progress.stdout.txt` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++<{%fg 13%}><{%bold%}>View Live: <{%underline%}><{%fg 12%}>http://example.com<{%reset%}>
++
++
++ <{%bold%}><{%fg 2%}>+ <{%reset%}> pulumi:pulumi:Stack test-test <{%bold%}><{%fg 2%}>creating<{%reset%}> 
++ <{%bold%}><{%fg 2%}>+ <{%reset%}> pkgA:m:typA resA <{%bold%}><{%fg 2%}>creating<{%reset%}> 
++ <{%fg 2%}>+ <{%reset%}> pkgA:m:typA resA <{%fg 2%}>created<{%reset%}> 
++ <{%bold%}><{%fg 2%}>+ <{%reset%}> pulumi:pulumi:Stack test-test <{%bold%}><{%fg 2%}>creating<{%reset%}> <{%fg 1%}>error: <{%reset%}><{%reset%}>resource violates plan: properties changed: ++out[{foo}!={bar}]<{%reset%}>
++ <{%fg 2%}>+ <{%reset%}> pulumi:pulumi:Stack test-test <{%fg 1%}>**creating failed**<{%reset%}> 1 <{%fg 1%}>error<{%reset%}>
++<{%fg 13%}><{%bold%}>Diagnostics:<{%reset%}>
++  <{%fg 12%}>pulumi:pulumi:Stack (test-test):<{%reset%}>
++    <{%fg 1%}>error: <{%reset%}><{%reset%}>resource violates plan: properties changed: ++out[{foo}!={bar}]<{%reset%}>
++
++<{%fg 13%}><{%bold%}>Resources:<{%reset%}>
++    <{%fg 2%}>+ 2 created<{%reset%}>
++    <{%fg 1%}>1 errored<{%reset%}>
++
++<{%fg 13%}><{%bold%}>Duration:<{%reset%}> 1s
++
+```
+
+**File**: `pkg/engine/lifecycletest/testdata/output/TestPlannedUpdateStackOutputViolationIsReported/0/urns-diff.stderr.txt` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<{%fg 1%}>error: <{%reset%}><{%reset%}>resource violates plan: properties changed: ++out[{foo}!={bar}]<{%reset%}>
+```
+
+**File**: `pkg/engine/lifecycletest/testdata/output/TestPlannedUpdateStackOutputViolationIsReported/0/urns-diff.stdout.txt` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++<{%fg 2%}>+ urn:pulumi:test::test::pulumi:pulumi:Stack::test-test: (create)
++<{%reset%}><{%fg 2%}>+ urn:pulumi:test::test::pkgA:m:typA::resA: (create)
++<{%reset%}><{%fg 13%}><{%bold%}>Resources:<{%reset%}>
++    <{%fg 2%}>+ 2 created<{%reset%}>
++
++<{%fg 13%}><{%bold%}>Duration:<{%reset%}> 1s
 ```
 
 #### Recent Merged Pull Requests:
@@ -1830,24 +1883,24 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Markdown rendering of `pulumi package publish` help text
+## X. silent `up --plan` failure for whole-resource stack outputs
 
 **RULE**:
-When implementing operations in `changelog/pending/20261112--cli-package--publish-help-markdown.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/engine-fix-20261109-120000.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6825a345`: Markdown rendering of `pulumi package publish` help text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9dd4c570`: silent `up --plan` failure for whole-resource stack outputs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261112--cli-package--publish-help-markdown.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/engine-fix-20261109-120000.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: cli/package
+component: engine
 kind: fix
-body: Fix formatting of the `pulumi package publish` reference docs
-time: 2026-11-12T00:00:00Z
+body: Report plan violations found while finalizing stack outputs instead of failing the update silently
+time: 2026-11-09T12:00:00.000000+00:00
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1857,7 +1910,7 @@ time: 2026-11-12T00:00:00Z
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6825a345` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9dd4c570` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

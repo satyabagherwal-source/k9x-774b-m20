@@ -10243,3 +10243,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `2299a19b` | Multi-dimensional audit evidence | 2026-11-16T01:45:22.181Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `12adfb14` | Multi-dimensional audit evidence | 2026-11-16T01:52:40.282Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `effd674b` | Multi-dimensional audit evidence | 2026-11-16T01:52:49.640Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `9dd4c570` | Multi-dimensional audit evidence | 2026-11-16T02:06:19.734Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `0a3328bd` | Multi-dimensional audit evidence | 2026-11-16T02:06:24.599Z |
+| `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `a05c6bc3` | Multi-dimensional audit evidence | 2026-11-16T02:06:33.227Z |

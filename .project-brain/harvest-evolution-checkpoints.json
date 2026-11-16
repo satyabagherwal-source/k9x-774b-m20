@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T01:52:54.317Z",
+  "last_updated": "2026-11-16T02:06:38.338Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T01:52:53.818Z",
@@ -823,7 +823,7 @@
       "staged_for_review": 1
     },
     "yugabyte-yugabyte-db-learnings.md": {
-      "processed_at": "2026-11-14T17:40:48.225Z",
+      "processed_at": "2026-11-16T02:06:37.605Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -998,7 +998,7 @@
       "staged_for_review": 1
     },
     "pulumi-pulumi-learnings.md": {
-      "processed_at": "2026-11-14T19:21:23.433Z",
+      "processed_at": "2026-11-16T02:06:36.947Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3121,9 +3121,14 @@
       "processed_at": "2026-11-16T01:45:26.059Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "crawlcove-crawlcove-hreflang-checker-learnings.md": {
+      "processed_at": "2026-11-16T02:06:36.345Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1206,
+  "total_dossiers_evaluated": 1209,
   "total_canonical_promoted": 281,
-  "total_staged_for_review": 922
+  "total_staged_for_review": 925
 }

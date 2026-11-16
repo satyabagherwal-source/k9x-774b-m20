@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-GXRO",
-    "timestamp": "2026-11-13T17:11:04.692Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "e3d6ec28deb81e6c0f22ec6ef281ff0261ae2dedbaa0aee37b92053b55f93a0c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-H0PC",
-    "timestamp": "2026-11-13T17:11:08.496Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-YEBF",
-    "timestamp": "2026-11-13T17:24:39.291Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "145ab63e180ee23782214241017097cdd63a9535ae8ab79374dc5fcea2c48a24",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-YGD7",
     "timestamp": "2026-11-13T17:24:41.947Z",
     "repository": "pimalaya/himalaya",
@@ -7490,6 +7445,51 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "4d0a93b31a41f9e3c284230bd52f542506f684a20de864af74911cffb9c7c33f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-GZ82",
+    "timestamp": "2026-11-16T02:06:19.730Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-H2Z8",
+    "timestamp": "2026-11-16T02:06:24.596Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "5024bf64f16a00eb9c0d216ad37064ee9a22d3021231313c6491a698eba702f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-H9MV",
+    "timestamp": "2026-11-16T02:06:33.223Z",
+    "repository": "CrawlCove/hreflang-checker",
+    "learningId": "learn-github-crawlcove-hreflang-checker",
+    "contentHash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
