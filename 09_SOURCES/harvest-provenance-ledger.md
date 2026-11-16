@@ -10265,3 +10265,7 @@ Every entry in this ledger must capture:
 | `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `e6b51cd7` | Multi-dimensional audit evidence | 2026-11-16T03:47:45.596Z |
 | `learn-dom-j-d8adf367` | `project://crawlcove-crawlcove-sitemap-validator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md` | 2026-11-16T03:48:11.534Z |
 | `learn-dom-i-5993b15b` | `project://crawlcove-crawlcove-sitemap-validator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md` | 2026-11-16T03:48:41.984Z |
+| `learn-github-ganymedenil-document-ai` | `https://github.com/GanymedeNil/document.ai` | `4e2940ff` | Multi-dimensional audit evidence | 2026-11-16T03:57:06.597Z |
+| `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `2a4ea295` | Multi-dimensional audit evidence | 2026-11-16T03:57:17.338Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b9c39f1f` | Multi-dimensional audit evidence | 2026-11-16T03:57:22.202Z |
+| `learn-dom-f-4f38fea1` | `project://ganymedenil-document.ai` | `4e2940ff` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ganymedenil-document.ai-learnings.md` | 2026-11-16T03:57:49.588Z |

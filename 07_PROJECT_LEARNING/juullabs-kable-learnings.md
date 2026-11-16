@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source**: github ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
-> **Source Version**: `67aed25e`  
+> **Source Version**: `2a4ea295`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:20:54.941Z  
+> **Timestamp**: 2026-11-16T03:57:16.498Z  
 > **Learning ID**: `learn-github-juullabs-kable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:20:54.934Z  
+> **Harvest Timestamp**: 2026-11-16T03:57:16.494Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kotlin Asynchronous Bluetooth Low-Energy
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1204 stars
+- **Stars / Engagement**: 1205 stars
 
 ---
 
@@ -179,6 +179,23 @@ public interface AndroidPeripheral : Peripheral {
     public val address: String
 
     public fun requestConnectionPriority(priority: Priority): Boolean
+
+    /**
+     * Clears Android's cached GATT database for this peripheral, so that the next service discovery reads the
+     * services from the remote device instead of the cache. Useful when a peripheral changes its attribute table
+     * (e.g. after a firmware update) without the stack noticing.
+     *
+     * Services already discovered for the current connection are unaffected: [disconnect] and [connect] again to
+     * discover the fresh attribute table.
+     *
+     * Invokes the hidden `BluetoothGatt.refresh()` via reflection, so may stop working on a future Android release.
+     *
+     * @return `true` if the cache refresh was requested, `false` if the platform declined it or the hidden API was
+     * unavailable.
+     * @throws NotConnectedException if invoked without an established [connection][connect].
+     */
+    @ExperimentalKableApi
+    public fun refreshGattCache(): Boolean
 
     /**
      * Requests that the current connection's MTU be changed. Suspends until the MTU changes, or failure occurs. The
@@ -599,6 +616,16 @@ internal class BluetoothDeviceAndroidPeripheral(
             .requestConnectionPriority(priority.intValue)
     }
 
+    @ExperimentalKableApi
+    override fun refreshGattCache(): Boolean {
+        val refreshed = connectionOrThrow().gatt.refreshWithReflection()
+        logger.debug {
+            message = "refreshGattCache"
+            detail("refreshed", refreshed.toString())
+        }
+        return refreshed
+    }
+
     override suspend fun maximumWriteValueLengthForType(writeType: WriteType): Int =
         (mtu.value ?: DEFAULT_ATT_MTU) - ATT_MTU_HEADER_SIZE
 
@@ -696,17 +723,7 @@ internal class BluetoothDeviceAndroidPeripheral(
         onSubscription: OnSubscriptionAction,
     ): Flow<ByteArray> = observers.acquire(characteristic, onSubscription)
 
-    internal suspend fun startObservation(characteristic: Characteristic) {
-        logger.debug {
-            message = "Starting observation"
-            detail(characteristic)
-        }
-
-        val platformCharacteristic = servicesOrThrow().obtain(characteristic, Notify or Indicate)
-
-        logger.verbose {
-            message = "setCharacteristicNotification"
-      
+    internal suspend fun startObservation(characteristic: Characteri
 ```
 
 ### Core Architecture Module: `kable-core/src/androidMain/kotlin/BluetoothGatt.kt`
@@ -1116,19 +1133,86 @@ internal val bluetoothState = broadcastReceiverFlow(intentFilter)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67aed25e` (2026-11-11)
-**Commit Message**: Update Gradle to v9.9.1 (#1290)
+### Incident Patch 1: `2a4ea295` (2026-11-16)
+**Commit Message**: Add `AndroidPeripheral.refreshGattCache` (#1282)
 
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
+**File**: `kable-core/api/android/kable-core.api` (modified, +1/-0)
 ```diff
-@@ -1,6 +1,6 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
- networkTimeout=10000
- validateDistributionUrl=true
- zipStoreBase=GRADLE_USER_HOME
+@@ -16,6 +16,7 @@ public abstract interface class com/juul/kable/AndroidPeripheral : com/juul/kabl
+ 	public abstract fun getBluetoothDevice ()Landroid/bluetooth/BluetoothDevice;
+ 	public abstract fun getMtu ()Lkotlinx/coroutines/flow/StateFlow;
+ 	public abstract fun getType ()Lcom/juul/kable/AndroidPeripheral$Type;
++	public abstract fun refreshGattCache ()Z
+ 	public abstract fun requestConnectionPriority (Lcom/juul/kable/AndroidPeripheral$Priority;)Z
+ 	public abstract fun requestMtu (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ 	public abstract fun write (Lcom/juul/kable/Characteristic;[BLcom/juul/kable/WriteType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+```
+
+**File**: `kable-core/src/androidMain/kotlin/AndroidPeripheral.kt` (modified, +17/-0)
+```diff
+@@ -126,6 +126,23 @@ public interface AndroidPeripheral : Peripheral {
+ 
+     public fun requestConnectionPriority(priority: Priority): Boolean
+ 
++    /**
++     * Clears Android's cached GATT database for this peripheral, so that the next service discovery reads the
++     * services from the remote device instead of the cache. Useful when a peripheral changes its attribute table
++     * (e.g. after a firmware update) without the stack noticing.
++     *
++     * Services already discovered for the current connection are unaffected: [disconnect] and [connect] again to
++     * discover the fresh attribute table.
++     *
++     * Invokes the hidden `BluetoothGatt.refresh()` via reflection, so may stop working on a future Android release.
++     *
++     * @return `true` if the cache refresh was requested, `false` if the platform declined it or the hidden API was
++     * unavailable.
++     * @throws NotConnectedException if invoked without an established [connection][connect].
++     */
++    @ExperimentalKableApi
++    public fun refreshGattCache(): Boolean
++
+     /**
+      * Requests that the current connection's MTU be changed. Suspends until the MTU changes, or failure occurs. The
+      * negotiated MTU value is returned, which may not be [mtu] value requested if the remote peripheral negotiated an
+```
+
+**File**: `kable-core/src/androidMain/kotlin/BluetoothDeviceAndroidPeripheral.kt` (modified, +10/-0)
+```diff
+@@ -168,6 +168,16 @@ internal class BluetoothDeviceAndroidPeripheral(
+             .requestConnectionPriority(priority.intValue)
+     }
+ 
++    @ExperimentalKableApi
++    override fun refreshGattCache(): Boolean {
++        val refreshed = connectionOrThrow().gatt.refreshWithReflection()
++        logger.debug {
++            message = "refreshGattCache"
++            detail("refreshed", refreshed.toString())
++        }
++        return refreshed
++    }
++
+     override suspend fun maximumWriteValueLengthForType(writeType: WriteType): Int =
+         (mtu.value ?: DEFAULT_ATT_MTU) - ATT_MTU_HEADER_SIZE
+ 
+```
+
+**File**: `kable-core/src/androidMain/kotlin/Reflection.kt` (modified, +7/-0)
+```diff
+@@ -37,6 +37,13 @@ internal fun BluetoothDevice.connectGattWithReflection(
+     }
+ }
+ 
++/** Invokes the hidden `BluetoothGatt.refresh()`, which clears the stack's cached attribute table for the device. */
++internal fun BluetoothGatt.refreshWithReflection(): Boolean = try {
++    invoke("refresh") as? Boolean ?: false
++} catch (_: ReflectiveOperationException) {
++    false
++}
++
+ private fun Any.invoke(method: String): Any? =
+     javaClass.getDeclaredMethod(method).apply { isAccessible = true }.invoke(this)
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1157,28 +1241,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Gradle to v9.9.1 (#1290)
+## X. Add `AndroidPeripheral.refreshGattCache`
 
 **RULE**:
-When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kable-core/api/android/kable-core.api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67aed25e`: Update Gradle to v9.9.1 (#1290). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a4ea295`: Add `AndroidPeripheral.refreshGattCache`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kable-core/api/android/kable-core.api`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
+	public abstract fun refreshGattCache ()Z
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67aed25e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a4ea295` are properly handled with clean fallback behavior.

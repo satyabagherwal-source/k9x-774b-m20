@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T03:48:42.417Z",
+  "updated_at": "2026-11-16T03:57:49.633Z",
   "stats": {
-    "total_discovered": 4089,
-    "approved_pending_harvest": 3841,
+    "total_discovered": 4091,
+    "approved_pending_harvest": 3842,
     "harvested_count": 0,
-    "rejected_count": 248,
+    "rejected_count": 249,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3838,
+      "COMMUNITY_AND_EXPERT": 3840,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 94,
       "ENGINEERING_BLOGS": 3,
@@ -88243,6 +88243,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
         "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-F2E7E26C41C8": {
+      "id": "SRC-F2E7E26C41C8",
+      "url": "https://github.com/GanymedeNil/document.ai",
+      "title": "https://github.com/GanymedeNil/document.ai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:57:49.604Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ganymedenil-document.ai-learnings.md",
+        "fileName": "ganymedenil-document.ai-learnings.md"
+      }
+    },
+    "SRC-6547C8C527A2": {
+      "id": "SRC-6547C8C527A2",
+      "url": "http://127.0.0.1:8000`）；覆盖提问（含流式、转后台进度与取消）、会话、上传、审核、归档、证据、强制验证清单与身份切换；启动与演示步骤见",
+      "title": "http://127.0.0.1:8000`）；覆盖提问（含流式、转后台进度与取消）、会话、上传、审核、归档、证据、强制验证清单与身份切换；启动与演示步骤见",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T03:57:49.633Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ganymedenil-document.ai-learnings.md",
+        "fileName": "ganymedenil-document.ai-learnings.md"
       }
     }
   }

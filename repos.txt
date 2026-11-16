@@ -5114,3 +5114,7 @@ https://github.com/chocoford/ExcalidrawZ
 # --- Automatically Discovered by AI Scout Engine [2026-11-16T00:17:19.801Z] ---
 # [MOBILE-CROSS-PLATFORM] MetrolistGroup/Metrolist (7971 score) - Material Design YouTube Music client for Android, iOS and desktop
 https://github.com/MetrolistGroup/Metrolist
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-16T03:57:01.227Z] ---
+# [AI-AGENTS] GanymedeNil/document.ai (2177 score) - 可溯源、带时效判断的企业知识库问答：每条结论标明出自哪份文档的哪个版本、哪一处，以及在目标时间是否有效（Traceable, version- and time
+https://github.com/GanymedeNil/document.ai

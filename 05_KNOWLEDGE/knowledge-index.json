@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T03:48:44.434Z",
-  "total_verified_learnings": 8759,
+  "last_updated": "2026-11-16T03:57:51.192Z",
+  "total_verified_learnings": 8761,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18913,
+  "total_items": 18930,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228309,8 +228309,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "fe3421e7",
-      "content_hash": "4738272aeabc31184e4f6e98f3ac4ff40e5ab59ccdac134ecc1948b6b52a87c0",
+      "source_version": "b9c39f1f",
+      "content_hash": "cc0ab6e973ccd3cdbed34ea4748f183985e4a6d7690848a877634e43826fa1dd",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -228323,6 +228323,11 @@
           "number": 8488,
           "title": "bump go.opentelemetry.io/otel/sdk",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8709,
+          "title": "bump golang.org/x/crypto v0.58.0 → v0.59.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228330,7 +228335,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:00:11.845Z",
+      "verified_at": "2026-11-16T03:57:22.066Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228372,10 +228377,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "fe3421e7",
-      "content_hash": "12cd4647434ddc833954dab7090002a79df5ffbed7e42b326b5be6b40b868595",
+      "source_version": "b9c39f1f",
+      "content_hash": "7978c83d69745fe364fd4bbdb9971990345e401f11c621d93518d76f1187ec23",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T06:00:12.354Z"
+      "persisted_at": "2026-11-16T03:57:22.461Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -228384,10 +228389,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "fe3421e7",
-      "content_hash": "ab81c792f8a9370e61098f39f9aedf8ed0cbc3782279ea869865977e0e9bb84c",
+      "source_version": "b9c39f1f",
+      "content_hash": "0edf2b504374177ea8971cfc85ea93bbb64da980c50c674a5289f58b2e9e7c10",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:00:12.473Z"
+      "persisted_at": "2026-11-16T03:57:22.563Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -240512,9 +240517,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "30b20b3d17755f156ecd89b2a66987c4734a55a9b61fa23ada6e04e7da2325ad",
+      "content_hash": "1112a59c0c166b7a1e57292a370612a8df8a5b8f51587f3a16bc4dba0cc131eb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T06:00:50.681Z"
+      "persisted_at": "2026-11-16T03:57:51.075Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -240524,9 +240529,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "752b93f56abf9d52c87116f7687c0459ababa12dc9a9f9c127fc430185a06f88",
+      "content_hash": "5ce4cebfc41e5f0420f5cfd8745eae324de3539e6f58c01fb478420feb3adf3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:00:50.847Z"
+      "persisted_at": "2026-11-16T03:57:51.192Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -251179,6 +251184,258 @@
       "content_hash": "f790cd2498f62b27720b8fe44b384656c9a9d612389d8f863f699587c106614e",
       "domain_letter": "G",
       "persisted_at": "2026-11-16T03:48:43.707Z"
+    },
+    "learn-github-ganymedenil-document-ai": {
+      "learning_id": "learn-github-ganymedenil-document-ai",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "GanymedeNil/document.ai",
+      "repository": "GanymedeNil/document.ai",
+      "slug": "ganymedenil-document.ai",
+      "platform": "github",
+      "source_url": "https://github.com/GanymedeNil/document.ai",
+      "source_version": "4e2940ff",
+      "content_hash": "fdc2284c643ccc080d73569dd12fcacfcaed7cbac6cdebba6c9fc5a612b10dec",
+      "dossier_path": "07_PROJECT_LEARNING/ganymedenil-document.ai-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ganymedenil-document.ai-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8707,
+          "title": "新增简易 Web UI（web/，Next.js + shadcn/ui），证据接口给出文档日期与出处",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T03:57:06.435Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8707": {
+      "learning_id": "rule-8707",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8707,
+      "title": "新增简易 Web UI（web/，Next.js + shadcn/ui），证据接口给出文档日期与出处",
+      "source_url": "https://github.com/GanymedeNil/document.ai",
+      "source_version": "4e2940ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:57:06.435Z"
+    },
+    "candidate_directive-web-ui-web-next-js-shadcn-ui": {
+      "item_id": "candidate_directive-web-ui-web-next-js-shadcn-ui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GDBO-web-ui-web-next-js-shadcn-ui.md",
+      "title": "新增简易 Web UI（web/，Next.js + shadcn/ui），证据接口给出文档日期与出处",
+      "repository": "ganymedenil-document.ai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7cbf959447afa976b2cb8bf2aa8901b7b3366942605e02f01f65fc98fcfbebef",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T03:57:49.813Z"
+    },
+    "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-ganymedenil-document-ai-product-intelligence-ganymedenil-document-ai-core-invari.md",
+      "title": "Product Intelligence: GanymedeNil/document.ai Core Invariants",
+      "repository": "GanymedeNil/document.ai",
+      "source_version": "4e2940ff",
+      "content_hash": "d8f1c9bacafc3e02748a68290a82cbeb6483c8377196ce6305f1f286f956db34",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T03:57:06.883Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-ganymedenil-document-ai": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ganymedenil-document-ai",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/ganymedenil-document-ai-verification-protocol-empirical-defect-shield-for-ganyme.md",
+      "title": "Verification Protocol: Empirical Defect Shield for GanymedeNil/document.ai",
+      "repository": "GanymedeNil/document.ai",
+      "source_version": "4e2940ff",
+      "content_hash": "bc4d13c5d30e01df60071d4b6d669e22702345d9dea8ab7287a14450f623f397",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:57:06.989Z"
+    },
+    "learn-github-juullabs-kable": {
+      "learning_id": "learn-github-juullabs-kable",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "JuulLabs/kable",
+      "repository": "JuulLabs/kable",
+      "slug": "juullabs-kable",
+      "platform": "github",
+      "source_url": "https://github.com/JuulLabs/kable",
+      "source_version": "2a4ea295",
+      "content_hash": "c89e8cabc74d8c50aebc0736afa58094ba9a27132dc0f4f4ac683d6cfc98f198",
+      "dossier_path": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8708,
+          "title": "Add `AndroidPeripheral.refreshGattCache`",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T03:57:17.201Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8708": {
+      "learning_id": "rule-8708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8708,
+      "title": "Add `AndroidPeripheral.refreshGattCache`",
+      "source_url": "https://github.com/JuulLabs/kable",
+      "source_version": "2a4ea295",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:57:17.201Z"
+    },
+    "candidate_directive-add-androidperipheral-refreshgattcache": {
+      "item_id": "candidate_directive-add-androidperipheral-refreshgattcache",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GDTS-add-androidperipheral-refreshgattcache.md",
+      "title": "Add `AndroidPeripheral.refreshGattCache`",
+      "repository": "juullabs-kable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a321fae635f2ced1c2b34120bb1096cccd9c3804b47c3652051d5ce5a2cb8acb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:57:50.464Z"
+    },
+    "domain_intelligence-architecture-intelligence-juullabs-kable-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-juullabs-kable-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-architecture-intelligence-juullabs-kable-core-invariants.md",
+      "title": "Architecture Intelligence: JuulLabs/kable Core Invariants",
+      "repository": "JuulLabs/kable",
+      "source_version": "2a4ea295",
+      "content_hash": "49a76f3cd731b835b80ed1b69236c8f97fd3673ec28abbedce384c30a0611fa2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:57:17.588Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/juullabs-kable-verification-protocol-empirical-defect-shield-for-juullabs-kable.md",
+      "title": "Verification Protocol: Empirical Defect Shield for JuulLabs/kable",
+      "repository": "JuulLabs/kable",
+      "source_version": "2a4ea295",
+      "content_hash": "39a0e2c0ba8f135034c8992228e3fa72c1426bf4d0e9ce027b738c686f25f8f1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:57:17.683Z"
+    },
+    "rule-8709": {
+      "learning_id": "rule-8709",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8709,
+      "title": "bump golang.org/x/crypto v0.58.0 → v0.59.0",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "b9c39f1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:57:22.066Z"
+    },
+    "candidate_directive-bump-golang-org-x-crypto-v0-58-0-v0-59-0": {
+      "item_id": "candidate_directive-bump-golang-org-x-crypto-v0-58-0-v0-59-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FS55-bump-golang-org-x-crypto-v0-58-0-v0-59-0.md",
+      "title": "bump golang.org/x/crypto v0.58.0 → v0.59.0",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "b9c39f1f",
+      "content_hash": "fe0c01e8b165f717322ed271cc05d7d67c64d4904e8851bfd90f335b725a6dd0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:57:22.364Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ganymedenil-document-ai-learnings-core-invariant": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ganymedenil-document-ai-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-ganymedenil-document-ai-learnings-research-knowledge-intelligence-ganymedenil-do.md",
+      "title": "Research & Knowledge Intelligence: ganymedenil-document.ai-learnings Core Invariants",
+      "repository": "ganymedenil-document.ai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "473f231935dd433ad893234cb661b65791a115355ff50ac5ae8d343d882bd045",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T03:57:49.927Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-ganymedenil-document-ai-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ganymedenil-document-ai-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/ganymedenil-document-ai-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ganymedenil-document.ai-learnings",
+      "repository": "ganymedenil-document.ai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9062eab34649799da590a879e99984fb0af607d18df7beb13356183dd583af05",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:57:50.041Z"
+    },
+    "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-learnings-architecture-intelligence-juullabs-kable-learnings-core.md",
+      "title": "Architecture Intelligence: juullabs-kable-learnings Core Invariants",
+      "repository": "juullabs-kable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f557b1a57592de77a205324ea9805c39651ca05d4778237700b4c58db305e491",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:57:50.567Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/juullabs-kable-learnings-verification-protocol-empirical-defect-shield-for-juull.md",
+      "title": "Verification Protocol: Empirical Defect Shield for juullabs-kable-learnings",
+      "repository": "juullabs-kable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5eaa6c4008d25bce8e9435c570925ee0596584744305c60f90a6c21b6f7e7c67",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:57:50.679Z"
+    },
+    "candidate_directive-deps-bump-golang-org-x-crypto-v0-58-0-v0-59-0": {
+      "item_id": "candidate_directive-deps-bump-golang-org-x-crypto-v0-58-0-v0-59-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GE7T-deps-bump-golang-org-x-crypto-v0-58-0-v0-59-0.md",
+      "title": "deps): bump golang.org/x/crypto v0.58.0 → v0.59.0",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9aafd037b723adaa892785ca750a981dcf3e405b9602f11a249feb6443a47755",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:57:50.970Z"
     }
   },
   "ai-builder-brain": {

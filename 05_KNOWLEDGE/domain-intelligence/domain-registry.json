@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T03:48:44.226Z",
-  "total_records": 1217,
+  "last_updated": "2026-11-16T03:57:51.075Z",
+  "total_records": 1222,
   "domains": {
     "A": {
       "total": 7,
@@ -17,7 +17,7 @@
       ]
     },
     "B": {
-      "total": 11,
+      "total": 12,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -29,7 +29,8 @@
         "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants",
         "domain_intelligence-product-intelligence-domcyrus-rustnet-learnings-core-invariants",
         "domain_intelligence-product-intelligence-crate-ci-typos-core-invariants",
-        "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants"
+        "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
+        "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants"
       ]
     },
     "C": {
@@ -39,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 575,
+      "total": 576,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -615,7 +616,8 @@
         "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-base-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-ganymedenil-document-ai-learnings-core-invariant"
       ]
     },
     "E": {
@@ -626,7 +628,7 @@
       ]
     },
     "F": {
-      "total": 23,
+      "total": 24,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -650,11 +652,12 @@
         "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants",
         "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
         "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
-        "DOM-F-DDC06A14"
+        "DOM-F-DDC06A14",
+        "DOM-F-4F38FEA1"
       ]
     },
     "G": {
-      "total": 217,
+      "total": 219,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -872,7 +875,9 @@
         "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants",
         "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",
-        "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-juullabs-kable-core-invariants",
+        "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants"
       ]
     },
     "H": {
@@ -14566,8 +14571,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "12cd4647434ddc833954dab7090002a79df5ffbed7e42b326b5be6b40b868595",
-      "created_at": "2026-11-15T06:00:12.354Z"
+      "content_hash": "7978c83d69745fe364fd4bbdb9971990345e401f11c621d93518d76f1187ec23",
+      "created_at": "2026-11-16T03:57:22.461Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -19115,8 +19120,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "30b20b3d17755f156ecd89b2a66987c4734a55a9b61fa23ada6e04e7da2325ad",
-      "created_at": "2026-11-15T06:00:50.681Z"
+      "content_hash": "1112a59c0c166b7a1e57292a370612a8df8a5b8f51587f3a16bc4dba0cc131eb",
+      "created_at": "2026-11-16T03:57:51.075Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -22600,6 +22605,84 @@
       "repository": "cilium-cilium-learnings",
       "content_hash": "5cabd07594cb6b38f76d1698a63b7afa3081c7a861f5fb55047b4ddb9cdcc487",
       "created_at": "2026-11-16T03:48:43.600Z"
+    },
+    "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: GanymedeNil/document.ai Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-ganymedenil-document-ai-product-intelligence-ganymedenil-document-ai-core-invari.md",
+      "repository": "GanymedeNil/document.ai",
+      "content_hash": "d8f1c9bacafc3e02748a68290a82cbeb6483c8377196ce6305f1f286f956db34",
+      "created_at": "2026-11-16T03:57:06.883Z"
+    },
+    "domain_intelligence-architecture-intelligence-juullabs-kable-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-juullabs-kable-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: JuulLabs/kable Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-architecture-intelligence-juullabs-kable-core-invariants.md",
+      "repository": "JuulLabs/kable",
+      "content_hash": "49a76f3cd731b835b80ed1b69236c8f97fd3673ec28abbedce384c30a0611fa2",
+      "created_at": "2026-11-16T03:57:17.588Z"
+    },
+    "DOM-F-4F38FEA1": {
+      "record_id": "DOM-F-4F38FEA1",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "新增简易 Web UI（web/，Next.js + shadcn/ui），证据接口给出文档日期与出处",
+      "content": "When implementing operations in `.claude/launch.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GanymedeNil/document.ai. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "d0b8e3c634a86ad5abad2a6a7b4724b25579053a658debf0d2a7454faebf50ea",
+      "summary": "Prevents defects observed in production commit `cfa5e3fa`: 新增简易 Web UI（web/，Next.js + shadcn/ui），证据接口给出文档日期与出处. Unvalidated execution paths  -> When implementing operations in `.claude/launch.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memo",
+      "provenance": {
+        "source_uri": "project://ganymedenil-document.ai/ganymedenil-document.ai-learnings.md",
+        "source_version": "4e2940ff",
+        "observed_at": "2026-11-16T03:57:05.780Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (ganymedenil-document.ai)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of ganymedenil-document.ai"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T03:57:49.572Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ganymedenil-document-ai-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ganymedenil-document-ai-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ganymedenil-document.ai-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-ganymedenil-document-ai-learnings-research-knowledge-intelligence-ganymedenil-do.md",
+      "repository": "ganymedenil-document.ai-learnings",
+      "content_hash": "473f231935dd433ad893234cb661b65791a115355ff50ac5ae8d343d882bd045",
+      "created_at": "2026-11-16T03:57:49.927Z"
+    },
+    "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: juullabs-kable-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-learnings-architecture-intelligence-juullabs-kable-learnings-core.md",
+      "repository": "juullabs-kable-learnings",
+      "content_hash": "f557b1a57592de77a205324ea9805c39651ca05d4778237700b4c58db305e491",
+      "created_at": "2026-11-16T03:57:50.567Z"
     }
   }
 }

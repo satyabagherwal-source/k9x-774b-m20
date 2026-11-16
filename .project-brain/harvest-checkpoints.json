@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T03:47:45.603Z",
+  "last_updated": "2026-11-16T03:57:22.209Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "4738272aeabc31184e4f6e98f3ac4ff40e5ab59ccdac134ecc1948b6b52a87c0",
-      "verified_at": "2026-11-15T06:00:12.040Z",
+      "content_hash": "cc0ab6e973ccd3cdbed34ea4748f183985e4a6d7690848a877634e43826fa1dd",
+      "verified_at": "2026-11-16T03:57:22.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T06:00:12.040Z"
+      "last_updated": "2026-11-16T03:57:22.209Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -13206,14 +13206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juullabs-kable",
-      "content_hash": "d5babb294ac084a41ea91a26d686fdea44d73abd493518827a129574b1b1e3bc",
-      "verified_at": "2026-11-12T22:21:20.699Z",
+      "content_hash": "c89e8cabc74d8c50aebc0736afa58094ba9a27132dc0f4f4ac683d6cfc98f198",
+      "verified_at": "2026-11-16T03:57:17.345Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:21:20.699Z"
+      "last_updated": "2026-11-16T03:57:17.345Z"
     },
     "tmolavi/siteprobe": {
       "repository": "tmolavi/siteprobe",
@@ -19094,6 +19094,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-16T00:17:31.029Z"
+    },
+    "GanymedeNil/document.ai": {
+      "repository": "GanymedeNil/document.ai",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ganymedenil-document-ai",
+      "content_hash": "fdc2284c643ccc080d73569dd12fcacfcaed7cbac6cdebba6c9fc5a612b10dec",
+      "verified_at": "2026-11-16T03:57:06.606Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-16T03:57:06.606Z"
     }
   },
   "repos": {

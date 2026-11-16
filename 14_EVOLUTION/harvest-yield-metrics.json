@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T03:47:45.600Z",
-  "total_cycles_completed": 9825,
-  "total_learnings_persisted": 9825,
-  "total_rules_promoted": 9437,
+  "last_updated": "2026-11-16T03:57:22.206Z",
+  "total_cycles_completed": 9828,
+  "total_learnings_persisted": 9828,
+  "total_rules_promoted": 9440,
   "history": [
-    {
-      "timestamp": "2026-11-15T00:37:31.127Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T00:37:45.465Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T00:50:34.362Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T00:50:36.515Z",
       "repository": "cachix/devenv",
@@ -1403,6 +1382,27 @@
       "repository": "CrawlCove/xml-sitemap-validator",
       "learningId": "learn-github-crawlcove-xml-sitemap-validator",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T03:57:06.603Z",
+      "repository": "GanymedeNil/document.ai",
+      "learningId": "learn-github-ganymedenil-document-ai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T03:57:17.343Z",
+      "repository": "JuulLabs/kable",
+      "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T03:57:22.206Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

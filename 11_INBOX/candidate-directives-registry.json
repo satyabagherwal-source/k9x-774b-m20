@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T03:48:44.120Z",
+  "last_updated": "2026-11-16T03:57:50.970Z",
   "directives": [
     {
       "id": "CD-001",
@@ -18001,6 +18001,59 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6D5861-engine-detect-uv-run-script-shebangs.md",
       "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-GDBO",
+      "directive_title": "新增简易 Web UI（web/，Next.js + shadcn/ui），证据接口给出文档日期与出处",
+      "source_repo": "ganymedenil-document.ai-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GDBO-web-ui-web-next-js-shadcn-ui.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-GDTS",
+      "directive_title": "Add `AndroidPeripheral.refreshGattCache`",
+      "source_repo": "juullabs-kable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GDTS-add-androidperipheral-refreshgattcache.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-FS55",
+      "directive_title": "bump golang.org/x/crypto v0.58.0 → v0.59.0",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "b9c39f1f",
+      "staged_file": "11_INBOX/candidate-directives/CD-FS55-bump-golang-org-x-crypto-v0-58-0-v0-59-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-782BC5",
+      "directive_title": "Add `AndroidPeripheral.refreshGattCache`",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "juullabs-kable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-782BC5-add-androidperipheral-refreshgattcache-.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-GE7T",
+      "directive_title": "deps): bump golang.org/x/crypto v0.58.0 → v0.59.0",
+      "source_repo": "projectdiscovery-nuclei-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GE7T-deps-bump-golang-org-x-crypto-v0-58-0-v0-59-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
     }
   ]
 }

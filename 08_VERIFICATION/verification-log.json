@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-GI7T",
-    "timestamp": "2026-11-13T18:34:43.385Z",
-    "repository": "prithivMLmods/Gender-Classifier-Mini",
-    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-    "contentHash": "aa1c9df342964035489069261a2122e725c1d4308bc85c7013982b3f259a9cb6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-GOGU",
-    "timestamp": "2026-11-13T18:34:51.486Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "9f09f4d8c8bb56ead76b1336a8b8505b907c3fae9a75c96e7bb5e7ec27941628",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-GSNL",
-    "timestamp": "2026-11-13T18:34:56.913Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "64bcc67eae947a93447d7150d76f694d523b19038f2df83a07a49c7cf98b571c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-GUU0",
     "timestamp": "2026-11-13T18:34:59.736Z",
     "repository": "topoteretes/cognee",
@@ -7492,6 +7447,51 @@
     "contentHash": "bb2da102333e735bbc91e810424cf8a3ba57368ec4078784aa9f9ec75fba3baa",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-FFZ5",
+    "timestamp": "2026-11-16T03:57:06.593Z",
+    "repository": "GanymedeNil/document.ai",
+    "learningId": "learn-github-ganymedenil-document-ai",
+    "contentHash": "fdc2284c643ccc080d73569dd12fcacfcaed7cbac6cdebba6c9fc5a612b10dec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-FO9J",
+    "timestamp": "2026-11-16T03:57:17.335Z",
+    "repository": "JuulLabs/kable",
+    "learningId": "learn-github-juullabs-kable",
+    "contentHash": "c89e8cabc74d8c50aebc0736afa58094ba9a27132dc0f4f4ac683d6cfc98f198",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-FS0N",
+    "timestamp": "2026-11-16T03:57:22.199Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "cc0ab6e973ccd3cdbed34ea4748f183985e4a6d7690848a877634e43826fa1dd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

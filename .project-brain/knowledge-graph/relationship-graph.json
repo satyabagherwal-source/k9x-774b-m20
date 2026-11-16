@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-16T03:48:41.982Z",
+  "updated_at": "2026-11-16T03:57:49.587Z",
   "statistics": {
-    "total_nodes": 281,
-    "total_edges": 145,
+    "total_nodes": 282,
+    "total_edges": 146,
     "domain_distribution": {
       "D": 217,
       "M": 1,
@@ -14,13 +14,13 @@
       "K": 12,
       "L": 3,
       "G": 1,
-      "F": 6,
+      "F": 7,
       "B": 1,
       "E": 1,
       "I": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 144,
+      "CONSTRAINED_BY_ARCHITECTURE": 145,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -6306,6 +6306,29 @@
       ],
       "created_at": "2026-11-16T03:48:41.982Z",
       "updated_at": "2026-11-16T03:48:41.982Z"
+    },
+    "DOM-F-4F38FEA1": {
+      "id": "DOM-F-4F38FEA1",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "新增简易 Web UI（web/，Next.js + shadcn/ui），证据接口给出文档日期与出处",
+      "summary": "Prevents defects observed in production commit `cfa5e3fa`: 新增简易 Web UI（web/，Next.js + shadcn/ui），证据接口给出文档日期与出处. Unvalidated execution paths  -> When implementing operations in `.claude/launch.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memo",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://ganymedenil-document.ai/ganymedenil-document.ai-learnings.md",
+        "source_version": "4e2940ff",
+        "observed_at": "2026-11-16T03:57:05.780Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (ganymedenil-document.ai)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-16T03:57:49.587Z",
+      "updated_at": "2026-11-16T03:57:49.587Z"
     }
   },
   "edges": [
@@ -7758,6 +7781,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-CB5F7DEE [D] with Domain M",
       "created_at": "2026-11-16T00:00:27.370Z"
+    },
+    {
+      "id": "EDGE-4E747A62B8D8",
+      "sourceId": "DOM-F-4F38FEA1",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-F-4F38FEA1 [F] with Domain G",
+      "created_at": "2026-11-16T03:57:49.587Z"
     }
   ]
 }

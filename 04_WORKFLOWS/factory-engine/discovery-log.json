@@ -21259,5 +21259,20 @@
     "qualityScore": 7971,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-16T00:15:37.214Z"
+  },
+  {
+    "name": "document.ai",
+    "fullName": "GanymedeNil/document.ai",
+    "url": "https://github.com/GanymedeNil/document.ai",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "可溯源、带时效判断的企业知识库问答：每条结论标明出自哪份文档的哪个版本、哪一处，以及在目标时间是否有效（Traceable, version- and time-aware enterprise RAG）",
+    "stars": 3658,
+    "forks": 321,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 2177,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-16T03:53:33.080Z"
   }
 ]
