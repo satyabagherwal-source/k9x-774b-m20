@@ -10409,3 +10409,5 @@ Every entry in this ledger must capture:
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `5251e89f` | Multi-dimensional audit evidence | 2026-11-16T23:35:04.866Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `f1e6395b` | Multi-dimensional audit evidence | 2026-11-16T23:35:06.227Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6b0edc20` | Multi-dimensional audit evidence | 2026-11-16T23:35:10.964Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `69a4f721` | Multi-dimensional audit evidence | 2026-11-16T23:52:46.724Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `ffdee00a` | Multi-dimensional audit evidence | 2026-11-16T23:52:55.862Z |

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T23:35:14.050Z",
-    "lastVerified": "2026-11-16T23:35:14.050Z",
+    "lastChecked": "2026-11-16T23:52:58.847Z",
+    "lastVerified": "2026-11-16T23:52:58.847Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -153,8 +153,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-16T23:03:47.564Z",
-    "lastVerified": "2026-11-16T23:03:47.564Z",
+    "lastChecked": "2026-11-16T23:52:55.857Z",
+    "lastVerified": "2026-11-16T23:52:55.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2241,22 +2241,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-16T16:08:54.481Z",
-    "lastVerified": "2026-11-16T16:08:54.481Z",
+    "lastChecked": "2026-11-16T23:52:55.042Z",
+    "lastVerified": "2026-11-16T23:52:55.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "ce8d173ba42fcdae0f3aa8ac376dd62dd1e9345244a1211042006d096c2a1ac3",
+    "contentHash": "086bdeecb96b71975a99ec59a539a0027c5c43ec4154808b738fa20c1f02aa26",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "db665f0c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -2600,9 +2599,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-15T17:14:11.722Z",
+    "lastChecked": "2026-11-16T23:52:48.391Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-15T17:14:11.722Z"
+    "lastVerified": "2026-11-16T23:52:48.391Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -2626,14 +2625,14 @@
     "officialUrl": "https://github.com/Kuddev/pebrel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T04:04:55.549Z",
-    "lastVerified": "2026-11-15T04:04:55.549Z",
+    "lastChecked": "2026-11-16T23:52:45.647Z",
+    "lastVerified": "2026-11-16T23:52:45.647Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "247f06dc7a1b4d4b153819ee6693e1d4ca256122a1746aed91a53f3a0cf92207",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 7,
+    "contentHash": "a2a9bb3c804e1105894c7e1f7682ecd534558dea6b5de2a93ab1b7a3e53326e9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3463,9 +3462,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-15T15:23:18.834Z",
+    "lastChecked": "2026-11-16T23:52:53.441Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-15T15:23:18.834Z"
+    "lastVerified": "2026-11-16T23:52:53.441Z"
   },
   "o2sh-onefetch": {
     "name": "onefetch",
@@ -12029,9 +12028,9 @@
   "digitalbazaar-jsonld.js": {
     "name": "jsonld.js",
     "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
-    "lastChecked": "2026-11-12T06:41:24.294Z",
+    "lastChecked": "2026-11-16T23:52:43.374Z",
     "revisionIdentifier": "7a93609e",
-    "lastVerified": "2026-11-12T06:41:24.294Z"
+    "lastVerified": "2026-11-16T23:52:43.374Z"
   },
   "jasonjmcghee-rem": {
     "name": "rem",
@@ -12355,8 +12354,8 @@
     "officialUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-13T10:26:26.536Z",
-    "lastVerified": "2026-11-13T10:26:26.536Z",
+    "lastChecked": "2026-11-16T23:52:45.853Z",
+    "lastVerified": "2026-11-16T23:52:45.853Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mikelikesdesign-swiftui-experiments",

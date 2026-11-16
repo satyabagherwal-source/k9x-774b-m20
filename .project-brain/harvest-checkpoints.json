@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T23:35:10.973Z",
+  "last_updated": "2026-11-16T23:52:55.869Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "247f06dc7a1b4d4b153819ee6693e1d4ca256122a1746aed91a53f3a0cf92207",
-      "verified_at": "2026-11-15T04:04:55.908Z",
+      "content_hash": "a2a9bb3c804e1105894c7e1f7682ecd534558dea6b5de2a93ab1b7a3e53326e9",
+      "verified_at": "2026-11-16T23:52:46.732Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T04:04:55.908Z"
+      "last_updated": "2026-11-16T23:52:46.732Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "ce8d173ba42fcdae0f3aa8ac376dd62dd1e9345244a1211042006d096c2a1ac3",
-      "verified_at": "2026-11-15T22:46:49.247Z",
+      "content_hash": "086bdeecb96b71975a99ec59a539a0027c5c43ec4154808b738fa20c1f02aa26",
+      "verified_at": "2026-11-16T23:52:55.869Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T22:46:49.247Z"
+      "last_updated": "2026-11-16T23:52:55.869Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",

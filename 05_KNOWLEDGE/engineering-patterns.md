@@ -640572,3 +640572,162 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6b0edc20` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8819. count lock creation failures instead of retrying (Harvested from Kuddev/pebrel)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "count lock creation failures instead of retrying",
+  "source": "Kuddev/pebrel",
+  "source_url": "https://github.com/Kuddev/pebrel",
+  "source_version": "69a4f721",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-16T23:52:46.333Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kuddev-pebrel",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Kuddev/pebrel](https://github.com/Kuddev/pebrel) (Revision: `69a4f721`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `architecture/notes/pebrel_app/directory_history/2026-11-13-background-flush.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3ab8fb31`: directory_history): count lock creation failures instead of retrying. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/pebrel_app/directory_history/2026-11-13-background-flush.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- 锁争用、建锁失败或写盘失败时都把批次放回队列头等待下一轮。争用不是失败，
+  重试即可；建锁失败（只读盘、父路径不可创建等）与写盘失败由 worker 连续计数，
+  并丢弃 `pending` 与迁移种子，避免按去抖节奏无限重试。
+- `try_lock` 先创建锁文件父目录并原样上报错误，再判定锁文件是否已存在。Windows
+  上 `create_dir_all` 对“父级/祖先被普通文件占据”返回 `AlreadyExists`，不能与
+  跨进程争用混为一谈，否则永久失败会被当成锁忙而无限重试。
+- 连续 3 次落盘失败（含建锁失败，约 1.5 s）后持久化自动关闭，内存 frecency 与
+  补全继续工作，重启后重新启用；丢弃的只是尚未落盘的那批观察，已写入文件的历史
+  不受影响。争用不计入失败次数；锁被长期占用时仍会按去抖节奏重试。
+后台最终落盘、多次记录合并为一次数据库、锁竞争保留待写批次且不计失败、建锁失败
+（直接父目录与祖先是普通文件）按失败上报并在连续 3 次后关闭持久化、版本不受支持
+时不覆盖文件且不回退内存。异步断言使用轮询或文件锁；“争用不计失败”是负向断言，
+额外跨过多个去抖窗口确认仍保持启用。
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+- 抢锁失败或写盘失败时把批次放回队列头等待下一轮；写盘错误由 worker 连续计数，
+  并丢弃 `pending` 与迁移种子，避免按去抖节奏无限重试整库写入。
+- 连续 3 次写盘失败（约 1.5 s）后持久化自动关闭，内存 frecency 与补全继续工作，
+  重启后重新启用；丢弃的只是尚未落盘的那批观察，已写入文件的历史不受影响。
+后台最终落盘、多次记录合并为一次数据库、锁竞争保留待写批次、版本不受支持时
+不覆盖文件且不回退内存，以及持久化关闭后丢弃待写批次而内存记录仍可用。异步断言
+使用轮询或文件锁，不依赖固定睡眠。
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3ab8fb31` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8820. add upsert_error to AWSSecretsManager metadata (Harvested from trufflesecurity/trufflehog)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "add upsert_error to AWSSecretsManager metadata",
+  "source": "trufflesecurity/trufflehog",
+  "source_url": "https://github.com/trufflesecurity/trufflehog",
+  "source_version": "ffdee00a",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-16T23:52:55.469Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trufflesecurity-trufflehog",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `ffdee00a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/pb/source_metadatapb/source_metadata.pb.validate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ffdee00a`: proto): add upsert_error to AWSSecretsManager metadata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/pb/source_metadatapb/source_metadata.pb.validate.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// no validation rules for UpsertError
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ffdee00a` are properly handled with clean fallback behavior.

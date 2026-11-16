@@ -10376,3 +10376,5 @@
 | `CYCLE-20261116-IBOE` | `2026-11-16T23:35:04.862Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8816` | Yes (`4e463c0b...`) |
 | `CYCLE-20261116-ICQ7` | `2026-11-16T23:35:06.223Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8817` | Yes (`4f0c31ba...`) |
 | `CYCLE-20261116-IGDS` | `2026-11-16T23:35:10.960Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8818` | Yes (`8487f964...`) |
+| `CYCLE-20261116-530H` | `2026-11-16T23:52:46.721Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8819` | Yes (`a2a9bb3c...`) |
+| `CYCLE-20261116-5A2A` | `2026-11-16T23:52:55.858Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8820` | Yes (`086bdeec...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:35:16.039Z",
+  "last_updated": "2026-11-16T23:53:00.473Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-9D4N",
+      "id": "CD-5DMD",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-9D4N-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5DMD-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -20832,6 +20832,59 @@
       "source_repo": "kubeedge-kubeedge",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-97B3BB-empirical-invariant-guard-in-configupdat.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-5351",
+      "directive_title": "count lock creation failures instead of retrying",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "69a4f721",
+      "staged_file": "11_INBOX/candidate-directives/CD-5351-count-lock-creation-failures-instead-of-retrying.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-5A71",
+      "directive_title": "add upsert_error to AWSSecretsManager metadata",
+      "source_repo": "trufflesecurity/trufflehog",
+      "source_commit": "ffdee00a",
+      "staged_file": "11_INBOX/candidate-directives/CD-5A71-add-upsert_error-to-awssecretsmanager-metadata.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-5CMF",
+      "directive_title": "directory_history): count lock creation failures instead of retrying",
+      "source_repo": "kuddev-pebrel-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5CMF-directory_history-count-lock-creation-failures-instead-of-retrying.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-5D5N",
+      "directive_title": "proto): add upsert_error to AWSSecretsManager metadata",
+      "source_repo": "trufflesecurity-trufflehog-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5D5N-proto-add-upsert_error-to-awssecretsmanager-metadata.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-8C5609",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8C5609-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-16"
     }
   ]

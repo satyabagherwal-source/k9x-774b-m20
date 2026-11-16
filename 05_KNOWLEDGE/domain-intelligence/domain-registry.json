@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T23:35:16.159Z",
+  "last_updated": "2026-11-16T23:53:00.579Z",
   "total_records": 1364,
   "domains": {
     "A": {
@@ -8097,8 +8097,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "31a20b35f4aea33e5d6e9814ff2b38b7541fc5d201bb06fab6e358ac3b307f9d",
-      "created_at": "2026-11-16T22:04:08.106Z"
+      "content_hash": "708b3110016ebbca32021f83be30a1c796bde4b36496b5e0e165cf64bef86652",
+      "created_at": "2026-11-16T23:53:00.579Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12078,8 +12078,8 @@
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "repository": "trufflesecurity/trufflehog",
-      "content_hash": "09bcdca8533aa107d437723a1e75a3b0961e13846fe90bf58f44b663b1b7cc51",
-      "created_at": "2026-11-15T22:46:49.456Z"
+      "content_hash": "309653b71939fe7eaf413ee95e59c8c3497cee150ce7a334722d1cd9c66f23fa",
+      "created_at": "2026-11-16T23:52:56.134Z"
     },
     "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
@@ -18803,8 +18803,8 @@
       "title": "Architecture Intelligence: Kuddev/pebrel Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kuddev-pebrel-architecture-intelligence-kuddev-pebrel-core-invariants.md",
       "repository": "Kuddev/pebrel",
-      "content_hash": "363640be861d1a9a7579cbc58f1ed93b8594006173b843a6d2eb9029bfb9af5f",
-      "created_at": "2026-11-15T04:04:56.144Z"
+      "content_hash": "fdebf22e711c56de08dbf6ac199247fcc8530973d91570dfa65968d5bebfe4b9",
+      "created_at": "2026-11-16T23:52:46.993Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -18812,8 +18812,8 @@
       "title": "Architecture Intelligence: kuddev-pebrel-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kuddev-pebrel-learnings-architecture-intelligence-kuddev-pebrel-learnings-core-i.md",
       "repository": "kuddev-pebrel-learnings",
-      "content_hash": "aa446de0722292a1e3b4b917461a9f2777b60009bbbef4049391b5b50beb61ea",
-      "created_at": "2026-11-15T04:05:05.517Z"
+      "content_hash": "fec7bedc812e35fe11fc15957ac2aa35141dca557e2e80b3631eb525247f395b",
+      "created_at": "2026-11-16T23:52:59.288Z"
     },
     "DOM-D-F3C53CD9": {
       "record_id": "DOM-D-F3C53CD9",
@@ -21822,8 +21822,8 @@
       "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-learnings-architecture-intelligence-trufflesecurity-t.md",
       "repository": "trufflesecurity-trufflehog-learnings",
-      "content_hash": "bb3e3da5075ddc5774ae81603bd134971d164c85517f348bd729e29b99c55dec",
-      "created_at": "2026-11-15T22:46:52.696Z"
+      "content_hash": "37b1bfa055c70b08daac240726da794c9d31cf368c03f3ce2235187fbf3b0add",
+      "created_at": "2026-11-16T23:52:59.975Z"
     },
     "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",

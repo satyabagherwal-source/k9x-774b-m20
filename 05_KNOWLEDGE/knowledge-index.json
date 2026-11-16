@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T23:35:16.284Z",
+  "last_updated": "2026-11-16T23:53:00.683Z",
   "total_verified_learnings": 8817,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19492,
+  "total_items": 19498,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9D4N-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5DMD-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "96bf9339bc6ff8532af6b4bf4be1fa28d2b67f1c00f79aa260f81e35c99d5162",
+      "content_hash": "28857b76cf069b87b52869ddeee56ef4f6e00a7b552118b7e5d86c3853d7691d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:04:07.995Z"
+      "persisted_at": "2026-11-16T23:53:00.473Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "31a20b35f4aea33e5d6e9814ff2b38b7541fc5d201bb06fab6e358ac3b307f9d",
+      "content_hash": "708b3110016ebbca32021f83be30a1c796bde4b36496b5e0e165cf64bef86652",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:04:08.106Z"
+      "persisted_at": "2026-11-16T23:53:00.579Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "73a7cc2fb4b350f6d6d0f836212a762ac972d76f1822fd2334c75a75514a58a2",
+      "content_hash": "44d059e9d10a5772de56db503b4cefbaf7b8659b47e59eb7eef9a0be018bdd0f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:04:08.222Z"
+      "persisted_at": "2026-11-16T23:53:00.683Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214534,9 +214534,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trufflesecurity-trufflehog-learnings",
       "repository": "trufflesecurity-trufflehog-learnings",
       "source_version": "HEAD",
-      "content_hash": "e24f4aa1080e988e0a8f6a314e5d6b5688f2de3d79566b74b4cc38f550f2b39b",
+      "content_hash": "5387b82543688c1ab0db23c45994cd727b8d9fe92f31a746207f48afa0d99ebc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:46:52.799Z"
+      "persisted_at": "2026-11-16T23:53:00.080Z"
     },
     "learn-huggingface-cloudflare-clef-flash": {
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
@@ -221400,8 +221400,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "db665f0c",
-      "content_hash": "ce8d173ba42fcdae0f3aa8ac376dd62dd1e9345244a1211042006d096c2a1ac3",
+      "source_version": "ffdee00a",
+      "content_hash": "086bdeecb96b71975a99ec59a539a0027c5c43ec4154808b738fa20c1f02aa26",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -221414,6 +221414,11 @@
           "number": 8662,
           "title": "Lukem ts/update digitaloceanv2 detector",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8820,
+          "title": "add upsert_error to AWSSecretsManager metadata",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221421,7 +221426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T22:46:49.116Z",
+      "verified_at": "2026-11-16T23:52:55.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221463,10 +221468,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "repository": "trufflesecurity/trufflehog",
-      "source_version": "db665f0c",
-      "content_hash": "09bcdca8533aa107d437723a1e75a3b0961e13846fe90bf58f44b663b1b7cc51",
+      "source_version": "ffdee00a",
+      "content_hash": "309653b71939fe7eaf413ee95e59c8c3497cee150ce7a334722d1cd9c66f23fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:46:49.456Z"
+      "persisted_at": "2026-11-16T23:52:56.134Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trufflesecurity-trufflehog": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trufflesecurity-trufflehog",
@@ -221475,10 +221480,10 @@
       "relative_path": "08_VERIFICATION/trufflesecurity-trufflehog-verification-protocol-empirical-defect-shield-for-tru.md",
       "title": "Verification Protocol: Empirical Defect Shield for trufflesecurity/trufflehog",
       "repository": "trufflesecurity/trufflehog",
-      "source_version": "db665f0c",
-      "content_hash": "123fd6a170cf82f8dd6287025cd58fc7672aa150a2affe776b7ad0fb18f5f047",
+      "source_version": "ffdee00a",
+      "content_hash": "20af8249ffd6a10c4db223b3139ec3a47bae187e1b27631bb1c2ff022c335709",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:46:49.539Z"
+      "persisted_at": "2026-11-16T23:52:56.233Z"
     },
     "learn-github-matrixorigin-matrixone": {
       "learning_id": "learn-github-matrixorigin-matrixone",
@@ -239773,17 +239778,23 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "c63ff393",
-      "content_hash": "247f06dc7a1b4d4b153819ee6693e1d4ca256122a1746aed91a53f3a0cf92207",
+      "source_version": "69a4f721",
+      "content_hash": "a2a9bb3c804e1105894c7e1f7682ecd534558dea6b5de2a93ab1b7a3e53326e9",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 8819,
+          "title": "count lock creation failures instead of retrying",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T04:04:55.750Z",
+      "verified_at": "2026-11-16T23:52:46.574Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239811,10 +239822,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kuddev-pebrel-architecture-intelligence-kuddev-pebrel-core-invariants.md",
       "title": "Architecture Intelligence: Kuddev/pebrel Core Invariants",
       "repository": "Kuddev/pebrel",
-      "source_version": "c63ff393",
-      "content_hash": "363640be861d1a9a7579cbc58f1ed93b8594006173b843a6d2eb9029bfb9af5f",
+      "source_version": "69a4f721",
+      "content_hash": "fdebf22e711c56de08dbf6ac199247fcc8530973d91570dfa65968d5bebfe4b9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T04:04:56.144Z"
+      "persisted_at": "2026-11-16T23:52:46.993Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kuddev-pebrel": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kuddev-pebrel",
@@ -239823,10 +239834,10 @@
       "relative_path": "08_VERIFICATION/kuddev-pebrel-verification-protocol-empirical-defect-shield-for-kuddev-pebrel.md",
       "title": "Verification Protocol: Empirical Defect Shield for Kuddev/pebrel",
       "repository": "Kuddev/pebrel",
-      "source_version": "c63ff393",
-      "content_hash": "a271816d8025f02b514ca848e2d70e9375a9863c020554a1b1043771683ef32d",
+      "source_version": "69a4f721",
+      "content_hash": "73186938b02767010b6b7b33d849ca991f60fc6505626b8dca414b63a346b45f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T04:04:56.234Z"
+      "persisted_at": "2026-11-16T23:52:47.094Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -239836,9 +239847,9 @@
       "title": "Architecture Intelligence: kuddev-pebrel-learnings Core Invariants",
       "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa446de0722292a1e3b4b917461a9f2777b60009bbbef4049391b5b50beb61ea",
+      "content_hash": "fec7bedc812e35fe11fc15957ac2aa35141dca557e2e80b3631eb525247f395b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T04:05:05.517Z"
+      "persisted_at": "2026-11-16T23:52:59.288Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kuddev-pebrel-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kuddev-pebrel-learnings",
@@ -239848,9 +239859,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kuddev-pebrel-learnings",
       "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "bdbba63e6c1e7987fa1ac47b847ed5c3d7178c04a2e603f57505faba7a5c5dc9",
+      "content_hash": "3175f81e30711ff0edcb8c294fc043884f80f04c595d4621f96bc9ca048163d0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T04:05:05.607Z"
+      "persisted_at": "2026-11-16T23:52:59.399Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le",
@@ -247992,9 +248003,9 @@
       "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "repository": "trufflesecurity-trufflehog-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb3e3da5075ddc5774ae81603bd134971d164c85517f348bd729e29b99c55dec",
+      "content_hash": "37b1bfa055c70b08daac240726da794c9d31cf368c03f3ce2235187fbf3b0add",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:46:52.696Z"
+      "persisted_at": "2026-11-16T23:52:59.975Z"
     },
     "learn-huggingface-microsoft-florence-2-base": {
       "learning_id": "learn-huggingface-microsoft-florence-2-base",
@@ -259837,6 +259848,82 @@
       "content_hash": "ba643fa138221bf1845fe32d3d5aad05080499955f61280eef77861a71d217dc",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T23:35:16.284Z"
+    },
+    "rule-8819": {
+      "learning_id": "rule-8819",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8819,
+      "title": "count lock creation failures instead of retrying",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "69a4f721",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:52:46.574Z"
+    },
+    "candidate_directive-count-lock-creation-failures-instead-of-retrying": {
+      "item_id": "candidate_directive-count-lock-creation-failures-instead-of-retrying",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5351-count-lock-creation-failures-instead-of-retrying.md",
+      "title": "count lock creation failures instead of retrying",
+      "repository": "Kuddev/pebrel",
+      "source_version": "69a4f721",
+      "content_hash": "9e10c865583f3231f6420209b5c2acb954a9695d06325f6679a053d94b41099c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:52:46.888Z"
+    },
+    "rule-8820": {
+      "learning_id": "rule-8820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8820,
+      "title": "add upsert_error to AWSSecretsManager metadata",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "ffdee00a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:52:55.719Z"
+    },
+    "candidate_directive-add-upsert_error-to-awssecretsmanager-metadata": {
+      "item_id": "candidate_directive-add-upsert_error-to-awssecretsmanager-metadata",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5A71-add-upsert_error-to-awssecretsmanager-metadata.md",
+      "title": "add upsert_error to AWSSecretsManager metadata",
+      "repository": "trufflesecurity/trufflehog",
+      "source_version": "ffdee00a",
+      "content_hash": "de046ae5982f5dc5122a5ea6ec1e7e4a77d001a482345de34c0a299b83a42d7e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:52:56.030Z"
+    },
+    "candidate_directive-directory_history-count-lock-creation-failures-instead-of-retrying": {
+      "item_id": "candidate_directive-directory_history-count-lock-creation-failures-instead-of-retrying",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5CMF-directory_history-count-lock-creation-failures-instead-of-retrying.md",
+      "title": "directory_history): count lock creation failures instead of retrying",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2530d048b632420fe60838bb7803acc3151e794bdd4d70cc6f7037de4b2dba80",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:52:59.179Z"
+    },
+    "candidate_directive-proto-add-upsert_error-to-awssecretsmanager-metadata": {
+      "item_id": "candidate_directive-proto-add-upsert_error-to-awssecretsmanager-metadata",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5D5N-proto-add-upsert_error-to-awssecretsmanager-metadata.md",
+      "title": "proto): add upsert_error to AWSSecretsManager metadata",
+      "repository": "trufflesecurity-trufflehog-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3e240f1a27ba55ee6c3cc4d4994ec6e598575f8afb35f7ce66c7d5c7e0495ee8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:52:59.867Z"
     }
   },
   "ai-builder-brain": {

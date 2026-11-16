@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:35:16.399Z",
+  "last_updated": "2026-11-16T23:53:00.778Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T22:34:20.943Z",
@@ -103,7 +103,7 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-15T22:46:52.234Z",
+      "processed_at": "2026-11-16T23:52:59.508Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-16T22:04:07.688Z",
+      "processed_at": "2026-11-16T23:53:00.180Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -488,7 +488,7 @@
       "staged_for_review": 1
     },
     "kuddev-pebrel-learnings.md": {
-      "processed_at": "2026-11-15T04:05:05.167Z",
+      "processed_at": "2026-11-16T23:52:58.952Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3228,7 +3228,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1395,
+  "total_dossiers_evaluated": 1398,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1092
+  "total_staged_for_review": 1095
 }

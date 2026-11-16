@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:35:10.969Z",
-  "total_cycles_completed": 9963,
-  "total_learnings_persisted": 9963,
-  "total_rules_promoted": 9555,
+  "last_updated": "2026-11-16T23:52:55.866Z",
+  "total_cycles_completed": 9965,
+  "total_learnings_persisted": 9965,
+  "total_rules_promoted": 9557,
   "history": [
-    {
-      "timestamp": "2026-11-15T21:15:40.816Z",
-      "repository": "maziyarpanahi/openmed",
-      "learningId": "learn-github-maziyarpanahi-openmed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T21:15:43.146Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T21:27:31.581Z",
       "repository": "Comfy-Org/MiniMax-H3-Image",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T23:35:10.969Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:52:46.729Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:52:55.866Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
