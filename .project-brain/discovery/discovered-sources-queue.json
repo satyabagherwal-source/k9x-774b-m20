@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T18:46:59.589Z",
+  "updated_at": "2026-11-16T18:55:56.685Z",
   "stats": {
-    "total_discovered": 4375,
-    "approved_pending_harvest": 4111,
+    "total_discovered": 4386,
+    "approved_pending_harvest": 4122,
     "harvested_count": 0,
     "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4116,
+      "COMMUNITY_AND_EXPERT": 4127,
       "OFFICIAL_DOCUMENTATION": 138,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -94423,6 +94423,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
         "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-B654A5BC9778": {
+      "id": "SRC-B654A5BC9778",
+      "url": "https://worktrunk.dev/config",
+      "title": "https://worktrunk.dev/config",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:55.193Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-79752D666A23": {
+      "id": "SRC-79752D666A23",
+      "url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
+      "title": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:55.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-E9238E80D3DB": {
+      "id": "SRC-E9238E80D3DB",
+      "url": "https://github.com/prettier/prettier",
+      "title": "https://github.com/prettier/prettier",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:55.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-569544FC5AC5": {
+      "id": "SRC-569544FC5AC5",
+      "url": "https://github.com/prettier/prettier/releases",
+      "title": "https://github.com/prettier/prettier/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:55.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-60FC3F88213C": {
+      "id": "SRC-60FC3F88213C",
+      "url": "https://github.com/prettier/prettier/blob/main/CHANGELOG.md",
+      "title": "https://github.com/prettier/prettier/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:55.918Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-6EB1EDBD7182": {
+      "id": "SRC-6EB1EDBD7182",
+      "url": "https://github.com/prettier/prettier/compare/3.9.10...3.10.1",
+      "title": "https://github.com/prettier/prettier/compare/3.9.10...3.10.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:55.943Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-4E976BCB969D": {
+      "id": "SRC-4E976BCB969D",
+      "url": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
+      "title": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:55.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-583710D01004": {
+      "id": "SRC-583710D01004",
+      "url": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
+      "title": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:55.996Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-595BFEF95AE1": {
+      "id": "SRC-595BFEF95AE1",
+      "url": "https://github.com/wquguru/cicada/releases/tag/v1.10.0",
+      "title": "https://github.com/wquguru/cicada/releases/tag/v1.10.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:56.636Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+        "fileName": "wquguru-cicada-learnings.md"
+      }
+    },
+    "SRC-18E4A37EFE47": {
+      "id": "SRC-18E4A37EFE47",
+      "url": "https://github.com/LingyiChen-AI/huiyi",
+      "title": "https://github.com/LingyiChen-AI/huiyi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:56.660Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+        "fileName": "wquguru-cicada-learnings.md"
+      }
+    },
+    "SRC-24E940DA8E26": {
+      "id": "SRC-24E940DA8E26",
+      "url": "https://github.com/wquguru/cicada/releases/latest",
+      "title": "https://github.com/wquguru/cicada/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:55:56.685Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+        "fileName": "wquguru-cicada-learnings.md"
       }
     }
   }

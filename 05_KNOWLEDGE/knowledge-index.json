@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T18:47:00.943Z",
-  "total_verified_learnings": 8797,
+  "last_updated": "2026-11-16T18:55:57.054Z",
+  "total_verified_learnings": 8799,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19284,
+  "total_items": 19307,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215453,14 +215453,19 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "f77caec1",
-      "content_hash": "b706159394d4afeb7a93872267c0afd5674bd59be93f3b7ad8651af19689aaf5",
+      "source_version": "886c258b",
+      "content_hash": "d47689e61914138bc417fa40d90acb68e6b9912bd02e817c10c749f3e5351dec",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
         {
           "number": 8381,
           "title": "Adds Infinispan Chat Memory store",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8783,
+          "title": "restore the interrupt status when execute() is interrupted",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -215469,7 +215474,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:54:33.068Z",
+      "verified_at": "2026-11-16T18:55:51.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215511,10 +215516,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "repository": "langchain4j/langchain4j",
-      "source_version": "f77caec1",
-      "content_hash": "3ece1b4514d35b58ab7c2d5656d3a26dcf1d3d4a31a41352e2e66f74c7f78250",
+      "source_version": "886c258b",
+      "content_hash": "5e859acac458868e8b7834f7b27abb39dc73049edf1abffd5377702a5529d800",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T20:54:33.456Z"
+      "persisted_at": "2026-11-16T18:55:52.287Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j",
@@ -215523,10 +215528,10 @@
       "relative_path": "08_VERIFICATION/langchain4j-langchain4j-verification-protocol-empirical-defect-shield-for-langch.md",
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j/langchain4j",
       "repository": "langchain4j/langchain4j",
-      "source_version": "f77caec1",
-      "content_hash": "0dcc6f31975c4da319530f6b22053ec2ec4d161590e8b59d21e6e57e2f5036ed",
+      "source_version": "886c258b",
+      "content_hash": "ddbc4d1aad73b82f57238e82484adf224cc040e2b0f40c6a919b8e8b7dd9e6e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:54:33.550Z"
+      "persisted_at": "2026-11-16T18:55:52.390Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
@@ -218581,8 +218586,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "195c21fb",
-      "content_hash": "8c50138dadd3753e0a7c39eb942b3d0e2a1e1a5935a66b09cb95c1f60fcb790c",
+      "source_version": "240592ea",
+      "content_hash": "05ec2406f0d6b7f59130ba69697f8f9f997d29e034f49cd0df2789eae07298d9",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -218595,6 +218600,11 @@
           "number": 8609,
           "title": "misleading `Garden` networking validation errors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8781,
+          "title": "[GEP-28] Fail `gardenadm connect` if temporary bootstrap cluster-admin binding s",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218602,7 +218612,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T11:12:42.236Z",
+      "verified_at": "2026-11-16T18:55:48.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218644,10 +218654,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "repository": "gardener/gardener",
-      "source_version": "195c21fb",
-      "content_hash": "bb55103c5489189fe574739fb31830ec51ff8a7a1ca9782ba17ba8a328747a37",
+      "source_version": "240592ea",
+      "content_hash": "6693173c19473893c9e5463d84a741e91184825da3bcd8aa2f9ce3e8998238d2",
       "domain_letter": "L",
-      "persisted_at": "2026-11-15T11:12:42.692Z"
+      "persisted_at": "2026-11-16T18:55:48.957Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
@@ -218656,10 +218666,10 @@
       "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
       "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
       "repository": "gardener/gardener",
-      "source_version": "195c21fb",
-      "content_hash": "ab423ddfb570af90e22d7cf4cc5cf36758e85c47fe1ad063225a521a13a1051b",
+      "source_version": "240592ea",
+      "content_hash": "3f0aba464a20ec7c34899408babb2e6bd9f9816dd00cfff2c20142034e8179b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T11:12:42.806Z"
+      "persisted_at": "2026-11-16T18:55:49.060Z"
     },
     "rule-8406": {
       "learning_id": "rule-8406",
@@ -235409,14 +235419,19 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "325c0b18",
-      "content_hash": "026d8bb73411adcd327c16e646d8ed9a945803d8c4c36164176d9751dcacd8bc",
+      "source_version": "829610e8",
+      "content_hash": "06e2e5da6ee64e35e08acdf980021486f0114c3244b2059b1d13a79e2ced0f7f",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
         {
           "number": 8538,
           "title": "stop a branch's vars from including a dotted branch's vars",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8782,
+          "title": "fail a hook before it starts when its template error is already decided",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -235425,7 +235440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:29:22.254Z",
+      "verified_at": "2026-11-16T18:55:50.711Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235467,10 +235482,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "repository": "max-sixty/worktrunk",
-      "source_version": "325c0b18",
-      "content_hash": "782104a0c94cee14d16555265ec7281d171f5b92fc748addba31a7c86df2cc23",
+      "source_version": "829610e8",
+      "content_hash": "61c3cd7b9fa62b4e6f01118c64992b75b64e921c1b7e217515b3e3b132e980ed",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T21:29:22.764Z"
+      "persisted_at": "2026-11-16T18:55:51.132Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk",
@@ -235479,10 +235494,10 @@
       "relative_path": "08_VERIFICATION/max-sixty-worktrunk-verification-protocol-empirical-defect-shield-for-max-sixty-.md",
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk",
       "repository": "max-sixty/worktrunk",
-      "source_version": "325c0b18",
-      "content_hash": "924bb78f5cfb24e9db909f3546b0f2e39f9df219ab0d78d93b21a9471469af12",
+      "source_version": "829610e8",
+      "content_hash": "f2d5a182e09889acfc84e726d8878cac7db52ed1631be5b0aca867ec7c407b09",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:29:22.890Z"
+      "persisted_at": "2026-11-16T18:55:51.237Z"
     },
     "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars": {
       "item_id": "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars",
@@ -235504,9 +235519,9 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f64bdef68235c96e79f492b834ef3ea39ab0d45c47e87e0a3993aa64ef51367",
+      "content_hash": "7f7393ee1237dee7d8b148a79fb410a5ec0113eb3e407ce9f665e86a5f1932f8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T21:29:32.477Z"
+      "persisted_at": "2026-11-16T18:55:55.500Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings",
@@ -235516,9 +235531,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty-worktrunk-learnings",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec0d92b9e7e4aa290e76da41123bf60d26f41bbbb3e3131e0d0d125e9cd91ab8",
+      "content_hash": "9eded9827fc4bf87aa99283bb7683d2bbb3dd0b43ca7575c71ff46edcfa8e332",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:29:32.604Z"
+      "persisted_at": "2026-11-16T18:55:55.603Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
@@ -256734,6 +256749,334 @@
       "content_hash": "36c6266534bd27893623c24e773632f036726ce7e43f462333f7e6ef81429747",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T18:47:00.943Z"
+    },
+    "learn-github-inikulin-parse5": {
+      "learning_id": "learn-github-inikulin-parse5",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "inikulin/parse5",
+      "repository": "inikulin/parse5",
+      "slug": "inikulin-parse5",
+      "platform": "github",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "ed000203",
+      "content_hash": "8316ee9bf9588597c5b3423b563e5bf324f3639345906115a1b634cc9686ac00",
+      "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8779,
+          "title": "bump prettier from 3.9.10 to 3.10.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T18:55:43.414Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8779": {
+      "learning_id": "rule-8779",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8779,
+      "title": "bump prettier from 3.9.10 to 3.10.1",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "ed000203",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:55:43.414Z"
+    },
+    "candidate_directive-bump-prettier-from-3-9-10-to-3-10-1": {
+      "item_id": "candidate_directive-bump-prettier-from-3-9-10-to-3-10-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J2PC-bump-prettier-from-3-9-10-to-3-10-1.md",
+      "title": "bump prettier from 3.9.10 to 3.10.1",
+      "repository": "inikulin/parse5",
+      "source_version": "ed000203",
+      "content_hash": "15a001d75ed1983f478ecef7368497fa3feca8aba5d301787eb83a8082892d44",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:55:43.731Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-inikulin-parse5-technical-construction-intelligence-inikulin-parse5-core-invaria.md",
+      "title": "Technical Construction Intelligence: inikulin/parse5 Core Invariants",
+      "repository": "inikulin/parse5",
+      "source_version": "ed000203",
+      "content_hash": "da3dae6789e93c896c198afa5d00778183457a8f50eaa60fc4d2bed64233c381",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:55:43.838Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-inikulin-parse5": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-inikulin-parse5",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/inikulin-parse5-verification-protocol-empirical-defect-shield-for-inikulin-parse.md",
+      "title": "Verification Protocol: Empirical Defect Shield for inikulin/parse5",
+      "repository": "inikulin/parse5",
+      "source_version": "ed000203",
+      "content_hash": "03a7670236f77c47c5b4579242b36d1206d65b9b7c1c2b7430ae0b49156c5131",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T18:55:43.950Z"
+    },
+    "learn-github-wquguru-cicada": {
+      "learning_id": "learn-github-wquguru-cicada",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "wquguru/cicada",
+      "repository": "wquguru/cicada",
+      "slug": "wquguru-cicada",
+      "platform": "github",
+      "source_url": "https://github.com/wquguru/cicada",
+      "source_version": "d8ed8ca6",
+      "content_hash": "73ed9b5961213d0495a29e7a01752020259273108a57126f77659c77adeeb277",
+      "dossier_path": "07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8780,
+          "title": "a notice says why listening stopped, and a disconnected room mic shows",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T18:55:45.001Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8780": {
+      "learning_id": "rule-8780",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8780,
+      "title": "a notice says why listening stopped, and a disconnected room mic shows",
+      "source_url": "https://github.com/wquguru/cicada",
+      "source_version": "d8ed8ca6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:55:45.001Z"
+    },
+    "candidate_directive-a-notice-says-why-listening-stopped-and-a-disconnected-room-mic-shows": {
+      "item_id": "candidate_directive-a-notice-says-why-listening-stopped-and-a-disconnected-room-mic-shows",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J3XF-a-notice-says-why-listening-stopped-and-a-disconnected-room-mic-shows.md",
+      "title": "a notice says why listening stopped, and a disconnected room mic shows",
+      "repository": "wquguru/cicada",
+      "source_version": "d8ed8ca6",
+      "content_hash": "301bc2d28d78b0c039154aadd41b53cb4deef71b341125e72742e2eb18ff7897",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:55:45.318Z"
+    },
+    "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-architecture-intelligence-wquguru-cicada-core-invariants.md",
+      "title": "Architecture Intelligence: wquguru/cicada Core Invariants",
+      "repository": "wquguru/cicada",
+      "source_version": "d8ed8ca6",
+      "content_hash": "6f308e49e01f1c99781c04f978e14e10db6670ecdb22091c1e1f3d491d869491",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:55:45.421Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-wquguru-cicada": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wquguru-cicada",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/wquguru-cicada-verification-protocol-empirical-defect-shield-for-wquguru-cicada.md",
+      "title": "Verification Protocol: Empirical Defect Shield for wquguru/cicada",
+      "repository": "wquguru/cicada",
+      "source_version": "d8ed8ca6",
+      "content_hash": "a5cf2d19f90cd3a0bbcc6b31a37b16de71d569fa9ad24441083c169405691006",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T18:55:45.525Z"
+    },
+    "rule-8781": {
+      "learning_id": "rule-8781",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8781,
+      "title": "[GEP-28] Fail `gardenadm connect` if temporary bootstrap cluster-admin binding s",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "240592ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:55:48.550Z"
+    },
+    "candidate_directive-gep-28-fail-gardenadm-connect-if-temporary-bootstrap-cluster-admin-binding-s": {
+      "item_id": "candidate_directive-gep-28-fail-gardenadm-connect-if-temporary-bootstrap-cluster-admin-binding-s",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J6NN-gep-28-fail-gardenadm-connect-if-temporary-bootstrap-cluster-admin-binding-s.md",
+      "title": "[GEP-28] Fail `gardenadm connect` if temporary bootstrap cluster-admin binding s",
+      "repository": "gardener/gardener",
+      "source_version": "240592ea",
+      "content_hash": "582ad4a4599999da33fe8622ce17d63aa564a8983850e273c38392477876d928",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-16T18:55:48.852Z"
+    },
+    "rule-8782": {
+      "learning_id": "rule-8782",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8782,
+      "title": "fail a hook before it starts when its template error is already decided",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "829610e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:55:50.711Z"
+    },
+    "candidate_directive-fail-a-hook-before-it-starts-when-its-template-error-is-already-decided": {
+      "item_id": "candidate_directive-fail-a-hook-before-it-starts-when-its-template-error-is-already-decided",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J8C0-fail-a-hook-before-it-starts-when-its-template-error-is-already-decided.md",
+      "title": "fail a hook before it starts when its template error is already decided",
+      "repository": "max-sixty/worktrunk",
+      "source_version": "829610e8",
+      "content_hash": "109b40f081dd5a1ee784f7e14ce1a1e9d22e19f6e6d61937d1ca6e6a890e38fe",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T18:55:51.027Z"
+    },
+    "rule-8783": {
+      "learning_id": "rule-8783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8783,
+      "title": "restore the interrupt status when execute() is interrupted",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "886c258b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:55:51.884Z"
+    },
+    "candidate_directive-restore-the-interrupt-status-when-execute-is-interrupted": {
+      "item_id": "candidate_directive-restore-the-interrupt-status-when-execute-is-interrupted",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J987-restore-the-interrupt-status-when-execute-is-interrupted.md",
+      "title": "restore the interrupt status when execute() is interrupted",
+      "repository": "langchain4j/langchain4j",
+      "source_version": "886c258b",
+      "content_hash": "6c8ece330b3f9c9a6dd4d293bf1531a68464a685cd428d93e576a029a7a89cda",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:55:52.186Z"
+    },
+    "candidate_directive-hooks-fail-a-hook-before-it-starts-when-its-template-error-is-already-decided": {
+      "item_id": "candidate_directive-hooks-fail-a-hook-before-it-starts-when-its-template-error-is-already-decided",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JBPC-hooks-fail-a-hook-before-it-starts-when-its-template-error-is-already-decided.md",
+      "title": "hooks): fail a hook before it starts when its template error is already decided",
+      "repository": "max-sixty-worktrunk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fed92aa9ff92fdc297fbf7a3b49685c565976826ff9ae12c95de926f023e309c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T18:55:55.395Z"
+    },
+    "candidate_directive-deps-dev-bump-prettier-from-3-9-10-to-3-10-1": {
+      "item_id": "candidate_directive-deps-dev-bump-prettier-from-3-9-10-to-3-10-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JCEH-deps-dev-bump-prettier-from-3-9-10-to-3-10-1.md",
+      "title": "deps-dev): bump prettier from 3.9.10 to 3.10.1",
+      "repository": "inikulin-parse5-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9b38ae6ca25b355a9cde3bdef7cd9c29126846134b7ea4a4e8faf2baecf93326",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:55:56.300Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-inikulin-parse5-learnings-technical-construction-intelligence-inikulin-parse5-le.md",
+      "title": "Technical Construction Intelligence: inikulin-parse5-learnings Core Invariants",
+      "repository": "inikulin-parse5-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4f3a2a05858d4047608176ade9dd1d7e91027e1d64f64d19622e56df944c512d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:55:56.405Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-inikulin-parse5-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-inikulin-parse5-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/inikulin-parse5-learnings-verification-protocol-empirical-defect-shield-for-inik.md",
+      "title": "Verification Protocol: Empirical Defect Shield for inikulin-parse5-learnings",
+      "repository": "inikulin-parse5-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4705faef7a094928e81aa12ed7a53609aca9d593fb8b16ff30d86af51df199d1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T18:55:56.510Z"
+    },
+    "candidate_directive-windows-a-notice-says-why-listening-stopped-and-a-disconnected-room-mic-shows": {
+      "item_id": "candidate_directive-windows-a-notice-says-why-listening-stopped-and-a-disconnected-room-mic-shows",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JCTO-windows-a-notice-says-why-listening-stopped-and-a-disconnected-room-mic-shows.md",
+      "title": "windows): a notice says why listening stopped, and a disconnected room mic shows",
+      "repository": "wquguru-cicada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e0e1c92e652717de6390482004c3af2e3916cb41b475f44617a758dbc5a25726",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:55:56.847Z"
+    },
+    "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-learnings-architecture-intelligence-wquguru-cicada-learnings-core.md",
+      "title": "Architecture Intelligence: wquguru-cicada-learnings Core Invariants",
+      "repository": "wquguru-cicada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "25be5099355b063e73c750a2c3dcb36e5d58b9c50d3685d84539d1e4b84d14b5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:55:56.951Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-wquguru-cicada-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wquguru-cicada-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/wquguru-cicada-learnings-verification-protocol-empirical-defect-shield-for-wqugu.md",
+      "title": "Verification Protocol: Empirical Defect Shield for wquguru-cicada-learnings",
+      "repository": "wquguru-cicada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "565122aed11865d166fe9f8a1c17b91f0cf6fc2080ada3d405924ef727877283",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T18:55:57.054Z"
     }
   },
   "ai-builder-brain": {

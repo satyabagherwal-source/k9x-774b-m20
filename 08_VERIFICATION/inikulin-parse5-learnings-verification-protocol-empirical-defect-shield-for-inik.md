@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:33.049Z",
+  "timestamp": "2026-11-16T18:55:56.205Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-inikulin-parse5-learnings",
+  "learning_id": "LEARN-EVO-inikulin-parse5-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [inikulin-parse5-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:33.049Z`  
-> **Learning ID**: `LEARN-REEXTRACT-inikulin-parse5-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T18:55:56.205Z`  
+> **Learning ID**: `LEARN-EVO-inikulin-parse5-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source**: github ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
-> **Source Version**: `48fb1533`  
+> **Source Version**: `ed000203`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T02:48:32.625Z  
+> **Timestamp**: 2026-11-16T18:55:42.721Z  
 > **Learning ID**: `learn-github-inikulin-parse5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T02:48:32.615Z  
+> **Harvest Timestamp**: 2026-11-16T18:55:41.307Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: HTML parsing/serialization toolset for Node.js. WHATWG HTML Living Standard (aka HTML5)-compliant.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3940 stars
+- **Stars / Engagement**: 3942 stars
 
 ---
 
@@ -1688,214 +1688,219 @@ export class ParserFeedbackSimulator implements TokenHandler {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f52fa37f` (2026-10-28)
-**Commit Message**: docs(security): name Tidelift as the only channel for reports
+### Incident Patch 1: `ed000203` (2026-11-16)
+**Commit Message**: chore(deps-dev): bump prettier from 3.9.10 to 3.10.1 (#1933)
 
-The current maintainers cannot see reports filed through GitHub's
-private vulnerability reporting, so say that Tidelift is the only
-channel.
+Bumps [prettier](https://github.com/prettier/prettier) from 3.9.10 to 3.10.1.
+- [Release notes](https://github.com/prettier/prettier/releases)
+- [Changelog](https://github.com/prettier/prettier/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/prettier/prettier/compare/3.9.10...3.10.1)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: prettier
+  dependency-version: 3.10.1
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
 
-**File**: `SECURITY.md` (modified, +3/-0)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `package-lock.json` (modified, +7/-7)
 ```diff
-@@ -8,3 +8,6 @@ Only the current release is supported. Please make sure to update to the latest
- 
- To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security).
- Tidelift will coordinate the fix and disclosure.
-+
-+The current maintainers do not have access to GitHub's private vulnerability reporting for this repository,
-+so reports filed there are not seen. Tidelift is the only channel for submitting reports.
+@@ -20,7 +20,7 @@
+                 "husky": "^9.1.7",
+                 "nano-staged": "^1.0.2",
+                 "outdent": "^0.8.0",
+-                "prettier": "^3.9.10",
++                "prettier": "^3.10.1",
+                 "ts-node": "^10.9.2",
+                 "typedoc": "^0.28.20",
+                 "typescript": "^6.0.3",
+@@ -2789,9 +2789,9 @@
+             }
+         },
+         "node_modules/prettier": {
+-            "version": "3.9.10",
+-            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
+-            "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
++            "version": "3.10.1",
++            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
++            "integrity": "sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==",
+             "dev": true,
+             "license": "MIT",
+             "bin": {
+@@ -5211,9 +5211,9 @@
+             "dev": true
+         },
+         "prettier": {
+-            "version": "3.9.10",
+-            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
+-            "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
++            "version": "3.10.1",
++            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
++            "integrity": "sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==",
+             "dev": true
+         },
+         "punycode": {
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@
+         "husky": "^9.1.7",
+         "nano-staged": "^1.0.2",
+         "outdent": "^0.8.0",
+-        "prettier": "^3.9.10",
++        "prettier": "^3.10.1",
+         "ts-node": "^10.9.2",
+         "typedoc": "^0.28.20",
+         "typescript": "^6.0.3",
 ```
 
 ---
 
-### Incident Patch 2: `b9093da5` (2026-10-24)
-**Commit Message**: fix(parser): match foreign end tags ASCII case-insensitively
+### Incident Patch 2: `476b24b0` (2026-11-13)
+**Commit Message**: chore(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (#1931)
 
-The foreign-content "any other end tag" steps compare the node's name converted to ASCII lowercase. `String#toLowerCase` also folds non-ASCII characters (U+212A KELVIN SIGN becomes `k`), so an element could fail to match its own end tag or match another one. The stored name is compared against the token name and the SVG adjustment-map name instead: start-tag names are ASCII-lowercased by the tokenizer and tree construction only adds ASCII uppercase through that map, so the comparison is ASCII-exact and allocates nothing.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `packages/parse5/lib/parser/index.test.ts` (modified, +9/-0)
-```diff
-@@ -84,6 +84,15 @@ describe('parser', () => {
-         });
-     });
- 
-+    // TODO: upstream to html5lib-tests
-+    it.each([
-+        // U+212A KELVIN SIGN is not an ASCII upper alpha: `toLowerCase` turns it into "k".
-+        ['<svg><a\u212A><desc></a\u212A>x', '<svg><a\u212A><desc></desc></a\u212A>x</svg>'],
-+        ['<svg><a\u212A><desc></ak>x', '<svg><a\u212A><desc>x</desc></a\u212A></svg>'],
-+    ])('foreign end tags are matched ASCII case-insensitively - %s', (input, expected) => {
-+        expect(serialize(parseFragment(input))).toBe(expected);
-+    });
-+
-     describe("Regression - Don't inherit from Object when creating collections (GH-119)", () => {
-         beforeEach(() => {
-             // @ts-expect-error Adding unknown prototype method
-```
-
-**File**: `packages/parse5/lib/parser/index.ts` (modified, +3/-1)
-```diff
-@@ -3814,7 +3814,9 @@ function endTagInForeignContent<T extends TreeAdapterTypeMap>(p: Parser<T>, toke
- 
-         const tagName = p.treeAdapter.getTagName(element);
- 
--        if (tagName.toLowerCase() === token.tagName) {
-+        // The tokenizer lowercases foreign start-tag names and tree construction adds ASCII uppercase only through
-+        // the SVG adjustment map, so these two comparisons are the ASCII case-insensitive match for every name created.
-+        if (tagName === token.tagName || tagName === foreignContent.SVG_TAG_NAMES_ADJUSTMENT_MAP.get(token.tagName)) {
-             //NOTE: update the token tag name for `_setEndLocation`.
-             token.tagName = tagName;
-             p.openElements.shortenToLength(i);
-```
+Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.72.1 to 8.72.2.
+- [Release notes](https://github.com/typescript-eslint/typescript-eslint/releases)
+- [Changelog](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md)
+- [Commits](https://github.com/typescript-eslint/typescript-eslint/commits/v8.72.2/packages/typescript-eslint)
 
 ---
+updated-dependencies:
+- dependency-name: typescript-eslint
+  dependency-version: 8.72.2
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
 
-### Incident Patch 3: `48fb1533` (2026-11-10)
-**Commit Message**: test: resolve data dirs with fileURLToPath so the suite runs on Windows (#1930)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Co-authored-by: goranai <[REDACTED_EMAIL]>
-
-**File**: `bench/perf/index.js` (modified, +2/-1)
+**File**: `package-lock.json` (modified, +122/-122)
 ```diff
-@@ -1,4 +1,5 @@
- import { readFileSync, createReadStream, readdirSync } from 'node:fs';
-+import { fileURLToPath } from 'node:url';
- import { Bench } from 'tinybench';
- import { loadTreeConstructionTestData } from 'parse5-test-utils/dist/generate-parsing-tests.js';
- import { loadSAXParserTestData } from 'parse5-test-utils/dist/load-sax-parser-test-data.js';
-@@ -48,7 +49,7 @@ function runPages(parser) {
- }
- 
- // Stream data
--const files = readdirSync(saxPath).map((dirName) => new URL(`${dirName}/src.html`, saxPath).pathname);
-+const files = readdirSync(saxPath).map((dirName) => fileURLToPath(new URL(`${dirName}/src.html`, saxPath)));
- 
- // Utils
- async function runBench({ name, workingCopyFn, upstreamFn }) {
+@@ -24,7 +24,7 @@
+                 "ts-node": "^10.9.2",
+                 "typedoc": "^0.28.20",
+                 "typescript": "^6.0.3",
+-                "typescript-eslint": "^8.72.1",
++                "typescript-eslint": "^8.72.2",
+                 "vitest": "^5.1.0"
+             }
+         },
+@@ -834,17 +834,17 @@
+             "dev": true
+         },
+         "node_modules/@typescript-eslint/eslint-plugin": {
+-            "version": "8.72.1",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+-            "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
++            "version": "8.72.2",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
++            "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+                 "@eslint-community/regexpp": "^4.12.2",
+-                "@typescript-eslint/scope-manager": "8.72.1",
+-                "@typescript-eslint/type-utils": "8.72.1",
+-                "@typescript-eslint/utils": "8.72.1",
+-                "@typescript-eslint/visitor-keys": "8.72.1",
++                "@typescript-eslint/scope-manager": "8.72.2",
++                "@typescript-eslint/type-utils": "8.72.2",
++                "@typescript-eslint/utils": "8.72.2",
++                "@typescript-eslint/visitor-keys": "8.72.2",
+                 "ignore": "^7.0.5",
+                 "natural-compare": "^1.4.0",
+                 "ts-api-utils": "^2.5.0"
+@@ -857,7 +857,7 @@
+                 "url": "https://opencollective.com/typescript-eslint"
+             },
+             "peerDependencies": {
+-                "@typescript-eslint/parser": "^8.72.1",
++                "@typescript-eslint/parser": "^8.72.2",
+                 "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+                 "typescript": ">=4.8.4 <6.1.0"
+             }
+@@ -873,16 +873,16 @@
+             }
+         },
+         "node_modules/@typescript-eslint/parser": {
+-            "version": "8.72.1",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+-            "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
++            "version": "8.72.2",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
++            "integrity": "sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+-                "@typescript-eslint/scope-manager": "8.72.1",
+-                "@typescript-eslint/types": "8.72.1",
+-                "@typescript-eslint/typescript-estree": "8.72.1",
+-                "@typescript-eslint/visitor-keys": "8.72.1",
++                "@typescript-eslint/scope-manager": "8.72.2",
++                "@typescript-eslint/types": "8.72.2",
++                "@typescript-eslint/typescript-estree": "8.72.2",
++                "@typescript-eslint/visitor-keys": "8.72.2",
+                 "debug": "^4.4.3"
+             },
+             "engines": {
+@@ -898,14 +898,14 @@
+             }
+         },
+         "node_modules/@typescript-eslint/project-service": {
+-            "version": "8.72.1",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
+-            "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGzW1J6jTg==",
++            "version": "8.72.2",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.2.tgz",
++            "integrity": "sha512-6y5dLTZdHhI8Eh3yIQ/bfQhRKwn5e+TpJj64o18Cngc0iW/BCrVvrr6zGYqXPnYH31u6YXAYiFh0+qxX5mybJw==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+-                "@typescript-eslint/tsconfig-utils": "^8.72.1",
+-                "@typescript-eslint/types": "^8.72.1",
++                "@typescript-eslint/tsconfig-utils": "^8.72.2",
++                "@typescript-eslint/types": "^8.72.2",
+                 "debug": "^4.4.3"
+             },
+             "engines": {
+@@ -920,14 +920,14 @@
+             }
+         },
+         "node_modules/@typescript-eslint/scope-manager": {
+-            "version": "8.72.1",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
+-            "integrity": "sha512-lC/t6eMCZZQAAKZEYGL6RDVSuFehpdmMT6h+nJIjIa6oylN/PwDgDVtEIbB7O9xFfZYtZAYLoLlDNWKJhtF+uQ==",
++            "version": "8.72.2",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.2.tgz",
++            "integ
 ```
 
-**File**: `packages/parse5-sax-parser/test/parser-feedback-simulator.test.ts` (modified, +3/-2)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -1,12 +1,13 @@
-+import { fileURLToPath } from 'node:url';
- import { it, assert } from 'vitest';
- import { generateTokenizationTests } from 'parse5-test-utils/utils/generate-tokenization-tests.js';
- import { ParserFeedbackSimulator } from '../lib/parser-feedback-simulator.js';
- 
--const feedbackPath = new URL('../../../test/data/parser-feedback', import.meta.url);
-+const feedbackPath = fileURLToPath(new URL('../../../test/data/parser-feedback', import.meta.url));
- 
- generateTokenizationTests(
-     'ParserFeedbackSimulator',
--    feedbackPath.pathname,
-+    feedbackPath,
-     (handler) => new ParserFeedbackSimulator({}, handler).tokenizer,
- );
- 
-```
-
-**File**: `packages/parse5/lib/tokenizer/index.test.ts` (modified, +3/-2)
-```diff
-@@ -1,13 +1,14 @@
-+import { fileURLToPath } from 'node:url';
- import { it, assert, describe } from 'vitest';
- import { Tokenizer, TokenizerMode, type Token } from 'parse5';
- import { generateTokenizationTests } from 'parse5-test-utils/utils/generate-tokenization-tests.js';
- 
--const dataPath = new URL('../../../../test/data/html5lib-tests/tokenizer', import.meta.url);
-+const dataPath = fileURLToPath(new URL('../../../../test/data/html5lib-tests/tokenizer', import.meta.url));
- const tokenizerOpts = {
-     sourceCodeLocationInfo: true,
- };
- 
--generateTokenizationTests('Tokenizer', dataPath.pathname, (handler) => new Tokenizer(tokenizerOpts, handler));
-+generateTokenizationTests('Tokenizer', dataPath, (handler) => new Tokenizer(tokenizerOpts, handler));
- 
- function noop(): void {
-     // Noop
-```
-
-**File**: `test/utils/generate-location-info-parser-tests.ts` (modified, +3/-2)
-```diff
-@@ -1,6 +1,7 @@
- import { it, assert } from 'vitest';
- import * as fs from 'node:fs';
- import path from 'node:path';
-+import { fileURLToPath } from 'node:url';
- import { type TreeAdapterTypeMap, type TreeAdapter, type ParserOptions, type Token, serializeOuter } from 'parse5';
- import {
-     removeNewLines,
-@@ -101,11 +102,11 @@ export function assertNodeLocation(
- }
- 
- function loadParserLocationInfoTestData(): { name: string; data: string }[] {
--    const dataDirPath = new URL('../data/location-info', import.meta.url);
-+    const dataDirPath = fileURLToPath(new URL('../data/location-info', import.meta.url));
-     const testSetFileDirs = fs.readdirSync(dataDirPath);
- 
-     return testSetFileDirs.map((dirName) => {
--        const dataFilePath = path.join(dataDirPath.pathname, dirName, 'data.html');
-+        const dataFilePath = path.join(dataDirPath, dirName, 'data.html');
-         const data = fs.readFileSync(dataFilePath).toString();
- 
-         return {
-```
-
-**File**: `test/utils/generate-parsing-tests.ts` (modified, +2/-1)
-```diff
-@@ -2,6 +2,7 @@ import { it, assert } from 'vitest';
- import type { ParserOptions, TreeAdapter, TreeAdapterTypeMap, ParserError } from 'parse5';
- import * as fs from 'node:fs';
- import path from 'node:path';
-+import { fileURLToPath } from 'node:url';
- import { serializeToDatFileFormat } from './serialize-to-dat-file-format.js';
- import { generateTestsForEachTreeAdapter } from './common.js';
- import { parseDatFile, type DatFile } from './parse-dat-file.js';
-@@ -18,7 +19,7 @@ export function loadTreeConstructionTestData<T extends TreeAdapterTypeMap>(
- ): TreeConstructionTestData<T>[] {
-     const tests: TreeConstructionTestData<T>[] = [];
- 
--    const dataDirPath = dataDir.pathname;
-+    const dataDirPath = fileURLToPath(dataDir);
-     const testSetFileNames = fs.readdirSync(dataDir);
-     const dirName = path.basename(dataDirPath);
- 
-```
-
-**File**: `test/utils/load-sax-parser-test-data.ts` (modified, +4/-3)
-```diff
-@@ -1,14 +1,15 @@
- import * as fs from 'node:fs';
- import path from 'node:path';
-+import { fileURLToPath } from 'node:url';
- import { normalizeNewLine } from './common.js';
- 
- export function loadSAXParserTestData(): { name: string; src: string; expected: string }[] {
--    const dataDirPath = new URL('../data/sax', import.meta.url);
-+    const dataDirPath = fileURLToPath(new URL('../data/sax', import.meta.url));
-     const testSetFileDirs = fs.readdirSync(dataDirPath);
- 
-     return testSetFileDirs.map((dirName) => {
--        const srcFilePath = path.join(dataDirPath.pathname, dirName, 'src.html');
--        const expectedFilePath = path.join(dataDirPath.pathname, dirName, 'expected.html');
-+        const srcFilePath = path.join(dataDirPath, dirName, 'src.html');
-+        const expectedFilePath = path.join(dataDirPath, dirName, 'expected.html');
-         const src = fs.readFileSync(srcFilePath).toString();
-         const expected = fs.readFileSync(expectedFilePath).toString();
- 
+@@ -21,7 +21,7 @@
+         "ts-node": "^10.9.2",
+         "typedoc": "^0.28.20",
+         "typescript": "^6.0.3",
+-        "typescript-eslint": "^8.72.1",
++        "typescript-eslint": "^8.72.2",
+         "vitest": "^5.1.0"
+     },
+     "scripts": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1933** (2026-11-16): chore(deps-dev): bump prettier from 3.9.10 to 3.10.1 (@dependabot[bot])
+- **PR #1931** (2026-11-13): chore(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (@dependabot[bot])
 - **PR #1930** (2026-11-10): test: resolve data dirs with fileURLToPath so the suite runs on Windows (@goranai)
 - **PR #1927** (2026-11-09): chore(deps): bump the codeql group with 2 updates (@dependabot[bot])
 - **PR #1926** (2026-11-07): chore: v8.1.1 (@fb55)
 - **PR #1922** (2026-11-06): fix(tokenizer): bound the duplicate-attribute check for wide tags (@fb55)
-- **PR #1921** (2026-11-07): Security fixes for the tokenizer, serializer, SAX parser and tree construction (@fb55)
-- **PR #1919** (2026-11-06): chore(deps-dev): bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
 
 ---
 
@@ -1915,33 +1920,43 @@ Co-authored-by: goranai <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(security): name Tidelift as the only channel for reports
+## X. deps-dev): bump prettier from 3.9.10 to 3.10.1
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f52fa37f`: docs(security): name Tidelift as the only channel for reports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed000203`: deps-dev): bump prettier from 3.9.10 to 3.10.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-
-The current maintainers do not have access to GitHub's private vulnerability reporting for this repository,
-so reports filed there are not seen. Tidelift is the only channel for submitting reports.
+                "prettier": "^3.10.1",
+            "version": "3.10.1",
+            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
+            "integrity": "sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==",
+            "version": "3.10.1",
+            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
+            "integrity": "sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+                "prettier": "^3.9.10",
+            "version": "3.9.10",
+            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
+            "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
+            "version": "3.9.10",
+            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
+            "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f52fa37f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed000203` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

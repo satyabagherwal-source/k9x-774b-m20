@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T18:47:01.102Z",
+  "last_updated": "2026-11-16T18:55:57.147Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T18:19:03.607Z",
@@ -293,7 +293,7 @@
       "staged_for_review": 1
     },
     "max-sixty-worktrunk-learnings.md": {
-      "processed_at": "2026-11-14T21:29:31.983Z",
+      "processed_at": "2026-11-16T18:55:55.121Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -703,7 +703,7 @@
       "staged_for_review": 1
     },
     "inikulin-parse5-learnings.md": {
-      "processed_at": "2026-11-12T02:49:02.468Z",
+      "processed_at": "2026-11-16T18:55:55.704Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1578,7 +1578,7 @@
       "staged_for_review": 1
     },
     "wquguru-cicada-learnings.md": {
-      "processed_at": "2026-11-13T06:07:07.255Z",
+      "processed_at": "2026-11-16T18:55:56.613Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3213,7 +3213,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1341,
+  "total_dossiers_evaluated": 1344,
   "total_canonical_promoted": 290,
-  "total_staged_for_review": 1041
+  "total_staged_for_review": 1044
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T18:47:00.581Z",
+  "last_updated": "2026-11-16T18:55:56.847Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19847,6 +19847,94 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3EB361-empirical-invariant-guard-in-2026-11-16-.md",
       "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-J2PC",
+      "directive_title": "bump prettier from 3.9.10 to 3.10.1",
+      "source_repo": "inikulin/parse5",
+      "source_commit": "ed000203",
+      "staged_file": "11_INBOX/candidate-directives/CD-J2PC-bump-prettier-from-3-9-10-to-3-10-1.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-J3XF",
+      "directive_title": "a notice says why listening stopped, and a disconnected room mic shows",
+      "source_repo": "wquguru/cicada",
+      "source_commit": "d8ed8ca6",
+      "staged_file": "11_INBOX/candidate-directives/CD-J3XF-a-notice-says-why-listening-stopped-and-a-disconnected-room-mic-shows.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-J6NN",
+      "directive_title": "[GEP-28] Fail `gardenadm connect` if temporary bootstrap cluster-admin binding s",
+      "source_repo": "gardener/gardener",
+      "source_commit": "240592ea",
+      "staged_file": "11_INBOX/candidate-directives/CD-J6NN-gep-28-fail-gardenadm-connect-if-temporary-bootstrap-cluster-admin-binding-s.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-J8C0",
+      "directive_title": "fail a hook before it starts when its template error is already decided",
+      "source_repo": "max-sixty/worktrunk",
+      "source_commit": "829610e8",
+      "staged_file": "11_INBOX/candidate-directives/CD-J8C0-fail-a-hook-before-it-starts-when-its-template-error-is-already-decided.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-J987",
+      "directive_title": "restore the interrupt status when execute() is interrupted",
+      "source_repo": "langchain4j/langchain4j",
+      "source_commit": "886c258b",
+      "staged_file": "11_INBOX/candidate-directives/CD-J987-restore-the-interrupt-status-when-execute-is-interrupted.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-JBPC",
+      "directive_title": "hooks): fail a hook before it starts when its template error is already decided",
+      "source_repo": "max-sixty-worktrunk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JBPC-hooks-fail-a-hook-before-it-starts-when-its-template-error-is-already-decided.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-JCEH",
+      "directive_title": "deps-dev): bump prettier from 3.9.10 to 3.10.1",
+      "source_repo": "inikulin-parse5-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JCEH-deps-dev-bump-prettier-from-3-9-10-to-3-10-1.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-JCTO",
+      "directive_title": "windows): a notice says why listening stopped, and a disconnected room mic shows",
+      "source_repo": "wquguru-cicada-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JCTO-windows-a-notice-says-why-listening-stopped-and-a-disconnected-room-mic-shows.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
     }
   ]
 }

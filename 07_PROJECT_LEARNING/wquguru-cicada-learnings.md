@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wquguru-cicada-learnings.md`  
 > **Source**: github ([https://github.com/wquguru/cicada](https://github.com/wquguru/cicada))  
-> **Source Version**: `f119ba61`  
+> **Source Version**: `d8ed8ca6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T06:06:43.193Z  
+> **Timestamp**: 2026-11-16T18:55:44.306Z  
 > **Learning ID**: `learn-github-wquguru-cicada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wquguru-cicada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wquguru/cicada](https://github.com/wquguru/cicada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T06:06:43.014Z  
+> **Harvest Timestamp**: 2026-11-16T18:55:44.300Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 知了 Cicada · 任何会议和直播的实时字幕、同声传译、AI 会议纪要，Mac、Windows、Linux、Android 免费开源。Live subtitles, interpreting and meeting notes for any call or stream, on Mac, Windows, Linux and Android.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2200 stars
+- **Stars / Engagement**: 2352 stars
 
 ---
 
@@ -1789,17 +1789,15 @@ class LingClient(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #26** (2026-11-12): **[FR] 导入录音/重新转写也做说话人识别（声纹标注）**
-  *Symptoms*: ### 背景  现场开会（开始听）时，说话人识别（设置 › 通用）工作正常：每句话的音频会跑声纹聚类，记录里能标出“说话人 1/2”，也支持命名和合并。但**导入录音/视频**和**重新转写**这条离线链路只出文字，不做声纹标注，产出的记录里所有行的 `voice` 都是空的。  ### 复现  1. 设置 › 通用 › 说话人识别：开启。 2. 导入一段多人对话的录音（mp3），等转写完成。 3. 打开文字记录：所有行只显示“对方”，没有说话人编号。 4. 检查 `~/Library/Application Support/LiveSubs/Sessions/<id>/session.json`：所有行的 `voice` 均为 null。  对照：同一天现场听的会议里 `voice` 字段正常标注（0、1、2…），只是句数少没到显示门槛。实测 8 场导入转写的会议（每场约 250 行）全部 0 行带 `voice`，现场听的会议有标注——可以排除是设置没开。  ### 期望  导入录音/视频、重新转写这些离线链路也跑声纹标注，显示规则与现场一致（说话人 N、命名、合并，纪要里能归属到人）。  ### 可行性（个人猜测）  导入时音频本来就在手上（已经是 16 kHz 单声道 PCM），每行也有起止时间，似乎可以在逐行落盘时切出对应片段喂给现有的 `SpeakerTagger` / `VoiceClusterer`，不需要新模型或服务。  ### 环境  - Cicada 1.7.0（核对了 1.8.0 的更新说明，未见此项） - Apple Silicon Mac，macOS 15.5 - 声纹用的本地音频，与识别引擎无关；现场/导入两种链路的差异看起来只在是否调用了声纹 
+- **Issue #32** (2026-11-14): **Windows: 同传声音加「我自己的声音」（把 Mac 的 VoiceOption.clone/ Ming 克隆移植过来）**
+  *Symptoms*: Windows 1.9.0 的同传声音只有 Ming 手挑的 3 个英文 / 4 个中文音色，没有 Mac 已经上线的「我自己的声音」（Sources/Cicada/Voices.swift 的 VoiceOption.clone + VoiceReference）。 Windows 侧缺两点：windows/src/Cicada.Core/Speak.cs 的 VoiceCatalog.Ming() 没有这一项；Ling.cs 的 Speech() 不发 references，有样本也发不出去。 请照 Mac 的实现移植。一个建议：样本限制在 10–15 秒（无状态克隆每句都要重传样本，太长会让出声慢半拍）。
   **Post-Mortem & Fix Analysis**:
-  > 谢谢这么详细的建议和排查！你的判断是对的：导入时手上已经有 16 kHz 单声道音频和每行的时间，按行切片喂给现有的声纹聚类就行，不需要新模型。我们近期会实现，导入录音/视频和重新转写都会标出说话人，显示、命名、合并和现场听的会议一致。做好后会在这里更新。
-  > 1.9.0 已发布：导入的录音/视频和重新转写的会议都会按声音标出说话人 1、2，可以改名、合并，导出的文字记录和纪要里也会写出是谁说的。注意一种声音要先说上几句才会标出来，很短的插话会先显示“未识别”。
+  > 已在 1.10.0 发布：https://github.com/wquguru/cicada/releases/tag/v1.10.0  Windows 的同声传译现在可以用你自己的声音说译文：在「设置 › 同声传译」里点「我自己的声音」旁的「录制」，照着一段话读 10 到 15 秒（按你的建议限制了时长），先试听像不像再保存。  - 需要 Ling key；比自带声音晚约 3 秒出声。 - 录音只存在这台电脑上，可随时删除；换成别的 AI 服务时自动用回默认声音。 - 录音结尾停顿太久、克隆出来的声音几乎没声的问题也一起修了。  谢谢建议！用起来有问题欢迎在这里继续反馈。 
 
-- **Issue #25** (2026-11-13): **[FR]翻译与纪要分别配置LLM模型**
-  *Symptoms*: ## 需求  现在「AI 服务 → 其他（兼容 OpenAI）」只有一行文字模型，标题是「翻译和纪要」，翻译、纪要、说话人识别和设置检查都共用它。希望可以分别配置：  - 翻译模型：普通句子翻译、会中听错的词修正等低延迟任务 - 纪要模型：实时纪要、说话人识别、JSON 检查等需要结构化 JSON 的任务  版本：Cicada 1.7.0（macOS）  ## 为什么需要  两个任务的取舍相反：  - 翻译每句有 6 秒超时，要求低延迟、纯文本。本地打算使用翻译专用模型，但不擅长写纪要。 - 纪要 90 秒超时、6000 token，需要通用模型的理解和归纳，并稳定返回 JSON。  现在只能在一个模型上取舍：选翻译模型，纪要不可用；选通用模型，翻译变慢。云端服务也一样：快而便宜的模型适合翻译，强模型适合纪要。  ## 现在的 workaround  我在本机加了一层 OpenAI 兼容代理，按请求是否带 `response_format` 分流。能用，但不够可靠：  - 分流依据是 JSON 字段，不是任务语义；「会中改正听错的词」也返回 JSON，但它是低延迟任务，应该走翻译模型。 - 需要额外运行代理，配置和排错多一层。 - 设置页检查只能测一个模型，无法同时验证“翻译够快”和“纪要 JSON 可用”。    
+- **Issue #31** (2026-11-14): **我做了一个 Windows 版本的**
+  *Symptoms*: https://github.com/LingyiChen-AI/huiyi
   **Post-Mortem & Fix Analysis**:
-  > 感谢详细的需求说明，这个已经实现了（21642b9），会在下一个版本发布。  做法：设置 › AI 服务 › 其他（兼容 OpenAI）拆成「翻译」和「纪要」两部分：  - **翻译**：句子翻译、会中改正听错的词等低延迟任务，走翻译模型。 - **纪要**：实时纪要、说话人识别、文件转写后的修正，可选「同一个服务」换个模型，或「另一个服务」用自己的地址和 key。默认和翻译用同一个。 - 模型菜单会从服务的 `/models` 搜索，列表里没有的名字也能直接填。 - 设置页检查会分别测两边：翻译测速度，纪要单独测能否稳定返回 JSON；两边各自限流，纪要出错不会影响翻译。  这样就不需要按 `response_format` 分流的本地代理了。发版后欢迎反馈。
-  > 1.9.0 已发布，包含这个功能：设置 › AI 服务 › 其他（兼容 OpenAI）分成「翻译」和「纪要」两组，纪要可以换模型，也可以选「另一个服务」填自己的地址和 key；「保存并检查」会分别测翻译速度和纪要能不能写。下载：https://cicada.indaloop.app/download/ ，用着有问题欢迎在这里继续说。
+  > 谢谢分享，看到大家用知了的思路做自己的版本很开心！知了官方也有 Windows 版，在 [Releases](https://github.com/wquguru/cicada/releases/latest) 里下载。这里不是待处理的问题，先关闭了；有想合进知了的改进，欢迎提 PR 或新开 issue 讨论。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1816,155 +1814,223 @@ class LingClient(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c3d0142` (2026-11-12)
-**Commit Message**: fix: Cicada no longer quits after an interpreted sentence when the meeting plays from the speakers
-
-Letting go of the echo-cancelling unit after a press rebuilds the voice output engine; a sentence still streaming then scheduled its audio on the new, unwired player, which threw (channel count mismatch) and left the app to crash on the main thread a few seconds later. The player is now wired again before every buffer.
-
-audio-test, meeting at 56 %: before, 2 of 4 rounds crashed (log: required condition is false: _outputFormat.channelCount == buffer.format.channelCount); after, 7 rounds and 26 engine rebuilds, no crash, no exception.
+### Incident Patch 1: `058b2339` (2026-11-14)
+**Commit Message**: fix(windows): a notice says why listening stopped, and a disconnected room mic shows as off
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Sources/Cicada/SpeakEngine.swift` (modified, +19/-1)
+**File**: `windows/src/Cicada/App.cs` (modified, +7/-2)
 ```diff
-@@ -165,6 +165,8 @@ final class SpeakEngine {
-     private var player = AVAudioPlayerNode()
-     private var outObserver: NSObjectProtocol?
-     private var outFormat: AVAudioFormat?
-+    /// Where the output was last pointed, to wire a replaced engine the same way.
-+    private var outDevice: OutputDevice?
-     private var outDeviceUID: String?
-     /// The device the latest `speak` call played to.
-     private(set) var lastDevice: OutputDevice?
-@@ -887,6 +889,7 @@ final class SpeakEngine {
-             debugLog("voice output failed: \(error)")
-             return
-         }
-+        guard outputReady(for: first.format) else { return }
-         for b in buffers.dropLast() { player.scheduleBuffer(b, completionHandler: nil) }
-         firstAudioAt = Date()
-         player.play()
-@@ -926,8 +929,10 @@ final class SpeakEngine {
-                     firstAt = Date().timeIntervalSince(started)
-                     firstAudioAt = Date()
-                     configureOutput(format: format, device: device)
--                    if !out.isRunning { try out.start() }
+@@ -511,8 +511,9 @@ void StartRoomSide()
+                     Toast(L("听会议室要先允许麦克风"), L("电脑声音照常在记"), () => Open("ms-settings:privacy-microphone"));
                  }
-+                // The engine may have been replaced while the stream ran (the echo-cancelling unit
-+                // let go): a player not wired for this format throws, and that took the app down.
-+                guard outputReady(for: format) else { break }
-                 player.scheduleBuffer(buf, completionHandler: nil)
-                 if !player.isPlaying { player.play() }
-                 count += 1
-@@ -951,6 +956,7 @@ final class SpeakEngine {
-     /// Schedules `buffer` last and waits until it has played, or `limit` seconds. A stalled output
-     /// never calls back, and would otherwise hold every later sentence; it is rebuilt instead.
-     private func waitPlayed(_ buffer: AVAudioPCMBuffer, limit: TimeInterval) async {
-+        guard outputReady(for: buffer.format) else { return }
-         let once = Once()
-         let played = await withCheckedContinuation { (cont: CheckedContinuation<Bool, Never>) in
-             player.scheduleBuffer(buffer, completionCallbackType: .dataPlayedBack) { _ in once.run { cont.resume(returning: true) } }
-@@ -993,6 +999,18 @@ final class SpeakEngine {
-         out.connect(player, to: out.mainMixerNode, format: format)
-         outFormat = format
-         outDeviceUID = uid
-+        outDevice = device
-+    }
-+
-+    /// The player is wired for `format` and the engine runs (wired again after the engine was
-+    /// replaced or reset); false when it can't be started.
-+    private func outputReady(for format: AVAudioFormat) -> Bool {
-+        if outFormat != format { configureOutput(format: format, device: outDevice) }
-+        guard !out.isRunning else { return true }
-+        do { try out.start(); return true } catch {
-+            debugLog("voice output failed: \(error)")
-+            return false
-+        }
-     }
- 
-     /// Plays a short sample through the chosen output so the user can check it.
+                 else if (reason == "none") Toast(L("没有可用的麦克风"), L("电脑声音照常在记"));
+-                _ = StopRoomSide();
+-                Changed();
++                else Toast(L("会议室的麦克风断开了"), L("电脑声音照常在记"));
++                // The mic is really off now: say so in the tray and the menu, not only stop hearing it.
++                if (reason == "denied") { _ = StopRoomSide(); Changed(); } else SetMic(false);
+             });
+         };
+         HybridMicDenied = false;
+@@ -543,6 +544,10 @@ IAudioSource Watch(IAudioSource source)
+                     Toast(L("听会议室要先允许麦克风"), L("Windows 不让知了用麦克风：设置 › 隐私和安全性 › 麦克风"), () => Open("ms-settings:privacy-microphone"));
+                 else if (source is GatedSource && reason == "none")
+                     Toast(L("没有可用的麦克风"), L("插上麦克风后再开始听。"));
++                else if (source is GatedSource)
++                    Toast(L("会议室的麦克风断开了"), L("已停止记录；插好麦克风后再开始听。"));
++                else
++                    Toast(L("听不到电脑的声音了"), L("已停止记录；稍后再开始听，或重启电脑后再试。"));
+                 _ = StopListening();
+             });
+         };
+```
+
+**File**: `windows/src/Cicada/Strings/en.lproj/Windows.strings` (modified, +4/-0)
+```diff
+@@ -365,3 +365,7 @@
+ "换个文件夹，或在它的属性里允许写入" = "Pick another folder, or allow writing in its Properties";
+ "在文件资源管理器中显示" = "Show in File Explorer";
+ "听起来不像或有杂音？换个安静的地方重录一次。录音仅保存在本机，可随时删除。" = "Doesn't sound like you, or noisy? Record again somewhere quiet. The recording stays on this PC and can be deleted anytime.";
++"会议室的麦克风断开了" = "The room microphone disconnected";
++"已停止记录；插好麦克风后再开始听。" = "Stopped recording. Plug the microphone back in, then start listening.";
++"听不到电脑的声音了" = "Can't hear the PC's audio anymore";
++"已停止记录；稍后再开始听，或重启电脑后再试。" = "Stopped recording. Start listening again in a moment, or restart the PC and try again.";
+```
+
+**File**: `windows/src/Cicada/Strings/ja.lproj/Windows.strings` (modified, +4/-0)
+```diff
+@@ -365,3 +365,7 @@
+ "换个文件夹，或在它的属性里允许写入" = "別のフォルダを選ぶか、フォルダのプロパティで書き込みを許可してください";
+ "在文件资源管理器中显示" = "エクスプローラーで表示";
+ "听起来不像或有杂音？换个安静的地方重录一次。录音仅保存在本机，可随时删除。" = "似ていない、またはノイズがありますか？静かな場所で録り直してください。録音はこのPCにのみ保存され、いつでも削除できます。";
++"会议室的麦克风断开了" = "会議室のマイクが切断されました";
++"已停止记录；插好麦克风后再开始听。" = "記録を停止しました。マイクを接続し直してから聞き取りを開始してください。";
++"听不到电脑的声音了" = "PC の音声を取得できなくなりました";
++"已停止记录；稍后再开始听，或重启电脑后再试。" = "記録を停止しました。少し待ってから聞き取りを再開するか、PC を再起動してお試しください。";
+```
+
+**File**: `windows/src/Cicada/Strings/ko.lproj/Windows.strings` (modified, +4/-0)
+```diff
+@@ -365,3 +365,7 @@
+ "换个文件夹，或在它的属性里允许写入" = "다른 폴더를 고르거나 폴더 속성에서 쓰기를 허용하세요";
+ "在文件资源管理器中显示" = "파일 탐색기에서 보기";
+ "听起来不像或有杂音？换个安静的地方重录一次。录音仅保存在本机，可随时删除。" = "내 목소리 같지 않거나 잡음이 있나요? 조용한 곳에서 다시 녹음해 보세요. 녹음은 이 PC에만 저장되며 언제든 삭제할 수 있습니다.";
++"会议室的麦克风断开了" = "회의실 마이크 연결이 끊겼습니다";
++"已停止记录；插好麦克风后再开始听。" = "기록을 멈췄습니다. 마이크를 다시 연결한 뒤 듣기를 시작하세요.";
++"听不到电脑的声音了" = "PC 소리를 더 이상 들을 수 없습니다";
++"已停止记录；稍后再开始听，或重启电脑后再试。" = "기록을 멈췄습니다. 잠시 후 다시 듣기를 시작하거나 PC를 다시 시작한 뒤 시도하세요.";
 ```
 
 ---
 
-### Incident Patch 2: `9d3286eb` (2026-11-12)
-**Commit Message**: fix: Cicada no longer quits now and then when the menu bar panel opens
-
-SwiftUI sometimes builds the panel off the main thread, where the keyboard-layout lookup for the shortcut's name asserted the main queue (crash reports since 1.4.0). Off the main thread the name now comes from the last one worked out on it.
+### Incident Patch 2: `61eac690` (2026-11-14)
+**Commit Message**: docs: changelog for the Windows listening fixes
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Sources/Cicada/Shortcuts.swift` (modified, +15/-0)
+**File**: `site/changelog.json` (modified, +34/-1)
 ```diff
-@@ -62,10 +62,25 @@ struct Shortcut: Equatable {
-         kVK_Home: "↖", kVK_End: "↘", kVK_PageUp: "⇞", kVK_PageDown: "⇟", kVK_RightOption: L("右 ⌥"),
-     ]
- 
-+    /// Names worked out on the main thread. SwiftUI sometimes builds the panel off it, and the
-+    /// input-source calls assert the main queue there (a crash since 1.4.0): off it, the last name.
-+    private static let nameLock = NSLock()
-+    nonisolated(unsafe) private static var names: [Int: String] = [:]
-+
-     /// The character the key types on the current layout (US letters on non-Latin layouts).
-     static func keyName(_ code: Int) -> String {
-         if let f = functionKeys[code] { return f }
-         if let n = named[code] { return n }
-+        guard Thread.isMainThread else {
-+            nameLock.lock(); defer { nameLock.unlock() }
-+            return names[code] ?? "#\(code)"
-+        }
-+        let name = layoutName(code)
-+        nameLock.lock(); names[code] = name; nameLock.unlock()
-+        return name
-+    }
-+
-+    private static func layoutName(_ code: Int) -> String {
-         guard let source = TISCopyCurrentASCIICapableKeyboardLayoutInputSource()?.takeRetainedValue(),
-               let ptr = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else { return "#\(code)" }
-         let data = Unmanaged<CFData>.fromOpaque(ptr).takeUnretainedValue() as Data
+@@ -1,9 +1,42 @@
+ [
++  {
++    "version": "1.10.1",
++    "date": null,
++    "title": "Windows 听电脑声音更稳了",
++    "summary": "声卡或音频服务重置后会自动接上，听不下去时会告诉你原因。",
++    "image": null,
++    "items": [
++      {
++        "kind": "fixed",
++        "platforms": [
++          "windows"
++        ],
++        "title": "音频服务重启、拔插扩展坞或驱动重置后，知了会自动重新接上电脑的声音。",
++        "text": "以前出了这种情况，会议看着还在记，其实之后一个字都没录上，过十分钟被当成没人说话自动结束。现在会自动重新接上；一直接不上才停下，并告诉你原因。"
++      },
++      {
++        "kind": "fixed",
++        "platforms": [
++          "windows"
++        ],
++        "title": "听不下去时会弹出提示说明原因，不再一声不响地停下。",
++        "text": "听不到电脑声音、会议室的麦克风断开时都会提示。电脑和会议室一起听时麦克风断开，托盘里的麦克风也会跟着显示为关闭，电脑声音照常在记。"
++      },
++      {
++        "kind": "fixed",
++        "platforms": [
++          "windows"
++        ],
++        "title": "允许过麦克风但从没用过的应用，不再被当成正在通话。",
++        "text": "这类应用会让知了以为一直在开会，没人说话时也不自动结束。"
++      }
++    ]
++  },
+   {
+     "version": "1.10.0",
+     "date": "2026-11-14",
+     "title": "同传用你自己的声音，各端都有了",
+-    "summary": "Windows、Linux 的同声传译和 Android 的面对面都能用你自己的声音说译文；Android 还能给每种语言选声音。Android 面对面也能听到隔着桌子正常说话的人了。 Mac 能记住认识的人、手动改纪要、用录音重新转写。",
++    "summary": "Windows、Linux 的同声传译和 Android 的面对面都能用你自己的声音说译文；Android 还能给每种语言选声音。Android 面对面也能听到隔着桌子正常说话的人了。Mac 能记住认识的人、手动改纪要、用录音重新转写。",
+     "image": null,
+     "items": [
+       {
 ```
 
 ---
 
-### Incident Patch 3: `4ff6ac9d` (2026-11-12)
-**Commit Message**: docs: changelog items for the crash and playback fixes
+### Incident Patch 3: `97c4416e` (2026-11-14)
+**Commit Message**: docs: changelog, READMEs and debug commands for editing notes in place
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `site/changelog.json` (modified, +16/-0)
+**File**: `README.ja.md` (modified, +1/-1)
 ```diff
-@@ -162,6 +162,22 @@
+@@ -78,7 +78,7 @@ Mac では「設定 › 同時通訳」で「キーを押さずに」もオン
+ 
+ 二か国語の記録、メモ、元の録音はすべて端末内に保存されます。任意の文をクリックするとその位置から再生でき、文字がハイライトされて自動でスクロールします。端末内の声紋モデルが話者を自動で区別し（Ling キーがあれば名前も補完）、間違っていればいつでも名前の変更や統合ができます。Mac では話者に名前を付けて「この声を記憶」を押すと（先に相手の了承を得てください）、以降の会議で自動的に判別します。声紋はこの Mac にだけ保存され、「設定 › 一般 › 話者を記憶」で管理・削除できます。現在、記録内の「あなた」に含まれるのは話すキーを押して話した内容のみで、会議でそのまま話した分については[ロードマップ](#ロードマップ)をご覧ください。
+ 
+-会議後にメモを追加生成したり、メインウインドウの「メモを編集」で手直ししたり、言語を間違えたときは録音から「もう一度文字起こし」したり、Markdown、Word、SRT 字幕にエクスポートしたり、「ファイル › 録音・動画を読み込む…」から手元の音声や動画を文字起こししたりできます。Mac の「議事メモをコピー」（⇧⌘C）は、Feishu・Notion・Word に貼ると見出し・箇条書き・フィッシュボーン図がそのまま入り、チャットには Markdown で貼られます。「設定 › 一般 › フォルダに保存」をオンにすると、会議ごとに Markdown（先頭にエージェント向けの frontmatter 付き）が Obsidian の保管庫などのフォルダに自動保存され、名前の変更や再整理に合わせてファイルも更新されます。
++会議後にメモを追加生成したり、メインウインドウで要約・結論・ToDo をクリックしてその場で直したり、言語を間違えたときは録音から「もう一度文字起こし」したり、Markdown、Word、SRT 字幕にエクスポートしたり、「ファイル › 録音・動画を読み込む…」から手元の音声や動画を文字起こししたりできます。Mac の「議事メモをコピー」（⇧⌘C）は、Feishu・Notion・Word に貼ると見出し・箇条書き・フィッシュボーン図がそのまま入り、チャットには Markdown で貼られます。「設定 › 一般 › フォルダに保存」をオンにすると、会議ごとに Markdown（先頭にエージェント向けの frontmatter 付き）が Obsidian の保管庫などのフォルダに自動保存され、名前の変更や再整理に合わせてファイルも更新されます。
+ 
+ 「共有…」でメモのリンク（任意で二か国語の全文付き）を作成でき、有効期限とパスワードの設定に対応しています。アップロード前にはキーや未公開の社内情報などの機密内容を自動でブロックします。
+ 
+```
+
+**File**: `README.ko.md` (modified, +1/-1)
+```diff
+@@ -78,7 +78,7 @@ Mac에서는 "설정 › 동시통역"에서 "키 없이 말하기"를 켤 수
+ 
+ 이중 언어 기록, 회의록, 원본 녹음은 모두 기기에 저장됩니다. 아무 문장이나 클릭하면 그 위치부터 다시 들을 수 있고, 글자가 강조되며 함께 스크롤됩니다. 기기 내 성문 모델이 화자를 자동으로 구분하며(Ling 키가 있으면 이름도 채움), 잘못 구분되면 언제든 이름을 바꾸거나 합칠 수 있습니다. Mac에서는 화자에게 이름을 붙이고 "이 목소리 기억"을 누르면(먼저 상대에게 알려 주세요) 이후 회의에서 바로 알아봅니다. 성문은 이 Mac에만 저장되며 "설정 › 일반 › 발화자 기억"에서 관리하거나 삭제할 수 있습니다. 현재 기록에 남는 내 발언은 말하기 키를 누르고 말한 내용뿐이며, 회의에서 바로 말한 부분은 [로드맵](#로드맵)을 참고하세요.
+ 
+-회의 후 회의록을 추가로 생성하거나 메인 창의 "메모 편집"으로 직접 고치고, 언어를 잘못 골랐다면 녹음으로 "다시 받아쓰기"를 할 수 있으며, Markdown, Word, SRT 자막으로 내보내거나, "파일 › 녹음 또는 동영상 가져오기…"로 로컬 오디오·비디오를 변환할 수 있습니다. Mac의 "회의록 복사하기"(⇧⌘C)는 Feishu, Notion, Word에 붙이면 제목·목록·피시본 다이어그램이 그대로 들어가고, 채팅창에는 Markdown으로 붙습니다. "설정 › 일반 › 폴더에 저장"을 켜면 회의마다 Markdown(앞부분에 에이전트용 frontmatter 포함)으로 Obsidian 보관함 등의 폴더에 자동 저장되고, 이름을 바꾸거나 다시 정리하면 파일도 함께 갱신됩니다.
++회의 후 회의록을 추가로 생성하거나 메인 창에서 요약·결론·할 일을 클릭해 바로 고치고, 언어를 잘못 골랐다면 녹음으로 "다시 받아쓰기"를 할 수 있으며, Markdown, Word, SRT 자막으로 내보내거나, "파일 › 녹음 또는 동영상 가져오기…"로 로컬 오디오·비디오를 변환할 수 있습니다. Mac의 "회의록 복사하기"(⇧⌘C)는 Feishu, Notion, Word에 붙이면 제목·목록·피시본 다이어그램이 그대로 들어가고, 채팅창에는 Markdown으로 붙습니다. "설정 › 일반 › 폴더에 저장"을 켜면 회의마다 Markdown(앞부분에 에이전트용 frontmatter 포함)으로 Obsidian 보관함 등의 폴더에 자동 저장되고, 이름을 바꾸거나 다시 정리하면 파일도 함께 갱신됩니다.
+ 
+ "공유…"를 누르면 회의록 링크(선택 시 이중 언어 전문 포함)를 만들 수 있으며, 유효 기간과 비밀번호 설정을 지원합니다. 업로드 전에는 키나 미공개 회사 정보 같은 민감한 내용을 자동으로 차단합니다.
+ 
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -78,7 +78,7 @@ Turning on interpreting switches the system microphone to BlackHole 2ch, a virtu
+ 
+ Bilingual transcripts, notes, and raw audio recordings are saved on your device. Click any line to play from that point while the text highlights and scrolls along. The on-device voiceprint model automatically separates speakers (and fills in their names when a Ling key is set), and you can rename or merge them anytime if someone is misidentified. On the Mac, name a speaker and click **Remember this voice** (check with them first) and later meetings recognize them; the voiceprint stays on this Mac, and **Settings › General › Remember speakers** manages or deletes it. Right now "you" in the record only covers what you say while holding the talk key; capturing what you say directly in the meeting is on the [roadmap](#roadmap).
+ 
+-After a meeting, you can generate notes retroactively, fix them by hand with **Edit Notes** in the main window, use **Transcribe Again** on the recording if the wrong language was picked, export to Markdown, Word, and SRT subtitles, or transcribe local audio and video files via **File › Import Recording or Video…**. On the Mac, **Copy Notes** (⇧⌘C) pastes into Feishu, Notion or Word with its headings, lists and fishbone picture, and as Markdown into a chat. Turn on **Settings › General › Save to folder** and each meeting is also automatically saved as Markdown (with frontmatter at the top for agents) into an Obsidian vault or another folder, updating automatically whenever you rename it or regenerate its notes.
++After a meeting, you can generate notes retroactively, click the summary, a conclusion or a to-do in the main window to fix it in place, use **Transcribe Again** on the recording if the wrong language was picked, export to Markdown, Word, and SRT subtitles, or transcribe local audio and video files via **File › Import Recording or Video…**. On the Mac, **Copy Notes** (⇧⌘C) pastes into Feishu, Notion or Word with its headings, lists and fishbone picture, and as Markdown into a chat. Turn on **Settings › General › Save to folder** and each meeting is also automatically saved as Markdown (with frontmatter at the top for agents) into an Obsidian vault or another folder, updating automatically whenever you rename it or regenerate its notes.
+ 
+ Click **Share…** to generate a link to the notes (optionally including the full bilingual transcript) with an expiration time and password; before uploading, it automatically blocks keys, unpublished company info, and other sensitive content.
+ 
+```
+
+**File**: `README.zh-CN.md` (modified, +1/-1)
+```diff
+@@ -78,7 +78,7 @@ Mac 上还能在“设置 › 同声传译”打开“不用按键”：听会
+ 
+ 双语记录、纪要和原始录音都存在本机。点任意一句就能从那儿回放，文字跟着高亮滚动。本机声纹模型会自动区分说话人（填了 Ling key 会填上名字），认错了随时改名或合并。Mac 上给说话人写上名字后点“记住这个声音”（先确认对方知道），以后的会议会直接认出这个人；声纹只存在本机，可在“设置 › 通用 › 记住说话人”里管理和删除。目前记录里的你只包含按住说话键说的话，会上直接开口的部分见[路线图](#路线图)。
+ 
+-会后可以补生成纪要，在主窗口“编辑纪要”手动改，语言选错了用录音“重新转写”，导出 Markdown、Word 和 SRT 字幕，或者点“文件 › 导入录音或视频…”转写本地音视频。Mac 上“复制纪要”（⇧⌘C）贴进飞书、Notion、Word 时标题、列表和鱼骨图都在，贴进聊天框是 Markdown。打开“设置 › 通用 › 存到文件夹”后，每场会议还会自动存成 Markdown（开头带给 agent 读的 frontmatter）放进 Obsidian 库等文件夹，改名或重新整理后文件跟着更新。
++会后可以补生成纪要，在主窗口点一下总结、结论或待办直接改，语言选错了用录音“重新转写”，导出 Markdown、Word 和 SRT 字幕，或者点“文件 › 导入录音或视频…”转写本地音视频。Mac 上“复制纪要”（⇧⌘C）贴进飞书、Notion、Word 时标题、列表和鱼骨图都在，贴进聊天框是 Markdown。打开“设置 › 通用 › 存到文件夹”后，每场会议还会自动存成 Markdown（开头带给 agent 读的 frontmatter）放进 Obsidian 库等文件夹，改名或重新整理后文件跟着更新。
+ 
+ 点“分享…”能生成纪要链接（可选带上双语全文），支持设有效期和密码，上传前会自动拦截密钥、未公开公司信息等敏感内容。
+ 
+```
+
+**File**: `site/changelog.json` (modified, +2/-2)
+```diff
+@@ -45,8 +45,8 @@
+         "platforms": [
+           "mac"
          ],
-         "title": "自建服务的 key 失效时，报错会直接写出服务地址。",
-         "text": "以前英文界面会显示有语病的“The this service key doesn't work”。现在直接写明服务地址，比如“zenmux.ai 的 key 用不了”。"
-+      },
-+      {
-+        "kind": "fixed",
-+        "platforms": [
-+          "mac"
-+        ],
-+        "title": "会议外放时用同声传译，说完一句后知了不会再退出。",
-+        "text": "按住说话键说完一句、译文说出去后，知了偶尔会在几秒后直接退出。现在不会了。"
-+      },
-+      {
-+        "kind": "fixed",
-+        "platforms": [
-+          "mac"
-+        ],
-+        "title": "打开菜单栏面板时，知了不会再偶尔退出。",
-+        "text": "面板里显示快捷键名字时偶尔会让知了直接退出，从 1.4 起就有。现在不会了。"
-       }
-     ]
-   },
+-        "title": "会议结束后可以手动改纪要。",
+-        "text": "在主窗口的会议记录里点“编辑纪要”，改摘要、议题、结论、人名和术语；把识别错的写法填进“听成”，以后整理纪要也会按对的写。"
++        "title": "会议结束后，纪要里的总结、结论和待办可以直接改。",
++        "text": "在主窗口的会议记录里点一下某条结论、待办或总结，就地改字，回车保存，Esc 取消；待办还能改负责人，清空一条就是删掉。"
+       },
+       {
+         "kind": "new",
+```
+
+**File**: `tools/README.md` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@
+   - 显示与字幕：`display:<notes|bar|none>`、`subtitles:<both|translation|original>`、`meetingSubtitles:<…>`、`overlayState`、`overlayToggle`、`pillClick`（等于点主窗口顶部的“正在听”）、`overlayAuto[:off]`、`hideAfter:<秒>`
+   - 纪要：`notesLang:<mine|source>`、`meetingNotesLang:<…>`、`notesRegenerate:<id>=<mine|source>`、`notesWindow[:x,y,w,h]`、`notesClose`、`notesMinimize`、`notesFrame`、`notesNow`、`notesState`、`notesShow:<id>`、`notesReplay:<id>[,<每次几句>]`（按会议时的节奏重写一遍纪要，默认每次 4 句；回复被 max_tokens 截断时日志写 `cut at max_tokens`）、`notesCapturable[:off]`（只改窗口能否被截屏）、`notesShare:<on|off>`（改“共享屏幕时让对方看到”这个设置，等于点图标或开关）
+   - 结束会议：`endSim:<应用名>[,…]` 假装这些会议应用在通话（`endSim:` 全部挂断，`endSim:off` 回到真实情况），`endTimes:<静默秒>,<倒计时秒>,<挂断宽限秒>` 缩短等待（`endTimes:` 回到设置），`endKeep` 等于点“继续记录”，`endState` 写进日志
+-  - 渲染（不需要录屏权限）：`panelRender:<png>`（菜单栏面板，离屏画）、`windowsRender:<目录>`、`settingsRender:<栏目>=<png>`、`notesRender:<png>`、`mainShow:<id>[,transcript]`、`mainWindow:x,y,宽,高`（摆好主窗口并暂时浮在最上层，方便模拟点击；不带参数恢复）、`mainRender:<png>`、`speakTestRender:<png>`；`peopleShow`（人员库）、`notesEditShow:<会议 id>`（编辑纪要）单独开成窗口，用 `winall` + `screencapture -l` 截
++  - 渲染（不需要录屏权限）：`panelRender:<png>`（菜单栏面板，离屏画）、`windowsRender:<目录>`、`settingsRender:<栏目>=<png>`、`notesRender:<png>`、`mainShow:<id>[,transcript]`、`mainWindow:x,y,宽,高`（摆好主窗口并暂时浮在最上层，方便模拟点击；不带参数恢复）、`mainRender:<png>`、`speakTestRender:<png>`；`peopleShow`（人员库）单独开成窗口，用 `winall` + `screencapture -l` 截；纪要原地编辑：`noteEdit:<会议 id>=<summary|N>` 打开一处（N 按结论再待办从 1 数，`noteEdit:` 收起），`noteSave:<会议 id>=<summary|N>|<文字>[|<负责人>]` 等于回车保存，文字为空就删掉这条
+   - AI：`aiKeyFile:<路径>`（从 0600 文件读 key，不经过日志；测完就删掉文件）、`aiCheck`、`aiRemove`、`aiHide:<on|off>`（只在内存里当作没有 key，文件不动；用于截图）、`aiState`、`lingSimulate:<429|hijack|timeout|off>`、`translateFail:<n>`（接下来 n 句在所有翻译来源都失败，用来测重试）、`googleDown:<on|off>`（Google 翻译当作连不上，测提示和暂停）
+   - 声音：`voice:<语言>[=<id>]`、`voicePreview:<语言>=<id>`、`voiceCloneFile:<wav>`、`voicePicker:<on|off>`
+   - 诊断：`diagnostics:<on|off>`、`diagReport`
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #29** (2026-11-14): feat(speakers): remember known voices across meetings (@clementchen816-svg)
 - **PR #21** (2026-11-09): Add meeting microphone selection on macOS (@Ali1995A)
 - **PR #18** (closed): Feature/lark task sync (@lmjmt)
 - **PR #17** (2026-11-06): fix(audio): dynamically query default output sample rate and support LarkSuite app (@lmjmt)
 - **PR #13** (2026-11-06): fix: prevent push-to-talk crashes after switching microphones (@philo-veritas)
 - **PR #10** (2026-11-05): feat: support Intel Macs with cloud speech recognition (@longshines)
-- **PR #8** (2026-11-05): docs: add Japanese README (@eltociear)
 
 ---
 
@@ -1984,46 +2050,35 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Cicada no longer quits after an interpreted sentence when the meeting plays from
+## X. windows): a notice says why listening stopped, and a disconnected room mic shows
 
 **RULE**:
-When implementing operations in `Sources/Cicada/SpeakEngine.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wquguru/cicada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `windows/src/Cicada/App.cs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wquguru/cicada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c3d0142`: Cicada no longer quits after an interpreted sentence when the meeting plays from the speakers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `058b2339`: windows): a notice says why listening stopped, and a disconnected room mic shows as off. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Cicada/SpeakEngine.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `windows/src/Cicada/App.cs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// Where the output was last pointed, to wire a replaced engine the same way.
-    private var outDevice: OutputDevice?
-        guard outputReady(for: first.format) else { return }
-                // The engine may have been replaced while the stream ran (the echo-cancelling unit
-                // let go): a player not wired for this format throws, and that took the app down.
-                guard outputReady(for: format) else { break }
-        guard outputReady(for: buffer.format) else { return }
-        outDevice = device
-    }
-
-    /// The player is wired for `format` and the engine runs (wired again after the engine was
-    /// replaced or reset); false when it can't be started.
-    private func outputReady(for format: AVAudioFormat) -> Bool {
-        if outFormat != format { configureOutput(format: format, device: outDevice) }
-        guard !out.isRunning else { return true }
-        do { try out.start(); return true } catch {
-            debugLog("voice output failed: \(error)")
-            return false
-        }
+                else Toast(L("会议室的麦克风断开了"), L("电脑声音照常在记"));
+                // The mic is really off now: say so in the tray and the menu, not only stop hearing it.
+                if (reason == "denied") { _ = StopRoomSide(); Changed(); } else SetMic(false);
+                else if (source is GatedSource)
+                    Toast(L("会议室的麦克风断开了"), L("已停止记录；插好麦克风后再开始听。"));
+                else
+                    Toast(L("听不到电脑的声音了"), L("已停止记录；稍后再开始听，或重启电脑后再试。"));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-                    if !out.isRunning { try out.start() }
+// Induced defect failure mode:
+                _ = StopRoomSide();
+                Changed();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c3d0142` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `058b2339` are properly handled with clean fallback behavior.

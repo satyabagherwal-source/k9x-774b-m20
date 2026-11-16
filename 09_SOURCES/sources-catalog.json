@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "325c0b18",
+    "sourceVersion": "829610e8",
     "license": "Apache-2.0",
-    "contentHash": "026d8bb73411adcd327c16e646d8ed9a945803d8c4c36164176d9751dcacd8bc",
-    "lastHarvestedAt": "2026-11-14T21:29:22.427Z",
+    "contentHash": "06e2e5da6ee64e35e08acdf980021486f0114c3244b2059b1d13a79e2ced0f7f",
+    "lastHarvestedAt": "2026-11-16T18:55:50.858Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "195c21fb",
+    "sourceVersion": "240592ea",
     "license": "Apache-2.0",
-    "contentHash": "8c50138dadd3753e0a7c39eb942b3d0e2a1e1a5935a66b09cb95c1f60fcb790c",
-    "lastHarvestedAt": "2026-11-15T11:12:42.395Z",
+    "contentHash": "05ec2406f0d6b7f59130ba69697f8f9f997d29e034f49cd0df2789eae07298d9",
+    "lastHarvestedAt": "2026-11-16T18:55:48.695Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "f77caec1",
+    "sourceVersion": "886c258b",
     "license": "Apache-2.0",
-    "contentHash": "b706159394d4afeb7a93872267c0afd5674bd59be93f3b7ad8651af19689aaf5",
-    "lastHarvestedAt": "2026-11-13T20:54:33.202Z",
+    "contentHash": "d47689e61914138bc417fa40d90acb68e6b9912bd02e817c10c749f3e5351dec",
+    "lastHarvestedAt": "2026-11-16T18:55:52.026Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -9373,10 +9373,10 @@
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "48fb1533",
+    "sourceVersion": "ed000203",
     "license": "MIT",
-    "contentHash": "eb97b42b22fc6bbde186d14d77bbc13692c9e22c95b1aebca1a67015c8aea035",
-    "lastHarvestedAt": "2026-11-12T02:48:47.811Z",
+    "contentHash": "8316ee9bf9588597c5b3423b563e5bf324f3639345906115a1b634cc9686ac00",
+    "lastHarvestedAt": "2026-11-16T18:55:43.564Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {
@@ -12223,10 +12223,10 @@
     "repository": "wquguru/cicada",
     "platform": "github",
     "sourceUrl": "https://github.com/wquguru/cicada",
-    "sourceVersion": "f119ba61",
+    "sourceVersion": "d8ed8ca6",
     "license": "Apache-2.0",
-    "contentHash": "74a9479e6c69960c04dd883781f635cf69973f57f5ff433f50ff9368a7ef7b59",
-    "lastHarvestedAt": "2026-11-13T06:06:58.271Z",
+    "contentHash": "73ed9b5961213d0495a29e7a01752020259273108a57126f77659c77adeeb277",
+    "lastHarvestedAt": "2026-11-16T18:55:45.144Z",
     "learningId": "learn-github-wquguru-cicada"
   },
   "heymrun-heym": {

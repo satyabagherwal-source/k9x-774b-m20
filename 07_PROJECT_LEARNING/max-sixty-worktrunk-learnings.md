@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `325c0b18`  
+> **Source Version**: `829610e8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T21:29:21.380Z  
+> **Timestamp**: 2026-11-16T18:55:50.033Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:29:21.370Z  
+> **Harvest Timestamp**: 2026-11-16T18:55:38.322Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12529 stars
+- **Stars / Engagement**: 12565 stars
 
 ---
 
@@ -1907,7 +1907,8 @@ pub(crate) fn prepare_selected(
 ) -> anyhow::Result<Vec<SourcedStep>> {
     let mut out = Vec::new();
     for (source, config) in entries {
-        let steps = prepare_steps(config, ctx, extra_vars, hook_type, *source)?.validated()?;
+        let steps =
+            prepare_steps(config, ctx, extra_vars, hook_type, *source)?.validated(ctx.repo)?;
         out.extend(steps.into_iter().map(|step| SourcedStep {
             step,
             source: *source,
@@ -1982,8 +1983,7 @@ fn no_matching_commands_error(
     for (source, config) in sources {
         let Some(config) = config else { continue };
         // Include this source if any filter matches it
-        if !parsed_filters.iter().any(|f| f.matches_source(source)) {
-    
+        if !parsed_filters.iter().any(|f| f.matches_so
 ```
 
 
@@ -2015,507 +2015,585 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da09f170` (2026-11-13)
-**Commit Message**: fix(state): stop a branch's vars from including a dotted branch's vars (#4779)
+### Incident Patch 1: `b200ed58` (2026-11-15)
+**Commit Message**: fix(hooks): fail a hook before it starts when its template error is already decided (#4787)
 
-A branch's vars could include another branch's vars when that branch's
-name extends the first with `.vars.<x>`.
-[`vars_entries`](https://github.com/max-sixty/worktrunk/blob/d65c511596ac1d952d28d3be8f13e43a2f8f4b22/src/git/repository/config.rs#L208-L223)
-queried `^worktrunk\.state\.<branch>\.vars\.` with no end anchor, so for
-branch `a` it also matched `worktrunk.state.a.vars.x.vars.k` (a var `k`
-on branch `a.vars.x`) and returned it as a var named `x.vars.k`. Git
-config variable names can't contain a dot, so this anchors the pattern
-to `\.vars\.[^.]+$`.
+A hook with an unguarded `{{ branch }}` can't expand in a detached
+worktree, where `branch` is unset by design (#4009). In a background
+hook that failure was silent: the runner renders each step (#3042), so
+`wt remove` announced the `post-remove` hook, exited 0, and the error
+reached only `runner.log`. In a jj-colocated repo, where every worktree
+is detached, that happens on every removal.
 
-Who sees it: `wt config state vars list`, `{{ vars.* }}` in hook and
-alias templates, and the statusline read the extra entry. `wt config
-state vars clear --all` on `a` also unset the other branch's vars, since
-it clears every key `vars_entries` returns. The cross-branch reads
-(`all_vars_entries`, the snapshot) already split on the last `.vars.`
-and were correct.
+Hook preparation already rejects a template that can't parse before any
+step runs. `PreparedPipeline::validated` now also rejects one whose
+render fails without reading anything an earlier step can change, which
+excludes `vars.*` on a branch and Worktrunk's template functions. Such a
+template gets the same error and exit status as a syntax error, in every
+hook, foreground and background. An error that depends on `vars` or a
+function still surfaces when its step runs. The hook help says so, and
+points a command that identifies the worktree at `worktree_name` or
+`worktree_path`.
 
-A new unit test, `test_vars_entries_excludes_extended_branch_names`,
-failed before the change (branch `weird` returned `{"branch.vars.key":
-"v", "own": "1"}`) and passes after; the rest of the
+Worth weighing: `wt remove` with such a `post-remove` hook now removes
+the worktree, prints the error and exits 1, as a syntax e
 
-**File**: `src/git/repository/config.rs` (modified, +22/-1)
+**File**: `docs/src/content/docs/hook.md` (modified, +2/-2)
 ```diff
-@@ -207,7 +207,9 @@ impl Repository {
-     /// through our coherent `set_config_value` helper.
-     pub fn vars_entries(&self, branch: &str) -> std::collections::BTreeMap<String, String> {
-         let escaped = regex::escape(branch);
--        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.");
-+        // Variable names can't contain a dot, so anchoring past one keeps
-+        // out the vars of a branch named `{branch}.vars.<x>`.
-+        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.[^.]+$");
-         let prefix = format!("worktrunk.state.{branch}.vars.");
-         self.config_regexp_entries(&pattern)
-             .unwrap_or_default()
-@@ -1300,6 +1302,25 @@ mod tests {
-         assert_eq!(snapshot["weird.vars.branch"]["key"], "v");
-     }
+@@ -102,7 +102,7 @@ server = "npm run dev"
  
-+    /// A branch's vars exclude those of a branch whose name extends it with
-+    /// `.vars.<x>`: `worktrunk.state.weird.vars.branch.vars.key` belongs to
-+    /// `weird.vars.branch`, though it also starts with `weird`'s vars prefix.
-+    #[test]
-+    fn test_vars_entries_excludes_extended_branch_names() {
-+        let test = TestRepo::with_initial_commit();
-+        let repo = Repository::at(test.root_path()).unwrap();
-+
-+        repo.set_config("worktrunk.state.weird.vars.own", "1")
-+            .unwrap();
-+        repo.set_config("worktrunk.state.weird.vars.branch.vars.key", "v")
-+            .unwrap();
-+
-+        let weird = repo.vars_entries("weird");
-+        assert_eq!(weird.len(), 1, "{weird:?}");
-+        assert_eq!(weird["own"], "1");
-+        assert_eq!(repo.vars_entries("weird.vars.branch")["key"], "v");
-+    }
-+
-     /// The branch-config snapshot read parses `branch.<name>.*` keys, including
-     /// branch names containing dots or slashes, lowercases the variable name as
-     /// git does, and skips git's own section-level branch settings
+ Here `install` runs first, then `build` and `server` run together.
+ 
+-Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
++Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+ 
+ Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependency chain — typically setup that must complete before later steps, like installing dependencies before running a build and dev server concurrently.
+ 
+@@ -179,7 +179,7 @@ Undefined variables error — use conditionals or defaults for optional behavior
+ sync = "{% if upstream %}git fetch && git rebase {{ upstream }}{% endif %}"
+ ```
+ 
+-A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
++A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
+ 
+ Run any hook-firing command with `-v` to see the resolved variables for the actual invocation — each hook prints a `template variables:` block showing every in-scope variable and its value (`(unset)` for conditional vars that didn't populate, like `target_worktree_path` during `wt switch -`). Aliases do the same under `-v`: `wt -v <alias>` prints the alias's in-scope variables before the pipeline runs.
+ 
 ```
 
----
-
-### Incident Patch 2: `a591d31f` (2026-11-13)
-**Commit Message**: fix(config state): print table cells literally instead of as markdown (#4780)
-
-The tables in `wt config state get` rendered their cells as markdown, so
-user data could break them.
-[`render_data_table`](https://github.com/max-sixty/worktrunk/blob/08de6cc4e3fda245b886fbce08ac64101bc6224b/src/md_help.rs#L299-L319)
-joined cells with ` | ` and passed the lines through the help-text table
-path. A var set with ``wt config state vars set 'note=a | b
-[x](http://y) `c`'`` printed as:
-
-```
-VARS
- Branch Key  Value
- ────── ──── ───── ─────
- master note a     b x c
-```
-
-The `|` opened an extra column, the link lost its URL, and the backticks
-became dim styling. A multi-line var value (allowed, and covered by an
-existing test) ended the table at its line break. Summary subjects and
-branch names reach the same tables.
-
-minimad, termimad's parser, honours backslash escapes for `|`, `*`, `~`,
-`` ` `` and `\`. Cells are now escaped with those, line breaks become
-spaces, and data tables skip the help-text link stripping and `\|`
-unescaping. The same value now prints as ``a | b [x](http://y) `c` ``.
-Help-text tables are unchanged.
-
-`test_render_data_table_cells_are_literal` covers `|`, `*`, backticks,
-
-
-**File**: `src/md_help.rs` (modified, +52/-13)
+**File**: `plugins/worktrunk/skills/worktrunk/reference/hook.md` (modified, +2/-2)
 ```diff
-@@ -298,21 +298,42 @@ fn render_table(lines: &[&str], max_width: Option<usize>) -> String {
+@@ -96,7 +96,7 @@ server = "npm run dev"
  
- /// Render a table from headers and rows using termimad.
+ Here `install` runs first, then `build` and `server` run together.
+ 
+-Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](https://worktrunk.dev/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
++Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](https://worktrunk.dev/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+ 
+ Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependency chain — typically setup that must complete before later steps, like installing dependencies before running a build and dev server concurrently.
+ 
+@@ -173,7 +173,7 @@ Undefined variables error — use conditionals or defaults for optional behavior
+ sync = "{% if upstream %}git fetch && git rebase {{ upstream }}{% endif %}"
+ ```
+ 
+-A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
++A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
+ 
+ Run any hook-firing command with `-v` to see the resolved variables for the actual invocation — each hook prints a `template variables:` block showing every in-scope variable and its value (`(unset)` for conditional vars that didn't populate, like `target_worktree_path` during `wt switch -`). Aliases do the same under `-v`: `wt -v <alias>` prints the alias's in-scope variables before the pipeline runs.
+ 
+```
+
+**File**: `skills/worktrunk/reference/hook.md` (modified, +2/-2)
+```diff
+@@ -96,7 +96,7 @@ server = "npm run dev"
+ 
+ Here `install` runs first, then `build` and `server` run together.
+ 
+-Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](https://worktrunk.dev/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
++Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](https://worktrunk.dev/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+ 
+ Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependency chain — typically setup that must complete before later steps, like installing dependencies before running a build and dev server concurrently.
+ 
+@@ -173,7 +173,7 @@ Undefined variables error — use conditionals or defaults for optional behavior
+ sync = "{% if upstream %}git fetch && git rebase {{ upstream }}{% endif %}"
+ ```
+ 
+-A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
++A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
+ 
+ Run any hook-firing command with `-v` to see the resolved variables for the actual invocation — each hook prints a `template variables:` block showing every in-scope variable and its value (`(unset)` for conditional vars that didn't populate, like `target_worktree_path` during `wt switch -`). Aliases do the same under `-v`: `wt -v <alias>` prints the alias's in-scope variables before the pipeline runs.
+ 
+```
+
+**File**: `src/cli/mod.rs` (modified, +2/-2)
+```diff
+@@ -1721,7 +1721,7 @@ server = "npm run dev"
+ 
+ Here `install` runs first, then `build` and `server` run together.
+ 
+-Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
++Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+ 
+ Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependency chain — typically setup that must complete before later steps, like installing dependencies before running a build and dev server concurrently.
+ 
+@@ -1798,7 +1798,7 @@ Undefined variables error — use conditionals or defaults for optional behavior
+ sync = "{% if upstream %}git fetch && git rebase {{ upstream }}{% endif %}"
+ ```
+ 
+-A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
++A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
+ 
+ Run any hook-firing command with `-v` to see the resolved variables for the actual invocation — each hook prints a `template variables:` block showing every in-scope variable and its value (`(unset)` for conditional vars that didn't populate, like `target_worktree_path` during `wt switch -`). Aliases do the same under `-v`: `wt -v <alias>` prints the alias's in-scope variables before the pipeline runs.
+ 
+```
+
+**File**: `src/commands/command_executor.rs` (modified, +24/-15)
+```diff
+@@ -34,9 +34,9 @@ use worktrunk::config::HookSource;
+ pub struct PreparedCommand {
+     pub name: Option<String>,
+     /// Raw template, rendered against `context` when the command runs.
+-    /// Execution paths validate syntax via [`PreparedPipeline::validated`];
+-    /// rendering is deferred so `vars.*` set by earlier pipeline steps are
+-    /// read fresh from git config.
++    /// Execution paths reject what the frozen context already decides via
++    /// [`PreparedPipeline::validated`]; rendering is deferred so `vars.*` set
++    /// by earlier pipeline steps are read fresh from git config.
+     pub template: String,
+     /// Template variables, frozen at preparation. Serialized to JSON only at
+     /// the process boundary (the background pipeline spec).
+@@ -795,7 +795,7 @@ pub fn map_config_steps(
+         .collect()
+ }
+ 
+-/// A prepared pipeline that has not yet chosen a syntax-error policy.
++/// A prepared pipeline that has not yet chosen a template-error policy.
  ///
--/// Column widths are computed by termimad based on content.
-+/// Column widths are computed by termimad based on content. Cells are data —
-+/// var values, summary subjects, branch names — so each is escaped to print as
-+/// written, and the help-text preprocessing (link stripping, `\|` unescaping)
-+/// is skipped.
- pub(crate) fn render_data_table(headers: &[&str], rows: &[Vec<String>]) -> String {
--    let header_line = format!("| {} |", headers.join(" | "));
--    let separator = format!("|{}|", vec!["---"; headers.len()].join("|"));
--    let row_lines: Vec<String> = rows
--        .iter()
--        .map(|row| format!("| {} |", row.join(" | ")))
--        .collect();
--
--    let mut lines: Vec<&str> = Vec::with_capacity(rows.len() + 2);
--    lines.push(&header_line);
--    lines.push(&separator);
--    lines.extend(row_lines.iter().map(|s| s.as_str()));
-+    let row_line = |cells: Vec<String>| format!("| {} |", cells.join(" | "));
-+    let mut lines = vec![
-+        row_line(headers.iter().map(|h| escape_table_cell(h)).collect()),
-+        format!("|{}|", vec!["---"; headers.len()].join("|")),
-+    ];
-+    lines.extend(
-+        rows.iter()
-+            .map(|row| row_line(row.iter().map(|cell| escape_table_cell(cell)).collect())),
-+    );
-+
-+    help_table_skin()
-+        .text(&lines.join("\n"), Some(DEFAULT_HELP_WIDTH))
-+        .to_string()
-+}
+ /// [`prepare_steps`] returns this rather than the steps themselves so the
+ /// choice is a method call the compiler demands: running hooks takes
+@@ -807,19 +807,29 @@ pub fn map_config_steps(
+ pub struct PreparedPipeline(Vec<PreparedStep>);
  
--    render_table_with_termimad(&lines, None)
-+/// Escape a data value for a termimad table cell: backslash-escape the
-+/// characters minimad gives meaning to (`|` splits cells; `*`, `~` and `` ` ``
-+/// style text), and flatten line breaks, which would end the row.
-+fn escape_table_cell(cell: &str) -> String {
-+    let mut escaped = String::with_capacity(cell.len());
-+    for c in cell.chars() {
-+        match c {
-+            '\\' | '|' | '*' | '~' | '`' => {
-+                escaped.push('\\');
-+                escaped.push(c);
+ impl PreparedPipeline {
+-    /// The steps, rejected if any template cannot parse — so a pipeline that
+-    /// cannot render in full never starts.
++    /// The steps, rejected if any template fails in a way the frozen context
++    /// already decides — so a pipeline that cannot render in full never
++    /// starts, in the foreground or the background.
+     ///
+-    /// Semantic errors (undefined variable, filter failure) are not checked:
+-    /// rendering is deferred, so they surface at the failing step.
+-    pub fn validated(self) -> Result<Vec<PreparedStep>> {
++    /// Two failures are decided now: a template that cannot parse, and one
++    /// whose render fails without reading anything an earlier step can change
++    /// (see [`TemplateContext::known_expansion_error`]), such as an unguarded
++    /// `{{ branch }}` in a detached worktree. A failure that depends on
++    /// `vars.*` or a template function surfaces when its step runs.
++    pub fn validated(self, repo: &Repository) -> Result<Vec<PreparedStep>> {
+         for cmd in self.0.iter().flat_map(PreparedStep::commands) {
+             validate_template_syntax(&cmd.template, &cmd.template_name)?;
++            if let Some(err) =
++                cmd.context
++                    .known_expansion_error(&cmd.template, repo, &cmd.template_name)
++            {
++                return Err(err.into());
 +            }
-+            '\n' | '\r' => escaped.push(' '),
-+            _ => escaped.push(c),
-+        }
-+    }
-+    escaped
- }
- 
- /// Render a markdown table using termimad
-@@ -805,6 +826,24 @@ mod tests {
-         ");
-     }
- 
-+    /// Cells hold data (var values, summary subjects, branch names), not
-+    /// markdown: a `|` stays in its cell, and `*`, `` ` ``, `\`, `[x](y)` and a
-+    /// line break print as written rather than restyling or splitting the row.
-+    #[test]
-+    fn test_render_data_table_cells_are_literal() {
-+        let rows = vec![
-+            vec!["a|b".into(), "x *y* `z` \\ [l](u)".into()],
-+            vec!["two\nlines".into(), "ok".into()],
-+        ];
-+        let result = render_data_table(&["K", "V"], &rows);
-+        assert_snapshot!(result, @r"
-+            K             V          
-+        ───────── ────────────────── 
-+        a|b       x *y* `z` \ [l](u) 
-+        two lines ok
-+        ");
-+    }
-+
-     #[test]
-     fn test_render_data_table_empty_rows() {
-         let result = render_data_table(&["A", "B"], &[]);
-```
-
----
-
-### Incident Patch 3: `0df65338` (2026-11-14)
-**Commit Message**: fix(hooks): announce background hooks per directory (#4781)
-
-`wt merge --no-remove` with both a `post-commit` and a `post-merge` hook
-printed one combined line, `Running post-commit: mark (user);
-post-merge: sync (user) @ ~/repo`. That reads as if `post-commit` ran in
-the target, but it runs in the feature worktree. This PR gives hooks
-that run in different directories separate `Running` lines:
-
-```
-◎ Running post-commit: mark (user)
-◎ Running post-merge: sync (user) @ ~/repo
-```
-
-`run_hooks_background` puts the display path of the first pipeline that
-has one at the end of the line, on the assumption (written in its
-docstring) that every hook in a batch shares a path. That stopped being
-true for `post-commit` once the `post-commit` pipeline started being
-dropped when its worktree is removed. Now `post-commit` reaches the
-flush only when the feature worktree is kept, which is exactly when its
-directory differs from `post-merge`'s. Hooks that share a path, such as
-`post-remove`, `post-switch` and `post-merge` after a removal, still
-combine onto one line, so existing snapshots are unchanged.
-
-The new snapshot test
-`test_merge_announces_post_commit_and_post_merge_by_directory` produced
-
-**File**: `src/commands/hook_announcement.rs` (modified, +13/-6)
-```diff
-@@ -1,7 +1,9 @@
- //! # Hook announcement format
- //!
- //! Background hook execution emits a single `Running ...` line covering every
--//! hook type that fires from one event. Separators form a precedence hierarchy
-+//! hook type that fires from one event in one directory; hooks running in a
-+//! different directory get their own line, since the `@ <path>` suffix
-+//! covers the whole line. Separators form a precedence hierarchy
- //! from tightest to loosest:
- //!
- //! ```text
-@@ -51,8 +53,12 @@
- //!
- //! Multi-source for one hook type: `sync, push (user); build (project)`.
- //!
--//! Multi-type bundle (e.g., `wt merge` firing four hook types):
--//! `Running post-commit: mark (user); post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
-+//! Multi-type bundle (e.g., `wt merge` firing three hook types):
-+//! `Running post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
-+//!
-+//! Split by path (`wt merge --no-remove`, where `post-commit` runs in the
-+//! feature worktree and `post-merge` in the target):
-+//! `Running post-commit: mark (user)` then `Running post-merge: sync (user) @ ~/repo`.
- //!
- //! ## Implementation
- //!
-@@ -61,9 +67,10 @@
- //! - [`format_pipeline_summary`] wraps it with the per-pipeline source label,
- //!   collapsing the all-unnamed case to the bare `<source>` / `<source> ×N`
- //!   form.
--//! - `run_hooks_background` (in `hooks.rs`) joins source summaries with `;`
--//!   within each hook-type clause, then joins clauses with `;` into one
--//!   announce line with the path suffix at the end.
-+//! - `run_hooks_background` (in `hooks.rs`) groups pipelines by display path;
-+//!   for each group it joins source summaries with `;` within each hook-type
-+//!   clause, then joins clauses with `;` into one announce line with the path
-+//!   suffix at the end.
- 
- use color_print::cformat;
- 
-```
-
-**File**: `src/commands/hooks.rs` (modified, +42/-25)
-```diff
-@@ -232,11 +232,12 @@ fn no_matching_commands_error(
- 
- /// Coordinates background hook announcements within a single `wt` command.
- ///
--/// The principle: one `◎ Running …` line per command. Sites that would have
--/// individually spawned background hooks instead `register` their pipelines
--/// here, and the command `flush`es once after all phases have been resolved —
--/// every registered hook type ends up on the same combined announce line, in
--/// registration order, with `;` between clauses (see module spec).
-+/// The principle: one `◎ Running …` line per command and directory. Sites that
-+/// would have individually spawned background hooks instead `register` their
-+/// pipelines here, and the command `flush`es once after all phases have been
-+/// resolved — every registered hook type sharing a display path ends up on the
-+/// same combined announce line, in registration order, with `;` between
-+/// clauses (see module spec).
- ///
- /// Just-in-time honesty: registration happens at each phase's normal moment,
- /// so if an earlier phase fails (e.g. pre-merge errors before post-merge is
-@@ -383,11 +384,11 @@ impl Drop for HookAnnouncer<'_> {
- /// `flush` lands here. The function stays separate to keep the announce/spawn
- /// formatting isolated from the announcer's pending-list bookkeeping.
- ///
--/// Emits a single combined `Running ...` line covering every registered hook
--/// type (see module-level grammar), with the path suffix at the end. Pipelines
--/// may carry different worktrees (e.g., post-remove uses the removed branch
--/// while post-switch uses the destination branch); the announce shares one
--/// line because every bundled clause shares the same path.
-+/// Emits one combined `Running ...` line per display path, covering every hook
-+/// type registered with that path (see module-level grammar), with the path
-+/// suffix at the end. Pipelines may carry different worktrees (e.g.,
-+/// post-remove uses the removed branch while post-switch uses the destination
-+/// branch) yet share one line when they share a display path.
- ///
- /// When `show_branch` is true, the announce includes the branch name for
- /// disambiguation in batch contexts (e.g., prune removing multiple worktrees):
-@@ -409,16 +410,38 @@ fn run_hooks_background(
-         return Ok(());
-     }
- 
-+    // The `@ path` suffix covers the whole line, so pipelines announced
-+    // together must share a display path. `wt merge --no-remove` registers
-+    // `post-commit` (in the feature worktree, no path) beside `post-merge`
-+    // (@ the target), so group by path and give each group its own line.
-+    let mut groups: Vec<Vec<PendingPipeline>> = Vec::new();
-+    for pipeline in pipelines {
-+        match groups
-+            .iter_mut()
-+            .find(|g| g[0].display_path == pipeline.display_path)
-+        {
-+            Some(group) => group.push(pipeline),
-+            None => groups.push(vec![pipeline]),
-+        }
-+    }
-+
-+    for group in groups {
-+        announce_pipelines(&group, show_branch);
-+        for pipeline in group {
-+            spawn_hook_pipeline_quiet(repo, pipeline)?;
-+        }
-+    }
-+
-+    Ok(())
-+}
-+
-+/// Print one combined `Running ...` line for pipelines sharing a display path.
-+fn announce_pipelines(pipelines: &[PendingPipeline], show_branch: bool) {
-     // Merge per-source summaries by hook type so user+project for the same
-     // type render as one clause: `post-merge: sync, push (user); build (project)`.
--    // Pull `display_path` off the first pipeline that has one — every hook
--    // pipeline in this batch shares a path; the path slot is bundle-wide.
--    let mut display_path: Option<&Path> = None;
-+    let display_path = pipelines[0].display_path.as_deref();
-     let mut type_summaries: Vec<(HookType, Vec<String>)> = Vec::new();
--    for pipeline in &pipelines {
--        if display_path.is_none() {
--            display_path = pipeline.display_path.as_deref();
--        }
-+    for pipeline in pipelines {
-         let summary = format_pipeline_summary(&pipeline.steps);
-         if let Some(entry) = type_summaries
-             .iter_mut()
-@@ -444,7 +467,7 @@ fn run_hooks_background(
- 
-     if verbosity() >= 1 {
-         for (ht, _) in &type_summaries {
--            print_background_variable_table(&pipelines, *ht);
-+            print_background_variable_table(pipelines, *ht);
          }
+         Ok(self.0)
      }
-     let suffix = branch_suffix.as_deref().unwrap_or("");
-@@ -461,12 +484,6 @@ fn run_hooks_background(
-         None => format!("Running {combined}"),
-     };
-     eprintln!("{}", progress_message(message));
--
--    for pipeline in pipelines {
--        spawn_hook_pipeline_quiet(repo, pipeline)?;
--    }
--
--    Ok(())
- }
  
- /// Report background hook pipelines dropped because this command removed the
-@@ -527,7 +544,7 @@ fn into_source_groups(flat: Vec<SourcedStep>) -> Vec<Vec<SourcedStep>> {
+-    /// The steps with no syntax check, for `wt hook show --expanded`: a
++    /// The steps with no template check, for `wt hook show --expanded`: a
+     /// listing annotates a broken template in place rather than blanking the
+     /// rest of the listing.
+     pub fn into_unvalidated(self) -> Vec<PreparedStep> {
+@@ -832,11 +842,10 @@ impl PreparedPipeline {
+ /// and background) and the `wt hook show --expanded` listing come through here,
+ /// so a context key added here reaches both with no second edit.
  ///
- /// Background hooks don't flow through `announce_command` (which prints the
- /// table in the foreground path), so
+-/// Each command freezes its context and keeps its raw template;
+-/// rendering happens when the command runs, so semantic errors (undefined
+-/// variable, filter failure) surface at the failing step. The returned
+-/// [`PreparedPipeline`] makes the caller choose what an unparsable template
+-/// does.
++/// Each command freezes its context and keeps its raw template; rendering
++/// happens when the command runs, so `vars.*` set by an earlier step are read
++/// fresh. The returned [`PreparedPipeline`] makes the caller choose what a
++/// template that cannot render does.
+ pub fn prepare_steps(
+     command_config: &CommandConfig,
+     ctx: &CommandContext<'_>,
 ```
 
-**File**: `tests/integration_tests/user_hooks.rs` (modified, +28/-0)
+**File**: `src/commands/hooks.rs` (modified, +2/-1)
 ```diff
-@@ -1287,6 +1287,34 @@ mark = "git rev-parse --show-toplevel > {{ repo_path }}/post-commit-toplevel.txt
+@@ -138,7 +138,8 @@ pub(crate) fn prepare_selected(
+ ) -> anyhow::Result<Vec<SourcedStep>> {
+     let mut out = Vec::new();
+     for (source, config) in entries {
+-        let steps = prepare_steps(config, ctx, extra_vars, hook_type, *source)?.validated()?;
++        let steps =
++            prepare_steps(config, ctx, extra_vars, hook_type, *source)?.validated(ctx.repo)?;
+         out.extend(steps.into_iter().map(|step| SourcedStep {
+             step,
+             source: *source,
+```
+
+**File**: `src/config/expansion.rs` (modified, +181/-53)
+```diff
+@@ -166,12 +166,69 @@ impl TemplateContext {
+         name: &str,
+         vars_mode: VarsMode,
+     ) -> Result<String, TemplateExpandError> {
+-        let vars: HashMap<&str, &str> = self
+-            .0
++        expand_template_with(
++            template,
++            &self.borrowed(),
++            escape_mode,
++            repo,
++            name,
++            vars_mode,
++        )
++    }
++
++    /// The error [`Self::expand`] will return for `template` when it runs
++    /// later, if this context already decides it.
++    ///
++    /// A pipeline freezes its context when it is prepared, so only two inputs
++    /// can change before a step renders: `vars.*`, read from the branch's git
++    /// config that an earlier step may write, and Worktrunk's template
++    /// functions, which read the repository. Without a `branch` there is no
++    /// git config to read, and `vars` is the empty map whenever the step runs.
++    /// A template that reads no changing input renders now exactly as it will
++    /// then, so this renders it, with no `-v` output; escaping can't make a
++    /// render fail, so none is applied. `None` when it renders, when its
++    /// outcome waits on that later state, or when it doesn't parse, which
++    /// [`validate_template_syntax`] reports.
++    ///
++    /// Every read counts, a local's included, since `{% set f = f() %}`
++    /// binds the name it calls and so hides the call from
++    /// `undeclared_variables`.
++    pub fn known_expansion_error(
++        &self,
++        template: &str,
++        repo: &Repository,
++        name: &str,
++    ) -> Option<TemplateExpandError> {
++        let analysis = TemplateVars::of(template)?;
++        let env = template_environment(repo);
++        // MiniJinja's own globals (`range`, `namespace`, …) read nothing, so
++        // the changing ones are those a bare environment lacks.
++        let builtins = Environment::new();
++        let vars_can_change = self.get("branch").is_some();
++        let reads_later_state = analysis.reads.iter().any(|(read, _)| {
++            (*read == "vars" && vars_can_change)
++                || (env.globals().any(|(global, _)| global == *read)
++                    && builtins.globals().all(|(global, _)| global != *read))
++        });
++        if reads_later_state {
++            return None;
++        }
++        render_template(
++            template,
++            &self.borrowed(),
++            ShellEscapeMode::Literal,
++            repo,
++            name,
++            VarsMode::Resolve,
++        )
++        .err()
++    }
++
++    fn borrowed(&self) -> HashMap<&str, &str> {
++        self.0
+             .iter()
+             .map(|(k, v)| (k.as_str(), v.as_str()))
+-            .collect();
+-        expand_template_with(template, &vars, escape_mode, repo, name, vars_mode)
++            .collect()
      }
+ 
+     /// The JSON form piped to a `wt step for-each` child's stdin.
+@@ -1069,10 +1126,10 @@ pub fn referenced_vars_for_config(
+ ///
+ /// Every path that runs hooks calls this on each template, via
+ /// `PreparedPipeline::validated`, so syntax errors (e.g. `{{ vars..foo }}`) abort
+-/// before the first pipeline step runs; rendering — and with it semantic errors
+-/// like undefined variables — is deferred to execution time. Alias dispatch has
+-/// already parsed each template for argument routing by then, so it skips the
+-/// check. The error matches [`expand_template`]'s
++/// before the first pipeline step runs, along with the render errors
++/// [`TemplateContext::known_expansion_error`] already decides. Alias dispatch
++/// has already parsed each template for argument routing by then, so it skips
++/// the check. The error matches [`expand_template`]'s
+ /// parse-failure shape so syntax errors render identically wherever they
+ /// surface.
+ pub fn validate_template_syntax(template: &str, name: &str) -> Result<(), TemplateExpandError> {
+@@ -1202,6 +1259,62 @@ pub fn expand_template_with(
+     repo: &Repository,
+     name: &str,
+     vars_mode: VarsMode,
++) -> Result<String, TemplateExpandError> {
++    // Cache verbosity level for consistent behavior within this call
++    let verbose = verbosity();
++
++    // -vv: Full debug logging with vars
++    // Redact credentials from values to prevent leaking tokens in logs
++    if verbose >= 2 {
++        tracing::debug!(name = %name, template = ?template, "[template:{name}] template={template:?}");
++        // Sort keys for deterministic output in tests
++        let mut sorted_vars: Vec<_> = vars.iter().collect();
++        sorted_vars.sort_by_key(|(k, _)| *k);
++        tracing::debug!(
++            name = %name,
++            "[template:{name}] vars={{{}}}",
++            sorted_vars
++                .iter()
++                .map(|(k, v)| format!("{k}={:?}", redact_credentials(v)))
++                .collect::<Vec<_>>()
++                .join(", ")
++        );
++    }
++
++    let result = render_template(template, vars, escape_mode, repo, name, vars_mode)?;
++
++    // -vv: Full debug logging with 
+```
+
+**File**: `tests/integration_tests/user_hooks.rs` (modified, +93/-32)
+```diff
+@@ -990,6 +990,53 @@ capture = "echo 'branch=[{% if branch %}{{ branch }}{% endif %}]' > ../postremov
+     );
  }
  
-+/// `wt merge --no-remove` registers `post-commit` in the feature worktree and
-+/// `post-merge` in the target. The announce's `@ <path>` suffix covers the
-+/// whole line, so the two get separate lines rather than one line implying
-+/// `post-commit` ran in the target.
++/// An unguarded `{{ branch }}` can't expand in a detached worktree, and the
++/// context frozen at preparation already decides that, so the hook fails
++/// before it starts, as a syntax error does: no step runs, not even the one
++/// before the broken step, and the command exits 1 with the error.
++/// `post-remove` is prepared after the removal, so the worktree is gone. The
++/// reported case was a `post-remove` running `jj workspace forget
++/// {{ branch }}`, which was announced, never ran, and left its error only in
++/// the background runner's log while `wt remove` exited 0.
 +#[rstest]
-+fn test_merge_announces_post_commit_and_post_merge_by_directory(mut repo: TestRepo) {
-+    let feature_wt =
-+        repo.add_worktree_with_commit("feature", "feature.txt", "feature", "Add feature");
-+    // Uncommitted work so the merge squashes, which is what fires post-commit.
-+    fs::write(feature_wt.join("dirty.txt"), "uncommitted").unwrap();
++fn test_user_post_remove_unguarded_branch_fails_before_hook_starts(mut repo: TestRepo) {
++    repo.add_worktree("feature");
++    repo.detach_head_in_worktree("feature");
++    let feature_wt_path = repo.worktree_path("feature").to_path_buf();
 +
 +    repo.write_test_config(
-+        r#"[post-commit]
-+mark = "echo commit"
-+
-+[post-merge]
-+sync = "echo merge"
++        r#"post-remove = [
++    { first = "echo ran > ../postremove_first.txt" },
++    { forget = "echo {{ branch }} > ../postremove_forget.txt" },
++]
 +"#,
 +    );
 +
-+    snapshot_merge(
-+        "merge_announces_post_commit_and_post_merge_by_directory",
++    snapshot_remove(
++        "user_post_remove_unguarded_branch_fails_before_hook_starts",
 +        &repo,
-+        &["main", "--yes", "--no-remove"],
-+        Some(&feature_wt),
++        &[
++            feature_wt_path.to_str().unwrap(),
++            "--force",
++            "--foreground",
++            "--yes",
++        ],
++        None,
++    );
++
++    assert!(!feature_wt_path.exists(), "the removal itself completes");
++    thread::sleep(SLEEP_FOR_ABSENCE_CHECK);
++    let first_marker = repo
++        .root_path()
++        .parent()
++        .unwrap()
++        .join("postremove_first.txt");
++    assert!(
++        !first_marker.exists(),
++        "no step of a hook rejected at preparation runs"
 +    );
 +}
 +
- /// When post-merge template prep errors after post-remove + post-switch are
- /// already registered, the announcer's `Drop` impl flushes the pending hooks
- /// so they still spawn — preserving the prior fire-and-forget behavior in
+ /// `target` names the branch the user lands on after removal — the primary
+ /// worktree's — so a detached primary leaves it unset for the same reason
+ /// `branch` is unset above. Both halves of one removal have to agree: the
+@@ -1329,10 +1376,10 @@ fn test_merge_drops_pending_hooks_when_post_merge_fails(mut repo: TestRepo) {
+     let post_merge_marker = temp_root.join("drop_postmerge_marker.txt");
+ 
+     // post-merge has a template syntax error, so `register` errors after
+-    // post-remove + post-switch are already pending in the announcer.
+-    // (Semantic errors like undefined variables no longer fail prep — they
+-    // surface when the runner renders the step; see
+-    // test_background_hook_undefined_var_fails_in_runner.)
++    // post-remove + post-switch are already pending in the announcer. (An
++    // undefined variable the frozen context decides fails prep the same way;
++    // one whose outcome depends on `vars` surfaces when the runner renders the
++    // step — see test_background_hook_undefined_var_fails_in_runner.)
+     // Convert to forward slashes so the rendered shell command parses the same
+     // way under Windows Git Bash (where backslashes in unquoted paths get
+     // eaten as escape-of-next-char).
+@@ -1376,16 +1423,18 @@ sync = "echo POST_MERGE_RAN > {} {{{{ bad..syntax }}}}"
+     );
+ }
+ 
+-/// A semantic template error (undefined variable) in a background hook does
+-/// not fail the foreground command: templates render when each step runs, so
+-/// the error surfaces in the detached runner and lands in its log. Only
+-/// syntax errors abort at prep (see
++/// A template error in a background hook whose outcome depends on `vars`,
++/// which an earlier step could set, does not fail the foreground command:
++/// templates render when each step runs, so the error surfaces in the
++/// detached runner and lands in its log. An error the frozen context already
++/// decides fails at prep instead (see
++/// test_user_post_remove_unguarded_branch_fails_before_hook_starts and
+ /// test_merge_drops_pending_hooks_when_post_merge_fails).
+ #[rstest]
+ fn test_background_hook_undefined_var_fails_in_runner(repo: TestRepo) {
+     repo.write_test_config(
+         r#"[post-start]
+-broken = "echo {{ does_not_exist }} > should_not_exist.txt"
++broken = "{% if not vars.ready %}echo {{ does_not_exist }} > should_not_exist.txt{% endif %}"
+ "#,
+     );
+ 
+@@ -1414,7 +1463,7 @@ broken = "echo {{ does_not_exist }} > should_not_exist.txt"
+     // Template errors identify the hook type, source, and command.
+     assert_snapshot!(log_content, @"
+     [31m✗[39m [31mFailed to expand post-start user:broken: undefined variable does_not_exist @ line 1[39m
+-    [107m [0m echo {{ does_not_exist }} > should_not_exist.txt
++    [107m [0m {% if not vars.ready %}echo {{ does_not_exist }} > should_not_exist.txt{% endif %}
+     [2m↳[22m [2mAvailable variables: [4margs[24m, [4mbase[24m, [4mbase_worktree_path[24m, [4mbranch[24m, [4mcommit[24m, [4mcwd[24m, [4mdefault_branch[24m, [4mhook_name[24m, [4mhook_type[24m, [4mprimary_worktree_path[24m, [4mremote[24m, [4mremote_url[24m, [4mrepo[24m, [4mrepo_path[24m, [4mshort_commit[2
 ```
 
-**File**: `tests/snapshots/integration__integration_tests__user_hooks__merge_announces_post_commit_and_post_merge_by_directory.snap` (added, +84/-0)
+---
+
+### Incident Patch 2: `da19b76d` (2026-11-16)
+**Commit Message**: refactor(list): build the GitLab MR status once when MR details fail (#4819)
+
+`detect_gitlab` built the same `PrStatus` twice: once after fetching MR
+details, and again, field for field, when `glab mr view` failed,
+differing only in `ci_status: CiStatus::Error`. The failure branch now
+yields `CiStatus::Error` and falls through to the shared construction,
+removing 17 duplicated lines. A future field added to `PrStatus` now
+needs one edit here instead of two that could drift.
+
+Behavior is unchanged. `test_list_full_with_gitlab_mr_view_failure`
+exercises the failure path and its snapshot still matches; the 22 GitLab
+integration tests and clippy pass locally.
+
+Found in the nightly survey of `src/commands/list/ci_status/gitlab.rs`.
+
+Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
+
+**File**: `src/commands/list/ci_status/gitlab.rs` (modified, +4/-17)
 ```diff
-@@ -0,0 +1,84 @@
-+---
-+source: tests/integration_tests/user_hooks.rs
-+info:
-+  program: wt
-+  args:
-+    - merge
-+    - main
-+    - "--yes"
-+    - "--no-remove"
-+  env:
-+    APPDATA: "[TEST_CONFIG_HOME]"
-+    CLAUDE_CONFIG_DIR: "[TEST_CLAUDE_CONFIG]"
-+    CLICOLOR_FORCE: "1"
-+    COLUMNS: "500"
-+    GIT_ALLOW_PROTOCOL: file
-+    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
-+    GIT_AUTHOR_EMAIL: test@example.com
-+    GIT_AUTHOR_NAME: Test User
-+    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
-+    GIT_COMMITTER_EMAIL: test@example.com
-+    GIT_COMMITTER_NAME: Test User
-+    GIT_CONFIG_COUNT: "2"
-+    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_KEY_0: user.useConfigOnly
-+    GIT_CONFIG_KEY_1: rerere.enabled
-+    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_VALUE_0: "true"
-+    GIT_CONFIG_VALUE_1: "false"
-+    GIT_TERMINAL_PROMPT: "0"
-+    HOME: "[TEST_HOME]"
-+    LANG: C
-+    LC_ALL: C
-+    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
-+    OPENCODE_CONFIG_DIR: "[TEST_OPENCODE_CONFIG]"
-+    PATH: "[PATH]"
-+    TERM: alacritty
-+    USERPROFILE: "[TEST_HOME]"
-+    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
-+    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
-+    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
-+    WORKTRUNK_TEST_BASH_INSTALLED: "0"
-+    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
-+    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
-+    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
-+    WORKTRUNK_TEST_EPOCH: "1735776000"
-+    WORKTRUNK_TEST_FISH_INSTALLED: "0"
-+    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
-+    WORKTRUNK_TEST_MOCK_CONFIG_DIR: "[TEST_MOCK_CONFIG]"
-+    WORKTRUNK_TEST_NUSHELL_ENV: "0"
-+    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
-+    WORKTRUNK_TEST_PARENT_SHELL: ""
-+    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
-+    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
-+    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
-+    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
-+    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
-+    XDG_CONFIG_HOME: "[TEST_CONFIG_HOME]"
-+---
-+success: true
-+exit_code: 0
-+----- stdout -----
+@@ -204,24 +204,11 @@ pub(super) fn detect_gitlab(
+         info.ci_status()
+     } else {
+         // Found MR but couldn't fetch details - treat as error so it surfaces
+-        // (not NoCI, which would imply no MR exists). Carry the MR identity
+-        // already in hand: the ⚠ stays clickable and the iid still feeds the
+-        // CI column width ratchet.
++        // (not NoCI, which would imply no MR exists). The MR identity already
++        // in hand still goes out below: the ⚠ stays clickable and the iid
++        // still feeds the CI column width ratchet.
+         tracing::debug!(iid = %mr_entry.iid, "Could not fetch MR details for !{}", mr_entry.iid);
+-        return Some(PrStatus {
+-            ci_status: CiStatus::Error,
+-            source: CiSource::PullRequest,
+-            is_stale: mr_entry.sha != local_head,
+-            is_priming: false,
+-            url: mr_entry.web_url.clone(),
+-            number: Some(PrRef::mr(mr_entry.iid)),
+-            review_state: mr_entry.review_state(),
+-            title: mr_entry.title.clone(),
+-            body: mr_entry.description.clone(),
+-            author: mr_entry.author.as_ref().map(|a| a.username.clone()),
+-            comment_count: mr_entry.comment_count(),
+-            updated_at: None,
+-        });
++        CiStatus::Error
+     };
+ 
+     let is_stale = mr_entry.sha != local_head;
+```
+
+---
+
+### Incident Patch 3: `2a820b28` (2026-11-16)
+**Commit Message**: fix(claude): resolve symlinks in the WorktreeCreate hook's path (#4814)
+
+The Claude Code `WorktreeCreate` hook printed the `path` field from `wt
+switch --format=json` without changing it. For a new worktree, that is
+the templated `worktree-path`. When the template puts worktrees under a
+symlinked directory inside the repository, such as `{{ repo_path
+}}/.worktrees/…` with `.worktrees` linked elsewhere, the printed path
+goes through that link. Claude Code 2.1.325 refuses that kind of answer
+([CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md):
+"Changed EnterWorktree to refuse a `WorktreeCreate` hook path that goes
+through a symlink inside the project; have the hook print the real
+path"). The hook now resolves the path with `dunce::canonicalize` before
+printing it. `operational_worktree_path` in `switch.rs` already resolves
+paths for existing worktrees the same way.
+
+`test_claude_hook_worktree_create_resolves_symlink` links `.worktrees`
+to a directory outside the repository and checks the path the hook
+prints. It failed before the change (`…/repo/.worktrees/agent-task`) and
+passes after it (`…/real-worktrees/agent-task`). The existing
+`WorktreeCreate` tests 
+
+**File**: `src/commands/config/plugins.rs` (modified, +10/-5)
+```diff
+@@ -152,10 +152,11 @@ struct PermissionRequest {
+ ///   session 💬 while the dialog waits. One hook does both because Claude Code
+ ///   runs every matching hook in parallel.
+ /// - `WorktreeCreate` runs `wt switch --create` and prints the new worktree's
+-///   path, which Claude Code reads as the hook's answer. A name whose branch
+-///   already exists switches to it without `--create`, since Claude Code fires
+-///   the hook again when `claude --worktree <name>` reopens a kept worktree
+-///   (#4486). A failure exits nonzero with nothing on stdout (#3545).
++///   path, resolved through symlinks, which Claude Code reads as the hook's
++///   answer. A name whose branch already exists switches to it without
++///   `--create`, since Claude Code fires the hook again when
++///   `claude --worktree <name>` reopens a kept worktree (#4486). A failure
++///   exits nonzero with nothing on stdout (#3545).
+ /// - `WorktreeRemove` resolves against the worktree path Claude Code hands
+ ///   over, never `CLAUDE_PROJECT_DIR`: the `claude agents` view spans
+ ///   repositories, so no single project dir is right for every session
+@@ -203,7 +204,11 @@ pub fn handle_claude_hook() -> anyhow::Result<()> {
+             let path = created["path"]
+                 .as_str()
+                 .context("`wt switch --format=json` output has no `path`")?;
+-            println!("{path}");
++            // Claude Code refuses an answer that goes through a symlink inside
++            // the project, and a templated `worktree-path` can (#4812).
++            let path = dunce::canonicalize(path)
++                .with_context(|| format!("Failed to resolve worktree path {path}"))?;
++            println!("{}", path.display());
+             Ok(())
+         }
+         ClaudeHook::WorktreeRemove { worktree_path } => {
+```
+
+**File**: `tests/integration_tests/claude_hook.rs` (modified, +25/-0)
+```diff
+@@ -221,3 +221,28 @@ fn test_claude_hook_worktree_remove(mut repo: TestRepo) {
+     let again = run_hook(&repo, &outside, &outside, &payload.to_string());
+     assert!(again.status.success());
+ }
 +
-+----- stderr -----
-+[33m▲[39m [33mAuto-staging 1 untracked path:[39m
-+[107m [0m dirty.txt
-+[36m◎[39m [36mSquashing 1 commit & working tree changes into a single commit [90m(2 files, [32m+2[39m[39m[90m)[39m...[39m
-+[2m↳[22m [2mBackup created @ [4mrefs/wt-backup/feature[24m (874aee4)[22m
-+[2m↳[22m [2mTo recover in a new worktree, run [4mwt switch --create --base 874aee4a329ef4a3a76b091e5d04f2b9ee5f33a5 --no-hooks recovery/874aee4[24m[22m
-+[36m◎[39m [36mGenerating squash commit message...[39m
-+[2m↳[22m [2mUsing fallback commit message. For LLM setup guide, run [4mwt config --help[24m[22m
-+[107m [0m [1mSquash commits from feature[22m
-+[107m [0m 
-+[107m [0m Combined commits:
-+[107m [0m - Add feature
-+[32m✓[39m [32mSquashed @ [HASH][39m
-+[36m◎[39m [36mMerging 1 commit to [1mmain[22m @ [2m[HASH][22m (no rebase needed)[39m
-+[107m [0m * [33m[HASH][m Squash commits from feature
-+[107m [0m  dirty.txt   | 1 [32m+[m
-+[107m [0m  feature.txt | 1 [32m+[m
-+[107m [0m  2 files changed, 2 insertions(+)
-+[32m✓[39m [32mMerged to [1mmain[22m [90m(1 commit, 2 files, [32m+2[39m[39m[90m)[39m[39m
-+[2m○[22m Worktree preserved (--no-remove)
-+[36m◎[39m [36mRunning post-commit: [1mmark[22m (user)[39m
-+[36m◎[39m [36mRunning post-merge: [1msync[22m (user) @ [1m_REPO_[22m[39m
++/// `WorktreeCreate` prints the worktree's resolved path. Claude Code refuses a
++/// hook answer that goes through a symlink inside the project, so a
++/// `worktree-path` under a symlinked directory in the repository must not
++/// reach it in templated form (#4812).
++#[cfg(unix)]
++#[rstest]
++fn test_claude_hook_worktree_create_resolves_symlink(repo: TestRepo) {
++    let root = repo.root_path().to_path_buf();
++    let target = repo.home_path().join("real-worktrees");
++    std::fs::create_dir_all(&target).unwrap();
++    std::os::unix::fs::symlink(&target, root.join(".worktrees")).unwrap();
++    repo.write_test_config(
++        r#"worktree-path = "{{ repo_path }}/.worktrees/{{ branch | sanitize }}"
++"#,
++    );
++
++    let payload = r#"{"hook_event_name":"WorktreeCreate","name":"agent-task"}"#;
++    let created = run_hook(&repo, &root, &root, payload);
++    assert!(created.status.success(), "{created:?}");
++    let printed = stdout(&created);
++    let printed = Path::new(printed.trim_end());
++    let expected = dunce::canonicalize(target.join("agent-task")).unwrap();
++    assert_eq!(printed, expected);
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4789** (2026-11-14): Repair macOS release runners and recover existing tags (@max-sixty)
-- **PR #4784** (2026-11-14): skills(running-tend): don't list intended behavior as a bug in the digest (@max-sixty)
-- **PR #4783** (2026-11-14): chore: split LICENSE into LICENSE-MIT and LICENSE-APACHE (@max-sixty)
-- **PR #4782** (2026-11-14): docs: correct stale code comments in hooks, list, picker, and output (@worktrunk-bot)
-- **PR #4781** (2026-11-14): fix(hooks): announce background hooks per directory (@worktrunk-bot)
-- **PR #4780** (2026-11-13): fix(config state): print table cells literally instead of as markdown (@worktrunk-bot)
+- **PR #4826** (2026-11-16): chore: pre-commit autoupdate (@pre-commit-ci[bot])
+- **PR #4821** (2026-11-16): chore: update tend workflows (0.3.25 → 0.3.26) (@worktrunk-bot)
+- **PR #4820** (2026-11-16): chore(clawpatch): point the approvals-store spec at its own tests (@worktrunk-bot)
+- **PR #4819** (2026-11-16): refactor(list): build the GitLab MR status once when MR details fail (@worktrunk-bot)
+- **PR #4817** (2026-11-16): skills(running-tend): weekly digest raises themes from earlier digests (@max-sixty)
+- **PR #4814** (2026-11-16): fix(claude): resolve symlinks in the WorktreeCreate hook's path (@worktrunk-bot)
 
 ---
 
@@ -2535,49 +2613,30 @@ The new snapshot test
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. state): stop a branch's vars from including a dotted branch's vars
+## X. hooks): fail a hook before it starts when its template error is already decided
 
 **RULE**:
-When implementing operations in `src/git/repository/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/content/docs/hook.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da09f170`: state): stop a branch's vars from including a dotted branch's vars. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b200ed58`: hooks): fail a hook before it starts when its template error is already decided. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/git/repository/config.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/docs/hook.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Variable names can't contain a dot, so anchoring past one keeps
-        // out the vars of a branch named `{branch}.vars.<x>`.
-        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.[^.]+$");
-    /// A branch's vars exclude those of a branch whose name extends it with
-    /// `.vars.<x>`: `worktrunk.state.weird.vars.branch.vars.key` belongs to
-    /// `weird.vars.branch`, though it also starts with `weird`'s vars prefix.
-    #[test]
-    fn test_vars_entries_excludes_extended_branch_names() {
-        let test = TestRepo::with_initial_commit();
-        let repo = Repository::at(test.root_path()).unwrap();
-
-        repo.set_config("worktrunk.state.weird.vars.own", "1")
-            .unwrap();
-        repo.set_config("worktrunk.state.weird.vars.branch.vars.key", "v")
-            .unwrap();
-
-        let weird = repo.vars_entries("weird");
-        assert_eq!(weird.len(), 1, "{weird:?}");
-        assert_eq!(weird["own"], "1");
-        assert_eq!(repo.vars_entries("weird.vars.branch")["key"], "v");
-    }
-
+Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.");
+Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da09f170` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b200ed58` are properly handled with clean fallback behavior.

@@ -10359,3 +10359,8 @@ Every entry in this ledger must capture:
 | `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `fd2e61db` | Multi-dimensional audit evidence | 2026-11-16T18:46:44.017Z |
 | `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `3c87b271` | Multi-dimensional audit evidence | 2026-11-16T18:46:52.831Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `0c63ea4e` | Multi-dimensional audit evidence | 2026-11-16T18:46:54.708Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `ed000203` | Multi-dimensional audit evidence | 2026-11-16T18:55:43.564Z |
+| `learn-github-wquguru-cicada` | `https://github.com/wquguru/cicada` | `d8ed8ca6` | Multi-dimensional audit evidence | 2026-11-16T18:55:45.144Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `240592ea` | Multi-dimensional audit evidence | 2026-11-16T18:55:48.695Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `829610e8` | Multi-dimensional audit evidence | 2026-11-16T18:55:50.858Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `886c258b` | Multi-dimensional audit evidence | 2026-11-16T18:55:52.026Z |

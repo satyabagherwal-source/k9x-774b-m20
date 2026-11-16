@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T18:47:00.768Z",
-  "total_records": 1312,
+  "last_updated": "2026-11-16T18:55:56.951Z",
+  "total_records": 1316,
   "domains": {
     "A": {
       "total": 7,
@@ -681,7 +681,7 @@
       ]
     },
     "G": {
-      "total": 236,
+      "total": 238,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -918,11 +918,13 @@
         "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants",
         "domain_intelligence-architecture-intelligence-seaql-sea-orm-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants",
-        "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants",
+        "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 285,
+      "total": 287,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1208,7 +1210,9 @@
         "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants",
         "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants"
       ]
     },
     "I": {
@@ -9773,8 +9777,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "3ece1b4514d35b58ab7c2d5656d3a26dcf1d3d4a31a41352e2e66f74c7f78250",
-      "created_at": "2026-11-13T20:54:33.456Z"
+      "content_hash": "5e859acac458868e8b7834f7b27abb39dc73049edf1abffd5377702a5529d800",
+      "created_at": "2026-11-16T18:55:52.287Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -10901,8 +10905,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "bb55103c5489189fe574739fb31830ec51ff8a7a1ca9782ba17ba8a328747a37",
-      "created_at": "2026-11-15T11:12:42.692Z"
+      "content_hash": "6693173c19473893c9e5463d84a741e91184825da3bcd8aa2f9ce3e8998238d2",
+      "created_at": "2026-11-16T18:55:48.957Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -17269,8 +17273,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "782104a0c94cee14d16555265ec7281d171f5b92fc748addba31a7c86df2cc23",
-      "created_at": "2026-11-14T21:29:22.764Z"
+      "content_hash": "61c3cd7b9fa62b4e6f01118c64992b75b64e921c1b7e217515b3e3b132e980ed",
+      "created_at": "2026-11-16T18:55:51.132Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -17278,8 +17282,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "8f64bdef68235c96e79f492b834ef3ea39ab0d45c47e87e0a3993aa64ef51367",
-      "created_at": "2026-11-14T21:29:32.477Z"
+      "content_hash": "7f7393ee1237dee7d8b148a79fb410a5ec0113eb3e407ce9f665e86a5f1932f8",
+      "created_at": "2026-11-16T18:55:55.500Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -23707,6 +23711,42 @@
       "repository": "openziti-zrok-learnings",
       "content_hash": "21b5992b2c034a424646e2c098fd49f579d1b55ff97c5befd7eb5eccff2e7570",
       "created_at": "2026-11-16T18:47:00.768Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: inikulin/parse5 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-inikulin-parse5-technical-construction-intelligence-inikulin-parse5-core-invaria.md",
+      "repository": "inikulin/parse5",
+      "content_hash": "da3dae6789e93c896c198afa5d00778183457a8f50eaa60fc4d2bed64233c381",
+      "created_at": "2026-11-16T18:55:43.838Z"
+    },
+    "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: wquguru/cicada Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-architecture-intelligence-wquguru-cicada-core-invariants.md",
+      "repository": "wquguru/cicada",
+      "content_hash": "6f308e49e01f1c99781c04f978e14e10db6670ecdb22091c1e1f3d491d869491",
+      "created_at": "2026-11-16T18:55:45.421Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: inikulin-parse5-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-inikulin-parse5-learnings-technical-construction-intelligence-inikulin-parse5-le.md",
+      "repository": "inikulin-parse5-learnings",
+      "content_hash": "4f3a2a05858d4047608176ade9dd1d7e91027e1d64f64d19622e56df944c512d",
+      "created_at": "2026-11-16T18:55:56.405Z"
+    },
+    "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: wquguru-cicada-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-learnings-architecture-intelligence-wquguru-cicada-learnings-core.md",
+      "repository": "wquguru-cicada-learnings",
+      "content_hash": "25be5099355b063e73c750a2c3dcb36e5d58b9c50d3685d84539d1e4b84d14b5",
+      "created_at": "2026-11-16T18:55:56.951Z"
     }
   }
 }

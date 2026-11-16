@@ -10326,3 +10326,8 @@
 | `CYCLE-20261116-7I98` | `2026-11-16T18:46:44.012Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8776` | Yes (`ef695c19...`) |
 | `CYCLE-20261116-7P22` | `2026-11-16T18:46:52.826Z` | `openziti/zrok` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8777` | Yes (`8b4818c2...`) |
 | `CYCLE-20261116-7QI7` | `2026-11-16T18:46:54.703Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8778` | Yes (`9f54aec4...`) |
+| `CYCLE-20261116-J2KP` | `2026-11-16T18:55:43.561Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8779` | Yes (`8316ee9b...`) |
+| `CYCLE-20261116-J3SL` | `2026-11-16T18:55:45.141Z` | `wquguru/cicada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8780` | Yes (`73ed9b59...`) |
+| `CYCLE-20261116-J6J7` | `2026-11-16T18:55:48.691Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8781` | Yes (`05ec2406...`) |
+| `CYCLE-20261116-J87A` | `2026-11-16T18:55:50.854Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8782` | Yes (`06e2e5da...`) |
+| `CYCLE-20261116-J93R` | `2026-11-16T18:55:52.023Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8783` | Yes (`d47689e6...`) |

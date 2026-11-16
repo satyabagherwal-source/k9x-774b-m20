@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T18:46:54.720Z",
+  "last_updated": "2026-11-16T18:55:52.034Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "026d8bb73411adcd327c16e646d8ed9a945803d8c4c36164176d9751dcacd8bc",
-      "verified_at": "2026-11-14T21:29:22.437Z",
+      "content_hash": "06e2e5da6ee64e35e08acdf980021486f0114c3244b2059b1d13a79e2ced0f7f",
+      "verified_at": "2026-11-16T18:55:50.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:29:22.437Z"
+      "last_updated": "2026-11-16T18:55:50.865Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "8c50138dadd3753e0a7c39eb942b3d0e2a1e1a5935a66b09cb95c1f60fcb790c",
-      "verified_at": "2026-11-15T11:12:42.405Z",
+      "content_hash": "05ec2406f0d6b7f59130ba69697f8f9f997d29e034f49cd0df2789eae07298d9",
+      "verified_at": "2026-11-16T18:55:48.702Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T11:12:42.405Z"
+      "last_updated": "2026-11-16T18:55:48.702Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "b706159394d4afeb7a93872267c0afd5674bd59be93f3b7ad8651af19689aaf5",
-      "verified_at": "2026-11-13T20:54:33.211Z",
+      "content_hash": "d47689e61914138bc417fa40d90acb68e6b9912bd02e817c10c749f3e5351dec",
+      "verified_at": "2026-11-16T18:55:52.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:54:33.211Z"
+      "last_updated": "2026-11-16T18:55:52.033Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -14106,14 +14106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-inikulin-parse5",
-      "content_hash": "eb97b42b22fc6bbde186d14d77bbc13692c9e22c95b1aebca1a67015c8aea035",
-      "verified_at": "2026-11-12T02:48:47.840Z",
+      "content_hash": "8316ee9bf9588597c5b3423b563e5bf324f3639345906115a1b634cc9686ac00",
+      "verified_at": "2026-11-16T18:55:43.571Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T02:48:47.840Z"
+      "last_updated": "2026-11-16T18:55:43.571Z"
     },
     "kitlangton/Hex": {
       "repository": "kitlangton/Hex",
@@ -18396,14 +18396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wquguru-cicada",
-      "content_hash": "74a9479e6c69960c04dd883781f635cf69973f57f5ff433f50ff9368a7ef7b59",
-      "verified_at": "2026-11-13T06:06:58.286Z",
+      "content_hash": "73ed9b5961213d0495a29e7a01752020259273108a57126f77659c77adeeb277",
+      "verified_at": "2026-11-16T18:55:45.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T06:06:58.286Z"
+      "last_updated": "2026-11-16T18:55:45.152Z"
     },
     "heymrun/heym": {
       "repository": "heymrun/heym",

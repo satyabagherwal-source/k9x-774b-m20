@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `f77caec1`  
+> **Source Version**: `886c258b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T20:54:32.375Z  
+> **Timestamp**: 2026-11-16T18:55:51.196Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:54:32.369Z  
+> **Harvest Timestamp**: 2026-11-16T18:55:51.191Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13401 stars
+- **Stars / Engagement**: 13411 stars
 
 ---
 
@@ -838,328 +838,633 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4809d33` (2026-11-13)
-**Commit Message**: Adds Infinispan Chat Memory store (#6973)
-
-## Issue
-Closes #6974
+### Incident Patch 1: `4b67c2e2` (2026-11-16)
+**Commit Message**: fix(mcp-docker): restore the interrupt status when execute() is interrupted (#6486)
 
 ## Change
-Infinispan Chat memory store in the langchain4j Infinispan integration
-module
+Follow-up to #6467 (issue #6466): `DockerMcpTransport.execute()` has two
+more blocking sites that sit inside its broad `catch (Exception e)`
+block, so an interrupt delivered there is swallowed and the thread's
+interrupt flag is left cleared:
 
+- `callback.awaitStarted(attachTimeout.toMillis(),
+TimeUnit.MILLISECONDS)` — parking until the container attachment starts;
+- `Thread.sleep(100)` — the settle wait on the fire-and-forget path
+(`sendMessage` with a null id).
 
-## General checklist
-<!-- Please double-check the following points and mark them like this:
-[X] -->
-- [X] There are no breaking changes (API, behaviour)
-- [X] I have added unit and/or integration tests for my change
-- [X] The tests cover both positive and negative cases
-- [X] I have manually run all the unit and integration tests in the
-module I have added/changed, and they are all green
-- [ ] I have manually run all the unit and integration tests in the
-[core](https://github.com/langchain4j/langchain4j/tree/main/langchain4j-core)
-and
-[main](https://github.com/langchain4j/langchain4j/tree/main/langchain4j)
-modules, and they are all green
-- [X] I have added/updated the
-[documentation](https://github.com/langchain4j/langchain4j/tree/main/docs/docs)
-- [ ] I have added an example in the [examples
-repo](https://github.com/langchain4j/langchain4j-examples) (only for
-"big" features)
-- [ ] I have added/updated [Spring Boot
-starter(s)](https://github.com/langchain4j/langchain4j-spring) (if
-applicable)
+Both were disclosed in #6466. The fix mirrors what the same class
+already does in `awaitResponseAndDetach`, and what #6411 / #6467 do for
+the blocking phases of `start()`: catch `InterruptedException` first,
+restore the flag, and hand the exception to
+`future.completeExceptionally` (the existing failure-delivery mechanism
+of `execute`, so the caller-visible behaviour is unchanged apart from
+the restored flag):
 
-
-## Checklist for adding new maven 
-
-**File**: `docs/docs/integrations/chat-memory-stores/index.md` (modified, +1/-0)
-```diff
-@@ -12,6 +12,7 @@ sidebar_position: 0
- | [Coherence](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-coherence/src/test/java/dev/langchain4j/store/memory/chat/coherence/CoherenceChatMemoryStoreIT.java)                     | ✅           |         |
- | [Hazelcast (IMap)](https://github.com/langchain4j/langchain4j-community/blob/main/chat-memory-stores/langchain4j-community-hazelcast/src/test/java/dev/langchain4j/community/store/memory/chat/hazelcast/HazelcastChatMemoryStoreIT.java)                     | ✅           |         |
- | [Hazelcast (CPMap)](https://github.com/langchain4j/langchain4j-community/blob/main/embedding-stores/langchain4j-community-hazelcast-enterprise/src/test/java/dev/langchain4j/community/store/memory/chat/hazelcast/HazelcastCPMapChatMemoryStoreIT.java)                     | ✅           |         |
-+| [Infinispan](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java)                     | ✅           |         |
- | [Neo4j](https://github.com/langchain4j/langchain4j-community/blob/main/embedding-stores/langchain4j-community-neo4j/src/test/java/dev/langchain4j/community/store/memory/chat/neo4j/Neo4jChatMemoryStoreIT.java)                             | ✅           |         |
- | [Oracle](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-oracle/src/test/java/dev/langchain4j/store/memory/chat/oracle/OracleChatMemoryStoreIT.java) | ✅            |         |
- | [Redis](https://github.com/langchain4j/langchain4j-community/blob/main/embedding-stores/langchain4j-community-redis/src/test/java/dev/langchain4j/community/store/memory/chat/redis/RedisChatMemoryStoreIT.java)                             | ✅           |         |
+```java
+} catch (InterruptedException e) {
+    Thread.currentThread().interrupt();
+    future.completeExceptionally(e);
+} catch (Exception e) {
+    future.completeExceptionally(e);
+}
 ```
 
-**File**: `docs/docs/integrations/embedding-stores/infinispan.md` (modified, +21/-0)
+## General
+
+- [X] I have read the 
+
+**File**: `langchain4j-mcp-docker/pom.xml` (modified, +21/-4)
 ```diff
-@@ -32,7 +32,28 @@ From 15.2 Infinispan Server and above, metadata filtering is supported.
- ## APIs
+@@ -1,7 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<project xmlns="http://maven.apache.org/POM/4.0.0"
+-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+     <parent>
+         <groupId>dev.langchain4j</groupId>
+@@ -10,7 +8,6 @@
+         <relativePath>../langchain4j-parent/pom.xml</relativePath>
+     </parent>
  
- - `InfinispanEmbeddingStore`
-+- `InfinispanChatMemoryStore`
+-
+     <artifactId>langchain4j-mcp-docker</artifactId>
+     <name>LangChain4j :: Integration :: Model Context Protocol :: Docker transport</name>
  
-+### InfinispanChatMemoryStore
-+
-+A `ChatMemoryStore` backed by an Infinispan cache. Messages are serialized to JSON
-+using `ChatMessageSerializer`, supporting all message types including multimodal
-+content (images, audio, video, PDF), tool calls, and provider-specific attributes.
-+
-+```java
-+// Using a ConfigurationBuilder
-+InfinispanChatMemoryStore store = InfinispanChatMemoryStore.builder()
-+    .infinispanConfigBuilder(builder)
-+    .build();
-+```
-+
-+When using a pre-configured `RemoteCacheManager` (e.g. in Quarkus):
-+
-+```java
-+InfinispanChatMemoryStore store = InfinispanChatMemoryStore.builder()
-+    .remoteCacheManager(remoteCacheManager)
-+    .build();
-+```
+@@ -59,4 +56,24 @@
  
- ## Examples
+     </dependencies>
  
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-surefire-plugin</artifactId>
++                <configuration>
++                    <!--
++                        DockerResultCallbackTest mocks LoggerFactory statically and relies on the
++                        DockerResultCallback class still being uninitialized when it runs. The default
++                        "filesystem" run order is not deterministic across environments, so any test
++                        that executes DockerMcpTransport.execute() (which instantiates
++                        DockerResultCallback) could run before it and break the mock. Alphabetical
++                        order pins DockerResultCallbackTest (R) before such tests (T).
++                    -->
++                    <runOrder>alphabetical</runOrder>
++                </configuration>
++            </plugin>
++        </plugins>
++    </build>
++
+ </project>
 ```
 
-**File**: `langchain4j-infinispan/src/main/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStore.java` (added, +175/-0)
+**File**: `langchain4j-mcp-docker/src/main/java/dev/langchain4j/mcp/client/transport/docker/DockerMcpTransport.java` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,175 @@
-+package dev.langchain4j.store.memory.chat.infinispan;
-+
-+import static dev.langchain4j.internal.ValidationUtils.ensureNotBlank;
-+import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
-+
-+import dev.langchain4j.data.message.ChatMessage;
-+import dev.langchain4j.data.message.ChatMessageDeserializer;
-+import dev.langchain4j.data.message.ChatMessageSerializer;
-+import dev.langchain4j.store.memory.chat.ChatMemoryStore;
-+import java.util.ArrayList;
-+import java.util.List;
-+import org.infinispan.client.hotrod.RemoteCache;
-+import org.infinispan.client.hotrod.RemoteCacheManager;
-+import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-+import org.infinispan.commons.configuration.StringConfiguration;
-+
-+/**
-+ * A {@link ChatMemoryStore} backed by an Infinispan cache.
-+ *
-+ * <p>Messages are serialized to JSON using {@link ChatMessageSerializer} and stored as strings,
-+ * following the same approach as the other ChatMemoryStore implementations (Coherence, Cassandra, Oracle).
-+ * The cache uses {@code application/x-protostream} encoding since strings are a native ProtoStream type.
-+ */
-+public class InfinispanChatMemoryStore implements ChatMemoryStore {
-+
-+    public static final String DEFAULT_CACHE_NAME = "chat-memory";
-+
-+    private static final String DEFAULT_CACHE_CONFIG = "<distributed-cache name=\"CACHE_NAME\" statistics=\"true\">\n"
-+            + "<encoding>\n"
-+            + "<key media-type=\"application/x-protostream\"/>\n"
-+            + "<value media-type=\"application/x-protostream\"/>\n"
-+            + "</encoding>\n"
-+            + "</distributed-cache>";
-+
-+    private final RemoteCache<String, String> remoteCache;
-+
-+    /**
-+     * Creates an InfinispanChatMemoryStore from a pre-configured RemoteCacheManager.
-+     *
-+     * @param remoteCacheManager the already configured remote cache manager
-+     * @param cacheName          the cache name to use
-+     * @param createCache        whether to create the cache if it doesn't exist. When {@code false}, the cache must
-+     *                           already exist on the server
-+     * @param cacheConfig        optional custom cache configuration XML
-+     */
-+    public InfinispanChatMemoryStore(
-+            RemoteCacheManager remoteCacheManager, String cacheName, boolean createCache, String cacheConfig) {
-+        ensureNotNull(remoteCacheManager, "remoteCacheManager");
-+        ensureNotBlank(cacheName, "cacheName");
-+
-+        if (createCache) {
-+            String config = cacheConfig != null ? cacheConfig : DEFAULT_CACHE_CONFIG.replace("CACHE_NAME", cacheName);
-+            this.remoteCache =
-+                    remoteCacheManager.administration().getOrCreateCache(cacheName, new StringConfiguration(config));
-+        } else {
-+            this.remoteCache = getExistingCache(remoteCacheManager, cacheName);
-+        }
-+    }
-+
-+    /**
-+     * Creates an InfinispanChatMemoryStore from a ConfigurationBuilder.
-+     *
-+     * @param builder     the Infinispan configuration builder
-+     * @param cacheName   the cache name to use
-+     * @param createCache whether to create the cache if it doesn't exist. When {@code false}, the cache must already
-+     *                    exist on the server
-+     * @param cacheConfig optional custom cache configuration XML
-+     */
-+    public InfinispanChatMemoryStore(
-+            ConfigurationBuilder builder, String cacheName, boolean createCache, String cacheConfig) {
-+        ensureNotNull(builder, "builder");
-+        ensureNotBlank(cacheName, "cacheName");
-+
-+        if (createCache) {
-+            String config = cacheConfig != null ? cacheConfig : DEFAULT_CACHE_CONFIG.replace("CACHE_NAME", cacheName);
-+            builder.remoteCache(cacheName).configuration(config);
-+        }
-+
-+        RemoteCacheManager remoteCacheManager = new RemoteCacheManager(builder.build());
-+        this.remoteCache = getExistingCache(remoteCacheManager, cacheName);
-+    }
-+
-+    private static RemoteCache<String, String> getExistingCache(
-+            RemoteCacheManager remoteCacheManager, String cacheName) {
-+        RemoteCache<String, String> cache = remoteCacheManager.getCache(cacheName);
-+        if (cache == null) {
-+            throw new IllegalStateException("Infinispan cache '" + cacheName
-+                    + "' does not exist. Create it on the server, or set createCache(true) to let the store create it");
-+        }
-+        return cache;
-+    }
-+
-+    @Override
-+    public List<ChatMessage> getMessages(Object memoryId) {
-+        ensureNotNull(memoryId, "memoryId");
-+        String json = remoteCache.get(memoryId.toString());
-+        return json == null ? new ArrayList<>() : ChatMessageDeserializer.messagesFromJson(json);
-+    }
-+
-+    @Override
-+    public void updateMessages(Object memoryId, List<ChatMessage> messages) {
-+        ensureNotNull(memoryId, "memoryId");
-+        ensureNotNull(messages, "messages");
-+        String json = ChatMessageSerializer.mess
+@@ -279,6 +279,9 @@ private CompletableFuture<String> execute(String request, Long id) {
+                 // For messages with null ID, we don't wait for a corresponding response
+                 future.complete(null);
+             }
++        } catch (InterruptedException e) {
++            Thread.currentThread().interrupt();
++            future.completeExceptionally(e);
+         } catch (Exception e) {
+             future.completeExceptionally(e);
+         } finally {
+@@ -480,5 +483,4 @@ public DockerMcpTransport build() {
+             return new DockerMcpTransport(this);
+         }
+     }
+-
+ }
 ```
 
-**File**: `langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java` (added, +251/-0)
+**File**: `langchain4j-mcp-docker/src/test/java/dev/langchain4j/mcp/client/transport/docker/DockerTransportExecuteInterruptTest.java` (added, +190/-0)
 ```diff
-@@ -0,0 +1,251 @@
-+package dev.langchain4j.store.memory.chat.infinispan;
+@@ -0,0 +1,190 @@
++package dev.langchain4j.mcp.client.transport.docker;
 +
 +import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+import static org.infinispan.testcontainers.InfinispanContainer.IMAGE_BASENAME;
++import static org.mockito.Mockito.mock;
 +
-+import dev.langchain4j.agent.tool.ToolExecutionRequest;
-+import dev.langchain4j.data.message.AiMessage;
-+import dev.langchain4j.data.message.ChatMessage;
-+import dev.langchain4j.data.message.CustomMessage;
-+import dev.langchain4j.data.message.ImageContent;
-+import dev.langchain4j.data.message.SystemMessage;
-+import dev.langchain4j.data.message.TextContent;
-+import dev.langchain4j.data.message.ToolExecutionResultMessage;
-+import dev.langchain4j.data.message.UserMessage;
-+import java.util.List;
-+import java.util.Map;
-+import org.infinispan.client.hotrod.RemoteCacheManager;
-+import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-+import org.infinispan.commons.util.Version;
-+import org.infinispan.testcontainers.InfinispanContainer;
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.BeforeAll;
-+import org.junit.jupiter.api.BeforeEach;
++import com.sun.net.httpserver.HttpServer;
++import dev.langchain4j.mcp.client.transport.McpOperationHandler;
++import dev.langchain4j.mcp.protocol.McpInitializationNotification;
++import java.io.OutputStream;
++import java.net.InetAddress;
++import java.net.InetSocketAddress;
++import java.nio.charset.StandardCharsets;
++import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.TimeUnit;
 +import org.junit.jupiter.api.Test;
 +
-+class InfinispanChatMemoryStoreIT {
++/**
++ * {@link DockerMcpTransport#execute} has two blocking sites that sit inside its broad
++ * {@code catch (Exception e)} block, which hands every exception to
++ * {@code future.completeExceptionally} without ever restoring the thread's interrupt flag:
++ *
++ * <pre>
++ * callback.awaitStarted(attachTimeout.toMillis(), TimeUnit.MILLISECONDS);
++ * ...
++ * Thread.sleep(100); // only on the fire-and-forget path
++ * </pre>
++ *
++ * <p>An interrupt delivered while the transport is parked at either site is therefore swallowed,
++ * and the thread's interrupt flag is left cleared — so the cancellation is silently lost and the
++ * surrounding framework has no way to observe it. The sibling method
++ * {@code awaitResponseAndDetach} in the same class already shows the intended handling
++ * (re-interrupt, then {@code completeExceptionally}); {@code execute} should behave the same.
++ *
++ * <p>Both phases are exercised against a stub Docker daemon so that the real docker-java client
++ * issues the real blocking calls. The interrupt flag is observed on the calling thread right after
++ * {@code sendMessage} returns, which is exactly when {@code execute} has finished its
++ * catch/finally processing on that same thread.
++ *
++ * <p>Note on the class name: these tests execute the real {@link DockerResultCallback} code path,
++ * which binds its static {@code LOG} field on first use. {@code DockerResultCallbackTest} relies on
++ * mocking {@code LoggerFactory} while the class is still uninitialized, so it must run first — and
++ * with the default class-name ordering, "DockerTransport..." sorts after "DockerResultCallback..."
++ * while "DockerMcpTransport..." would not.
++ */
++class DockerTransportExecuteInterruptTest {
 +
-+    static InfinispanContainer infinispan = new InfinispanContainer(IMAGE_BASENAME + ":" + Version.getVersion());
-+    InfinispanChatMemoryStore chatMemoryStore;
-+
-+    @BeforeAll
-+    static void beforeAll() {
-+        infinispan.start();
++    /** A stub response that satisfies docker-java's parsing for each endpoint {@code start()} hits. */
++    private static String bodyFor(String path) {
++        if (path.equals("/images/create")) {
++            return "{\"status\":\"Download complete\"}";
++        }
++        if (path.startsWith("/containers/create")) {
++            return "{\"Id\":\"stub-container-id\",\"Warnings\":[]}";
++        }
++        if (path.endsWith("/wait")) {
++            return "{\"StatusCode\":0}";
++        }
++        return "";
 +    }
 +
-+    @AfterAll
-+    static void afterAll() {
-+        infinispan.stop();
-+    }
-+
-+    @BeforeEach
-+    void setUp() {
-+        ConfigurationBuilder builder = new ConfigurationBuilder();
-+        builder.uri(infinispan.getConnectionURI());
-+        chatMemoryStore = InfinispanChatMemoryStore.builder()
-+                .infinispanConfigBuilder(builder)
-+                .build();
-+    }
-+
++    /**
++     * The interrupt arrives while {@code execute} is parked in
++     * {@code callback.awaitStarted(...)}: the stub daemon withholds the attach response headers, so
++     * the attachment start never completes until the test interrupts.
++     */
 +    @Test
-+    void should_get_empty_messages_for_unknown_memory_id() {
-+        assertThat(chatMemoryStore.getMessages("unknown")).isEmpty();
++    void shouldRestoreInterruptStatusWhenAttachmentStartIsInterrupted() throws Exception {
++        CountDownLatch attachRequested = new CountDownLatch(1);
++        CountDownLatch releaseAttach = new CountDownLatch(1);
++        HttpServer daemon = stubDaemon(attachRequested, releaseAttach, false);
++        daemon.start();
++
++        try {
++            CompletableFuture<Boolean> interruptStatus = executeThenInterrupt(daemon, attachRequested);
++            assertThat(interruptStatus.get(15, TimeUnit.SECONDS))
++                    .as("interrupt status must survive the attachment-start phase of execute()")
++                    .isTrue();
++        } finally {
++            releaseAttach.countDown();
++            daemon.stop(0);
++        }
 +    }
 +
++    /**
++     * The fire-and-forget path: the attachment starts successfully, the request is written to the
++     * container's stdin, and {@code execute} settles in {@code Thread.sleep(100)} before tearing the
++     * attachment down. The interrupt is delivered right after the attach response has been written
++     * back, so it lands inside (or immediately before) that sleep window — either way the pending
++     * flag must survive {@code execute}'s catch block.
++     */
 +    @Test
-+    void should_store_and_retrieve_simple_messages() {
-+        List<ChatMessage> messages = List.of(
-+                SystemMessage.from("You are a helpful assistant"),
-+                UserMessage.from("Hello"),
-+                AiMessage.from("Hi there!"));
++    void shouldRestoreInterruptStatusWhenPostWriteSleepIsInterrupted() throws Exception {
++        CountDownLatch attachResponded = new CountDownLatch(1);
++        CountDownLatch neverAwaited = new CountDownLatch(1);
++        HttpServer daemon = stubDaemon(attachResponded, neverAwaited, true);
++        daemon.start();
 +
-+        chatMemoryStore.updateMessages("simple", messages);
++        try {
++            CompletableFuture<Boolean> interruptStatus = executeThenInterrupt(daemon, attachResponded);
++            assertThat(interruptStatus.get(15, TimeUnit.SECONDS))
++                    .as("interrupt status must survive the po
+```
+
+---
+
+### Incident Patch 2: `2ed1b5bc` (2026-11-16)
+**Commit Message**: docs: Fix the guardrail precedence described in the Javadoc of AiServices and GuardrailService (#7088)
+
+## Issue
+No issue, @dliubarskyi mentioned this as a separate bug in the tool
+guardrails discussion:
+https://github.com/langchain4j/langchain4j/discussions/7030#discussioncomment-19538533
+
+## Change
+
+For AI service guardrails, the builder wins: guardrails set on
+`AiServices` are used instead of `@InputGuardrails`/`@OutputGuardrails`,
+and a method annotation wins over a class annotation
+(`GuardrailServiceBuilder.computeInputGuardrails`/`computeOutputGuardrails`).
+The precedence lists in `guardrails.md` say the same. The Javadoc said
+the opposite in a few places:
+
+- `AiServices.inputGuardrailClasses(...)`, `inputGuardrails(...)`,
+`outputGuardrailClasses(...)`, `outputGuardrails(...)` (8 overloads):
+"exactly the same as using the annotation at the class level. Using the
+annotation takes precedence."
+- `GuardrailServiceBuilder` class Javadoc: "annotations take precedence
+over guardrails configured programmatically in the builder."
+- `GuardrailService.Builder.build()`: method annotations, then class
+annotations, "and if those are absent, it uses the settings defined in
+the builder."
+
+A
+
+**File**: `docs/docs/tutorials/guardrails.md` (modified, +12/-5)
+```diff
+@@ -109,6 +109,9 @@ There are several ways to declare input guardrails, listed here in order of prec
+ 1. [`InputGuardrail`](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-core/src/main/java/dev/langchain4j/guardrail/InputGuardrail.java) implementation class names or instances set directly on the [`AiServices`](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/AiServices.java) builder.
+ 2. [`@InputGuardrails` annotations](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/guardrail/InputGuardrails.java) placed on an individual [AI Service](/tutorials/ai-services) method.
+ 3. [`@InputGuardrails` annotation](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/guardrail/InputGuardrails.java) placed on an [AI Service](/tutorials/ai-services) class.
 +
-+        List<ChatMessage> retrieved = chatMemoryStore.getMessages("simple");
-+        assertThat(retrieved).hasSize(3);
-+        assertThat(((SystemMessage) retrieved.get(0)).text()).isEqualTo("You are a helpful assistant");
-+        assertThat(((UserMessage) retrieved.get(1)).singleText()).isEqualTo("Hello");
-+        assertThat(((AiMessage) retrieved.get(2)).text()).isEqualTo("Hi there!");
-+    }
++Only the input guardrails from one of these places are used: the ones set on the `AiServices` builder if there is at least one, otherwise the `@InputGuardrails` annotation on the method if it is present, otherwise the one on the class. Guardrails declared in different places are not combined. For example, an `@InputGuardrails` annotation on a method replaces the one on the class for that method.
 +
-+    @Test
-+    void should_store_user_message_with_name() {
-+        chatMemoryStore.updateMessages("user-name", List.of(UserMessage.from("John", "Hello")));
+ Regardless of how they are declared, input guardrails are always executed in the order they appear in the list. A user message rewritten by any guardrail in the list is visible to the guardrails that follow it and, unless a later guardrail rewrites it again, to the LLM.
+ 
+ #### `AiServices` builder
+@@ -153,7 +156,7 @@ The way classes are converted to instances can be customized. For example, frame
+ 
+ #### Annotation on individual AI Service methods
+ 
+-[`@InputGuardrails` annotations](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/guardrail/InputGuardrails.java) placed on an individual [AI Service](/tutorials/ai-services) methods have the next highest precedence.
++[`@InputGuardrails` annotations](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/guardrail/InputGuardrails.java) placed on individual [AI Service](/tutorials/ai-services) methods have the next highest precedence.
+ 
+ ```java
+ public interface Assistant {
+@@ -309,6 +312,8 @@ There are several ways to declare output guardrails, listed here in order of pre
+ 2. [`@OutputGuardrails` annotations](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/guardrail/OutputGuardrails.java) placed on an individual [AI Service](/tutorials/ai-services) method.
+ 3. [`@OutputGuardrails` annotation](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/guardrail/OutputGuardrails.java) placed on an [AI Service](/tutorials/ai-services) class.
+ 
++Only the output guardrails from one of these places are used: the ones set on the `AiServices` builder if there is at least one, otherwise the `@OutputGuardrails` annotation on the method if it is present, otherwise the one on the class. Guardrails declared in different places are not combined. For example, an `@OutputGuardrails` annotation on a method replaces the one on the class for that method.
 +
-+        UserMessage msg = (UserMessage) chatMemoryStore.getMessages("user-name").get(0);
-+        assertThat(msg.name()).isEqualTo("John");
-+        assertThat(msg.singleText()).isEqualTo("Hello");
-+    }
-+
-+    @Test
-+    void should_store_multimodal_user_message() {
-+        UserMessage message = UserMessage.from(
-+                TextContent.from("What is in this image?"), ImageContent.from("https://example.com/image.png"));
-+
-+        chatMemoryStore.updateMessages("multimodal", List.of(message));
-+
-+        UserMessage msg =
-+                (UserMessage) chatMemoryStore.getMessages("multimodal").get(0);
-+        assertThat(msg.contents()).hasSize(2);
-+        assertThat(((TextContent) msg.contents().get(0)).text()).isEqualTo("What is in this image?");
-+        assertThat(((ImageContent) msg.contents().get(1)).image().url().toString())
-+                .isEqualTo("https://example.com/image.png");
-+    }
-+
-+    @Test
-+    void should_store_ai_message_with_tool_execution_requests() {
-+        ToolExecutionRequest request = ToolExecutionRequest.builder()
-+                .id("call_123")
-+                .name("get_weather")
-+                .arguments("{\"city\":\"Paris\"}")
-+                .build();
-+
-+        chatMemoryStore.updateMessages("tool-req", List.of(AiMessage.from(request)));
-+
-+        AiMessage msg = (AiMessage) chatMemoryStore.getMessages("tool-req").get(0);
-+        assertThat(msg.toolExecutionRequests()).hasSize(1);
-+        assertThat(msg.toolExecutionRequests().get(0).id()).isEqualTo("call_123");
-+        assertThat(msg.toolExecutionRequests().get(0).name()).isEqualTo("get_weather");
-+    }
-+
-+    @Test
-+    void should_store_tool_execution_result_with_image() {
-+        ToolExecutionResultMessage toolResult = ToolExecutionResultMessage.builder()
-+                .id("call_img")
-+                .toolName("screenshot")
-+                .contents(List.of(
-+                        TextContent.from("Screenshot captured"),
-+                        ImageContent.from("https://example.com/screenshot.png")))
-+   
+ Regardless of how they are declared, output guardrails are always executed in the order they appear in the list. An output rewritten by any guardrail in the list is visible to the guardrails that follow it and, unless a later guardrail rewrites it again, to the caller.
+ 
+ #### `AiServices` builder
+@@ -349,7 +354,7 @@ The way classes are converted to instances can be customized. For example, frame
+ 
+ #### Annotation on individual AI Service methods
+ 
+-[`@OutputGuardrails` annotations](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/guardrail/OutputGuardrails.java) placed on ndividual [AI Service](/tutorials/ai-services) methods have the next highest precendence.
++[`@OutputGuardrails` annotations](https://github.com/langchain4j/langchain4j/blob/main/langchain4j/src/main/java/dev/langchain4j/service/guardrail/OutputGuardrails.java) placed on individual [AI Service](/tutorials/ai-services) methods have the next highest precedence.
+ 
+ ```java
+ public interface Assistant {
+@@ -396,7 +401,9 @@ Output guardrails have the following additional configuration that can be suppli
+ 
+ | Configuration | Description                                                                                                                                                |
+ |:--------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+-| `maxRetries`  | - The maximum number of retries for an output guardrail when performing a retry or reprompt.<br/> - Defaults to `2`.<br/> - Set to `0` to
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/agent/AgentBuilder.java` (modified, +12/-0)
+```diff
+@@ -47,6 +47,8 @@
+ import dev.langchain4j.rag.content.retriever.ContentRetriever;
+ import dev.langchain4j.service.AiServiceContext;
+ import dev.langchain4j.service.AiServices;
++import dev.langchain4j.service.guardrail.InputGuardrails;
++import dev.langchain4j.service.guardrail.OutputGuardrails;
+ import dev.langchain4j.service.memory.ChatMemoryAccess;
+ import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
+ import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
+@@ -597,6 +599,7 @@ public B retrievalAugmentor(RetrievalAugmentor retrievalAugmentor) {
+ 
+     /**
+      * Sets the configuration for input guardrails applied before sending requests to the model.
++     * It applies to every method of the agent.
+      *
+      * @param inputGuardrailsConfig the input guardrails configuration
+      * @return {@code this}
+@@ -608,6 +611,7 @@ public B inputGuardrailsConfig(InputGuardrailsConfig inputGuardrailsConfig) {
+ 
+     /**
+      * Sets the configuration for output guardrails applied after receiving responses from the model.
++     * It takes precedence over the configuration of any {@link OutputGuardrails} annotation on the agent.
+      *
+      * @param outputGuardrailsConfig the output guardrails configuration
+      * @return {@code this}
+@@ -619,6 +623,8 @@ public B outputGuardrailsConfig(OutputGuardrailsConfig outputGuardrailsConfig) {
+ 
+     /**
+      * Sets the input guardrail classes to be instantiated and applied before each request.
++     * Guardrails set this way replace the ones declared in {@link InputGuardrails} annotations on the agent,
++     * see there for the exact rules.
+      *
+      * @param inputGuardrailClasses the input guardrail classes
+      * @param <I> the guardrail type
+@@ -631,6 +637,8 @@ public <I extends InputGuardrail> B inputGuardrailClasses(Class<? extends I>...
+ 
+     /**
+      * Sets the output guardrail classes to be instantiated and applied after each response.
++     * Guardrails set this way replace the ones declared in {@link OutputGuardrails} annotations on the agent,
++     * see there for the exact rules.
+      *
+      * @param outputGuardrailClasses the output guardrail classes
+      * @param <O> the guardrail type
+@@ -643,6 +651,8 @@ public <O extends OutputGuardrail> B outputGuardrailClasses(Class<? extends O>..
+ 
+     /**
+      * Sets the input guardrail instances applied before each request.
++     * Guardrails set this way replace the ones declared in {@link InputGuardrails} annotations on the agent,
++     * see there for the exact rules.
+      *
+      * @param inputGuardrails the input guardrails
+      * @param <I> the guardrail type
+@@ -655,6 +665,8 @@ public <I extends InputGuardrail> B inputGuardrails(I... inputGuardrails) {
+ 
+     /**
+      * Sets the output guardrail instances applied after each response.
++     * Guardrails set this way replace the ones declared in {@link OutputGuardrails} annotations on the agent,
++     * see there for the exact rules.
+      *
+      * @param outputGuardrails the output guardrails
+      * @param <O> the guardrail type
+```
+
+**File**: `langchain4j-core/src/main/java/dev/langchain4j/guardrail/OutputGuardrail.java` (modified, +4/-1)
+```diff
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.guardrail;
+ 
+ import dev.langchain4j.data.message.AiMessage;
++import dev.langchain4j.guardrail.config.OutputGuardrailsConfig;
+ import java.util.Arrays;
+ 
+ /**
+@@ -9,7 +10,9 @@
+  * <p>
+  * In the case of reprompting, the reprompt message is added to the LLM context and the request is retried.
+  * <p>
+- * The maximum number of retries is configurable, defaulting to {@link dev.langchain4j.guardrail.config.OutputGuardrailsConfig#MAX_RETRIES_DEFAULT}.
++ * The maximum number of times a response of the model is validated, including the first one, is configurable with
++ * {@link OutputGuardrailsConfig#maxRetries()}, and defaults to {@link OutputGuardrailsConfig#MAX_RETRIES_DEFAULT} (one
++ * retry or reprompt).
+  */
+ public interface OutputGuardrail extends Guardrail<OutputGuardrailRequest, OutputGuardrailResult> {
+     /**
+```
+
+**File**: `langchain4j-core/src/main/java/dev/langchain4j/guardrail/config/OutputGuardrailsConfig.java` (modified, +13/-8)
+```diff
+@@ -13,16 +13,20 @@
+ @JacocoIgnoreCoverageGenerated
+ public interface OutputGuardrailsConfig extends GuardrailsConfig {
+     /**
+-     * Default maximum number of retries for the guardrail.
++     * Default value of {@link #maxRetries()}: the first response of the model plus one retry or reprompt.
+      */
+     int MAX_RETRIES_DEFAULT = 2;
+ 
+     /**
+-     * Configures the maximum number of retries for the guardrail.
++     * Returns the maximum number of times the output guardrails validate a response of the model, including the first
++     * one: at most {@code maxRetries - 1} retries or reprompts. Unlike {@code maxRetries} on chat models, which counts
++     * only the retries after the first call, this value includes the first response.
+      * <p>
+-     *     Defaults to {@link #MAX_RETRIES_DEFAULT} if not set.
++     *     The default implementation uses {@link #MAX_RETRIES_DEFAULT} (one retry or reprompt) if not set.
+      * </p>
+-     * Set to {@code 0} to disable retries.
++     * Set to {@code 0} or {@code 1} to disable retries. A negative value uses {@link #MAX_RETRIES_DEFAULT}.
++     *
++     * @return the maximum number of validations, including the first one
+      */
+     int maxRetries();
+ 
+@@ -46,12 +50,13 @@ static OutputGuardrailsConfigBuilder builder() {
+      */
+     interface OutputGuardrailsConfigBuilder extends GuardrailsConfigBuilder<OutputGuardrailsConfig> {
+         /**
+-         * Sets the maximum number of retries for output guardrails.
++         * Sets the maximum number of times the output guardrails validate a response of the model, including the
++         * first one.
+          * <p>
+-         *     Defaults to {@link OutputGuardrailsConfig#maxRetries()} if not set.
++         *     The default implementation uses {@link OutputGuardrailsConfig#MAX_RETRIES_DEFAULT} if not set.
+          * </p>
+-         * @param maxRetries The maximum number of retries for output guardrails
+-         * @return The maximum number of retries for output guardrails
++         * @param maxRetries The maximum number of times a response is validated, including the first one
++         * @return This builder
+          * @see OutputGuardrailsConfig#maxRetries()
+          */
+         OutputGuardrailsConfigBuilder maxRetries(int maxRetries);
+```
+
+**File**: `langchain4j/src/main/java/dev/langchain4j/service/AiServices.java` (modified, +40/-25)
+```diff
+@@ -43,6 +43,8 @@
+ import dev.langchain4j.rag.content.Content;
+ import dev.langchain4j.rag.content.retriever.ContentRetriever;
+ import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
++import dev.langchain4j.service.guardrail.InputGuardrails;
++import dev.langchain4j.service.guardrail.OutputGuardrails;
+ import dev.langchain4j.service.tool.AiServiceTool;
+ import dev.langchain4j.service.tool.BeforeToolExecution;
+ import dev.langchain4j.service.tool.DefaultToolExecutor;
+@@ -1017,6 +1019,10 @@ public AiServices<T> unregisterListeners(Collection<? extends AiServiceListener<
+ 
+     /**
+      * Configures the input guardrails for the AI service context by setting the provided InputGuardrailsConfig.
++     * <p>
++     *     The configuration set this way applies to every method of the AI service, including methods whose input
++     *     guardrails are declared in an {@link InputGuardrails} annotation.
++     * </p>
+      *
+      * @param inputGuardrailsConfig the configuration object that defines input guardrails for the AI service
+      * @return the current instance of {@link AiServices} to allow method chaining
+@@ -1028,6 +1034,11 @@ public AiServices<T> inputGuardrailsConfig(InputGuardrailsConfig inputGuardrails
+ 
+     /**
+      * Configures the output guardrails for AI services.
++     * <p>
++     *     The configuration set this way applies to every method of the AI service and takes precedence over the
++     *     configuration declared in any {@link OutputGuardrails} annotation on the AI service methods or class, such
++     *     as its {@link OutputGuardrails#maxRetries() maxRetries}.
++     * </p>
+      *
+      * @param outputGuardrailsConfig the configuration object specifying the output guardrails
+      * @return the current instance of {@link AiServices} to allow for method chaining
+@@ -1040,8 +1051,8 @@ public AiServices<T> outputGuardrailsConfig(OutputGuardrailsConfig outputGuardra
+     /**
+      * Configures the input guardrail classes for the AI services.
+      * <p>
+-     *     Configuring this way is exactly the same as using the {@link dev.langchain4j.service.guardrail.InputGuardrails InptputGuardrails}
+-     *     annotation at the class level. Using the annotation takes precedence.
++     *     Input guardrails set this way replace the ones declared in {@link InputGuardrails} annotations, for every
++     *     method of the AI service. See {@link InputGuardrails} for the exact rules.
+      * </p>
+      * <p>
+      *     An input guardrail is a rule that is applied to the input of the model (essentially the user message) to ensure
+@@ -1057,8 +1068,8 @@ public AiServices<T> outputGuardrailsConfig(OutputGuardrailsConfig outputGuardra
+      *     they are listed.
+      * </p>
+      *
+-     * @param guardrailClasses A list of {@link InputGuardrailsConfig} classes, which will be used for input validation.
+-     *                         The list can be {@code null} if no guardrails are to be applied.
++     * @param guardrailClasses A list of {@link InputGuardrail} classes, which will be used for input validation.
++     *                         Can be {@code null}.
+      * @param <I> The type of {@link InputGuardrail}
+      * @return The instance of {@link AiServices} to allow method chaining.
+      */
+@@ -1070,8 +1081,8 @@ public <I extends InputGuardrail> AiServices<T> inputGuardrailClasses(List<Class
+     /**
+      * Configures input guardrail classes for the AI service.
+      * <p>
+-     *     Configuring this way is exactly the same as using the {@link dev.langchain4j.service.guardrail.InputGuardrails InptputGuardrails}
+-     *     annotation at the class level. Using the annotation takes precedence.
++     *     Input guardrails set this way replace the ones declared in {@link InputGuardrails} annotations, for every
++     *     method of the AI service. See {@link InputGuardrails} for the exact rules.
+      * </p>
+      * <p>
+      *     An input guardrail is a rule that is applied to the input of the model (essentially the user message) to ensure
+@@ -1087,8 +1098,8 @@ public <I extends InputGuardrail> AiServices<T> inputGuardrailClasses(List<Class
+      *     they are listed.
+      * </p>
+      *
+-     * @param guardrailClasses A list of {@link InputGuardrail} classes, which
+-     *                         can include {@code null} to indicate no guardrails or optional configurations.
++     * @param guardrailClasses The {@link InputGuardrail} classes, which will be used for input validation.
++     *                         Can be {@code null}.
+      * @param <I> The type of {@link InputGuardrail}
+      * @return the current instance of {@link AiServices} for chaining further configurations.
+      */
+@@ -1100,8 +1111,8 @@ public <I extends InputGuardrail> AiServices<T> inputGuardrailClasses(Class<? ex
+     /**
+      * Sets the input guardrails to be used by the guardrail service builder in the current context.
+      * <p>
+-     *     Configuring this way is exactly the same as us
+```
+
+**File**: `langchain4j/src/main/java/dev/langchain4j/service/guardrail/GuardrailService.java` (modified, +13/-7)
+```diff
+@@ -3,15 +3,15 @@
+ import static dev.langchain4j.internal.CompletableFutureUtils.propagateCancellation;
+ 
+ import dev.langchain4j.Experimental;
+-import dev.langchain4j.exception.AsyncNotSupportedException;
+-import dev.langchain4j.internal.AsyncNotSupported;
+ import dev.langchain4j.data.message.UserMessage;
++import dev.langchain4j.exception.AsyncNotSupportedException;
+ import dev.langchain4j.guardrail.InputGuardrail;
+ import dev.langchain4j.guardrail.InputGuardrailRequest;
+ import dev.langchain4j.guardrail.InputGuardrailResult;
+ import dev.langchain4j.guardrail.OutputGuardrail;
+ import dev.langchain4j.guardrail.OutputGuardrailRequest;
+ import dev.langchain4j.guardrail.OutputGuardrailResult;
++import dev.langchain4j.internal.AsyncNotSupported;
+ import dev.langchain4j.model.chat.response.ChatResponse;
+ import dev.langchain4j.service.guardrail.spi.GuardrailServiceBuilderFactory;
+ import java.lang.reflect.Method;
+@@ -162,7 +162,8 @@ default <MethodKey, T> T executeGuardrails(MethodKey method, OutputGuardrailRequ
+      * @since 1.20.0
+      */
+     @Experimental
+-    default <MethodKey, T> CompletableFuture<T> executeGuardrailsAsync(MethodKey method, OutputGuardrailRequest request) {
++    default <MethodKey, T> CompletableFuture<T> executeGuardrailsAsync(
++            MethodKey method, OutputGuardrailRequest request) {
+         CompletableFuture<OutputGuardrailResult> guardrailFuture = executeOutputGuardrailsAsync(method, request);
+         CompletableFuture<T> result = guardrailFuture.thenApply(r -> r.response(request));
+         propagateCancellation(result, guardrailFuture);
+@@ -307,10 +308,15 @@ default <O extends OutputGuardrail> Builder outputGuardrails(O... guardrails) {
+ 
+         /**
+          * Builds and returns an instance of {@link GuardrailService}.
+-         * This method configures input and output guardrails at the service level
+-         * using the provided class-level or method-level annotations. If no
+-         * method-level annotations are present, it defers to class-level annotations,
+-         * and if those are absent, it uses the settings defined in the builder.
++         * This method configures input and output guardrails for each method of the service.
++         * Guardrails set in the builder take precedence. If none are set, it uses the
++         * method-level annotations, and if those are absent, the class-level annotations.
++         * <p>
++         * The guardrails and their configuration are resolved independently of each other, and separately for input
++         * and output guardrails. Only the first source found is used: guardrails set in the builder, on the method and
++         * on the class are not combined. Guardrails set in the builder count only when there is at least one:
++         * {@code null} or an empty list does not disable the guardrails declared in annotations. Guardrail instances
++         * and guardrail classes set in the builder are both used: the instances first, then the classes.
+          *
+          * @return an instance of {@link GuardrailService} configured with appropriate
+          * input and output guardrails.
+```
+
+**File**: `langchain4j/src/main/java/dev/langchain4j/service/guardrail/GuardrailServiceBuilder.java` (modified, +2/-7)
+```diff
+@@ -25,9 +25,8 @@
+  * mechanisms for an AI service class. This class allows customization of the guardrails through configuration objects,
+  * guardrail classes, or direct instances of guardrails.
+  * <p>
+- * This builder supports setting guardrails via both annotations and explicit configurations in code. Annotations at the
+- * method level take precedence over annotations at the class level, and annotations take precedence over guardrails
+- * configured programmatically in the builder.
++ * This builder supports setting guardrails via both annotations and explicit configurations in code. The order of
++ * precedence is described in {@link Builder#build()}.
+  */
+ final class GuardrailServiceBuilder implements Builder {
+     private final Supplier<InputGuardrailExecutor> defaultInputGuardrailSupplier =
+@@ -173,10 +172,6 @@ public DefaultGuardrailService build() {
+         // Anything set here in this builder is relevant at the AiService level, NOT at the method level
+         // Setting guardrails at the method level can only be done via the annotations
+ 
+-        // Next, compute method-level guardrails based on the annotations
+-        // Go method-by-method, if there are annotations on the method, then use them
+-        // Otherwise use the annotations on the class
+-        // If there aren't any annotations on the class, then use the ones set on this builder
+         var inputGuardrailsByMethod = new HashMap<Object, InputGuardrailExecutor>();
+         var outputGuardrailsByMethod = new HashMap<Object, OutputGuardrailExecutor>();
+         var factory = ClassMetadataProvider.getClassMetadataProviderFactory();
+```
+
+**File**: `langchain4j/src/main/java/dev/langchain4j/service/guardrail/InputGuardrails.java` (modified, +9/-2)
+```diff
+@@ -1,14 +1,15 @@
+ package dev.langchain4j.service.guardrail;
+ 
+ import dev.langchain4j.guardrail.InputGuardrail;
++import dev.langchain4j.service.AiServices;
+ import java.lang.annotation.Documented;
+ import java.lang.annotation.ElementType;
+ import java.lang.annotation.Retention;
+ import java.lang.annotation.RetentionPolicy;
+ import java.lang.annotation.Target;
+ 
+ /**
+- * An annotation to apply input guardrails to the input of the model using the declarative {@link dev.langchain4j.service.AiServices AiServices} approach.
++ * An annotation to apply input guardrails to the input of the model using the declarative {@link AiServices} approach.
+  * <p>
+  *     An input guardrail is a rule that is applied to the input of the model (essentially the user message) to ensure
+  *     that the input is safe and meets the expectations of the model. It does not replace a moderation model, but it can
+@@ -19,7 +20,13 @@
+  *     to the caller, wrapped into a {@link dev.langchain4j.guardrail.GuardrailException GuardrailException}.
+  * </p>
+  * <p>
+- *     If the annotation is present on a class, the guardrails will be applied to all the methods of the class.
++ *     If the annotation is present on a class, the guardrails will be applied to all the methods of the class. An
++ *     annotation on a method takes precedence over one on the class: for that method, it replaces the annotation on
++ *     the class, and the guardrails of the two are not combined. Input guardrails set on the {@link AiServices}
++ *     builder take precedence over both: they replace the guardrails of these annotations, and are not combined with
++ *     them either. Passing {@code null} or an empty list of input guardrails to the builder does not disable these
++ *     annotations. An input guardrails configuration set on the builder applies to every method, including the ones
++ *     whose guardrails come from these annotations.
+  * </p>
+  * <p>
+  *     When several guardrails are applied, the order of the guardrails is important, as the guardrails are applied in the order
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7130** (2026-11-16): CI: run the integration tests of all selected modules when one module fails (@dliubarskyi)
+- **PR #7118** (2026-11-16): Update dependency org.apache.maven.plugins:maven-surefire-plugin to v3.6.1 (@renovate[bot])
 - **PR #7116** (2026-11-13): Renovate: keep io.weaviate:client below 5.6.0 and skip its client6 replacement (@dliubarskyi)
-- **PR #7109** (closed): Document the actual guardrail precedence in Javadoc (@edeandrea)
-- **PR #7105** (2026-11-13): Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.16.0 (@renovate[bot])
-- **PR #7104** (2026-11-13): Update dependency org.apache.logging.log4j:log4j-bom to v2.26.1 (@renovate[bot])
-- **PR #7103** (2026-11-13): Update dependency org.apache.commons:commons-lang3 to v3.22.0 (@renovate[bot])
-- **PR #7102** (2026-11-13): Update dependency net.minidev:json-smart to v2.6.1 (@renovate[bot])
+- **PR #7114** (2026-11-16): Update dependency org.apache.maven.plugins:maven-install-plugin to v3.2.0 (@renovate[bot])
+- **PR #7112** (2026-11-16): Update dependency org.apache.maven.plugins:maven-deploy-plugin to v3.2.0 (@renovate[bot])
+- **PR #7111** (2026-11-16): Update dependency org.apache.maven.plugins:maven-dependency-plugin to v3.11.0 (@renovate[bot])
 
 ---
 
@@ -1179,28 +1484,51 @@ applicable)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Adds Infinispan Chat Memory store
+## X. mcp-docker): restore the interrupt status when execute() is interrupted
 
 **RULE**:
-When implementing operations in `docs/docs/integrations/chat-memory-stores/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-mcp-docker/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4809d33`: Adds Infinispan Chat Memory store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b67c2e2`: mcp-docker): restore the interrupt status when execute() is interrupted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/integrations/chat-memory-stores/index.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-mcp-docker/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-| [Infinispan](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java)                     | ✅           |         |
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!--
+                        DockerResultCallbackTest mocks LoggerFactory statically and relies on the
+                        DockerResultCallback class still being uninitialized when it runs. The default
+                        "filesystem" run order is not deterministic across environments, so any test
+                        that executes DockerMcpTransport.execute() (which instantiates
+                        DockerResultCallback) could run before it and break the mock. Alphabetical
+                        order pins DockerResultCallbackTest (R) before such tests (T).
+                    -->
+                    <runOrder>alphabetical</runOrder>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4809d33` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b67c2e2` are properly handled with clean fallback behavior.
