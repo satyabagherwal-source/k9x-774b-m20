@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T20:52:48.598Z",
+  "timestamp": "2026-11-16T03:37:30.175Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-meshery-meshery-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meshery-meshery-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T20:52:48.598Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T03:37:30.175Z`  
 > **Learning ID**: `LEARN-EVO-meshery-meshery-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meshery-meshery-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `c5d2dbe7`  
+> **Source Version**: `424dd96c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T20:52:09.783Z  
+> **Timestamp**: 2026-11-16T03:37:12.948Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T20:52:09.776Z  
+> **Harvest Timestamp**: 2026-11-16T03:37:12.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12193 stars
+- **Stars / Engagement**: 12209 stars
 
 ---
 
@@ -832,11 +832,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23603** (2026-11-14): **[Docs] Fix breadcrumb accessibility**
-  *Symptoms*: **Notes for Reviewers**  - Fixes #23598. - Render each breadcrumb as an ordered-list item, mark only the current page, and add a keyboard focus outline. Separators are rendered with CSS.  **Validation**  - A Hugo fixture rendered a nested page with home, parent, and current-page items, correct links, and `aria-current` only on the leaf. - Dart Sass compiled the updated stylesheet and produced the focus-visible outline. - The full documentation build was started but remained on Hugo module downloads in the local environment.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.   <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Improvements**   * Breadcrumb navigation is hidden on the home page and displayed as a structured list on other pages. The trail includes a home link, shows the current page as active, and uses angled separators between items.   * Breadcrumb items wrap onto additional lines when needed. Breadcrumb links also display a visible outline when focused using a keyboard, improving visibility during navigation. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #23705** (2026-11-15): **[mesheryctl] Preserve followed Kubernetes log lines**
+  *Symptoms*: Buffer the Kubernetes log stream across reads, emitting complete lines and the final unterminated line at EOF.  Fixes #23704  Test: go test ./internal/cli/root/system -run TestPrintLogStreamPreservesLinesAcrossReads -count=1  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Kubernetes logs in follow mode now display complete lines consistently, even when log data arrives in multiple chunks.   * Any final log content without a trailing newline is also shown, with the pod name and a newline for clear formatting. Non-follow Kubernetes logs and Docker log output remain unchanged.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #23601** (2026-11-14): **[mesheryctl] Make ForceCleanupCluster best-effort and idempotent**
-  *Symptoms*: ## Summary  `utils.ForceCleanupCluster` is the Kubernetes half of `mesheryctl system uninstall`: it removes the Deployments, Services, StatefulSets, (Cluster)RoleBindings, (Cluster)Roles, ServiceAccounts, Secrets and ConfigMaps Meshery left behind. Today it behaves in a way that makes repeated uninstall unreliable:  - It **aborts on the first failure**. Every one of the nine `List` calls `return err` immediately, so a single failing kind leaves every later kind in place. - It **aborts on the first `List` error even when nothing was deleted**, so the caller cannot distinguish "nothing to clean" from "cleanup stopped early". - Individual `Delete` failures are only `log.Debug`-ed and then **silently dropped**, so the command reports success while resources remain. - It treats an **already-absent resource as a failure**, so re-running uninstall (or uninstalling after a partial failure) can never converge.  This PR makes cleanup best-effort and idempotent, which is the prerequisite for `system uninstall --force` being able to report real state instead of an early return.  ### What changed  `mesheryctl/pkg/utils/platform.go` (+197/−100)  - `ForceCleanupCluster()` keeps its signature and its kube-client construction, then delegates to a new `cleanupCluster(kube kubernetes.Interface) error`. Splitting the body out of the client construction is what makes the cleanup logic reachable from a fake clientset. - `cleanupCluster` attempts **every** resource kind. List failures are recorded 
+- **Issue #23704** (2026-11-15): **[mesheryctl] Followed Kubernetes logs split lines at stream read boundaries**
+  *Symptoms*: In `mesheryctl system logs --follow`, each arbitrary stream read is printed separately. A line such as `hello world` delivered in two reads can be printed as two separate log lines. A line larger than the read buffer is also split.  Expected: buffer across reads and print complete lines, retaining any final unterminated line when the stream ends.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -853,452 +853,362 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9006fc05` (2026-11-14)
-**Commit Message**: fix(docs): keep breadcrumb trail on one row with spaced separators
+### Incident Patch 1: `44f1ee38` (2026-11-16)
+**Commit Message**: Merge pull request #23699 from antcybersec/fix/dashboard-selects-accessible-name
 
-The global ul, ol rule in _elements.scss sets flex-direction: column,
-so the new per-crumb list items stacked one per line. Restore the
-horizontal trail with wrapping, and give the CSS-generated slash
-separator breathing room to match the previous spaced rendering.
+[UI] Add accessible names to Dashboard Workload and HoneyComb dropdowns
 
-Signed-off-by: Mia Grenell <[REDACTED_EMAIL]>
-
-**File**: `docs/assets/scss/_layout.scss` (modified, +3/-0)
+**File**: `ui/components/dashboard/charts/WorkloadChart.test.tsx` (modified, +4/-0)
 ```diff
-@@ -133,8 +133,11 @@ ol {
-   & #breadcrumbs {
-     font-size: .9rem;
-     line-height: 1.15rem;
-+    flex-direction: row;
-+    flex-wrap: wrap;
-     & .breadcrumb-item + .breadcrumb-item::before {
-       content: "/";
-+      padding: 0 .25rem;
-     }
-     & a {
-       color: var(--color-grey-dark);
+@@ -54,13 +54,16 @@ vi.mock('@sistent/sistent', () => ({
+     children,
+     value,
+     onChange,
++    inputProps,
+   }: {
+     children?: React.ReactNode;
+     value?: string;
+     onChange?: (event: { target: { value: string } }) => void;
++    inputProps?: { 'aria-label'?: string };
+   }) => (
+     <select
+       data-testid="namespace-select"
++      aria-label={inputProps?.['aria-label']}
+       value={value}
+       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
+     >
+@@ -136,6 +139,7 @@ describe('WorkloadChart', () => {
+     );
+     const select = screen.getByTestId('namespace-select');
+     expect(select).toBeInTheDocument();
++    expect(screen.getByRole('combobox', { name: 'Namespace' })).toBeInTheDocument();
+     fireEvent.change(select, { target: { value: 'kube-system' } });
+     expect(handleSetNamespace).toHaveBeenCalledWith('kube-system');
+   });
+```
+
+**File**: `ui/components/dashboard/charts/WorkloadChart.tsx` (modified, +1/-0)
+```diff
+@@ -99,6 +99,7 @@ export default function WorkloadChart({
+           <Select
+             value={selectedNamespace}
+             onChange={(event) => handleSetNamespace(event.target.value)}
++            inputProps={{ 'aria-label': 'Namespace' }}
+           >
+             {(namespaces || []).map((ns) => (
+               <MenuItem key={ns} value={ns}>
+```
+
+**File**: `ui/components/dashboard/widgets/HoneyComb/HoneyCombComponent.test.tsx` (modified, +4/-0)
+```diff
+@@ -107,13 +107,16 @@ vi.mock('@sistent/sistent', () => ({
+     children,
+     value,
+     onChange,
++    inputProps,
+   }: {
+     children?: React.ReactNode;
+     value?: string;
+     onChange?: (event: { target: { value: string } }) => void;
++    inputProps?: { 'aria-label'?: string };
+   }) => (
+     <select
+       data-testid="group-select"
++      aria-label={inputProps?.['aria-label']}
+       value={value}
+       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
+     >
+@@ -177,6 +180,7 @@ describe('HoneycombComponent', () => {
+   it('renders the group-by select with the documented options', () => {
+     render(<HoneycombComponent kinds={[{ kind: 'Pod', count: 1 }]} />);
+     expect(screen.getByTestId('group-select')).toBeInTheDocument();
++    expect(screen.getByRole('combobox', { name: 'Group by' })).toBeInTheDocument();
+     expect(screen.getByRole('option', { name: 'All Resources' })).toBeInTheDocument();
+     expect(screen.getByRole('option', { name: 'Workload' })).toBeInTheDocument();
+   });
+```
+
+**File**: `ui/components/dashboard/widgets/HoneyComb/HoneyCombComponent.tsx` (modified, +6/-1)
+```diff
+@@ -125,7 +125,12 @@ const HoneycombComponent = ({
+             Cluster Resource Overview
+           </Typography>
+           <ControlsContainer>
+-            <Select value={groupBy} onChange={handleGroupChange} variant="standard">
++            <Select
++              value={groupBy}
++              onChange={handleGroupChange}
++              variant="standard"
++              inputProps={{ 'aria-label': 'Group by' }}
++            >
+               {groupOptions.map((option) => (
+                 <MenuItem key={option.value} value={option.value}>
+                   {option.label}
 ```
 
 ---
 
-### Incident Patch 2: `7533d1f0` (2026-11-14)
-**Commit Message**: fixed linter error and other failing tests
+### Incident Patch 2: `d7ead8e6` (2026-11-15)
+**Commit Message**: Merge branch 'master' into fix/dashboard-selects-accessible-name
 
-Signed-off-by: Rabia Ghafoor <[REDACTED_EMAIL]>
-
-**File**: `docs/content/en/reference/extensibility/providers/index.md` (modified, +1/-1)
+**File**: `mesheryctl/internal/cli/root/design/import.go` (modified, +13/-0)
 ```diff
-@@ -549,7 +549,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
- #### Meshery Server Registration
+@@ -17,8 +17,11 @@ package design
+ import (
+ 	"bytes"
+ 	"encoding/json"
++	"fmt"
+ 	"io"
++	"net/url"
+ 	"os"
++	"path"
+ 	"path/filepath"
  
- Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
--On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
-+On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely identify Meshery server and its status.
- 
- Example of the request body. The `id` is the zero UUID serialized for the unset connection ID; the Meshery server ID is in `metadata.serverId`:
- 
+ 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+@@ -136,6 +139,16 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
+ 	// use file name as default
+ 	var patternName string
+ 	fileName := filepath.Base(file)
++	if utils.IsValidUrl(file) {
++		parsed, err := url.Parse(file)
++		if err != nil {
++			return nil, utils.ErrParsingUrl(err)
++		}
++		fileName = path.Base(parsed.Path)
++		if name == "" && (fileName == "." || fileName == "/") {
++			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
++		}
++	}
+ 	if name == "" {
+ 		patternName = fileName
+ 	} else {
 ```
 
-**File**: `docs/content/en/reference/graphql-apis.md` (modified, +5/-5)
+**File**: `mesheryctl/internal/cli/root/design/import_test.go` (modified, +35/-0)
 ```diff
-@@ -137,7 +137,7 @@ Query details about Addons available (Eg. Prometheus and Grafana).
- 
- ### `Query.getAvailableNamespaces`
- 
--Query available Namesapces in your cluster.
-+Query available Namespaces in your cluster.
- 
- ###### **Returns** [`[NameSpace!]!`](#namespace).
- 
-@@ -362,7 +362,7 @@ Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster
- 
- ### `Subscription.listenToMeshSyncEvents`
- 
--Listen to changes in the list of available Namesapces in your cluster.
-+Listen to changes in the list of available Namespaces in your cluster.
- 
- ###### **Returns** [`OperatorControllerStatusPerK8sContext`](#operatorcontrollerstatusperk8scontext).
- 
-@@ -881,7 +881,7 @@ Status of Meshery Operator and its controllers.
- | <a id="operatorstatuscontrollers"></a>`controllers` | [`[OperatorControllerStatus!]!`](#operatorcontrollerstatus) | Details about various Controllers of Meshery Operator. |
- | <a id="operatorstatuserror"></a>`error` | [`Error`](#error) | Error Logs encountered by Meshery Operator. |
- | <a id="operatorstatusstatus"></a>`status` | [`Status!`](#status) | Status of Meshery Operator. |
--| <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Verion of Meshery Operator. |
-+| <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Version of Meshery Operator. |
- 
- ### `OperatorStatusPerK8sContext`
- 
-@@ -973,7 +973,7 @@ Status of Meshery Operator and its controllers.
- 
- | Name | Type | Description |
- | ---- | ---- | ----------- |
--| <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resouce. |
-+| <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resource. |
- | <a id="resourcekind"></a>`kind` | [`String!`](#string) | Name of resource. |
- 
- ### `TelemetryComp`
-@@ -1096,7 +1096,7 @@ Input for changing Addon Status.
- | Name | Type | Description |
- | ---- | ---- | ----------- |
- | <a id="addonstatusinputk8scontextid"></a>`k8scontextID` | [`String!`](#string) | kubernetes context ID. |
--| <a id="addonstatusinputselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Serice Mesh. |
-+| <a id="addonstatusinputselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Service Mesh. |
- | <a id="addonstatusinputtargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired Status. |
- 
- ### `CatalogSelector`
-```
-
-**File**: `docs/content/en/reference/meshery-operator-crds.md` (modified, +2/-2)
-```diff
-@@ -148,12 +148,12 @@ The following section outlines the fields and their descriptions
-         Events   []string
-       ]
-       ```
--      The string should be json enconded for example
-+      The string should be json encoded for example
-       ```yaml
-       '[{"Resource":"namespaces.v1.","Events":["ADDED","MODIFIED","DELETED"]}]'
-       ```
-     - **blacklist**:
--      Alternatively one can use the blacklist field to define resources that should be ingored by MeshSync. The resources and their respective events will not be tracked.
-+      Alternatively one can use the blacklist field to define resources that should be ignored by MeshSync. The resources and their respective events will not be tracked.
-       The blacklist is an array of resources of the format **_resource.version.group_** format
-       ```yaml
-       '["namespaces.v1.","configmaps.v1."]'
-```
-
-**File**: `docs/content/en/reference/mesheryctl/environment/delete.md` (modified, +2/-2)
-```diff
-@@ -19,15 +19,15 @@ Delete an environment by providing the environment ID
- <pre class='codeblock-pre'>
- <div class='codeblock'>
- <div class='clipboardjs'>
--mesheryctl environment delete [flags]
-+mesheryctl environment delete [environmentId] [flags]
- 
- </div>
- </div>
- </pre> 
- 
- ## Examples
- 
--delete a new environment
-+Delete an environment by ID
- <pre class='codeblock-pre'>
- <div class='codeblock'>
- <div class='clipboardjs'>
-```
-
-**File**: `docs/content/en/reference/mesheryctl/filter/view.md` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ mesheryctl filter view [flags]
- ## Examples
- 
- View the specified WASM filter
--A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
-+Provide a full filter name or a unique ID prefix.
- <pre class='codeblock-pre'>
- <div class='codeblock'>
- <div class='clipboardjs'>
-```
-
-**File**: `docs/data/errorindex/meshery-server_errors_index.json` (modified, +10/-10)
-```diff
-@@ -2596,7 +2596,7 @@
-       },
-       "numericCode": "1160",
-       "severity": "alert",
--      "shortDescription": "Unable to create rest config from kube congif"
-+      "shortDescription": "Unable to create rest config from kube config"
-     },
-     {
-       "code": "meshery-server-1161",
-@@ -3220,7 +3220,7 @@
-       },
-       "numericCode": "1198",
-       "severity": "alert",
--      "shortDescription": "failed to find the resource. invalid resource type. resource doens't exists",
-+      "shortDescription": "failed to find the resource. invalid resource type. resource doesn't exist",
-       "longDescription": "invalid kubernetes resource type or couldn't find the specified resource"
-     },
-     {
-@@ -3382,7 +3382,7 @@
-         "The machine context has become invalid."
-       ],
-       "suggestedRemediation": [
--        "Retry the opereation or try archiving and reinitializing the connection"
-+        "Retry the operation or try archiving and reinitializing the connection"
-       ]
-     },
-     {
-@@ -3450,7 +3450,7 @@
-       },
-       "numericCode": "1222",
-       "severity": "alert",
--      "shortDescription": "Unable to prase the Page Numer"
-+      "shortDescription": "Unable to parse the Page Number"
-     },
-     {
-       "code": "meshery-server-1223",
-@@ -3473,7 +3473,7 @@
-       },
-       "numericCode": "1224",
-       "severity": "alert",
--      "shortDescription": "Invalid peformance profile ID"
-+      "shortDescription": "Invalid performance profile ID"
-     },
-     {
-       "code": "meshery-server-1225",
-@@ -4056,13 +4056,13 @@
-       "numericCode": "1273",
-       "severity": "alert",
-       "shortDescription": "Capability is not supported by your Provider",
--      "longDescription": "You dont have access to the capability",
-+      "longDescription": "You don't have access to the capability",
-       "probableCause": [
--        "Not logged in to the vaild remote Provider"
-+        "Not logged in to the valid remote Provider"
-       ],
-       "suggestedRemediation": [
--        "Connect to the vaild remote Provider",
--        "Ask the Provider Adim for access"
-+        "Connect to the valid remote Provider",
-+        "Ask the Provider Admin for access"
-       ]
-     },
-     {
-@@ -5525,7 +5525,7 @@
-       },
-       "numericCode": "1370",
-       "severity": "alert",
--      "shortDescription": "Error in meshsync data hadler",
-+      "shortDescription": "Error in meshsync data handler",
-       "probableCause": [
-         "not deployed operator",
-         "issue with connection to broker"
-```
-
-**File**: `docs/data/errorindex/mesheryctl_errors_index.json` (modified, +20/-3)
-```diff
-@@ -776,7 +776,7 @@
-       "severity": "alert",
-       "shortDescription": "Failed to unmarshal configuration file",
-       "probableCause": [
--        "Unable to covert JSON format from yml file"
-+        "Unable to convert JSON format from yml file"
-       ],
-       "suggestedRemediation": [
-         "Ensure a valid data is provided in your yml file"
-@@ -1207,7 +1207,7 @@
-       "shortDescription": "Failed to get a free port",
-       "longDescription": "Failed to start port-forwarding",
-       "probableCause": [
--        "Unable to provide a free port to connect to a kuberentes cluster"
-+        "Unable to provide a free port to connect to a kubernetes cluster"
-       ],
-       "suggestedRemediation": [
-         "Ensure your Meshery Server is running,",
-@@ -1290,7 +1290,7 @@
-       },
-       "numericCode": "1082",
-       "severity": "alert",
--      "shortDescription": "Unable to exectute command",
-+      "shortDescription": "Unable to execute command",
-       "longDescription": "Channel switch aborted",
-       "probableCause": [
-         "No user response provided"
-@@ -4089,6 +4089,23 @@
-       "suggestedRemediation": [
-         "Provide the full ID instead of a short prefix, or retry the command."
-       ]
-+    },
-+    {
-+      "code": "mesheryctl-1263",
-+      "moniker": "ErrRedirectChangesMethodCode",
-+      "component": {
-+        "name": "mesheryctl",
-+        "type": "client"
-+      },
-+      "numericCode": "1263",
-+      "severity": "alert",
-+      "shortDescription": "Redirect would change the request method",
-+      "probableCause": [
-+        "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"
-+      ],
-+      "suggestedRemediation": [
-+        "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
-+      ]
-     }
-   ],
-   "schemaVersion": 2
-```
-
-**File**: `docs/data/errorref/meshery-server_errors_export.json` (modified, +9/-9)
-```diff
-@@ -1412,7 +1412,7 @@
-         "code": "1160",
-         "severity": "Alert",
-         "long_description": "",
--        "short_description": "Unable to create rest config from kube congif",
-+        "short_description": "Unable to create rest config from kube config",
-         "probable_cause": "",
-         "suggested_remediation": ""
-       },
-@@ -1754,7 +1754,7 @@
-         "code": "1198",
-         "severity": "Alert",
-         "long_description": "invalid kubernetes resource type or couldn't find the specified resource",
--        "short_description": "failed to find the resource\ninvalid resource type\nresource doens't exists",
-+        "short_description": "failed to find the resource\ninvalid resource type\nresource doesn't exist",
-         "probable_cause": "",
-         "suggested_remediation": ""
-       },
-@@ -1855,7 +1855,7 @@
-         "long_description": "",
-         "short_description": "type assertion of context to *kubernetes.MachineCtx failed",
-         "probable_cause": "The machine context has become invalid.",
--        "suggested_remediation": "Retry the opereation or try archiving and reinitializing the connection"
-+        "suggested_remediation": "Retry the operation or try archiving and reinitializing the connection"
-       },
-       "1218": {
-         "name": "ErrInvalidTypeCode",
-@@ -1898,7 +1898,7 @@
-         "code": "1222",
-         "severity": "Alert",
-         "long_description": "",
--        "short_description": "Unable to prase the Page Numer",
-+        "short_description": "Unable to parse the Page Number",
-         "probable_cause": "",
-         "suggested_remediation": ""
-       },
-@@ -1916,7 +1916,7 @@
-         "code": "1224",
-         "severity": "Alert",
-         "long_description": "",
--        "short_description": "Invalid peformance profile ID",
-+        "short_description": "Invalid performance profile ID",
-         "probable_cause": "",
-         "suggested_remediation": ""
-       },
-@@ -2356,10 +2356,10 @@
-         "name": "ErrInvalidCapabilityCode",
-         "code": "1273",
-         "severity": "Alert",
--        "long_description": "You dont have access to the capability",
-+        "long_description": "You don't have access to the capability",
-         "short_description": "Capability is not supported by your Provider",
--        "probable_cause": "Not logged in to the vaild remote Provider",
--        "suggested_remediation": "Connect to the vaild remote Provider\nAsk the Provider Adim for access"
-+        "probable_cause": "Not logged in to the valid remote Provider",
-+        "suggested_remediation": "Connect to the valid remote Provider\nAsk the Provider Admin for access"
-       },
-       "1274": {
-         "name": "ErrResultDataCode",
-@@ -3271,7 +3271,7 @@
-         "code": "1370",
-         "severity": "Alert",
-         "long_description": "",
--        "short_description": "Error in meshsync data hadler",
-+        "short_description": "Error in meshsync data handler",
-         "probable_cause": "not deployed operator\nissue with connection to broker",
-         "suggested_remediation": "check that operator is deployed\ncheck that server can establish connection to broker"
-       },
-```
-
----
-
-### Incident Patch 3: `c5d2dbe7` (2026-11-14)
-**Commit Message**: Merge pull request #23603 from 0xmaster7/fix/docs-breadcrumb-accessibility
-
-[Docs] Fix breadcrumb accessibility
-
-**File**: `docs/assets/scss/_layout.scss` (modified, +19/-0)
-```diff
-@@ -133,12 +133,31 @@ ol {
-   & #breadcrumbs {
-     font-size: .9rem;
-     line-height: 1.15rem;
-+    flex-direction: row;
-+    flex-wrap: wrap;
-+    align-items: center;
-+    & .breadcrumb-item {
-+      display: inline-flex;
-+      align-items: center;
-+    }
-+    & .breadcrumb-item + .breadcrumb-item::before {
-+      content: "";
-+      display: inline-block;
-+      margin: 0 .35rem;
-+      transform: rotate(15deg);
-+      border-right: 1.5px solid var(--color-grey-dark);
-+      height: .75rem;
-+    }
-     & a {
-       color: var(--color-grey-dark);
-       transition: all 0.3s;
-       &:hover {
-         color: var(--color-secondary-dark);
-       }
-+      &:focus-visible {
-+        outline: 2px solid var(--color-secondary-dark);
-+        outline-offset: 2px;
-+      }
-     }
-   }
+@@ -213,3 +213,38 @@ func mapKeys(m map[string]interface{}) []string {
+ 	}
+ 	return keys
  }
++
++func TestImportPatternURLDefaultNameExcludesQuery(t *testing.T) {
++	testContext := utils.InitTestEnvironment(t)
++	_ = utils.SetupMeshkitLoggerTesting(t, false)
++	defer utils.StopMockery(t)
++	defer resetVariables()
++	utils.TokenFlag = utils.GetToken(t)
++	var captured map[string]interface{}
++	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
++		if err := json.NewDecoder(req.Body).Decode(&captured); err != nil {
++			return nil, err
++		}
++		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"sample"}]`), nil
++	})
++	_, err := importPattern("", "https://example.com/design.yaml?token=secret#fragment", testContext.BaseURL+"/api/pattern/import")
++	if err != nil {
++		t.Fatal(err)
++	}
++	assert.Equal(t, "design.yaml", captured["name"])
++	assert.Equal(t, "https://example.com/design.yaml?token=secret#fragment", captured["url"])
++}
++
++func TestImportPatternURLWithoutPathNameRequiresNameFlag(t *testing.T) {
++	testContext := utils.InitTestEnvironment(t)
++	_ = utils.SetupMeshkitLoggerTesting(t, false)
++	defer utils.StopMockery(t)
++	defer resetVariables()
++	utils.TokenFlag = utils.GetToken(t)
++	oldName := name
++	name = ""
++	defer func() { name = oldName }()
++	_, err := importPattern("", "https://example.com?token=secret", testContext.BaseURL+"/api/pattern/import")
++	assert.Error(t, err)
++	assert.Contains(t, err.Error(), "--name")
++}
 ```
 
-**File**: `docs/layouts/_default/baseof.html` (modified, +4/-4)
+**File**: `mesheryctl/internal/cli/root/system/log_stream_test.go` (added, +20/-0)
 ```diff
-@@ -78,13 +78,13 @@
-       </div>
+@@ -0,0 +1,20 @@
++package system
++
++import (
++	"io"
++	"strings"
++	"testing"
++
++	"github.com/meshery/meshery/mesheryctl/pkg/utils"
++)
++
++func TestPrintLogStreamPreservesLinesAcrossReads(t *testing.T) {
++	b := utils.SetupMeshkitLoggerTesting(t, false)
++	reader := io.MultiReader(strings.NewReader("hello "), strings.NewReader("world\nlast"))
++	if err := printLogStream(reader, "pod"); err != nil {
++		t.Fatal(err)
++	}
++	if got, want := b.String(), "pod\t|\thello world\npod\t|\tlast\n"; got != want {
++		t.Fatalf("got %q want %q", got, want)
++	}
++}
+```
+
+**File**: `mesheryctl/internal/cli/root/system/logs.go` (modified, +20/-16)
+```diff
+@@ -15,6 +15,7 @@
+ package system
  
-       <main class="main-container{{ block "main_class" . }}{{ end }}" role="main">
-+        {{ if not .IsHome }}
-         <nav aria-label="breadcrumb">
--          <ol class="breadcrumb spb-1">
--            <li class="breadcrumb-item active" aria-current="page">
--              {{ partial "breadcrumbs.html" . }}
--            </li>
-+          <ol id="breadcrumbs" class="breadcrumb spb-1">
-+            {{ partial "breadcrumbs.html" . }}
-           </ol>
-         </nav>
-+        {{ end }}
-         <div class="td-content{{ block "td_content_class" . }}{{ end }}">
-           {{ if ne (.Params.display_title | default true) false }}
-             <h1>{{ .Title }}</h1>
+ import (
++	"bufio"
+ 	"context"
+ 	"fmt"
+ 	"io"
+@@ -53,14 +54,29 @@ func printLogs(logs string, podName string) {
+ 	}
+ }
+ 
++// printLogStream buffers across reads so a stream read boundary does not split a log line.
++func printLogStream(stream io.Reader, podName string) error {
++	reader := bufio.NewReader(stream)
++	for {
++		line, err := reader.ReadString('\n')
++		if len(line) > 0 {
++			printLogs(strings.TrimSuffix(line, "\n"), podName)
++		}
++		if err == io.EOF {
++			return nil
++		}
++		if err != nil {
++			return err
++		}
++	}
++}
++
+ type cmdSystemLogsFlags struct {
+ 	Follow bool `json:"follow" validate:"boolean"`
+ }
+ 
+ var systemLogsFlags cmdSystemLogsFlags
+ 
+-const BYTE_SIZE = 2000
+-
+ // logsCmd represents the logs command
+ var logsCmd = &cobra.Command{
+ 	Use:   "logs",
+@@ -240,20 +256,8 @@ mesheryctl system logs meshery-istio
+ 						go func(stream io.ReadCloser, podName string) {
+ 							defer wg.Done()
+ 							defer func() { _ = stream.Close() }()
+-							buf := make([]byte, BYTE_SIZE)
+-							for {
+-								numBytes, err := stream.Read(buf)
+-								if numBytes > 0 {
+-									logBuf := buf[0:numBytes]
+-									printLogs(string(logBuf), podName)
+-								}
+-								if err == io.EOF {
+-									break
+-								}
+-								if err != nil {
+-									utils.Log.Errorf("error occurred while processing logs %v", err)
+-									break
+-								}
++							if err := printLogStream(stream, podName); err != nil {
++								utils.Log.Errorf("error occurred while processing logs %v", err)
+ 							}
+ 						}(logs, name)
+ 					}
 ```
 
-**File**: `docs/layouts/partials/breadcrumbs.html` (modified, +6/-10)
+---
+
+### Incident Patch 3: `a871123d` (2026-11-15)
+**Commit Message**: Merge pull request #23703 from 0xmaster7/fix/design-import-url-name
+
+[mesheryctl] Exclude URL query from imported design name
+
+**File**: `mesheryctl/internal/cli/root/design/import.go` (modified, +13/-0)
 ```diff
-@@ -1,11 +1,7 @@
--<div id="breadcrumbs">
--  {{ if not .IsHome }}
--    <a href="{{ "" | relURL }}">home</a>
--    {{ range .Ancestors.Reverse }}
--      {{ if ne . $.Site.Home }}
--        / <a href="{{ .RelPermalink }}">{{ lower .LinkTitle }}</a>
--      {{ end }}
--    {{ end }}
--    / {{ lower .Page.Title }}
-+<li class="breadcrumb-item"><a href="{{ "" | relURL }}">home</a></li>
-+{{ range .Ancestors.Reverse }}
-+  {{ if ne . $.Site.Home }}
-+    <li class="breadcrumb-item"><a href="{{ .RelPermalink }}">{{ lower .LinkTitle }}</a></li>
-   {{ end }}
--</div>
-+{{ end }}
-+<li class="breadcrumb-item active" aria-current="page">{{ lower .Page.Title }}</li>
+@@ -17,8 +17,11 @@ package design
+ import (
+ 	"bytes"
+ 	"encoding/json"
++	"fmt"
+ 	"io"
++	"net/url"
+ 	"os"
++	"path"
+ 	"path/filepath"
+ 
+ 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+@@ -136,6 +139,16 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
+ 	// use file name as default
+ 	var patternName string
+ 	fileName := filepath.Base(file)
++	if utils.IsValidUrl(file) {
++		parsed, err := url.Parse(file)
++		if err != nil {
++			return nil, utils.ErrParsingUrl(err)
++		}
++		fileName = path.Base(parsed.Path)
++		if name == "" && (fileName == "." || fileName == "/") {
++			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
++		}
++	}
+ 	if name == "" {
+ 		patternName = fileName
+ 	} else {
+```
+
+**File**: `mesheryctl/internal/cli/root/design/import_test.go` (modified, +35/-0)
+```diff
+@@ -213,3 +213,38 @@ func mapKeys(m map[string]interface{}) []string {
+ 	}
+ 	return keys
+ }
++
++func TestImportPatternURLDefaultNameExcludesQuery(t *testing.T) {
++	testContext := utils.InitTestEnvironment(t)
++	_ = utils.SetupMeshkitLoggerTesting(t, false)
++	defer utils.StopMockery(t)
++	defer resetVariables()
++	utils.TokenFlag = utils.GetToken(t)
++	var captured map[string]interface{}
++	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
++		if err := json.NewDecoder(req.Body).Decode(&captured); err != nil {
++			return nil, err
++		}
++		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"sample"}]`), nil
++	})
++	_, err := importPattern("", "https://example.com/design.yaml?token=secret#fragment", testContext.BaseURL+"/api/pattern/import")
++	if err != nil {
++		t.Fatal(err)
++	}
++	assert.Equal(t, "design.yaml", captured["name"])
++	assert.Equal(t, "https://example.com/design.yaml?token=secret#fragment", captured["url"])
++}
++
++func TestImportPatternURLWithoutPathNameRequiresNameFlag(t *testing.T) {
++	testContext := utils.InitTestEnvironment(t)
++	_ = utils.SetupMeshkitLoggerTesting(t, false)
++	defer utils.StopMockery(t)
++	defer resetVariables()
++	utils.TokenFlag = utils.GetToken(t)
++	oldName := name
++	name = ""
++	defer func() { name = oldName }()
++	_, err := importPattern("", "https://example.com?token=secret", testContext.BaseURL+"/api/pattern/import")
++	assert.Error(t, err)
++	assert.Contains(t, err.Error(), "--name")
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23603** (2026-11-14): [Docs] Fix breadcrumb accessibility (@0xmaster7)
-- **PR #23601** (2026-11-14): [mesheryctl] Make ForceCleanupCluster best-effort and idempotent (@AnimeshPriyanshu)
-- **PR #23600** (2026-11-14): [Server] Return the saved filters from POST /api/filter (@antcybersec)
-- **PR #23591** (closed): [mesheryctl] Resolve filter view names by whole name (@VimalN2005)
-- **PR #23590** (2026-11-14): [UI] List every connection of an environment in the deployment target picker (@ChackoPAbraham19)
-- **PR #23589** (2026-11-14): [Server] Bound request body size and guard against DoS in ValidationHandler (@Supersaiyan101)
+- **PR #23705** (2026-11-15): [mesheryctl] Preserve followed Kubernetes log lines (@0xmaster7)
+- **PR #23703** (2026-11-15): [mesheryctl] Exclude URL query from imported design name (@0xmaster7)
+- **PR #23699** (2026-11-16): [UI] Add accessible names to Dashboard Workload and HoneyComb dropdowns (@antcybersec)
+- **PR #23697** (2026-11-15): [Server] Test undecodable provider response in filter save handler (@antcybersec)
+- **PR #23691** (2026-11-15): [Docs] Remove Bitcask from Meshery database docs (@Asheesh7298)
+- **PR #23688** (2026-11-15): [Server] Return 404 for a design that does not exist (@himanishpuri)
 
 ---
 
@@ -1318,23 +1228,24 @@ Signed-off-by: Rabia Ghafoor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): keep breadcrumb trail on one row with spaced separators
+## X. Empirical Invariant Guard in WorkloadChart.test.tsx
 
 **RULE**:
-When implementing operations in `docs/assets/scss/_layout.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/components/dashboard/charts/WorkloadChart.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9006fc05`: docs): keep breadcrumb trail on one row with spaced separators. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44f1ee38`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/assets/scss/_layout.scss`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/dashboard/charts/WorkloadChart.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    flex-direction: row;
-    flex-wrap: wrap;
-      padding: 0 .25rem;
+    inputProps,
+    inputProps?: { 'aria-label'?: string };
+      aria-label={inputProps?.['aria-label']}
+    expect(screen.getByRole('combobox', { name: 'Namespace' })).toBeInTheDocument();
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1344,7 +1255,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9006fc05` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44f1ee38` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

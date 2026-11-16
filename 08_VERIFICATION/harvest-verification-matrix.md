@@ -10225,3 +10225,6 @@
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T03:06:56.756Z` | `matthart1983-netwatch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-78B796D1` [Domain H] | Yes (`650f6fa2...`) |
 | `CYCLE-20261116-7YQB` | `2026-11-16T03:23:18.035Z` | `CrawlCove/robots-txt-tester` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8690` | Yes (`21c31f05...`) |
 | `CYCLE-20261116-829F` | `2026-11-16T03:23:22.611Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`14716995...`) |
+| `CYCLE-20261116-PMLB` | `2026-11-16T03:37:02.111Z` | `baidu/ERNIE-5.5-Flash-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | Yes (`989f221e...`) |
+| `CYCLE-20261116-PVLX` | `2026-11-16T03:37:13.797Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8699` | Yes (`f7644d78...`) |
+| `CYCLE-20261116-Q5I3` | `2026-11-16T03:37:26.619Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8700` | Yes (`71005b99...`) |

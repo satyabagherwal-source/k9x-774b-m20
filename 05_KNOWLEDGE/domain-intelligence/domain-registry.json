@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T03:23:27.902Z",
-  "total_records": 1207,
+  "last_updated": "2026-11-16T03:37:30.954Z",
+  "total_records": 1211,
   "domains": {
     "A": {
       "total": 7,
@@ -39,7 +39,7 @@
       ]
     },
     "D": {
-      "total": 573,
+      "total": 575,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -613,7 +613,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
         "DOM-D-E52861DE",
         "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-base-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv"
       ]
     },
     "E": {
@@ -872,7 +874,7 @@
       ]
     },
     "H": {
-      "total": 250,
+      "total": 252,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1123,7 +1125,9 @@
         "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
         "DOM-H-78B796D1",
-        "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7304,8 +7308,8 @@
       "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
       "repository": "meshery/meshery",
-      "content_hash": "17dced8963c740887c55796469d05ccd1ba8a6c308b0006bec2016b5dca8968c",
-      "created_at": "2026-11-14T20:52:11.145Z"
+      "content_hash": "da9e72d31601aee0ff1aecd405c842566c5197d7aa3731fb9385480358d16e11",
+      "created_at": "2026-11-16T03:37:14.085Z"
     },
     "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
@@ -7382,8 +7386,8 @@
       "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-learnings-technical-construction-intelligence-meshery-meshery-le.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "14e8fe754d40b5f1c4bb047ff4d1db25120a9bdd1414a437e97835275c873d69",
-      "created_at": "2026-11-14T20:52:48.840Z"
+      "content_hash": "93106c1bd066e1c0cde5ac1ec8dee2b079775ae88d372358abbb0fa7924bee27",
+      "created_at": "2026-11-16T03:37:30.379Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -22450,6 +22454,42 @@
       "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
       "content_hash": "4e8500a4b5a5d5feae591ca9ac9818b5261817171abac8b1e75b8eff4589093f",
       "created_at": "2026-11-16T03:23:26.717Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-base-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-base-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: baidu/ERNIE-5.5-Flash-Base Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-base-research-knowledge-intelligence-baidu-ernie-5-5-fl.md",
+      "repository": "baidu/ERNIE-5.5-Flash-Base",
+      "content_hash": "a549fede377491f9c5162262764e3f490fa57c307a6a29c0442775f11390d748",
+      "created_at": "2026-11-16T03:37:02.282Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
+      "repository": "ytsaurus/ytsaurus",
+      "content_hash": "a9238ad413de2801766cefdba176ff6b8de7889aad3e07b0e3bc640b08157693",
+      "created_at": "2026-11-16T03:37:26.899Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-baidu-ernie-5.5-flash-base-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-base-learnings-research-knowledge-intelligence-hf-baidu.md",
+      "repository": "hf-baidu-ernie-5.5-flash-base-learnings",
+      "content_hash": "4a61ff7ed2d04a82859ed70b5fe1397faa4115a8b2a8a25ffb76000f9cf7fa66",
+      "created_at": "2026-11-16T03:37:29.946Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-learnings-technical-construction-intelligence-ytsaurus-ytsauru.md",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "content_hash": "cdd5526a3bdf628054243bbfbf1bba5c4da7e70e435fefb35d77621e3d2ba51b",
+      "created_at": "2026-11-16T03:37:30.954Z"
     }
   }
 }

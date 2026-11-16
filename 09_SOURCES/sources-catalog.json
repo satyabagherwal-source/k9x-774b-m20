@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "c5d2dbe7",
+    "sourceVersion": "424dd96c",
     "license": "Apache-2.0",
-    "contentHash": "8687381d246d5bc6cbbe0f62b0ea2994e0de035a208ad3609d8a470e66676da8",
-    "lastHarvestedAt": "2026-11-14T20:52:10.812Z",
+    "contentHash": "f7644d78d343e4e3ccc01cf60fb87561bcbd3d3fb357093a925f80307d667d2b",
+    "lastHarvestedAt": "2026-11-16T03:37:13.801Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "349c6541",
+    "sourceVersion": "ffcd9432",
     "license": "Apache-2.0",
-    "contentHash": "b7689485e0227050f56d09ef0ff5c9b6935227832452393a67982828fc9f46c3",
-    "lastHarvestedAt": "2026-11-14T19:20:50.978Z",
+    "contentHash": "71005b99faddb41bfccfbe9e61f8896571408aa3022295db359af57492a90a64",
+    "lastHarvestedAt": "2026-11-16T03:37:26.623Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -12085,8 +12085,8 @@
     "sourceUrl": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
     "sourceVersion": "hf-baidu-ernie-5.5-flash-base",
     "license": "Open-Source",
-    "contentHash": "12ae8483b38672c3dbe340c14f6bd9224caf31bd0c42be7baadc83630a861297",
-    "lastHarvestedAt": "2026-11-11T13:28:50.997Z",
+    "contentHash": "989f221e8be0e63edfcced41bdff45289f24d5334ebad8c9f9661ad80845e992",
+    "lastHarvestedAt": "2026-11-16T03:37:02.115Z",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base"
   },
   "github-squad": {

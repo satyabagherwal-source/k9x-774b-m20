@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T03:23:28.021Z",
-  "total_verified_learnings": 8757,
+  "last_updated": "2026-11-16T03:37:31.063Z",
+  "total_verified_learnings": 8758,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18883,
+  "total_items": 18892,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112862,9 +112862,9 @@
       "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "14e8fe754d40b5f1c4bb047ff4d1db25120a9bdd1414a437e97835275c873d69",
+      "content_hash": "93106c1bd066e1c0cde5ac1ec8dee2b079775ae88d372358abbb0fa7924bee27",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T20:52:48.840Z"
+      "persisted_at": "2026-11-16T03:37:30.379Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery-learnings",
@@ -112874,9 +112874,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c84a8a4b4cf329a8b8cb2b357d7fdcab74601bd4577cd17ab7c4585da348851",
+      "content_hash": "ad08f2c86959f9bfa8ac1920f2037a833ca4da0f573cdff82646f7ef9ef05495",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:52:48.984Z"
+      "persisted_at": "2026-11-16T03:37:30.487Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -233598,14 +233598,19 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "349c6541",
-      "content_hash": "b7689485e0227050f56d09ef0ff5c9b6935227832452393a67982828fc9f46c3",
+      "source_version": "ffcd9432",
+      "content_hash": "71005b99faddb41bfccfbe9e61f8896571408aa3022295db359af57492a90a64",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
         {
           "number": 8526,
           "title": "worker stack introspection and GWM leader reporting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8700,
+          "title": "test_replication_card_migration class timeout",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -233614,7 +233619,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:20:50.833Z",
+      "verified_at": "2026-11-16T03:37:26.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233668,10 +233673,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "349c6541",
-      "content_hash": "08350bf676583a02ecc8ee3b8dc208f7b85033ebcc3c0dba43c140e2ea8d7e69",
+      "source_version": "ffcd9432",
+      "content_hash": "10c473e47e36ced0003f458c7c286659f3a2b0e342831255216b1bab554405cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:20:51.352Z"
+      "persisted_at": "2026-11-16T03:37:27.009Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -233729,9 +233734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus-ytsaurus-learnings",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "92e6b6f80201f909b642e95cb5ef207ec1c1ca36ba1854ae663520e8ee3ce4b0",
+      "content_hash": "acab7c25a02c2d5d732c93d38614c6ca726d1ccd96f246ba2a7b9dd3c40db36d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:21:24.782Z"
+      "persisted_at": "2026-11-16T03:37:31.063Z"
     },
     "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf": {
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
@@ -234622,14 +234627,19 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "c5d2dbe7",
-      "content_hash": "8687381d246d5bc6cbbe0f62b0ea2994e0de035a208ad3609d8a470e66676da8",
+      "source_version": "424dd96c",
+      "content_hash": "f7644d78d343e4e3ccc01cf60fb87561bcbd3d3fb357093a925f80307d667d2b",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
         {
           "number": 8533,
           "title": "keep breadcrumb trail on one row with spaced separators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8699,
+          "title": "Empirical Invariant Guard in WorkloadChart.test.tsx",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -234638,7 +234648,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T20:52:10.629Z",
+      "verified_at": "2026-11-16T03:37:13.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234680,10 +234690,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
       "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
       "repository": "meshery/meshery",
-      "source_version": "c5d2dbe7",
-      "content_hash": "17dced8963c740887c55796469d05ccd1ba8a6c308b0006bec2016b5dca8968c",
+      "source_version": "424dd96c",
+      "content_hash": "da9e72d31601aee0ff1aecd405c842566c5197d7aa3731fb9385480358d16e11",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T20:52:11.145Z"
+      "persisted_at": "2026-11-16T03:37:14.085Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery",
@@ -234692,10 +234702,10 @@
       "relative_path": "08_VERIFICATION/meshery-meshery-verification-protocol-empirical-defect-shield-for-meshery-mesher.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshery/meshery",
       "repository": "meshery/meshery",
-      "source_version": "c5d2dbe7",
-      "content_hash": "c9ab6cf1087b7ed708df2aa13e5c166a550cf5d8b769a5facc6318fea4fea33f",
+      "source_version": "424dd96c",
+      "content_hash": "a2d8a4aa813d9154f0d51cca04eda387f64531a7c294339f34c44e58d5a6bd59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:52:11.274Z"
+      "persisted_at": "2026-11-16T03:37:14.197Z"
     },
     "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker": {
       "item_id": "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker",
@@ -250732,6 +250742,133 @@
       "content_hash": "a444de3896df67fad8e534c6d6278b82249dbe1bb08fc540f53836c0f07a17d9",
       "domain_letter": "I",
       "persisted_at": "2026-11-16T03:23:27.215Z"
+    },
+    "learn-huggingface-baidu-ernie-5-5-flash-base": {
+      "learning_id": "learn-huggingface-baidu-ernie-5-5-flash-base",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "baidu/ERNIE-5.5-Flash-Base",
+      "repository": "baidu/ERNIE-5.5-Flash-Base",
+      "slug": "hf-baidu-ernie-5.5-flash-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+      "source_version": "hf-baidu-ernie-5.5-flash-base",
+      "content_hash": "989f221e8be0e63edfcced41bdff45289f24d5334ebad8c9f9661ad80845e992",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T03:37:01.951Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-base-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-base-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-base-research-knowledge-intelligence-baidu-ernie-5-5-fl.md",
+      "title": "Research & Knowledge Intelligence: baidu/ERNIE-5.5-Flash-Base Core Invariants",
+      "repository": "baidu/ERNIE-5.5-Flash-Base",
+      "source_version": "hf-baidu-ernie-5.5-flash-base",
+      "content_hash": "a549fede377491f9c5162262764e3f490fa57c307a6a29c0442775f11390d748",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T03:37:02.282Z"
+    },
+    "rule-8699": {
+      "learning_id": "rule-8699",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8699,
+      "title": "Empirical Invariant Guard in WorkloadChart.test.tsx",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "424dd96c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:37:13.641Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-workloadchart-test-tsx": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-workloadchart-test-tsx",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q8BK-empirical-invariant-guard-in-workloadchart-test-tsx.md",
+      "title": "Empirical Invariant Guard in WorkloadChart.test.tsx",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "45c0b04c3ca91038c72aaa4fd9ece3254ff75b63984f1de6ea17f653373ac0c8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:37:30.272Z"
+    },
+    "rule-8700": {
+      "learning_id": "rule-8700",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8700,
+      "title": "test_replication_card_migration class timeout",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "ffcd9432",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:37:26.475Z"
+    },
+    "candidate_directive-test_replication_card_migration-class-timeout": {
+      "item_id": "candidate_directive-test_replication_card_migration-class-timeout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q8RH-test_replication_card_migration-class-timeout.md",
+      "title": "test_replication_card_migration class timeout",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "38c9a5c964031d2056453691940f0d35e8a35928f827fe19392966ea58ad4e17",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T03:37:30.845Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
+      "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
+      "repository": "ytsaurus/ytsaurus",
+      "source_version": "ffcd9432",
+      "content_hash": "a9238ad413de2801766cefdba176ff6b8de7889aad3e07b0e3bc640b08157693",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T03:37:26.899Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-base-learnings-research-knowledge-intelligence-hf-baidu.md",
+      "title": "Research & Knowledge Intelligence: hf-baidu-ernie-5.5-flash-base-learnings Core Invariants",
+      "repository": "hf-baidu-ernie-5.5-flash-base-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4a61ff7ed2d04a82859ed70b5fe1397faa4115a8b2a8a25ffb76000f9cf7fa66",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T03:37:29.946Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-learnings-technical-construction-intelligence-ytsaurus-ytsauru.md",
+      "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cdd5526a3bdf628054243bbfbf1bba5c4da7e70e435fefb35d77621e3d2ba51b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T03:37:30.954Z"
     }
   },
   "ai-builder-brain": {

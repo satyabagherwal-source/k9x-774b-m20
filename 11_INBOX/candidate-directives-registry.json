@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T03:23:27.788Z",
+  "last_updated": "2026-11-16T03:37:30.845Z",
   "directives": [
     {
       "id": "CD-001",
@@ -17885,6 +17885,46 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-212D04-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-Q8BK",
+      "directive_title": "Empirical Invariant Guard in WorkloadChart.test.tsx",
+      "source_repo": "meshery-meshery-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q8BK-empirical-invariant-guard-in-workloadchart-test-tsx.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-Q8RH",
+      "directive_title": "test_replication_card_migration class timeout",
+      "source_repo": "ytsaurus-ytsaurus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q8RH-test_replication_card_migration-class-timeout.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-2F2CD1",
+      "directive_title": "Empirical Invariant Guard in WorkloadChart.test.tsx",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshery-meshery",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2F2CD1-empirical-invariant-guard-in-workloadcha.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-1485DA",
+      "directive_title": "test_replication_card_migration class timeout",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ytsaurus-ytsaurus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1485DA-test-replication-card-migration-class-ti.md",
       "staged_date": "2026-11-16"
     }
   ]

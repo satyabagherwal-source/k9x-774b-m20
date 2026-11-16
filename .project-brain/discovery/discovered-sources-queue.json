@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T03:23:26.393Z",
+  "updated_at": "2026-11-16T03:37:30.673Z",
   "stats": {
-    "total_discovered": 4069,
-    "approved_pending_harvest": 3823,
+    "total_discovered": 4074,
+    "approved_pending_harvest": 3828,
     "harvested_count": 0,
     "rejected_count": 246,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3820,
+      "COMMUNITY_AND_EXPERT": 3825,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
@@ -87817,6 +87817,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
         "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-82E338A174AC": {
+      "id": "SRC-82E338A174AC",
+      "url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+      "title": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:37:29.777Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
+        "fileName": "hf-baidu-ernie-5.5-flash-base-learnings.md"
+      }
+    },
+    "SRC-42C97B709008": {
+      "id": "SRC-42C97B709008",
+      "url": "https://example.com/design.yaml?token=secret",
+      "title": "https://example.com/design.yaml?token=secret",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:37:30.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-097633EE7C3C": {
+      "id": "SRC-097633EE7C3C",
+      "url": "https://example.com/?token=secret",
+      "title": "https://example.com/?token=secret",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:37:30.118Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-E209B919F068": {
+      "id": "SRC-E209B919F068",
+      "url": "https://nda.ya.ru/t/-bCdQYHc7wZBYh",
+      "title": "https://nda.ya.ru/t/-bCdQYHc7wZBYh",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:37:30.647Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-F376A3BE2C96": {
+      "id": "SRC-F376A3BE2C96",
+      "url": "https://nda.ya.ru/t/qa0kX64r7DqvtN",
+      "title": "https://nda.ya.ru/t/qa0kX64r7DqvtN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:37:30.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
       }
     }
   }

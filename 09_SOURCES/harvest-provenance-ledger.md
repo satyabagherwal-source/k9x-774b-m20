@@ -10258,3 +10258,6 @@ Every entry in this ledger must capture:
 | `learn-dom-h-78b796d1` | `project://matthart1983-netwatch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md` | 2026-11-16T03:06:56.756Z |
 | `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `baafccbf` | Multi-dimensional audit evidence | 2026-11-16T03:23:18.039Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `0bc4615f` | Multi-dimensional audit evidence | 2026-11-16T03:23:22.615Z |
+| `learn-huggingface-baidu-ernie-5-5-flash-base` | `https://huggingface.co/baidu/ERNIE-5.5-Flash-Base` | `hf-baidu-e` | Multi-dimensional audit evidence | 2026-11-16T03:37:02.115Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `424dd96c` | Multi-dimensional audit evidence | 2026-11-16T03:37:13.801Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `ffcd9432` | Multi-dimensional audit evidence | 2026-11-16T03:37:26.623Z |
