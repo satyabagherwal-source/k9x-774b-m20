@@ -2213,10 +2213,10 @@
     "repository": "openziti/zrok",
     "platform": "github",
     "sourceUrl": "https://github.com/openziti/zrok",
-    "sourceVersion": "f2c7dcf6",
+    "sourceVersion": "3c87b271",
     "license": "Apache-2.0",
-    "contentHash": "9eaa04862416bc63c1279cb7f1aeb5902ba52f4e81a45fafb52f5187afa51ec6",
-    "lastHarvestedAt": "2026-11-12T22:48:47.524Z",
+    "contentHash": "8b4818c23295eaf7be25afa05195c1170e3b73e8d1a2b930aca32ee58d93627a",
+    "lastHarvestedAt": "2026-11-16T18:46:52.831Z",
     "learningId": "learn-github-openziti-zrok"
   },
   "crate-crate": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "4270327e",
+    "sourceVersion": "a4b0e5b7",
     "license": "Apache-2.0",
-    "contentHash": "5115026d4da69b31863943d5795d91b707569f08199ef5176ffccc9c171c0e8e",
-    "lastHarvestedAt": "2026-11-14T21:20:52.895Z",
+    "contentHash": "4b52c9e957c4daa4b5c5e69ea2e2e4216f1511302f084639166daf59e91041db",
+    "lastHarvestedAt": "2026-11-16T18:46:43.735Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "0c2e67a2",
+    "sourceVersion": "0c63ea4e",
     "license": "Apache-2.0",
-    "contentHash": "56e4128ee25b9b5c120953fd56c4b0b6db69bc9e086f61410910deef0aeb23f4",
-    "lastHarvestedAt": "2026-11-13T20:47:16.609Z",
+    "contentHash": "9f54aec430989b8733a5130cbd53a7e335fd15c78d73c538913a3467865c783e",
+    "lastHarvestedAt": "2026-11-16T18:46:54.708Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "8fe6e970",
+    "sourceVersion": "fd2e61db",
     "license": "MIT",
-    "contentHash": "6a16a683cb04cbf87d9a72ab1c490d2ea905b4765821366ca6fb76d826207ca7",
-    "lastHarvestedAt": "2026-11-12T02:33:33.758Z",
+    "contentHash": "ef695c1952a1003b66f4361c5d0e16c5c2b4380faf8711a74a7b0014c682331f",
+    "lastHarvestedAt": "2026-11-16T18:46:44.017Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {

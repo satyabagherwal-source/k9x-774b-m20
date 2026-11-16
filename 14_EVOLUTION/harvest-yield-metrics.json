@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T18:38:35.916Z",
-  "total_cycles_completed": 9910,
-  "total_learnings_persisted": 9910,
-  "total_rules_promoted": 9508,
+  "last_updated": "2026-11-16T18:46:54.715Z",
+  "total_cycles_completed": 9914,
+  "total_learnings_persisted": 9914,
+  "total_rules_promoted": 9512,
   "history": [
-    {
-      "timestamp": "2026-11-15T12:54:30.832Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T13:08:57.215Z",
-      "repository": "fujiapple852/trippy",
-      "learningId": "learn-github-fujiapple852-trippy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T13:09:01.012Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T13:09:06.684Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T13:27:18.686Z",
       "repository": "LiquidAI/LFM3-VL-2B",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-16T18:38:35.916Z",
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T18:46:43.743Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T18:46:44.025Z",
+      "repository": "fb55/htmlparser2",
+      "learningId": "learn-github-fb55-htmlparser2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T18:46:52.838Z",
+      "repository": "openziti/zrok",
+      "learningId": "learn-github-openziti-zrok",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T18:46:54.715Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

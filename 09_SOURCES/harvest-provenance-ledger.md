@@ -10355,3 +10355,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-16T18:38:23.584Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `756888ba` | Multi-dimensional audit evidence | 2026-11-16T18:38:25.236Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `5bcf1daa` | Multi-dimensional audit evidence | 2026-11-16T18:38:35.911Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `a4b0e5b7` | Multi-dimensional audit evidence | 2026-11-16T18:46:43.735Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `fd2e61db` | Multi-dimensional audit evidence | 2026-11-16T18:46:44.017Z |
+| `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `3c87b271` | Multi-dimensional audit evidence | 2026-11-16T18:46:52.831Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `0c63ea4e` | Multi-dimensional audit evidence | 2026-11-16T18:46:54.708Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T18:38:40.617Z",
+  "updated_at": "2026-11-16T18:46:59.589Z",
   "stats": {
-    "total_discovered": 4362,
-    "approved_pending_harvest": 4098,
+    "total_discovered": 4375,
+    "approved_pending_harvest": 4111,
     "harvested_count": 0,
     "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4103,
+      "COMMUNITY_AND_EXPERT": 4116,
       "OFFICIAL_DOCUMENTATION": 138,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -94137,6 +94137,292 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
         "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-8B8F6C2D20EC": {
+      "id": "SRC-8B8F6C2D20EC",
+      "url": "https://github.com/typescript-eslint/typescript-eslint/releases",
+      "title": "https://github.com/typescript-eslint/typescript-eslint/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.116Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-4E3AEFC4E4A2": {
+      "id": "SRC-4E3AEFC4E4A2",
+      "url": "https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md",
+      "title": "https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-A4771746863A": {
+      "id": "SRC-A4771746863A",
+      "url": "https://github.com/typescript-eslint/typescript-eslint/commits/v8.72.2/packages/typescript-eslint",
+      "title": "https://github.com/typescript-eslint/typescript-eslint/commits/v8.72.2/packages/typescript-eslint",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-C1F6FCEB3686": {
+      "id": "SRC-C1F6FCEB3686",
+      "url": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-AACB47C86139": {
+      "id": "SRC-AACB47C86139",
+      "url": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-21C73CFA39C4": {
+      "id": "SRC-21C73CFA39C4",
+      "url": "https://opencollective.com/typescript-eslint",
+      "title": "https://opencollective.com/typescript-eslint",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.322Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-EAA58DCD34A5": {
+      "id": "SRC-EAA58DCD34A5",
+      "url": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-448D01226767": {
+      "id": "SRC-448D01226767",
+      "url": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-0D7B2AEECE75": {
+      "id": "SRC-0D7B2AEECE75",
+      "url": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-DB856DCBFFDC": {
+      "id": "SRC-DB856DCBFFDC",
+      "url": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.2.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.472Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-CFE113C1D235": {
+      "id": "SRC-CFE113C1D235",
+      "url": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.511Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-9B4F00FB26D6": {
+      "id": "SRC-9B4F00FB26D6",
+      "url": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.2.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.553Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-01DF9422E033": {
+      "id": "SRC-01DF9422E033",
+      "url": "https://registry.npmjs.org/@typ",
+      "title": "https://registry.npmjs.org/@typ",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:46:59.589Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
       }
     }
   }

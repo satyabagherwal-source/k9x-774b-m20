@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T18:38:40.794Z",
+  "last_updated": "2026-11-16T18:47:00.581Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19776,6 +19776,77 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-7TEB",
+      "directive_title": "test(chrome-ext): fix the most common flaky extension tests",
+      "source_repo": "automattic-harper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7TEB-test-chrome-ext-fix-the-most-common-flaky-extension-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-7UG0",
+      "directive_title": "build(deps-dev): Bump typescript-eslint from 8.72.1 to 8.72.2",
+      "source_repo": "fb55-htmlparser2-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7UG0-build-deps-dev-bump-typescript-eslint-from-8-72-1-to-8-72-2.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-7V1G",
+      "directive_title": "Empirical Invariant Guard in 2026-11-16.md",
+      "source_repo": "openziti-zrok-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7V1G-empirical-invariant-guard-in-2026-11-16-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-7QOJ",
+      "directive_title": "protect Snowball code generation on MSVC ARM64",
+      "source_repo": "alibaba/zvec",
+      "source_commit": "0c63ea4e",
+      "staged_file": "11_INBOX/candidate-directives/CD-7QOJ-protect-snowball-code-generation-on-msvc-arm64.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-79ED2D",
+      "directive_title": "test(chrome-ext): fix the most common flaky extension tests",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "automattic-harper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-79ED2D-test-chrome-ext-fix-the-most-common-flak.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-D30632",
+      "directive_title": "build(deps-dev): Bump typescript-eslint from 8.72.1 to 8.72.2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fb55-htmlparser2",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D30632-build-deps-dev-bump-typescript-eslint-fr.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-3EB361",
+      "directive_title": "Empirical Invariant Guard in 2026-11-16.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "openziti-zrok",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3EB361-empirical-invariant-guard-in-2026-11-16-.md",
+      "staged_date": "2026-11-16"
     }
   ]
 }

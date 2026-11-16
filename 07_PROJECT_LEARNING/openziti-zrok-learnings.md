@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openziti-zrok-learnings.md`  
 > **Source**: github ([https://github.com/openziti/zrok](https://github.com/openziti/zrok))  
-> **Source Version**: `f2c7dcf6`  
+> **Source Version**: `3c87b271`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:48:30.345Z  
+> **Timestamp**: 2026-11-16T18:46:51.626Z  
 > **Learning ID**: `learn-github-openziti-zrok`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openziti-zrok-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openziti/zrok](https://github.com/openziti/zrok))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:48:30.337Z  
+> **Harvest Timestamp**: 2026-11-16T18:46:51.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Secure internet sharing made simple.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 4812 stars
+- **Stars / Engagement**: 4816 stars
 
 ---
 
@@ -85,7 +85,7 @@ func (a *Agent) launchPublic(op *operation, attempt *startAttempt, req *SharePub
 	}
 	shr := &share{token: created.Token, frontendEndpoints: slices.Clone(created.FrontendEndpoints),
 		shareMode: sdk.PublicShareMode, backendMode: prepared.BackendMode, target: prepared.Target,
-		basicAuth: prepared.BasicAuth, nameSelections: names, insecure: req.Insecure,
+		nameSelections: names, insecure: req.Insecure,
 		oauthProvider: prepared.OauthProvider, oauthEmailAddressPatterns: prepared.OauthEmailAddressPatterns,
 		closed: req.Closed, accessGrants: prepared.AccessGrants}
 	a.mu.Lock()
@@ -1383,15 +1383,13 @@ func singleJoiningSlash(a, b string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1287** (2026-11-12): **Add --basic-auth-from-stdin to share public**
-  *Symptoms*: ## Add `--basic-auth-from-stdin` to `zrok2 share public`  `--basic-auth <username:password>` puts the credential in the process command line, where any local user can read it with `ps` and endpoint monitoring records it. Passing it through the environment isn't much better: `ps e` still shows the environment the process started with, even after `os.Unsetenv`.  This adds `--basic-auth-from-stdin`, which reads one `<username:password>` from the first line of stdin. A supervising process can pipe the credential in and close the pipe, so it never appears in argv or the environment.  - The default behavior and `--basic-auth` are unchanged - Can't be combined with `--basic-auth` or `--oauth-provider` - An empty or unreadable stdin fails before the share is created (exit 2) - Unit test for `readBasicAuth`; `CHANGELOG.md` updated  We (No-IP) run `zrok2 share public` as a child of our client's background service and currently pass tunnel passwords with `--basic-auth`; this came out of a security review of that. The agent's subordinate workers also pass `--basic-auth` on their command line (`agent/commandBuilder.go`), so they could use this flag too, which I'm happy to follow up on if useful.  ### Testing  - Tested on macOS arm64 with Go 1.27.3: `go test ./cmd/zrok2 -run TestPublicCLI` passes (with `TMPDIR=/tmp`, since the existing agent-socket test exceeds macOS's 104-character socket path limit under the default temp dir) - An empty stdin exits with the permanent error - The same cha
+- **Issue #1289** (2026-11-16): **agent smoke workflow fix**
+  *Symptoms*: a race fix for the automated agent smoke harness.
   **Post-Mortem & Fix Analysis**:
-  > @ayu0409 is attempting to deploy a commit to the **OpenZiti** Team on [Vercel](https://vercel.com).  A member of the Team first needs to [authorize it](https://vercel.com/git/authorize?team=OpenZiti&slug=openziti&teamId=team_bT6ULN5oFw8uRka0uFkKt7vN&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%2279e33657b53573fdafce881e8624a3b74f967025%22%7D%2C%22id%22%3A%22QmXF27UEqcytzSxxiEWa7UaGnie2cpNw9Gi8YrkWXh7Kz6%22%2C%22org%22%3A%22openziti%22%2C%22prId%22%3A1287%2C%22repo%22%3A%22zrok%22%7D).  
+  > [vc]: #Z/2KjRk0M4nEDTudpCJgnFdMhCLFUsSoeK1hK9G1AXU=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJ6cm9rIiwicHJvamVjdElkIjoicHJqX000ODk4ZTc2OXRxY2l3MVRUUmVQc21nallRcVYiLCJ2MCI6ZmFsc2UsInJvb3REaXJlY3RvcnkiOiJ3ZWJzaXRlIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL29wZW56aXRpL3pyb2svNWg0Zm5ndkVINzJEWjNra3pFMlgxd21Yb0dXciIsInByZXZpZXdVcmwiOiJ6cm9rLWdpdC12MjAxMC1hZ2VudC1zbW9rZS1maXgtb3BlbnppdGkudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJ6cm9rLWdpdC12MjAxMC1hZ2VudC1zbW9rZS1maXgtb3BlbnppdGkudmVyY2VsLmFwcCJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPW9wZW56aXRpJnJlcG89enJvayZwcj0xMjg5In0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com
 
-- **Issue #1286** (2026-10-30): **fixes-209**
-  *Symptoms*: FIX: Web shares no longer panic while starting Caddy when built with Go 1.27 or the JSON v2 experiment. The embedded Caddy dependency is updated from 2.9.1 to 2.11.7 to recognize the JSON type used by these builds, allowing both terminal and headless web shares to start. This update also requires newer shared dependencies, including Go OpenAPI, gRPC and OpenTelemetry.  CHANGE: Official builds now use Go 1.27.3, with CI and source-build Docker images using the same compiler version. Building from source still requires Go 1.26 or newer.
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #ejFTSV6u7oOE568v3jIjDz+TzbGZXVmtuGMDw1eDwfw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJ6cm9rIiwicHJvamVjdElkIjoicHJqX000ODk4ZTc2OXRxY2l3MVRUUmVQc21nallRcVYiLCJ2MCI6ZmFsc2UsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJ6cm9rLWdpdC1maXhlcy0yMDktb3BlbnppdGkudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vb3BlbnppdGkvenJvay8ySkhha3FaY1RjTmt4SndUQlhhUXpXYVJUTWlTIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIiwicm9vdERpcmVjdG9yeSI6IndlYnNpdGUiLCJwcmV2aWV3VXJsIjoienJvay1naXQtZml4ZXMtMjA5LW9wZW56aXRpLnZlcmNlbC5hcHAifV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPW9wZW56aXRpJnJlcG89enJvayZwcj0xMjg2In0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/openziti/zrok"><sup><img src="h
+- **Issue #1288** (2026-11-16): **V2_0_10_basic_auth_file**
+  *Symptoms*: CHANGE: **The agent registry (`agent-registry.json`) is now version 3, which agents from v2.0.9 and earlier cannot read.** The agent reads an existing version 2 registry as it is and saves it as version 3 at the end of its first startup, so upgrading needs no manual step. A v2.0.9 agent will not start on a version 3 registry: it reports the unsupported version, exits 1 and leaves the file as it was. Rolling back to v2.0.9 or earlier therefore needs a manual edit of the registry before the older agent will run; the procedure is in `docs/current/agent-share-lifecycle.md`. A v2.0.8 agent does start, with nothing restored, and replaces the registry with an empty one at its next save, so for v2.0.8 make the edit before starting it.  FEATURE: `zrok2 share public --basic-auth-from-stdin` reads one `<username:password>` from the first line of stdin instead of `--basic-auth`, so a supervising process can pass the credential without it appearing in the process command line or environment, where other local users and endpoint monitoring can read it. It cannot be combined with `--basic-auth` or `--oauth-provider`, and an empty or unreadable stdin fails with exit 2 before the share is created.  FEATURE: `zrok2 share public --basic-auth-file <path>` reads basic authentication users from a file, one `<username:password>` per line, so the credentials appear in neither the process command line nor the environment. Blank lines are skipped, either line ending is accepted, and a password may con
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1408,243 +1406,239 @@ func singleJoiningSlash(a, b string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f2c7dcf6` (2026-11-12)
-**Commit Message**: Merge pull request #1287 from aaeekaayyyyyy/basic-auth-from-stdin
+### Incident Patch 1: `3c87b271` (2026-11-16)
+**Commit Message**: Merge pull request #1289 from openziti/v2010-agent-smoke-fix
 
-Add --basic-auth-from-stdin to share public
+agent smoke workflow fix
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `docs/journal/2026-11-16.md` (modified, +2/-0)
 ```diff
-@@ -2,6 +2,8 @@
- 
- ## Unreleased
- 
-+FEATURE: `zrok2 share public --basic-auth-from-stdin` reads one `<username:password>` from the first line of stdin instead of `--basic-auth`, so a supervising process can pass the credential without it appearing in the process command line or environment, where other local users and endpoint monitoring can read it. It cannot be combined with `--basic-auth` or `--oauth-provider`, and an empty stdin fails before the share is created.
-+
- ## v2.0.9
- 
- FIX: **Agent-managed public shares are now deleted on shutdown, including named shares.** Reserved names and saved restart requests survive, but restarting creates a new share with a new token. Failed cleanup keeps tokens visible, retries before recreation, and reports unresolved tokens at shutdown.
+@@ -3,3 +3,5 @@
+ - A live functional check of the basic authentication work ran on 2026-11-13 from a scratch home with its own environment, and passed. It corrected one claim the documents had from reading alone: a `v2.0.9` agent does not start on a version 3 registry (a failed import is fatal; it exits 1 and leaves the file). The changelog entry and `docs/current/agent-share-lifecycle.md` now say so. The `v2.0.8` reaction is still from reading only.
+ - Two things that check observed and nobody acted on. For a moment after the agent creates a public share and before its worker is serving, a request with valid credentials gets 502 while one without gets 401; this follows from the agent creating the share before it launches the worker, and predates this work. A failed start at registry replay shows in `zrok2 agent status` and writes nothing to the agent's log.
+ - A test that runs `zrok2 share public` against a real controller without `--force-agent` runs locally when no agent answers, and creates a share. Check the agent is reachable first, or force agent routing.
++- The agent smoke workflow's offline harness step failed on the macOS row with one test, `TestUnresolvedProcessFailsCleanup/termination_unconfirmed`. It was a race in the harness, not in the product: `awaitGone` in `tests/agent-smoke/process_unix.go` bounds its polling with a context that also cancels a `ps` it catches running, and that killed `ps` was reported as an inspection failure, so the message depended on where the deadline fell. It now reports only an inspection that finished inside the bound. Every other `ERROR` line in that step's log is a failure scenario asserting a failure. Windows waits on handles and has no such path.
++- The live scenario did not run in that workflow run, so no native platform check of the v2.0.10 work has happened yet. Dispatch the workflow again once this fix is on the branch it runs from.
 ```
 
-**File**: `cmd/zrok2/sharePublic.go` (modified, +25/-0)
+**File**: `tests/agent-smoke/process_unix.go` (modified, +9/-3)
 ```diff
-@@ -1,6 +1,7 @@
+@@ -169,19 +169,25 @@ func processGone(ctx context.Context, record processRecord) (bool, error) {
+ }
+ 
+ // awaitGone polls until a killed recorded process is confirmed gone, within bound. inspection failures are
+-// retried until the bound expires.
++// retried until the bound expires. the bound also cancels an inspection it catches running, and that ps then
++// fails because it was killed, which says nothing about the recorded process; only the result of an inspection
++// that finished inside the bound is reported as an inspection failure.
+ func awaitGone(ctx context.Context, record processRecord, bound, poll time.Duration) error {
+ 	ctx, cancel := context.WithTimeout(ctx, bound)
+ 	defer cancel()
++	var inspectErr error
+ 	for {
+ 		gone, err := processGone(ctx, record)
+ 		if err == nil && gone {
+ 			return nil
+ 		}
++		if ctx.Err() == nil {
++			inspectErr = err
++		}
+ 		select {
+ 		case <-ctx.Done():
+-			if err != nil {
+-				return fmt.Errorf("termination not confirmed within %v of being killed: %w", bound, err)
++			if inspectErr != nil {
++				return fmt.Errorf("termination not confirmed within %v of being killed: %w", bound, inspectErr)
+ 			}
+ 			return fmt.Errorf("not confirmed terminated within %v of being killed", bound)
+ 		case <-time.After(poll):
+```
+
+**File**: `tests/agent-smoke/process_unix_test.go` (modified, +33/-0)
+```diff
+@@ -3,13 +3,15 @@
  package main
  
  import (
-+	"bufio"
- 	"context"
- 	"encoding/json"
++	"context"
  	"fmt"
-@@ -35,6 +36,7 @@ func init() {
- 
- type sharePublicCommand struct {
- 	basicAuth            []string
-+	basicAuthFromStdin   bool
- 	nameSelections       []string
- 	backendMode          string
- 	headless             bool
-@@ -85,7 +87,10 @@ func newSharePublicCommand() *sharePublicCommand {
- 	cmd.Flags().StringVar(&command.oauthProvider, "oauth-provider", "", "Select named OAuth provider (configured in selected frontend)")
- 	cmd.Flags().StringArrayVar(&command.oauthEmailDomains, "oauth-email-domain", []string{}, "Allow only email addresses matching this glob to access")
- 	cmd.Flags().DurationVar(&command.oauthRefreshInterval, "oauth-refresh-interval", 3*time.Hour, "Maximum lifetime for OAuth authentication; refresh after expiry")
-+	cmd.Flags().BoolVar(&command.basicAuthFromStdin, "basic-auth-from-stdin", false, "Read one basic authentication user (<username:password>) from the first line of stdin")
- 	cmd.MarkFlagsMutuallyExclusive("basic-auth", "oauth-provider")
-+	cmd.MarkFlagsMutuallyExclusive("basic-auth-from-stdin", "basic-auth")
-+	cmd.MarkFlagsMutuallyExclusive("basic-auth-from-stdin", "oauth-provider")
- 
- 	cmd.Run = command.run
- 	return command
-@@ -96,6 +101,14 @@ func (cmd *sharePublicCommand) run(_ *cobra.Command, args []string) {
- 		cmd.error("invalid public worker options", err)
- 		return
- 	}
-+	if cmd.basicAuthFromStdin {
-+		credential, err := readBasicAuth(os.Stdin)
-+		if err != nil {
-+			cmd.error("invalid basic authentication", err)
-+			return
-+		}
-+		cmd.basicAuth = []string{credential}
-+	}
- 	if cmd.subordinate {
- 		logrus.SetFormatter(&logrus.JSONFormatter{TimestampFormat: time.RFC3339Nano})
- 		dlOpts := dl.DefaultOptions().SetTrimPrefix(trimPrefix).SetLevel(slog.LevelInfo)
-@@ -120,6 +133,18 @@ func (cmd *sharePublicCommand) run(_ *cobra.Command, args []string) {
- 	)
- }
- 
-+func readBasicAuth(r io.Reader) (string, error) {
-+	line, err := bufio.NewReader(r).ReadString('\n')
-+	if err != nil && err != io.EOF {
-+		return "", errors.Wrap(err, "error reading basic authentication from stdin")
-+	}
-+	credential := strings.TrimRight(line, "\r\n")
-+	if credential == "" {
-+		return "", newPermanentError("--basic-auth-from-stdin is set but stdin is empty")
-+	}
-+	return credential, nil
-+}
-+
- func (cmd *sharePublicCommand) validateWorkerOptions() error {
- 	supplied := cmd.shareToken != "" || cmd.cmd != nil && cmd.cmd.Flags().Changed("share-token")
- 	if supplied && !cmd.subordinate {
-```
-
-**File**: `cmd/zrok2/sharePublic_test.go` (modified, +13/-0)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"errors"
- 	"io"
+ 	"io/fs"
+ 	"os"
+ 	"os/exec"
  	"path/filepath"
-+	"strings"
- 	"sync/atomic"
+ 	"syscall"
  	"testing"
- 	"time"
-@@ -43,6 +44,18 @@ func TestPublicCLIRequestPreparation(t *testing.T) {
- 	}
- }
++	"time"
  
-+func TestPublicCLIReadBasicAuth(t *testing.T) {
-+	for input, want := range map[string]string{"u:p\n": "u:p", "u:p\r\n": "u:p", "u:p": "u:p", "u:p\nother:q\n": "u:p"} {
-+		got, err := readBasicAuth(strings.NewReader(input))
-+		require.NoError(t, err)
-+		require.Equal(t, want, got)
-+	}
-+	for _, input := range []string{"", "\n", "\r\n"} {
-+		_, err := readBasicAuth(strings.NewReader(input))
-+		require.ErrorContains(t, err, "stdin is empty")
-+	}
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+@@ -44,13 +46,44 @@ func fakePS(t *testing.T, started, command string) {
+ 	if started != "" {
+ 		script = fmt.Sprintf("#!/bin/sh\ncase \"$2\" in\nlstart=) echo '%v' ;;\nargs=) echo '%v' ;;\n*) echo S ;;\nesac\n", started, command)
+ 	}
++	installPS(t, script)
 +}
 +
- func TestPublicCLIRejectsEmptyNamespaces(t *testing.T) {
- 	for _, selections := range [][]string{{""}, {":app"}, {"team", ""}} {
- 		cmd := &sharePublicCommand{backendMode: "proxy", nameSelections: selections}
++// installPS makes script the only ps on PATH for the rest of the test.
++func installPS(t *testing.T, script string) {
+ 	dir := t.TempDir()
+ 	if err := os.WriteFile(filepath.Join(dir, "ps"), []byte(script), 0o755); err != nil {
+ 		t.Fatal(err)
+ 	}
+ 	t.Setenv("PATH", dir)
+ }
+ 
++// the bound catching an inspection mid-run is the bound expiring, not an inspection failure. a ps that always
++// outlasts the bound makes that happen on every run; left to chance, it depends on where the deadline falls among
++// the polls, which is how a loaded runner came to report the killed ps as the reason.
++func TestAwaitGoneDoesNotReportTheInspectionItInterrupted(t *testing.T) {
++	// exec, so the kill reaches the sleeper itself and no child is left holding the output pipe open.
++	installPS(t, "#!/bin/sh\nexec /bin/sleep 30\n")
++	record := processRecord{PID: os.Getpid(), Platform: "posix", Started: "then", Command: "it"}
++	bound := 200 * time.Millisecond
++	start := time.Now()
++	err := awaitGone(context.Background(), record, bound, 10*time.Millisecond)
++	require.Error(t, err)
++	assert.Equal(t, "not confirmed terminated within 200ms of being killed", err.Error())
++	assert.Less(t, time.Since(start), 5*time.Second, "the interrupted inspection must not outlive the bound by long")
++}
++
++// an inspection that fails inside the bound is still reported with its cause, including when a later inspection
++// is the one the bound interrupts.
++func TestAwaitGoneReportsAnInspectionFailure(t *testing.T) {
++	installPS(t, "#!/bin/sh\nexit 2\n")
++	record := processRecord{PID: os.Getpid(), Platform: "posix", Started: "then", Command: "it"}
++	err := awaitGone(context.Background(), record, 300*time.Millisecond, 10*time.Millisecond)
++	require.Error(t, err)
++	assert.Contains(t, err.Error(), "termination not confirmed within 300ms of being killed: ")
++	assert.Contains(t, err.Error(), "exit status 2")
++}
++
+ // alive reports whether a pid still names a process.
+ func alive(pid int) bool {
+ 	return syscall.Kill(pid, 0) == nil
 ```
 
 ---
 
-### Incident Patch 2: `3ac1f759` (2026-11-11)
-**Commit Message**: Add --basic-auth-from-stdin to share public
+### Incident Patch 2: `bc9a8598` (2026-11-16)
+**Commit Message**: agent smoke workflow fix
 
-Signed-off-by: ayu <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `docs/journal/2026-11-16.md` (modified, +2/-0)
 ```diff
-@@ -2,6 +2,8 @@
- 
- ## Unreleased
- 
-+FEATURE: `zrok2 share public --basic-auth-from-stdin` reads one `<username:password>` from the first line of stdin instead of `--basic-auth`, so a supervising process can pass the credential without it appearing in the process command line or environment, where other local users and endpoint monitoring can read it. It cannot be combined with `--basic-auth` or `--oauth-provider`, and an empty stdin fails before the share is created.
-+
- ## v2.0.9
- 
- FIX: **Agent-managed public shares are now deleted on shutdown, including named shares.** Reserved names and saved restart requests survive, but restarting creates a new share with a new token. Failed cleanup keeps tokens visible, retries before recreation, and reports unresolved tokens at shutdown.
+@@ -3,3 +3,5 @@
+ - A live functional check of the basic authentication work ran on 2026-11-13 from a scratch home with its own environment, and passed. It corrected one claim the documents had from reading alone: a `v2.0.9` agent does not start on a version 3 registry (a failed import is fatal; it exits 1 and leaves the file). The changelog entry and `docs/current/agent-share-lifecycle.md` now say so. The `v2.0.8` reaction is still from reading only.
+ - Two things that check observed and nobody acted on. For a moment after the agent creates a public share and before its worker is serving, a request with valid credentials gets 502 while one without gets 401; this follows from the agent creating the share before it launches the worker, and predates this work. A failed start at registry replay shows in `zrok2 agent status` and writes nothing to the agent's log.
+ - A test that runs `zrok2 share public` against a real controller without `--force-agent` runs locally when no agent answers, and creates a share. Check the agent is reachable first, or force agent routing.
++- The agent smoke workflow's offline harness step failed on the macOS row with one test, `TestUnresolvedProcessFailsCleanup/termination_unconfirmed`. It was a race in the harness, not in the product: `awaitGone` in `tests/agent-smoke/process_unix.go` bounds its polling with a context that also cancels a `ps` it catches running, and that killed `ps` was reported as an inspection failure, so the message depended on where the deadline fell. It now reports only an inspection that finished inside the bound. Every other `ERROR` line in that step's log is a failure scenario asserting a failure. Windows waits on handles and has no such path.
++- The live scenario did not run in that workflow run, so no native platform check of the v2.0.10 work has happened yet. Dispatch the workflow again once this fix is on the branch it runs from.
 ```
 
-**File**: `cmd/zrok2/sharePublic.go` (modified, +25/-0)
+**File**: `tests/agent-smoke/process_unix.go` (modified, +9/-3)
 ```diff
-@@ -1,6 +1,7 @@
+@@ -169,19 +169,25 @@ func processGone(ctx context.Context, record processRecord) (bool, error) {
+ }
+ 
+ // awaitGone polls until a killed recorded process is confirmed gone, within bound. inspection failures are
+-// retried until the bound expires.
++// retried until the bound expires. the bound also cancels an inspection it catches running, and that ps then
++// fails because it was killed, which says nothing about the recorded process; only the result of an inspection
++// that finished inside the bound is reported as an inspection failure.
+ func awaitGone(ctx context.Context, record processRecord, bound, poll time.Duration) error {
+ 	ctx, cancel := context.WithTimeout(ctx, bound)
+ 	defer cancel()
++	var inspectErr error
+ 	for {
+ 		gone, err := processGone(ctx, record)
+ 		if err == nil && gone {
+ 			return nil
+ 		}
++		if ctx.Err() == nil {
++			inspectErr = err
++		}
+ 		select {
+ 		case <-ctx.Done():
+-			if err != nil {
+-				return fmt.Errorf("termination not confirmed within %v of being killed: %w", bound, err)
++			if inspectErr != nil {
++				return fmt.Errorf("termination not confirmed within %v of being killed: %w", bound, inspectErr)
+ 			}
+ 			return fmt.Errorf("not confirmed terminated within %v of being killed", bound)
+ 		case <-time.After(poll):
+```
+
+**File**: `tests/agent-smoke/process_unix_test.go` (modified, +33/-0)
+```diff
+@@ -3,13 +3,15 @@
  package main
  
  import (
-+	"bufio"
- 	"context"
- 	"encoding/json"
++	"context"
  	"fmt"
-@@ -35,6 +36,7 @@ func init() {
- 
- type sharePublicCommand struct {
- 	basicAuth            []string
-+	basicAuthFromStdin   bool
- 	nameSelections       []string
- 	backendMode          string
- 	headless             bool
-@@ -85,7 +87,10 @@ func newSharePublicCommand() *sharePublicCommand {
- 	cmd.Flags().StringVar(&command.oauthProvider, "oauth-provider", "", "Select named OAuth provider (configured in selected frontend)")
- 	cmd.Flags().StringArrayVar(&command.oauthEmailDomains, "oauth-email-domain", []string{}, "Allow only email addresses matching this glob to access")
- 	cmd.Flags().DurationVar(&command.oauthRefreshInterval, "oauth-refresh-interval", 3*time.Hour, "Maximum lifetime for OAuth authentication; refresh after expiry")
-+	cmd.Flags().BoolVar(&command.basicAuthFromStdin, "basic-auth-from-stdin", false, "Read one basic authentication user (<username:password>) from the first line of stdin")
- 	cmd.MarkFlagsMutuallyExclusive("basic-auth", "oauth-provider")
-+	cmd.MarkFlagsMutuallyExclusive("basic-auth-from-stdin", "basic-auth")
-+	cmd.MarkFlagsMutuallyExclusive("basic-auth-from-stdin", "oauth-provider")
- 
- 	cmd.Run = command.run
- 	return command
-@@ -96,6 +101,14 @@ func (cmd *sharePublicCommand) run(_ *cobra.Command, args []string) {
- 		cmd.error("invalid public worker options", err)
- 		return
- 	}
-+	if cmd.basicAuthFromStdin {
-+		credential, err := readBasicAuth(os.Stdin)
-+		if err != nil {
-+			cmd.error("invalid basic authentication", err)
-+			return
-+		}
-+		cmd.basicAuth = []string{credential}
-+	}
- 	if cmd.subordinate {
- 		logrus.SetFormatter(&logrus.JSONFormatter{TimestampFormat: time.RFC3339Nano})
- 		dlOpts := dl.DefaultOptions().SetTrimPrefix(trimPrefix).SetLevel(slog.LevelInfo)
-@@ -120,6 +133,18 @@ func (cmd *sharePublicCommand) run(_ *cobra.Command, args []string) {
- 	)
- }
- 
-+func readBasicAuth(r io.Reader) (string, error) {
-+	line, err := bufio.NewReader(r).ReadString('\n')
-+	if err != nil && err != io.EOF {
-+		return "", errors.Wrap(err, "error reading basic authentication from stdin")
-+	}
-+	credential := strings.TrimRight(line, "\r\n")
-+	if credential == "" {
-+		return "", newPermanentError("--basic-auth-from-stdin is set but stdin is empty")
-+	}
-+	return credential, nil
-+}
-+
- func (cmd *sharePublicCommand) validateWorkerOptions() error {
- 	supplied := cmd.shareToken != "" || cmd.cmd != nil && cmd.cmd.Flags().Changed("share-token")
- 	if supplied && !cmd.subordinate {
-```
-
-**File**: `cmd/zrok2/sharePublic_test.go` (modified, +13/-0)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"errors"
- 	"io"
+ 	"io/fs"
+ 	"os"
+ 	"os/exec"
  	"path/filepath"
-+	"strings"
- 	"sync/atomic"
+ 	"syscall"
  	"testing"
- 	"time"
-@@ -43,6 +44,18 @@ func TestPublicCLIRequestPreparation(t *testing.T) {
- 	}
- }
++	"time"
  
-+func TestPublicCLIReadBasicAuth(t *testing.T) {
-+	for input, want := range map[string]string{"u:p\n": "u:p", "u:p\r\n": "u:p", "u:p": "u:p", "u:p\nother:q\n": "u:p"} {
-+		got, err := readBasicAuth(strings.NewReader(input))
-+		require.NoError(t, err)
-+		require.Equal(t, want, got)
-+	}
-+	for _, input := range []string{"", "\n", "\r\n"} {
-+		_, err := readBasicAuth(strings.NewReader(input))
-+		require.ErrorContains(t, err, "stdin is empty")
-+	}
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+@@ -44,13 +46,44 @@ func fakePS(t *testing.T, started, command string) {
+ 	if started != "" {
+ 		script = fmt.Sprintf("#!/bin/sh\ncase \"$2\" in\nlstart=) echo '%v' ;;\nargs=) echo '%v' ;;\n*) echo S ;;\nesac\n", started, command)
+ 	}
++	installPS(t, script)
 +}
 +
- func TestPublicCLIRejectsEmptyNamespaces(t *testing.T) {
- 	for _, selections := range [][]string{{""}, {":app"}, {"team", ""}} {
- 		cmd := &sharePublicCommand{backendMode: "proxy", nameSelections: selections}
++// installPS makes script the only ps on PATH for the rest of the test.
++func installPS(t *testing.T, script string) {
+ 	dir := t.TempDir()
+ 	if err := os.WriteFile(filepath.Join(dir, "ps"), []byte(script), 0o755); err != nil {
+ 		t.Fatal(err)
+ 	}
+ 	t.Setenv("PATH", dir)
+ }
+ 
++// the bound catching an inspection mid-run is the bound expiring, not an inspection failure. a ps that always
++// outlasts the bound makes that happen on every run; left to chance, it depends on where the deadline falls among
++// the polls, which is how a loaded runner came to report the killed ps as the reason.
++func TestAwaitGoneDoesNotReportTheInspectionItInterrupted(t *testing.T) {
++	// exec, so the kill reaches the sleeper itself and no child is left holding the output pipe open.
++	installPS(t, "#!/bin/sh\nexec /bin/sleep 30\n")
++	record := processRecord{PID: os.Getpid(), Platform: "posix", Started: "then", Command: "it"}
++	bound := 200 * time.Millisecond
++	start := time.Now()
++	err := awaitGone(context.Background(), record, bound, 10*time.Millisecond)
++	require.Error(t, err)
++	assert.Equal(t, "not confirmed terminated within 200ms of being killed", err.Error())
++	assert.Less(t, time.Since(start), 5*time.Second, "the interrupted inspection must not outlive the bound by long")
++}
++
++// an inspection that fails inside the bound is still reported with its cause, including when a later inspection
++// is the one the bound interrupts.
++func TestAwaitGoneReportsAnInspectionFailure(t *testing.T) {
++	installPS(t, "#!/bin/sh\nexit 2\n")
++	record := processRecord{PID: os.Getpid(), Platform: "posix", Started: "then", Command: "it"}
++	err := awaitGone(context.Background(), record, 300*time.Millisecond, 10*time.Millisecond)
++	require.Error(t, err)
++	assert.Contains(t, err.Error(), "termination not confirmed within 300ms of being killed: ")
++	assert.Contains(t, err.Error(), "exit status 2")
++}
++
+ // alive reports whether a pid still names a process.
+ func alive(pid int) bool {
+ 	return syscall.Kill(pid, 0) == nil
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1289** (2026-11-16): agent smoke workflow fix (@michaelquigley)
+- **PR #1288** (2026-11-16): V2_0_10_basic_auth_file (@michaelquigley)
 - **PR #1287** (2026-11-12): Add --basic-auth-from-stdin to share public (@aaeekaayyyyyy)
 - **PR #1286** (2026-10-30): fixes-209 (@michaelquigley)
 - **PR #1284** (2026-10-08): fall-fixes-208 (@michaelquigley)
 - **PR #1283** (2026-10-03): rate limiting is counted and answered with 503; access and enable compensate (@michaelquigley)
-- **PR #1282** (2026-10-02): relax rebuilds v2 public share dial policies; repair-dial-policies; influx query deadline (@michaelquigley)
-- **PR #1281** (2026-10-02): garbage collection improvements (@michaelquigley)
 
 ---
 
@@ -1664,29 +1658,29 @@ Signed-off-by: ayu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1287 from aaeekaayyyyyy/basic-auth-from-stdin
+## X. Empirical Invariant Guard in 2026-11-16.md
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openziti/zrok. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/journal/2026-11-16.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openziti/zrok. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f2c7dcf6`: Merge pull request #1287 from aaeekaayyyyyy/basic-auth-from-stdin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c87b271`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/journal/2026-11-16.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FEATURE: `zrok2 share public --basic-auth-from-stdin` reads one `<username:password>` from the first line of stdin instead of `--basic-auth`, so a supervising process can pass the credential without it appearing in the process command line or environment, where other local users and endpoint monitoring can read it. It cannot be combined with `--basic-auth` or `--oauth-provider`, and an empty stdin fails before the share is created.
-
+- The agent smoke workflow's offline harness step failed on the macOS row with one test, `TestUnresolvedProcessFailsCleanup/termination_unconfirmed`. It was a race in the harness, not in the product: `awaitGone` in `tests/agent-smoke/process_unix.go` bounds its polling with a context that also cancels a `ps` it catches running, and that killed `ps` was reported as an inspection failure, so the message depended on where the deadline fell. It now reports only an inspection that finished inside the bound. Every other `ERROR` line in that step's log is a failure scenario asserting a failure. Windows waits on handles and has no such path.
+- The live scenario did not run in that workflow run, so no native platform check of the v2.0.10 work has happened yet. Dispatch the workflow again once this fix is on the branch it runs from.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f2c7dcf6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c87b271` are properly handled with clean fallback behavior.

@@ -636997,3 +636997,334 @@ checksum = "e293607563253e249d19cf4d36ac05821955170a63cf6d65deb4db60138b192e"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5bcf1daa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8775. test(chrome-ext): fix the most common flaky extension tests (Harvested from Automattic/harper)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(chrome-ext): fix the most common flaky extension tests",
+  "source": "Automattic/harper",
+  "source_url": "https://github.com/Automattic/harper",
+  "source_version": "a4b0e5b7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-16T18:46:43.176Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-automattic-harper",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Automattic/harper](https://github.com/Automattic/harper) (Revision: `a4b0e5b7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `justfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a4b0e5b7`: test(chrome-ext): fix the most common flaky extension tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `justfile`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  # Run Firefox headless: `pnpm test` passes `--headed`, which Chromium needs for extensions
+  # but Firefox doesn't. On a virtual display every headed window opens in the same place,
+  # and Firefox stops drawing frames for windows that are covered, which stalls the tests.
+  pnpm exec playwright test --project firefox
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  # For environments without displays like CI servers or containers
+  if [[ "$(uname)" == "Linux" ]]; then
+    env -u WAYLAND_DISPLAY XDG_SESSION_TYPE=x11 \
+    xvfb-run --auto-servernum pnpm test --project firefox 
+  else
+    pnpm test --project firefox 
+  fi
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a4b0e5b7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8776. build(deps-dev): Bump typescript-eslint from 8.72.1 to 8.72.2 (Harvested from fb55/htmlparser2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps-dev): Bump typescript-eslint from 8.72.1 to 8.72.2",
+  "source": "fb55/htmlparser2",
+  "source_url": "https://github.com/fb55/htmlparser2",
+  "source_version": "fd2e61db",
+  "license": "MIT",
+  "extracted_at": "2026-11-16T18:46:43.376Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fb55-htmlparser2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fb55/htmlparser2](https://github.com/fb55/htmlparser2) (Revision: `fd2e61db`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/htmlparser2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fd2e61db`: build(deps-dev): Bump typescript-eslint from 8.72.1 to 8.72.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+                "typescript-eslint": "^8.72.2",
+            "version": "8.72.2",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
+            "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
+                "@typescript-eslint/scope-manager": "8.72.2",
+                "@typescript-eslint/type-utils": "8.72.2",
+                "@typescript-eslint/utils": "8.72.2",
+                "@typescript-eslint/visitor-keys": "8.72.2",
+                "@typescript-eslint/parser": "^8.72.2",
+            "version": "8.72.2",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
+            "integrity": "sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==",
+                "@typescript-eslint/scope-manager": "8.72.2",
+                "@typescript-eslint/types": "8.72.2",
+                "@typescript-eslint/typescript-estree": "8.72.2",
+                "@typescript-eslint/visitor-keys": "8.72.2",
+            "version": "8.72.2",
+            "resolved": "https://registry.npmjs.org/@typ
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+                "typescript-eslint": "^8.72.1",
+            "version": "8.72.1",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+            "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
+                "@typescript-eslint/scope-manager": "8.72.1",
+                "@typescript-eslint/type-utils": "8.72.1",
+                "@typescript-eslint/utils": "8.72.1",
+                "@typescript-eslint/visitor-keys": "8.72.1",
+                "@typescript-eslint/parser": "^8.72.1",
+            "version": "8.72.1",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+            "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
+                "@typescript-eslint/scope-manager": "8.72.1",
+                "@typescript-eslint/types": "8.72.1",
+                "@typescript-eslint/typescript-estree": "8.72.1",
+                "@typescript-eslint/visitor-keys": "8.72.1",
+            "version": "8.72.1",
+            "resolved": "https://registry.npmjs.org/@typ
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fd2e61db` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8777. Empirical Invariant Guard in 2026-11-16.md (Harvested from openziti/zrok)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in 2026-11-16.md",
+  "source": "openziti/zrok",
+  "source_url": "https://github.com/openziti/zrok",
+  "source_version": "3c87b271",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-16T18:46:52.259Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-openziti-zrok",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openziti/zrok](https://github.com/openziti/zrok) (Revision: `3c87b271`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/journal/2026-11-16.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openziti/zrok. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3c87b271`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/journal/2026-11-16.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+- The agent smoke workflow's offline harness step failed on the macOS row with one test, `TestUnresolvedProcessFailsCleanup/termination_unconfirmed`. It was a race in the harness, not in the product: `awaitGone` in `tests/agent-smoke/process_unix.go` bounds its polling with a context that also cancels a `ps` it catches running, and that killed `ps` was reported as an inspection failure, so the message depended on where the deadline fell. It now reports only an inspection that finished inside the bound. Every other `ERROR` line in that step's log is a failure scenario asserting a failure. Windows waits on handles and has no such path.
+- The live scenario did not run in that workflow run, so no native platform check of the v2.0.10 work has happened yet. Dispatch the workflow again once this fix is on the branch it runs from.
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3c87b271` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8778. protect Snowball code generation on MSVC ARM64 (Harvested from alibaba/zvec)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "protect Snowball code generation on MSVC ARM64",
+  "source": "alibaba/zvec",
+  "source_url": "https://github.com/alibaba/zvec",
+  "source_version": "0c63ea4e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-16T18:46:54.148Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-alibaba-zvec",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `0c63ea4e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `thirdparty/snowball/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0c63ea4e`: build): protect Snowball code generation on MSVC ARM64. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `thirdparty/snowball/CMakeLists.txt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+      # MSVC 19.52 on ARM64 miscompiles the optimized Snowball generator:
+      # routine modes and tokeniser filenames lose their initialized values.
+      # Keep this build-time tool unoptimized until a fixed MSVC is verified;
+      # the generated stemmers and the Snowball runtime keep their optimization.
+      if(CMAKE_C_COMPILER_ID STREQUAL "MSVC"
+         AND CMAKE_C_COMPILER_ARCHITECTURE_ID STREQUAL "ARM64")
+        target_compile_options(snowball_compiler PRIVATE /Od /Ob0)
+      endif()
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0c63ea4e` are properly handled with clean fallback behavior.

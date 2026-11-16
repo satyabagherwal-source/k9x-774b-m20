@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T21:21:08.162Z",
+  "timestamp": "2026-11-16T18:46:58.308Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-automattic-harper-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [automattic-harper-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T21:21:08.162Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T18:46:58.308Z`  
 > **Learning ID**: `LEARN-EVO-automattic-harper-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from automattic-harper-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `4270327e`  
+> **Source Version**: `a4b0e5b7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T21:20:52.173Z  
+> **Timestamp**: 2026-11-16T18:46:42.459Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:20:52.168Z  
+> **Harvest Timestamp**: 2026-11-16T18:46:40.689Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17709 stars
+- **Stars / Engagement**: 17747 stars
 
 ---
 
@@ -1457,208 +1457,625 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4270327e` (2026-11-14)
-**Commit Message**: fix(TheyToThem): avoid flagging coordinating conjunction 'for they' (#4926)
+### Incident Patch 1: `a4b0e5b7` (2026-11-16)
+**Commit Message**: test(chrome-ext): fix the most common flaky extension tests (#4943)
 
-* fix(TheyToThem): avoid flagging coordinating conjunction 'for they'
+* test(chrome-ext): wait for the caret to settle before keys
 
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+Rich-text editors can lag behind the browser's caret. Slate in Firefox,
+for example, applies inserted text and then briefly puts the caret back
+where its own selection still thinks it is. A key pressed in that window
+lands in the wrong place. A trace of a failed CI run showed Enter
+splitting a line at its start, which scrambled the three lines of
+"Multiple suggestions and undo".
 
-* test: update Alice snapshot for TheyToThem fix
+The same race explains most failures of "Can apply basic suggestion"
+in the four weeks to 12 November: 16 in Firefox ProseMirror ("This is a
+est") and 18 in Chrome Lexical and ProseMirror ("This is  test"). In
+both, the arrow keys ran before the editor had settled the caret after
+the replacement, so Backspace deleted the wrong character.
 
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+The new waitForCaretAfter helper waits until the caret has stayed
+directly after some text for 100 ms. replaceEditorContent uses it
+before each line break, and the basic suggestion test uses it before
+the arrow keys and before Backspace. That still checks that the caret
+lands after the replacement, without racing the editor. The single
+animati
+
+**File**: `justfile` (modified, +4/-7)
+```diff
+@@ -351,13 +351,10 @@ test-firefox-plugin: build-firefox-plugin
+   cd "{{justfile_directory()}}/packages/chrome-plugin"
+   pnpm playwright install
+ 
+-  # For environments without displays like CI servers or containers
+-  if [[ "$(uname)" == "Linux" ]]; then
+-    env -u WAYLAND_DISPLAY XDG_SESSION_TYPE=x11 \
+-    xvfb-run --auto-servernum pnpm test --project firefox 
+-  else
+-    pnpm test --project firefox 
+-  fi
++  # Run Firefox headless: `pnpm test` passes `--headed`, which Chromium needs for extensions
++  # but Firefox doesn't. On a virtual display every headed window opens in the same place,
++  # and Firefox stops drawing frames for windows that are covered, which stalls the tests.
++  pnpm exec playwright test --project firefox
+ 
+ # Run VSCode plugin unit and integration tests.
+ alias test-vscode-extension := test-vscode
+```
+
+**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +65/-5)
+```diff
+@@ -99,11 +99,71 @@ export async function replaceEditorContent(editorEl: Locator, text: string, soft
+ 			await editorEl.page().keyboard.insertText(lines[i]);
+ 		}
+ 		if (i < lines.length - 1) {
++			if (lines[i]) {
++				// Some editors leave the caret behind inserted text, so put it at the end of the line.
++				// On macOS, End scrolls the page instead.
++				await editorEl.press(process.platform === 'darwin' ? 'Meta+ArrowRight' : 'End');
++				await waitForCaretAfter(editorEl, lines[i]);
++			}
+ 			await editorEl.press(breakKey);
+ 		}
+ 	}
+ }
+ 
++/**
++ * Wait until the caret has stayed directly after `text` for `quietMs`.
++ *
++ * Some editors (Slate in Firefox, for example) apply inserted text before their own selection
++ * catches up, and can leave the caret where it was. A key pressed before the caret settles lands
++ * in the wrong place: a break key splits the line at the old position and scrambles the content.
++ */
++async function waitForCaretAfter(editorEl: Locator, text: string, quietMs = 100) {
++	let settledSince: number | undefined;
++
++	await expect
++		.poll(
++			async () => {
++				const caretFollowsText = await editorEl.evaluate((el, text) => {
++					if (el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement) {
++						return (
++							el.selectionStart === el.selectionEnd &&
++							el.value.slice(0, el.selectionStart ?? 0).endsWith(text)
++						);
++					}
++					const selection = el.ownerDocument.getSelection();
++					if (
++						!selection?.isCollapsed ||
++						!selection.focusNode ||
++						!el.contains(selection.focusNode)
++					) {
++						return false;
++					}
++					const beforeCaret = el.ownerDocument.createRange();
++					beforeCaret.setStart(el, 0);
++					beforeCaret.setEnd(selection.focusNode, selection.focusOffset);
++					// Editors such as Slate pad empty nodes with zero-width characters.
++					return beforeCaret
++						.toString()
++						.replace(/[\uFEFF\u200B]/g, '')
++						.endsWith(text);
++				}, text);
++
++				const now = performance.now();
++				if (!caretFollowsText) {
++					settledSince = undefined;
++					return false;
++				}
++				settledSince ??= now;
++				return now - settledSince >= quietMs;
++			},
++			{
++				message: `The caret should stay after "${text}" for ${quietMs} ms`,
++				intervals: [10],
++			},
++		)
++		.toBe(true);
++}
++
+ /** Locate replacement rows (including explicit empty states) inside Harper's suggestion popup. */
+ export function getHarperSuggestionRows(page: Page): Locator {
+ 	return page.locator('.harper-container').getByRole('menuitem');
+@@ -320,14 +380,14 @@ export async function testBasicSuggestion(
+ 		await assertEditorText(editor, 'This is a test');
+ 		await expect(editor).toBeFocused();
+ 
+-		// Cursor should be right after "a" (pos 9). ArrowRight×3 + Backspace deletes 'e'.
++		// The caret should be right after "a" (pos 9). ArrowRight×3 + Backspace then deletes 'e',
++		// which checks the editor's own selection agrees. Wait for each caret move to settle, as
++		// keys pressed while an editor is still syncing its selection land in the wrong place.
++		await waitForCaretAfter(editor, 'This is a');
+ 		await page.keyboard.press('ArrowRight');
+ 		await page.keyboard.press('ArrowRight');
+ 		await page.keyboard.press('ArrowRight');
+-		// Let rich editors process the queued selectionchange before deleting.
+-		await page.evaluate(
+-			() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())),
+-		);
++		await waitForCaretAfter(editor, 'This is a te');
+ 		await page.keyboard.press('Backspace');
+ 		await assertEditorText(editor, 'This is a tst');
+ 
+```
+
+---
+
+### Incident Patch 2: `3ea81449` (2026-11-16)
+**Commit Message**: fix(core): detect "to" before degree words followed by nouns mid-sentence (#3131)
+
+* fix(core): detect 'to' before degree words followed by nouns mid-sentence
+
+* fix(core): collapse nested if blocks in ToTooDegreeWords for clippy
+
+* refactor(core): sort TO_TAKING_VERBS list alphabetically
+
+* fix(core): address review feedback on to/too degree words
+
+* test(core): add ignored tests for ToTwoToo known limitations
 
 ---------
 
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
+Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
 
-**File**: `harper-core/src/linting/weir_rules/TheyToThem.weir` (modified, +8/-2)
+**File**: `harper-core/src/linting/expr_linter.rs` (modified, +1/-2)
 ```diff
-@@ -1,7 +1,8 @@
--expr prepositions [to, with, for, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
-+expr prepositions [to, with, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
-+# `for` can also act as a coordinating conjunction introducing a finite clause, where `they` is the subject
- # Most of these are also nouns. In "the help they received", `they` is the subject of the verb that follows, so skip those
- expr verbs [call, contact, invite, remind, ask, see, watch, help, trust, send, support, follow, visit, tell, thank, mention, show]
--expr main [<(@prepositions they), they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
-+expr main [<(@prepositions they), they>, <[(for they ![VERB, AUX]), (for they.)], they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
- 
- let message "Use `them` when the pronoun follows a preposition or transitive verb."
- let description "Converts `they` to `them` whenever the pronoun serves as an object after common prepositions or actions that take direct objects."
-@@ -28,6 +29,8 @@ test "Show they how the tool works." "Show them how the tool works."
- 
- test "Mention they in your update." "Mention them in your update."
- test "I will call they." "I will call them."
-+test "This gift is for they." "This gift is for them."
-+test "Wait for they at the station." "Wait for them at the station."
- 
- # True negatives
- 
-@@ -40,3 +43,6 @@ allows "Whether they had families could affect the help they received."
- allows "We gave them the support they needed."
- allows "That was the show they watched."
- allows "The trust they built took years."
-+allows "At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven."
-+allows "For they know not what they do."
-+allows "Rejoice, for they have returned safely."
+@@ -212,8 +212,7 @@ pub fn preceded_by_word(
+     predicate: impl Fn(&Token) -> bool,
+ ) -> bool {
+     if let Some((before, _)) = context
+-        && let [.., word, ws] = before
+-        && ws.kind.is_whitespace()
++        && let Some(word) = before.iter().rev().find(|t| !t.kind.is_whitespace())
+     {
+         return predicate(word);
+     }
 ```
 
-**File**: `harper-core/tests/text/linters/Alice's Adventures in Wonderland.snap.yml` (modified, +0/-10)
+**File**: `harper-core/src/linting/to_two_too/mod.rs` (modified, +151/-0)
 ```diff
-@@ -3395,16 +3395,6 @@ Message: |
- 
- 
- 
--Lint:    Grammar (31 priority)
--Message: |
--    2741 | to see what the next witness would be like, “—for they haven’t got much evidence
--         |                                                   ^~~~ Use `them` when the pronoun follows a preposition or transitive verb.
--    2742 | yet,” she said to herself. Imagine her surprise, when the White Rabbit read out,
--Suggest:
--  - Replace with: “them”
--
--
--
- Lint:    Readability (127 priority)
- Message: |
-     2747 | “Here!” cried Alice, quite forgetting in the flurry of the moment how large she
-```
-
----
-
-### Incident Patch 2: `3ece2091` (2026-11-13)
-**Commit Message**: fix(core): mark "learnt", "burnt" and "leapt" as past forms (#4874)
-
-"He learnt the rules at school." was flagged by PronounVerbAgreement, because
-these forms were tagged as plain verbs.
-
-**File**: `harper-core/dictionary.dict` (modified, +3/-3)
-```diff
-@@ -16169,7 +16169,7 @@ burnish/VGd>SNgZ
- burnisher/Ng
- burnoose/NgS
- burnout/NgS
--burnt/~VJU
-+burnt/~VtTJU
- burp/NgSVdG
- burqa/NSg!@_₹
- burr/~NgSVdG
-@@ -32265,14 +32265,14 @@ leaper/Ng
- leapfrog/NgSV
- leapfrogged/VtT
- leapfrogging/NmV6
--leapt/V
-+leapt/VtT
- learn/~VGdSNrU
- learnability/N
- learnable/JN
- learnedly/Ry
- learner/~NgS
- learning's
--learnt/~V
-+learnt/~VtT
- lease/~NSgVdGr
- leaseback/NSg
- leasehold/J>NgSZ
-```
-
-**File**: `harper-core/src/linting/pronoun_verb_agreement.rs` (modified, +5/-0)
-```diff
-@@ -555,4 +555,9 @@ mod lints {
-     fn dont_flag_she_further_explained() {
-         assert_no_lints("She further explained the plan.", test_linter());
+@@ -463,4 +463,155 @@ mod tests {
+     fn no_lint_to_only_at_end() {
+         assert_no_lints("limited to only", test_linter());
      }
 +
++    // --- Degree words + noun (mid-sentence) ---
++
 +    #[test]
-+    fn dont_flag_she_learnt() {
-+        assert_no_lints("She learnt to swim.", test_linter());
++    fn fixes_to_many_cookies() {
++        assert_suggestion_result(
++            "I ate to many cookies.",
++            ToTwoToo::default(),
++            "I ate too many cookies.",
++        );
 +    }
++
++    #[test]
++    fn fixes_to_much_water() {
++        assert_suggestion_result(
++            "There is to much water.",
++            ToTwoToo::default(),
++            "There is too much water.",
++        );
++    }
++
++    #[test]
++    fn fixes_to_few_options() {
++        assert_suggestion_result(
++            "We have to few options.",
++            ToTwoToo::default(),
++            "We have too few options.",
++        );
++    }
++
++    #[test]
++    fn fixes_to_little_time() {
++        assert_suggestion_result(
++            "There is to little time.",
++            ToTwoToo::default(),
++            "There is too little time.",
++        );
++    }
++
++    #[test]
++    fn fixes_to_many_bugs_mid_sentence() {
++        assert_suggestion_result(
++            "There are to many bugs in this project.",
++            ToTwoToo::default(),
++            "There are too many bugs in this project.",
++        );
++    }
++
++    // --- Degree words + noun: false positive guards ---
++
++    #[test]
++    fn no_lint_give_to_many_charities() {
++        assert_no_lints("She likes to give to many charities.", ToTwoToo::default());
++    }
++
++    #[test]
++    fn no_lint_listen_to_many_podcasts() {
++        assert_no_lints("I listen to many podcasts.", ToTwoToo::default());
++    }
++
++    #[test]
++    fn no_lint_talk_to_many_people() {
++        assert_no_lints("We talk to many people.", ToTwoToo::default());
++    }
++
++    #[test]
++    fn no_lint_donate_to_many_causes() {
++        assert_no_lints("They donate to many causes.", ToTwoToo::default());
++    }
++
++    #[test]
++    fn no_lint_connected_to_many_servers() {
++        assert_no_lints("The app is connected to many servers.", ToTwoToo::default());
++    }
++
++    #[test]
++    fn no_lint_appeals_to_many_developers() {
++        assert_no_lints(
++            "SemVer is a false promise that appeals to many developers.",
++            ToTwoToo::default(),
++        );
++    }
++
++    #[test]
++    fn no_lint_to_many_after_verb_with_trailing_whitespace() {
++        assert_no_lints("give \nto many charities", ToTwoToo::default());
++    }
++
++    // --- Known limitations (each reason explains why it's left failing) ---
++
++    #[test]
++    #[ignore = "false positive: 'expired' is an adjective/verb ending in 'ed', matched by ToTooAdjVerbEdPunct; full runs hide it via overlap with InflectedVerbAfterTo"]
++    fn no_lint_going_to_expired() {
++        assert_no_lints(
++            "I didn't know it was going to expired.",
++            ToTwoToo::default(),
++        );
++    }
++
++    #[test]
++    #[ignore = "false negative: the parenthetical after the degree word breaks the pattern"]
++    fn correct_to_few_in_parenthetical() {
++        assert_suggestion_result(
++            "Possibly to few (unique) data points / predictions.",
++            ToTwoToo::default(),
++            "Possibly too few (unique) data points / predictions.",
++        );
++    }
++
++    #[test]
++    #[ignore = "false negative: a degree word followed by 'of' isn't handled yet"]
++    fn correct_to_much_of_regression() {
++        assert_suggestion_result(
++            "Question for checking python import times and warning if to much of regression.",
++            ToTwoToo::default(),
++            "Question for checking python import times and warning if too much of regression.",
++        );
++    }
++
++    #[test]
++    #[ignore = "false positive: only the token directly before 'to' is checked, so the noun between the verb and 'to' isn't recognized"]
++    fn no_lint_copy_files_to_many_hosts() {
++        assert_no_lints("Copy files to many hosts in parallel", ToTwoToo::default());
++    }
++
++    #[test]
++    #[ignore = "false positive: 'little endian' is a technical term, not an excess degree"]
++    fn no_lint_convert_opcode_to_little_endian() {
++        assert_no_lints(
++            "Small script to convert opcode to little endian format",
++            ToTwoToo::default(),
++        );
++    }
++
++    #[test]
++    #[ignore = "false positive: 'little endian' is a technical term, not an excess degree"]
++    fn no_lint_conversion_to_little_endian() {
++        assert_no_lints(
++            "I was working on gpt package in go and I didn't realize that the author had handled conversion to little endian when writing header.",
++            ToTwoToo::default(),
++        );
++    }
++
++    #[test]
++    #[ignore = "false positive: the compound splits into tokens, 'theme' reads as a noun and TooTo misfires on the valid 'too'"]
++    fn no_lint_too_theme_happy() {
++        assert_no_lints(
++            "2018: we may have gotten a bit too theme-happy.",
++            ToTwoToo:
+```
+
+**File**: `harper-core/src/linting/to_two_too/to_too_degree_words.rs` (modified, +137/-9)
+```diff
+@@ -1,24 +1,129 @@
+ use crate::{
+     Token, TokenKind,
+     char_string::CharStringExt,
+-    expr::{AnchorEnd, Expr, SequenceExpr},
++    expr::{AnchorEnd, Expr, FirstMatchOf, SequenceExpr},
++    patterns::{SingleTokenPattern, prepositional_preceder},
+ };
+ 
+ use super::{ExprLinter, Lint, LintKind, Suggestion};
+-use crate::linting::expr_linter::Chunk;
++use crate::linting::expr_linter::{Chunk, preceded_by_word};
++
++/// Verbs that commonly take "to" as a prepositional complement.
++/// Guards against false positives like "give to many charities".
++const TO_TAKING_VERBS: &[&str] = &[
++    "add",
++    "added",
++    "adding",
++    "adds",
++    "amount",
++    "amounted",
++    "amounting",
++    "amounts",
++    "appeal",
++    "appealed",
++    "appealing",
++    "appeals",
++    "applied",
++    "applies",
++    "apply",
++    "applying",
++    "attend",
++    "attended",
++    "attending",
++    "attends",
++    "belong",
++    "belonged",
++    "belonging",
++    "belongs",
++    "came",
++    "cater",
++    "catered",
++    "catering",
++    "caters",
++    "come",
++    "comes",
++    "coming",
++    "contribute",
++    "contributed",
++    "contributes",
++    "contributing",
++    "donate",
++    "donated",
++    "donates",
++    "donating",
++    "expose",
++    "exposed",
++    "exposes",
++    "exposing",
++    "gave",
++    "give",
++    "given",
++    "gives",
++    "giving",
++    "go",
++    "goes",
++    "going",
++    "gone",
++    "lead",
++    "leading",
++    "leads",
++    "led",
++    "listen",
++    "listened",
++    "listening",
++    "listens",
++    "move",
++    "moved",
++    "moves",
++    "moving",
++    "refer",
++    "referred",
++    "referring",
++    "refers",
++    "relate",
++    "related",
++    "relates",
++    "relating",
++    "respond",
++    "responded",
++    "responding",
++    "responds",
++    "return",
++    "returned",
++    "returning",
++    "returns",
++    "send",
++    "sending",
++    "sends",
++    "sent",
++    "speak",
++    "speaking",
++    "speaks",
++    "spoke",
++    "spoken",
++    "talk",
++    "talked",
++    "talking",
++    "talks",
++    "went",
++    "write",
++    "writes",
++    "writing",
++    "written",
++    "wrote",
++];
+ 
+ pub struct ToTooDegreeWords {
+     expr: Box<dyn Expr>,
+ }
+ 
+ impl Default for ToTooDegreeWords {
+     fn default() -> Self {
+-        // Only flag `to` before degree words when the phrase ends the clause
+-        // (punctuation or end). Avoids false positives like "connected to many X".
+-        let expr = SequenceExpr::default()
++        // Pattern 1: degree word at clause end.
++        let at_end = SequenceExpr::default()
+             .t_aco("to")
+             .t_ws()
+-            .then_word_set(["many", "much", "few"])
++            .then_word_set(["many", "much", "few", "little"])
+             .then_any_of([
+                 Box::new(SequenceExpr::default().then_kind_is_but_is_not_except(
+                     TokenKind::is_punctuation,
+@@ -28,8 +133,16 @@ impl Default for ToTooDegreeWords {
+                 Box::new(AnchorEnd),
+             ]);
+ 
++        // Pattern 2: degree word followed by a noun (e.g. "to many cookies").
++        let before_noun = SequenceExpr::default()
++            .t_aco("to")
++            .t_ws()
++            .then_word_set(["many", "much", "few", "little"])
++            .t_ws()
++            .then_noun();
++
+         Self {
+-            expr: Box::new(expr),
++            expr: Box::new(FirstMatchOf::new([Box::new(at_end), Box::new(before_noun)])),
+         }
+     }
+ }
+@@ -41,11 +154,26 @@ impl ExprLinter for ToTooDegreeWords {
+         self.expr.as_ref()
+     }
+ 
+-    fn match_to_lint(&self, tokens: &[Token], source: &[char]) -> Option<Lint> {
++    fn match_to_lint_with_context(
++        &self,
++        tokens: &[Token],
++        source: &[char],
++        context: Option<(&[Token], &[Token])>,
++    ) -> Option<Lint> {
+         let to_tok = tokens
+             .iter()
+             .find(|t| t.get_ch(source).eq_ch(&['t', 'o']))?;
+ 
++        // Suppress when "to" is a preposition, not a typo for "too".
++        if preceded_by_word(context, |prev| {
++            prepositional_preceder().matches_token(prev, source)
++                || prev
++                    .get_ch(source)
++                    .eq_any_ignore_ascii_case_str(TO_TAKING_VERBS)
++        }) {
++            return None;
++        }
++
+         Some(Lint {
+             span: to_tok.span,
+             lint_kind: LintKind::WordChoice,
+@@ -59,6 +187,6 @@ impl ExprLinter for ToTooDegreeWords {
+     }
+ 
+     fn description(&self) -> &str {
+-        "Detects `to` used before degree words like `many`, `much`, or `few`."
++        "Detects `to` used before degree words like `many`, `much`, `few`, or `little`."
+     }
  }
 ```
 
-**File**: `harper-core/tests/text/tagged/Alice's Adventures in Wonderland.md` (modified, +3/-3)
-```diff
-@@ -109,7 +109,7 @@
- > centre      of the earth      . Let     me       see    : that      would be       four thousand miles  down        , I
- # NSg/VB/Comm P  D+  NPr🅪Sg/VB+ . NSg/VBP NPr/ISg+ NSg/VB . I/C/Ddem+ VXB   NSg/VLXB NSg+ NSg+     NPrPl+ N🅪Sg/VB/J/P . ISg/#r+
- > think  — ” ( for   , you    see    , Alice had learnt several things of this    sort    in        her
--# NSg/VB . . . R/C/P . ISgPl+ NSg/VB . NPr+  VP  VB     J/Dq    NPl    P  I/Ddem+ NSg/VB+ NPr/J/R/P ISg/D$+
-+# NSg/VB . . . R/C/P . ISgPl+ NSg/VB . NPr+  VP  VP     J/Dq    NPl    P  I/Ddem+ NSg/VB+ NPr/J/R/P ISg/D$+
- > lessons in        the schoolroom , and  though this    was  not     a   very good     opportunity for
- # NPl/V3+ NPr/J/R/P D   NSg        . VB/C C      I/Ddem+ VLPt NSg/R/C D/P J/R  NPr/VB/J N🅪Sg+       R/C/P
- > showing  off        her     knowledge , as    there was  no       one      to listen to her     , still      it       was
-@@ -257,7 +257,7 @@
- > marked ‘ poison   ’ or    not     ” ; for   she  had read    several nice  little     histories about
- # VP/J   . N🅪Sg/VB+ . NPr/C NSg/R/C . . R/C/P ISg+ VP  NSg/VBP J/Dq    NPr/J NPr/I/J/Dq NPl       J/P
- > children who    had got burnt , and  eaten up         by wild     beasts and  other    unpleasant
--# NPl+     NPr/I+ VP  VP  VB/J  . VB/C VPp/J NSg/VB/J/P P  NSg/VB/J NPl/V3 VB/C NSg/VB/J J
-+# NPl+     NPr/I+ VP  VP  VP/J  . VB/C VPp/J NSg/VB/J/P P  NSg/VB/J NPl/V3 VB/C NSg/VB/J J
- > things , all          because they would not     remember the simple   rules   their friends   had
- # NPl+   . NSg/I/J/C/Dq C/P     IPl+ VXB   NSg/R/C NSg/VB   D   NSg/VB/J NPl/V3+ D$+   NPrPl/V3+ VP
- > taught them     : such  as    , that     a   red    - hot      poker   will    burn   you    if    you    hold     it       too
-@@ -4425,7 +4425,7 @@
- > “ Well       , I       can’t show   it       you    myself , ” the Mock     Turtle  said : “ I’m too stiff    . And
- # . NSg/VB/J/R . ISg/#r+ VXB   NSg/VB NSg/ISg+ ISgPl+ ISg+   . . D   NSg/VB/J NSg/VB+ VP/J . . K   R   NSg/VB/J . VB/C
- > the Gryphon never learnt it       . ”
--# D   ?       R     VB     NSg/ISg+ . .
-+# D   ?       R     VP     NSg/ISg+ . .
- >
- #
- > “ Hadn’t time       , ” said the Gryphon : “ I       went to the Classics master    , though . He       was
-```
-
 ---
 
-### Incident Patch 3: `f814e682` (2026-11-13)
-**Commit Message**: fix(desktop): tighten update button spacing (#4933)
+### Incident Patch 3: `a9b7fe45` (2026-11-16)
+**Commit Message**: ci: stop release builds crowding out PR check caches (#4952)
 
-**File**: `harper-desktop/src/lib/settings/pages/GeneralPage.svelte` (modified, +11/-11)
+The MSVC CRT cache added in #4917 keeps disappearing. Since 12 November
+it has been saved on master five times and evicted within hours each
+time, because the repository uses 11.1 GB of cache against GitHub's
+10 GB limit. When it's restored, the Windows desktop build takes 12
+minutes; without it, 21 to 32. The caches for the test-chrome-plugin,
+test-harperjs, test-obsidian and check-desktop jobs had been evicted
+too, so those PR checks were rebuilding from scratch.
+
+About 6.1 GB of that space is taken by the release builds in
+binaries.yml and vscode_plugin.yml. Each job is cached twice, once by
+its own rust-cache step and once by actions-rust-cross, which runs
+rust-cache itself unless told not to. Yet those caches mostly miss
+anyway, because they evict each other: the Linux harper-ls build missed
+in 22 of its last 25 runs. A miss costs these jobs about one to three
+minutes, and nobody waits on them except when cutting a release. So
+they no longer cache their Rust builds.
+
+They also no longer run in the merge queue. They aren't among the
+checks the queue requires, so a failure there can't stop a merge, and
+they run again 
+
+**File**: `.github/workflows/binaries.yml` (modified, +3/-5)
 ```diff
-@@ -299,6 +299,17 @@ function settingsValueToDialect(value: string): Dialect {
-               <p class="result-summary">
-                 Current version: {currentVersion || 'loading...'} · Latest version: {latestVersion || 'loading...'}
-               </p>
-+              <div class="inline-row">
-+                <Button
-+                  unstyled
-+                  class="button"
-+                  type="button"
-+                  disabled={isCheckingForUpdates}
-+                  on:click={checkForUpdates}
-+                >
-+                  {isCheckingForUpdates ? 'Checking...' : 'Check for updates'}
-+                </Button>
-+              </div>
-               <Checkbox
-                 slot="control"
-                 appearance="settings"
-@@ -309,17 +320,6 @@ function settingsValueToDialect(value: string): Dialect {
-                 {#if autoUpdate}<CheckIcon className="control-icon" />{/if}
-               </Checkbox>
-             </SettingRow>
--            <div class="inline-row">
--              <Button
--                unstyled
--                class="button"
--                type="button"
--                disabled={isCheckingForUpdates}
--                on:click={checkForUpdates}
--              >
--                {isCheckingForUpdates ? 'Checking...' : 'Check for updates'}
--              </Button>
--            </div>
-             {#if isAutoUpdateLoading}
-               <p class="result-summary">Loading update setting...</p>
-             {:else if autoUpdateError}
+@@ -4,7 +4,6 @@ on:
+   push:
+     branches: ["master"]
+     tags: ["v*"]
+-  merge_group:
+ 
+ jobs:
+   binaries:
+@@ -117,13 +116,12 @@ jobs:
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v7.0.1
+-      - name: Rust Cache
+-        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+-        with:
+-          cache-bin: "true"
+       - name: Build binary
+         uses: houseabsolute/actions-rust-cross@21b0f18dc621b25bfae556ff2791fca4173121e8 # v1.0.8
+         with:
++          # Release builds run after merging, so nobody waits on them. Their caches filled
++          # most of the repo's cache quota and evicted the ones PR checks rely on.
++          use-rust-cache: false
+           command: ${{ matrix.platform.command }}
+           target: ${{ matrix.platform.target }}
+           args: "--locked --release --bin ${{ matrix.platform.project }}"
+```
+
+**File**: `.github/workflows/vscode_plugin.yml` (modified, +3/-5)
+```diff
+@@ -4,7 +4,6 @@ on:
+   push:
+     branches: ["master"]
+     tags: ["v*"]
+-  merge_group:
+ 
+ jobs:
+   vscode-plugin:
+@@ -49,13 +48,12 @@ jobs:
+           node-version-file: ".node-version"
+       - name: Enable Corepack
+         run: corepack enable
+-      - name: Rust Cache
+-        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+-        with:
+-          cache-bin: "true"
+       - name: Build harper-ls
+         uses: houseabsolute/actions-rust-cross@21b0f18dc621b25bfae556ff2791fca4173121e8 # v1.0.8
+         with:
++          # Release builds run after merging, so nobody waits on them. Their caches filled
++          # most of the repo's cache quota and evicted the ones PR checks rely on.
++          use-rust-cache: false
+           target: ${{ matrix.platform.rust_target }}
+           args: "--locked --release --bin harper-ls"
+           force-use-cross: ${{ matrix.platform.os == 'ubuntu-latest' }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4965** (2026-11-16): feat: update dictionary regular past verbs `/j` vs `/tT` (@hippietrail)
+- **PR #4952** (2026-11-16): ci: stop release builds crowding out PR check caches (@GaryJones)
+- **PR #4951** (2026-11-16): docs: update stale paths in AGENTS.md (@shoustak)
 - **PR #4947** (2026-11-13): test(chrome-ext): stop stray blurs failing the iframe popup tests (@GaryJones)
 - **PR #4945** (2026-11-13): Bump CI toolkit to 7.1.1 for AWS cost saving (@mokagio)
-- **PR #4942** (2026-11-13): chore: more linters about confusable words into new config group (@hippietrail)
-- **PR #4939** (2026-11-13): feat: dabble down → double down (@hippietrail)
-- **PR #4933** (2026-11-13): fix(desktop): tighten update button spacing (@elijah-potter)
-- **PR #4932** (2026-11-13): feat(desktop): enable Telegram integration by default (@elijah-potter)
+- **PR #4943** (2026-11-16): test(chrome-ext): fix the most common flaky extension tests (@GaryJones)
 
 ---
 
@@ -1678,39 +2095,40 @@ these forms were tagged as plain verbs.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. TheyToThem): avoid flagging coordinating conjunction 'for they'
+## X. test(chrome-ext): fix the most common flaky extension tests
 
 **RULE**:
-When implementing operations in `harper-core/src/linting/weir_rules/TheyToThem.weir`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `justfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4270327e`: TheyToThem): avoid flagging coordinating conjunction 'for they'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a4b0e5b7`: test(chrome-ext): fix the most common flaky extension tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/weir_rules/TheyToThem.weir`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `justfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-expr prepositions [to, with, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
-# `for` can also act as a coordinating conjunction introducing a finite clause, where `they` is the subject
-expr main [<(@prepositions they), they>, <[(for they ![VERB, AUX]), (for they.)], they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
-test "This gift is for they." "This gift is for them."
-test "Wait for they at the station." "Wait for them at the station."
-allows "At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven."
-allows "For they know not what they do."
-allows "Rejoice, for they have returned safely."
+  # Run Firefox headless: `pnpm test` passes `--headed`, which Chromium needs for extensions
+  # but Firefox doesn't. On a virtual display every headed window opens in the same place,
+  # and Firefox stops drawing frames for windows that are covered, which stalls the tests.
+  pnpm exec playwright test --project firefox
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-expr prepositions [to, with, for, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
-expr main [<(@prepositions they), they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
+  # For environments without displays like CI servers or containers
+  if [[ "$(uname)" == "Linux" ]]; then
+    env -u WAYLAND_DISPLAY XDG_SESSION_TYPE=x11 \
+    xvfb-run --auto-servernum pnpm test --project firefox 
+  else
+    pnpm test --project firefox 
+  fi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4270327e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a4b0e5b7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

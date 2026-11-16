@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T18:38:40.916Z",
-  "total_records": 1307,
+  "last_updated": "2026-11-16T18:47:00.768Z",
+  "total_records": 1312,
   "domains": {
     "A": {
       "total": 7,
@@ -681,7 +681,7 @@
       ]
     },
     "G": {
-      "total": 234,
+      "total": 236,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -916,11 +916,13 @@
         "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-core-invariants",
         "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants",
-        "domain_intelligence-architecture-intelligence-seaql-sea-orm-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-seaql-sea-orm-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants",
+        "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 282,
+      "total": 285,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1203,7 +1205,10 @@
         "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants"
       ]
     },
     "I": {
@@ -17159,8 +17164,8 @@
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "repository": "Automattic/harper",
-      "content_hash": "981ded610d6c7ed83c7a9c3b82e64e0178526daf8694330ea84d769b5ebb329e",
-      "created_at": "2026-11-14T21:20:53.117Z"
+      "content_hash": "05d8154c413bb116b603445afb5576513320436661f2e03e9efc69382fc8c888",
+      "created_at": "2026-11-16T18:46:44.164Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
@@ -17186,8 +17191,8 @@
       "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-learnings-quality-verification-intelligence-automattic-harper-.md",
       "repository": "automattic-harper-learnings",
-      "content_hash": "0c67cb33ded0e02aed662d3a0ec30044a0a4264b9652c9b26afa887e2f056066",
-      "created_at": "2026-11-14T21:21:08.314Z"
+      "content_hash": "20c0574cd878fbcaaa4ef80a04802588c7980c1799881b6b8d08067938b01165",
+      "created_at": "2026-11-16T18:46:58.623Z"
     },
     "DOM-D-04705777": {
       "record_id": "DOM-D-04705777",
@@ -23657,6 +23662,51 @@
       "repository": "hf-divagr1925-qwen3.5-4b-qwenputer-learnings",
       "content_hash": "0fcdc490269458d5c8599283a1eff521d1c98b3b46fd60be44b3a87a1404d31d",
       "created_at": "2026-11-16T18:38:40.379Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fb55/htmlparser2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-technical-construction-intelligence-fb55-htmlparser2-core-invar.md",
+      "repository": "fb55/htmlparser2",
+      "content_hash": "5d781539f74b70147178cef4dc07032a78a426ff5f82fd3d4a95b714c7c03b7a",
+      "created_at": "2026-11-16T18:46:44.434Z"
+    },
+    "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: openziti/zrok Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-architecture-intelligence-openziti-zrok-core-invariants.md",
+      "repository": "openziti/zrok",
+      "content_hash": "7ce87de169ee7645ecbcf6a2b22d86c4887ab2c81632f71d9b09525118566bd7",
+      "created_at": "2026-11-16T18:46:53.224Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
+      "repository": "alibaba/zvec",
+      "content_hash": "464f15db9dcef4e762be5246b48d823f21f2b1dc4cce06d5461482c0531f6c1a",
+      "created_at": "2026-11-16T18:46:55.134Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fb55-htmlparser2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-learnings-technical-construction-intelligence-fb55-htmlparser2-.md",
+      "repository": "fb55-htmlparser2-learnings",
+      "content_hash": "eb0268a668ea13f3c886a4dda7ca90aa6343102411d70564a4af91abe7518eb4",
+      "created_at": "2026-11-16T18:46:59.986Z"
+    },
+    "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: openziti-zrok-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-learnings-architecture-intelligence-openziti-zrok-learnings-core-i.md",
+      "repository": "openziti-zrok-learnings",
+      "content_hash": "21b5992b2c034a424646e2c098fd49f579d1b55ff97c5befd7eb5eccff2e7570",
+      "created_at": "2026-11-16T18:47:00.768Z"
     }
   }
 }

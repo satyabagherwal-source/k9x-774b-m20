@@ -10322,3 +10322,7 @@
 | `CYCLE-20261116-WS4C` | `2026-11-16T18:38:23.580Z` | `divagr1925/Qwen3.5-4B-Qwenputer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md` | Yes (`6c168514...`) |
 | `CYCLE-20261116-WTE8` | `2026-11-16T18:38:25.232Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8773` | Yes (`8125f69c...`) |
 | `CYCLE-20261116-X1MR` | `2026-11-16T18:38:35.907Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8774` | Yes (`ce7994cc...`) |
+| `CYCLE-20261116-7I1E` | `2026-11-16T18:46:43.730Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8775` | Yes (`4b52c9e9...`) |
+| `CYCLE-20261116-7I98` | `2026-11-16T18:46:44.012Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8776` | Yes (`ef695c19...`) |
+| `CYCLE-20261116-7P22` | `2026-11-16T18:46:52.826Z` | `openziti/zrok` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8777` | Yes (`8b4818c2...`) |
+| `CYCLE-20261116-7QI7` | `2026-11-16T18:46:54.703Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8778` | Yes (`9f54aec4...`) |
