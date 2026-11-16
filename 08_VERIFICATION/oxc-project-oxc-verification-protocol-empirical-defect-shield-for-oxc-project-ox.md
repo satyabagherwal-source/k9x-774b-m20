@@ -4,22 +4,22 @@
 {
   "source_repository": "oxc-project/oxc",
   "source_url": "https://github.com/oxc-project/oxc",
-  "source_version": "93140429",
+  "source_version": "e61ca3a1",
   "license": "MIT",
-  "timestamp": "2026-11-14T15:49:31.240Z",
+  "timestamp": "2026-11-16T07:45:01.859Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-oxc-project-oxc",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `93140429`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T15:49:31.240Z`  
+> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `e61ca3a1`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T07:45:01.859Z`  
 > **Learning ID**: `learn-github-oxc-project-oxc`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `oxc-project/oxc` (Commit: `93140429`)
+- **Target Repository**: `oxc-project/oxc` (Commit: `e61ca3a1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:49:30.193Z  
+> **Harvest Timestamp**: 2026-11-16T07:45:00.857Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23441 stars
+- **Stars / Engagement**: 23465 stars
 
 ---
 
@@ -1059,11 +1059,13 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29571** (2026-11-14): **fix(linter/react): exhaustive-deps misses ref.current method calls on custom refs**
-  *Symptoms*: closes #27269  ## Problem  `react-hooks/exhaustive-deps` didn't report `ref.current?.setValue(x)` with deps `[ref.current, x]` when `ref` comes from a custom hook. Plain reads (`ref.current ?? 0`) and assignments were already reported. `eslint-plugin-react-hooks` reports all three.  For member expressions that are call callees, the visitor recorded only the object chain (`ref.current`), never the base `ref`. Since `ref.current` was declared, nothing looked missing. Plain `.current` reads already record both `ref` and `ref.current`.  ## Fix  In the call-callee path, when the object chain ends in `.current`, also record the base dependency. This matches the read path and ESLint, whose `getDependency` never goes past `.current`. `useRef` refs are still treated as stable and aren't affected.  ## Tests  - Fail: custom-hook ref + method call (with and without `?.`), deps `[ref.current, x]`. Now reports `missing dependency: 'ref'. Mutable values like 'ref.current' ...`. - Pass: same code with deps `[ref, x]`. - In one existing snapshot message, two missing-dependency names swapped order. Adding a set entry changed the iteration order; no diagnostics were added or removed.  AI assistance (Claude Code) was used for this change.
+- **Issue #29650** (2026-11-16): **refactor(playground): replace binding patch with source wrapper**
+  *Symptoms*: The playground build rewrites the generated browser loader to provide `Oxc.ast` and copies the WASI declaration into `index.d.ts`. This couples the AST wrapper to the generator's exact output text.  Move the existing AST proxy into a source module and route the package's browser entry and existing browser subpath through it. Generate `index.d.ts` directly with NAPI, which also emits `playground.wasi.d.cts`, and remove `scripts/patch.js`. Keep the existing worker-pool patch in `postbuild-wasm-dev` for cross-origin loading.  AST parsing, BigInt and RegExp restoration, native method binding, and other browser exports are preserved. The WASI declaration is byte-identical; the root declaration changes only NAPI's generated binding-target metadata.  Verified with the actual WASI development build, `just fmt`, `publint`, strict TypeScript checks for both declaration entries, and 18 real-browser assertions. Five fixtures produced identical ASTs, generated code, comments, and diagnostics through the old and new wrappers. The release profile was not built.  AI assistance: Claude. 
 
-- **Issue #29569** (2026-11-14): **fix(napi/parser): release native parse result eagerly**
-  *Symptoms*: closes #24472 supersedes #24362, #24575  ## Problem  `ParseResult` is a NAPI class. Each getter does a `mem::take`, so a field's Rust-side memory is freed only when it is read, or when the finalizer runs. Finalizers run only on an event-loop turn after a GC, and V8 cannot see native memory, so it never feels pressure to collect. Callers that only read `errors` (e.g. syntax validation via Vite / Rolldown `parseSync`), or that parse in a synchronous loop, retained the serialized AST of every file.  ## Fix  `wrap()` now takes every field out of the native object before returning. Only `JSON.parse` of the AST stays lazy.  - The JSON string is dropped once `program` has been parsed, so a retained result does not hold both the JSON and the AST. - `module`, `comments` and `errors` become plain properties, since they are read eagerly. - The test uses the real binding and checks that the native `ParseResult` is empty after `wrap()`, before any field is read. It fails on `main`.  Taking only `program` eagerly (#24362) still leaks about 85 KB per call in a synchronous loop (the unread `module` / `comments`), as measured in the issue.  ## Results  Issue repro, reading only `.errors`, RSS:  | | 1000 parses | 2000 | 3000 | |---|---|---|---| | main | 531 MB | 1008 MB | 1489 MB | | this PR | 121 MB | 118 MB | 121 MB |  Keeping 2000 results alive after reading `.program`: heap 301 MB, vs 432 MB when the JSON string is not dropped.  ## Related  - #24472 — the report, with reproductions from Vi
+- **Issue #29648** (2026-11-16): **feat(playground): expose compression options**
+  *Symptoms*: The playground currently ignores compression fields and always uses `CompressOptions::smallest()`. Expose `dropDebugger`, `dropConsole`, `joinVars`, `sequences`, `unused`, and `keepNames` through the WASM binding so the UI can configure those passes.  All fields are optional and retain the current smallest-preset defaults. `unused` accepts `true`, `false`, or `"keep_assign"`; invalid strings produce a diagnostic. Existing target handling is preserved. Console removal also discards argument evaluation, which is documented in the generated types.  Validation: Rust formatting and Clippy passed; rebuilt the WASM binding on current main; the Playground consumer's type check and production build passed. Browser checks confirmed non-default compression settings affect emitted code.  AI assistance: implementation and review used AI tools. 
+  **Post-Mortem & Fix Analysis**:
+  > ### Merge activity  * **Nov 16, 5:52 AM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 16, 5:55 AM UTC**: `Dunqing` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 16, 5:59 AM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1080,823 +1082,384 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1dc0ee95` (2026-11-14)
-**Commit Message**: fix(semantic): preserve catch and var binding identities (#28739)
+### Incident Patch 1: `994ddc33` (2026-11-15)
+**Commit Message**: fix(linter/eslint/no-div-regex): offer regex rewrites as suggestions (#29493)
 
-## Problem
+The `/=` to `/[=]` rewrite preserves matching behavior but changes
+`RegExp.prototype.source` and `toString()`. Emit it as a suggestion so
+ordinary `--fix` preserves observable output, while `--fix-suggestions`
+retains the rewrite.
 
-[Annex B.3.4](https://tc39.es/ecma262/#sec-variablestatements-in-catch-blocks) lets a `var` reuse the name of a simple catch parameter, and that one identifier then refers to two different bindings:
+### Example
+
+Input (`repro.cjs`):
 
 ```js
-function f() {
-  try { throw 1 } catch (e) {
-    var e = 2;      // declares `e` in f's scope, but `= 2` assigns the catch parameter
-    console.log(e); // 2: the catch parameter
-  }
-  return e;         // undefined: f's own `e`, which was never assigned
-}
+const re = /=x/;
+console.log(re.source);
+console.log(re.toString());
 ```
 
-Semantic analysis merged the two into the catch parameter's symbol. When the enclosing var scope had no binding of that name yet, it moved the catch parameter's binding there. Otherwise it kept the catch parameter as the only symbol, and the `var` declared nothing of its own. Either way, oxc saw one binding where the program has two, and every consumer inherited the mistake:
+Run these commands on a fresh copy of the input at each revision:
 
-- The mangler could give the catch parameter a name that is used outside the catch, so the printed `var` declared that name in the function and shadowed an outer variable (#28520).
-- After the move, the inner catch scope of nested catches no longer bound the name, so its re
-
-**File**: `crates/oxc_linter/src/rules/eslint/block_scoped_var.rs` (modified, +23/-11)
-```diff
-@@ -1,4 +1,4 @@
--use crate::{AstNode, context::LintContext, rule::Rule};
-+use crate::{AstNode, context::LintContext, rule::Rule, utils::declarator_initializes};
- use oxc_ast::{AstKind, ast::BindingPattern};
- use oxc_diagnostics::OxcDiagnostic;
- use oxc_ecmascript::BoundNames;
-@@ -189,21 +189,29 @@ fn run_for_all_redeclarations(
-                 declare_scope_id,
-                 declaration.scope_id(),
-                 ctx.scoping(),
--            ) && redeclaration_has_write(declaration, redeclaration.span, ctx)
-+            ) && redeclaration_has_write(declaration, redeclaration.span, *symbol, ctx)
-         })
-         .for_each(|redeclaration| {
-             ctx.diagnostic(redeclaration_diagnostic(pattern.span(), redeclaration.span, &name));
-         });
- }
- 
--fn redeclaration_has_write(node: &AstNode, span: Span, ctx: &LintContext) -> bool {
-+fn redeclaration_has_write(
-+    node: &AstNode,
-+    span: Span,
-+    symbol_id: SymbolId,
-+    ctx: &LintContext,
-+) -> bool {
-     let pattern = match node.kind() {
-         AstKind::VariableDeclarator(decl) => {
--            return decl.init.is_some()
--                || matches!(
--                    ctx.nodes().parent_kind(ctx.nodes().parent_id(node.id())),
--                    AstKind::ForInStatement(_) | AstKind::ForOfStatement(_)
--                );
-+            // An initializer in another catch writes to its catch parameter,
-+            // even though the declaration also contributes to this hoisted var.
-+            return declarator_initializes(decl, symbol_id)
-+                && (decl.init.is_some()
-+                    || matches!(
-+                        ctx.nodes().parent_kind(ctx.nodes().parent_id(node.id())),
-+                        AstKind::ForInStatement(_) | AstKind::ForOfStatement(_)
-+                    ));
-         }
-         AstKind::FormalParameter(param) => {
-             if param.initializer.is_some() {
-@@ -232,9 +240,10 @@ fn run_for_declaration(pattern: &BindingPattern, node_scope_id: ScopeId, ctx: &L
-     // e.g. "var [a, b] = [1, 2]"
-     pattern.bound_names(&mut |ident| {
-         let name = ident.name;
--        let Some(symbol) = ctx.scoping().find_binding(node_scope_id, name) else {
--            return;
--        };
-+        // The declarator's identifier is attached to the catch parameter when
-+        // its initializer assigns there. This rule checks the hoisted var's uses.
-+        let symbol = ident.symbol_id();
-+        let symbol = ctx.scoping().catch_var_binding(symbol).unwrap_or(symbol);
- 
-         let binding = (pattern, name, &symbol);
- 
-@@ -261,6 +270,7 @@ fn test() {
-     use crate::tester::Tester;
- 
-     let pass = vec![
-+        "function f() { try {} catch (x) { { var x = 1; } use(x); } }",
-         "if (1) {
-             var a = 4;
-         } else {
-@@ -367,6 +377,8 @@ fn test() {
-     ];
- 
-     let fail = vec![
-+        "function f(x) { use(x); try {} catch (x) { var x = 1; } use(x); }",
-+        "function f() { try {} catch (x) { var x = 1; } try {} catch (x) { var x = 2; } use(x); }",
-         r"
-             if (true) {
-                 var a = 3;
+```sh
+oxlint -A all -D eslint/no-div-regex --no-ignore --threads 1 --fix repro.cjs
+node repro.cjs
 ```
 
-**File**: `crates/oxc_linter/src/rules/eslint/no_redeclare.rs` (modified, +7/-0)
-```diff
-@@ -93,6 +93,11 @@ impl Rule for NoRedeclare {
-         };
- 
-         for symbol_id in ctx.scoping().symbol_ids() {
-+            // A `var` redeclaring a catch parameter is allowed, and it also redeclares
-+            // the enclosing binding, which is checked on its own. Skip the catch parameter.
-+            if ctx.scoping().catch_var_binding(symbol_id).is_some() {
-+                continue;
-+            }
-             let name = ctx.scoping().symbol_name(symbol_id);
-             let decl_span = ctx.scoping().symbol_span(symbol_id);
-             let is_builtin = builtin_globals.is_some_and(|builtin_globals| {
-@@ -247,13 +252,15 @@ fn test() {
-             "function A(): string; function A(): number; function A() {} namespace A {}",
-             Some(json!([{ "ignoreDeclarationMerge": true }])),
-         ),
-+        ("function f() { try {} catch (e) { var e = 2; } }", None),
-     ];
- 
-     let fail = vec![
-         ("switch(foo) { case a: var b = 3;\ncase b: var b = 4}", None),
-         ("var a = 3; var a = 10;", None),
-         ("var a = {}; var a = [];", None),
-         ("var a; function a() {}", None),
-+        ("function f() { try {} catch (e) { var e; var e; } }", None),
-         ("function a() {} function a() {}", None),
-         ("var a = function() { }; var a = function() { }", None),
-         ("var a = function() { }; var a = new Date();", None),
+Before output:
+
+```text
+Found 0 warnings and 0 errors.
+[=]x
+/[=]x/
 ```
 
-**File**: `crates/oxc_linter/src/rules/eslint/no_unused_vars/mod.rs` (modified, +15/-0)
+After output:
+
+```text
+x eslint(no-div-regex): A regular expression literal can be confused with '/='.
+   ,-[repro.cjs:1:12]
+ 1 | const re = /=x/;
+   :            ^^^^
+ 2 | console.log(re.source);
+   `----
+  help: Rewrite `/=` into `/[=]`
+
+Found 0 warnings and 1 error.
+=x
+/=x/
+```
+
+Captured from base `2958ebd2e39f668f891ff2169805f152cca4210b` and PR
+head `928a3aa9c8eb21ce4efdcedb97875214b956f4c0`; timing lines omitted.
+Before, `--fix` rewrites the regex. After, it reports the violation,
+exits 1, and leaves the file unchanged. 
+
+**File**: `crates/oxc_linter/src/rules/eslint/no_div_regex.rs` (modified, +2/-2)
 ```diff
-@@ -26,6 +26,7 @@ use crate::{
-     context::{ContextHost, LintContext},
-     rule::Rule,
-     rules::eslint::no_unused_vars::options::VarsOption,
-+    utils::declarator_initializes,
+@@ -39,7 +39,7 @@ declare_oxc_lint!(
+     NoDivRegex,
+     eslint,
+     restriction,
+-    fix,
++    suggestion,
+     version = "0.4.2",
+     short_description = "Disallow equal signs explicitly at the beginning of regular expressions.",
+ );
+@@ -55,7 +55,7 @@ impl Rule for NoDivRegex {
+                 .and_then(|it| it.body.first())
+                 .is_some_and(is_leading_equals)
+             {
+-                ctx.diagnostic_with_fix(no_div_regex_diagnostic(lit.span), |fixer| {
++                ctx.diagnostic_with_suggestion(no_div_regex_diagnostic(lit.span), |fixer| {
+                     let span = Span::sized(lit.span.start + 1, 1);
+                     fixer.replace(span, "[=]")
+                 });
+```
+
+---
+
+### Incident Patch 2: `dc5add70` (2026-11-15)
+**Commit Message**: fix(linter/jsx-a11y/lang): don't report a missing lang attribute (#29441)
+
+`jsx-a11y/lang` reported an `<html>` element with no `lang` attribute,
+at the same position as `jsx-a11y/html-has-lang`, so enabling both gave
+two diagnostics for one problem. In eslint-plugin-jsx-a11y, `lang` only
+checks the value of a `lang` attribute that is present, and a missing
+one is `html-has-lang`'s job.
+
+The rule now returns when there is no `lang` attribute. Invalid values
+(`lang="foo"`, `lang={undefined}`, …) are reported as before. The docs
+no longer list a bare `<html>` as incorrect for this rule and point to
+`html-has-lang` instead.
+
+Closes #29320
+
+AI disclosure: written with Claude Code; I reviewed and tested the
+change.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Follow-up review and comment cleanup assisted by OpenAI Codex.
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Cameron <[REDACTED_EMAIL]>
+
+**File**: `crates/oxc_linter/src/rules/jsx_a11y/lang.rs` (modified, +11/-12)
+```diff
+@@ -5,7 +5,7 @@ use oxc_ast::{
  };
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+-use oxc_span::{GetSpan, Span};
++use oxc_span::Span;
  
- #[derive(JsonSchema, Debug)]
-@@ -320,6 +321,11 @@ impl NoUnusedVars {
-                 };
- 
-                 Self::report_with_fix_mode(self.fix.variables, ctx, report, |fixer| {
-+                    // In `catch (e) { var e = 1 }`, the declarator initializes the catch
-+                    // parameter. Removing or renaming it would change that binding's value.
-+                    if !declarator_initializes(decl, symbol.id()) {
-+                        return fixer.noop();
-+                    }
-                     // NOTE: suggestions produced by this fixer are all flagged
-                     // as dangerous
-                     self.rename_or_remove_var_declaration(fixer, symbol, decl, declaration.id())
-@@ -466,6 +472,15 @@ fn remove_unused_catch_parameter<'a>(
-     ctx: &LintContext<'a>,
-     catch: &CatchParameter<'a>,
- ) -> crate::fixer::RuleFix {
-+    // A redeclaring `var` initializer assigns to this binding even without references.
-+    // Removing the parameter would redirect the assignment to the enclosing var binding.
-+    if catch
-+        .pattern
-+        .get_binding_identifier()
-+        .is_some_and(|id| ctx.scoping().catch_var_binding(id.symbol_id()).is_some())
-+    {
-+        return fixer.noop();
-+    }
-     let Span { start, end, .. } = catch.span();
-     let AstKind::CatchClause(catch_clause) = ctx.nodes().parent_node(catch.node_id()).kind() else {
-         return fixer.noop();
-```
-
-**File**: `crates/oxc_linter/src/rules/eslint/no_unused_vars/tests/oxc.rs` (modified, +17/-0)
-```diff
-@@ -579,6 +579,10 @@ fn test_vars_catch() {
-                 json!([{ "caughtErrors": "all", "caughtErrorsIgnorePattern": "^_", "reportUsedIgnorePattern": true }]),
-             ),
-         ),
-+        // The `var` is unused, but its initializer writes the catch parameter.
-+        ("function f() { try { throw 0 } catch (e) { var e = 1; console.log(e) } } f();", None),
-+        // The catch parameter is unused, but the `var` initializer writes it.
-+        ("function f() { try { throw 0 } catch (e) { var e = 1 } return e } f();", None),
-     ];
- 
-     // these suggestion fixes are safe
-@@ -622,6 +626,19 @@ fn test_vars_catch() {
-             None,
-             FixKind::Suggestion,
-         ),
-+        // Removing either declaration would retarget the `var` initializer, so no fix applies.
-+        (
-+            "function f() { try { throw 0 } catch (e) { var e = 1; console.log(e) } } f();",
-+            "function f() { try { throw 0 } catch (e) { var e = 1; console.log(e) } } f();",
-+            None,
-+            FixKind::DangerousSuggestion,
-+        ),
-+        (
-+            "function f() { try { throw 0 } catch (e) { var e = 1 } return e } f();",
-+            "function f() { try { throw 0 } catch (e) { var e = 1 } return e } f();",
-+            None,
-+            FixKind::DangerousSuggestion,
-+        ),
-     ];
- 
-     Tester::new(NoUnusedVars::NAME, NoUnusedVars::PLUGIN, pass, fail)
-```
-
-**File**: `crates/oxc_linter/src/rules/eslint/no_useless_assignment.rs` (modified, +7/-2)
-```diff
-@@ -23,7 +23,7 @@ use oxc_semantic::{NodeId, Reference, ScopeId, SymbolId};
- use oxc_span::GetSpan;
- use oxc_span::Span;
- 
--use crate::{context::LintContext, rule::Rule};
-+use crate::{context::LintContext, rule::Rule, utils::declarator_initializes};
- 
- fn no_useless_assignment_diagnostic(span: Span) -> OxcDiagnostic {
-     OxcDiagnostic::warn("This assigned value is not used in subsequent statements.")
-@@ -195,7 +195,11 @@ impl Rule for NoUselessAssignment {
-             });
- 
-             // Collect ops for this symbol (formerly Pass 2)
--            if var_decl.is_some_and(|var_decl| var_decl.init.is_some()) {
-+            // In `catch (e) { var e = 1 }`, the initializer writes the catch parameter,
-+            // not the enclosing binding declared by the `var`.
-+            if var_decl.is_some_and(|var_decl| {
-+                var_decl.init.is_some() && declarator_initializes(var_decl, symbol_id)
-+            }) {
-                 Self::push_op(
-                     ctx,
-                     graph,
-@@ -1609,6 +1613,7 @@ function useResource(unsafe: (resource: { readonly release: () => void }) => voi
-     ];
- 
-     let fail = vec![
-+        "function f() { try {} catch (e) { var e = 1; use(e); } e = 2; e = 3; use(e); }",
-         "let v = 'used';
-                         console.log(v);
-                         v = 'unused'",
-```
-
-**File**: `crates/oxc_linter/src/rules/unicorn/prefer_optional_catch_binding.rs` (modified, +8/-0)
-```diff
-@@ -51,6 +51,13 @@ impl Rule for PreferOptionalCatchBinding {
-         let AstKind::CatchParameter(catch_param) = node.kind() else {
+ use crate::{
+     AstNode,
+@@ -39,10 +39,11 @@ declare_oxc_lint!(
+     ///
+     /// Examples of **incorrect** code for this rule:
+     /// ```jsx
+-    /// <html>
+     /// <html lang="foo">
+     /// ```
+     ///
++    /// A missing `lang` attribute is reported by `jsx-a11y/html-has-lang`.
++    ///
+     /// Examples of **correct** code for this rule:
+     /// ```jsx
+     /// <html lang="en">
+@@ -72,16 +73,12 @@ impl Rule for Lang {
              return;
-         };
-+        // A same-named `var` assigns to this catch binding. Removing the parameter
-+        // would redirect its initializer to the enclosing var binding instead.
-+        if let BindingPattern::BindingIdentifier(ident) = &catch_param.pattern
-+            && ctx.scoping().catch_var_binding(ident.symbol_id()).is_some()
+         }
+ 
+-        has_jsx_prop_ignore_case(jsx_el, "lang").map_or_else(
+-            || ctx.diagnostic(lang_diagnostic(jsx_el.name.span())),
+-            |lang_prop| {
+-                if !is_valid_lang_prop(lang_prop)
+-                    && let JSXAttributeItem::Attribute(attr) = lang_prop
+-                {
+-                    ctx.diagnostic(lang_diagnostic(attr.span));
+-                }
+-            },
+-        );
++        if let Some(lang_prop) = has_jsx_prop_ignore_case(jsx_el, "lang")
++            && !is_valid_lang_prop(lang_prop)
++            && let JSXAttributeItem::Attribute(attr) = lang_prop
 +        {
-+            return;
++            ctx.diagnostic(lang_diagnostic(attr.span));
 +        }
-         let references_count = get_param_references_count(&catch_param.pattern, ctx);
-         if references_count != 0 {
-             return;
-@@ -116,6 +123,7 @@ fn test() {
-     use crate::tester::Tester;
+     }
+ }
  
-     let pass = vec![
-+        "function f(e) { try {} catch (e) { var e = 2; } return e; }",
-         "try {} catch {}",
-         "try {} catch {
-                 error
-```
-
-**File**: `crates/oxc_linter/src/snapshots/eslint_block_scoped_var.snap` (modified, +36/-0)
-```diff
-@@ -2,6 +2,42 @@
- source: crates/oxc_linter/src/tester.rs
- ---
- 
-+  ⚠ eslint(block-scoped-var): 'x' is used outside of binding context.
-+   ╭─[block_scoped_var.mjs:1:21]
-+ 1 │ function f(x) { use(x); try {} catch (x) { var x = 1; } use(x); }
-+   ·                     ┬                          ┬
-+   ·                     │                          ╰── It is declared in a different scope here
-+   ·                     ╰── 'x' is used here
-+   ╰────
-+  help: Variable 'x' is used outside its declaration block. Declare it outside the block or use 'let'/'const'.
-+
-+  ⚠ eslint(block-scoped-var): 'x' is used outside of binding context.
-+   ╭─[block_scoped_var.mjs:1:48]
-+ 1 │ function f(x) { use(x); try {} catch (x) { var x = 1; } use(x); }
-+   ·                                                ┬            ┬
-+   ·                                                │            ╰── 'x' is used here
-+   ·                                                ╰── It is declared in a different scope here
-+   ╰────
-+  help: Variable 'x' is used outside its declaration block. Declare it outside the block or use 'let'/'const'.
-+
-+  ⚠ eslint(block-scoped-var): 'x' is used outside of binding context.
-+   ╭─[block_scoped_var.mjs:1:39]
-+ 1 │ function f() { try {} catch (x) { var x = 1; } try {} catch (x) { var x = 2; } use(x); }
-+   ·                                       ┬                                            ┬
-+   ·                                       │                                            ╰── 'x' is used here
-+   ·                                       ╰── It is declared in a different scope here
-+   ╰────
-+  help: Variable 'x' is used outside its declaration block. Declare it outside the block or use 'let'/'const'.
-+
-+  ⚠ eslint(block-scoped-var): 'x' is used outside of binding context.
-+   ╭─[block_scoped_var.mjs:1:71]
-+ 1 │ function f() { try {} catch (x) { var x = 1; } try {} catch (x) { var x = 2; } use(x); }
-+   ·                                                                       ┬            ┬
-+   ·                                                                       │            ╰── 'x' is used here
-+   ·                                                                       ╰── It is declared in a different scope here
-+   ╰────
-+  help: Variable 'x' is used outside its declaration block. Declare it outside the block or use 'let'/'const'.
-+
-   ⚠ eslint(block-scoped-var): 'a' is used outside of binding context.
-    ╭─[block_scoped_var.mjs:3:21]
-  2 │             if (true) {
-```
-
-**File**: `crates/oxc_linter/src/snapshots/eslint_no_redeclare.snap` (modified, +9/-0)
-```diff
-@@ -39,6 +39,15 @@ source: crates/oxc_linter/src/tester.rs
-    ·     ╰── `a` has already been declared here
-    ╰────
- 
-+  ⚠ eslint(no-redeclare): 'e' is already defined.
-+   ╭─[no_redeclare..cts:1:39]
-+ 1 │ function f() { try {} catch (e) { var e; var e; } }
-+   ·                                       ┬      ┬
-+   ·                                       │      ╰── It can not be redeclared here.
-+   ·                                       ╰── 'e' is already defined.
-+   ╰────
-+  help: Use a different variable name or remove the duplicate declaration.
-+
-   ⚠ eslint(no-redeclare): 'a' is already defined.
-    ╭─[no_redeclare..cts:1:10]
-  1 │ function a() {} function a() {}
+@@ -138,6 +135,8 @@ fn test() {
+         ("<html lang='zh-yue-Hant' />", None, None),
+         ("<html lang='ja-Latn' />", None, None),
+         ("<html lang={foo} />", None, None),
++        ("<html />", None, None),
++        ("<html><body /></html>", None, None),
+         ("<HTML lang='foo' />", None, None),
+         ("<Foo lang={undefined} />", None, None),
+         ("<Foo lang='en' />", None, Some(settings())),
 ```
 
 ---
 
-### Incident Patch 2: `93140429` (2026-11-14)
-**Commit Message**: fix(linter/react): exhaustive-deps misses ref.current method calls on custom refs (#29571)
+### Incident Patch 3: `5062936d` (2026-11-15)
+**Commit Message**: fix(sprout): support Babel 8 with FBT (#29615)
 
-closes #27269
+Restore the Babel 8 upgrade deferred in #29610 by applying a one-line pnpm patch to `babel-plugin-fbt@1.0.0`: use the public `path.scope` API instead of the removed `path.context.scope`. Without this patch, 33 runnable React Compiler fixture transforms fail under Babel 8.
 
-## Problem
+Update Sprout's TypeScript preset to `ignoreExtensions`, type its preset list with Babel 8's `PresetItem`, and explicitly retain React's classic JSX runtime. The existing FBT + TypeScript + JSX regression fixture covers the patched integration.
 
-`react-hooks/exhaustive-deps` didn't report `ref.current?.setValue(x)` with deps `[ref.current, x]` when `ref` comes from a custom hook. Plain reads (`ref.current ?? 0`) and assignments were already reported. `eslint-plugin-react-hooks` reports all three.
+Validation:
+- Frozen-lockfile installation with pnpm 12.7.0.
+- All 42 harness tests pass.
+- All 1,357 Sprout runtime fixtures pass in CI.
+- Sprout typed lint and formatting pass.
+- Watched all 7 workflows complete successfully: 22 checks passed, 9 skipped as configured. [CI run](https://github.com/oxc-project/oxc/actions/runs/43748071331).
 
-For member expressions that are call callees, the visitor recorded only the object chain (`ref.current`), never the base `ref`. Since `ref.current` was declared, nothing looked missing. Plain `.current` reads already record both `ref` and `ref.current`.
+This follow-up is a single commit on main; #29610 had already merged before its Babel 7 workaround could be replaced.
 
-## Fix
+AI assistance: OpenAI Codex.
 
-In the call-callee path, when the object chain ends in `.current`, also record the base dependency. This matches the read path and ESLint, whose `getDependency` never goes past `.current`. `useRef` refs are still treated as stable and aren't affected.
-
-## Tests
-
-- Fail: custom-hook ref + method call (with and without `?.`), deps `[ref.current, x]`. Now reports `missing dependency: 'ref'. Mutable values like 'ref.current' ...`.
-- Pass: same code with deps `[ref, x]`.
-- In one existing snapshot message, two missing-dependency names swapped order. Adding a s
-
-**File**: `crates/oxc_linter/src/rules/react/exhaustive_deps.rs` (modified, +33/-0)
+**File**: `patches/babel-plugin-fbt@1.0.0.patch` (added, +8/-0)
 ```diff
-@@ -1365,6 +1365,19 @@ impl<'a> VisitJs<'a> for ExhaustiveDepsVisitor<'a, '_> {
-         if let Ok(source) = analyze_property_chain(&it.object, self.semantic) {
-             if let Some(source) = source {
-                 if is_parent_call_expr {
-+                    // For method calls on `ref.current` (e.g. `ref.current.focus()`),
-+                    // also track the base object (`ref`), same as for `.current` reads.
-+                    if source.chain.last().is_some_and(|part| part == "current") {
-+                        let mut base_chain = source.chain.clone();
-+                        base_chain.pop();
-+                        self.found_dependencies.insert(Dependency {
-+                            name: source.name,
-+                            reference_id: source.reference_id,
-+                            span: source.span,
-+                            chain: base_chain,
-+                            symbol_id: source.symbol_id,
-+                        });
-+                    }
-                     self.found_dependencies.insert(source);
-                 } else {
-                     let new_chain = Vec::from([Str::from(it.property.name)]);
-@@ -1670,6 +1683,13 @@ fn test() {
-     use crate::tester::Tester;
- 
-     let pass = vec![
-+        // https://github.com/oxc-project/oxc/issues/27269
-+        r"function MyComponent({ x }) {
-+          const ref = useCustomRef();
-+          useLayoutEffect(() => {
-+            ref.current?.setValue(x);
-+          }, [ref, x]);
-+        }",
-         r"function MyComponent() {
-           const local = {};
-           useEffect(() => {
-@@ -3397,6 +3417,19 @@ const Component = ({ filter }) => {
-             console.log(ref.current);
-           }, [ref.current, ref]);
-         }",
-+        // https://github.com/oxc-project/oxc/issues/27269
-+        r"function MyComponent({ x }) {
-+          const ref = useCustomRef();
-+          useLayoutEffect(() => {
-+            ref.current?.setValue(x);
-+          }, [ref.current, x]);
-+        }",
-+        r"function MyComponent({ x }) {
-+          const ref = useCustomRef();
-+          useLayoutEffect(() => {
-+            ref.current.setValue(x);
-+          }, [ref.current, x]);
-+        }",
-         r"const MyComponent = forwardRef((props, ref) => {
-           useImperativeHandle(ref, () => ({
-             focus() {
+@@ -0,0 +1,8 @@
++diff --git a/dist/FbtNodeChecker.js b/dist/FbtNodeChecker.js
++--- a/dist/FbtNodeChecker.js
+++++ b/dist/FbtNodeChecker.js
++@@ -81,3 +81,3 @@
++   isJSModuleBound(path) {
++-    const binding = path.context.scope.getBinding(this.moduleName);
+++    const binding = path.scope.getBinding(this.moduleName);
++     return !!(binding && binding.path.node);
 ```
 
-**File**: `crates/oxc_linter/src/snapshots/react_exhaustive_deps.snap` (modified, +25/-1)
+**File**: `pnpm-lock.yaml` (modified, +106/-229)
 ```diff
-@@ -1182,7 +1182,7 @@ source: crates/oxc_linter/src/tester.rs
-    ╰────
-   help: Either include it or remove the dependency array.
+@@ -213,6 +213,9 @@ overrides:
  
--  ⚠ react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'props.color', and 'props.someOtherRefs.current.innerHTML'
-+  ⚠ react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'props.someOtherRefs.current.innerHTML', and 'props.color'
-     ╭─[exhaustive_deps.tsx:9:14]
-   6 │             console.log(ref2.current.textContent);
-   7 │             alert(props.someOtherRefs.current.innerHTML);
-@@ -1294,6 +1294,30 @@ source: crates/oxc_linter/src/tester.rs
-    ╰────
-   help: Consider removing it from the dependency array. Mutable values aren't valid dependencies because mutating them doesn't re-render the component.
+ packageExtensionsChecksum: sha256-WlkiKBAt7r2UlrZsFUO1bnxo4IcnuMc2XFz6stV9WiY=
  
-+  ⚠ react-hooks(exhaustive-deps): React Hook useLayoutEffect has a missing dependency: 'ref'. Mutable values like 'ref.current' aren't valid dependencies because mutating them doesn't re-render the component.
-+   ╭─[exhaustive_deps.tsx:5:14]
-+ 3 │           useLayoutEffect(() => {
-+ 4 │             ref.current?.setValue(x);
-+   ·             ─────┬─────
-+   ·                  ╰── useLayoutEffect uses `ref` here
-+ 5 │           }, [ref.current, x]);
-+   ·              ────────────────
-+ 6 │         }
-+   ╰────
-+  help: Either include it or remove the dependency array.
++patchedDependencies:
++  babel-plugin-fbt@1.0.0: e748e7f8d950e1106d80d5b4a4440f76e6465c570a8178450017d12ccd53a491
 +
-+  ⚠ react-hooks(exhaustive-deps): React Hook useLayoutEffect has a missing dependency: 'ref'. Mutable values like 'ref.current' aren't valid dependencies because mutating them doesn't re-render the component.
-+   ╭─[exhaustive_deps.tsx:5:14]
-+ 3 │           useLayoutEffect(() => {
-+ 4 │             ref.current.setValue(x);
-+   ·             ─────┬─────
-+   ·                  ╰── useLayoutEffect uses `ref` here
-+ 5 │           }, [ref.current, x]);
-+   ·              ────────────────
-+ 6 │         }
-+   ╰────
-+  help: Either include it or remove the dependency array.
+ importers:
+ 
+   .:
+@@ -754,20 +757,20 @@ importers:
+   tasks/sprout:
+     devDependencies:
+       '@babel/core':
+-        specifier: ^7.26.0
+-        version: 7.29.13
++        specifier: ^8.0.0
++        version: 8.1.0
+       '@babel/parser':
+-        specifier: ^7.26.0
+-        version: 7.29.13
++        specifier: ^8.0.0
++        version: 8.1.2
+       '@babel/plugin-transform-modules-commonjs':
+-        specifier: ^7.26.0
+-        version: 7.29.7(@babel/core@7.29.13)
++        specifier: ^8.0.0
++        version: 8.1.2(@babel/core@8.1.0)
+       '@babel/preset-react':
+-        specifier: ^7.26.0
+-        version: 7.29.7(@babel/core@7.29.13)
++        specifier: ^8.0.0
++        version: 8.0.1(@babel/core@8.1.0)
+       '@babel/preset-typescript':
+-        specifier: ^7.26.0
+-        version: 7.29.7(@babel/core@7.29.13)
++        specifier: ^8.0.0
++        version: 8.0.7(@babel/core@8.1.0)
+       '@sinonjs/fake-timers':
+         specifier: ^15.4.0
+         version: 15.4.0
+@@ -791,7 +794,7 @@ importers:
+         version: 19.3.0
+       babel-plugin-fbt:
+         specifier: ^1.0.0
+-        version: 1.0.0(@fbtjs/default-collection-transform@1.0.0)
++        version: 1.0.0(patch_hash=e748e7f8d950e1106d80d5b4a4440f76e6465c570a8178450017d12ccd53a491)(@fbtjs/default-collection-transform@1.0.0)
+       babel-plugin-fbt-runtime:
+         specifier: ^1.0.0
+         version: 1.0.0(babel-plugin-fbt@1.0.0)
+@@ -1095,18 +1098,10 @@ packages:
+     resolution: {integrity: sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw==}
+     engines: {node: '>=6.9.0'}
+ 
+-  '@babel/generator@7.29.14':
+-    resolution: {integrity: sha512-qSY56jgW5JnSXzuekLVil6zaOQxOCtOHidr65KkaMBw772IuAY28Qx4ZykAcDn8+FRF15qk80XzKwgSc/RYW6g==}
+-    engines: {node: '>=6.9.0'}
+-
+   '@babel/generator@8.1.2':
+     resolution: {integrity: sha512-tAjURz1NaCZGtdG3hB6gjaIeTVo4XFD4TnbqIEneADVJ1Jpt2NxhPBAjbhius8ulUG5b/P2b56ec1ClJZa2aBQ==}
+     engines: {node: ^22.18.0 || >=24.11.0}
+ 
+-  '@babel/helper-annotate-as-pure@7.29.7':
+-    resolution: {integrity: sha512-OoK6239jHPuSQOoS0kfTVKn0b/rVTk0seKq4Gd2UMLtmOVLjDC0ki3e+c90Trqv2gMfvJFqkiljrr568+qddiw==}
+-    engines: {node: '>=6.9.0'}
+-
+   '@babel/helper-annotate-as-pure@8.0.0':
+     resolution: {integrity: sha512-NSpMkMsvvZqzThJ0p1B02cbtA2ObEyfBvq950bmNkyxsxvcxwhvvCB036rKhlEnuBBo30bOrk13u3FzlKSoRrw==}
+     engines: {node: ^22.18.0 || >=24.11.0}
+@@ -1119,12 +1114,6 @@ packages:
+     resolution: {integrity: sha512-ilAZCdOOlOVA7dQbaFNw2f/59p6GW33NxTopc3DvEE3efp3ZXTrGX/yZScaKw8/vd9bq31Ag0EcXiLw32bAgJg==}
+     engines: {node: ^22.18.0 || >=24.11.0}
+ 
+-  '@babel/helper-create-class-features-plugin@7.29.13':
+-    resolution: {integrity: sha512-fo8/Fr44/DMV71FQjk/HA0Npmu3bo5DFoWTCW1dhUR8Vx3NFfAVeEy0TbcBpt4e+hd2QhdmWgmspHo/9iWj8RA==}
+-    engines: {node: '>=6.9.0'}
+-    peerDependencies:
+-      '@babel/core': ^7.0.0
+-
+   '@babel/helper-create-class-features-plugin@8.0.6':
+     resolution: {integrity: sha512-Hy7wG2Pk1LnAkFMq0CbBk789XMTYVzYGxR7tKgk+TOpZckQRME3Tdou4mMT/8DFjJFxFZ8R6UsS4DR/duBKlVA==}
+     engines: {node: ^22.18.0 || >=24.11.0}
+@@ -1139,10 +1128,6 @@ packages:
+     resolution: {integrity: sha512-OdnA/N52LhzFpeUuVz5YGuSWjc7TPHiFmVYZbPlSgExocO2GwbxVpSni9MVs5wwW+wZ4kPuwBEBN9pIPDYz1mA==}
+     engines: {node: ^22.18.0 || >=24.11.0}
+ 
+-  '@babel/helper-member-expression-to-functions@7.29.14':
+-    resolution: {integrity: sha512-FuTSn8mXKAP+aHXnbkCYQsQAdlEIJptEutwc2NaPd28hyVqsjRDmBnI2EPJX6HCodKIqOHfayQHqtxQCkqwthA==}
+-    engines: {node: '>=6.9.0'}
+-
+   '@babel/helper-member-expression-to-functions@8.0.5':
+     resolution: {integrity: sha512-GLe05QD98BkNFTkjaqeqF9QSRoHLKrrB4tpoplyQuuPrQJ72rtmkM4wvqJLX/sjZPqkbK5MUYSsuUTqdJoOVjA==}
+     engines: {node: ^22.18.0 || >=24.11.0}
+@@ -1161,9 +1146,11 @@ packages:
+     peerDependencies:
+       '@babel/core': ^7.0.0
+ 
+-  '@babel/helper-optimise-call-expression@7.29.7':
+-    resolution: {integrity: sha512-+kmGVjcT9RGYzoDwdwEqEvGgKe3BYq+O1iGzjFubaNgZHwYHP6lsF2Yghf4kEuv9BV7tYDZ913aBW9am6YKong==}
+-    engines: {node: '>=6.9.0'}
++  '@babel/helper-module-transforms@8.1.2':
++    resolution: {integrity: sha512-iSa4SKZHScghjyCDWgrkcb/gt+huMuoZ8ZpY0iQQUG1C41XH9Iy3nQA0vcNDTcALItQ0kZ9cuWzqm76p/kkHJA==}
++    engines: {node: ^22.18.0 || >=24.11.0}
++    peerDependencies:
++      '@babel/core': ^8.0.0
+ 
+   '@babel/helper-optimise-call-expression@8.0.0':
+     resolution: {integrity: sha512-3W6satvtPuCUkUx63S2jMoW9EQNYkADgs1HTfufmL7gCmAulHMKupA/12WNz4A0GMMFn/YnWWwqOT9IZrJHQjg==}
+@@ -1185,22 +1172,12 @@ packages:
+     peerDependencies:
+       '@babel/core': ^8.0.0
+ 
+-  '@babel/helper-replace-supers@7.29.7':
+-    resolution: {integrity: sha512-atfGXWSeCiF4DnKZIfmJfQRkSw9b9gNNXR1kqKjbhG4pGYCOnkp8OcTB8E3NXjBu8NpheSnOeNKz8KT7UNFTmQ==}
+-    engine
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +4/-0)
+```diff
+@@ -66,3 +66,7 @@ minimumReleaseAgeExclude:
+   - vite-plus
+   - vitest
+   - prettier@3.10.1
 +
-   ⚠ react-hooks(exhaustive-deps): React Hook useImperativeHandle has a missing dependency: 'props.hello'
-    ╭─[exhaustive_deps.tsx:6:15]
-  3 │             focus() {
++patchedDependencies:
++  # Babel 8 removed the internal traversal context scope used by FBT 1.0.0.
++  babel-plugin-fbt@1.0.0: patches/babel-plugin-fbt@1.0.0.patch
 ```
 
----
-
-### Incident Patch 3: `11dbaf4c` (2026-11-13)
-**Commit Message**: fix(ecmascript): prefer hex integers when lengths tie (#29436)
-
-Compare hex against the shortest decimal/exponent representation, then prefer hex on ties. This prints `1e12` instead of `0xe8d4a51000`, and `0xfffff` instead of `1048575`.
-
-Across the minsize fixtures, raw sizes are unchanged and gzip output is 352 bytes smaller.
-
-**File**: `crates/oxc_codegen/tests/integration/esbuild.rs` (modified, +20/-14)
+**File**: `tasks/sprout/package.json` (modified, +5/-5)
 ```diff
-@@ -18,6 +18,8 @@ fn test_number() {
-     test("x = 1e2", "x = 100;\n");
-     test("x = 1e3", "x = 1e3;\n");
-     test("x = 1e4", "x = 1e4;\n");
-+    test("x = 1e6", "x = 1e6;\n");
-+    test("x = 1e12", "x = 1e12;\n");
-     test("x = 1e100", "x = 1e100;\n");
-     test_minify("x = 1e-100", "x=1e-100;");
-     test_minify("x = 1e-5", "x=1e-5;");
-@@ -30,6 +32,9 @@ fn test_number() {
-     test_minify("x = 1e2", "x=100;");
-     test_minify("x = 1e3", "x=1e3;");
-     test_minify("x = 1e4", "x=1e4;");
-+    test_minify("x = 1e6", "x=1e6;");
-+    test_minify("x = -1e6", "x=-1e6;");
-+    test_minify("x = 1e12", "x=1e12;");
-     test_minify("x = 1e100", "x=1e100;");
- 
-     // Check "12eN"
-@@ -60,10 +65,10 @@ fn test_number() {
-     test_minify("x = 12e100", "x=12e100;");
- 
-     // Check cases for "A.BeX" => "ABeY" simplification
--    test("x = 123456789", "x = 123456789;\n");
--    test("x = 1123456789", "x = 1123456789;\n");
--    test("x = 10123456789", "x = 10123456789;\n");
--    test("x = 100123456789", "x = 100123456789;\n");
-+    test("x = 123456789", "x = 0x75bcd15;\n");
-+    test("x = 1123456789", "x = 0x42f69715;\n");
-+    test("x = 10123456789", "x = 0x25b67b115;\n");
-+    test("x = 100123456789", "x = 0x174fd2b515;\n");
-     test("x = 1000123456789", "x = 0xe8dc00dd15;\n");
-     test("x = 10000123456789", "x = 0x91855ce6d15;\n");
-     test("x = 100000123456789", "x = 0x5af317d60d15;\n");
-@@ -78,18 +83,18 @@ fn test_number() {
-     // crashing in the WebAssembly build due to a bug in the Go runtime.
- 
-     // int32
--    test_minify("x = 0x7fff_ffff", "x=2147483647;");
--    test_minify("x = 0x8000_0000", "x=2147483648;");
--    test_minify("x = 0x8000_0001", "x=2147483649;");
--    test_minify("x = -0x7fff_ffff", "x=-2147483647;");
--    test_minify("x = -0x8000_0000", "x=-2147483648;");
--    test_minify("x = -0x8000_0001", "x=-2147483649;");
-+    test_minify("x = 0x7fff_ffff", "x=0x7fffffff;");
-+    test_minify("x = 0x8000_0000", "x=0x80000000;");
-+    test_minify("x = 0x8000_0001", "x=0x80000001;");
-+    test_minify("x = -0x7fff_ffff", "x=-0x7fffffff;");
-+    test_minify("x = -0x8000_0000", "x=-0x80000000;");
-+    test_minify("x = -0x8000_0001", "x=-0x80000001;");
- 
-     // uint32
--    test_minify("x = 0xffff_ffff", "x=4294967295;");
-+    test_minify("x = 0xffff_ffff", "x=0xffffffff;");
-     test_minify("x = 0x1_0000_0000", "x=4294967296;");
-     test_minify("x = 0x1_0000_0001", "x=4294967297;");
--    test_minify("x = -0xffff_ffff", "x=-4294967295;");
-+    test_minify("x = -0xffff_ffff", "x=-0xffffffff;");
-     test_minify("x = -0x1_0000_0000", "x=-4294967296;");
-     test_minify("x = -0x1_0000_0001", "x=-4294967297;");
- 
-@@ -110,14 +115,14 @@ fn test_number() {
-     test_minify("x = -0x1_0000_0000_0000_1000", "x=-0x10000000000001000;");
- 
-     // Check the hex vs. decimal decision boundary when minifying
--    test("x = 999999999999", "x = 999999999999;\n");
-+    test("x = 999999999999", "x = 0xe8d4a50fff;\n");
-     test("x = 1000000000001", "x = 0xe8d4a51001;\n");
-     test("x = 0x0FFF_FFFF_FFFF_FF80", "x = 0xfffffffffffff80;\n");
-     test("x = 0x1000_0000_0000_0000", "x = 0x1000000000000000;\n");
-     test("x = 0xFFFF_FFFF_FFFF_F000", "x = 0xfffffffffffff000;\n");
-     test("x = 0xFFFF_FFFF_FFFF_F800", "x = 0xfffffffffffff800;\n");
-     test("x = 0xFFFF_FFFF_FFFF_FFFF", "x = 0x10000000000000000;\n");
--    test_minify("x = 999999999999", "x=999999999999;");
-+    test_minify("x = 999999999999", "x=0xe8d4a50fff;");
-     test_minify("x = 1000000000001", "x=0xe8d4a51001;");
-     test_minify("x = 0x0FFF_FFFF_FFFF_FF80", "x=0xfffffffffffff80;");
-     test_minify("x = 0x1000_0000_0000_0000", "x=0x1000000000000000;");
-@@ -134,6 +139,7 @@ fn test_number() {
-     test_minify("x = 10 .y", "x=10 .y;");
-     test_minify("x = 100 .y", "x=100 .y;");
-     test_minify("x = 1000 .y", "x=1e3.y;");
-+    test_minify("x = 1000000 .y", "x=1e6.y;");
-     test_minify("x = 12345 .y", "x=12345 .y;");
-     test_minify("x = 0xFFFF_0000_FFFF_0000 .y", "x=0xffff0000ffff0000.y;");
- }
+@@ -7,11 +7,11 @@
+     "test-harness": "node --test test/*.test.ts"
+   },
+   "devDependencies": {
+-    "@babel/core": "^7.26.0",
+-    "@babel/parser": "^7.26.0",
+-    "@babel/plugin-transform-modules-commonjs": "^7.26.0",
+-    "@babel/preset-react": "^7.26.0",
+-    "@babel/preset-typescript": "^7.26.0",
++    "@babel/core": "^8.0.0",
++    "@babel/parser": "^8.0.0",
++    "@babel/plugin-transform-modules-commonjs": "^8.0.0",
++    "@babel/preset-react": "^8.0.0",
++    "@babel/preset-typescript": "^8.0.0",
+     "@sinonjs/fake-timers": "^15.4.0",
+     "@testing-library/react": "^16.3.0",
+     "@types/babel__core": "^7.20.5",
 ```
 
-**File**: `crates/oxc_ecmascript/src/number_literal.rs` (modified, +26/-16)
+**File**: `tasks/sprout/src/transform.ts` (modified, +4/-4)
 ```diff
-@@ -30,20 +30,7 @@ fn number_literal(value: f64) -> LiteralString {
-         best_candidate.push(byte);
-     }
+@@ -1,13 +1,13 @@
+ import { createRequire } from "node:module";
+-import { transformSync } from "@babel/core";
++import { transformSync, type PresetItem } from "@babel/core";
  
--    let mut is_hex = false;
--    if value.fract() == 0.0 {
--        let integer = value as u128;
--        let hex_digits = (integer.bit_width() as usize).div_ceil(4);
--        let hex_len = 2 + hex_digits;
--        if hex_len < best_candidate.len_usize() {
--            let mut candidate = LiteralString::new();
--            candidate.push(b'0');
--            candidate.push(b'x');
--            push_hex(integer, &mut candidate);
--            best_candidate = candidate;
--            is_hex = true;
--        }
--    } else if best_candidate.starts_with(".0")
-+    if best_candidate.starts_with(".0")
-         && let Some(index) = best_candidate.bytes().skip(2).position(|byte| byte != b'0')
-     {
-         let digits_start = index + 2;
-@@ -61,8 +48,7 @@ fn number_literal(value: f64) -> LiteralString {
-         }
-     }
- 
--    if !is_hex
--        && best_candidate.ends_with('0')
-+    if best_candidate.ends_with('0')
-         && let Some(exponent) = best_candidate.bytes().rev().position(|byte| byte != b'0')
-     {
-         let base_len = best_candidate.len_usize() - exponent;
-@@ -107,6 +93,19 @@ fn number_literal(value: f64) -> LiteralString {
-         }
-     }
- 
-+    if value.fract() == 0.0 {
-+        let integer = value as u128;
-+        let hex_digits = (integer.bit_width() as usize).div_ceil(4);
-+        let hex_len = 2 + hex_digits;
-+        if hex_len <= best_candidate.len_usize() {
-+            let mut candidate = LiteralString::new();
-+            candidate.push(b'0');
-+            candidate.push(b'x');
-+            push_hex(integer, &mut candidate);
-+            best_candidate = candidate;
-+        }
-+    }
-+
-     best_candidate
- }
- 
-@@ -170,6 +169,17 @@ mod tests {
-             (0.05, ".05"),
-             (0.000_001, "1e-6"),
-             (1000.0, "1e3"),
-+            (1e6, "1e6"),
-+            (1e8, "1e8"),
-+            (1e9, "1e9"),
-+            (1e12, "1e12"),
-+            (2592e6, "2592e6"),
-+            (31536e6, "31536e6"),
-+            (16728e3, "16728e3"),
-+            (864e13, "864e13"),
-+            (1_048_575.0, "0xfffff"),
-+            (1_048_576.0, "1048576"),
-+            (1_000_123_456_000.0, "0xe8dc00da00"),
-             (281_474_976_710_655.0, "0xffffffffffff"),
-             (1.2e101, "12e100"),
-             (f64::MAX, "17976931348623157e292"),
-```
-
-**File**: `packages/codegen/src-js/print/number.ts` (modified, +9/-16)
-```diff
-@@ -54,8 +54,8 @@ export function printNonNegativeFloat(
- /**
-  * Print an integer of 1000 or more in its shortest form.
-  *
-- * `String` gives plain digits below 1e21 and exponent notation from there up, which have different forms
-- * available to them, so they are separate cases. Both can go hexadecimal.
-+ * `String` gives plain digits below 1e21 and exponent notation from there up.
-+ * At 1e21 and above, shortened exponent notation is always shorter than hexadecimal.
-  *
-  * @param state - Printer state
-  * @param value - Integer to print, 1000 or more
-@@ -65,14 +65,11 @@ function printShortestInteger(state: State, value: number): void {
- 
-   if (value >= 1e21) {
-     debugAssert(formatted.includes("e+"), "`String` gives `e+` notation from 1e21 up");
--    // The `+` always goes, so the text is one shorter than `formatted`
--    if (printHexIfShorter(state, value, formatted.length - 1)) return;
-     printExponent(state, formatted, formatted.indexOf("e"));
-     return;
-   }
- 
-   const { length } = formatted;
--  if (printHexIfShorter(state, value, length)) return;
- 
-   // A run of trailing zeros as an exponent: `1000` -> `1e3`
-   if (formatted.charCodeAt(length - 1) === 48 /* 0 */) {
-@@ -83,14 +80,15 @@ function printShortestInteger(state: State, value: number): void {
-     // Worth it when the `e` and the exponent cost less than the zeros they replace
-     const exponent = String(zeros);
-     if (exponent.length + 1 < zeros) {
-+      if (printHexIfNoLonger(state, value, length - zeros + 1 + exponent.length)) return;
-       writeNoLast(state, formatted.slice(0, length - zeros));
-       writeNoLast(state, "e");
-       writeIdent(state, exponent);
-       return;
-     }
-   }
- 
--  write(state, formatted, CAT_INT_DIGIT);
-+  if (!printHexIfNoLonger(state, value, length)) write(state, formatted, CAT_INT_DIGIT);
- }
- 
- /**
-@@ -189,14 +187,9 @@ function printExponent(state: State, formatted: string, exponentIndex: number):
- }
- 
- /**
-- * Print `value` in hexadecimal if that is shorter than `length` characters, and report whether it was.
-+ * Print `value` in hexadecimal if that is no longer than `length` characters, and report whether it was.
-  *
-- * Hexadecimal has to win back the `0x` in front of it, which takes 13 digits at the very least,
-- * so below that the conversion is not attempted at all.
-- *
-- * That bound is in decimal digits, and the caller with a number in exponent notation passes the length
-- * of that instead, which is shorter - but such a number is at least 1e21, whose 18 hex digits make 20 characters,
-- * so anything the early return skips there could not have won either.
-+ * Hexadecimal can first tie decimal at seven digits, so shorter candidates skip the conversion.
-  *
-  * `BigInt` rather than `value.toString(16)`, whose result the specification leaves implementation-approximated
-  * for every radix but 10, where the output here has to be exact.
-@@ -205,11 +198,11 @@ function printExponent(state: State, formatted: string, exponentIndex: number):
-  * @param value - Number to print
-  * @param length - Length of the shortest text found for `value` so far
-  */
--function printHexIfShorter(state: State, value: number, length: number): boolean {
--  if (length < 13) return false;
-+function printHexIfNoLonger(state: State, value: number, length: number): boolean {
-+  if (length < 7) return false;
- 
-   const hex = BigInt(value).toString(16);
--  if (hex.length + 2 >= length) return false;
-+  if (hex.length + 2 > length) return false;
- 
-   writeNoLast(state, "0x");
-   writeIdent(state, hex);
-```
-
-**File**: `packages/codegen/test/fixtures/number-literals.js` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+1048575;
-+1048576;
-+1000123456000;
-+9007199254740991;
-+1e6;
-+1e8;
-+1e9;
-+1e12;
-+2592e6;
-+31536e6;
-+16728e3;
-+864e13;
-+1.0000990573316814e21;
-+1.0000473745167254e22;
-+1048575 .x;
-+1048576 .x;
-+(-1048575).x;
-```
-
-**File**: `packages/codegen/test/print.test.ts` (modified, +14/-12)
-```diff
-@@ -245,7 +245,9 @@ describe("member access on numbers", () => {
-     // The shortened forms, which all carry a `.`, an `e` or an `x` of their own and so must NOT
-     // gain the space, against the long integers which stay plain digits and must
-     ["int-1500", e(member(num(1500), id("x"))), "1500 .x;\n"],
--    ["int-max-safe", e(member(num(9007199254740991), id("x"))), "9007199254740991 .x;\n"],
-+    ["int-max-safe", e(member(num(9007199254740991), id("x"))), "0x1fffffffffffff.x;\n"],
-+    ["hex-tie", e(member(num(1048575), id("x"))), "0xfffff.x;\n"],
-+    ["hex-tie-negative", e(member(num(-1048575), id("x"))), "(-0xfffff).x;\n"],
-     ["hex", e(member(num(281474976710655), id("x"))), "0xffffffffffff.x;\n"],
-     ["exponent-fold", e(member(num(1.2e101), id("x"))), "12e100.x;\n"],
-   ]);
-@@ -280,19 +282,19 @@ describe("numbers", () => {
-   // integers. Every form and every "not worth it" boundary is here.
-   checkCases([
-     ["int-1500", e(num(1500)), "1500;\n"], // trailing zeros too few to pay for the `e`
--    // 16 digits, and hexadecimal still does not pay
--    ["int-max-safe", e(num(9007199254740991)), "9007199254740991;\n"],
-+    ["int-max-safe", e(num(9007199254740991)), "0x1fffffffffffff;\n"],
-+    ["hex-too-short", e(num(999999)), "999999;\n"],
-+    ["hex-first-tie", e(num(1000001)), "0xf4241;\n"],
-+    ["hex-tie", e(num(1048575)), "0xfffff;\n"],
-+    ["hex-tie-negative", e(num(-1048575)), "-0xfffff;\n"],
-+    ["hex-longer", e(num(1048576)), "1048576;\n"],
-+    ["hex-exponent-tie", e(num(1000123456000)), "0xe8dc00da00;\n"],
-     ["hex", e(num(281474976710655)), "0xffffffffffff;\n"],
-     ["hex-negative", e(num(-281474976710655)), "-0xffffffffffff;\n"],
--    // hexadecimal is tried first and wins, though `1e12` is shorter
--    ["hex-over-exponent", e(num(1e12)), "0xe8d4a51000;\n"],
--    // The two cases above reach the hexadecimal test from plain digits. These reach it from
--    // exponent notation, where the length it is judged against is one less than the text `String`
--    // gave, because the `+` of the exponent always goes. The second is the boundary: hexadecimal is
--    // exactly as long as the exponent form, so it must lose - and would wrongly win, as
--    // `0x21e2073de72ea800000`, if that one character were not taken off.
--    ["hex-from-exponent", e(num(1.0000990573316814e21)), "0x36372999e429e40000;\n"],
--    ["hex-from-exponent-boundary", e(num(1.0000473745167254e22)), "10000473745167254e6;\n"],
-+    ["exponent-over-hex", e(num(1e12)), "1e12;\n"],
-+    ["exponent-over-hex-million", e(num(1e6)), "1e6;\n"],
-+    ["exponent-over-hex-large", e(num(1.0000990573316814e21)), "10000990573316814e5;\n"],
-+    ["exponent-over-hex-boundary", e(num(1.0000473745167254e22)), "10000473745167254e6;\n"],
-     ["exponent-fold", e(num(1.2e101)), "12e100;\n"], // the point folds into the exponent
-     ["max-value", e(num(1.7976931348623157e308)), "17976931348623157e292;\n"],
-     ["min-value", e(num(5e-324)), "5e-324;\n"],
-```
-
-**File**: `tasks/minsize/minsize.snap` (modified, +7/-7)
-```diff
-@@ -9,19 +9,19 @@ Original    | minified    | minified    | gzip        | gzip        | Iterations
- 
- 342.15 kB   | 114,743 B   | 118.14 kB   | 42,675 B    | 44.37 kB    |           2 | vue.js
- 
--544.10 kB   | 69,872 B    | 72.48 kB    | 25,577 B    | 26.20 kB    |           2 | lodash.js
-+544.10 kB   | 69,872 B    | 72.48 kB    | 25,554 B    | 26.20 kB    |           2 | lodash.js
- 
--555.77 kB   | 262,720 B   | 270.13 kB   | 87,652 B    | 90.80 kB    |           2 | d3.js
-+555.77 kB   | 262,720 B   | 270.13 kB   | 87,627 B    | 90.80 kB    |           2 | d3.js
- 
- 1.01 MB     | 435,866 B   | 458.89 kB   | 121,774 B   | 126.71 kB   |           2 | bundle.min.js
- 
--1.25 MB     | 634,070 B   | 646.76 kB   | 158,359 B   | 163.73 kB   |           2 | three.js
-+1.25 MB     | 634,070 B   | 646.76 kB   | 158,272 B   | 163.73 kB   |           2 | three.js
- 
--2.14 MB     | 707,506 B   | 724.14 kB   | 160,017 B   | 181.07 kB   |           2 | victory.js
-+2.14 MB     | 707,506 B   | 724.14 kB   | 159,972 B   | 181.07 kB   |           2 | victory.js
- 
--3.20 MB     | 958,210 B   | 1.01 MB     | 316,891 B   | 331.56 kB   |           2 | echarts.js
-+3.20 MB     | 958,210 B   | 1.01 MB     | 316,876 B   | 331.56 kB   |           2 | echarts.js
- 
--6.69 MB     | 2,119,887 B | 2.31 MB     | 453,309 B   | 488.28 kB   |           4 | antd.js
-+6.69 MB     | 2,119,887 B | 2.31 MB     | 453,295 B   | 488.28 kB   |           4 | antd.js
- 
--10.95 MB    | 3,309,379 B | 3.49 MB     | 849,226 B   | 915.50 kB   |           4 | typescript.js
-+10.95 MB    | 3,309,379 B | 3.49 MB     | 849,083 B   | 915.50 kB   |           4 | typescript.js
- 
+ const require = createRequire(import.meta.url);
+-const presets = [
++const presets: PresetItem[] = [
+   [
+     require.resolve("@babel/preset-typescript"),
+-    { allExtensions: true, isTSX: true, onlyRemoveTypeImports: true },
++    { ignoreExtensions: true, onlyRemoveTypeImports: true },
+   ],
+-  [require.resolve("@babel/preset-react"), { throwIfNamespace: false }],
++  [require.resolve("@babel/preset-react"), { runtime: "classic", throwIfNamespace: false }],
+ ];
+ const plugins = [
+   require.resolve("babel-plugin-fbt"),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29571** (2026-11-14): fix(linter/react): exhaustive-deps misses ref.current method calls on custom refs (@Boshen)
-- **PR #29569** (2026-11-14): fix(napi/parser): release native parse result eagerly (@Boshen)
-- **PR #29560** (2026-11-14): perf(parser): keep the tokens read while classifying `()` and `(x)` arrows (@Boshen)
-- **PR #29559** (2026-11-14): perf(parser): lex the token after `let` and `?.` once (@Boshen)
-- **PR #29558** (2026-11-14): perf(parser): lex the token after a modifier keyword once (@Boshen)
-- **PR #29557** (2026-11-14): perf(parser): skip arrow speculation for array and object literals (@Boshen)
+- **PR #29650** (2026-11-16): refactor(playground): replace binding patch with source wrapper (@Dunqing)
+- **PR #29648** (2026-11-16): feat(playground): expose compression options (@Dunqing)
+- **PR #29642** (closed): feat(ci): migrate issue triage to Oxc Factory (@Boshen)
+- **PR #29641** (2026-11-16): fix(react-compiler): do not report hoisted function declaration initializer as access before declaration (@Boshen)
+- **PR #29639** (2026-11-16): chore(formatter_htmlish): bump oxc-htmlish-parser (@leaysgur)
+- **PR #29638** (2026-11-16): feat(playground): support explicit source types (@Dunqing)
 
 ---
 
@@ -1916,62 +1479,33 @@ Across the minsize fixtures, raw sizes are unchanged and gzip output is 352 byte
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. semantic): preserve catch and var binding identities
+## X. linter/eslint/no-div-regex): offer regex rewrites as suggestions
 
 **RULE**:
-When implementing operations in `crates/oxc_linter/src/rules/eslint/block_scoped_var.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/eslint/no_div_regex.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1dc0ee95`: semantic): preserve catch and var binding identities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `994ddc33`: linter/eslint/no-div-regex): offer regex rewrites as suggestions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/block_scoped_var.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_div_regex.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::{AstNode, context::LintContext, rule::Rule, utils::declarator_initializes};
-            ) && redeclaration_has_write(declaration, redeclaration.span, *symbol, ctx)
-fn redeclaration_has_write(
-    node: &AstNode,
-    span: Span,
-    symbol_id: SymbolId,
-    ctx: &LintContext,
-) -> bool {
-            // An initializer in another catch writes to its catch parameter,
-            // even though the declaration also contributes to this hoisted var.
-            return declarator_initializes(decl, symbol_id)
-                && (decl.init.is_some()
-                    || matches!(
-                        ctx.nodes().parent_kind(ctx.nodes().parent_id(node.id())),
-                        AstKind::ForInStatement(_) | AstKind::ForOfStatement(_)
-                    ));
-        // The declarator's identifier is attached to the catch parameter when
-        // its initializer assigns there. This rule checks the hoisted var's uses.
-        let symbol = ident.symbol_id();
-        let symbol = ctx.scoping().catch_var_binding(symbol).unwrap_or(symbol);
-        "function f() { try {} catch (x) { { var x = 1; } use(x); } }",
-        "function f(x) { use(x); try {} catch (x) { var x = 1; } use(
+    suggestion,
+                ctx.diagnostic_with_suggestion(no_div_regex_diagnostic(lit.span), |fixer| {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use crate::{AstNode, context::LintContext, rule::Rule};
-            ) && redeclaration_has_write(declaration, redeclaration.span, ctx)
-fn redeclaration_has_write(node: &AstNode, span: Span, ctx: &LintContext) -> bool {
-            return decl.init.is_some()
-                || matches!(
-                    ctx.nodes().parent_kind(ctx.nodes().parent_id(node.id())),
-                    AstKind::ForInStatement(_) | AstKind::ForOfStatement(_)
-                );
-        let Some(symbol) = ctx.scoping().find_binding(node_scope_id, name) else {
-            return;
-        };
+    fix,
+                ctx.diagnostic_with_fix(no_div_regex_diagnostic(lit.span), |fixer| {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1dc0ee95` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `994ddc33` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

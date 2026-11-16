@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "93140429",
+    "sourceVersion": "e61ca3a1",
     "license": "MIT",
-    "contentHash": "13c926c924afdab21050788673608207881ac7d5e6a77f6fffe413e65e5bd8c3",
-    "lastHarvestedAt": "2026-11-14T15:49:31.059Z",
+    "contentHash": "21d14b8a1709d6416bbde92ecf938f9e225b0c4c4ece56c491f0cc182f78f0f8",
+    "lastHarvestedAt": "2026-11-16T07:45:01.712Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

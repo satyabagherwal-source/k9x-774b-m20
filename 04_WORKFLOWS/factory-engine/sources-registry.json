@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T07:37:18.787Z",
-    "lastVerified": "2026-11-16T07:37:18.787Z",
+    "lastChecked": "2026-11-16T07:45:11.380Z",
+    "lastVerified": "2026-11-16T07:45:11.380Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -474,8 +474,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T06:35:53.798Z",
-    "lastVerified": "2026-11-16T06:35:53.798Z",
+    "lastChecked": "2026-11-16T07:45:11.372Z",
+    "lastVerified": "2026-11-16T07:45:11.372Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -955,9 +955,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-16T01:04:43.284Z",
+    "lastChecked": "2026-11-16T07:45:06.358Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-16T01:04:43.284Z"
+    "lastVerified": "2026-11-16T07:45:06.358Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -6978,9 +6978,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-15T02:35:01.997Z",
+    "lastChecked": "2026-11-16T07:45:03.939Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-15T02:35:01.997Z"
+    "lastVerified": "2026-11-16T07:45:03.939Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -8264,8 +8264,8 @@
     "officialUrl": "https://github.com/pathwaycom/serviette",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T00:37:29.831Z",
-    "lastVerified": "2026-11-15T00:37:29.831Z",
+    "lastChecked": "2026-11-16T07:45:08.858Z",
+    "lastVerified": "2026-11-16T07:45:08.858Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette",
@@ -8804,14 +8804,14 @@
     "officialUrl": "https://github.com/oxc-project/oxc",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T15:49:30.193Z",
-    "lastVerified": "2026-11-14T15:49:30.193Z",
+    "lastChecked": "2026-11-16T07:45:00.857Z",
+    "lastVerified": "2026-11-16T07:45:00.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "13c926c924afdab21050788673608207881ac7d5e6a77f6fffe413e65e5bd8c3",
+    "contentHash": "21d14b8a1709d6416bbde92ecf938f9e225b0c4c4ece56c491f0cc182f78f0f8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11225,8 +11225,8 @@
     "officialUrl": "https://github.com/lucky-media/astro-seo",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T18:11:43.105Z",
-    "lastVerified": "2026-11-11T18:11:43.105Z",
+    "lastChecked": "2026-11-16T07:44:58.888Z",
+    "lastVerified": "2026-11-16T07:44:58.888Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lucky-media-astro-seo",
@@ -11371,9 +11371,9 @@
   "oblador-hush": {
     "name": "hush",
     "officialUrl": "https://github.com/oblador/hush",
-    "lastChecked": "2026-11-13T01:01:12.323Z",
+    "lastChecked": "2026-11-16T07:45:01.374Z",
     "revisionIdentifier": "2e96f4f7",
-    "lastVerified": "2026-11-13T01:01:12.323Z"
+    "lastVerified": "2026-11-16T07:45:01.374Z"
   },
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-selenium",

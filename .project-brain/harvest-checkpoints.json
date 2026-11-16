@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T07:37:15.812Z",
+  "last_updated": "2026-11-16T07:45:01.720Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "13c926c924afdab21050788673608207881ac7d5e6a77f6fffe413e65e5bd8c3",
-      "verified_at": "2026-11-14T15:49:31.069Z",
+      "content_hash": "21d14b8a1709d6416bbde92ecf938f9e225b0c4c4ece56c491f0cc182f78f0f8",
+      "verified_at": "2026-11-16T07:45:01.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:49:31.069Z"
+      "last_updated": "2026-11-16T07:45:01.720Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

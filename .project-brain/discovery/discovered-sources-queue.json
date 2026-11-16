@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T07:37:19.179Z",
+  "updated_at": "2026-11-16T07:45:11.550Z",
   "stats": {
-    "total_discovered": 4174,
-    "approved_pending_harvest": 3923,
+    "total_discovered": 4175,
+    "approved_pending_harvest": 3924,
     "harvested_count": 0,
     "rejected_count": 251,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3922,
+      "COMMUNITY_AND_EXPERT": 3923,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -90092,6 +90092,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
         "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-9477167DE7CC": {
+      "id": "SRC-9477167DE7CC",
+      "url": "https://github.com/oxc-project/oxc/actions/runs/43748071331",
+      "title": "https://github.com/oxc-project/oxc/actions/runs/43748071331",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T07:45:11.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
       }
     }
   }

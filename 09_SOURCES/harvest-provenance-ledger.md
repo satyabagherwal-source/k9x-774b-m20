@@ -10291,3 +10291,4 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `323ddd36` | Multi-dimensional audit evidence | 2026-11-16T06:59:40.878Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `336cd8a4` | Multi-dimensional audit evidence | 2026-11-16T07:19:48.962Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `103dc4ef` | Multi-dimensional audit evidence | 2026-11-16T07:37:15.804Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `e61ca3a1` | Multi-dimensional audit evidence | 2026-11-16T07:45:01.712Z |

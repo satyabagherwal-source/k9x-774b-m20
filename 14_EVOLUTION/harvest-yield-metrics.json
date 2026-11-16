@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T07:37:15.809Z",
-  "total_cycles_completed": 9849,
-  "total_learnings_persisted": 9849,
-  "total_rules_promoted": 9457,
+  "last_updated": "2026-11-16T07:45:01.717Z",
+  "total_cycles_completed": 9850,
+  "total_learnings_persisted": 9850,
+  "total_rules_promoted": 9458,
   "history": [
-    {
-      "timestamp": "2026-11-15T03:13:33.917Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T03:13:36.255Z",
       "repository": "argoproj/argo-workflows",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T07:37:15.809Z",
       "repository": "biomejs/biome",
       "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T07:45:01.717Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

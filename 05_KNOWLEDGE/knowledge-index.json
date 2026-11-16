@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T07:37:20.575Z",
+  "last_updated": "2026-11-16T07:45:12.894Z",
   "total_verified_learnings": 8769,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19014,
+  "total_items": 19018,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b023207685fa8113c8fb5f326923ca0362a356b15ee59d8da43e062f79a56486",
+      "content_hash": "1e51e9cc47935ecb47aab35b84112c2121d4af97b6a9ae989544c83b94743933",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:37:19.936Z"
+      "persisted_at": "2026-11-16T07:45:12.796Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "76137d40b5fe8e7cabb116b2b3e3fbde027ab722934081645835927aeb35caaf",
+      "content_hash": "e7f302acd874d1d81bdf0575e15b67434a2aac5df64c0dda00f17058712e79e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:37:20.031Z"
+      "persisted_at": "2026-11-16T07:45:12.894Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OCL5-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KRWC-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "992ad3a53725558294c1bc702405255203b62455921bb576d5003d89804c93e5",
+      "content_hash": "eff834f6540efdb84010973b74dc01ee0033f9188cd690f0c618bd19ac11e3a8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T07:19:59.422Z"
+      "persisted_at": "2026-11-16T07:45:12.255Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1769913b6f7c3899ca2b6e16d350cfa5a84426473d9398fc150eb11cb5766b83",
+      "content_hash": "b5ae422a6921881ac80c94e0afa8ef3d657843ce76dbd3ab1d7853eaff69a9be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T07:19:59.505Z"
+      "persisted_at": "2026-11-16T07:45:12.350Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "18d0730a5e8527f622180221459539d893c0e0bc6439db34e6750cac255d8112",
+      "content_hash": "ee6c70c0632cf2b4c5143e64d3cb84759580ef2e033766852807f2ced3b7f278",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:19:59.595Z"
+      "persisted_at": "2026-11-16T07:45:12.449Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214845,13 +214845,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ANDJ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KS8P-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5993e67ca6925d0bffb80b999b478430095bed10001458f8a65520a045e8a7d",
+      "content_hash": "79740882c2e5f5fbb24afa54cba09b84954eb7b78060ddce58658e8ada31a1a3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:37:19.831Z"
+      "persisted_at": "2026-11-16T07:45:12.699Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -230265,14 +230265,19 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "93140429",
-      "content_hash": "13c926c924afdab21050788673608207881ac7d5e6a77f6fffe413e65e5bd8c3",
+      "source_version": "e61ca3a1",
+      "content_hash": "21d14b8a1709d6416bbde92ecf938f9e225b0c4c4ece56c491f0cc182f78f0f8",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
         {
           "number": 8501,
           "title": "preserve catch and var binding identities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8726,
+          "title": "linter/eslint/no-div-regex): offer regex rewrites as suggestions",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -230281,7 +230286,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:49:30.894Z",
+      "verified_at": "2026-11-16T07:45:01.575Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230335,10 +230340,10 @@
       "relative_path": "08_VERIFICATION/oxc-project-oxc-verification-protocol-empirical-defect-shield-for-oxc-project-ox.md",
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project/oxc",
       "repository": "oxc-project/oxc",
-      "source_version": "93140429",
-      "content_hash": "29fca72c0848bdf1bb296e26c9d325548a94c96adeb1f27846cc4f06713e448b",
+      "source_version": "e61ca3a1",
+      "content_hash": "ac2f2749ea8a1d042aaf133ef29fe34c46fc0543550c055f0e07eecb12a0b82f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:49:31.582Z"
+      "persisted_at": "2026-11-16T07:45:02.057Z"
     },
     "learn-github-agent-field-agentfield": {
       "learning_id": "learn-github-agent-field-agentfield",
@@ -230548,9 +230553,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project-oxc-learnings",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e97100362501acdd4efe076a8dc7db6379fbd05e5018a11e9192ff3ffc44c86",
+      "content_hash": "5019843816a368949fee09e22619a5de4cb33a448654548fe332b69b217df80e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:49:47.238Z"
+      "persisted_at": "2026-11-16T07:45:11.893Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
@@ -252683,6 +252688,56 @@
       "content_hash": "07518f21e5be41e75c49b7925124eeadf753f29a5238cdee0c0f6ff8f82eba4a",
       "domain_letter": "G",
       "persisted_at": "2026-11-16T07:37:19.357Z"
+    },
+    "rule-8726": {
+      "learning_id": "rule-8726",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8726,
+      "title": "linter/eslint/no-div-regex): offer regex rewrites as suggestions",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "e61ca3a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T07:45:01.575Z"
+    },
+    "candidate_directive-linter-eslint-no-div-regex-offer-regex-rewrites-as-suggestions": {
+      "item_id": "candidate_directive-linter-eslint-no-div-regex-offer-regex-rewrites-as-suggestions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KRGX-linter-eslint-no-div-regex-offer-regex-rewrites-as-suggestions.md",
+      "title": "linter/eslint/no-div-regex): offer regex rewrites as suggestions",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7196a74826e153cd41b8876bfa9466edc72bc37ffbee1ed70ef88025dc954efa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T07:45:11.698Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-technical-construction-intelligence-oxc-project-oxc-core-invaria.md",
+      "title": "Technical Construction Intelligence: oxc-project/oxc Core Invariants",
+      "repository": "oxc-project/oxc",
+      "source_version": "e61ca3a1",
+      "content_hash": "9a29fbd27f2e42ae1a3a4322ac02d775270f9e593425fb0c8347915b10a48041",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T07:45:01.959Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-learnings-technical-construction-intelligence-oxc-project-oxc-le.md",
+      "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33580de3147a95b5f31ed654b7af862edb12871dc3c384027bfdb237b1b6dae8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T07:45:11.796Z"
     }
   },
   "ai-builder-brain": {

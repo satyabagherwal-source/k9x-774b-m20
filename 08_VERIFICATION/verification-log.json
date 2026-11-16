@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-SHJL",
-    "timestamp": "2026-11-13T19:40:01.617Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "8dbf8f2bacdd79c7f37611a950a335f9f58f1de3a44a8c0c3ee55e004d68d4c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-SJ66",
     "timestamp": "2026-11-13T19:40:03.726Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7475,21 @@
     "repository": "biomejs/biome",
     "learningId": "learn-github-biomejs-biome",
     "contentHash": "1cedd318c33fffce85df6678332d4785aaf70b5c951c19294a9e81f032dc1d05",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-KJRH",
+    "timestamp": "2026-11-16T07:45:01.709Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "21d14b8a1709d6416bbde92ecf938f9e225b0c4c4ece56c491f0cc182f78f0f8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
