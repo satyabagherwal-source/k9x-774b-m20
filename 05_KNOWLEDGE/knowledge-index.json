@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T03:06:59.407Z",
-  "total_verified_learnings": 8755,
+  "last_updated": "2026-11-16T03:23:28.021Z",
+  "total_verified_learnings": 8757,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18875,
+  "total_items": 18883,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112549,10 +112549,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "repository": "crossplane/crossplane",
-      "source_version": "786343a3",
-      "content_hash": "1b4b1c782b4a03bae1775e6fc2e98c453f8f74751b01cca08b3f955dbc7d642b",
+      "source_version": "0bc4615f",
+      "content_hash": "fd0fa7eac4034281754d2be315fe5288fd41e7c086019c48bf05d94c87412240",
       "domain_letter": "I",
-      "persisted_at": "2026-11-13T15:29:32.951Z"
+      "persisted_at": "2026-11-16T03:23:22.910Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane",
@@ -112561,10 +112561,10 @@
       "relative_path": "08_VERIFICATION/crossplane-crossplane-verification-protocol-empirical-defect-shield-for-crosspla.md",
       "title": "Verification Protocol: Empirical Defect Shield for crossplane/crossplane",
       "repository": "crossplane/crossplane",
-      "source_version": "786343a3",
-      "content_hash": "73b9a128ef82cb3693f1b5d8b67a3526bf0f4d9cef6731321b2d2a4ff1e191a3",
+      "source_version": "0bc4615f",
+      "content_hash": "d96efb9ecee0839f258e257cb1f24fdf748334fdd2f4024ee7352961132f3c00",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:29:33.048Z"
+      "persisted_at": "2026-11-16T03:23:23.029Z"
     },
     "candidate_directive-handle-stop_sending-in-raw-quic-mode-8594": {
       "item_id": "candidate_directive-handle-stop_sending-in-raw-quic-mode-8594",
@@ -112670,9 +112670,9 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "repository": "crossplane-crossplane-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f493ce82181e98e14ecdc041778822dbe2fc132176942755495407765c8d8bb",
+      "content_hash": "e1d7a031a77cb1e8787ae83198a422426a574fbf1f4792aa3161e1745f6c09ce",
       "domain_letter": "I",
-      "persisted_at": "2026-11-13T15:30:24.909Z"
+      "persisted_at": "2026-11-16T03:23:27.328Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane-learning",
@@ -112682,9 +112682,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crossplane-crossplane-learnings",
       "repository": "crossplane-crossplane-learnings",
       "source_version": "HEAD",
-      "content_hash": "97081b04ec29a4fd7a04eed9c395afadedc70821aa87b0b093caf0883b467a10",
+      "content_hash": "e72300f63f52233fce18540b7d8b84b71152ec3b4b1a39a07a5cb72a1d0d8efe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:30:25.013Z"
+      "persisted_at": "2026-11-16T03:23:27.446Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -226672,13 +226672,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MZCV-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-8698-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0c7c06ebfb8c7b040ee91d7dfe898d53dfde4c3a31aa11ea4f492153792b858",
+      "content_hash": "eedbf178206b6a9448d44af24bb730b25aeb97b41c942635c4abc7fbdec8c33b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T03:06:59.072Z"
+      "persisted_at": "2026-11-16T03:23:27.788Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226688,9 +226688,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "6359a2bd11662b2591f5753baf38853708eb891748d30595a4bd6d5ea680ea3c",
+      "content_hash": "06bc74eb0ac84eb3515713e968b5389a853c6ca1ffee3b54f465452c85425202",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T03:06:59.238Z"
+      "persisted_at": "2026-11-16T03:23:27.902Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226700,9 +226700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "0edf72a7cc8e39e51e4d85d8979d072dc4a7dbcc663d5eafba7ec07882810bff",
+      "content_hash": "900c0505980ebdd097be79ff9660b781339264183d3ccbb5092fc82990c974b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:06:59.407Z"
+      "persisted_at": "2026-11-16T03:23:28.021Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -249973,26 +249973,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8690,
       "title": "Crawl Cove banner",
-      "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-      "source_version": "a05c6bc3",
+      "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "source_version": "baafccbf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-16T02:06:33.073Z"
+      "verified_at": "2026-11-16T03:23:17.881Z"
     },
     "candidate_directive-crawl-cove-banner": {
       "item_id": "candidate_directive-crawl-cove-banner",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H9RG-crawl-cove-banner.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7YVB-crawl-cove-banner.md",
       "title": "Crawl Cove banner",
-      "repository": "CrawlCove/hreflang-checker",
-      "source_version": "a05c6bc3",
-      "content_hash": "92978731563c96834363c91ed013dba23482143e058bae61f32313eca30a5669",
+      "repository": "CrawlCove/robots-txt-tester",
+      "source_version": "baafccbf",
+      "content_hash": "2368165f8942801d3aa8a0db34cbfcae6e979e1718b2e88a370f4303cbc54674",
       "domain_letter": "J",
-      "persisted_at": "2026-11-16T02:06:33.389Z"
+      "persisted_at": "2026-11-16T03:23:18.216Z"
     },
     "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants",
@@ -250022,13 +250022,13 @@
       "item_id": "candidate_directive-readme-crawl-cove-banner",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HC8Z-readme-crawl-cove-banner.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-85B9-readme-crawl-cove-banner.md",
       "title": "README: Crawl Cove banner",
-      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ac00676b4a3c0ccfaab2a0dacda2ffccc1eaa49b144c5e93af786f065686ba7",
+      "content_hash": "02c106e22e263c6cf3b1bb65d05be469b193b1d56039a2ca6c7e7818100b3546",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T02:06:36.611Z"
+      "persisted_at": "2026-11-16T03:23:26.566Z"
     },
     "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin": {
       "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin",
@@ -250594,6 +250594,144 @@
       "content_hash": "6df63b57016ebe486acd8b17968e814cbf4552e51bcc7e5e76fa8aba94a15abe",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T03:06:58.575Z"
+    },
+    "learn-github-crawlcove-robots-txt-tester": {
+      "learning_id": "learn-github-crawlcove-robots-txt-tester",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "CrawlCove/robots-txt-tester",
+      "repository": "CrawlCove/robots-txt-tester",
+      "slug": "crawlcove-crawlcove-robots-txt-tester",
+      "platform": "github",
+      "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "source_version": "baafccbf",
+      "content_hash": "21c31f05a722525c6f7cc2a2baaa4b56dad769e29514be64805c29ae73ddbc1d",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8690,
+          "title": "Crawl Cove banner",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T03:23:17.881Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-robots-txt-tester-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-robots-txt-tester-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-robots-txt-tester-search-distribution-intelligence-crawlcove.md",
+      "title": "Search & Distribution Intelligence: CrawlCove/robots-txt-tester Core Invariants",
+      "repository": "CrawlCove/robots-txt-tester",
+      "source_version": "baafccbf",
+      "content_hash": "062b7e2befe250fa1c5273597feb1aace994f7df291d2afe6009db103dfe3a3f",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T03:23:18.376Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-robots-txt-tester": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-robots-txt-tester",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crawlcove-crawlcove-robots-txt-tester-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for CrawlCove/robots-txt-tester",
+      "repository": "CrawlCove/robots-txt-tester",
+      "source_version": "baafccbf",
+      "content_hash": "f9036beff17e2147a98ada7c069b6963327c5649cea2486b87cd5f37e2d05a69",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:23:18.501Z"
+    },
+    "learn-github-crossplane-crossplane": {
+      "learning_id": "learn-github-crossplane-crossplane",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "crossplane/crossplane",
+      "repository": "crossplane/crossplane",
+      "slug": "crossplane-crossplane",
+      "platform": "github",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "0bc4615f",
+      "content_hash": "1471699563cae90446ad648665c5cf64a38cdb463f5c9d433cf8da12c1b1efa2",
+      "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
+      "promoted_rules": [
+        {
+          "number": "EXISTING",
+          "title": "update vulnerable dependencies [security]",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T03:23:22.458Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-update-vulnerable-dependencies-security": {
+      "item_id": "candidate_directive-update-vulnerable-dependencies-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-82EH-update-vulnerable-dependencies-security.md",
+      "title": "update vulnerable dependencies [security]",
+      "repository": "crossplane/crossplane",
+      "source_version": "0bc4615f",
+      "content_hash": "483d23b02cb07a7507bb38807f93fa65216642fa076ffe3587d78fe22cc654c3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T03:23:22.798Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-robots-txt-tester-learnings-search-distribution-intelligence.md",
+      "title": "Search & Distribution Intelligence: crawlcove-crawlcove-robots-txt-tester-learnings Core Invariants",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e8500a4b5a5d5feae591ca9ac9818b5261817171abac8b1e75b8eff4589093f",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T03:23:26.717Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-crawlcove-robots-txt": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-crawlcove-robots-txt",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crawlcove-crawlcove-robots-txt-tester-learnings-verification-protocol-empirical-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crawlcove-crawlcove-robots-txt-tester-learnings",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d676e2fc7cf8c09e7836391ac5a281b1cb6d16ff0b8678944e08be21dd9d836",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:23:26.838Z"
+    },
+    "candidate_directive-deps-update-vulnerable-dependencies-security": {
+      "item_id": "candidate_directive-deps-update-vulnerable-dependencies-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-85T7-deps-update-vulnerable-dependencies-security.md",
+      "title": "deps): update vulnerable dependencies [security]",
+      "repository": "crossplane-crossplane-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a444de3896df67fad8e534c6d6278b82249dbe1bb08fc540f53836c0f07a17d9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T03:23:27.215Z"
     }
   },
   "ai-builder-brain": {

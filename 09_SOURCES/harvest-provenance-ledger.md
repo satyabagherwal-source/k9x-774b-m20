@@ -10256,3 +10256,5 @@ Every entry in this ledger must capture:
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `e1979b97` | Multi-dimensional audit evidence | 2026-11-16T03:03:07.750Z |
 | `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `e11c8c49` | Multi-dimensional audit evidence | 2026-11-16T03:06:16.058Z |
 | `learn-dom-h-78b796d1` | `project://matthart1983-netwatch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md` | 2026-11-16T03:06:56.756Z |
+| `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `baafccbf` | Multi-dimensional audit evidence | 2026-11-16T03:23:18.039Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `0bc4615f` | Multi-dimensional audit evidence | 2026-11-16T03:23:22.615Z |

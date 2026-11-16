@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T02:26:03.291Z",
+  "updated_at": "2026-11-16T03:23:26.393Z",
   "stats": {
-    "total_discovered": 4065,
-    "approved_pending_harvest": 3819,
+    "total_discovered": 4069,
+    "approved_pending_harvest": 3823,
     "harvested_count": 0,
     "rejected_count": 246,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3816,
+      "COMMUNITY_AND_EXPERT": 3820,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
@@ -87729,6 +87729,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
         "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-3B5A9C758137": {
+      "id": "SRC-3B5A9C758137",
+      "url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "title": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:23:26.294Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-23B6F83FEF5B": {
+      "id": "SRC-23B6F83FEF5B",
+      "url": "https://github.com/CrawlCove/robots-txt-tester",
+      "title": "https://github.com/CrawlCove/robots-txt-tester",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:23:26.321Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-88C2D2F66E4F": {
+      "id": "SRC-88C2D2F66E4F",
+      "url": "https://${input/",
+      "title": "https://${input/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:23:26.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-6D7EE61986F6": {
+      "id": "SRC-6D7EE61986F6",
+      "url": "https://raw.githubusercontent.com/CrawlCove/.github/main/banners/robots-txt-tester.svg",
+      "title": "https://raw.githubusercontent.com/CrawlCove/.github/main/banners/robots-txt-tester.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:23:26.393Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
       }
     }
   }

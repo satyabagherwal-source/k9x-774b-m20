@@ -1863,10 +1863,10 @@
     "repository": "CrawlCove/robots-txt-tester",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-    "sourceVersion": "0d91d23a",
+    "sourceVersion": "baafccbf",
     "license": "MIT",
-    "contentHash": "95a3c30dfc796a83ba56bef17cd13aff5e354f974c0835547afd078a7df65290",
-    "lastHarvestedAt": "2026-10-28T00:26:18.939Z",
+    "contentHash": "21c31f05a722525c6f7cc2a2baaa4b56dad769e29514be64805c29ae73ddbc1d",
+    "lastHarvestedAt": "2026-11-16T03:23:18.039Z",
     "learningId": "learn-github-crawlcove-robots-txt-tester"
   },
   "crawlcove-crawlcove-hreflang-checker": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "786343a3",
+    "sourceVersion": "0bc4615f",
     "license": "Apache-2.0",
-    "contentHash": "a437bfefb77772bef10d9c36ef9d2fd78e24f007ce1d16d17f47e04875ef5be4",
-    "lastHarvestedAt": "2026-11-13T15:29:32.627Z",
+    "contentHash": "1471699563cae90446ad648665c5cf64a38cdb463f5c9d433cf8da12c1b1efa2",
+    "lastHarvestedAt": "2026-11-16T03:23:22.615Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {

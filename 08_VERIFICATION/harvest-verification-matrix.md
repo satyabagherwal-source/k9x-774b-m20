@@ -10223,3 +10223,5 @@
 | `CYCLE-20261116-I0V5` | `2026-11-16T03:03:07.745Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8695` | Yes (`977e9812...`) |
 | `CYCLE-20261116-M25X` | `2026-11-16T03:06:16.053Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8696, Rule 8697, Rule 8698` | Yes (`34a95334...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T03:06:56.756Z` | `matthart1983-netwatch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-78B796D1` [Domain H] | Yes (`650f6fa2...`) |
+| `CYCLE-20261116-7YQB` | `2026-11-16T03:23:18.035Z` | `CrawlCove/robots-txt-tester` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8690` | Yes (`21c31f05...`) |
+| `CYCLE-20261116-829F` | `2026-11-16T03:23:22.611Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`14716995...`) |

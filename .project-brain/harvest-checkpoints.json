@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T03:06:16.070Z",
+  "last_updated": "2026-11-16T03:23:22.624Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2931,14 +2931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
-      "content_hash": "95a3c30dfc796a83ba56bef17cd13aff5e354f974c0835547afd078a7df65290",
-      "verified_at": "2026-10-28T00:26:18.947Z",
+      "content_hash": "21c31f05a722525c6f7cc2a2baaa4b56dad769e29514be64805c29ae73ddbc1d",
+      "verified_at": "2026-11-16T03:23:18.048Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:26:18.947Z"
+      "last_updated": "2026-11-16T03:23:18.048Z"
     },
     "CrawlCove/hreflang-checker": {
       "repository": "CrawlCove/hreflang-checker",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "a437bfefb77772bef10d9c36ef9d2fd78e24f007ce1d16d17f47e04875ef5be4",
-      "verified_at": "2026-11-13T15:29:32.645Z",
+      "content_hash": "1471699563cae90446ad648665c5cf64a38cdb463f5c9d433cf8da12c1b1efa2",
+      "verified_at": "2026-11-16T03:23:22.624Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:29:32.645Z"
+      "last_updated": "2026-11-16T03:23:22.624Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",

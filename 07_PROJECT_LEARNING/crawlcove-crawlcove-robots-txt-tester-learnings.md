@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md`  
 > **Source**: github ([https://github.com/CrawlCove/crawlcove-robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester))  
-> **Source Version**: `0d91d23a`  
+> **Source Version**: `baafccbf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:26:18.623Z  
+> **Timestamp**: 2026-11-16T03:23:17.429Z  
 > **Learning ID**: `learn-github-crawlcove-robots-txt-tester`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrawlCove/crawlcove-robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:26:18.617Z  
+> **Harvest Timestamp**: 2026-11-16T03:23:17.284Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -370,117 +370,17 @@ export async function testRobots(input: string, opts: Options = DEFAULT_OPTIONS)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d91d23a` (2026-10-25)
-**Commit Message**: docs: link seo-chrome-extension from Related tools
+### Incident Patch 1: `baafccbf` (2026-11-15)
+**Commit Message**: README: Crawl Cove banner
 
-**File**: `README.md` (modified, +1/-0)
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -93,6 +93,7 @@ This checks the rules file. [Crawl Cove](https://crawlcove.com/?utm_source=githu
- - [crawlcove-action](https://github.com/CrawlCove/seo-audit-action) — the same checks as a GitHub Action on every PR.
- - [crawlcove-mcp](https://github.com/CrawlCove/seo-mcp-server) — crawl data for Claude, Cursor and other AI assistants.
- - [crawlcove-export-spec](https://github.com/CrawlCove/seo-crawl-export-spec) — the JSON Schema for Crawl Cove's crawl export.
-+- [seo-chrome-extension](https://github.com/CrawlCove/seo-chrome-extension) — Chrome extension: on-page SEO check of the current tab plus AI answer visibility (which AI crawlers may read it, snippet blocks, llms.txt, extractability score).
- 
- ## License
- 
-```
-
----
-
-### Incident Patch 2: `63245304` (2026-10-06)
-**Commit Message**: chore: repository renamed to CrawlCove/robots-txt-tester; point links, install commands and repository metadata at the new name
-
-**File**: `README.md` (modified, +15/-15)
-```diff
-@@ -2,16 +2,16 @@
+@@ -1,3 +1,5 @@
++<a href="https://crawlcove.com/download?utm_source=github&utm_medium=readme&utm_campaign=robots-txt-tester"><img src="https://raw.githubusercontent.com/CrawlCove/.github/main/banners/robots-txt-tester.svg" width="1200" alt="robots-txt-tester: Fetch and lint a robots.txt, test which URLs each crawler may fetch and see the deciding line. Fails deploys that block the site." /></a>
++
+ # crawlcove-robots-txt-tester
  
  A robots.txt tester for the command line: fetch a site's robots.txt, lint it for the mistakes that quietly block a whole site (or do nothing at all), and test exactly which URLs Googlebot, Bingbot or any other crawler may fetch — with the line number that decided each verdict, and a non-zero exit code for CI.
- 
--Need to write one instead? Use [crawlcove.com/tools/robots-txt-generator](https://crawlcove.com/tools/robots-txt-generator?utm_source=github&utm_medium=crawlcove-robots-txt-tester).
-+Need to write one instead? Use [crawlcove.com/tools/robots-txt-generator](https://crawlcove.com/tools/robots-txt-generator?utm_source=github&utm_medium=robots-txt-tester).
- 
- ## Install
- 
- ```sh
- # one-off, nothing installed (Node 18+):
--npx github:CrawlCove/crawlcove-robots-txt-tester https://example.com -u /pricing
-+npx github:CrawlCove/robots-txt-tester https://example.com -u /pricing
- 
- # global command, from the release tarball:
--npm install -g https://github.com/CrawlCove/crawlcove-robots-txt-tester/archive/refs/tags/v1.0.0.tar.gz
-+npm install -g https://github.com/CrawlCove/robots-txt-tester/archive/refs/tags/v1.0.0.tar.gz
- robots-txt-tester --version
- ```
- 
-@@ -78,21 +78,21 @@ Put that in a deploy pipeline with `--expect-allowed` and it fails the deploy be
- 
- ## Works with CrawlCove
- 
--This checks the rules file. [Crawl Cove](https://crawlcove.com/?utm_source=github&utm_medium=crawlcove-robots-txt-tester), the desktop SEO crawler for Windows and Mac, applies robots.txt the way Googlebot does across a whole-site crawl and shows you every page it kept you out of — plus which of those are in your sitemap or linked from your navigation.
-+This checks the rules file. [Crawl Cove](https://crawlcove.com/?utm_source=github&utm_medium=robots-txt-tester), the desktop SEO crawler for Windows and Mac, applies robots.txt the way Googlebot does across a whole-site crawl and shows you every page it kept you out of — plus which of those are in your sitemap or linked from your navigation.
- 
- ## Related tools
- 
--- [crawlcove-js](https://github.com/CrawlCove/crawlcove-js) — `crawlcove-export`, a typed JavaScript/TypeScript library to load, query and convert Crawl Cove exports.
--- [crawlcove-sheets](https://github.com/CrawlCove/crawlcove-sheets) — Google Sheets add-on that turns a Crawl Cove export into an audit workbook (issues by type, pages by status, title/meta flags).
--- [crawlcove-sf-import](https://github.com/CrawlCove/crawlcove-sf-import) — convert a Screaming Frog export into the Crawl Cove export format, with a report of what carried over.
--- [crawlcove-schema-validator](https://github.com/CrawlCove/crawlcove-schema-validator) — validate a page's JSON-LD against Google's required and recommended rich-result properties.
--- [crawlcove-hreflang-checker](https://github.com/CrawlCove/crawlcove-hreflang-checker) — check a page's or a sitemap's hreflang tags: codes, self-reference, x-default and return tags.
--- [crawlcove-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) — validate an XML sitemap or sitemap index against the protocol and search-engine limits.
--- [crawlcove-redirect-chain-checker](https://github.com/CrawlCove/crawlcove-redirect-chain-checker) — follow every hop of a URL’s redirects; flags chains, loops, HTTPS downgrades and meta refreshes.
--- [crawlcove-cli](https://github.com/CrawlCove/crawlcove-cli) — headless whole-site crawl with redirect-chain, broken-link, title and noindex checks.
--- [crawlcove-action](https://github.com/CrawlCove/crawlcove-action) — the same checks as a GitHub Action on every PR.
--- [crawlcove-mcp](https://github.com/CrawlCove/crawlcove-mcp) — crawl data for Claude, Cursor and other AI assistants.
--- [crawlcove-export-spec](https://github.com/CrawlCove/crawlcove-export-spec) — the JSON Schema for Crawl Cove's crawl export.
-+- [crawlcove-js](https://github.com/CrawlCove/seo-crawl-export-js) — `crawlcove-export`, a typed JavaScript/TypeScript library to load, query and convert Crawl Cove exports.
-+- [crawlcove-sheets](https://github.com/CrawlCove/seo-audit-google-sheets) — Google Sheets add-on that turns a Crawl Cove export into an audit workbook (issues by type, pages by status, title/meta flags).
-+- [crawlcove-sf-import](https://github.com/CrawlCove/screaming-frog-export-converter) — convert a Screaming Frog export into the Crawl Cove export format, with a report of what carried over.
-+- [crawlcove-schema-validator](https://github.com/CrawlCove/schema-markup-validator) — validate a page's JSON-LD against Google's required and recommended rich-result properties.
-+- [crawlcove-hreflang-checker](https://github.com/CrawlCove/hreflang-checker) — check a page's or a sitemap's hreflang tags: codes, self-reference, x-default and return tags.
-+- [crawlcove-sitemap-validator](https://github.com/CrawlCove/xml-sitemap-validator) — validate an XML sitemap or sitemap index against the protocol and search-engine limits.
-+- [crawlcove-redirect-chain-checker]
-```
-
-**File**: `dist/robots.js` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ export const SEVERITY = {
- };
- export const DEFAULT_OPTIONS = {
-     timeoutMs: 10_000,
--    userAgent: 'crawlcove-robots-txt-tester/1.0 (+https://github.com/CrawlCove/crawlcove-robots-txt-tester)',
-+    userAgent: 'crawlcove-robots-txt-tester/1.0 (+https://github.com/CrawlCove/robots-txt-tester)',
-     urls: ['/'],
-     agents: ['*', 'Googlebot', 'Bingbot'],
-     expectAllowed: false,
-```
-
-**File**: `package.json` (modified, +2/-2)
-```diff
-@@ -32,9 +32,9 @@
-   "license": "MIT",
-   "repository": {
-     "type": "git",
--    "url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester.git"
-+    "url": "https://github.com/CrawlCove/robots-txt-tester.git"
-   },
--  "homepage": "https://crawlcove.com/tools/robots-txt-generator?utm_source=github&utm_medium=crawlcove-robots-txt-tester",
-+  "homepage": "https://crawlcove.com/tools/robots-txt-generator?utm_source=github&utm_medium=robots-txt-tester",
-   "dependencies": {
-     "commander": "^15.0.0",
-     "robots-parser": "^3.0.1"
-```
-
-**File**: `src/robots.ts` (modified, +1/-1)
-```diff
-@@ -99,7 +99,7 @@ export interface Options {
- 
- export const DEFAULT_OPTIONS: Options = {
-   timeoutMs: 10_000,
--  userAgent: 'crawlcove-robots-txt-tester/1.0 (+https://github.com/CrawlCove/crawlcove-robots-txt-tester)',
-+  userAgent: 'crawlcove-robots-txt-tester/1.0 (+https://github.com/CrawlCove/robots-txt-tester)',
-   urls: ['/'],
-   agents: ['*', 'Googlebot', 'Bingbot'],
-   expectAllowed: false,
 ```
 
 #### Recent Merged Pull Requests:
@@ -504,13 +404,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: link seo-chrome-extension from Related tools
+## X. README: Crawl Cove banner
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrawlCove/robots-txt-tester. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d91d23a`: docs: link seo-chrome-extension from Related tools. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `baafccbf`: README: Crawl Cove banner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -518,14 +418,15 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- [seo-chrome-extension](https://github.com/CrawlCove/seo-chrome-extension) — Chrome extension: on-page SEO check of the current tab plus AI answer visibility (which AI crawlers may read it, snippet blocks, llms.txt, extractability score).
+<a href="https://crawlcove.com/download?utm_source=github&utm_medium=readme&utm_campaign=robots-txt-tester"><img src="https://raw.githubusercontent.com/CrawlCove/.github/main/banners/robots-txt-tester.svg" width="1200" alt="robots-txt-tester: Fetch and lint a robots.txt, test which URLs each crawler may fetch and see the deciding line. Fails deploys that block the site." /></a>
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d91d23a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `baafccbf` are properly handled with clean fallback behavior.

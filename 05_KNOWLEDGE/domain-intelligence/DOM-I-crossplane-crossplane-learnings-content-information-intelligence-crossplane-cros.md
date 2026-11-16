@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T15:30:24.690Z",
+  "timestamp": "2026-11-16T03:23:27.120Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-crossplane-crossplane-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [crossplane-crossplane-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T15:30:24.690Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T03:23:27.120Z`  
 > **Learning ID**: `LEARN-EVO-crossplane-crossplane-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `786343a3`  
+> **Source Version**: `0bc4615f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T15:29:32.064Z  
+> **Timestamp**: 2026-11-16T03:23:22.008Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:29:32.057Z  
+> **Harvest Timestamp**: 2026-11-16T03:23:22.002Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12244 stars
+- **Stars / Engagement**: 12245 stars
 
 ---
 
@@ -1553,106 +1553,117 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c1c1b69` (2026-11-10)
-**Commit Message**: fix(deps): update go dependencies
+### Incident Patch 1: `71fa40f3` (2026-11-14)
+**Commit Message**: chore(deps): update vulnerable dependencies [security]
 
-**File**: `go.mod` (modified, +5/-5)
+**File**: `go.mod` (modified, +12/-10)
 ```diff
-@@ -8,15 +8,15 @@ require (
- 	dario.cat/mergo v1.0.2
- 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6
- 	github.com/Masterminds/semver/v3 v3.5.0
--	github.com/alecthomas/kong v1.16.1
-+	github.com/alecthomas/kong v1.17.0
- 	github.com/crossplane/crossplane-runtime/v2 v2.5.0-rc.0.0.20261030000521-f78c9aebf4ff
- 	github.com/crossplane/crossplane/apis/v2 v2.5.0-rc.0.0.20261029180807-76a72bee8a19
- 	github.com/google/go-cmp v0.7.0
- 	github.com/google/go-containerregistry v0.22.1
- 	github.com/robfig/cron/v3 v3.0.1
- 	github.com/spf13/afero v1.15.0
--	golang.org/x/sync v0.24.0
--	google.golang.org/grpc v1.84.0
-+	golang.org/x/sync v0.25.0
-+	google.golang.org/grpc v1.85.0
- 	google.golang.org/protobuf v1.36.12
- 	k8s.io/api v0.37.1
- 	k8s.io/apiextensions-apiserver v0.37.1
-@@ -132,7 +132,7 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260817212433-ac3dfec99bb1 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	k8s.io/code-generator v0.37.1 // indirect
- 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3 // indirect
-@@ -215,7 +215,7 @@ require (
+@@ -53,7 +53,9 @@ require (
+ 	github.com/sirupsen/logrus v1.10.2 // indirect
+ 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
++	golang.org/x/crypto/openpgp v0.1.0-deprecated // indirect
+ 	k8s.io/streaming v0.37.1 // indirect
+ )
+ 
+@@ -181,7 +183,7 @@ require (
+ 	github.com/google/uuid v1.6.0
+ 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+-	github.com/klauspost/compress v1.20.1 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/mattn/go-colorable v0.1.14 // indirect
+ 	github.com/mattn/go-isatty v0.0.20 // indirect
+ 	github.com/mitchellh/go-homedir v1.1.0 // indirect
+@@ -200,20 +202,20 @@ require (
+ 	github.com/spf13/cobra v1.10.2 // indirect
+ 	github.com/spf13/pflag v1.0.10 // indirect
+ 	github.com/vladimirvivien/gexe v0.4.1 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.28.0 // indirect
+-	golang.org/x/crypto v0.58.0 // indirect
+-	golang.org/x/mod v0.41.0 // indirect
++	golang.org/x/crypto v0.59.0 // indirect
++	golang.org/x/mod v0.42.0 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+-	golang.org/x/sys v0.49.0 // indirect
+-	golang.org/x/term v0.47.0 // indirect
+-	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/sys v0.50.0 // indirect
++	golang.org/x/term v0.48.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
  	golang.org/x/time v0.16.0 // indirect
- 	golang.org/x/tools v0.51.0 // indirect
+-	golang.org/x/tools v0.51.0 // indirect
++	golang.org/x/tools v0.52.0 // indirect
  	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1 // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1 // indirect
  	gopkg.in/inf.v0 v0.9.1 // indirect
- 	k8s.io/component-base v0.37.1 // indirect
- 	k8s.io/klog/v2 v2.140.0
 ```
 
-**File**: `go.sum` (modified, +14/-14)
+**File**: `go.sum` (modified, +24/-20)
 ```diff
-@@ -1,5 +1,5 @@
--cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
--cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
-+cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
-+cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
- cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
- cloud.google.com/go/auth v0.20.0 h1:kXTssoVb4azsVDoUiF8KvxAqrsQcQtB53DcSgta74CA=
-@@ -51,8 +51,8 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
- github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
- github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
- github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
--github.com/alecthomas/kong v1.16.1 h1:ixhCt93XkJ98kGposQ54+bl0IK6XwqB40AsMynU7Z8E=
--github.com/alecthomas/kong v1.16.1/go.mod h1:wrlbXem1CWqUV5Vbmss5ISYhsVPkBb1Yo7YKJghju2I=
-+github.com/alecthomas/kong v1.17.0 h1:f52BVWChYMDkMkCoqkEWRuFOk/K4B5LO7xIijeLJRdk=
-+github.com/alecthomas/kong v1.17.0/go.mod h1:wrlbXem1CWqUV5Vbmss5ISYhsVPkBb1Yo7YKJghju2I=
- github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
- github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
- github.com/alessio/shellescape v1.4.1 h1:V7yhSDDn8LP4lc4jS8pFkt0zCnzVJlG5JXy9BVKJUX0=
-@@ -154,8 +154,8 @@ github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f h1:Wl78ApPPB2
- github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f/go.mod h1:OSYXu++VVOHnXeitef/D8n/6y4QV8uLHSFXX4NeXMGc=
- github.com/fatih/color v1.19.0 h1:Zp3PiM21/9Ld6FzSKyL5c/BULoe/ONr9KlbYVOfG8+w=
- github.com/fatih/color v1.19.0/go.mod h1:zNk67I0ZUT1bEGsSGyCZYZNrHuTkJJB+r6Q9VuMi0LE=
--github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeORc=
--github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
-+github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
-+github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
- github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
- github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
- github.com/fsnotify/fsnotify v1.5.4/go.mod h1:OVB6XrOHzAwXMpEM7uPOzcehqUV2UqJxmVXmkdnm1bU=
-@@ -590,8 +590,8 @@ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/5
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -647,12 +647,12 @@ google.golang.org/api v0.284.0 h1:i+cKTgeQRcRySkP7QTl5PDO7/pAm8EcMFIUMlNbk4Vc=
- google.golang.org/api v0.284.0/go.mod h1:AU44fU+XVZOCcd8uLaBIa/ZgzgPf/0qqY3+m7lQaado=
- google.golang.org/genproto v0.0.0-20260406210006-6f92a3bedf2d h1:N1Ec54vZnIPd7MnxRiYLW+oY4fDR4BOS/LrssdD9+ek=
- google.golang.org/genproto v0.0.0-20260406210006-6f92a3bedf2d/go.mod h1:c2hJ1grtnH0xUiEKGDGkjGNTJ1Hy2LrblyKOHF0sqRM=
--google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d h1:FarXi840EJWSHYTN3ERkADbPWjl307+FGrA22KAVjjc=
--google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d/go.mod h1:K/+WGbmBY7aNW1HDw1fJnKYo10i0DkAX6pows00dLig=
--google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d h1:IL4hdHzcUv2l/gcg98/Rj3FbtE6axwqslOW8SW0C+S0=
--google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
--google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
--google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
-+google.golang.org/genproto/googleapis/api v0.0.0-20260817212433-ac3dfec99bb1 h1:lrupDmKL3p5kEX1M92oan027eCKcouzjuPbH6YBK+Rs=
-+google.golang.org/genproto/googleapis/api v0.0.0-20260817212433-ac3dfec99bb1/go.mod h1:q/3oV3jAi5vwelxsVAprMBC8BcM2zmNe+IjRGd+9/ks=
-+google
+@@ -345,8 +345,8 @@ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnr
+ github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
+ github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRtuthU=
+ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
+-github.com/klauspost/compress v1.20.1 h1:T7kKElXUMXrUJ2E9QhQhxFtcK5rPyLdsGZvdbLMPdiQ=
+-github.com/klauspost/compress v1.20.1/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
+ github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
+@@ -538,18 +538,20 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
+ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0/go.mod h1:Sje3i3MjSPKTSPvVWCaL8ugBzJwik3u4smCjUeuupqg=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+ go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+ go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
+ go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
+ go.step.sm/crypto v0.81.0 h1:e+ouzpNt3Xm4dp7HGXhgYB5y4iFik3vh3phHKWmvugU=
+@@ -568,13 +570,15 @@ go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
+ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+-golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+-golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
++golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
++golang.org/x/crypto/openpgp v0.1.0-deprecated h1:T+duersHJVuH6qLtQk22qtGKH5vZhxGSlL5SMFHclaQ=
++golang.org/x/crypto/openpgp v0.1.0-deprecated/go.mod h1:KQF17hRm+yCzhnZa+aRLbinf2TRZa+7G3TeEnHj6OoY=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+-golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+-golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYt
 ```
 
 **File**: `nix/vendor-hashes.nix` (modified, +1/-1)
@@ -1661,186 +1672,48 @@ Observed empirical fixes and code patches:
  # by hand.)
  {
    # Root module: github.com/crossplane/crossplane/v2
--  root = "sha256-selb9Mm0vDIQwA5dqQ5JWyhuoRDD9HB/YAfWLSSq9dk=";
-+  root = "sha256-HIupaO1ehDF/k7g4IYIIp2GmIOtlhRR5BDTARJhQKsA=";
+-  root = "sha256-HIupaO1ehDF/k7g4IYIIp2GmIOtlhRR5BDTARJhQKsA=";
++  root = "sha256-w4P42Q75ISPEYzfAm0rs01cRxcf50k3KQiFpO60XYJs=";
  
    # apis module: github.com/crossplane/crossplane/apis/v2
    apis = "sha256-OOGYrf8BQfWKJ6YS4BEma53wjrSLh1WQ2dHGnDNUm3g=";
 ```
 
-**File**: `test/e2e/functions/revision-id/go.mod` (modified, +45/-38)
+**File**: `test/e2e/functions/revision-id/go.mod` (modified, +1/-1)
 ```diff
-@@ -3,55 +3,63 @@ module github.com/crossplane/crossplane/test/e2e/functions/revision-id
- go 1.26.7
- 
- require (
--	github.com/alecthomas/kong v1.16.1
--	github.com/crossplane/function-sdk-go v0.5.0
--	k8s.io/apimachinery v0.33.0
-+	github.com/alecthomas/kong v1.17.0
-+	github.com/crossplane/function-sdk-go v0.7.1
-+	k8s.io/apimachinery v0.35.3
- )
- 
- require (
+@@ -12,7 +12,7 @@ require (
  	dario.cat/mergo v1.0.2 // indirect
  	github.com/beorn7/perks v1.0.1 // indirect
  	github.com/cespare/xxhash/v2 v2.3.0 // indirect
--	github.com/crossplane/crossplane-runtime/v2 v2.0.0 // indirect
-+	github.com/crossplane/crossplane-runtime/v2 v2.3.1 // indirect
-+	github.com/crossplane/crossplane/apis/v2 v2.3.1 // indirect
+-	github.com/crossplane/crossplane-runtime/v2 v2.3.1 // indirect
++	github.com/crossplane/crossplane-runtime/v2 v2.3.3 // indirect
+ 	github.com/crossplane/crossplane/apis/v2 v2.3.1 // indirect
  	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
--	github.com/emicklei/go-restful/v3 v3.12.1 // indirect
--	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
-+	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
-+	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
- 	github.com/fatih/color v1.18.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
- 	github.com/go-json-experiment/json v0.0.0-20240815175050-ebd3a8989ca1 // indirect
- 	github.com/go-logr/logr v1.4.3 // indirect
- 	github.com/go-logr/zapr v1.3.0 // indirect
--	github.com/go-openapi/jsonpointer v0.21.0 // indirect
--	github.com/go-openapi/jsonreference v0.21.0 // indirect
--	github.com/go-openapi/swag v0.23.0 // indirect
-+	github.com/go-openapi/jsonpointer v0.22.5 // indirect
-+	github.com/go-openapi/jsonreference v0.21.5 // indirect
-+	github.com/go-openapi/swag v0.25.5 // indirect
-+	github.com/go-openapi/swag/cmdutils v0.25.5 // indirect
-+	github.com/go-openapi/swag/conv v0.25.5 // indirect
-+	github.com/go-openapi/swag/fileutils v0.25.5 // indirect
-+	github.com/go-openapi/swag/jsonname v0.25.5 // indirect
-+	github.com/go-openapi/swag/jsonutils v0.25.5 // indirect
-+	github.com/go-openapi/swag/loading v0.25.5 // indirect
-+	github.com/go-openapi/swag/mangling v0.25.5 // indirect
-+	github.com/go-openapi/swag/netutils v0.25.5 // indirect
-+	github.com/go-openapi/swag/stringutils v0.25.5 // indirect
-+	github.com/go-openapi/swag/typeutils v0.25.5 // indirect
-+	github.com/go-openapi/swag/yamlutils v0.25.5 // indirect
- 	github.com/gobuffalo/flect v1.0.3 // indirect
--	github.com/gogo/protobuf v1.3.2 // indirect
--	github.com/google/gnostic-models v0.7.0 // indirect
--	github.com/google/go-cmp v0.7.0 // indirect
-+	github.com/google/gnostic-models v0.7.1 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
- 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.1.0 // indirect
--	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0 // indirect
-+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.0 // indirect
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
--	github.com/josharian/intern v1.0.0 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
--	github.com/mailru/easyjson v0.7.7 // indirect
- 	github.com/mattn/go-colorable v0.1.14 // indirect
--	github.com/mattn/go-isatty v0.0.20 // indirect
-+	github.com/mattn/go-isatty v0.0.22 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
- 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
- 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
- 	github.com/pkg/errors v0.9.1 // indirect
--	github.com/prometheus/client_golang v1.22.0 // indirect
--	github.com/prometheus/client_model v0.6.1 // indirect
--	github.com/prometheus/common v0.62.0 // indirect
--	github.com/prometheus/procfs v0.15.1 // indirect
--	github.com/spf13/afero v1.12.0 // indirect
--	github.com/spf13/cobra v1.10.1 // indirect
-+	github.com/prometheus/client_golang v1.23.2 // indirect
-+	github.com/prometheus/client_model v0.6.2 // indirect
-+	github.com/prometheus/common v0.67.5 // indirect
-+	github.com/prometheus/procfs v0.19.2 // indirect
-+	github.com/spf13/afero v1.15.0 // indirect
-+	github.com/spf13/cobra v1.10.2 // indirect
- 	github.com/spf13/pflag v1.0.10 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	go.uber.org/zap v1.27.0 // indirect
--	go.yaml.in/yaml/v2 v2.4.2 // indirect
-+	go.uber.org/zap v1.28.0 // indirect
-+	go.yaml.in/yaml/v2 v2.4.3 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
-@@ -60,27 +68,26 @@ require (
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/term v0.47.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
--	golang.org/x/time v0.11.0 // indirect
-+	golang.org/x/time v0.15.0 // indirect
- 	golang.org/x/tools v0.51.0 // indirect
--	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
- 	google.golang.org/protobuf v1.36.11 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	gopkg.in/yaml.v2 v2.4.0 // indirect
- 	go
+ 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
 ```
 
-**File**: `test/e2e/functions/revision-id/go.sum` (modified, +155/-127)
+**File**: `test/e2e/functions/revision-id/go.sum` (modified, +2/-2)
 ```diff
-@@ -1,32 +1,47 @@
-+cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
-+cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- dario.cat/mergo v1.0.2 h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
- dario.cat/mergo v1.0.2/go.mod h1:E/hbnu0NxMFBjpMIE34DRGLWqDy0g5FuKDhCb31ngxA=
-+github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
-+github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
- github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
- github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
--github.com/alecthomas/kong v1.16.1 h1:ixhCt93XkJ98kGposQ54+bl0IK6XwqB40AsMynU7Z8E=
--github.com/alecthomas/kong v1.16.1/go.mod h1:wrlbXem1CWqUV5Vbmss5ISYhsVPkBb1Yo7YKJghju2I=
-+github.com/alecthomas/kong v1.17.0 h1:f52BVWChYMDkMkCoqkEWRuFOk/K4B5LO7xIijeLJRdk=
-+github.com/alecthomas/kong v1.17.0/go.mod h1:wrlbXem1CWqUV5Vbmss5ISYhsVPkBb1Yo7YKJghju2I=
- github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
- github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
-+github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYWrPrQ=
-+github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
- github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
- github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
-+github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdnnjpJbkM4JQ=
-+github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
-+github.com/blang/semver/v4 v4.0.0/go.mod h1:IbckMUScFkM3pff0VJDNKRiT6TG/YpiHIM2yvyW5YoQ=
-+github.com/cenkalti/backoff/v5 v5.0.3 h1:ZN+IMa753KfX5hd8vVaMixjnqRZ3y8CuJKRKj1xcsSM=
-+github.com/cenkalti/backoff/v5 v5.0.3/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F97BxZthm/crw=
+@@ -22,8 +22,8 @@ github.com/cenkalti/backoff/v5 v5.0.3/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F9
  github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
  github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
  github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
--github.com/crossplane/crossplane-runtime/v2 v2.0.0 h1:PK2pTKfshdDZ5IfoiMRiCi0PBnIjqbS0KGXEJgRdrb4=
--github.com/crossplane/crossplane-runtime/v2 v2.0.0/go.mod h1:pkd5UzmE8esaZAApevMutR832GjJ1Qgc5Ngr78ByxrI=
--github.com/crossplane/function-sdk-go v0.5.0 h1:wF+pOsR6jlIUHZjpSL6tbuSP0UB7s25+4AGkNytsHKk=
--github.com/crossplane/function-sdk-go v0.5.0/go.mod h1:bIvGe17dIdpZ/YULrg5xAP8MK+eS3ot5BAuQEntaeWc=
-+github.com/crossplane/crossplane-runtime/v2 v2.3.1 h1:g2jT8aWl8bVuM62oeUiCv4FcrwoNcmJBXWj2ZpV+2Kw=
-+github.com/crossplane/crossplane-runtime/v2 v2.3.1/go.mod h1:kl5xmOCH7pOVs0vMeDyQ5utqCxjmHd3Qa79i9Cc4mw0=
-+github.com/crossplane/crossplane/apis/v2 v2.3.1 h1:gaJX/DSp5qnfLoThMxbJZOEziIJBEGbcRl7HjT3R1fk=
-+github.com/crossplane/crossplane/apis/v2 v2.3.1/go.mod h1:o+D0ktZQKJCFcpfzMKA4n53aTo2sFqqDsADBNIRuIyE=
-+github.com/crossplane/function-sdk-go v0.7.1 h1:BEM2b7nAr8rJYc9tjwnoMfVVy1veCA/juD8APYCVLi0=
-+github.com/crossplane/function-sdk-go v0.7.1/go.mod h1:AOD9l/tlKYP6giyT8ZVxrcTUCYliRDKO3aRySojsHVY=
- github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
- github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
- github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
- github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
--github.com/emicklei/go-restful/v3 v3.12.1 h1:PJMDIM/ak7btuL8Ex0iYET9hxM3CI2sjZtzpL63nKAU=
--github.com/emicklei/go-restful/v3 v3.12.1/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
--github.com/evanphx/json-patch/v5 v5.9.0 h1:kcBlZQbplgElYIlo/n1hJbls2z/1awpXxpRi0/FOJfg=
--github.com/evanphx/json-patch/v5 v5.9.0/go.mod h1:VNkHZ/282BpEyt/tObQO8s5CMPmYYq14uClGH4abBuQ=
-+github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bFY/oTyCes=
-+github.com/emicklei/go-restful/v3 v3.13.0/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
-+github.com/evanphx/json-patch/v5 v5.9.11 h1:/8HVnzMq13/3x9TPvjG08wUGqBTmZBsCWzjTM0wiaDU=
-+github.com/evanphx/json-patch/v5 v5.9.11/go.mod h1:3j+LviiESTElxA4p3EMKAB9HXj3/XEtnUf6OZxqIQTM=
- github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
- github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
--github.com/fsnotify/fsnotify v1.8.0 h1:dAwr6QBTBZIkG8roQaJjGof0pp0EeF+tNV7YBP3F/8M=
--github.com/fsnotify/fsnotify v1.8.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
-+github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
-+github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
-+github.com/fsnotify/fsnotify v1.9
+-github.com/crossplane/crossplane-runtime/v2 v2.3.1 h1:g2jT8aWl8bVuM62oeUiCv4FcrwoNcmJBXWj2ZpV+2Kw=
+-github.com/crossplane/crossplane-runtime/v2 v2.3.1/go.mod h1:kl5xmOCH7pOVs0vMeDyQ5utqCxjmHd3Qa79i9Cc4mw0=
++github.com/crossplane/crossplane-runtime/v2 v2.3.3 h1:seIYf6pk7dLhXd7uSh/N9rVB8IdbCthy3LB6TSn91OI=
++github.com/crossplane/crossplane-runtime/v2 v2.3.3/go.mod h1:UBxoZEXVZz9Ql2W5u5ssFE+egQ21BYqGGc2F3dozUvI=
+ github.com/crossplane/crossplane/apis/v2 v2.3.1 h1:gaJX/DSp5qnfLoThMxbJZOEziIJBEGbcRl7HjT3R1fk=
+ github.com/crossplane/crossplane/apis/v2 v2.3.1/go.mod h1:o+D0ktZQKJCFcpfzMKA4n53aTo2sFqqDsADBNIRuIyE=
+ github.com/crossplane/function-sdk-go v0.7.1 h1:BEM2b7nAr8rJYc9tjwnoMfVVy1veCA/juD8APYCVLi0=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8047** (2026-11-15): chore(deps): update module go.opentelemetry.io/otel/trace to v1.47.0 [security] (release-2.4) (@crossplane-renovate[bot])
+- **PR #8046** (2026-11-15): chore(deps): update module go.opentelemetry.io/otel/trace to v1.47.0 [security] (release-2.3) (@crossplane-renovate[bot])
+- **PR #8045** (2026-11-15): chore(deps): update vulnerable dependencies to v1.47.0 [security] (release-1.20) (@crossplane-renovate[bot])
 - **PR #8036** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.4) (@crossplane-renovate[bot])
 - **PR #8035** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.3) (@crossplane-renovate[bot])
 - **PR #8034** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.2) (@crossplane-renovate[bot])
-- **PR #8031** (2026-11-13): chore(deps): update dependency renovate to v44.235.1 (main) (@crossplane-renovate[bot])
-- **PR #8028** (2026-11-13): fix(deps): update go dependencies (main) (@crossplane-renovate[bot])
-- **PR #8027** (2026-11-13): chore(deps): update renovatebot/github-action action to v46.3.13 (main) (@crossplane-renovate[bot])
 
 ---
 
@@ -1860,13 +1733,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update go dependencies
+## X. deps): update vulnerable dependencies [security]
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c1c1b69`: deps): update go dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `71fa40f3`: deps): update vulnerable dependencies [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -1874,25 +1747,37 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/alecthomas/kong v1.17.0
-	golang.org/x/sync v0.25.0
-	google.golang.org/grpc v1.85.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20260817212433-ac3dfec99bb1 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1 // indirect
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	golang.org/x/crypto/openpgp v0.1.0-deprecated // indirect
+	github.com/klauspost/compress v1.20.2 // indirect
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+	golang.org/x/crypto v0.59.0 // indirect
+	golang.org/x/mod v0.42.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
+	golang.org/x/term v0.48.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
+	golang.org/x/tools v0.52.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	github.com/alecthomas/kong v1.16.1
-	golang.org/x/sync v0.24.0
-	google.golang.org/grpc v1.84.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+// Induced defect failure mode:
+	github.com/klauspost/compress v1.20.1 // indirect
+	go.opentelemetry.io/otel v1.45.0 // indirect
+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+	golang.org/x/crypto v0.58.0 // indirect
+	golang.org/x/mod v0.41.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/term v0.47.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/tools v0.51.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c1c1b69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `71fa40f3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

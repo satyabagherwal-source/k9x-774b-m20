@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T03:06:59.238Z",
-  "total_records": 1205,
+  "last_updated": "2026-11-16T03:23:27.902Z",
+  "total_records": 1207,
   "domains": {
     "A": {
       "total": 7,
@@ -1181,7 +1181,7 @@
       ]
     },
     "J": {
-      "total": 16,
+      "total": 18,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1198,7 +1198,9 @@
         "DOM-J-6AB1B121",
         "DOM-J-C5E210D6",
         "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-crawlcove-robots-txt-tester-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings"
       ]
     },
     "K": {
@@ -7188,8 +7190,8 @@
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "repository": "crossplane/crossplane",
-      "content_hash": "1b4b1c782b4a03bae1775e6fc2e98c453f8f74751b01cca08b3f955dbc7d642b",
-      "created_at": "2026-11-13T15:29:32.951Z"
+      "content_hash": "fd0fa7eac4034281754d2be315fe5288fd41e7c086019c48bf05d94c87412240",
+      "created_at": "2026-11-16T03:23:22.910Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
@@ -7266,8 +7268,8 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-learnings-content-information-intelligence-crossplane-cros.md",
       "repository": "crossplane-crossplane-learnings",
-      "content_hash": "8f493ce82181e98e14ecdc041778822dbe2fc132176942755495407765c8d8bb",
-      "created_at": "2026-11-13T15:30:24.909Z"
+      "content_hash": "e1d7a031a77cb1e8787ae83198a422426a574fbf1f4792aa3161e1745f6c09ce",
+      "created_at": "2026-11-16T03:23:27.328Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -13996,8 +13998,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "6359a2bd11662b2591f5753baf38853708eb891748d30595a4bd6d5ea680ea3c",
-      "created_at": "2026-11-16T03:06:59.238Z"
+      "content_hash": "06bc74eb0ac84eb3515713e968b5389a853c6ca1ffee3b54f465452c85425202",
+      "created_at": "2026-11-16T03:23:27.902Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -22430,6 +22432,24 @@
       "repository": "prof18-feed-flow-learnings",
       "content_hash": "38d5f139bf6e60f34d43553f80f9cc6b885328480407398c3a191922f6c951b8",
       "created_at": "2026-11-16T03:06:58.409Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-robots-txt-tester-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-crawlcove-robots-txt-tester-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: CrawlCove/robots-txt-tester Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-robots-txt-tester-search-distribution-intelligence-crawlcove.md",
+      "repository": "CrawlCove/robots-txt-tester",
+      "content_hash": "062b7e2befe250fa1c5273597feb1aace994f7df291d2afe6009db103dfe3a3f",
+      "created_at": "2026-11-16T03:23:18.376Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: crawlcove-crawlcove-robots-txt-tester-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-robots-txt-tester-learnings-search-distribution-intelligence.md",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "content_hash": "4e8500a4b5a5d5feae591ca9ac9818b5261817171abac8b1e75b8eff4589093f",
+      "created_at": "2026-11-16T03:23:26.717Z"
     }
   }
 }

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T03:06:19.670Z",
-    "lastVerified": "2026-11-16T03:06:19.670Z",
+    "lastChecked": "2026-11-16T03:23:26.144Z",
+    "lastVerified": "2026-11-16T03:23:26.144Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -372,8 +372,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T02:17:29.744Z",
-    "lastVerified": "2026-11-16T02:17:29.744Z",
+    "lastChecked": "2026-11-16T03:23:26.132Z",
+    "lastVerified": "2026-11-16T03:23:26.132Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1857,8 +1857,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T22:03:42.555Z",
-    "lastVerified": "2026-11-15T22:03:42.555Z",
+    "lastChecked": "2026-11-16T03:23:21.173Z",
+    "lastVerified": "2026-11-16T03:23:21.173Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -5788,22 +5788,21 @@
     "revisionIdentifier": "fbc666cf"
   },
   "crossplane-crossplane": {
-    "name": "crossplane",
+    "name": "crossplane/crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T20:32:27.882Z",
-    "lastVerified": "2026-11-14T20:32:27.882Z",
+    "lastChecked": "2026-11-16T03:23:22.002Z",
+    "lastVerified": "2026-11-16T03:23:22.002Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "a437bfefb77772bef10d9c36ef9d2fd78e24f007ce1d16d17f47e04875ef5be4",
+    "contentHash": "1471699563cae90446ad648665c5cf64a38cdb463f5c9d433cf8da12c1b1efa2",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "786343a3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sfu-db-connector-x": {
     "name": "sfu-db/connector-x",
@@ -7065,9 +7064,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-14T19:03:19.540Z",
+    "lastChecked": "2026-11-16T03:23:23.718Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-14T19:03:19.540Z"
+    "lastVerified": "2026-11-16T03:23:23.718Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -8104,9 +8103,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-14T07:30:33.778Z",
+    "lastChecked": "2026-11-16T03:23:11.161Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-14T07:30:33.778Z"
+    "lastVerified": "2026-11-16T03:23:11.162Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -10859,11 +10858,21 @@
     "lastVerified": "2026-11-16T02:06:11.192Z"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
-    "name": "crawlcove-robots-txt-tester",
+    "name": "CrawlCove/robots-txt-tester",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-    "lastChecked": "2026-11-11T13:16:59.073Z",
-    "revisionIdentifier": "0d91d23a",
-    "lastVerified": "2026-11-11T13:16:59.073Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-16T03:23:17.284Z",
+    "lastVerified": "2026-11-16T03:23:17.284Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crawlcove-robots-txt-tester",
+    "contentHash": "21c31f05a722525c6f7cc2a2baaa4b56dad769e29514be64805c29ae73ddbc1d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "shifthackz-stable-diffusion-kmp": {
     "name": "ShiftHackZ/SDAI-KMP",
@@ -10970,12 +10979,12 @@
     "lastVerified": "2026-11-11T14:38:28.086Z"
   },
   "yshrsmz-buildkonfig": {
-    "name": "yshrsmz/BuildKonfig",
+    "name": "BuildKonfig",
     "officialUrl": "https://github.com/yshrsmz/BuildKonfig",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-12T21:49:07.088Z",
-    "lastVerified": "2026-11-12T21:49:07.088Z",
+    "lastChecked": "2026-11-16T03:23:16.126Z",
+    "lastVerified": "2026-11-16T03:23:16.126Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yshrsmz-buildkonfig",
@@ -10984,7 +10993,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f044a582"
   },
   "4mmar1mtiaz-seo-tools-by-ammar-imtiaz": {
     "name": "SEO-tools-by-Ammar-Imtiaz",
