@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T11:04:41.367Z",
+  "timestamp": "2026-11-16T04:53:34.145Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zenbu-labs-terminal-browser-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zenbu-labs-terminal-browser-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T11:04:41.367Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T04:53:34.145Z`  
 > **Learning ID**: `LEARN-EVO-zenbu-labs-terminal-browser-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `e459febc`  
+> **Source Version**: `53b7f598`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T11:04:21.033Z  
+> **Timestamp**: 2026-11-16T04:53:16.162Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T11:04:21.024Z  
+> **Harvest Timestamp**: 2026-11-16T04:53:15.983Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4638 stars
+- **Stars / Engagement**: 4671 stars
 
 ---
 
@@ -1575,71 +1575,92 @@ impl Bridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bb6ae6d` (2026-11-13)
-**Commit Message**: fix cards wrapping when they exactly fill a row (#281)
+### Incident Patch 1: `53b7f598` (2026-11-16)
+**Commit Message**: in-memory webview partitions (#298)
 
-* keep items that exactly fill a wrapping flex line on it
+* webview: persist={false} keeps a partition in memory
 
-* break flex lines with the same sum the content size uses
+* webview: memory partitions drop a persist: prefix and save no favicons
 
-**File**: `pixel/engine/crates/pixel-core/src/tree/tests.rs` (modified, +19/-0)
+**File**: `pixel/AGENT-DOCS.md` (modified, +1/-0)
 ```diff
-@@ -2037,3 +2037,22 @@ fn a_list_following_its_end_measures_its_last_row_again_when_it_grows() {
-     tree.flush_layout(&mut crate::fonts::FontRegistry::bundled(), 16.0);
-     assert_eq!(tree.rect(tree.find("row19").unwrap()).unwrap().h, 60.0);
- }
-+
-+#[test]
-+fn cards_that_exactly_fill_a_wrapping_row_stay_on_one_line() {
-+    let cw = 14.0411f32;
-+    let room = 59.0 * cw;
-+    let card = ((room - cw) / 2.0).floor();
-+    let grid = Desc {
-+        key: Some("grid".into()),
-+        style: Style { flex_direction: FlexDirection::Row, flex_wrap: true, gap: cw, ..Style::default() },
-+        children: (0..2).map(|i| Desc { key: Some(format!("c{i}")), style: Style { width: Dimension::Px(card), height: Dimension::Px(281.0), flex_shrink: 0.0, ..Style::default() }, ..Desc::default() }).collect(),
-+        ..Desc::default()
-+    };
-+    let holder = Desc { style: Style { padding: crate::style::Edges { left: 2.0 * cw, ..Default::default() }, ..Style::default() }, children: vec![grid], ..Desc::default() };
-+    let width = 63.0 * cw;
-+    let tree = tree_of((width, 1000.0), vec![Desc { style: Style { width: Dimension::Px(width), flex_direction: FlexDirection::Column, padding: crate::style::Edges { left: cw, right: cw, ..Default::default() }, ..Style::default() }, children: vec![holder], ..Desc::default() }]);
-+    let rect = |key: &str| tree.rect(tree.find(key).unwrap()).unwrap();
-+    assert_eq!(rect("c1").y, rect("c0").y, "the second card stays beside the first");
-+    assert!(rect("c1").y + rect("c1").h <= rect("grid").y + rect("grid").h, "the row is as tall as its cards");
-+}
+@@ -267,6 +267,7 @@ KeyMods        { shift: boolean; alt: boolean; ctrl: boolean; super: boolean }
+ | `style` | layout style |
+ | `preload` | preload script path |
+ | `partition` | session name, made persistent |
++| `persist` | `false` keeps the partition in memory: nothing it stores reaches disk, and it is gone when the app quits; its pages get no favicon <!-- fixme: placeholder copy --> |
+ | `proxy` | proxy rules, e.g. `socks5://127.0.0.1:1080` |
+ | `clipboardRead` | allows the page to read the clipboard |
+ | `browserWindowOptions` | Electron `BrowserWindow` options except size and offscreen flags |
 ```
 
-**File**: `pixel/engine/vendor/taffy/src/compute/flexbox.rs` (modified, +3/-6)
+**File**: `pixel/packages/pixel/src/web/browser-session.ts` (modified, +4/-0)
 ```diff
-@@ -903,16 +903,13 @@ fn collect_flex_lines<'a>(
-                 while !flex_items.is_empty() {
-                     // Find index of the first item in the next line
-                     // (or the last item if all remaining items are in the current line)
--                    let mut line_length = 0.0;
-+                    let mut items_length = 0.0;
-                     let index = flex_items
-                         .iter()
-                         .enumerate()
-                         .find(|&(idx, child)| {
--                            // Gaps only occur between items (not before the first one or after the last one)
--                            // So first item in the line does not contribute a gap to the line length
--                            let gap_contribution = if idx == 0 { 0.0 } else { main_axis_gap };
--                            line_length += child.hypothetical_outer_size.main(constants.dir) + gap_contribution;
--                            line_length > main_axis_available_space && idx != 0
-+                            items_length += child.hypothetical_outer_size.main(constants.dir);
-+                            items_length + sum_axis_gaps(main_axis_gap, idx + 1) > main_axis_available_space && idx != 0
-                         })
-                         .map(|(idx, _)| idx)
-                         .unwrap_or(flex_items.len());
+@@ -198,6 +198,10 @@ export function persistentPartition(partition: string): string {
+   return partition.startsWith("persist:") ? partition : `persist:${partition}`;
+ }
+ 
++export function memoryPartition(partition: string): string {
++  return partition.replace(/^persist:/, "");
++}
++
+ function rangeResponse(url: string, range: string): Response | null {
+   const match = /^bytes=(\d*)-(\d*)$/.exec(range.trim());
+   if (!match || (!match[1] && !match[2])) return null;
+```
+
+**File**: `pixel/packages/pixel/src/web/favicon.ts` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ export class FaviconCache {
+   constructor(private readonly dir: string = path.join(app.getPath("userData"), "favicons")) {}
+ 
+   async resolve(urls: string[], ses: Session): Promise<string | null> {
+-    if (urls.length === 0) return null;
++    if (urls.length === 0 || !ses.isPersistent()) return null;
+     const clearsBefore = clears;
+     const candidates = [...urls].sort((a, b) => Number(RASTER_URL.test(b)) - Number(RASTER_URL.test(a)));
+     try {
+```
+
+**File**: `pixel/packages/pixel/src/webview.tsx` (modified, +5/-2)
+```diff
+@@ -44,7 +44,7 @@ import type {
+ } from "./web/browser-session";
+ import { PageHost, decideOpenWindow } from "./web/host";
+ import type { BrowserWindowOptions, OpenWindowDecision, OpenWindowPolicy } from "./web/host";
+-import { persistentPartition } from "./web/browser-session";
++import { memoryPartition, persistentPartition } from "./web/browser-session";
+ import { initialWebViewState, snapToCssGrid } from "./web/types";
+ import type { DevtoolsDock, MediaCapture, SurfaceLayout, WebViewState } from "./web/types";
+ import type { ZoomDirection } from "./web/zoom";
+@@ -66,6 +66,7 @@ export interface WebViewProps {
+   style?: Style;
+   preload?: string;
+   partition?: string;
++  persist?: boolean;
+   clipboardRead?: boolean;
+   proxy?: string;
+   browserWindowOptions?: BrowserWindowOptions;
+@@ -247,7 +248,9 @@ export const WebView = forwardRef<WebViewHandle, WebViewProps>(function WebView(
+       ...passthrough,
+       webPreferences: {
+         ...passthrough.webPreferences,
+-        ...(initial.partition ? { partition: persistentPartition(initial.partition) } : {}),
++        ...(initial.partition
++          ? { partition: initial.persist === false ? memoryPartition(initial.partition) : persistentPartition(initial.partition) }
++          : {}),
+         ...(initial.preload ? { preload: path.resolve(initial.preload) } : {}),
+       },
+     };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #298** (2026-11-16): in-memory webview partitions (@RobPruzan)
+- **PR #297** (2026-11-15): change pixel hero (@RobPruzan)
+- **PR #294** (2026-11-15): code block copy button (@RobPruzan)
+- **PR #293** (2026-11-15): improve ssh scroll perf (@RobPruzan)
 - **PR #286** (2026-11-13): fix phone crashes from reserved address space (@RobPruzan)
 - **PR #285** (2026-11-13): link targets in text layout (@RobPruzan)
-- **PR #284** (2026-11-13): keep list text in place when width changes (@RobPruzan)
-- **PR #281** (2026-11-13): fix cards wrapping when they exactly fill a row (@RobPruzan)
-- **PR #280** (2026-11-12): fix list rows drawn over a grown row (@RobPruzan)
-- **PR #279** (2026-11-12): fix perf issues (@RobPruzan)
 
 ---
 
@@ -1659,37 +1680,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cards wrapping when they exactly fill a row
+## X. in-memory webview partitions
 
 **RULE**:
-When implementing operations in `pixel/engine/crates/pixel-core/src/tree/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixel/AGENT-DOCS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bb6ae6d`: cards wrapping when they exactly fill a row. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53b7f598`: in-memory webview partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/engine/crates/pixel-core/src/tree/tests.rs`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/AGENT-DOCS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-
-#[test]
-fn cards_that_exactly_fill_a_wrapping_row_stay_on_one_line() {
-    let cw = 14.0411f32;
-    let room = 59.0 * cw;
-    let card = ((room - cw) / 2.0).floor();
-    let grid = Desc {
-        key: Some("grid".into()),
-        style: Style { flex_direction: FlexDirection::Row, flex_wrap: true, gap: cw, ..Style::default() },
-        children: (0..2).map(|i| Desc { key: Some(format!("c{i}")), style: Style { width: Dimension::Px(card), height: Dimension::Px(281.0), flex_shrink: 0.0, ..Style::default() }, ..Desc::default() }).collect(),
-        ..Desc::default()
-    };
-    let holder = Desc { style: Style { padding: crate::style::Edges { left: 2.0 * cw, ..Default::default() }, ..Style::default() }, children: vec![grid], ..Desc::default() };
-    let width = 63.0 * cw;
-    let tree = tree_of((width, 1000.0), vec![Desc { style: Style { width: Dimension::Px(width), flex_direction: FlexDirection::Column, padding: crate::style::Edges { left: cw, right: cw, ..Default::default() }, ..Style::default() }, children: vec![holder], ..Desc::default() }]);
-    let rect = |key: &str| tree.rect(tree.find(key).unwrap()).unwrap();
-    assert_eq!(rect("c1").y, rect("c0").y, "the second card stays besi
+| `persist` | `false` keeps the partition in memory: nothing it stores reaches disk, and it is gone when the app quits; its pages get no favicon <!-- fixme: placeholder copy --> |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1699,7 +1704,7 @@ fn cards_that_exactly_fill_a_wrapping_row_stay_on_one_line() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bb6ae6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53b7f598` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

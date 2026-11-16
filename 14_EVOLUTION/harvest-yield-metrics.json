@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T04:30:28.211Z",
-  "total_cycles_completed": 9832,
-  "total_learnings_persisted": 9832,
-  "total_rules_promoted": 9444,
+  "last_updated": "2026-11-16T04:53:30.454Z",
+  "total_cycles_completed": 9835,
+  "total_learnings_persisted": 9835,
+  "total_rules_promoted": 9446,
   "history": [
-    {
-      "timestamp": "2026-11-15T01:03:20.411Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T01:03:28.314Z",
-      "repository": "JetBrains/kotlinconf-app",
-      "learningId": "learn-github-jetbrains-kotlinconf-app",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T01:03:34.899Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T01:32:38.674Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -1403,6 +1382,27 @@
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T04:53:17.312Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T04:53:22.663Z",
+      "repository": "mikepenz/multiplatform-markdown-renderer",
+      "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T04:53:30.454Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

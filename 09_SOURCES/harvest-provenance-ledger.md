@@ -10273,3 +10273,6 @@ Every entry in this ledger must capture:
 | `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `4bb39f16` | Multi-dimensional audit evidence | 2026-11-16T04:30:14.611Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6e16dac9` | Multi-dimensional audit evidence | 2026-11-16T04:30:25.183Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `39281811` | Multi-dimensional audit evidence | 2026-11-16T04:30:28.206Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `53b7f598` | Multi-dimensional audit evidence | 2026-11-16T04:53:17.305Z |
+| `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `8077f612` | Multi-dimensional audit evidence | 2026-11-16T04:53:22.657Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `149cd0ad` | Multi-dimensional audit evidence | 2026-11-16T04:53:30.434Z |

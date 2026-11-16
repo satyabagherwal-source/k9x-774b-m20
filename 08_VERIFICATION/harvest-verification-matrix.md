@@ -10240,3 +10240,6 @@
 | `CYCLE-20261116-M1XS` | `2026-11-16T04:30:14.608Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8711` | Yes (`12033044...`) |
 | `CYCLE-20261116-MA3F` | `2026-11-16T04:30:25.179Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8712` | Yes (`8a47637e...`) |
 | `CYCLE-20261116-MCFE` | `2026-11-16T04:30:28.202Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8713` | Yes (`355ee964...`) |
+| `CYCLE-20261116-FOTW` | `2026-11-16T04:53:17.300Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8714` | Yes (`0fb1b770...`) |
+| `CYCLE-20261116-FSYK` | `2026-11-16T04:53:22.652Z` | `mikepenz/multiplatform-markdown-renderer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8715` | Yes (`799eaca7...`) |
+| `CYCLE-20261116-FYYM` | `2026-11-16T04:53:30.430Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md` | Yes (`552f7b88...`) |

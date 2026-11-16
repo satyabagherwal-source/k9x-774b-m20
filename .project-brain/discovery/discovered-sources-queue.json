@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T04:30:32.705Z",
+  "updated_at": "2026-11-16T04:53:36.736Z",
   "stats": {
-    "total_discovered": 4114,
-    "approved_pending_harvest": 3865,
+    "total_discovered": 4151,
+    "approved_pending_harvest": 3900,
     "harvested_count": 0,
-    "rejected_count": 249,
+    "rejected_count": 251,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3862,
+      "COMMUNITY_AND_EXPERT": 3899,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -88786,6 +88786,806 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mariadb-server-learnings.md",
         "fileName": "mariadb-server-learnings.md"
+      }
+    },
+    "SRC-BDE43BC452A0": {
+      "id": "SRC-BDE43BC452A0",
+      "url": "https://redirect.github.com/SnipMeDev/Highlights",
+      "title": "https://redirect.github.com/SnipMeDev/Highlights",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:34.756Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-BBE962EE5709": {
+      "id": "SRC-BBE962EE5709",
+      "url": "https://api.securityscorecards.dev/projects/github.com/SnipMeDev/Highlights/badge",
+      "title": "https://api.securityscorecards.dev/projects/github.com/SnipMeDev/Highlights/badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:34.791Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-FF522B38A6F3": {
+      "id": "SRC-FF522B38A6F3",
+      "url": "https://securityscorecards.dev/viewer/?uri=github.com%2FSnipMeDev%2FHighlights",
+      "title": "https://securityscorecards.dev/viewer/?uri=github.com%2FSnipMeDev%2FHighlights",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:34.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-FD0052CEFDA1": {
+      "id": "SRC-FD0052CEFDA1",
+      "url": "https://redirect.github.com/SnipMeDev/Highlights/blob/HEAD/CHANGELOG.md",
+      "title": "https://redirect.github.com/SnipMeDev/Highlights/blob/HEAD/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:34.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-85C73F808D85": {
+      "id": "SRC-85C73F808D85",
+      "url": "https://redirect.github.com/SnipMeDev/Highlights/compare/1.1.0...1.2.0",
+      "title": "https://redirect.github.com/SnipMeDev/Highlights/compare/1.1.0...1.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:34.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-B009E67B1969": {
+      "id": "SRC-B009E67B1969",
+      "url": "https://redirect.github.com/SnipMeDev/Highlights/issues/78",
+      "title": "https://redirect.github.com/SnipMeDev/Highlights/issues/78",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:34.930Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-D14D7254A8A2": {
+      "id": "SRC-D14D7254A8A2",
+      "url": "https://redirect.github.com/actions/setup-java",
+      "title": "https://redirect.github.com/actions/setup-java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:34.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-34A21B79D3A4": {
+      "id": "SRC-34A21B79D3A4",
+      "url": "https://api.securityscorecards.dev/projects/github.com/actions/setup-java/badge",
+      "title": "https://api.securityscorecards.dev/projects/github.com/actions/setup-java/badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-E7DF14F28126": {
+      "id": "SRC-E7DF14F28126",
+      "url": "https://securityscorecards.dev/viewer/?uri=github.com%2Factions%2Fsetup-java",
+      "title": "https://securityscorecards.dev/viewer/?uri=github.com%2Factions%2Fsetup-java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.041Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-BFC0B0CF1ECF": {
+      "id": "SRC-BFC0B0CF1ECF",
+      "url": "https://redirect.github.com/github/codeql-action",
+      "title": "https://redirect.github.com/github/codeql-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-7CA18B37AC2C": {
+      "id": "SRC-7CA18B37AC2C",
+      "url": "https://api.securityscorecards.dev/projects/github.com/github/codeql-action/badge",
+      "title": "https://api.securityscorecards.dev/projects/github.com/github/codeql-action/badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.107Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-653642D923B7": {
+      "id": "SRC-653642D923B7",
+      "url": "https://securityscorecards.dev/viewer/?uri=github.com%2Fgithub%2Fcodeql-action",
+      "title": "https://securityscorecards.dev/viewer/?uri=github.com%2Fgithub%2Fcodeql-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.145Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-405717E592B3": {
+      "id": "SRC-405717E592B3",
+      "url": "https://redirect.github.com/actions/setup-java/releases/tag/v6.2.0",
+      "title": "https://redirect.github.com/actions/setup-java/releases/tag/v6.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.179Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-0C52C80F2A23": {
+      "id": "SRC-0C52C80F2A23",
+      "url": "https://redirect.github.com/actions/setup-java/compare/v6.1.0...v6.2.0",
+      "title": "https://redirect.github.com/actions/setup-java/compare/v6.1.0...v6.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-2E769808BD04": {
+      "id": "SRC-2E769808BD04",
+      "url": "https://redirect.github.com/brunoborges",
+      "title": "https://redirect.github.com/brunoborges",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.250Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-0D18F30DAD53": {
+      "id": "SRC-0D18F30DAD53",
+      "url": "https://redirect.github.com/actions/setup-java/pull/1291",
+      "title": "https://redirect.github.com/actions/setup-java/pull/1291",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-2EF5FB05FFB5": {
+      "id": "SRC-2EF5FB05FFB5",
+      "url": "https://redirect.github.com/actions/setup-java/pull/1308",
+      "title": "https://redirect.github.com/actions/setup-java/pull/1308",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-6341585A342D": {
+      "id": "SRC-6341585A342D",
+      "url": "https://redirect.github.com/dependabot",
+      "title": "https://redirect.github.com/dependabot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:35.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
+        "fileName": "mikepenz-multiplatform-markdown-renderer-learnings.md"
+      }
+    },
+    "SRC-9F01D6490F41": {
+      "id": "SRC-9F01D6490F41",
+      "url": "https://github.com/sporkmonger/addressable",
+      "title": "https://github.com/sporkmonger/addressable",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.100Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-486EB501FC0E": {
+      "id": "SRC-486EB501FC0E",
+      "url": "http://github.com/halfbyte/afm",
+      "title": "http://github.com/halfbyte/afm",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T04:53:36.134Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-FF1D92692FF8": {
+      "id": "SRC-FF1D92692FF8",
+      "url": "https://github.com/DataWraith/ascii85gem",
+      "title": "https://github.com/DataWraith/ascii85gem",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.167Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-616EFE6F9614": {
+      "id": "SRC-616EFE6F9614",
+      "url": "https://github.com/socketry/async",
+      "title": "https://github.com/socketry/async",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-12C1D00A519F": {
+      "id": "SRC-12C1D00A519F",
+      "url": "https://github.com/FasterXML/jackson",
+      "title": "https://github.com/FasterXML/jackson",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.239Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-4B5B272B1BC7": {
+      "id": "SRC-4B5B272B1BC7",
+      "url": "http://fasterxml.com/",
+      "title": "http://fasterxml.com/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T04:53:36.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-8813E6621431": {
+      "id": "SRC-8813E6621431",
+      "url": "https://socketry.github.io/console",
+      "title": "https://socketry.github.io/console",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.306Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-0D758848788C": {
+      "id": "SRC-0D758848788C",
+      "url": "https://github.com/socketry/console",
+      "title": "https://github.com/socketry/console",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.340Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-B78EBC9B1AC7": {
+      "id": "SRC-B78EBC9B1AC7",
+      "url": "https://github.com/ruby/csv",
+      "title": "https://github.com/ruby/csv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.379Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-F01A3BA81523": {
+      "id": "SRC-F01A3BA81523",
+      "url": "https://github.com/typhoeus/ethon",
+      "title": "https://github.com/typhoeus/ethon",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.412Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-350F52E94DBB": {
+      "id": "SRC-350F52E94DBB",
+      "url": "https://github.com/socketry/fiber-storage",
+      "title": "https://github.com/socketry/fiber-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.446Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-1191826978CF": {
+      "id": "SRC-1191826978CF",
+      "url": "https://github.com/ioquatix/fiber-storage",
+      "title": "https://github.com/ioquatix/fiber-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-01FEF26940D9": {
+      "id": "SRC-01FEF26940D9",
+      "url": "https://github.com/gjtorikian/html-proofer",
+      "title": "https://github.com/gjtorikian/html-proofer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-1D2F5CE24FD8": {
+      "id": "SRC-1D2F5CE24FD8",
+      "url": "https://github.com/socketry/io-event",
+      "title": "https://github.com/socketry/io-event",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-F51C7285D9D9": {
+      "id": "SRC-F51C7285D9D9",
+      "url": "https://github.com/jekyll/jekyll-seo-tag",
+      "title": "https://github.com/jekyll/jekyll-seo-tag",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.596Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-D308C310E5DD": {
+      "id": "SRC-D308C310E5DD",
+      "url": "https://github.com/jekyll/mercenary",
+      "title": "https://github.com/jekyll/mercenary",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-BC67FBB2F2A5": {
+      "id": "SRC-BC67FBB2F2A5",
+      "url": "https://github.com/syntax-tree/mdast-util-to-hast",
+      "title": "https://github.com/syntax-tree/mdast-util-to-hast",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-FB5B1D12A3C1": {
+      "id": "SRC-FB5B1D12A3C1",
+      "url": "https://github.com/socketry/metrics",
+      "title": "https://github.com/socketry/metrics",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.703Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-11597060CDF0": {
+      "id": "SRC-11597060CDF0",
+      "url": "https://nokogiri.org/",
+      "title": "https://nokogiri.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:53:36.736Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
       }
     }
   }

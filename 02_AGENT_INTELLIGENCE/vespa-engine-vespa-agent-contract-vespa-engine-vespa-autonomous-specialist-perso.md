@@ -4,17 +4,17 @@
 {
   "source_repository": "vespa-engine/vespa",
   "source_url": "https://github.com/vespa-engine/vespa",
-  "source_version": "1f5abdb0",
+  "source_version": "149cd0ad",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T20:32:38.392Z",
+  "timestamp": "2026-11-16T04:53:30.685Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vespa-engine-vespa",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `1f5abdb0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T20:32:38.392Z`  
+> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `149cd0ad`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T04:53:30.685Z`  
 > **Learning ID**: `learn-github-vespa-engine-vespa`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T20:32:37.413Z  
+> **Harvest Timestamp**: 2026-11-16T04:53:29.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1077,464 +1077,455 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0ca7822` (2026-11-14)
-**Commit Message**: Merge pull request #38516 from vespa-engine/fix/cve-deps-2026-11-13
+### Incident Patch 1: `149cd0ad` (2026-11-15)
+**Commit Message**: Merge pull request #38532 from vespa-engine/chore/update-attributions
 
-Bump addressable to 2.9.2 (4 Mend HIGH CVEs)
+chore: update third-party attributions
 
-**File**: `Gemfile.lock` (modified, +17/-23)
+**File**: `ATTRIBUTIONS.md` (modified, +37/-55)
 ```diff
-@@ -1,44 +1,42 @@
- GEM
-   remote: https://rubygems.org/
-   specs:
--    Ascii85 (1.1.1)
--    addressable (2.9.0)
-+    Ascii85 (2.0.1)
-+    addressable (2.9.2)
-       public_suffix (>= 2.0.2, < 8.0)
--    afm (0.2.2)
--    async (2.39.0)
-+    afm (1.0.1)
-+    async (2.46.0)
-       console (~> 1.29)
-       fiber-annotation
--      io-event (~> 1.11)
--      metrics (~> 0.12)
--      traces (~> 0.18)
-+      io-event (~> 1.21)
-     base64 (0.3.0)
-     benchmark (0.5.0)
-     bigdecimal (4.1.3)
-     colorator (1.1.0)
-     concurrent-ruby (1.3.8)
--    console (1.35.1)
-+    console (1.38.0)
-       fiber-annotation
-       fiber-local (~> 1.1)
-       json
--    csv (3.3.6)
-+    csv (3.3.7)
-     em-websocket (0.5.3)
-       eventmachine (>= 0.12.9)
-       http_parser.rb (~> 0)
--    ethon (0.18.0)
-+    ethon (0.19.2)
-       ffi (>= 1.15.0)
-       logger
-     eventmachine (1.2.7)
-     ffi (1.17.4-x86_64-linux-gnu)
-     fiber-annotation (0.2.0)
-     fiber-local (1.1.0)
-       fiber-storage
--    fiber-storage (0.1.2)
-+    fiber-storage (1.0.1)
-     forwardable-extended (2.6.0)
-     google-protobuf (4.36.2-x86_64-linux-gnu)
-       bigdecimal
-       rake (~> 13.3)
-     hashery (2.1.2)
--    html-proofer (5.2.2)
-+    html-proofer (5.2.3)
-       addressable (~> 2.3)
-       async (~> 2.1)
-       benchmark (~> 0.5)
-@@ -51,7 +49,7 @@ GEM
-     http_parser.rb (0.8.1)
-     i18n (1.15.2)
-       concurrent-ruby (~> 1.0)
--    io-event (1.16.4)
-+    io-event (1.22.3)
-     jekyll (4.4.1)
-       addressable (~> 2.4)
-       base64 (~> 0.2)
-@@ -77,7 +75,7 @@ GEM
-       jekyll (>= 3.3, < 5.0)
-     jekyll-sass-converter (3.1.0)
-       sass-embedded (~> 1.75)
--    jekyll-seo-tag (2.8.0)
-+    jekyll-seo-tag (2.9.1)
-       jekyll (>= 3.8, < 5.0)
-     jekyll-watch (2.2.1)
-       listen (~> 3.0)
-@@ -93,20 +91,18 @@ GEM
-       rb-inotify (~> 0.9, >= 0.9.10)
-     logger (1.7.0)
-     mercenary (0.4.0)
--    metrics (0.15.0)
-     minima (2.5.2)
-       jekyll (>= 3.5, < 5.0)
-       jekyll-feed (~> 0.9)
-       jekyll-seo-tag (~> 2.1)
--    nokogiri (1.19.4-x86_64-linux-gnu)
-+    nokogiri (1.19.7-x86_64-linux-gnu)
-       racc (~> 1.4)
-     pathutil (0.16.2)
-       forwardable-extended (~> 2.6)
--    pdf-reader (2.15.1)
-+    pdf-reader (2.16.0)
-       Ascii85 (>= 1.0, < 3.0, != 2.0.0)
-       afm (>= 0.2.1, < 2)
-       hashery (~> 2.0)
--      ruby-rc4
-       ttfunk
-     public_suffix (7.0.5)
-     racc (1.8.1)
-@@ -117,16 +113,14 @@ GEM
-       ffi (~> 1.0)
-     rexml (3.4.4)
-     rouge (4.7.0)
--    ruby-rc4 (0.1.5)
-     safe_yaml (1.0.5)
--    sass-embedded (1.105.1-x86_64-linux-gnu)
-+    sass-embedded (1.108.2-x86_64-linux-gnu)
-       google-protobuf (~> 4.31)
-     terminal-table (3.0.2)
-       unicode-display_width (>= 1.1.1, < 3)
--    traces (0.18.2)
-     ttfunk (1.7.0)
--    typhoeus (1.6.0)
--      ethon (>= 0.18.0)
-+    typhoeus (1.7.1)
-+      ethon (>= 0.19.1, < 0.20.0)
-     unicode-display_width (2.6.0)
-     webrick (1.9.2)
-     yell (2.2.2)
+@@ -6,7 +6,7 @@ dependencies of Vespa detected by scanning package manifests.
+ For the hand-maintained list of vendored C/C++ libraries (Boost, OpenSSL,
+ ICU, etc.), see [`NOTICES`](NOTICES).
+ 
+-Last updated: 2026-11-14
++Last updated: 2026-11-15
+ 
+ ---
+ 
+@@ -94,29 +94,28 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## addressable 2.9.0 — Apache 2.0
++## addressable 2.9.2 — Apache 2.0
+ 
+ - Homepage: <https://github.com/sporkmonger/addressable>
+ - Copyright Bob Aman</dd>
+ 
+ ---
+ 
+-## afm 0.2.2 — MIT
++## afm 1.0.1 — MIT
+ 
+ - Homepage: <http://github.com/halfbyte/afm>
+-- Copyright 2010 Jan Krutisch
+-- Copyright 2009 Jan Krutisch
++- Copyright Jan Krutisch
+ 
+ ---
+ 
+-## Ascii85 1.1.1 — Adobe Postscript AFM
++## Ascii85 2.0.1 — Adobe Postscript AFM
+ 
+ - Homepage: <https://github.com/DataWraith/ascii85gem/>
+ - Copyright 2009 Johannes Holzfuß
+ 
+ ---
+ 
+-## Ascii85 1.1.1 — MIT
++## Ascii85 2.0.1 — MIT
+ 
+ - Homepage: <https://github.com/DataWraith/ascii85gem/>
+ - Copyright 2009 Johannes Holzfuß
+@@ -131,13 +130,9 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## async 2.39.0 — MIT
++## async 2.46.0 — MIT
+ 
+ - Homepage: <https://github.com/socketry/async>
+--  by Kent Gruber
+-- Copyright 2024
+-- Copyright 2017
+--  by Patrik Wenger
+ 
+ ---
+ 
+@@ -209,14 +204,15 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## com.fasterxml.jackson.core 2.22 — Apache 2.0
++## com.fasterxml.jackson.core 2.23 — Apache 2.0
+ 
+-- Homepage: <https://github.com/FasterXML/jackson>
++- Homepage: <http://fasterxml.com/>
++- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
+ - FasterXML
+ 
+ ---
+ 
+-## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
++## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
+ 
+ - Homepage: <http://fasterxml.com/>
+ - Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
+@@ -297,28 +293,26 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## console 1.35.1 — MIT
++## console 1.38.0 — MIT
+ 
+-- Homepage: <https://socketry.github.io/console>
+--  by Samuel Williams
+-- Copyright 2022
++- Homepage: <https://github.com/socketry/console>
+ 
+ ---
+ 
+-## csv 3.3.6 — BSD 2
++## csv 3.3.7 — BSD 2
+ 
+ - Homepage: <https://github.com/ruby/csv>
+ - Copyright 2007-2017 Yukihiro Matsumoto
+ - Copyright 2017 pavel
+-- Copyright 2018 Vladislav
+ - Copyright 2018 Kouhei Sutou
++- Copyright 2018 Vladislav
+ - Copyright 2017-2018 Steven Daniels
+ - Copyright 2017 Espartaco Palma
+ - Copyright 2018 Tomohiro Ogoke
+-- Copyright 2017 Marcus Stollsteimer
+-- Copyright 2005-2016 James Edward Gray II
+ - Copyright 2017 SHIBATA Hiroshi
+ - Copyright 2017 Olivier Lacan
++- Copyright 2005-2016 James Edward Gray II
++- Copyright 2017 Marcus Stollsteimer
+ - Copyright 2018 Mitsutaka Mimura
+ 
+ ---
+@@ -344,7 +338,7 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## ethon 0.18.0 — MIT
++## ethon 0.19.2 — MIT
+ 
+ - Homepage: <https://github.com/typhoeus/ethon>
+ - Copyright 2012-2016 Hans Hasselberg
+@@ -389,10 +383,10 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## fiber-storage 0.1.2 — MIT
++## fiber-storage 1.0.1 — MIT
+ 
+-- Homepage: <https://github.com/socketry/fiber-storage>
+-- Copyright, 2022-2023, by Samuel Williams.
++- Homepage: <https://github.com/ioquatix/fiber-storage>
++- Copyright, 2022-2025, by Samuel Williams.
+ 
+ ---
+ 
+@@ -627,9 +621,10 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## html-proofer 5.2.2 — MIT
++## html-proofer 5.2.3 — MIT
+ 
+ - Homepage: <https://github.com/gjtorikian/html-proofer>
++- Copyright 2013 Garen Torikian
+ 
+ ---
+ 
+@@ -655,7 +650,7 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## io-event 1.16.4 — MIT
++## io-event 1.22.3 — MIT
+ 
+ - Homepage: <https://github.com/socketry/io-event>
+ -  by Wander Hillen
+@@ -711,7 +706,7 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## jekyll-seo-tag 2.8.0 — MIT
++## jekyll-seo-tag 2.9.1 — MIT
+ 
+ - Homepage: <https://github.com/jekyll/jekyll-seo-tag>
+ - Copyright 2015 Ben Balter and the jekyll-seo-tag contributors
+@@ -783,17 +778,17 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## mercenary 0.4.0 — MIT
++## mdast-util-to-hast 13.2.2 — MIT
+ 
+-- Homepage: <https://github.com/jekyll/mercenary>
+-- Copyright 2013 Parker Moore and the mercenary contributors
++- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
++- Copyright Titus Wormer <tituswormer@gmail.com>
+ 
+ ---
+ 
+-## metrics 0.15.0 — MIT
++## mercenary 0.4.0 — MIT
+ 
+-- Homepage: <https://github.com/socketry/metrics>
+-- Copyright, 2021-2025, by Samuel Williams.
++- Homepage: <https://github.com/jekyll/mercenary>
++- Copyright 2013 Parker Moore and the mercenary contributors
+ 
+ ---
+ 
+@@ -850,12 +845,13 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## nokogiri 1.19.4 — MIT
++## nokogiri 1.19.7 — MIT
+ 
+ - Homepage: <https://nokogiri.org>
+ - Copyright 2008-2023 Mike Dalessio
+-- Copyright 1998-2012 Daniel Veillard
+ - Copyright 1995-2017 Jean-loup Gailly and Mark Adler
++- Copyright 1998-2012 Daniel Veillard
++- Copyright 2020 Joshua J Baker
+ - Copyright 2001-2003 Thai Open Source Software Center Ltd
+ - Copyright 2001-2002 SourceForge ISO-RELAX Project
+ - Copyright 2001-2002 Thomas Broyer
+@@ -1042,7 +1038,7 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## pdf-reader 2.15.1 — MIT
++## pd
 ```
 
 ---
 
-### Incident Patch 2: `77e5b309` (2026-11-14)
-**Commit Message**: fix(deps): update jackson monorepo
+### Incident Patch 2: `be01309c` (2026-11-15)
+**Commit Message**: chore: update third-party attributions
 
-**File**: `dependency-versions/pom.xml` (modified, +2/-2)
+**File**: `ATTRIBUTIONS.md` (modified, +37/-55)
 ```diff
-@@ -38,8 +38,8 @@
-         <guava.vespa.version>33.7.2-jre</guava.vespa.version>
-         <guice.vespa.version>6.0.0</guice.vespa.version>
-         <j2objc-annotations.vespa.version>3.1</j2objc-annotations.vespa.version>
--        <jackson2.vespa.version>2.22.4</jackson2.vespa.version>
--        <jackson-annotations.vespa.version>2.22</jackson-annotations.vespa.version>
-+        <jackson2.vespa.version>2.23.0</jackson2.vespa.version>
-+        <jackson-annotations.vespa.version>2.23</jackson-annotations.vespa.version>
-         <jackson-databind.vespa.version>${jackson2.vespa.version}</jackson-databind.vespa.version>
-         <jakarta.inject.vespa.version>2.0.1</jakarta.inject.vespa.version>
-         <javax.activation-api.vespa.version>1.2.0</javax.activation-api.vespa.version>
-```
-
-**File**: `integration/logstash-plugins/logstash-output-vespa/build.gradle` (modified, +5/-5)
-```diff
-@@ -59,10 +59,10 @@ dependencies {
+@@ -6,7 +6,7 @@ dependencies of Vespa detected by scanning package manifests.
+ For the hand-maintained list of vendored C/C++ libraries (Boost, OpenSSL,
+ ICU, etc.), see [`NOTICES`](NOTICES).
  
-     implementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
+-Last updated: 2026-11-14
++Last updated: 2026-11-15
  
--    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.4'
--    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.4'
--    implementation 'com.fasterxml.jackson.core:jackson-core:2.22.4'
--    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.22'
-+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.23.0'
-+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.23.0'
-+    implementation 'com.fasterxml.jackson.core:jackson-core:2.23.0'
-+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.23'
+ ---
  
-     implementation "org.yaml:snakeyaml:${snakeYamlVersion}"
+@@ -94,29 +94,28 @@ Last updated: 2026-11-14
  
-@@ -73,7 +73,7 @@ dependencies {
-     testImplementation 'org.mockito:mockito-core:5.24.0'
-     testImplementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
-     testImplementation fileTree(dir: LOGSTASH_CORE_PATH, include: "**/logstash-core.jar")
--    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.4'
-+    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.23.0'
- }
+ ---
  
- clean {
-```
-
----
-
-### Incident Patch 3: `a5a6d3cf` (2026-11-13)
-**Commit Message**: Merge pull request #38528 from vespa-engine/toregge/add-trace-spans-for-document-db-init-and-shutdown
-
-Add trace spans for document db init and shutdown.
-
-**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +7/-0)
-```diff
-@@ -291,13 +291,15 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-         {
-             ExitOnSignal exit_on_signal;
-             span->AddEvent("Starting proton");
-+            auto scope = tracer->WithActiveSpan(span);
-             proton.init(configSnapshot);
-         }
-         std::string file_distributor_connection_spec = configSnapshot->getFiledistributorrpcConfig().connectionspec;
-         std::unique_ptr<ProtonServiceLayerProcess> spiProton;
+-## addressable 2.9.0 — Apache 2.0
++## addressable 2.9.2 — Apache 2.0
  
-         if (!params.serviceidentity.empty()) {
-             span->AddEvent("Starting service layer");
-+            auto scope = tracer->WithActiveSpan(span);
-             spiProton = std::make_unique<ProtonServiceLayerProcess>(
-                 identityUri.createWithNewId(params.serviceidentity), proton, transport,
-                 file_distributor_connection_spec, configSnapshot->getHwInfo());
-@@ -311,6 +313,7 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-         configSnapshot.reset();
-         span->AddEvent("Started proton");
-         span->End();
-+        span.reset();
-         EV_STARTED("proton");
-         while (!(SIG::INT.check() || SIG::TERM.check() || (spiProton && spiProton->getNode().attemptedStopped()))) {
-             std::this_thread::sleep_for(1000ms);
-@@ -319,6 +322,8 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-                 spiProton->updateConfig();
-             }
-         }
-+        span = tracer->StartSpan("Proton process stopping");
-+        auto scope = tracer->WithActiveSpan(span);
-         // Ensure metric manager and state server are shut down before we start tearing
-         // down any service layer components that they may end up transitively using.
-         protonUP->shutdown_config_fetching_and_state_exposing_components_once();
-@@ -328,6 +333,8 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-             EV_STOPPING("servicelayer", "clean shutdown");
-         }
-         protonUP.reset();
-+        span->End();
-+        span.reset();
-         EV_STOPPING("proton", "clean shutdown");
-     }
- }
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/server/ddbstate.cpp` (modified, +61/-1)
-```diff
-@@ -4,12 +4,27 @@
+ - Homepage: <https://github.com/sporkmonger/addressable>
+ - Copyright Bob Aman</dd>
  
- #include <vespa/check_require.h>
+ ---
  
-+#include <opentelemetry/trace/provider.h>
-+
- #include <vespa/log/logf.h>
+-## afm 0.2.2 — MIT
++## afm 1.0.1 — MIT
  
- LOG_SETUP(".proton.server.ddbstate");
+ - Homepage: <http://github.com/halfbyte/afm>
+-- Copyright 2010 Jan Krutisch
+-- Copyright 2009 Jan Krutisch
++- Copyright Jan Krutisch
  
-+using opentelemetry::trace::Provider;
-+using opentelemetry::trace::SpanKind;
-+using opentelemetry::trace::StartSpanOptions;
-+
- namespace proton {
+ ---
  
-+namespace {
-+
-+[[nodiscard]] std::shared_ptr<opentelemetry::trace::Tracer> get_tracer() {
-+    auto provider = Provider::GetTracerProvider();
-+    return provider->GetTracer("proton");
-+}
-+
-+} // namespace
-+
- std::vector<std::string> DDBState::_stateNames = {
-     "CONSTRUCT",
-     "LOAD",
-@@ -33,16 +48,45 @@ DDBState::DDBState(const DocTypeName& doc_type_name)
-       _load_time(),
-       _online_time(),
-       _replay_time(),
--      _doc_type_name(doc_type_name) {
-+      _doc_type_name(doc_type_name),
-+      _multistate_span(),
-+      _state_span() {
- }
+-## Ascii85 1.1.1 — Adobe Postscript AFM
++## Ascii85 2.0.1 — Adobe Postscript AFM
  
- DDBState::~DDBState() = default;
+ - Homepage: <https://github.com/DataWraith/ascii85gem/>
+ - Copyright 2009 Johannes Holzfuß
  
-+void DDBState::end_multistate_span() {
-+    if (_multistate_span) {
-+        _multistate_span->End();
-+        _multistate_span.reset();
-+    }
-+}
-+
-+void DDBState::end_state_span() {
-+    if (_state_span) {
-+        _state_span->End();
-+        _state_span.reset();
-+    }
-+}
-+
- void DDBState::set_state(State state) {
-     auto old_state = getState();
-+    if (state == old_state) {
-+        return;
-+    }
-+    end_state_span();
-     _state.store(state, std::memory_order_release);
-     LOGF(info, "Switched document type {} ddb state from {} to {}", _doc_type_name.getName(),
-          getStateString(old_state), getStateString(state));
-+    if (!_multistate_span) {
-+        return;
-+    }
-+    auto             tracer = get_tracer();
-+    StartSpanOptions options;
-+    options.kind = SpanKind::kInternal;
-+    options.parent = _multistate_span->GetContext();
-+    _state_span = tracer->StartSpan(
-+        std::format("Document type {} ddb state {}", _doc_type_name.getName(), getStateString(state)), options);
- }
+ ---
  
- bool DDBState::enterLoadState() {
-@@ -51,6 +95,12 @@ bool DDBState::enterLoadState() {
-         return false;
-     }
-     CHECK(getState() == State::CONSTRUCT);
-+    auto             tracer = get_tracer();
-+    auto             parent_span = tracer->GetCurrentSpan();
-+    StartSpanOptions options;
-+    options.kind = SpanKind::kInternal;
-+    options.parent = parent_span->GetContext();
-+    _multistate_span = tracer->StartSpan(std::format("Document type {} init", _doc_type_name.getName()), options);
-     _load_time = std::chrono::system_clock::now();
-     set_state(State::LOAD);
-     return true;
-@@ -118,6 +168,8 @@ bool DDBState::enterOnlineState() {
-     CHECK(getState() == State::REPROCESS);
-     _online_time = std::chrono::system_clock::now();
-     set_state(State::ONLINE);
-+    end_state_span();
-+    end_multistate_span();
-     _cond.notify_all();
-     return true;
- }
-@@ -128,6 +180,12 @@ void DDBState::enterShutdownState() {
-     if (getClosed()) {
-         return;
-     }
-+    auto             tracer = get_tracer();
-+    auto             parent_span = tracer->GetCurrentSpan();
-+    StartSpanOptions options;
-+    options.kind = SpanKind::kInternal;
-+    options.parent = parent_span->GetContext();
-+    _multistate_span = tracer->StartSpan(std::format("Document type {} shutdown", _doc_type_name.getName()), options);
-     set_state(State::SHUTDOWN);
-     _cond.notify_all();
- }
-@@ -139,6 +197,8 @@ void DDBState::enterDeadState() {
-     }
-     CHECK(getState() == State::SHUTDOWN);
-     set_state(State::DEAD);
-+    end_state_span();
-+    end_multistate_span();
-     _cond.notify_all();
- }
+-## Ascii85 1.1.1 — MIT
++## Ascii85 2.0.1 — MIT
  
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/server/ddbstate.h` (modified, +7/-1)
-```diff
-@@ -3,6 +3,8 @@
+ - Homepage: <https://github.com/DataWraith/ascii85gem/>
+ - Copyright 2009 Johannes Holzfuß
+@@ -131,13 +130,9 @@ Last updated: 2026-11-14
  
- #include <vespa/searchcore/proton/common/doctypename.h>
+ ---
  
-+#include <opentelemetry/trace/span.h>
-+
- #include <atomic>
- #include <condition_variable>
- #include <mutex>
-@@ -51,11 +53,15 @@ class DDBState {
-     std::atomic<time_point> _online_time;
-     std::atomic<time_point> _replay_time;
+-## async 2.39.0 — MIT
++## async 2.46.0 — MIT
  
--    DocTypeName _doc_type_name;
-+    DocTypeName                                 _doc_type_name;
-+    std::shared_ptr<opentelemetry::trace::Span> _multistate_span; // Init states or shutdown states
-+    std::shared_ptr<opentelemetry::trace::Span> _state_span;
+ - Homepage: <https://github.com/socketry/async>
+--  by Kent Gruber
+-- Copyright 2024
+-- Copyright 2017
+--  by Patrik Wenger
  
-     static std::vector<std::string> _stateNames;
-     static std::vector<std::string> _configStateNames;
+ ---
  
-+    void end_multistate_span();
-+    void end_state_span();
-     void set_state(State state);
+@@ -209,14 +204,15 @@ Last updated: 2026-11-14
  
- public:
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/server/proton.cpp` (modified, +10/-1)
-```diff
-@@ -69,6 +69,7 @@
- #ifdef __linux__
- #include <malloc.h>
- #endif
-+#include <opentelemetry/trace/provider.h>
+ ---
  
- #include <sstream>
+-## com.fasterxml.jackson.core 2.22 — Apache 2.0
++## com.fasterxml.jackson.core 2.23 — Apache 2.0
  
-@@ -78,6 +79,7 @@ LOG_SETUP(".proton.server.proton");
- using CpuCategory = vespalib::CpuUsage::Category;
+-- Homepage: <https://github.com/FasterXML/jackson>
++- Homepage: <http://fasterxml.com/>
++- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
+ - FasterXML
  
- using document::DocumentTypeRepo;
-+using opentelemetry::trace::Provider;
- using proton::flushengine::PrepareRestartCostsConfig;
- using proton::flushengine::SetStrategyResult;
- using search::DiskSpaceCalculator;
-@@ -637,8 +639,15 @@ void Proton::closeDocumentDBs(vespalib::ThreadStackExecutorBase& executor) {
-     for (const auto& entry : _documentDBMap) {
-         docTypes.push_back(entry.first);
-     }
-+    auto provider = Provider::GetTracerProvider();
-+    auto tracer = provider->GetTracer("proton");
-+    auto parent_span = tracer->GetCurrentSpan();
-     for (const auto& docTypeName : docTypes) {
--        executor.execute(makeLambdaTask([this, docTypeName]() { removeDocumentDB(docTypeName); }));
-+        executor.execute(makeLambdaTask([this, docTypeName, parent_span, tracer]() {
-+            auto parent_span_copy = parent_span;
-+            auto scope = tracer->WithActiveSpan(parent_span_copy);
-+            removeDocumentDB(docTypeName);
-+        }));
-     }
-     executor.sync();
- }
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/server/proton_configurer.cpp` (modified, +11/-0)
-```diff
-@@ -18,11 +18,15 @@
- #include <vespa/vespalib/util/retain_guard.h>
- #include <vespa/vespalib/util/threadstackexecutorbase.h>
+ ---
  
-+#include <opentelemetry/trace/provider.h>
-+
- #include <future>
+-## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
++## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
  
- #include <vespa/log/log.h>
- LOG_SETUP(".proton.server.proton_configurer");
+ - Homepage: <http://fasterxml.com/>
+ - Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
+@@ -297,28 +293,26 @@ Last updated: 2026-11-14
  
-+using opentelemetry::trace::Provider;
-+
- using vespa::config::search::core::ProtonConfig;
- using vespalib::makeLambdaTask;
+ ---
  
-@@ -113,7 +117,14 @@ void ProtonConfigurer::performReconfigure() {
-     // called by proton executor thread
-     CHECK(_executor.isCurrentThread());
-     auto configSnapshot(getPendingConfigSnapshot());
-+    auto provider = Provider::GetTracerProvider();
-+    auto tracer = provider->GetTracer("proton");
-+    auto span = tracer->StartSpan("reconfigure");
-+    span->AddEvent("Start reconfigure");
-+    auto scope = tracer->WithActiveSpan(span);
-     applyConfig(configSnapshot, InitializeThreads(), false);
-+    span->AddEvent("Done reconfigure");
-+    span->End();
- }
+-## console 1.35.1 — MIT
++## console 1.38.0 — MIT
  
- bool ProtonConfigurer::skipConfig(const ProtonConfigSnapshot* configSnapshot, bool initialConfig) {
+-- Homepage: <https://socketry.github.io/console>
+--  by Samuel Williams
+-- Copyright 2022
++- Homepage: <https://github.com/socketry/console>
+ 
+ ---
+ 
+-## csv 3.3.6 — BSD 2
++## csv 3.3.7 — BSD 2
+ 
+ - Homepage: <https://github.com/ruby/csv>
+ - Copyright 2007-2017 Yukihiro Matsumoto
+ - Copyright 2017 pavel
+-- Copyright 2018 Vladislav
+ - Copyright 2018 Kouhei Sutou
++- Copyright 2018 Vladislav
+ - Copyright 2017-2018 Steven Daniels
+ - Copyright 2017 Espartaco Palma
+ - Copyright 2018 Tomohiro Ogoke
+-- Copyright 2017 Marcus Stollsteimer
+-- Copyright 2005-2016 James Edward Gray II
+ - Copyright 2017 SHIBATA Hiroshi
+ - Copyright 2017 Olivier Lacan
++- Copyright 2005-2016 James Edward Gray II
++- Copyright 2017 Marcus Stollsteimer
+ - Copyright 2018 Mitsutaka Mimura
+ 
+ ---
+@@ -344,7 +338,7 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## ethon 0.18.0 — MIT
++## ethon 0.19.2 — MIT
+ 
+ - Homepage: <https://github.com/typhoeus/ethon>
+ - Copyright 2012-2016 Hans Hasselberg
+@@ -389,10 +383,10 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## fiber-storage 0.1.2 — MIT
++## fiber-storage 1.0.1 — MIT
+ 
+-- Homepage: <https://github.com/socketry/fiber-storage>
+-- Copyright, 2022-2023, by Samuel Williams.
++- Homepage: <https://github.com/ioquatix/fiber-storage>
++- Copyright, 2022-2025, by Samuel Williams.
+ 
+ ---
+ 
+@@ -627,9 +621,10 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## html-proofer 5.2.2 — MIT
++## html-proofer 5.2.3 — MIT
+ 
+ - Homepage: <https://github.com/gjtorikian/html-proofer>
++- Copyright 2013 Garen Torikian
+ 
+ ---
+ 
+@@ -655,7 +650,7 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## io-event 1.16.4 — MIT
++## io-event 1.22.3 — MIT
+ 
+ - Homepage: <https://github.com/socketry/io-event>
+ -  by Wander Hillen
+@@ -711,7 +706,7 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## jekyll-seo-tag 2.8.0 — MIT
++## jekyll-seo-tag 2.9.1 — MIT
+ 
+ - Homepage: <https://github.com/jekyll/jekyll-seo-tag>
+ - Copyright 2015 Ben Balter and the jekyll-seo-tag contributors
+@@ -783,17 +778,17 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## mercenary 0.4.0 — MIT
++## mdast-util-to-hast 13.2.2 — MIT
+ 
+-- Homepage: <https://github.com/jekyll/mercenary>
+-- Copyright 2013 Parker Moore and the mercenary contributors
++- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
++- Copyright Titus Wormer <tituswormer@gmail.com>
+ 
+ ---
+ 
+-## metrics 0.15.0 — MIT
++## mercenary 0.4.0 — MIT
+ 
+-- Homepage: <https://github.com/socketry/metrics>
+-- Copyright, 2021-2025, by Samuel Williams.
++- Homepage: <https://github.com/jekyll/mercenary>
++- Copyright 2013 Parker Moore and the mercenary contributors
+ 
+ ---
+ 
+@@ -850,12 +845,13 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## nokogiri 1.19.4 — MIT
++## nokogiri 1.19.7 — MIT
+ 
+ - Homepage: <https://nokogiri.org>
+ - Copyright 2008-2023 Mike Dalessio
+-- Copyright 1998-2012 Daniel Veillard
+ - Copyright 1995-2017 Jean-loup Gailly and Mark Adler
++- Copyright 1998-2012 Daniel Veillard
++- Copyright 2020 Joshua J Baker
+ - Copyright 2001-2003 Thai Open Source Software Center Ltd
+ - Copyright 2001-2002 SourceForge ISO-RELAX Project
+ - Copyright 2001-2002 Thomas Broyer
+@@ -1042,7 +1038,7 @@ Last updated: 2026-11-14
+ 
+ ---
+ 
+-## pdf-reader 2.15.1 — MIT
++## pd
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38532** (2026-11-15): chore: update third-party attributions (@github-actions[bot])
 - **PR #38531** (2026-11-14): fix(deps): update jackson monorepo (@renovate[bot])
 - **PR #38530** (2026-11-14): chore: update third-party attributions (@github-actions[bot])
 - **PR #38529** (2026-11-14): Place early provision (@hakonhall)
 - **PR #38528** (2026-11-13): Add trace spans for document db init and shutdown. (@toregge)
 - **PR #38525** (2026-11-14): Support index settings in struct-field blocks for struct field indexes (@arnej27959)
-- **PR #38524** (2026-11-13): Fix code style. (@toregge)
 
 ---
 
@@ -1554,69 +1545,101 @@ Add trace spans for document db init and shutdown.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Gemfile.lock
+## X. Empirical Invariant Guard in ATTRIBUTIONS.md
 
 **RULE**:
-When implementing operations in `Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ATTRIBUTIONS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0ca7822`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `149cd0ad`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `Gemfile.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `ATTRIBUTIONS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    Ascii85 (2.0.1)
-    addressable (2.9.2)
-    afm (1.0.1)
-    async (2.46.0)
-      io-event (~> 1.21)
-    console (1.38.0)
-    csv (3.3.7)
-    ethon (0.19.2)
-    fiber-storage (1.0.1)
-    html-proofer (5.2.3)
-    io-event (1.22.3)
-    jekyll-seo-tag (2.9.1)
-    nokogiri (1.19.7-x86_64-linux-gnu)
-    pdf-reader (2.16.0)
-    sass-embedded (1.108.2-x86_64-linux-gnu)
-    typhoeus (1.7.1)
-      ethon (>= 0.19.1, < 0.20.0)
+Last updated: 2026-11-15
+## addressable 2.9.2 — Apache 2.0
+## afm 1.0.1 — MIT
+- Copyright Jan Krutisch
+## Ascii85 2.0.1 — Adobe Postscript AFM
+## Ascii85 2.0.1 — MIT
+## async 2.46.0 — MIT
+## com.fasterxml.jackson.core 2.23 — Apache 2.0
+- Homepage: <http://fasterxml.com/>
+- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
+## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
+## console 1.38.0 — MIT
+- Homepage: <https://github.com/socketry/console>
+## csv 3.3.7 — BSD 2
+- Copyright 2018 Vladislav
+- Copyright 2005-2016 James Edward Gray II
+- Copyright 2017 Marcus Stollsteimer
+## ethon 0.19.2 — MIT
+## fiber-storage 1.0.1 — MIT
+- Homepage: <https://github.com/ioquatix/fiber-storage>
+- Copyright, 2022-2025, by Samuel Williams.
+## html-proofer 5.2.3 — MIT
+- Copyright 2013 Garen Torikian
+## io-event 1.22.3 — MIT
+## jekyll-seo-tag 2.9.1 — MIT
+## mdast-util-to-hast 13.2.2 — MIT
+- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
+- Copyright Titus Wormer <tituswormer@gmail.com>
+## mercenary 0.4.0 — MIT
+- Homepage: <https://github.com/jekyll/mercenary>
+- Copyright 2013 Parker Moore and the mercenary contributors
+## nokogiri 1.19.7 — MIT
+- Copyright 1998-2012 Daniel Veillard
+- 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    Ascii85 (1.1.1)
-    addressable (2.9.0)
-    afm (0.2.2)
-    async (2.39.0)
-      io-event (~> 1.11)
-      metrics (~> 0.12)
-      traces (~> 0.18)
-    console (1.35.1)
-    csv (3.3.6)
-    ethon (0.18.0)
-    fiber-storage (0.1.2)
-    html-proofer (5.2.2)
-    io-event (1.16.4)
-    jekyll-seo-tag (2.8.0)
-    metrics (0.15.0)
-    nokogiri (1.19.4-x86_64-linux-gnu)
-    pdf-reader (2.15.1)
-      ruby-rc4
-    ruby-rc4 (0.1.5)
-    sass-embedded (1.105.1-x86_64-linux-gnu)
-    traces (0.18.2)
-    typhoeus (1.6.0)
-      ethon (>= 0.18.0)
+Last updated: 2026-11-14
+## addressable 2.9.0 — Apache 2.0
+## afm 0.2.2 — MIT
+- Copyright 2010 Jan Krutisch
+- Copyright 2009 Jan Krutisch
+## Ascii85 1.1.1 — Adobe Postscript AFM
+## Ascii85 1.1.1 — MIT
+## async 2.39.0 — MIT
+-  by Kent Gruber
+- Copyright 2024
+- Copyright 2017
+-  by Patrik Wenger
+## com.fasterxml.jackson.core 2.22 — Apache 2.0
+- Homepage: <https://github.com/FasterXML/jackson>
+## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
+## console 1.35.1 — MIT
+- Homepage: <https://socketry.github.io/console>
+-  by Samuel Williams
+- Copyright 2022
+## csv 3.3.6 — BSD 2
+- Copyright 2018 Vladislav
+- Copyright 2017 Marcus Stollsteimer
+- Copyright 2005-2016 James Edward Gray II
+## ethon 0.18.0 — MIT
+## fiber-storage 0.1.2 — MIT
+- Homepage: <https://github.com/socketry/fiber-storage>
+- Copyright, 2022-2023, by Samuel Williams.
+## html-proofer 5.2.2 — MIT
+## io-event 1.16.4 — MIT
+## jekyll-seo-tag 2.8.0 — MIT
+## mercenary 0.4.0 — MIT
+- Homepage: <https://github.com/jekyll/mercenary>
+- Copyright 2013 Parker Moore and the mercenary contributors
+## metrics 0.15.0 — MIT
+- Homepage: <https://github.com/socketry/metrics>
+- Copyright, 2021-2025, by Samuel Williams.
+## nokogiri 1.19.4 — MIT
+- C
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0ca7822` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `149cd0ad` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

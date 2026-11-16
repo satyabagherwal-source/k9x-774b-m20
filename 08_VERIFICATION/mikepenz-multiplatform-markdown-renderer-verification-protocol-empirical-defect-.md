@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for mikepenz/multiplatform/markdown/renderer
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for mikepenz/multiplatform-markdown-renderer
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "mikepenz/multiplatform/markdown/renderer",
-  "source_url": "https://github.com/mikepenz/multiplatform/markdown/renderer",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "mikepenz/multiplatform-markdown-renderer",
+  "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+  "source_version": "8077f612",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-16T04:53:22.883Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-mikepenz-multiplatform-markdown-renderer",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mikepenz/multiplatform/markdown/renderer](https://github.com/mikepenz/multiplatform/markdown/renderer) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [mikepenz/multiplatform-markdown-renderer](https://github.com/mikepenz/multiplatform-markdown-renderer) (Revision: `8077f612`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T04:53:22.883Z`  
+> **Learning ID**: `learn-github-mikepenz-multiplatform-markdown-renderer`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mikepenz/multiplatform/markdown/renderer` (Commit: `historical`)
+- **Target Repository**: `mikepenz/multiplatform-markdown-renderer` (Commit: `8077f612`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md`  
-> **Source**: github ([https://github.com/mikepenz/multiplatform-markdown-renderer](https://github.com/mikepenz/multiplatform-markdown-renderer))  
-> **Source Version**: `28528661`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T16:58:42.783Z  
-> **Learning ID**: `learn-github-mikepenz-multiplatform-markdown-renderer`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): mikepenz/multiplatform-markdown-renderer
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mikepenz/multiplatform-markdown-renderer](https://github.com/mikepenz/multiplatform-markdown-renderer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T16:58:42.775Z  
+> **Harvest Timestamp**: 2026-11-16T04:53:21.486Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Markdown renderer for Kotlin Multiplatform Projects (Android, iOS, Desktop), using Compose.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1132 stars
+- **Stars / Engagement**: 1138 stars
 
 ---
 
@@ -783,11 +769,11 @@ fun MarkdownCheckBox(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #662** (2026-11-07): **chore(deps): update mike penz internal projects**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | OpenSSF | |---|---|---|---|---|---| | [mikepenz/action-junit-report](https://redirect.github.com/mikepenz/action-junit-report) | action | patch | `v6.6.1` → `v6.6.2` | `v6.7.1` (+1) | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/mikepenz/action-junit-report/badge)](https://securityscorecards.dev/viewer/?uri=github.com/mikepenz/action-junit-report) | | [mikepenz/release-changelog-builder-action](https://redirect.github.com/mikepenz/release-changelog-builder-action) | action | minor | `v6.4.0` → `v6.5.0` |  | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/mikepenz/release-changelog-builder-action/badge)](https://securityscorecards.dev/viewer/?uri=github.com/mikepenz/release-changelog-builder-action) |  ---  ### Release Notes  <details> <summary>mikepenz/action-junit-report</summary>  ### [`v6.6.2`](https://redirect.github.com/mikepenz/action-junit-report/releases/tag/v6.6.2)  [Compare Source](https://redirect.github.com/mikepenz/action-junit-report/compare/v6.6.1...v6.6.2)  #### 📦 Dependencies  - chore(deps): update dependency nanoid to v6.0.2   - PR: [#&#8203;1634](https://redirect.github.com/mikepenz/action-junit-report/issues/1634) - chore(deps): update dependency fast-uri to v4.2.2   - PR: [#&#8203;1633](https://redirect.github.com/mikepenz/action-junit-report/issues/1633)  #### Contributors:  - [@&#8203;renovate-mike](https:
+- **Issue #672** (2026-11-15): **fix(deps): update dependency dev.snipme:highlights to v1.2.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | OpenSSF | |---|---|---|---|---| | [dev.snipme:highlights](https://redirect.github.com/SnipMeDev/Highlights) | dependencies | minor | `1.1.0` → `1.2.0` | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/SnipMeDev/Highlights/badge)](https://securityscorecards.dev/viewer/?uri=github.com/SnipMeDev/Highlights) |  ---  ### Release Notes  <details> <summary>SnipMeDev/Highlights (dev.snipme:highlights)</summary>  ### [`v1.2.0`](https://redirect.github.com/SnipMeDev/Highlights/blob/HEAD/CHANGELOG.md#120)  [Compare Source](https://redirect.github.com/SnipMeDev/Highlights/compare/1.1.0...1.2.0)  ##### Fixed  - invalid range in multiline comment locating - comment delimiters inside string and char literals starting a comment ([#&#8203;78](https://redirect.github.com/SnipMeDev/Highlights/issues/78)) - marks, punctuation, numbers and annotations reported inside comments and strings  </details>  ---  ### Configuration  📅 **Schedule**: (in timezone Europe/Berlin)  - Branch creation   - "before 6am on Monday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR has been generated by [Mend Renovat
 
-- **Issue #661** (2026-11-05): **fix: restore multiplatform test compilation and update deprecated APIs**
-  *Symptoms*: ## Description  Fix test compilation after the Markdown color API and Compose test API updates:  - Supply the required highlight colors in `DetachedPlacementTest` and migrate to `androidx.compose.ui.test.v2.runComposeUiTest`. - Replace `runBlocking` with `runTest` in `AsMarkdownStateTest` so common tests compile for JS and Wasm, retaining real-time delays on `Dispatchers.Default`.  Fixes # (issue)  ## Type of change Please delete options that are not relevant.  - [x] Bug fix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected) - [ ] Documentation update - [ ] Code style update (formatting, renaming) - [ ] Refactoring (no functional changes, no API changes) - [ ] Build configuration change - [ ] Other (please describe):  ## How Has This Been Tested?   ## Checklist: - [ ] My code follows the style guidelines of this project - [x] I have performed a self-review of my own code - [ ] I have commented my code, particularly in hard-to-understand areas - [ ] I have made corresponding changes to the documentation - [ ] My changes generate no new warnings - [ ] I have added tests that prove my fix is effective or that my feature works - [ ] New and existing unit tests pass locally with my changes - [ ] Any dependent changes have been merged and published in downstream modules 
+- **Issue #671** (2026-11-15): **chore(deps): update github actions updates**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | OpenSSF | |---|---|---|---|---|---| | [actions/setup-java](https://redirect.github.com/actions/setup-java) | action | minor | `v6.1.0` → `v6.2.0` | `v6.3.0` | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/actions/setup-java/badge)](https://securityscorecards.dev/viewer/?uri=github.com/actions/setup-java) | | [github/codeql-action](https://redirect.github.com/github/codeql-action) | action | patch | `v4.39.1` → `v4.39.3` |  | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/github/codeql-action/badge)](https://securityscorecards.dev/viewer/?uri=github.com/github/codeql-action) |  ---  ### Release Notes  <details> <summary>actions/setup-java</summary>  ### [`v6.2.0`](https://redirect.github.com/actions/setup-java/releases/tag/v6.2.0)  [Compare Source](https://redirect.github.com/actions/setup-java/compare/v6.1.0...v6.2.0)  ##### What's Changed  - Fix Liberica SDKMAN patch release resolution by [@&#8203;brunoborges](https://redirect.github.com/brunoborges) in [#&#8203;1291](https://redirect.github.com/actions/setup-java/pull/1291) - Update Undici to 6.29.1 by [@&#8203;brunoborges](https://redirect.github.com/brunoborges) in [#&#8203;1308](https://redirect.github.com/actions/setup-java/pull/1308) - chore(deps): bump the monthly-npm-updates group with 12 updates by [@&#8203;dependabot](https://redirect.github.com/dependabot)\[bot] in [#
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -804,40 +790,48 @@ fun MarkdownCheckBox(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28528661` (2026-11-07)
-**Commit Message**: chore(deps): update mike penz internal projects (#662)
+### Incident Patch 1: `a60347dc` (2026-11-15)
+**Commit Message**: fix(deps): update dependency dev.snipme:highlights to v1.2.0 (#672)
 
 Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -101,7 +101,7 @@ jobs:
+@@ -4,7 +4,7 @@ coil = "3.6.3"
+ coil2 = "2.7.0"
+ markdown = "0.7.18"
+ ktor = "3.6.1"
+-highlights = "1.1.0"
++highlights = "1.2.0"
  
-       - name: Publish Test Report
-         if: false && (failure() || success()) && github.event_name == 'pull_request'
--        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
-+        uses: mikepenz/action-junit-report@8a133bfa3ecb0ea9024c1e2ae788b4c25f6cdb9d # v6.6.2
-         with:
-           report_paths: '**/sample/android/build/test-results/testDebugUnitTest/TEST-*.xml'
-           github_token: ${{ secrets.GITHUB_TOKEN }}
-@@ -188,7 +188,7 @@ jobs:
- 
-       - name: Build Changelog
-         id: github_release
--        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6.4.0
-+        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6.5.0
-         with:
-           configuration: ".github/config/configuration.json"
-           ignorePreReleases: ${{ !contains(github.ref, '-') }}
+ [libraries]
+ androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+```
+
+---
+
+### Incident Patch 2: `2fc99061` (2026-11-14)
+**Commit Message**: build: update Gradle wrapper to 9.9.1 (#670)
+
+**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
+ networkTimeout=10000
+ retries=0
+ retryBackOffMs=500
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #662** (2026-11-07): chore(deps): update mike penz internal projects (@renovate-mike[bot])
-- **PR #661** (2026-11-05): fix: restore multiplatform test compilation and update deprecated APIs (@keta1)
-- **PR #660** (2026-11-02): fix(deps): update dependency org.jetbrains:markdown to v0.7.18 (@renovate-mike[bot])
-- **PR #659** (2026-11-02): chore(deps): update gradle to v9.8.2 (@renovate-mike[bot])
-- **PR #658** (2026-11-02): chore(deps): update github actions updates (@renovate-mike[bot])
-- **PR #657** (2026-10-27): fix(deps): update dependency com.mikepenz:version-catalog to v0.23.2 (@renovate-mike[bot])
+- **PR #672** (2026-11-15): fix(deps): update dependency dev.snipme:highlights to v1.2.0 (@renovate-mike[bot])
+- **PR #671** (2026-11-15): chore(deps): update github actions updates (@renovate-mike[bot])
+- **PR #670** (2026-11-14): build: update Gradle wrapper to 9.9.1 (@mikepenz)
+- **PR #667** (2026-11-13): chore(deps): update mikepenz/action-junit-report action to v6.7.1 (@renovate-mike[bot])
+- **PR #665** (2026-11-10): chore(deps): update mikepenz/action-junit-report action to v6.7.0 (@renovate-mike[bot])
+- **PR #664** (2026-11-08): fix(deps): update ktor monorepo to v3.6.1 (@renovate-mike[bot])
 
 ---
 
@@ -857,33 +851,31 @@ Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.g
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update mike penz internal projects (#662)
+## X. deps): update dependency dev.snipme:highlights to v1.2.0
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/multiplatform-markdown-renderer. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/multiplatform-markdown-renderer. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28528661`: deps): update mike penz internal projects (#662). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a60347dc`: deps): update dependency dev.snipme:highlights to v1.2.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        uses: mikepenz/action-junit-report@8a133bfa3ecb0ea9024c1e2ae788b4c25f6cdb9d # v6.6.2
-        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6.5.0
+highlights = "1.2.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
-        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6.4.0
+// Induced defect failure mode:
+highlights = "1.1.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28528661` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a60347dc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

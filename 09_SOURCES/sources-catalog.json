@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "1f5abdb0",
+    "sourceVersion": "149cd0ad",
     "license": "Apache-2.0",
-    "contentHash": "a98cc0a7023ddf123e164393f84d3354f45ddb86339a93440510fdef590b3b54",
-    "lastHarvestedAt": "2026-11-14T20:32:38.228Z",
+    "contentHash": "552f7b88e0bf0150047334219654d85e6a1d39b8ab0d8bcd0c8d7dc2fe194a98",
+    "lastHarvestedAt": "2026-11-16T04:53:30.434Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "e459febc",
+    "sourceVersion": "53b7f598",
     "license": "MIT",
-    "contentHash": "534c4d3311007b7508fec808c3f7abb6052016e609a1323b8ca9cce7a7bfc2a2",
-    "lastHarvestedAt": "2026-11-14T11:04:22.042Z",
+    "contentHash": "0fb1b7703d082d882f286bc6792e16eecbf72ded5a2a4b35bbb8b38658f7aaf1",
+    "lastHarvestedAt": "2026-11-16T04:53:17.305Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -8833,10 +8833,10 @@
     "repository": "mikepenz/multiplatform-markdown-renderer",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-    "sourceVersion": "0993c86f",
+    "sourceVersion": "8077f612",
     "license": "Apache-2.0",
-    "contentHash": "2fb5ac5e864d9a9aa7a009e772e4df05fdb66aa9e2723bc384c72edc16410052",
-    "lastHarvestedAt": "2026-11-12T22:48:37.399Z",
+    "contentHash": "799eaca739471117f8aecd3291a88807338ccba9474236c7181dbc511f5272d1",
+    "lastHarvestedAt": "2026-11-16T04:53:22.657Z",
     "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer"
   },
   "kamgurgul-cpu-info": {

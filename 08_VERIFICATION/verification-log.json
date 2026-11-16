@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-34Y2",
-    "timestamp": "2026-11-13T18:52:19.274Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "7e7e5649d41c689771237e5b2208eb6dad0c3b468cc68db73de960bc642857a4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-36YT",
-    "timestamp": "2026-11-13T18:52:21.893Z",
-    "repository": "actix/actix-web",
-    "learningId": "learn-github-actix-actix-web",
-    "contentHash": "f63f582ae633872e624f4031448fc970b4922e24c6732f5808390048e84861fa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-3A6F",
-    "timestamp": "2026-11-13T18:52:26.055Z",
-    "repository": "dkhamsing/open-source-ios-apps",
-    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "5f388e7b4c5a375e29b57d7fda9cf38158de29c3744fbe8a0ebb1f9da546db47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-3GMJ",
     "timestamp": "2026-11-13T18:52:34.411Z",
     "repository": "weaviate/weaviate",
@@ -7492,6 +7447,51 @@
     "contentHash": "355ee964bd3fb732d8cd29f168b4f4e4e0249c5e655a017cd4cb1a06d2d8453b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-FOTW",
+    "timestamp": "2026-11-16T04:53:17.300Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "0fb1b7703d082d882f286bc6792e16eecbf72ded5a2a4b35bbb8b38658f7aaf1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-FSYK",
+    "timestamp": "2026-11-16T04:53:22.652Z",
+    "repository": "mikepenz/multiplatform-markdown-renderer",
+    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+    "contentHash": "799eaca739471117f8aecd3291a88807338ccba9474236c7181dbc511f5272d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-FYYM",
+    "timestamp": "2026-11-16T04:53:30.430Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "552f7b88e0bf0150047334219654d85e6a1d39b8ab0d8bcd0c8d7dc2fe194a98",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
