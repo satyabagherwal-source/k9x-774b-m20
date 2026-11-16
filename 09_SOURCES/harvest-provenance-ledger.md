@@ -10292,3 +10292,5 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `336cd8a4` | Multi-dimensional audit evidence | 2026-11-16T07:19:48.962Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `103dc4ef` | Multi-dimensional audit evidence | 2026-11-16T07:37:15.804Z |
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `e61ca3a1` | Multi-dimensional audit evidence | 2026-11-16T07:45:01.712Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `bfd935f4` | Multi-dimensional audit evidence | 2026-11-16T08:06:43.155Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `a57e2fdc` | Multi-dimensional audit evidence | 2026-11-16T08:11:19.652Z |

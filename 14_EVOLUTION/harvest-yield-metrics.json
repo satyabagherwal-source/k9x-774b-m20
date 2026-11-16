@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T07:45:01.717Z",
-  "total_cycles_completed": 9850,
-  "total_learnings_persisted": 9850,
-  "total_rules_promoted": 9458,
+  "last_updated": "2026-11-16T08:11:19.661Z",
+  "total_cycles_completed": 9852,
+  "total_learnings_persisted": 9852,
+  "total_rules_promoted": 9460,
   "history": [
-    {
-      "timestamp": "2026-11-15T03:13:36.255Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T03:13:41.711Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T03:34:20.802Z",
       "repository": "pyannote/speaker-diarization-community-1",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T07:45:01.717Z",
       "repository": "oxc-project/oxc",
       "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T08:06:43.161Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T08:11:19.661Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

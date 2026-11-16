@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T16:49:53.798Z",
+  "timestamp": "2026-11-16T08:11:24.141Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-volcengine-openviking-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [volcengine-openviking-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T16:49:53.798Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T08:11:24.141Z`  
 > **Learning ID**: `LEARN-EVO-volcengine-openviking-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `07432564`  
+> **Source Version**: `bfd935f4`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T16:49:10.033Z  
+> **Timestamp**: 2026-11-16T08:06:41.974Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T16:49:10.027Z  
+> **Harvest Timestamp**: 2026-11-16T08:01:29.212Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42189 stars
+- **Stars / Engagement**: 42292 stars
 
 ---
 
@@ -1499,13 +1499,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7713** (2026-11-16): **[Bug]: non-object pending queue JSON blocks replay of healthy messages**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  A pending queue file containing valid JSON null blocks replay of otherwise healthy offline messages. listPending() catches JSON parse errors but accepts non-object values; sorting reads entry.createdAt outside that catch. Reproduced locally through the shared production enqueue/replay functions by an AI agent.  ### Steps to Reproduce  1. Set OPENVIKING_PENDING_DIR to a temporary directory. 2. Call enqueue("addMessage", "session", {role:"user",content:"offline message"}). 3. Write null into another .json file in the directory. 4. Call replayPending(async () => ({ok:true}), () => {}).  ### Expected Behavior  Skip non-object queue values, as with invalid JSON, and replay healthy queued messages.  ### Actual Behavior  TypeError: Cannot read properties of null (reading createdAt). No HTTP replay is attempted.  ### Minimal Reproducible Example  ```python  ```  ### Error Logs  ```shell  ```  ### OpenViking Version  main at 1a6e51f0c62462da43a79e9794f03efb485cc17f  ### Python Version  Not applicable; shared JavaScript memory plugin running in Node.js  ### Operating System  Linux  ### Model Backend  None  ### Additional Context  The malformed file is deliberately injected to exercise the corruption boundary; this is not a claim that normal enqueue writes null. Searches of existing pending/null and pending/malformed issues and PRs found no matching fix.  Proposed scope: skip null, scalar and array JSON
+
 - **Issue #7412** (2026-11-13): **[Bug]: Gateway session memory_policy overrides user-level memory_types**
   *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  ### Version  - OpenViking: v0.5.3 - Also reproducible on main `9c48090b0e6a48303909cb87333c778acca34cd6`  ### Description  OpenViking Gateway creates every capture session with:  ```json {"memory_policy":{"working_memory":{"enabled":false}}}   Session policy precedence selects the whole Session policy before the User policy. It does not merge missing fields from lower-priority policies. Therefore a User-level memory_policy.memory_types allowlist is ignored for Gateway-created sessions.  Because the Gateway policy omits memory_types, it resolves to null, meaning all enabled memory types are allowed.  ### Steps to Reproduce  Configure a User policy such as:   {"memory_policy":{"memory_types":["events"]}}   Start a new conversation through OpenViking Gateway.  Inspect the generated OV session and commit it.  The session carries a Session-level policy with Working Memory disabled but no memory_types restriction; extraction is not limited to events.  ### Expected Behavior  Gateway should disable only Working Memory while preserving User-level self, peer, and memory_types policy resolution.  ### Actual Behavior  The partial Session policy masks the complete User policy.   ### Minimal Reproducible Example  ```python Remove memory_policy from Gateway create_session().  Send enable_working_memory: false in the Gateway commit request. This existing per-commit field overrides only Working Memory and pre
-
-- **Issue #7356** (2026-11-12): **[Bug]: 同一用户批量 session commit 时，记忆操作组产生同 URI 冲突并导致任务失败**
-  *Symptoms*: ## 问题描述  在为记忆编译准备真实会议记忆时，同一用户下的多个 session 正常完成消息写入，`session commit` 请求也已受理，但部分后台任务最终失败，报 `Conflicting add/update/delete results for URIs`。  本轮错误表明，不同操作组的结果落到了同一个记忆 URI，合并时判定冲突，导致对应 `session commit` 失败；日志反复指向同一条“录音项目”记忆。  这是**真实环境观察到的问题**。失败发生在 `session commit` 的记忆提取／更新阶段，当时尚未开始调用 `POST /api/v1/compile`。  ## 环境与输入  - 服务端：商业个人版，`/health` 返回版本 `v0.5.2.5`；同一个用户、同一个 API Key。 - 客户端：Linux 容器，Python 3.12，通过 HTTP API 调用；模型服务为 Volcengine。 - 数据：公开 [ICSI 会议转写](https://groups.inf.ed.ac.uk/ami/icsi/download/)，50 场不同的完整会议，对应 **50 个 session**。 - 每段会议发言作为一条 `role=user` 的 message，正文保留说话人标签，保留 `created_at` 和 `turn_id`。 - 共 **71,998 条 message**；每个 session 平均约 **1,440 条**，实际范围 256–2,494 条。每个 session 仅执行一次手动 `session commit`。 - 创建 session 时设置 `auto_commit_policy=null`，未设置自定义 `memory_extraction_config`。  ## 实际操作流程  1. 在同一用户下创建 50 个不同 session：     ```http    POST /api/v1/sessions    {"session_id": "<每场会议独立的 session_id>", "auto_commit_policy": null}    ```  2. 通过 `POST /api/v1/sessions/{session_id}/messages/batch` 写入各自的会议转写，每个请求最多 100 条；同一个 session 内按原顺序写入。 3. **全部 session 的消息写入完成后**，以 HTTP 并发 16 提交整批 50 个 commit：     ```http    POST /api/v1/sessions/{session_id}/commit    {"keep_recent_count": 0}    ```  4. 收集所有已受理请求返回的 `task_id`，整批提交完成后，再通过 `GET /api/v1/tasks/{task_id}` 等待各自终态。  以上是本次实测流程，尚未缩减为每次运行都必然触发的最小复现。  ## 实际结果与错误  已核对完整任务回执，50 个 commit 均已进入终态：  | 已受理 commit | 成功 | 失败 | 尚未确认终态 | | --- | --- | --- | --- | | 50 | 34 | 16 | 0 |  最终任务失败率为 **32%（16/50）**。16 个失败任务均包含同类 URI 操作冲突错误。  一条真实任务回执：  ```j
-  **Post-Mortem & Fix Analysis**:
-  > I reproduced a **target-selection collision with disjoint input URIs** at `main@32de68480d36593648563f749d9af7a4a817489f`, using fixed completion responses and the real `StreamingMemoryUpdater.submit` → patch prefetch → `ExtractLoop` → apply path.  The inputs use the repository's `_registry`, `_note_op`, `_note_update_op`, `_ctx` and `InMemoryVikingFS` fixtures:  ```text Stored: canonical.md = "old canonical" Session A: ADD alias_0.md; UPDATE canonical.md Session B: ADD alias_1.md ```  All three input targets are distinct. The search fixture returns `canonical.md` as a candidate for the add group. Its real read tool assigns `page_id=1`. The scripted completion selects that existing page:  ```json {"notes":[{"page_id":1,"content":{"blocks":[{"search":"old canonical","replace":"old canonical\nfrom_adds"}]}}],"delete_ids":[]} ```  The real parser/resolver returns an **update** to `canonical.md` (`old_memory_file_content` is populated). However, the final conflict check still associates th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1522,1332 +1520,849 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf14a0cb` (2026-11-13)
-**Commit Message**: fix(react): align the file browser search dialog with the console design (#7570)
+### Incident Patch 1: `1a6e51f0` (2026-11-15)
+**Commit Message**: feat(ci): route Linux API jobs and wheel builds to dedicated runner (#6806)
 
-* fix(react): align the file browser search dialog with the console design
+* feat(ci): route Linux tests and CLI builds across available compute pools
 
-The dialog drifted from the design: the empty state was two lines of centred
-text with no artwork, a hover preview panel split the result list in two, the
-count line put the mode chip before the retrieval label, and the advanced panel
-referenced `--ov-ui-file-search-*` variables that were never declared, so its
-surface was transparent.
+Use prepared self-hosted hosts for ordinary Linux jobs with isolated build environments, shared pool scheduling without inventory credentials, and hosted fallback when selection is unavailable.
 
-Match the design node by node:
+* fix(ci): let Linux distribution builds use available compute pools
 
-- Empty state: the design's 258x140 artwork above the title and hint, 24px
-  apart, with the block starting 120px below the content top.
-- Results: the list fills the dialog again. The preview panel and its split
-  layout are gone; rows keep the design's 20px/12px padding, 24px icon tile,
-  14px name and bottom divider. Arrow keys still move the current row and Enter
-  opens it.
-- Count line: `N results ・ [mode] Vector retrieval Switch`, indented to the
-  row's text edge, and rendered only when there are results — the design draws
-  neither the empty, loading nor failure state with it.
-- Advanced panel: the design's `bg-2` surface, which needed `--ov-ui-bg-2-defa
+Preserve the Ubuntu 20.04 wheel baseline while routing x64 wheels and shared Studio/source builds through the Linux pool selector.
 
-**File**: `frontend/.changeset/file-browser-search-design-alignment.md` (added, +12/-0)
+* fix(ci): avoid waiting for self-hosted capacity in pool selection
+
+Default the selector to GitHub-hosted and retain an explicit runner-label override for prepared self-hosted machines.
+
+* fix(ci): resolve Hermes Python libraries in clean container environments
+
+Register setup-python libraries with the container loader so Hermes can clear its environment without losing the shared Python runtime.
+
+* fix(ci): install zip for plugin archive tests in Linux containers
+
+The hosted image supplied zip implicitly, but archive installation tests also need it in the isolated test container.
+
+* fix(ci): supply and check plugin marketplace installer too
+
+**File**: `.github/CI.md` (modified, +62/-7)
 ```diff
-@@ -0,0 +1,12 @@
-+---
-+'@openviking/react': patch
-+---
+@@ -18,12 +18,65 @@ file checksum before writing it. Other test platforms build locally. Release
+ wheels build independently in Ubuntu 20.04/macOS/Windows; Ubuntu 24.04 test
+ binaries and musl CLI binaries are never reused in release wheels.
+ 
+-Builds and ordinary tests use GitHub-hosted runners to measure build reuse and
+-cache behavior independently of self-hosted machine capacity. There is no
+-`ov-ci-runner` scheduling or manual selection in these workflows.
+-The existing P0 Memory Tests remain on their original ECS environment, selected
+-with `[self-hosted, Linux, X64, openviking-ecs]`. That runner must have the
+-`openviking-ecs` custom label; its display name alone does not select it.
++With repository variable `CI_LINUX_BUILDS_ENABLED=true`, trusted Linux API jobs
++use `[self-hosted, Linux, X64, ci-linux-builds]`. Linux x86_64 wheel builds
++alternate between GitHub-hosted and this dedicated pool.
++Only the dedicated runner `iv-yezentk8ao3z47ge5tmm` has that custom label; runner
++display names do not select machines.
++Linux wheels use the dedicated runner on even workflow run numbers.
++API native runtime preparation and its short change-planning job always use
++the dedicated runner for eligible events, regardless of workflow run number.
++The planning job runs Git/Python on the host with a five-minute execution limit.
++Linux API/CLI, MySQL/Redis and
++cuVS tests inherit their same-run native producer's destination. This keeps the
++entire trusted Linux API dependency chain off the hosted queue.
++Wheel builds send 50% of consecutive runs to each destination, and reruns keep
++the same destination. This is not half of all Linux jobs or an equal share of
++execution time. Conditional skips can change the observed share.
++The old ECS runner does not receive these jobs.
 +
-+Align the FileBrowser search dialog with the console design and drop the result preview panel it gained in 0.1.10.
++Only official repository PRs from the same repository and branch pushes are
++eligible. Release/tag events, schedules, manual builds, fork PRs and other
++repositories use GitHub-hosted. The native producer publishes its selected labels
++and container image for its consumers; no extra selector job or token is needed.
++Studio, both musl CLI targets, other tests/checks and source packaging stay hosted. Native ARM,
++macOS and Windows assignments are unchanged.
 +
-+- The empty state shows the design's artwork above the title and hint instead of two centred lines of text.
-+- Results fill the dialog width again: the hover/keyboard preview panel and its split layout are gone, and each row keeps its bottom divider, 24px icon tile and 14px name. `↑`/`↓` still move the current row and `Enter` opens it.
-+- The count line reads `N results ・ [mode] Vector retrieval Switch` in the design's order, and appears only when there are results; the empty, loading and failure states no longer carry it.
-+- The advanced panel takes the design's `bg-2` surface, and the mode menu its 259px popover with a 6px radius and card shadow.
++Self-hosted builds and tests require Docker access and use disposable containers with
++job-local HOME/Cargo/Rustup directories and post-job ownership cleanup.
++Wheels retain Ubuntu 20.04/glibc 2.31. API native runtime preparation uses Ubuntu
++24.04 on both destinations so its artifact remains compatible with hosted tests.
++Self-hosted API, database and cuVS consumers also use Ubuntu 24.04 containers;
++hosted consumers retain their existing host execution. Database consumers use
++service-container DNS inside containers and loopback on hosted runners.
++The Linux wheel execution timeout is 60 minutes and native preparation is limited
++to 30 minutes. Timeouts start when execution begins, not while queued; there is
++no automatic queue fallback.
 +
-+BREAKING CHANGE: `FileBrowserLabels.searchPreview`, `searchPreviewEmpty` and `searchPreviewFailed` are removed, because the search dialog no longer previews results. Drop those overrides; the keys have no effect.
++Before enabling routing, dispatch `_build.yml` on this branch with
++`check_linux_runner=true`, `build_wheels=false` and `build_sdist=false`. Its
++five-minute diagnostic checks Docker access, HTTPS package-index downloads and
++package installation in both container images without checking out repository
++code. Enable `CI_LINUX_BUILDS_ENABLED` only after it passes. The runner user must
++be able to access Docker without interactive sudo.
++
++Package sources use HTTPS. Minimal Ubuntu images bootstrap TLS verification with
++the host's `/etc/ssl/certs/ca-certificates.crt`, mounted read-only at a temporary
++path until the container installs its own certificates. The host CA bundle must
++exist. Incomplete apt index downloads fail the job instead of continuing with
++missing package metadata.
++If official Ubuntu endpoints are unreachable from the dedicated machine, set
++`CI_UBUNTU_MIRROR` to a reachable HTTPS Ubuntu mirror, including its `/ubuntu` path.
++The override applies only to self-hosted builds/tests and the readiness diagnostic;
++hosted builds retain the official sources. The diagnostic prints host/container
++TCP reachability to help distinguish mirror access from Docker networking issues.
++
++If the dedicated runner is offline or stuck, set repository Actions variable
++`CI_DISABLE_SELF_HOSTED=true`, cancel affected runs and trigger new runs.
++New jobs use hosted runners; already queued jobs retain their original labels.
++After repairing/updating the runner, remove the disable variable to resume the
++dedicated routing. Removing `CI_LINUX_BUILDS_ENABLED` also leaves these builds/tests hosted.
++Release builds remain hosted regardless of either variable.
+ 
+ The cuVS check now lives in the API workflow so it can consume the same artifact.
+ Its check name stays `cuvs-tests / Lite Test (ubuntu-24.04, 3.11)`, matching the
+@@ -54,9 +107,11 @@ select API tests, including newly introduced runtime paths.
+ Local checks:
+ 
+ ```sh
++python3 -m pip install pytest PyYAML
+ 
 ```
 
-**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +2/-2)
+**File**: `.github/actionlint.yaml` (modified, +1/-1)
 ```diff
-@@ -241,7 +241,7 @@ All fields are optional, and omitted fields follow `locale`.
- | searchIgnoreCase        | Case-insensitive matching                                                                                                    | `string`                             | `'Ignore case'`                                                       |
- | searchFilterUnsupported | Why a filter is unavailable in the current mode                                                                              | `string`                             | `'This filter is unavailable for the current mode'`                   |
- | searchResultCount       | Result count; receives the number                                                                                            | `(count: number) => string`          | `'N results'`                                                         |
--| searchVia               | Copy between the count and the mode chip                                                                                     | `string`                             | `'Vector retrieval'`                                                  |
-+| searchVia               | Copy that follows the mode chip                                                                                              | `string`                             | `'Vector retrieval'`                                                  |
- | searchSwitchMode        | Entry that switches the retrieval mode                                                                                       | `string`                             | `'Switch'`                                                            |
- | searchAdvancedLabel     | Accessible name of the advanced-filter button                                                                                | `string`                             | `'Advanced filters'`                                                  |
- | previewMode             | Preview in the Preview / Source switch                                                                                       | `string`                             | `'Preview'`                                                           |
-@@ -424,7 +424,7 @@ Reveal defaults to `true`; `{ reveal: false }` only requests a preview and resol
- - Semantic results rank by score and deduplicate by URI. `grep` keeps each match and its line number, even when several matches share a file.
- - A `glob` pattern without `/` gains a `**/` prefix; a directory match drops its trailing slash before navigation and records the directory fact on `isDir`.
- - Filter groups enable or disable with the mode. A disabled group stays visible but dimmed, with the reason beside its title. Directory candidates derive from `rootUri` with the `~` alias; selections invalidated by a root change are dropped.
--- Hover a result or use **↑ / ↓** to preview it. Click or press **Enter** to close the dialog, open the resource and reveal its tree row. The preview moves below the list on narrow screens.
-+- Use **↑ / ↓** to move the current result. Click or press **Enter** to close the dialog, open the resource and reveal its tree row.
- 
- ### Preview actions
- 
+@@ -1,3 +1,3 @@
+ self-hosted-runner:
+   labels:
+-    - openviking-ecs
++    - ci-linux-builds
 ```
 
-**File**: `frontend/docs/docs/zh/modules/file-browser.mdx` (modified, +2/-2)
+**File**: `.github/actions/linux-test-env/action.yml` (added, +7/-0)
 ```diff
-@@ -241,7 +241,7 @@ import '@openviking/react/modules/file-browser/style.css';
- | searchIgnoreCase        | 忽略大小写                                                                                    | `string`                             | `'忽略大小写'`                           |
- | searchFilterUnsupported | 某个筛选在当前检索方式下不可用的原因                                                          | `string`                             | `'当前检索方式不支持此筛选'`             |
- | searchResultCount       | 检索结果数量，参数为条数                                                                      | `(count: number) => string`          | `'检索到 N 条结果'`                      |
--| searchVia               | 结果数量与模式之间的分隔说明                                                                  | `string`                             | `'向量检索方式'`                         |
-+| searchVia               | 模式 chip 之后的检索方式说明                                                                  | `string`                             | `'向量检索方式'`                         |
- | searchSwitchMode        | 切换检索方式的入口                                                                            | `string`                             | `'切换'`                                 |
- | searchAdvancedLabel     | 高级筛选按钮的无障碍名称                                                                      | `string`                             | `'高级筛选'`                             |
- | previewMode             | 「预览 / 源码」切换里的「预览」                                                               | `string`                             | `'预览'`                                 |
-@@ -424,7 +424,7 @@ await browserRef.current?.openResource(resultUri, { reveal: true });
- - 结果按 URI 去重；`grep` 例外——同一文件的多行命中是不同结果，各带自己的行号。
- - `glob` 的模式不含 `/` 时自动补 `**/` 前缀；目录命中去掉尾斜杠后再参与导航，目录这一事实记在 `isDir` 上。
- - 高级面板的筛选项按当前方式启用或禁用，禁用的分区保留可见并置灰，标题旁说明原因。目录候选从 `rootUri` 派生，用户根用 `~` 别名；切换根时失效的已选目录会被丢弃。
--- 悬停结果或按 **↑ / ↓** 查看预览。点击或按 **Enter** 关闭弹窗、打开资源并在树中定位。窄屏时预览移到列表下方。
-+- 按 **↑ / ↓** 切换当前结果，点击或按 **Enter** 关闭弹窗、打开资源并在树中定位。
- 
- ### 预览操作区
- 
+@@ -0,0 +1,7 @@
++name: Bootstrap Linux build container
++description: Supply a job-local home before language setup and restore workspace ownership
++runs:
++  using: node24
++  main: bootstrap.mjs
++  post: cleanup.mjs
++  post-if: always()
 ```
 
-**File**: `frontend/packages/icons/README.md` (modified, +7/-0)
+**File**: `.github/actions/linux-test-env/bootstrap.mjs` (added, +14/-0)
 ```diff
-@@ -28,6 +28,13 @@ React imports these SVG files directly during its build. This file records where
-   ISC; the same artwork is present in 0.0.134. The 14 × 14 viewBox, path and
-   1.2-unit `currentColor` stroke are unchanged. Only the runtime wrapper is
-   removed; the React package bundles the local SVG through SVGR.
-+- `svg/file-browser/` — the search dialog's filter glyph, the toolbar's refresh
-+  glyph and the empty search state's artwork. `search-filter.svg` and
-+  `refresh-cw-01.svg` keep the design's geometry with `currentColor` paint;
-+  `search-empty.svg` redraws the design's 258 × 140 dashed grid, document outline
-+  and magnifier in the style of `svg/console/history-empty.svg`, with its colours
-+  mapped to theme variables. See that directory's README.
+@@ -0,0 +1,14 @@
++import { execFileSync } from 'node:child_process';
++import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
++import { join } from 'node:path';
 +
- - `svg/scope-switcher/` — the chevron and check assets were supplied by the
-   designer. Chevron is 14 × 14 and check is 16 × 16. Their paint was changed from
-   the design's fixed colours to `currentColor` so a host theme can recolour them;
++const env = process.env;
++const workspace = env.GITHUB_WORKSPACE;
++// Preserve the host runner's ownership before any build writes root-owned files.
++const owner = execFileSync('stat', ['-c', '%u:%g', workspace], { encoding: 'utf8' }).trim();
++const home = mkdtempSync(join(env.RUNNER_TEMP, 'linux-test-home.'));
++appendFileSync(env.GITHUB_STATE, `owner=${owner}\nworkspace=${workspace}\nhome=${home}\n`);
++appendFileSync(env.GITHUB_ENV, `HOME=${home}\nCARGO_HOME=${home}/.cargo\nRUSTUP_HOME=${home}/.rustup\n`);
++// Checkout used the original container HOME; restrict trust to these workspaces.
++writeFileSync(join(home, '.gitconfig'),
++  `[safe]\n\tdirectory = ${workspace}\n`);
 ```
 
-**File**: `frontend/packages/icons/svg/file-browser/README.md` (modified, +9/-0)
+**File**: `.github/actions/linux-test-env/cleanup.mjs` (added, +9/-0)
 ```diff
-@@ -3,3 +3,12 @@
- - `search-filter.svg` comes from the supplied `Frame.svg`. The 28 × 28
-   viewBox and paths are unchanged. Its stroke inherits the button's theme color.
-   The artwork follows the repository license.
-+- `refresh-cw-01.svg` is the console's refresh glyph. The 14 × 14 viewBox and
-+  paths are unchanged; its stroke inherits the button's theme color.
-+- `search-empty.svg` is the empty search state's artwork, redrawn in the style of
-+  `svg/console/history-empty.svg`: the same 258 × 140 canvas, document outline,
-+  fold and magnifier geometry, but the design's five per-row grid paths collapsed
-+  into one dashed grid masked by a radial fade, and the white backdrop dropped so
-+  the dialog's own surface shows through. The design's fixed colours become theme
-+  variables: `--ov-ui-color-border-2` for the grid, `--ov-ui-color-border-3` for
-+  the sheet behind, `currentColor` for the front sheet and glyph.
+@@ -0,0 +1,9 @@
++import { execFileSync } from 'node:child_process';
++
++const { STATE_owner: owner, STATE_workspace: workspace, STATE_home: home } = process.env;
++if (owner && workspace && home) {
++  // Run after test/cache steps, before checkout's post-job cleanup. Do not follow
++  // symlinks into host paths. The next host job must be able to
++  // clean the shared checkout and runner temp directory.
++  execFileSync('chown', ['-hR', owner, workspace, home], { stdio: 'inherit' });
++}
 ```
 
-**File**: `frontend/packages/icons/svg/file-browser/search-empty.svg` (added, +58/-0)
+**File**: `.github/workflows/_build.yml` (modified, +95/-7)
 ```diff
-@@ -0,0 +1,58 @@
-+<svg xmlns="http://www.w3.org/2000/svg" width="258" height="140" viewBox="0 0 258 140" fill="none">
-+  <g
-+    opacity=".36"
-+    stroke="var(--ov-ui-color-border-2, var(--ov-ui-border-2-default))"
-+    stroke-dasharray="2 2"
-+    style="
-+      mask-image: radial-gradient(
-+        ellipse at center,
-+        currentColor,
-+        transparent 72%
-+      );
-+    "
-+  >
-+    <path d="M0 28H258M0 56H258M0 84H258M0 112H258M37 0V140M75 0V140M117 0V140M159 0V140M199 0V140M235 0V140" />
-+  </g>
-+  <path
-+    d="M109.974 93.6485V43.9883C109.974 39.57 113.555 35.9883 117.974 35.9883H151.613C154.247 35.9883 156.712 37.2844 158.204 39.4541L165.495 50.0515C166.412 51.3855 166.904 52.9665 166.904 54.5857V93.6485C166.904 98.0667 163.322 101.648 158.904 101.648H117.974C113.555 101.648 109.974 98.0667 109.974 93.6485Z"
-+    fill="var(--ov-ui-color-bg-1, var(--ov-ui-bg-1-default))"
-+    stroke="var(--ov-ui-color-border-3, var(--ov-ui-border-3-default))"
-+    stroke-width="1.5"
-+  />
-+  <path
-+    d="M108.68 107.328H151.207C155.625 107.328 159.207 103.747 159.207 99.3283V60.8783C159.207 58.9881 158.537 57.1589 157.317 55.715L148.037 44.732C146.517 42.9331 144.281 41.8954 141.926 41.8954H108.68C104.262 41.8954 100.68 45.4771 100.68 49.8954V99.3283C100.68 103.747 104.262 107.328 108.68 107.328Z"
-+    fill="var(--ov-ui-color-bg-1, var(--ov-ui-bg-1-default))"
-+    stroke="currentColor"
-+    stroke-width="1.5"
-+    stroke-linecap="round"
-+  />
-+  <path
-+    d="M144.3 41.8954V48.2817C144.3 54.3568 149.225 59.2817 155.3 59.2817H159.204"
-+    stroke="currentColor"
-+    stroke-width="1.5"
-+  />
-+  <circle
-+    cx="126.114"
-+    cy="73.6377"
-+    r="11.0244"
-+    stroke="currentColor"
-+    stroke-width="1.5"
-+    stroke-linecap="round"
-+  />
-+  <path
-+    d="M135.746 79.8945L141.385 85.5332C142.195 86.3438 142.195 87.6581 141.385 88.4687C140.574 89.2794 139.26 89.2794 138.449 88.4687L132.811 82.83"
-+    stroke="currentColor"
-+    stroke-width="1.5"
-+    stroke-linecap="round"
-+  />
-+  <g
-+    stroke="currentColor"
-+    stroke-width="1.5"
-+    stroke-linecap="round"
-+    opacity=".8"
-+  >
-+    <path d="M129.019 58.2283L129.168 53.9442" />
-+    <path d="M133.498 59.8939L136.088 56.4783" />
-+    <path d="M137.098 63.4613L140.95 61.5799" />
-+  </g>
-+</svg>
+@@ -25,6 +25,11 @@ on:
+         default: true
+   workflow_dispatch:
+     inputs:
++      check_linux_runner:
++        description: 'Check Docker and HTTPS package downloads on the dedicated Linux build runner'
++        required: false
++        type: boolean
++        default: false
+       build_sdist:
+         description: 'Whether to build source distribution'
+         required: false
+@@ -45,6 +50,63 @@ on:
+         default: '["3.10"]'
+ 
+ jobs:
++  check-linux-runner:
++    name: Check dedicated Linux runner
++    if: github.event_name == 'workflow_dispatch' && inputs.check_linux_runner && github.repository == 'volcengine/OpenViking'
++    runs-on: [self-hosted, Linux, X64, ci-linux-builds]
++    permissions: {}
++    timeout-minutes: 5
++    env:
++      UBUNTU_MIRROR: ${{ vars.CI_UBUNTU_MIRROR }}
++    steps:
++      - name: Verify runner and disposable build containers
++        shell: bash
++        run: |
++          set -euo pipefail
++          id
++          uname -m
++          nproc
++          df -h "$RUNNER_TEMP"
++          docker version
++          test -s /etc/ssl/certs/ca-certificates.crt
++          for host in archive.ubuntu.com mirrors.aliyun.com; do
++            if timeout 5 bash -c 'exec 3<>/dev/tcp/$1/443' _ "$host"; then
++              echo "Host TCP reachable: $host:443"
++            else
++              echo "Host TCP unreachable: $host:443"
++            fi
++            if docker run --rm ubuntu:24.04 timeout 5 \
++              bash -c 'exec 3<>/dev/tcp/$1/443' _ "$host"; then
++              echo "Container TCP reachable: $host:443"
++            else
++              echo "Container TCP unreachable: $host:443"
++            fi
++          done
++          for image in ubuntu:20.04 ubuntu:24.04; do
++            docker run --rm -i \
++              --env UBUNTU_MIRROR \
++              --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro \
++              "$image" bash -e <<'BOOTSTRAP'
++          for source in /etc/apt/sources.list /etc/apt/sources.list.d/ubuntu.sources; do
++            if [ -f "$source" ]; then
++              sed -i 's|http://|https://|g' "$source"
++              if [ -n "$UBUNTU_MIRROR" ]; then
++                case "$UBUNTU_MIRROR" in https://*) ;; *) exit 1 ;; esac
++                sed -i \
++                  "s|https://archive.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g; s|https://security.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g" \
++                  "$source"
++              fi
++            fi
++          done
++          apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++            -o Acquire::Retries=2 -o Acquire::https::Timeout=20 \
++            -o APT::Update::Error-Mode=any update
++          apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++            -o Acquire::Retries=2 install -y ca-certificates git
++          getconf GNU_LIBC_VERSION
++          BOOTSTRAP
++          done
++
+   build-studio:
+     name: Build shared Studio bundle
+     if: inputs.build_wheels
+@@ -145,8 +207,22 @@ jobs:
+         contains(inputs.os_json, '"ubuntu-24.04"') ||
+         contains(inputs.os_json, 'ubuntu-24.04-arm')
+       )
+-    runs-on: ${{ matrix.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+-    container: ubuntu:20.04
++    runs-on: >-
++      ${{ fromJSON(matrix.arch == 'aarch64' && '["ubuntu-24.04-arm"]' ||
++          github.repository == 'volcengine/OpenViking' &&
++          (github.event_name == 'pull_request' || github.event_name == 'push') &&
++          !startsWith(github.ref, 'refs/tags/') && vars.CI_DISABLE_SELF_HOSTED != 'true' &&
++          vars.CI_LINUX_BUILDS_ENABLED == 'true' &&
++          (!github.event.pull_request || github.event.pull_request.head.repo.full_name == github.repository) &&
++          (endsWith(github.run_number, '0') || endsWith(github.run_number, '2') ||
++           endsWith(github.run_number, '4') || endsWith(github.run_number, '6') ||
++           endsWith(github.run_number, '8')) &&
++          '["self-hosted","Linux","X64","ci-linux-builds"]' || '["ubuntu-24.04"]') }}
++    container:
++      image: ubuntu:20.04
++      # Minimal Ubuntu images lack CA certificates before the first apt install.
++      options: --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro
++    timeout-minutes: 60
+     env:
+       DEBIAN_FRONTEND: noninteractive
+       TZ: Etc/UTC
+@@ -158,13 +234,23 @@ jobs:
+     
+     steps:
+     - name: Install system dependencies (Linux)
++      env:
++        UBUNTU_MIRROR: ${{ runner.environment == 'self-hosted' && vars.CI_UBUNTU_MIRROR || '' }}
+       run: |
+-        # Replace archive.ubuntu.com with azure.archive.ubuntu.com for better stability in GH Actions
+-        sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/azure.archive.ubuntu.com\/ubuntu\//g' /etc/apt/sources.list
+-        # Retry apt-get update
+-        for i in 1 2 3 4 5; do apt-get update && break || sleep 5; done
+-        apt-get install -y \
++        sed -i 's|http://|https://|g' /etc/apt/sources.li
 ```
 
-**File**: `frontend/packages/react/src/modules/file-browser/file-browser-search-mode-menu.tsx` (modified, +62/-36)
+**File**: `.github/workflows/_test_lite.yml` (modified, +40/-2)
 ```diff
-@@ -1,64 +1,90 @@
--import { useEffect, useRef, useState } from 'react';
-+import { useCallback, useEffect } from 'react';
-+import type { RefObject } from 'react';
+@@ -3,6 +3,16 @@ name: 12. _Test Suite (Lite)
+ on:
+   workflow_call:
+     inputs:
++      linux_runner_json:
++        description: 'Linux labels selected by the same-run native producer'
++        required: false
++        type: string
++        default: '["ubuntu-24.04"]'
++      linux_container:
++        description: 'Disposable Linux test container; empty keeps hosted execution'
++        required: false
++        type: string
++        default: ''
+       native_artifact:
+         description: 'Validated same-run cp310-abi3 native runtime (empty builds locally)'
+         required: false
+@@ -32,17 +42,45 @@ on:
+ jobs:
+   test-lite:
+     name: Lite Test (${{ matrix.os }}, ${{ matrix.python-version }})
+-    runs-on: ${{ matrix.os }}
++    runs-on: ${{ matrix.os == 'ubuntu-24.04' && fromJSON(inputs.linux_runner_json || '["ubuntu-24.04"]') || matrix.os }}
++    container:
++      image: ${{ matrix.os == 'ubuntu-24.04' && inputs.linux_container || '' }}
++      options: --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro
++    timeout-minutes: 30
++    defaults:
++      run:
++        shell: ${{ matrix.os == 'windows-latest' && 'pwsh' || 'bash' }}
+     strategy:
+       fail-fast: false
+       matrix:
+         os: ${{ fromJson(inputs.os_json) }}
+         python-version: ${{ fromJson(inputs.python_json) }}
  
- import { SEARCH_MODES } from './search-types.js';
- import type { SearchMode } from './search-types.js';
- import type { ResolvedLabels } from './file-browser-labels.js';
+     steps:
++    - name: Bootstrap self-hosted Ubuntu test container
++      if: runner.environment == 'self-hosted'
++      env:
++        UBUNTU_MIRROR: ${{ vars.CI_UBUNTU_MIRROR }}
++        DEBIAN_FRONTEND: noninteractive
++      run: |
++        sed -i 's|http://|https://|g' /etc/apt/sources.list.d/ubuntu.sources
++        if [ -n "$UBUNTU_MIRROR" ]; then
++          case "$UBUNTU_MIRROR" in https://*) ;; *) exit 1 ;; esac
++          sed -i \
++            "s|https://archive.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g; s|https://security.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g" \
++            /etc/apt/sources.list.d/ubuntu.sources
++        fi
++        apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++          -o Acquire::Retries=2 -o Acquire::https::Timeout=20 \
++          -o APT::Update::Error-Mode=any update
++        apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++          -o Acquire::Retries=2 install -y --no-install-recommends \
++          git ca-certificates curl python3 cmake build-essential
+     - uses: actions/checkout@v6
+       with:
+         submodules: recursive
++    - uses: ./.github/actions/linux-test-env
++      if: runner.environment == 'self-hosted'
  
- /**
-- * 模式下拉：四种检索方式各一行，带一句说明。选中项打勾。
-+ * 模式下拉的内容：四种检索方式各一行，带一句说明，选中项打勾。
-  *
-- * 展开状态由调用方持有——结果区的「切换」按钮与下拉本身是两个触发器，共用一个
-- * 开关比各自维护一份状态更简单。
-+ * 浮层本身由结果区的 `Popover` 提供——它挂到 `document.body` 并用视口坐标定位，
-+ * 结果区裁掉的溢出不会波及菜单。这里只画内容，另外补两件事：挂载后把焦点交给
-+ * 调用方（键盘打开时移进第一项），以及点击菜单外时关闭。
-  *
-- * The mode menu: one row per retrieval mode with a one-line description, and a check
-- * on the current one.
-+ * The mode menu's content: one row per retrieval mode with a one-line description and a
-+ * check on the current one.
-  *
-- * The open state belongs to the caller: the result header's switch button and the menu
-- * are two triggers, and sharing one flag is simpler than keeping two.
-+ * The surface comes from the result area's `Popover`, which portals into `document.body`
-+ * and positions in viewport coordinates, so the results area's clipping cannot reach it.
-+ * This draws the content, hands the node to the caller after mount (so a keyboard opening
-+ * can move focus to the first item) and closes on Escape. Outside clicks stay with
-+ * `Popover`, which already excludes both the surface and the trigger.
-  */
- export interface FileBrowserSearchModeMenuProps {
--  open: boolean;
-   value: SearchMode;
-   text: ResolvedLabels;
-+  menuRef?: RefObject<HTMLDivElement | null>;
-   onSelect: (mode: SearchMode) => void;
--  onClose: () => void;
-+  /** 菜单挂载后调用，供调用方移动焦点。 Called after mount so the caller can focus. */
-+  onMounted?: () => void;
-+  /** 点击菜单外部时调用。 Called on a click outside the menu. */
-+  onDismiss: () => void;
- }
+     - name: Set up Python ${{ matrix.python-version }}
+       uses: actions/setup-python@v6
+@@ -55,7 +93,7 @@ jobs:
+         enable-cache: true
  
- export function FileBrowserSearchModeMenu({
--  open,
-   value,
-   text,
-+  menuRef,
-   onSelect,
--  onClose,
-+  onMounted,
-+  onDismiss,
- }: FileBrowserSearchModeMenuProps) {
--  const ref = useRef<HTMLDivElement>(null);
--  const [active, setActive] = useState(value);
--
--  useEffect(() => {
--    setActive(value);
--  }, [value, open]);
--
--  // useEffect 必要性：与 document 的指针事件同步。下拉挂在结果区里，点击外部
--  // 关闭必须监听整个文档——只监听自己的节点收不到外部点击。卸载或关闭时移除。
-+  // 回调 ref 必须稳定：每次渲染新建函数会让 React 先 `ref(null)` 再 `ref(node)`，
-+  // 而 `onMounted` 在挂载回调里移焦点，重复触发会让焦点反复跳动。
-+  //
-+  // The callback ref must be stable: a fresh function per render makes React call
-+  // `ref(null)` then `ref(node)`, and since `onMounted` moves focus from that callback,
-+  // repeated firing would bounce focus around.
-+  const attachMenu = useCallback(
-+    (node: HTMLDivElement | null) => {
-+      if (menuRef) menuRef.current = node;
-+      if (node) onMounted?.();
-+    },
-+    [menuRef, onMounted],
-+  );
-+  // 点击外部关闭交给 `Popover`：它的点击态已经同时排除浮层与触发按钮，点「切换」
-+  // 才能正常切换关闭。这里再挂一份只排除菜单的 `pointerdown` 监听，会把「切换」
-+  // 当成外部点击——先关掉，随后的 click 又把它打开，菜单永远关不上。
-+  //
-+  // Outside clicks belong to `Popover`, whose click trigger already excludes both the
-+  // surface and its trigger, so clicking the switch toggles it closed. A second
-+  // `pointerdown` listener here that excludes only the menu would treat the switch as an
-+  // outside click — closing on pointerdown and reopening on the following click, so the
-+  // menu could never be dismissed by clicking it again.
-+  //
-+  // useEffect 必要性：Esc 要监听整个文档。菜单容器是 `role="group"`，给它挂键盘
-+  // 监听既不合语义，也拦不住焦点在按钮上时的冒泡。捕获阶段先于弹窗的 Esc 处理，
-+  // 一次 Esc 只关菜单。卸载时移除。
-   //
--  // Syncs with the document's pointer events. The menu sits inside the result area,
--  // so closing on an outside click needs a document-level listener: a listener on its
--  // own node never sees that click. Removed on unmount or close.
-+  // The Escape listener has to sit on the document. The menu is a `role="group"`, so a
-+  // key listener on it is both wrong semantically and unable to intercept events while
-+  // focus sits on a button. Capture runs before the dialog's own Escape handler, so one
-+  // Escape closes the menu only. Removed on unmount.
-   useEffect(() => {
--    if (!open) return;
--    const onPointerDown = (event: PointerEvent) => {
--      if (!(event.target instanceof Node)) return;
--      if (ref.current?.contains(event.target)) return;
--      onClose();
-+    const onKeyDown = (event: KeyboardEvent) => {
-+      if (event.key !== 'Escape' || event.defaultPrevented) return;
-+      event.preventDefault();
-+      event.stopPropagation();
-+      onDismiss();
-     };
--    document.addEventListener('pointerdown', onPointerDown);
--    return () => document.removeEventListener('pointerdown', onPointerDown);
--  }, [open, onClose]);
-+    document.addEventListener('keydown', onKeyDown, true);
-+    return () => document.removeEventListener('keydown', onKeyDown, true);
-+  }, [onDismiss]);
- 
--  if (!open) return null;
-   return (
-     <div
--      ref={ref}
-+      ref={attachMenu}
-       className="ov-file-browser-search__menu"
-       role="g
+     - name: Install system dependencies (Ubuntu)
+-      if: runner.os == 'Linux'
++      if: runner.os == 'Linux' && runner.environment != 'self-hosted'
+       run: |
+         sudo apt-get update
+         sudo apt-get install -y cmake build-essential
 ```
 
-**File**: `frontend/packages/react/src/modules/file-browser/file-browser-search-mode-row.tsx` (modified, +135/-15)
+**File**: `.github/workflows/api_test.yml` (modified, +118/-10)
 ```diff
-@@ -1,47 +1,167 @@
--import { useState } from 'react';
-+import { useCallback, useRef, useState } from 'react';
-+import type { KeyboardEvent, RefObject } from 'react';
-+
-+import { Popover } from '../../shared/primitives/popover/popover.js';
- import { FileBrowserSearchModeMenu } from './file-browser-search-mode-menu.js';
- import type { SearchMode } from './search-types.js';
- import type { ResolvedLabels } from './file-browser-labels.js';
+@@ -30,7 +30,14 @@ concurrency:
  
-+/**
-+ * 结果区顶部的模式行：数量、模式 chip、检索方式说明与切换入口。
-+ *
-+ * 顺序与设计稿一致：先给数量，再给当前模式，最后才是切换入口。
-+ *
-+ * 下拉挂在「切换」按钮上，由 `Popover` 渲染到 `document.body`：结果区为了固定
-+ * 头部会裁掉溢出，菜单留在原地时在窄屏会被裁掉大半。菜单 portal 出去后不在弹窗
-+ * 的 DOM 子树里，`Popover` 会把它登记进弹窗的焦点范围，Tab 因此仍能进入。
-+ *
-+ * 键盘打开（Enter、Space、↓ 进第一项，↑ 进最后一项）时焦点移进菜单；关闭时若
-+ * 焦点还在菜单里就还给「切换」按钮——否则 portal 的菜单虽然能被 Tab 到，键盘
-+ * 用户仍要多按几次才知道菜单开了。
-+ *
-+ * The mode row above the results: the count, the mode chip, what the mode retrieves
-+ * and the switch.
-+ *
-+ * The order follows the design: the count first, then the current mode, then the
-+ * switch.
-+ *
-+ * The menu hangs off the switch button and is rendered by `Popover` into
-+ * `document.body`: the results area clips its overflow so the header can stay put, and a
-+ * menu left in place would lose most of itself on a narrow viewport. Once portaled it is
-+ * outside the dialog's DOM subtree, so `Popover` registers it into the dialog's focus
-+ * scope and Tab can still reach it.
-+ *
-+ * Opening from the keyboard (Enter, Space and ↓ land on the first item, ↑ on the last)
-+ * moves focus into the menu; closing returns it to the switch when it was inside the
-+ * menu. Without that, the portaled menu would be reachable but a keyboard user would
-+ * have no sign it had opened.
-+ */
- export interface FileBrowserSearchModeRowProps {
-   mode: SearchMode;
-   count: number;
-   text: ResolvedLabels;
-+  /** 「切换」不在时的焦点去处；选完模式会立刻重新检索，本行在加载态里不渲染。 */
-+  fallbackFocusRef?: RefObject<HTMLElement | null>;
-   onSelectMode: (mode: SearchMode) => void;
- }
+ jobs:
+   prepare:
+-    runs-on: ubuntu-24.04
++    runs-on: >-
++      ${{ fromJSON(github.repository == 'volcengine/OpenViking' &&
++          (github.event_name == 'pull_request' || github.event_name == 'push') &&
++          !startsWith(github.ref, 'refs/tags/') && vars.CI_DISABLE_SELF_HOSTED != 'true' &&
++          vars.CI_LINUX_BUILDS_ENABLED == 'true' &&
++          (!github.event.pull_request || github.event.pull_request.head.repo.full_name == github.repository) &&
++          '["self-hosted","Linux","X64","ci-linux-builds"]' || '["ubuntu-24.04"]') }}
++    timeout-minutes: 5
+     outputs:
+       api_changed: ${{ steps.plan.outputs.api_changed }}
+       cuvs_changed: ${{ steps.plan.outputs.cuvs_changed }}
+@@ -50,18 +57,63 @@ jobs:
  
- export function FileBrowserSearchModeRow({
-   mode,
-   count,
-   text,
-+  fallbackFocusRef,
-   onSelectMode,
- }: FileBrowserSearchModeRowProps) {
-   const [menuOpen, setMenuOpen] = useState(false);
-+  const anchorRef = useRef<HTMLButtonElement>(null);
-+  // 菜单内容在 `Popover` 里，节点要等它挂载后才拿得到；用 ref 交给它的回调，
-+  // 不额外存 state——焦点只在打开那一刻移动一次。
-+  //
-+  // The menu lives inside `Popover` and only exists after it mounts; hand the node over
-+  // through a ref rather than extra state, since focus moves exactly once per opening.
-+  const menuRef = useRef<HTMLDivElement | null>(null);
-+  const pendingFocus = useRef<'first' | 'last' | null>(null);
-+
-+  const focusPendingItem = useCallback(() => {
-+    const edge = pendingFocus.current;
-+    if (!edge) return;
-+    pendingFocus.current = null;
-+    const items = menuRef.current?.querySelectorAll<HTMLButtonElement>(
-+      'button:not(:disabled)',
-+    );
-+    const target = edge === 'first' ? items?.[0] : items?.[items.length - 1];
-+    target?.focus();
-+  }, []);
-+
-+  // 焦点去处取决于菜单怎么关的：
-+  //
-+  // - 选中某个模式时，`onSelectMode` 会立刻重新检索，结果区在加载态里不渲染模式行，
-+  //   「切换」按钮随这一行卸载，`focus()` 会落空并把焦点丢给 `body`。所以这里交给
-+  //   搜索输入框。
-+  // - Esc 与点击外部时这一行还在，焦点回到「切换」；焦点本来就不在菜单里（用户点
-+  //   了别处）则不动，免得把焦点从刚点的地方抢走。
-+  //
-+  // Where focus goes depends on how the menu closed:
-+  //
-+  // - Picking a mode triggers a new search at once, and the results area renders no mode
-+  //   row while loading, so the switch unmounts with that row and `focus()` would land
-+  //   nowhere, dropping focus to `body`. The search input takes it instead.
-+  // - Escape and outside clicks leave the row in place, so focus returns to the switch —
-+  //   unless it was never inside the menu (the user clicked elsewhere), where moving it
-+  //   would steal focus from where they just clicked.
-+  const close = useCallback(
-+    (focusTarget: 'switch' | 'fallback' = 'switch') => {
-+      const inside =
-+        !!menuRef.current?.contains(document.activeElement) ||
-+        pendingFocus.current !== null;
-+      pendingFocus.current = null;
-+      setMenuOpen(false);
-+      if (focusTarget === 'fallback') {
-+        fallbackFocusRef?.current?.focus();
-+        return;
-+      }
-+      if (inside) anchorRef.current?.focus();
-+    },
-+    [fallbackFocusRef],
-+  );
-+
-+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-+    if (event.key === 'Escape' && menuOpen) {
-+      event.preventDefault();
-+      close();
-+      return;
-+    }
-+    if (!['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(event.key)) return;
-+    if (menuOpen) return;
-+    // Enter 与 Space 的默认行为是点击，这里显式接管，焦点移动只发生一次。
-+    // Enter and Space would otherwise click; take over so focus moves exactly once.
-+    event.preventDefault();
-+    pendingFocus.current = event.key === 'ArrowUp' ? 'last' : 'first';
-+    setMenuOpen(true);
-+  };
-+
-   return (
-     <div className="ov-file-browser-search__summary">
-       <span>{text.searchResultCount?.(count)}</span>
-       <span aria-hidden="true">・</span>
--      <span>{text.searchVia
+   native-runtime:
+     needs: prepare
++    outputs:
++      test_runner: ${{ steps.test-pool.outputs.runner }}
++      test_container: ${{ steps.test-pool.outputs.container }}
+     if: >-
+       (needs.prepare.outputs.api_changed == 'true' || needs.prepare.outputs.cuvs_changed == 'true') &&
+       (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' ||
+        (github.repository == 'volcengine/OpenViking' &&
+         (github.event_name != 'release' || startsWith(github.event.release.tag_name, 'v'))))
+-    runs-on: ubuntu-24.04
++    runs-on: >-
++      ${{ fromJSON(github.repository == 'volcengine/OpenViking' &&
++          (github.event_name == 'pull_request' || github.event_name == 'push') &&
++          !startsWith(github.ref, 'refs/tags/') && vars.CI_DISABLE_SELF_HOSTED != 'true' &&
++          vars.CI_LINUX_BUILDS_ENABLED == 'true' &&
++          (!github.event.pull_request || github.event.pull_request.head.repo.full_name == github.repository) &&
++          '["self-hosted","Linux","X64","ci-linux-builds"]' || '["ubuntu-24.04"]') }}
++    container:
++      image: ubuntu:24.04
++      # Bootstrap HTTPS apt with the host's read-only CA bundle.
++      options: --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro
+     timeout-minutes: 30
++    defaults:
++      run:
++        shell: bash
++    env:
++      DEBIAN_FRONTEND: noninteractive
+     steps:
++      - name: Share the Linux test destination
++        id: test-pool
++        env:
++          TEST_RUNNER: ${{ runner.environment == 'self-hosted' && '["self-hosted","Linux","X64","ci-linux-builds"]' || '["ubuntu-24.04"]' }}
++          TEST_CONTAINER: ${{ runner.environment == 'self-hosted' && 'ubuntu:24.04' || '' }}
++        run: |
++          echo "runner=$TEST_RUNNER" >> "$GITHUB_OUTPUT"
++          echo "container=$TEST_CONTAINER" >> "$GITHUB_OUTPUT"
++      - name: Install native build system dependencies
++        env:
++          UBUNTU_MIRROR: ${{ runner.environment == 'self-hosted' && vars.CI_UBUNTU_MIRROR || '' }}
++        run: |
++          sed -i 's|http://|https://|g' /etc/apt/sources.list.d/ubuntu.sources
++          if [ -n "$UBUNTU_MIRROR" ]; then
++            case "$UBUNTU_MIRROR" in https://*) ;; *) exit 1 ;; esac
++            sed -i \
++              "s|https://archive.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g; s|https://security.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g" \
++              /etc/apt/sources.list.d/ubuntu.sources
++          fi
++          apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++            -o Acquire::Retries=2 -o Acquire::https::Timeout=20 \
++            -o APT::Update::Error-Mode=any update
++          apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++            -o Acquire::Retries=2 install -y \
++            git ca-certificates build-essential clang pkg-config curl unzip xz-utils \
++            python3 libssl-dev
+       - uses: actions/checkout@v6
+         with:
+           submodules: recursive
+           fetch-depth: 0
++      - uses: ./.github/actions/linux-test-env
+       - uses: actions/setup-python@v6
+         with:
+           python-version: '3.10'
+@@ -88,12 +140,20 @@ jobs:
+       os_json: '["ubuntu-24.04"]'
+       python_json: '["3.11"]'
+       native_artifact: native-runtime-linux-x64-cp310-abi3
++      linux_runner_json: ${{ needs.native-runtime.outputs.test_runner }}
++      linux_container: ${{ needs.native-runtime.outputs.test_container }}
+ 
+   database-tests:
+     name: MySQL & Redis Integration Tests
+     needs: [prepare, native-runtime]
+     if: needs.prepare.outputs.api_changed == 'true'
+-    runs-on: ubuntu-24.04
++    runs-on: ${{ fromJSON(needs.native-runtime.outputs.test_runner) }}
++    container:
++      image: ${{ needs.native-runtime.outputs.test_container }}
++      options: --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro
++    defaults:
++      run:
++        shell: bash
+     timeout-minutes: 20
+     services:
+       mysql:
+@@ -104,7 +164,7 @@ jobs:
+           MYSQL_USER: openviking_test
+           MYSQL_PASSWORD: integration-test-password
+         ports:
+-          - 3306:3306
++          - ${{ needs.native-runtime.outputs.test_container != ''
 ```
 
 ---
 
-### Incident Patch 2: `297847cd` (2026-11-13)
-**Commit Message**: fix(opencode): load bundled skills on OpenCode v2 and run v2 prompt context concurrently (#7582)
+### Incident Patch 2: `26be9df8` (2026-11-16)
+**Commit Message**: Feat/queuefs memory integration (#7606)
 
-* fix(opencode): register bundled skills through the v2 skill editor
+* fix(tests): isolate domain fixtures from Watch leadership
 
-The v2 entrypoint called draft.source() on the skill editor, which the
-OpenCode v2 plugin API does not have (the editor exposes list/get/add/
-update/remove). It was also unreachable: the host batches plugin setup, so
-the MCP transform callback had not run yet and `registered` was still
-false when the skill transform was gated on it. The bundled skills were
-never loaded.
+Disable the background Watch scheduler for file-only domain fixtures so Session tests do not require native leadership APIs.
 
-Read the bundled SKILL.md files at setup and add them through the public
-editor in a transform registered at setup time, reading the MCP decision
-inside the callback. A missing directory or unparsable skill is logged and
-skipped so it cannot throw into setup and disable the plugin.
+* feat(memory): integrate grouped queues with native retry
 
-Co-authored-by: stefanielizeth73-art <[REDACTED_EMAIL]>
+Keep account/user memory batches on one consumer and settle deliveries after shared work finishes, while preserving existing batching windows, flush cancellation, and first-failure semantics.
 
-* fix(opencode): run v2 session context and recall concurrently
-
-prepareV2Prompt awaited the session-start injection before starting
-recall, so the first prompt of each v2 session waited for both round
-trips back to back while the prompt hook held the message. The v1
-chat.message path already runs them together. Sta
-
-**File**: `examples/opencode-plugin/lib/v2-plugin.mjs` (modified, +42/-22)
+**File**: `docs/en/concepts/16-queue-lifecycle.md` (modified, +13/-0)
 ```diff
-@@ -1,3 +1,5 @@
-+import { readFile, readdir } from "node:fs/promises"
-+import { join } from "node:path"
- import { isRecallEnabled } from "./shared/recall-core.mjs"
- import { createOpenVikingV2McpConfig, openVikingSkillsDir } from "./mcp-config.mjs"
- import { contextMessageEvents, normalizeV2LifecycleEvent } from "./v2-events.mjs"
-@@ -39,15 +41,19 @@ export async function startV2Plugin(ctx, runtime, { pluginRoot }) {
-   if (config.mcp.enabled && ctx?.mcp?.transform) {
-     let registered = false
-     await ctx.mcp.transform((editor) => {
--      const current = editor.get?.("openviking")
--      if (current?.disabled === true) return
--      editor.set("openviking", createOpenVikingV2McpConfig(pluginRoot))
--      registered = true
-+      registered = editor.get?.("openviking")?.disabled !== true
-+      if (registered) editor.set("openviking", createOpenVikingV2McpConfig(pluginRoot))
-     })
-     log("INFO", "mcp", "Registered OpenViking MCP server for OpenCode v2")
--    if (registered && ctx?.skill?.transform) {
--      await ctx.skill.transform((draft) => {
--        draft.source({ type: "directory", path: openVikingSkillsDir(pluginRoot) })
-+    if (ctx?.skill?.transform) {
-+      const skills = await loadBundledSkills(openVikingSkillsDir(pluginRoot))
-+      // Transforms run again after setup, so read the MCP decision on each run.
-+      await ctx.skill.transform((editor) => {
-+        if (!registered) return
-+        // A user skill overrides a bundled one by ID or by name; the host keys
-+        // skills by ID only, so a same-name skill would otherwise be listed twice.
-+        const taken = new Set(editor.list().flatMap((skill) => [skill.id, skill.name]))
-+        for (const skill of skills) if (!taken.has(skill.id) && !taken.has(skill.name)) editor.add(skill)
-       })
-     }
-   } else if (!config.mcp.enabled) {
-@@ -160,6 +166,29 @@ export async function startV2Plugin(ctx, runtime, { pluginRoot }) {
-   }
- }
- 
-+async function loadBundledSkills(root) {
-+  const entries = await readdir(root, { withFileTypes: true }).catch((error) => {
-+    logHookError("skill.load", error)
-+    return []
-+  })
-+  const skills = []
-+  for (const entry of entries.filter((item) => item.isDirectory())) {
-+    const path = join(root, entry.name, "SKILL.md")
-+    try {
-+      const text = await readFile(path, "utf8")
-+      const frontmatter = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/)
-+      // Bundled descriptions are a plain scalar or a folded (`>`) block.
-+      const [, head = "", folded = ""] = frontmatter?.[1].match(/^description:(.*)((?:\r?\n[ \t]+.*)*)/m) ?? []
-+      const description = (/^\s*>-?\s*$/.test(head) ? folded : head).trim().replace(/\s+/g, " ")
-+      if (!description) throw new Error(`no description in ${path}`)
-+      skills.push({ id: entry.name, name: entry.name, description, path, content: text.slice(frontmatter[0].length) })
-+    } catch (error) {
-+      logHookError("skill.load", error)
-+    }
-+  }
-+  return skills
-+}
+@@ -169,3 +169,16 @@ a warning and leaves the delivery for recovery while consumption continues.
+ For this release, ExternalTaskService retains its baseline target reservations
+ and execution guard for pre-key deliveries, restoring reservations before workers
+ start. These transitional guards are scheduled for removal in the next release.
 +
- async function consumeEvents(ctx, signal, handle) {
-   try {
-     for await (const event of ctx.event.subscribe({ signal })) {
-@@ -187,21 +216,12 @@ export async function prepareV2Prompt(event, {
-   const text = event?.prompt?.text
-   const parts = typeof text === "string" && text.trim() ? [{ type: "text", text }] : []
-   const input = { sessionID, messageID, directory }
--  const blocks = []
--  try {
--    const sessionBlock = await sessionInject.buildSessionContext(input)
--    if (sessionBlock) blocks.push(sessionBlock)
--  } catch (error) {
--    logHookError("session.prompt.profile", error)
--  }
--  if (recallEnabled) {
--    try {
--      const recallBlock = await recall.buildRelevantMemories(input, parts)
--      if (recallBlock) blocks.push(recallBlock)
--    } catch (error) {
--      logHookError("session.prompt.recall", error)
--    }
--  }
-+  const blocks = (await Promise.all([
-+    sessionInject.buildSessionContext(input).catch((error) => logHookError("session.prompt.profile", error)),
-+    recallEnabled
-+      ? recall.buildRelevantMemories(input, parts).catch((error) => logHookError("session.prompt.recall", error))
-+      : undefined,
-+  ])).filter(Boolean)
-   if (blocks.length === 0) return
- 
-   event.metadata = event.metadata && typeof event.metadata === "object" ? event.metadata : {}
++SessionCommit uses an account/user `group_key` on initial and recovery enqueue,
++allowing concurrent sessions to share the streaming-memory batcher. Waiting for
++a predecessor archive returns `ProcessResult.retry()` without publishing a
++replacement. The original message returns to its group tail, allowing the
++predecessor to continue. RETRY and REQUEUED both increment the persisted Work
++`requeue_count`; this counter has no retry limit.
++Batch work and all merge groups finish before processing returns, including on
++failure or cancellation; shutdown leaves the message unacknowledged.
++Submit cancellation keeps the existing count/time/close batching window.
++Cancelling a flush propagates to batch processing and settles its waiting items
++as cancelled. Multiple group failures preserve the first observed exception
++after the remaining groups finish.
 ```
 
-**File**: `examples/opencode-plugin/package.json` (modified, +1/-1)
+**File**: `docs/zh/concepts/16-queue-lifecycle.md` (modified, +10/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@openviking/opencode-plugin",
--  "version": "0.5.25",
-+  "version": "0.5.26",
-   "author": "@openviking",
-   "description": "Unified OpenCode plugin for OpenViking repository retrieval and long-term memory",
-   "type": "module",
+@@ -147,3 +147,13 @@ Task/Work 保存异常均不 ACK，已处理的业务失败在 Work 结算后 AC
+ warning，消息留待恢复，消费继续。本版本 ExternalTaskService 保留基线的目标
+ 占用和执行保护，并在 worker 启动前恢复占用，以兼容未携带 key 的旧消息；
+ 这些过渡保护计划在下个版本移除。
++
++SessionCommit 的首次提交和恢复入队均按账号/用户生成 `group_key`，
++让同用户的并发会话共用流式 Memory 批处理器。等待前一个 archive 时返回
++`ProcessResult.retry()`，不发布替代消息；原消息回到该组队尾，让前一个 archive
++可继续消费。RETRY 与 REQUEUED 都会累加持久化 Work 的 `requeue_count`，
++该计数不设重投上限。批处理及全部合并分组结束后才返回，
++失败或取消也须等待实际写回结束；停机取消保留未 ACK 消息。
++取消 submit 不改变原有 count/time/close 批处理窗口；取消 flush 会传递给
++批处理，并将等待项结算为取消。多个合并分组失败时，等待其他组结束后仍抛出
++最先发生的异常。
 ```
 
-**File**: `examples/opencode-plugin/tests/v2-plugin.test.mjs` (modified, +80/-4)
+**File**: `openviking/session/memory/streaming_memory_updater.py` (modified, +10/-2)
 ```diff
-@@ -1,9 +1,12 @@
- import test from "node:test"
- import assert from "node:assert/strict"
--import { resolve } from "node:path"
-+import { fileURLToPath } from "node:url"
- import { captureV2Context, injectV2Context, prepareV2Prompt, startV2Plugin } from "../lib/v2-plugin.mjs"
- import { createVikingUriNotice } from "../lib/viking-uri-guard.mjs"
+@@ -23,6 +23,7 @@
+ from openviking.core.peer_id import safe_peer_id
+ from openviking.message import Message
+ from openviking.server.identity import RequestContext
++from openviking.service.task_tracker_concurrency import run_to_completion
+ from openviking.session.memory.dataclass import (
+     MemoryFile,
+     MemoryOperationSource,
+@@ -232,9 +233,16 @@ async def _submit_grouped_merge_request(
+             (await self._get_group_batcher(group_key)).submit(group_request)
+             for group_key, group_request in grouped_requests
+         ]
+-        group_results = list(await asyncio.gather(*submissions))
++        submissions = [asyncio.ensure_future(submission) for submission in submissions]
++        try:
++            group_results = list(await asyncio.gather(*submissions))
++        except (Exception, asyncio.CancelledError):
++            # Drain accepted groups before delivery settlement while preserving
++            # gather's first failure, rather than choosing by group order.
++            await run_to_completion(lambda: asyncio.gather(*submissions, return_exceptions=True))
++            raise
+         result = combine_streaming_memory_results(*group_results, fallback_request_count=1)
+-        await self._apply_post_group_links(request, result)
++        await run_to_completion(lambda: self._apply_post_group_links(request, result))
+         return result
  
-+const pluginRoot = fileURLToPath(new URL("..", import.meta.url))
-+const BUNDLED_SKILLS = ["openviking-memory", "openviking-rule-search", "openviking-skills", "ov-experience-memory"]
-+
- function runtimeFixture(overrides = {}) {
-   const events = []
-   return {
-@@ -39,7 +42,11 @@ function contextFixture(messages = []) {
-     skillSources,
-     ctx: {
-       skill: {
--        transform: async (callback) => callback({ source: (source) => skillSources.push(source), list: () => skillSources }),
-+        transform: async (callback) => callback({
-+          list: () => skillSources,
-+          get: (id) => skillSources.find((skill) => skill.id === id),
-+          add: (skill) => skillSources.push(skill),
-+        }),
-       },
-       location: { directory: "/tmp/project" },
-       mcp: {
-@@ -61,16 +68,65 @@ function contextFixture(messages = []) {
- test("startV2Plugin registers direct MCP tools and all v2 hooks", async () => {
-   const { runtime } = runtimeFixture()
-   const { ctx, hooks, registered, skillSources } = contextFixture()
--  const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot: "/tmp/ov" })
-+  const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot })
+     async def _apply_post_group_links(
+```
+
+**File**: `openviking/session/memory/utils/streaming_batcher.py` (modified, +16/-3)
+```diff
+@@ -12,6 +12,7 @@
+ from dataclasses import dataclass, field
+ from typing import Any, Generic, TypeVar
  
--  assert.deepEqual(skillSources, [{ type: "directory", path: resolve("/tmp/ov", "skills") }])
-+  assert.deepEqual(skillSources.map((skill) => skill.id).sort(), BUNDLED_SKILLS)
-+  for (const skill of skillSources) {
-+    assert.ok(skill.description.length > 20 && !skill.description.includes("\n"))
-+    assert.match(skill.content, /^\s*# /)
-+  }
-   assert.equal(registered[0][0], "openviking")
-   assert.equal(registered[0][1].type, "local")
-   assert.equal(registered[0][1].codemode, false)
-   assert.deepEqual(Object.keys(hooks).sort(), ["compaction", "context", "execute.after", "execute.before", "prompt"])
-   await cleanup()
- })
++from openviking.service.task_tracker_concurrency import run_to_completion
+ from openviking.service.task_work_index import detach_task_context
+ from openviking.telemetry import tracer
+ from openviking_cli.utils import get_logger
+@@ -115,7 +116,16 @@ async def submit(self, payload: T) -> R:
+         if should_flush:
+             self._trigger_background_flush("count")
  
-+for (const disabled of [false, true]) {
-+  test(`bundled skills follow MCP registration when transforms run after setup, disabled=${disabled}`, async () => {
-+    const { runtime } = runtimeFixture()
-+    const { ctx } = contextFixture()
-+    const transforms = []
-+    ctx.mcp.transform = async (callback) => { transforms.push(callback) }
-+    ctx.skill.transform = async (callback) => { transforms.push(callback) }
-+    const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot })
-+    const [mcp, skill] = transforms
-+    const skills = new Map()
-+    mcp({ get: () => (disabled ? { disabled: true } : undefined), set: () => {} })
-+    skill({ list: () => [...skills.values()], get: (id) => skills.get(id), add: (value) => skills.set(value.id, value) })
-+    assert.deepEqual([...skills.keys()].sort(), disabled ? [] : BUNDLED_SKILLS)
-+    await cleanup()
-+  })
-+}
-+
-+test("existing skills override bundled skills by ID or name", async () => {
-+  const { runtime } = runtimeFixture()
-+  const { ctx, skillSources } = contextFixture()
-+  skillSources.push(
-+    { id: "project-memory", name: "openviking-memory", path: "/tmp/project/.opencode/skills/project-memory/SKILL.md", content: "" },
-+    { id: "openviking-skills", name: "Custom skills", path: "/tmp/project/.opencode/skills/openviking-skills/SKILL.md", content: "" },
-+  )
-+  const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot })
-+  assert.deepEqual(skillSources.map((skill) => skill.id).sort(), [
-+    "openviking-rule-search",
-+    "openviking-skills",
-+    "ov-experience-memory",
-+    "project-memory",
-+  ])
-+  assert.equal(skillSources.find((skill) => skill.id === "openviking-skills").name, "Custom skills")
-+  await cleanup()
-+})
-+
-+test("a missing skills directory leaves MCP and hooks registered", async () => {
-+  const { runtime } = runtimeFixture()
-+  const { ctx, hooks, registered, skillSources } = contextFixture()
-+  const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot: "/nonexistent" })
-+  assert.deepEqual(skillSources, [])
-+  assert.equal(registered[0][0], "openviking")
-+  assert.equal(typeof hooks.prompt, "function")
-+  await cleanup()
-+})
-+
- test("compaction captures messages before the host drops them and contains read failures", async () => {
-   const { runtime, events } = runtimeFixture()
-   const messages = [
-@@ -126,6 +182,26 @@ test("cleanup waits for background initialization before flushing", async () =>
-   assert.equal(flushed, true)
- })
+-        return await future
++        try:
++            return await asyncio.shield(future)
++        except asyncio.CancelledError:
++            # Keep delivery settlement behind accepted shared work. Cancellation
++            # does not change the existing count/time/close batching window.
++            try:
++                await run_to_completion(lambda: future)
++            except Exception:
++                pass
++            raise
  
-+test("prompt starts session context and recall together and keeps block order", async () => {
-+  const started = []
-+  const pending = {}
-+  const call = (name) => new Promise((resolve) => {
-+    started.push(name)
-+    pending[name] = resolve
-+  })
-+  const event = { sessionID: "ses_1", messageID: "msg_1", prompt: { text: "query" } }
-+  const preparing
+     async def close(self) -> R | None:
+         if self._closed:
+@@ -151,10 +161,13 @@ async def flush(self, reason: str) -> R | None:
+                     if metadata is not None:
+                         metadata.setdefault("batch_id", batch_id)
+                         metadata.setdefault("batch_trace_id", batch_trace_id)
+-            except Exception as exc:
++            except (Exception, asyncio.CancelledError) as exc:
+                 for item in items:
+                     if not item.future.done():
+-                        item.future.set_exception(exc)
++                        if isinstance(exc, asyncio.CancelledError):
++                            item.future.cancel()
++                        else:
++                            item.future.set_exception(exc)
+                 raise
+ 
+             self._last_result = result
+```
+
+**File**: `openviking/session/session.py` (modified, +4/-1)
+```diff
+@@ -1935,6 +1935,7 @@ async def commit_async(
+                     await get_queue_manager().enqueue(
+                         QueueManager.SESSION_COMMIT,
+                         queue_msg.to_dict(),
++                        group_key=queue_msg.queue_group_key,
+                     )
+             except Exception as exc:
+                 try:
+@@ -2324,7 +2325,9 @@ async def retry_archive(
+             )
+             try:
+                 with bind_task_context(new_task_id, self.ctx.account_id, self.ctx.user.user_id):
+-                    await get_queue_manager().enqueue(QueueManager.SESSION_COMMIT, msg.to_dict())
++                    await get_queue_manager().enqueue(
++                        QueueManager.SESSION_COMMIT, msg.to_dict(), group_key=msg.queue_group_key
++                    )
+             except Exception as exc:
+                 await tracker.fail(
+                     new_task_id,
+```
+
+**File**: `openviking/storage/queuefs/session_commit_msg.py` (modified, +10/-0)
+```diff
+@@ -2,6 +2,7 @@
+ # SPDX-License-Identifier: AGPL-3.0
+ """Persistent Session Phase 2 queue message."""
+ 
++import json
+ from dataclasses import asdict, dataclass, field, fields
+ from typing import Any, Dict, List
+ 
+@@ -35,6 +36,15 @@ class SessionCommitMsg:
+     # omitted true; only queued work, never saved user intent, inherits that value.
+     memory_policy_version: int = 1
+ 
++    @property
++    def queue_group_key(self) -> str:
++        """All sessions of one account/user share a streaming-memory consumer."""
++        return json.dumps(
++            [self.user["account_id"], self.user["user_id"]],
++            ensure_ascii=False,
++            separators=(",", ":"),
++        )
++
+     def to_dict(self) -> Dict[str, Any]:
+         return asdict(self)
+ 
+```
+
+**File**: `openviking/storage/queuefs/session_commit_processor.py` (modified, +2/-10)
+```diff
+@@ -75,15 +75,7 @@ async def _process_bound(self, msg: SessionCommitMsg, ctx: RequestContext) -> bo
+                     user_id=ctx.user.user_id,
+                 )
+                 return True
+-            processed = await session.resume_queued_commit(msg)
+-            if not processed:
+-                from openviking.storage.queuefs import QueueManager, get_queue_manager
+-
+-                await get_queue_manager().enqueue(
+-                    QueueManager.SESSION_COMMIT,
+-                    msg.to_dict(),
+-                )
+-            return processed
++            return await session.resume_queued_commit(msg)
+         finally:
+             reset_root_observability_context(root_context_token)
+ 
+@@ -129,4 +121,4 @@ async def on_dequeue(self, data: Optional[Dict[str, Any]]) -> ProcessResult:
+                 processed = await self._process(msg, ctx)
+             except Exception as exc:
+                 return ProcessResult.failed(str(exc))
+-        return ProcessResult.success() if processed else ProcessResult.requeued()
++        return ProcessResult.success() if processed else ProcessResult.retry()
+```
+
+**File**: `tests/conftest.py` (modified, +2/-0)
+```diff
+@@ -162,6 +162,8 @@ def get_dimension(self) -> int:
+     OpenVikingConfigSingleton.reset_instance()
+     OpenVikingConfigSingleton.initialize(
+         config_dict={
++            # Domain tests use a file-only fake; Watch leadership has dedicated fixtures.
++            "enable_watch_scheduler": False,
+             "storage": {
+                 "workspace": str(test_data_dir),
+                 "agfs": {"backend": "local"},
 ```
 
 ---
 
-### Incident Patch 3: `dbb22428` (2026-11-13)
-**Commit Message**: fix(react): keep the quick command tooltip when the description is truncated (#7558)
+### Incident Patch 3: `bfd935f4` (2026-11-16)
+**Commit Message**: fix(session): serialize explicit session creation (#6044)
 
-* fix(react): show the quick command tooltip only when a summary hides the description
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
 
-The empty state row prints `summary ?? description`, so a command without a
-`summary` had the same sentence in the row and in the Tooltip. Only mount the
-Tooltip when the host supplied a `summary`, which is the only case where the
-description is not already visible.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-* fix(react): keep the quick command tooltip when the description is truncated
-
-The empty state row prints `summary ?? description` and clips it to one line
-with an ellipsis, so a command without a `summary` lost the rest of its
-description once the panel narrowed. Mount the Tooltip whenever the row cannot
-show the text in full: a `summary` hides it, or the description is truncated.
-
-Truncation is measured per description node rather than on the list, because a
-longer text can appear while the container keeps its width. The measurement
-re-runs on resize and drops the Tooltip again when the text fits.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-* fix(react): keep the quick command tooltip subscrip
-
-**File**: `frontend/.changeset/quick-command-tooltip-summary.md` (added, +5/-0)
+**File**: `openviking/service/session_service.py` (modified, +3/-5)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+Show a quick command's description on hover only when the row cannot show it in full: when the command defines a `summary`, or when the description is truncated by the row's single-line ellipsis. The row prints `summary ?? description`, so a command without a `summary` used to repeat the same sentence in the Tooltip, while removing it outright hid the full text of a long description in a narrow panel.
+@@ -295,10 +295,6 @@ async def create(
+         """
+         self._record_lifecycle_metric("create", "attempt")
+         try:
+-            if session_id:
+-                existing = self.session(ctx, session_id)
+-                if await existing.exists():
+-                    raise AlreadyExistsError(f"Session '{session_id}' already exists")
+             session = self.session(ctx, session_id)
+             if memory_policy is not None:
+                 policy = MemoryPolicy.from_dict(memory_policy)
+@@ -321,7 +317,9 @@ async def create(
+                     event_tags,
+                     discard_invalid=True,
+                 )
+-            await session.ensure_exists()
++            created = await session.ensure_exists()
++            if session_id and not created:
++                raise AlreadyExistsError(f"Session '{session_id}' already exists")
+             self._record_lifecycle_metric("create", "ok")
+             return session
+         except Exception:
 ```
 
-**File**: `frontend/docs/docs/en/components/command-console.mdx` (modified, +1/-1)
+**File**: `openviking/session/session.py` (modified, +4/-3)
 ```diff
-@@ -29,7 +29,7 @@ The example uses fixed simulated data: submitting appends a pending record that
+@@ -790,23 +790,24 @@ async def is_materialized(self) -> bool:
+                 raise
+             return False
  
- ### Empty state and quick commands
- 
--Quick commands appear while there are no records. Clicking one only fills the input; press Enter to submit, and the first submission replaces the empty state with records.
-+Quick commands appear while there are no records. Clicking one only fills the input; press Enter to submit, and the first submission replaces the empty state with records. Each row shows its `summary`, falling back to `description`; hovering the row shows the full `description` when a `summary` is provided or when the description is truncated by the single-line ellipsis.
- 
- ```tsx file="../../_demos/command-console-empty.tsx" preview
+-    async def ensure_exists(self) -> None:
+-        """Materialize session root and messages file if missing."""
++    async def ensure_exists(self) -> bool:
++        """Materialize session state and return whether this call created it."""
+         # Initial state must not overwrite a concurrent append or commit.
+         session_path = self._viking_fs._uri_to_path(self._session_uri, ctx=self.ctx)
+         lease = await self._viking_fs._async_agfs.pathlock_acquire_exact(
+             session_path, timeout_secs=_SESSION_PHASE1_LOCK_TIMEOUT_SECONDS
+         )
+         try:
+             if await self.exists():
+-                return
++                return False
+             await self._viking_fs.mkdir(self._session_uri, exist_ok=True, ctx=self.ctx)
+             await self._viking_fs.write_file(
+                 f"{self._session_uri}/messages.jsonl",
+                 "",
+                 ctx=self.ctx,
+             )
+             await self._save_meta()
++            return True
+         finally:
+             await self._viking_fs._async_agfs.pathlock_release(lease)
  
 ```
 
-**File**: `frontend/docs/docs/zh/components/command-console.mdx` (modified, +1/-1)
+**File**: `tests/server/test_api_sessions.py` (modified, +49/-0)
 ```diff
-@@ -29,7 +29,7 @@ import '@openviking/react/components/command-console/style.css';
+@@ -642,6 +642,55 @@ async def append(self, messages):
+     assert meta["last_message_at"]
  
- ### 空态与快捷命令
  
--没有记录时显示快捷入口，点击只把命令填入输入区，按 Enter 才提交，提交后空态被记录取代。
-+没有记录时显示快捷入口，点击只把命令填入输入区，按 Enter 才提交，提交后空态被记录取代。每行显示 `summary`，省略时回退到 `description`；提供了 `summary`，或说明被单行省略截断时，悬停该行显示完整的 `description`。
- 
- ```tsx file="../../_demos/command-console-empty.tsx" preview
- 
-```
-
-**File**: `frontend/packages/react/src/components/command-console/command-console-empty.tsx` (modified, +55/-25)
-```diff
-@@ -8,6 +8,7 @@ import {
-   DEFAULT_COMMAND_CONSOLE_LABELS,
-   type ResolvedCommandConsoleLabels,
- } from './command-console-labels.js';
-+import { useCommandConsoleQuickOverflow } from './use-command-console-quick-overflow.js';
- 
- /**
-  * 按名称从宿主目录中取快捷命令，保持传入顺序，未命中的名称直接跳过。
-@@ -53,6 +54,10 @@ export function CommandConsoleEmptyRegion({
-   disabled?: boolean;
-   onPick: (value: string) => void;
- }) {
-+  // Hook 必须在提前返回之前调用；内置空态不渲染时列表 ref 为空，测量直接跳过。
-+  // Hooks run before the early returns; with no built-in empty state the list ref
-+  // stays null and the measurement is skipped.
-+  const { listRef, truncated } = useCommandConsoleQuickOverflow();
-   if (emptyState !== undefined) {
-     return emptyState === null ? null : (
-       <div className="ov-command-console__empty">{emptyState}</div>
-@@ -88,34 +93,59 @@ export function CommandConsoleEmptyRegion({
-       <p className="ov-command-console__empty-quick-label">
-         {labels.quickStart}
-       </p>
--      <ul className="ov-command-console__empty-list">
--        {commands.map((command) => (
--          <li key={command.name} className="ov-command-console__empty-item">
--            <Tooltip
--              content={command.description}
--              placement="top"
-+      <ul ref={listRef} className="ov-command-console__empty-list">
-+        {commands.map((command, index) => {
-+          const action = (
-+            <button
-+              type="button"
-+              className="ov-command-console__empty-action"
-               disabled={disabled}
--              className="ov-command-console__quick-tooltip"
-+              onClick={() => onPick(command.value)}
-             >
--              <button
--                type="button"
--                className="ov-command-console__empty-action"
--                disabled={disabled}
--                onClick={() => onPick(command.value)}
--              >
--                <ArrowRightIcon width={14} height={14} focusable="false" />
--                <span className="ov-command-console__empty-content">
--                  <span className="ov-command-console__empty-name">
--                    {command.name}
--                  </span>
--                  <span className="ov-command-console__empty-desc">
--                    {command.summary ?? command.description}
--                  </span>
-+              <ArrowRightIcon width={14} height={14} focusable="false" />
-+              <span className="ov-command-console__empty-content">
-+                <span className="ov-command-console__empty-name">
-+                  {command.name}
-+                </span>
-+                <span className="ov-command-console__empty-desc">
-+                  {command.summary ?? command.description}
-                 </span>
--              </button>
--            </Tooltip>
--          </li>
--        ))}
-+              </span>
-+            </button>
-+          );
-+          // 行内显示 summary ?? description：宿主另给了 summary 时完整说明被藏起来，
-+          // 没有 summary 但说明被单行省略截断时同样看不到全文。两种情况下 Tooltip
-+          // 才有行内没有的内容，其余情况弹出的会是同一句话。
-+          //
-+          // Tooltip 始终挂载、只切 disabled，而不是按需包一层：包与不包会替换整棵
-+          // 子树，说明节点随之卸载，截断测量仍盯着已脱离 DOM 的旧节点，测出的 0
-+          // 宽又会把 Tooltip 关掉。保持节点身份稳定，订阅才一直有效。
-+          //
-+          // The row shows `summary ?? description`: the full description is hidden
-+          // when the host supplied a `summary`, and equally when the description is
-+          // truncated by the single-line ellipsis. Only then does the Tooltip add
-+          // something the row does not already show.
-+          //
-+          // The Tooltip stays mounted and only toggles `disabled` instead of being
-+          // added on demand: adding it replaces the whole subtree, so the
-+          // description node unmounts while the measurement still watches the
-+          // detached old node, whose zero width then switches the Tooltip back off.
-+          // Keeping the node's identity stable keeps the subscription valid.
-+          const hasTooltip =
-+            command.summary !== undefined || truncated.includes(index);
-+          return (
-+            <li key={command.name} className="ov-command-console__empty-item">
-+              <Tooltip
-+                content={command.description}
-+                placement="top"
-+                disabled={disabled || !hasTooltip}
-+                className="ov-command-console__quick-tooltip"
-+              >
-+                {action}
-+              </Tooltip>
-+            </li>
-+          );
-+        })}
-       </ul>
-     </div>
-   );
-```
-
-**File**: `frontend/packages/react/src/components/command-console/use-command-console-quick-overflow.ts` (added, +119/-0)
-```diff
-@@ -0,0 +1,119 @@
-+import {
-+  useCallback,
-+  useEffect,
-+  useLayoutEffect,
-+  useRef,
-+  useState,
-+} from 'react';
++async def test_concurrent_create_with_explicit_id_has_single_winner(
++    client: httpx.AsyncClient,
++    monkeypatch,
++):
++    session_id = "concurrent-explicit-create"
++    request_count = 8
++    ready_count = 0
++    ready_lock = asyncio.Lock()
++    all_ready = asyncio.Event()
++    original_ensure_exists = Session.ensure_exists
 +
-+// 服务端渲染没有布局，useLayoutEffect 在那里只会告警；测量只在浏览器有意义。
-+// A server render has no layout, so a layout effect would only warn there.
-+const useMeasureEffect =
-+  typeof window === 'undefined' ? useEffect : useLayoutEffect;
++    async def synchronize_before_create(session):
++        nonlocal ready_count
++        if session.session_id == session_id:
++            async with ready_lock:
++                ready_count += 1
++                if ready_count == request_count:
++                    all_ready.set()
++            await asyncio.wait_for(all_ready.wait(), timeout=5)
++        return await original_ensure_exists(session)
 +
-+const DESC_SELECTOR = '.ov-command-console__empty-desc';
-+
-+/**
-+ * 跟踪哪些快捷命令的说明被单行省略截断，返回列表的 callback ref 与截断项下标。
-+ *
-+ * 说明是单行省略的文本，容器变窄或文案变长时会被截断，行内便看不到全文。
-+ *
-+ * 返回 callback ref 而不是 ref 对象：空态区域在快捷命令尚未匹配到、或宿主提供
-+ * 了 `emptyState` 时照样挂载却不渲染列表，此时没有可观察的节点。用 effect 建订阅
-+ * 会在这时提前返回，而空依赖的 effect 之后不会再跑，列表后来出现就永远没有观察器；
-+ * 列表隐藏再恢复时，旧观察器也仍绑在已卸载的节点上。callback ref 在节点挂载与
-+ * 卸载时各触发一次，订阅始终跟随当前列表。
-+ *
-+ * useLayoutEffect 必要性：是否截断取决于容器的布局宽度与文本的自然宽度，二者
-+ * 只有提交后才可测量，无法在渲染或事件里算出；窗口缩放和面板宽度变化都会改变
-+ * 结果。
-+ *
-+ * 观察列表容器，而不是说明节点：说明是网格列里的单行文本，宽度由列宽决定，
-+ * 文本溢出时它自己的 content box 不变，观察它收不到回调。容器宽度随面板与窗口
-+ * 变化，是可靠的触发源。
-+ *
-+ * 文案变长不改变任何盒尺寸，观察器不会回调，因此每次渲染后再测一次：测量只读
-+ * scrollWidth/clientWidth，不写 DOM，代价是一次同步布局查询。
-+ *
-+ * Tracks which quick command descriptions the single-line ellipsis truncates,
-+ * returning the list's callback ref and the truncated indices.
-+ *
-+ * A layout effect is required: truncation depends on the container's laid-out
-+ * width and the text's natural width, measurable only after commit, and both
-+ * change with the window and the panel.
-+ *
-+ * It returns a callback ref rather than a ref object: the empty region mounts
-+ * while no quick command resolves or while the host supplies `emptyState`, and
-+ * renders no list then. An effect would return early with no node to observe, and
-+ * an empty-dependency effect never runs again, so a list that appears later would
-+ * never get an observer; a list hidden and shown again would keep the observer on
-+ * the unmounted node. A callback ref fires on both mount and unmount, so the
-+ * subscription always follows the current list.
-+ *
-+ * The list container is observed rather than the description nodes: each
-+ * description is a single line inside a grid column, so its width follows the
-+ * column and its own content box does not change when the text overflows —
-+ * watching it receives no callback. The container's width tracks the panel and
-+ * the window.
-+ *
-+ * Longer copy changes no box at all, so the observer never fires; measuring after
-+ * every render covers it. The measurement only reads `scrollWidth`/`clientWidth`
-+ * and writes no DOM, so it costs one synchronous layout query.
-+ */
-+export function useCommandConsoleQuickOverflow() {
-+  const listRef = useRef<HTMLUListElement | null>(null);
-+  const observerRef = useRef<ResizeObserver | null>(null);
-+  const [truncated, setTruncated] = useState<readonly number[]>([]);
-+
-+  const measure = useCallback(() => {
-+    const list = listRef.current;
-+    if (!list) return;
-+    const next: number[] = [];
-+    list.querySelectorAll<HTMLElement>(DESC_SELECTOR).forEach((node, index) => {
-+      if (node.scrollWidth > node.clientWidth) next.push(index);
-+    });
-+    // 只在结果变化时提交，避免每次渲染都触发一轮新渲染。
-+    // Commit only on change so a render does not schedule another one.
-+    setTruncated((current) =>
-+      current.length === next.length &&
-+      current.every((value, index) => value === next[index])
-+        ? current
-+        : next,
-+    );
-+  }, []);
-+
-+  const attachList = useCallback(
-+    (list: HTMLUListElement | null) => {
-+      listRef.current = list;
-+      observerRef.current?.disconnect();
-+      observerRef.current = null;
-+      if (!list) {
-+        // 列表消失后下标不再对应任何一行，清空避免残留。
-+        // Without a list the indices point at nothing; drop them.
-+        setTruncated((current) => (current.length ? [] : current));
-+        return;
-+      }
-+      const observer = new ResizeObserver(measure);
-+      observer.observe(list);
-+      observerRef.current = observer;
-+      measure();
-+    },
-+    [measure],
-+  );
-+
-+  // 每次渲染后补测一次，覆盖文案变长这类不改变盒尺寸的变化。
-+  // Re-measure after every render to cover changes that resize no box, such as
-+  // longer copy.
-+  useMeasureEffect(measure);
-+
-+  // 订阅的建立与释放全部交给 callback ref：它在节点挂载时收到列表、卸载时收到
-+  // null。不要再加一个「卸载时断开」的 effect——StrictMode 会重放 effect 的
-+  // setup→cleanup→setup，却不会重新调用 DOM callback ref，cleanup 断开的订阅
-+  // 便无人恢复。
-+  //
-+  // The callback ref owns both ends of the subscription: it receives the list on
-+  // mount and null on unmount. Do not add an "disconnect on unmount" effect —
-+  // StrictMode replays an effect's setup→cleanup→setup without re-invoking DOM
-+  // callback refs, so a cleanup that disconnects leaves nothing to restore it.
-+  return { listRef: attachList, truncated };
-+}
-```
-
-**File**: `frontend/packages/react/test/command-console-empty-tooltip-lifecycle.test.mjs` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+import assert from 'node:assert/strict';
-+import { test } from 'node:test';
-+import { mount } from './helpers/command-console-dom.mjs';
-+import {
-+  hover,
-+  observedLists,
-+  resize,
-+  setDescWidth,
-+} from './helpers/quick-command-widths.mjs';
-+
-+const commands = [
-+  {
-+    name: 'ls',
-+    description: 'List directory entries',
-+    usage: 'ov ls [uri]',
-+  },
-+];
-+
-+const actions = (container) => [
-+  ...container.querySelectorAll('.ov-command-console__empty-action'),
-+];
-+
-+const withCommand = {
-+  commands,
-+  quickCommands: [{ name: 'ls', value: '' }],
-+};
-+
-+test('a list that appears after mount still gets observed', async () => {
-+  // 空态区域在没有匹配到快捷命令时照样挂载、但不渲染列表。订阅若只在首次挂载
-+  // 时建立，这里会因 ref 为空而跳过，之后列表出现也不会被观察。
-+  //
-+  // The empty region mounts without a list when no quick command resolves. A
-+  // subscription built only on first mount would skip it and never observe the
-+  // list that appears later.
-+  setDescWidth(1000);
-+  const view = await mount({ commands, quickCommands: [] });
-+  try {
-+    assert.equal(observedLists(), 0, 'no list, nothing to observe');
-+    await view.render(withCommand);
-+    assert.equal(observedLists(), 1, 'the list that appeared is observed');
-+    setDescWidth(80);
-+    await resize();
-+    assert.equal(
-+      await hover(actions(view.container)[0]),
-+      'List directory entries',
-+    );
-+  } finally {
-+    await view.dispose();
-+    setDescWidth(1000);
-+  }
-+});
-+
-+test('StrictMode keeps the list observed', async () => {
-+  // StrictMode 会重放 effect 的 setup→cleanup→setup，但不重新调用 DOM callback
-+  // ref。若另有 effect 在 cleanup 里断开订阅，这里就再也没人恢复它。
-+  //
-+  // StrictMode replays an effect's setup→cleanup→setup without re-invoking DOM
-+  // callback refs, so a cleanup that disconnects the subscription leaves nothing
-+  // to restore it.
-+  setDescWidth(1000);
-+  const view = await mount(withCommand, true, { strict: true });
-+  try {
-+    assert.equal(
-+      observedLists(),
-+      1,
-+      'the list stays observed under StrictMode',
-+    );
-+    setDescWidth(80);
-+    await resize();
-+    assert.equal(
-+      await hover(actions(view.container)[0]),
-+      'List directory entries',
-+    );
-+  } finally {
-+    await view.dispose();
-+    setDescWidth(1000);
-+  }
-+});
-+
-+test('a list hidden and shown again is observed afresh', async () => {
-+  // 列表消失后旧观察器绑在已卸载的节点上；恢复时必须重新订阅当前列表，否则
-+  // 之后的宽度变化收不到。
-+  //
-+  // Once the list goes away the old observer holds an unmounted node; showing it
-+  // again has to subscribe to the new one, or later resizes go unheard.
-+  setDescWidth(1000);
-+  const view = await mount(withCommand);
-+  try {
-+    assert.equal(observedLists(), 1);
-+    await view.render({ commands, quickCommands: [] });
-+    assert.equal(observedLists(), 0, 'the old list is no longer observed');
-+    await view.render(withCommand);
-+    assert.equal(observedLists(), 1, 'the new list is observed');
-+    setDescWidth(80);
-+    await resize();
-+    assert.equal(
-+      await hover(actions(view.container)[0]),
-+      'List directory entries',
-+    );
-+  } finally {
-+    await view.dispose();
-+    setDescWidth(1000);
-+  }
-+});
-```
-
-**File**: `frontend/packages/react/test/command-console-empty-tooltip.test.mjs` (added, +156/-0)
-```diff
-@@ -0,0 +1,156 @@
-+import assert from 'node:assert/strict';
-+import { test } from 'node:test';
-+import { mount } from './helpers/command-console-dom.mjs';
-+import {
-+  hover,
-+  resize,
-+  setDescWidth,
-+} from './helpers/quick-command-widths.mjs';
-+
-+const commands = [
-+  {
-+    name: 'ls',
-+    description: 'List directory entries',
-+    usage: 'ov ls [uri]',
-+  },
-+  {
-+    name: 'find',
-+    summary: 'Find matching context',
-+    description: 'Unused when a summary exists',
-+    usage: 'ov find <query>',
-+  },
-+];
-+
-+const actions = (container) => [
-+  ...container.querySelectorAll('.ov-command-console__empty-action'),
-+];
-+
-+test('a row shows its description on hover only when a summary hides it', async () => {
-+  const withSummary = await mount({
-+    commands,
-+    quickCommands: [{ name: 'find', value: '' }],
-+  });
-+  try {
-+    assert.equal(
-+      await hover(actions(withSummary.container)[0]),
-+      'Unused when a summary exists',
-+    );
-+  } finally {
-+    await withSummary.dispose();
-+  }
-+  const withoutSummary = await mount({
-+    commands,
-+    quickCommands: [{ name: 'ls', value: '' }],
-+  });
-+  try {
-+    assert.equal(await hover(actions(withoutSummary.container)[0]), null);
-+  } finally {
-+    await withoutSummary.dispose();
-+  }
-+});
-+
-+test('a truncated description keeps its tooltip without a summary', async () => {
-+  // 'List directory entries' 是 22 个字符，自然宽度 176px；容器给 80px 便截断。
-+  // The 22-character description measures 176px; an 80px container truncates it.
-+  setDescWidth(80);
-+  const view = await mount({
-+    commands,
-+    quickCommands: [{ name: 'ls', value: '' }],
-+  });
-+  try {
-+    assert.equal(
-+      await hover(actions(view.container)[0]),
-+      'List directory entries',
-+    );
-+  } finally {
-+    await view.dispose();
-+    setDescWidth(1000);
-+  }
-+});
-+
-+test('a description that fits keeps no tooltip and gains one when truncated', async () => {
-+  setDescWidth(1000);
-+  const view = await mount({
-+    commands,
-+    quickCommands: [{ name: 'ls', value: '' }],
-+  });
-+  try {
-+    assert.equal(await hover(actions(view.container)[0]), null);
-+    // 容器收窄后重新测量，Tooltip 随之出现。
-+    // Re-measuring after the container narrows brings the tooltip back.
-+    setDescWidth(80);
-+    await resize();
-+    assert.equal(
-+      await hover(actions(view.container)[0]),
-+      'List directory entries',
-+    );
-+    // 恢复宽度后说明完整可见，Tooltip 撤销。
-+    // Widening again makes the whole description visible, so the tooltip goes.
-+    setDescWidth(1000);
-+    await resize();
-+    assert.equal(await hover(actions(view.container)[0]), null);
-+  } finally {
-+    await view.dispose();
-+    setDescWidth(1000);
-+  }
-+});
-+
-+test('narrowing then widening repeatedly keeps tracking the current node', async () => {
-+  // 覆盖评审指出的节点替换问题：Tooltip 开关会替换子树，若观察器盯着旧节点，
-+  // 旧节点脱离文档后宽度为 0，第二轮收窄就再也测不到截断。
-+  //
-+  // Covers the stale-node regression: toggling the tooltip replaces the subtree,
-+  // and a watcher bound to the old node reads 0 once it detaches, so the second
-+  // narrowing would never be detected.
-+  setDescWidth(1000);
-+  const view = await mount({
-+    commands,
-+    quickCommands: [{ name: 'ls', value: '' }],
-+  });
-+  try {
-+    for (const width of [80, 1000, 80, 1000, 80]) {
-+      setDescWidth(width);
-+      await resize();
-+      const expected = width < 176 ? 'List directory entries' : null;
-+      assert.equal(await hover(actions(view.container)[0]), expected);
-+    }
-+  } finally {
-+    await view.dispose();
-+    setDescWidth(1000);
-+  }
-+});
-+
-+test('a longer description at the same width gains its tooltip', async () => {
-+  // 单行文本变长不改变节点盒尺寸，ResizeObserver 不会回调；只有按内容重测才
-+  // 能发现新的截断。这里不触发 resize，只替换 commands 的文案。
-+  //
-+  // A longer single-line text keeps the node's box unchanged, so the observer
-+  // never fires; only a content-driven re-measure reveals the new truncation.
-+  // No resize is fired here — only the command copy changes.
-+  setDescWidth(200);
-+  const short = [{ name: 'ls', description: 'Short', usage: 'ov ls [uri]' }];
-+  const view = await mount({
-+    commands: short,
-+    quickCommands: [{ name: 'ls', value: '' }],
-+  });
-+  try {
-+    assert.equal(await hover(actions(view.container)[0]), null);
-+    await view.render({
-+      commands: [
++    monkeypatch.setattr(Session, "ensure_exists", synchronize_before_create)
++    requests = [
 +        {
-+          name: 'ls',
-+          description: 'A much longer description that no longer fits the row',
-+          usage: 'ov ls [uri]',
-+        },
-+      ],
-+      quickCommands: [{ name: 'ls', value: '' }],
-+    });
-+    assert.equal(
-+      await hover(actions(view.container)[0]),
-+      'A much longer description that no longer fits the row',
-+    );
-+  } finally {
-+    await view.dispose();
-+    setDescWidth(1000);
-+  }
-+});
++            "session_id": session_id,
++            "auto_commit_policy": {"message_count_threshold": threshold},
++        }
++        for threshold in range(10, 10 + request_count)
++    ]
++
++    responses = await asyncio.wait_for(
++        asyncio.gather(*(client.post("/api/v1/sessions", json=request) for request in requests)),
++        timeout=10,
++    )
++
++    winners = [response for response in responses if response.status_code == 200]
++    conflicts = [response for response in responses if response.status_code == 409]
++    assert len(winners) == 1
++    assert len(conflicts) == request_count - 1
++    assert all(response.json()["error"]["code"] == "ALREADY_EXISTS" for response in conflicts)
++
++    persisted = await client.get(f"/api/v1/sessions/{session_id}")
++    assert persisted.status_code == 200
++    assert (
++        persisted.json()["result"]["auto_commit_policy"]
++        == winners[0].json()["result"]["auto_commit_policy"]
++    )
++
++
+ async def test_add_message_ignores_extra_metadata_fields(client: httpx.AsyncClient):
+     create_resp = await client.post("/api/v1/sessions", json={})
+     session_id = create_resp.json()["result"]["session_id"]
 ```
 
-**File**: `frontend/packages/react/test/helpers/command-console-dom.mjs` (modified, +25/-3)
+**File**: `tests/service/test_session_service_metrics.py` (modified, +1/-3)
 ```diff
-@@ -1,6 +1,6 @@
- import { after } from 'node:test';
- import { JSDOM } from 'jsdom';
--import { act, createElement, useState } from 'react';
-+import { act, createElement, StrictMode, useState } from 'react';
- import { CommandConsole } from '@openviking/react/components/command-console';
+@@ -25,8 +25,7 @@ async def test_create_keeps_working_when_lifecycle_metrics_fail(monkeypatch: pyt
+     service = SessionService()
+     ctx = _make_ctx()
+     session = Mock()
+-    session.exists = AsyncMock(return_value=False)
+-    session.ensure_exists = AsyncMock()
++    session.ensure_exists = AsyncMock(return_value=True)
+     debug = Mock()
  
- const dom = new JSDOM('<!doctype html><html><body></body></html>', {
-@@ -13,6 +13,19 @@ Object.defineProperty(globalThis, 'navigator', {
-   value: dom.window.navigator,
- });
- globalThis.IS_REACT_ACT_ENVIRONMENT = true;
-+// jsdom 没有 ResizeObserver，而快捷命令的截断测量依赖它；替身只记录目标、
-+// 从不回调，测试断言的是渲染结果而非尺寸变化。需要模拟尺寸的用例自行覆盖。
-+//
-+// jsdom has no ResizeObserver and the quick-command truncation measurement needs
-+// one; the stub records its target and never calls back, since these tests assert
-+// on rendered output rather than size changes. Cases that need sizes override it.
-+if (typeof globalThis.ResizeObserver === 'undefined') {
-+  globalThis.ResizeObserver = class {
-+    observe() {}
-+    unobserve() {}
-+    disconnect() {}
-+  };
-+}
- const { createRoot } = await import('react-dom/client');
- after(() => dom.window.close());
+     def _boom(*_args, **_kwargs):
+@@ -39,7 +38,6 @@ def _boom(*_args, **_kwargs):
+     result = await service.create(ctx, "sess-1")
  
-@@ -33,7 +46,7 @@ export const record = (content, id = 'one') => ({
-   content,
- });
+     assert result is session
+-    session.exists.assert_awaited_once()
+     session.ensure_exists.assert_awaited_once()
+     assert debug.call_count == 2
  
--export async function mount(props = {}, controlled = true) {
-+export async function mount(props = {}, controlled = true, options = {}) {
-   const container = document.createElement('div');
-   document.body.append(container);
-   const root = createRoot(container);
-@@ -45,9 +58,18 @@ export async function mount(props = {}, controlled = true) {
-       controlled ? { ...input, value, onValueChange: setValue } : input,
-     );
-   }
-+  // StrictMode 会重放 effect 的 setup→cleanup→setup，但不重新调用 DOM
-+  // callback ref；订阅类实现必须在这个模式下同样成立。
-+  //
-+  // StrictMode replays an effect's setup→cleanup→setup without re-invoking DOM
-+  // callback refs, so a subscription must survive that replay too.
-+  const tree = (input) => {
-+    const host = createElement(Host, { input });
-+    return options.strict ? createElement(StrictMode, null, host) : host;
-+  };
-   const render = async (next = {}) => {
-     current = { ...current, ...next };
--    await act(() => root.render(createElement(Host, { input: current })));
-+    await act(() => root.render(tree(current)));
-   };
-   await render();
-   return {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7635** (2026-11-13): ci(react): publish GitHub releases with bilingual notes (@LaamGinghong)
-- **PR #7628** (2026-11-13): chore(react): prepare 0.1.11 stable release (@LaamGinghong)
-- **PR #7626** (2026-11-13): fix(react): highlight conversation error notices (@LaamGinghong)
-- **PR #7613** (closed): feat(superagent): load Role from OpenViking soul.md (@openviking-superagent)
-- **PR #7611** (2026-11-13): fix(superagent): show the model the text of a quoted message (@t0saki)
-- **PR #7609** (2026-11-13): feat(react): isolate rendering failures and support local retries (@LaamGinghong)
+- **PR #7746** (2026-11-16): fix(parse): keep Markdown that is not YAML frontmatter (@123XieC)
+- **PR #7744** (2026-11-16): feat(studio): show the connected OpenViking version in the sidebar footer (@zuoanCo)
+- **PR #7740** (closed): fix(dsh-memory-plugin): never give up on a returning server (@lztxwd6666)
+- **PR #7735** (closed): parse: resolve percent-encoded image destinations (@Batianxieshen1)
+- **PR #7734** (closed): fix(mcp): expose metadata-only retrieval tag updates (@xixi-box)
+- **PR #7733** (2026-11-16): fix(superagent): accept reactions from other Lark apps (@r266-tech)
 
 ---
 
@@ -2867,42 +2382,54 @@ Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react): align the file browser search dialog with the console design (#7570)
+## X. ci): route Linux API jobs and wheel builds to dedicated runner
 
 **RULE**:
-When implementing operations in `frontend/.changeset/file-browser-search-design-alignment.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/CI.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf14a0cb`: react): align the file browser search dialog with the console design (#7570). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a6e51f0`: ci): route Linux API jobs and wheel builds to dedicated runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/.changeset/file-browser-search-design-alignment.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/CI.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
----
-'@openviking/react': patch
----
+With repository variable `CI_LINUX_BUILDS_ENABLED=true`, trusted Linux API jobs
+use `[self-hosted, Linux, X64, ci-linux-builds]`. Linux x86_64 wheel builds
+alternate between GitHub-hosted and this dedicated pool.
+Only the dedicated runner `iv-yezentk8ao3z47ge5tmm` has that custom label; runner
+display names do not select machines.
+Linux wheels use the dedicated runner on even workflow run numbers.
+API native runtime preparation and its short change-planning job always use
+the dedicated runner for eligible events, regardless of workflow run number.
+The planning job runs Git/Python on the host with a five-minute execution limit.
+Linux API/CLI, MySQL/Redis and
+cuVS tests inherit their same-run native producer's destination. This keeps the
+entire trusted Linux API dependency chain off the hosted queue.
+Wheel builds send 50% of consecutive runs to each destination, and reruns keep
+the same destination. This is not half of all Linux jobs or an equal share of
+execution time. Conditional skips can change the observed share.
+The old ECS runner does not receive these jobs.
 
-Align the FileBrowser search dialog with the console design and drop the result preview panel it gained in 0.1.10.
-
-- The empty state shows the design's artwork above the title and hint instead of two centred lines of text.
-- Results fill the dialog width again: the hover/keyboard preview panel and its split layout are gone, and each row keeps its bottom divider, 24px icon tile and 14px name. `↑`/`↓` still move the current row and `Enter` opens it.
-- The count line reads `N results ・ [mode] Vector retrieval Switch` in the design's order, and appears only when there are results; the empty, loading and failure states no longer carry it.
-- The advanced panel takes the design's `bg-2` surface, and the mode menu its 259px popover with a 6px radius and card shadow.
-
-BREAKING CHANGE: `FileBrowserLabels.searchPreview`, `searchPreviewEmpty` and `searchPreviewFailed` are removed, because the search dialog no longer previews results. Drop those overrides; the keys have no effect.
+Only official repository PRs from the same repository and branch pushes are
+eligible. Release/tag events, schedules, ma
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+Builds and ordinary tests use GitHub-hosted runners to measure build reuse and
+cache behavior independently of self-hosted machine capacity. There is no
+`ov-ci-runner` scheduling or manual selection in these workflows.
+The existing P0 Memory Tests remain on their original ECS environment, selected
+with `[self-hosted, Linux, X64, openviking-ecs]`. That runner must have the
+`openviking-ecs` custom label; its display name alone does not select it.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf14a0cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a6e51f0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

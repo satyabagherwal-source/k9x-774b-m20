@@ -10259,3 +10259,5 @@
 | `CYCLE-20261116-O4IN` | `2026-11-16T07:19:48.959Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8724` | Yes (`10f08cf6...`) |
 | `CYCLE-20261116-AK9L` | `2026-11-16T07:37:15.801Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8725` | Yes (`1cedd318...`) |
 | `CYCLE-20261116-KJRH` | `2026-11-16T07:45:01.709Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8726` | Yes (`21d14b8a...`) |
+| `CYCLE-20261116-CFYM` | `2026-11-16T08:06:43.150Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8727` | Yes (`01b2d3ce...`) |
+| `CYCLE-20261116-IDB4` | `2026-11-16T08:11:19.648Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8728` | Yes (`b1d9abf3...`) |

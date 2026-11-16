@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T15:59:55.573Z",
+  "timestamp": "2026-11-16T08:11:23.312Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zed-industries-zed-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zed-industries-zed-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T15:59:55.573Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T08:11:23.312Z`  
 > **Learning ID**: `LEARN-EVO-zed-industries-zed-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `99c890d3`  
+> **Source Version**: `a57e2fdc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T15:59:48.646Z  
+> **Timestamp**: 2026-11-16T08:11:18.483Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:59:48.641Z  
+> **Harvest Timestamp**: 2026-11-16T08:01:17.118Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 95026 stars
+- **Stars / Engagement**: 95120 stars
 
 ---
 
@@ -2359,558 +2359,282 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5a40bc8b` (2026-11-13)
-**Commit Message**: gpui_web: Fix safe-area insets under a strict style CSP (#66907)
+### Incident Patch 1: `053d91cb` (2026-11-16)
+**Commit Message**: agent_ui: Check for an empty message without copying the text (#67020)
 
 ## Summary
 
-gpui web uses exploratory divs to learn about the unusable deadspace on
-the margins of a device's screen, which it calls safe-area insets.
+`MessageEditor::is_empty` copied the whole draft with `text(cx)` to
+check whether it was blank. It now reads characters from the buffer
+until one isn't whitespace. `str::trim` removes exactly the characters
+that `char::is_whitespace` matches, so the result is the same.
 
-When doing this, it uses html `style` attributes with raw css
-parameters. In modern web development, is typical to use a
-`Content-Security-Policy` to block `unsafe-inline` css in html. This
-feature breaks when such security settings are in use.
+The thread view calls it on every render, through `render_send_button`.
+The thread view's observer on the message editor also copied the text
+each time the editor notified, to check for an empty draft. It now uses
+`Editor::is_empty`, which reads the buffer length.
 
-However, while raw CSS in the style element is not permitted, even with
-the CSP set to block `unsafe-inline` style attributes, it still permits
-some direct adjustments via CSSOM with `el.style.setProperty(p, v)`.
-This workaround is already used by gpui web on the canvas and IME
-elements.
+Both `is_empty` checks timed on a `rope::Rope` in a release build,
+median per call:
 
-See
-*
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src
-*
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src-attr
+| Draft size | Before | After | Speedup |
+|---|---|---|---|
+| 1 KB | 112 ns | 22 ns | 5x |
+| 16 KB | 1.1 µs | 24 ns | 46x |
+| 256 KB | 16.6 µs | 28 ns | 590x |
+| 4 MB | 271 µs | 33 ns | 8,200x |
 
 ## Testing
 
-I have manually reviewed this change in WebKit, Chromium, and Gecko. All
-modern web engines support this workaround and document it as safe.
+- `cargo test -p agent_ui --lib message_editor` passes.
+- `cargo test -p agent_ui --lib conversation_view` passes.
+- `./script/clippy -p agent_ui` passes.
 
 ## Self-review
 
-- [x] I've reviewed my diff for quality, security, reliabi
+- [x] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[chec
 
-**File**: `crates/gpui_web/src/viewport.rs` (modified, +18/-9)
+**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +1/-1)
 ```diff
-@@ -113,14 +113,23 @@ fn safe_area_probe(
-         .map_err(|error| anyhow::anyhow!("Failed to create safe-area probe: {error:?}"))?
-         .dyn_into::<web_sys::HtmlElement>()
-         .map_err(|error| anyhow::anyhow!("Invalid safe-area probe element: {error:?}"))?;
--    probe
--        .set_attribute(
--            "style",
--            &format!(
--                "position:fixed;left:0;top:0;width:0;padding:0;border:0;visibility:hidden;\
--                 pointer-events:none;height:env(safe-area-inset-{edge},0px)"
--            ),
--        )
--        .map_err(|error| anyhow::anyhow!("Failed to style safe-area probe: {error:?}"))?;
-+    let height = format!("env(safe-area-inset-{edge},0px)");
-+    // A CSP that blocks inline styles still allows per-property CSSOM writes.
-+    let style = probe.style();
-+    for (property, value) in [
-+        ("position", "fixed"),
-+        ("left", "0"),
-+        ("top", "0"),
-+        ("width", "0"),
-+        ("padding", "0"),
-+        ("border", "0"),
-+        ("visibility", "hidden"),
-+        ("pointer-events", "none"),
-+        ("height", height.as_str()),
-+    ] {
-+        style.set_property(property, value).map_err(|error| {
-+            anyhow::anyhow!("Failed to set safe-area probe {property} style: {error:?}")
-+        })?;
-+    }
-     Ok(probe)
- }
+@@ -1229,7 +1229,7 @@ impl ThreadView {
+                 this._draft_resolve_task.take();
+                 return;
+             }
+-            let is_empty = editor.read(cx).text(cx).is_empty();
++            let is_empty = editor.read(cx).editor().read(cx).is_empty(cx);
+             let draft_contents_task = if is_empty {
+                 None
+             } else {
+```
+
+**File**: `crates/agent_ui/src/message_editor.rs` (modified, +7/-1)
+```diff
+@@ -759,7 +759,13 @@ impl MessageEditor {
+     }
+ 
+     pub fn is_empty(&self, cx: &App) -> bool {
+-        self.editor.read(cx).text(cx).trim().is_empty()
++        self.editor
++            .read(cx)
++            .buffer()
++            .read(cx)
++            .read(cx)
++            .chars_at(MultiBufferOffset(0))
++            .all(char::is_whitespace)
+     }
+ 
+     pub fn is_completions_menu_visible(&self, cx: &App) -> bool {
 ```
 
 ---
 
-### Incident Patch 2: `dc93abce` (2026-11-13)
-**Commit Message**: gpui: Keep macOS notification service calls off the UI thread (#66934)
-
-## Problem
-
-macOS notification APIs can synchronously wait for the notification
-service, even when they expose completion handlers. A captured
-main-thread stack showed notification dismissal blocked in
-`removePendingNotificationRequestsWithIdentifiers:` →
-`__NSXPCCONNECTION_IS_WAITING_FOR_A_SYNCHRONOUS_REPLY__`. GPUI called
-that API on the UI thread while holding its platform-state mutex,
-freezing the interface until macOS replied.
-
-## Changes
-
-- Lazily start one dedicated notification thread that owns the
-notification center, delegate, authorization state, and registered
-categories.
-- Queue posting and dismissal in FIFO order so a delayed dismissal
-cannot overtake a replacement notification. Initialization and native
-calls happen on the worker; notification responses still return through
-the foreground executor.
-- Return a `Task<()>` from `dismiss_system_notification`, allowing
-callers to await completion without blocking the UI. Completion means
-the platform calls returned, not that asynchronous OS work finished.
-Dropping the task does not cancel dismissal. Update the other platform
-implementations, example, 
-
-**File**: `crates/gpui/examples/system_notifications.rs` (modified, +1/-1)
-```diff
-@@ -63,7 +63,7 @@ impl Render for SystemNotificationExample {
-                     )))
-                     .child(
-                         button("dismiss", "Dismiss").on_click(cx.listener(|this, _, _, cx| {
--                            cx.dismiss_system_notification(NOTIFICATION_TAG);
-+                            cx.dismiss_system_notification(NOTIFICATION_TAG).detach();
-                             this.status = "Dismissed the notification".into();
-                             cx.notify();
-                         })),
-```
-
-**File**: `crates/gpui/src/app.rs` (modified, +5/-2)
-```diff
-@@ -2085,8 +2085,11 @@ impl App {
-     ///
-     /// Best-effort: some platforms cannot retract a notification once shown,
-     /// in which case it ages out of the notification center on its own.
--    pub fn dismiss_system_notification(&self, tag: &str) {
--        self.platform.dismiss_system_notification(tag);
-+    /// The task completes after the platform calls return, not after any
-+    /// asynchronous work inside the operating system. Dropping it does not
-+    /// cancel dismissal.
-+    pub fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
-+        self.platform.dismiss_system_notification(tag)
-     }
- 
-     /// Registers the handler invoked when the user activates a system
-```
-
-**File**: `crates/gpui/src/app/test_context.rs` (modified, +2/-2)
-```diff
-@@ -1424,7 +1424,7 @@ mod tests {
-             }]
-         );
- 
--        cx.update(|cx| cx.dismiss_system_notification("thread-1"));
-+        cx.update(|cx| cx.dismiss_system_notification("thread-1").detach());
-         assert!(cx.delivered_system_notifications().is_empty());
-         assert_eq!(cx.dismissed_system_notifications(), ["thread-1"]);
-     }
-@@ -1499,7 +1499,7 @@ mod tests {
-                 actions: Vec::new(),
-             });
-             cx.on_system_notification_response(|response, cx| {
--                cx.dismiss_system_notification(&response.tag);
-+                cx.dismiss_system_notification(&response.tag).detach();
-             });
-         });
- 
-```
-
-**File**: `crates/gpui/src/platform.rs` (modified, +5/-1)
-```diff
-@@ -579,8 +579,12 @@ pub trait Platform: 'static {
-     ///
-     /// Best-effort: some platforms cannot retract a notification once shown,
-     /// in which case it ages out of the notification center on its own.
--    fn dismiss_system_notification(&self, tag: &str) {
-+    /// The task completes after the platform calls return, not after any
-+    /// asynchronous work inside the operating system. Dropping it does not
-+    /// cancel dismissal.
-+    fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
-         _ = tag;
-+        Task::ready(())
-     }
- 
-     /// Registers the callback invoked when the user activates a system
-```
-
-**File**: `crates/gpui/src/platform/test/platform.rs` (modified, +2/-1)
-```diff
-@@ -735,14 +735,15 @@ impl Platform for TestPlatform {
-         system_notifications.shown.push(notification);
-     }
- 
--    fn dismiss_system_notification(&self, tag: &str) {
-+    fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
-         let mut system_notifications = self.system_notifications.borrow_mut();
-         system_notifications
-             .delivered
-             .retain(|notification| notification.tag != tag);
-         system_notifications
-             .dismissed
-             .push(SharedString::from(tag.to_string()));
-+        Task::ready(())
-     }
- 
-     fn on_system_notification_response(
-```
-
-**File**: `crates/gpui_linux/src/linux/platform.rs` (modified, +2/-1)
-```diff
-@@ -1005,8 +1005,9 @@ impl Platform for LinuxPlatform {
-         });
-     }
- 
--    fn dismiss_system_notification(&self, tag: &str) {
-+    fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
-         self.with_common(|common| common.system_notifications.dismiss(tag));
-+        Task::ready(())
-     }
- 
-     fn on_system_notification_response(
-```
-
-**File**: `crates/gpui_macos/src/platform.rs` (modified, +19/-5)
-```diff
-@@ -2,6 +2,7 @@ use crate::{
-     AppleActivity, AppleDispatcher, BoolExt, MacDisplay, MacKeyboardLayout, MacKeyboardMapper,
-     MacWindow, events::key_to_menu_equivalent, main_thread_marker, ns_string,
-     pasteboard::Pasteboard, renderer, set_active_window_cursor_style,
-+    system_notifications::NotificationCommand,
- };
- use anyhow::{Context as _, anyhow};
- use block2::RcBlock;
-@@ -1128,14 +1129,27 @@ impl Platform for MacPlatform {
- 
-     fn show_system_notification(&self, notification: gpui::SystemNotification) {
-         let mut state = self.0.lock();
--        let executor = state.foreground_executor.clone();
--        state.system_notifications.show(&executor, notification);
-+        let foreground_executor = state.foreground_executor.clone();
-+        let background_executor = state.background_executor.clone();
-+        state
-+            .system_notifications
-+            .send(
-+                &foreground_executor,
-+                &background_executor,
-+                NotificationCommand::Show(notification),
-+            )
-+            .detach();
-     }
- 
--    fn dismiss_system_notification(&self, tag: &str) {
-+    fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
-         let mut state = self.0.lock();
--        let executor = state.foreground_executor.clone();
--        state.system_notifications.dismiss(&executor, tag);
-+        let foreground_executor = state.foreground_executor.clone();
-+        let background_executor = state.background_executor.clone();
-+        state.system_notifications.send(
-+            &foreground_executor,
-+            &background_executor,
-+            NotificationCommand::Dismiss(gpui::SharedString::from(tag.to_owned())),
-+        )
-     }
- 
-     fn on_system_notification_response(
-```
-
-**File**: `crates/gpui_macos/src/system_notifications.rs` (modified, +162/-56)
-```diff
-@@ -4,19 +4,24 @@
- //! so nothing can trigger the authorization prompt or the framework's
- //! not-in-a-bundle abort) until the application posts a notification or
- //! registers a response callback.
-+//!
-+//! Notification-center calls can synchronously wait for the macOS service.
-+//! A single worker owns the center so those waits never block the UI, while
-+//! preserving the order of posting and dismissing notifications.
- 
--use std::cell::{Cell, RefCell};
-+use std::cell::RefCell;
- use std::collections::HashMap;
- use std::rc::Rc;
-+use std::sync::mpsc::{Sender, channel};
- 
- use block2::RcBlock;
- use futures::StreamExt as _;
--use futures::channel::mpsc;
-+use futures::channel::{mpsc, oneshot};
- use gpui::{
--    ForegroundExecutor, SharedString, SystemNotification, SystemNotificationAction,
--    SystemNotificationResponse, Task,
-+    BackgroundExecutor, ForegroundExecutor, SharedString, SystemNotification,
-+    SystemNotificationAction, SystemNotificationResponse, Task,
- };
--use objc2::rc::Retained;
-+use objc2::rc::{Retained, autoreleasepool};
- use objc2::runtime::{Bool, ProtocolObject};
- use objc2::{AnyThread, DefinedClass, define_class, msg_send};
- use objc2_foundation::{NSArray, NSBundle, NSError, NSObject, NSObjectProtocol, NSSet, NSString};
-@@ -30,35 +35,55 @@ use objc2_user_notifications::{
- 
- type ResponseCallback = Rc<RefCell<Option<Box<dyn FnMut(SystemNotificationResponse)>>>>;
- 
-+#[cfg_attr(test, derive(Debug, PartialEq, Eq))]
-+pub(crate) enum NotificationCommand {
-+    Show(SystemNotification),
-+    Dismiss(SharedString),
-+}
-+
- pub(crate) struct SystemNotificationState {
-     initialized: bool,
--    center: Option<NotificationCenter>,
-+    commands: Option<Sender<(NotificationCommand, oneshot::Sender<()>)>>,
-     callback: ResponseCallback,
-+    /// The center's `delegate` property is weak; keeping the delegate retained
-+    /// here keeps response handling alive for the app's lifetime.
-+    _delegate: Option<Retained<NotificationResponseDelegate>>,
-     _response_task: Option<Task<()>>,
- }
- 
- impl SystemNotificationState {
-     pub(crate) fn new() -> Self {
-         Self {
-             initialized: false,
--            center: None,
-+            commands: None,
-             callback: Rc::new(RefCell::new(None)),
-+            _delegate: None,
-             _response_task: None,
-         }
-     }
- 
--    pub(crate) fn show(&mut self, executor: &ForegroundExecutor, notification: SystemNotification) {
--        self.initialize(executor);
--        if let Some(center) = &self.center {
--            center.show(notification);
--        }
--    }
--
--    pub(crate) fn dismiss(&mut self, executor: &ForegroundExecutor, tag: &str) {
--        self.initialize(executor);
--        if let Some(center) = &self.center {
--            center.dismiss(tag);
-+    pub(crate) fn send(
-+        &mut self,
-+        foreground_executor: &ForegroundExecutor,
-+        background_executor: &BackgroundExecutor,
-+        command: NotificationCommand,
-+    ) -> Task<()> {
-+        self.initialize(foreground_executor);
-+        let Some(commands) = &self.commands else {
-+            return Task::ready(());
-+        };
-+        let (completed, completion) = oneshot::channel();
-+        if let Err(error) = commands.send((command, completed)) {
-+            log::error!("system notification worker disconnected: {error}");
-+            return Task::ready(());
-         }
-+        background_executor.spawn(async move {
-+            if let Err(error) = completion.await {
-+                log::error!(
-+                    "system notification worker stopped before completing a command: {error}"
-+                );
-+            }
-+        })
-     }
- 
-     pub(crate) fn on_response(
-@@ -76,11 +101,45 @@ impl SystemNotificationState {
-         }
-         self.initialized = true;
- 
-+        // UserNotifications aborts outside an app bundle. Checking the bundle
-+        // does not contact the notification service.
-+        if NSBundle::mainBundle().bundleIdentifier().is_none() {
-+            log::info!("system notifications disabled: not running from an app bundle");
-+            return;
-+        }
-+
-         let (sender, mut receiver) = mpsc::unbounded();
--        self.center = NotificationCenter::new(sender);
--        if self.center.is_none() {
-+        // Install the delegate before returning so a response delivered right
-+        // after registration (e.g. the click that launched the app) has
-+        // somewhere to go. Setting the delegate doesn't wait on the
-+        // notification service, unlike the calls handled by the worker.
-+        let delegate = autoreleasepool(|_| {
-+            let delegate = NotificationResponseDelegate::new(sender);
-+            UNUserNotificationCenter::currentNotificationCenter()
-+                .setDelegate(Some(ProtocolObject::from_ref(&*delegate)));
-+            delegate
-+        });
-+        self._delegate = Some(delegate);
-+
-+        let (commands, pending_commands) = channel::<(NotificationCommand, oneshot:
-```
-
----
-
-### Incident Patch 3: `2568d560` (2026-11-14)
-**Commit Message**: settings_content: Fix outdated defaults in setting doc comments (#66974)
+### Incident Patch 2: `4cc3e27d` (2026-11-14)
+**Commit Message**: editor: Build completion sort keys once per match (#66959)
 
 ## Summary
 
-> In the doc comments inside Zed's settings code, there were 11 settings
-where the default value written after "Default:" differs from the actual
-default value (`default.json`).
->
-> For `terminal.bell`, the description of the PR that added it (#53752)
-says it is "enabled by default", but the merged value is `"off"`, and
-the release note also says "can be enabled by setting `terminal.bell` to
-`"system"`", so I judged that `"off"` is correct.
->
-> This is related to #53323, but I did not fix the settings mentioned in
-that issue (such as `proxy`), so I did not use "Closes".
+The completions menu sorts its matches on the main thread on every
+keystroke while it is open. `sort_unstable_by_key` builds the sort key
+twice per comparison, and the key clones the match positions and scans
+the candidate. `sort_by_cached_key` builds each key once.
 
-(Machine-translated from Japanese. Original:)
+The sort is now stable: ties keep the fuzzy matcher order.
 
-Zed
-の設定のコード内にある説明コメントで、「Default:」に書かれた既定値が、実際の既定値（`default.json`）と違うものが11個ありました。
+A copy of the key function outside Zed, sorting 1000 synthetic matches:
+1.75 ms before, 0.13 ms after (about 20,500 key builds down to 1,000).
 
-`terminal.bell` は、追加したPR（#53752）の本文に「既定で有効」とありますが、マージされた値は
-`"off"`、リリースノートも「`"system"` にすると有効になる」となっていたので、`"off"` が正しいと判断。
+## Testing
 
-#53323 に関連しますが、この issue で挙げられている設定（`proxy` など）は直していないので、Closes にはしていない。
+`cargo test -p editor --lib completion` passes, including the sort-order
+tests in `code_completion_tests.rs`.
 
-| Setting | Doc comment said | `default.json` |
-| --- | --- | --- |
-| `expand_excerpt_lines` | `3` | `5` |
-| `diagnostics_max_severity` | `warning` | `all` |
-| `terminal.line_height` | `comfortable` | `standard
+## Self-review
 
-**File**: `crates/settings_content/src/agent.rs` (modified, +1/-1)
+- [x] I have reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [x] Tests cover the new or changed behavior.
+
+Release Notes:
+
+- Improved responsiveness of the completions menu with many matches
+
+**File**: `crates/editor/src/code_completion_tests.rs` (modified, +63/-3)
 ```diff
-@@ -370,7 +370,7 @@ pub struct AgentSettingsContent {
-     pub terminal_init_command: Option<String>,
-     /// How thinking blocks should be displayed by default in the agent panel.
-     ///
--    /// Default: automatic
-+    /// Default: auto
-     pub thinking_display: Option<ThinkingBlockDisplay>,
-     /// Whether clicking the stop button on a running terminal tool should also cancel the agent's generation.
-     /// Note that this only applies to the stop button, not to ctrl+c inside the terminal.
-```
-
-**File**: `crates/settings_content/src/editor.rs` (modified, +2/-2)
-```diff
-@@ -138,7 +138,7 @@ pub struct EditorSettingsContent {
- 
-     /// How many lines to expand the multibuffer excerpts by default
-     ///
--    /// Default: 3
-+    /// Default: 5
-     pub expand_excerpt_lines: Option<u32>,
- 
-     /// How many lines of context to provide in multibuffer excerpts by default
-@@ -222,7 +222,7 @@ pub struct EditorSettingsContent {
-     ///
-     /// Shows all diagnostics if not specified.
-     ///
--    /// Default: warning
-+    /// Default: all
-     pub diagnostics_max_severity: Option<DiagnosticSeverityContent>,
- 
-     /// Whether to show code action button at start of buffer line.
-```
-
-**File**: `crates/settings_content/src/project.rs` (modified, +1/-1)
-```diff
-@@ -847,7 +847,7 @@ pub struct BranchPickerSettingsContent {
-     pub date_style: Option<GitDateStyle>,
-     /// Whether to show author name as part of the commit information.
-     ///
--    /// Default: false
-+    /// Default: true
-     pub show_author_name: Option<bool>,
+@@ -393,6 +393,58 @@ async fn test_semver_label_sort_by_latest_version(cx: &mut TestAppContext) {
+     }
  }
  
++#[gpui::test]
++async fn test_sort_keeps_order_of_equal_keys(cx: &mut TestAppContext) {
++    // Overloads share filter text, sort text and kind, so their sort keys are equal.
++    // An unstable sort only reorders equal elements in longer slices,
++    // hence the number of overloads.
++    let functions = ["eprint", "println", "print"];
++    let completions = (0..16)
++        .flat_map(|arity| {
++            functions.map(|function| {
++                CompletionBuilder::function(
++                    &format!("{function}/{arity}"),
++                    Some(function),
++                    "80000000",
++                )
++            })
++        })
++        .collect::<Vec<_>>();
++
++    let query = "print";
++    let mut matches = filter_matches(query, &completions, cx).await;
++    assert_eq!(matches.len(), completions.len());
++    // The matcher returns its results ordered by score, which is close to the sorted order.
++    // Interleave the functions instead, to spread each group of equal keys over the input.
++    matches.sort_by_key(|string_match| string_match.candidate_id);
++    let unsorted_matches = matches.clone();
++
++    let sorted_matches = CompletionsMenu::sort_string_matches(
++        matches,
++        Some(query),
++        SnippetSortOrder::default(),
++        &completions,
++    );
++
++    // The exact match goes first, the match that does not start a word goes last.
++    let mut expected_candidate_ids = Vec::new();
++    for function in ["print", "println", "eprint"] {
++        expected_candidate_ids.extend(
++            unsorted_matches
++                .iter()
++                .filter(|string_match| string_match.string == function)
++                .map(|string_match| string_match.candidate_id),
++        );
++    }
++    assert_eq!(
++        sorted_matches
++            .iter()
++            .map(|string_match| string_match.candidate_id)
++            .collect::<Vec<_>>(),
++        expected_candidate_ids
++    );
++}
++
+ async fn test_for_each_prefix<F>(
+     target: &str,
+     completions: &Vec<Completion>,
+@@ -497,6 +549,15 @@ async fn filter_and_sort_matches(
+     completions: &Vec<Completion>,
+     snippet_sort_order: SnippetSortOrder,
+     cx: &mut TestAppContext,
++) -> Vec<StringMatch> {
++    let matches = filter_matches(query, completions, cx).await;
++    CompletionsMenu::sort_string_matches(matches, Some(query), snippet_sort_order, completions)
++}
++
++async fn filter_matches(
++    query: &str,
++    completions: &Vec<Completion>,
++    cx: &mut TestAppContext,
+ ) -> Vec<StringMatch> {
+     let candidates: Arc<[StringMatchCandidate]> = completions
+         .iter()
+@@ -505,7 +566,7 @@ async fn filter_and_sort_matches(
+         .collect();
+     let cancel_flag = Arc::new(AtomicBool::new(false));
+     let background_executor = cx.executor();
+-    let matches = fuzzy::match_strings(
++    fuzzy::match_strings(
+         &candidates,
+         query,
+         query.chars().any(|c| c.is_uppercase()),
+@@ -514,6 +575,5 @@ async fn filter_and_sort_matches(
+         &cancel_flag,
+         background_executor,
+     )
+-    .await;
+-    CompletionsMenu::sort_string_matches(matches, Some(query), snippet_sort_order, completions)
++    .await
+ }
 ```
 
-**File**: `crates/settings_content/src/settings_content.rs` (modified, +4/-4)
+**File**: `crates/editor/src/code_context_menus.rs` (modified, +2/-1)
 ```diff
-@@ -220,10 +220,10 @@ pub struct SettingsContent {
-     pub auto_update: Option<bool>,
+@@ -1550,7 +1550,8 @@ impl CompletionsMenu {
+                 .retain(|string_match| !completions[string_match.candidate_id].is_snippet_kind());
+         }
  
-     /// This base keymap settings adjusts the default keybindings in Zed to be similar
--    /// to other common code editors. By default, Zed's keymap closely follows VSCode's
--    /// keymap, with minor adjustments, this corresponds to the "VSCode" setting.
-+    /// to other common code editors. By default, Zed uses its own keymap, which
-+    /// corresponds to the "Zed" setting.
-     ///
--    /// Default: VSCode
-+    /// Default: Zed
-     pub base_keymap: Option<BaseKeymapContent>,
+-        matches.sort_unstable_by_key(|string_match| {
++        // The key allocates, so build it once per match.
++        matches.sort_by_cached_key(|string_match| {
+             let completion = &completions[string_match.candidate_id];
  
-     /// Configuration for the collab panel visual settings.
-@@ -1016,7 +1016,7 @@ pub struct FileFinderSettingsContent {
-     /// Whether to pre-fill the file finder's query with the text selected in the
-     /// focused item (e.g. an editor or a terminal) when it is opened.
-     ///
--    /// Default: true
-+    /// Default: false
-     pub prefill_query_from_selection: Option<bool>,
- }
- 
+             let sort_text = match &completion.source {
 ```
 
-**File**: `crates/settings_content/src/terminal.rs` (modified, +2/-2)
-```diff
-@@ -133,7 +133,7 @@ pub struct TerminalSettingsContent {
- 
-     /// Sets the terminal's line height.
-     ///
--    /// Default: comfortable
-+    /// Default: standard
-     pub line_height: Option<TerminalLineHeight>,
-     pub font_features: Option<FontFeaturesContent>,
-     /// Sets the terminal's font weight in CSS weight units 0-900.
-@@ -234,7 +234,7 @@ pub struct TerminalSettingsContent {
-     pub show_count_badge: Option<bool>,
-     /// What to do when the `BEL` character (`\a`) is printed to terminal.
-     ///
--    /// Default: "system"
-+    /// Default: "off"
-     pub bell: Option<TerminalBell>,
- }
- 
-```
+---
 
-**File**: `crates/settings_content/src/workspace.rs` (modified, +4/-4)
+### Incident Patch 3: `24d37721` (2026-11-15)
+**Commit Message**: fs: Fix wrong cfg guard for fast path for macos only  (#67006)
+
+## Summary
+
+In https://github.com/zed-industries/zed/pull/66973 I introduced a
+faster path for matching on macos, but I actually guarded it for linux
+also, but that is not correct. Since the following code (what expensive
+is on macos) was only guarded on macos.
+
+So we should make the parent also guard for macos only.. this was a
+mistake from me.
+
+
+https://github.com/zed-industries/zed/blob/596dfdcf32d85d4d8d17a8887b4d0979ec7c5e14/crates/fs/src/fs_watcher.rs#L561-L577
+
+## Testing
+
+This changes nothing for macos, just so we don't also do the same path
+for linux.
+
+## Self-review
+
+- [x] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [x] Tests cover the new or changed behavior.
+
+Release Notes:
+
+- N/A
+
+**File**: `crates/fs/src/fs_watcher.rs` (modified, +2/-2)
 ```diff
-@@ -29,11 +29,11 @@ pub struct WorkspaceSettingsContent {
-     pub bottom_dock_layout: Option<BottomDockLayout>,
-     /// Direction to split horizontally.
-     ///
--    /// Default: "up"
-+    /// Default: "down"
-     pub pane_split_direction_horizontal: Option<PaneSplitDirectionHorizontal>,
-     /// Direction to split vertically.
-     ///
--    /// Default: "left"
-+    /// Default: "right"
-     pub pane_split_direction_vertical: Option<PaneSplitDirectionVertical>,
-     /// Centered layout related settings.
-     pub centered_layout: Option<CenteredLayoutSettings>,
-@@ -202,9 +202,9 @@ pub struct ItemSettingsContent {
-     ///
-     /// Default: off
-     pub show_diagnostics: Option<ShowDiagnostics>,
--    /// Whether to always show the close button on tabs.
-+    /// When to show the close button on tabs.
-     ///
--    /// Default: false
-+    /// Default: hover
-     pub show_close_button: Option<ShowCloseButton>,
- }
+@@ -881,13 +881,13 @@ impl WatchPaths {
+                 ids.extend_from_slice(&registration.watcher_ids);
+             }
  
+-            #[cfg(target_os = "windows")]
++            #[cfg(not(target_os = "macos"))]
+             if let Some(registration) = self.0.get(&WatchKey::folded(ancestor)) {
+                 ids.extend_from_slice(&registration.watcher_ids);
+             }
+         }
+ 
+-        #[cfg(not(target_os = "windows"))]
++        #[cfg(target_os = "macos")]
+         {
+             let folded_path = WatchKey::folded_path(path);
+             for ancestor in Path::new(&folded_path).ancestors() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66974** (2026-11-14): settings_content: Fix outdated defaults in setting doc comments (@Toraastrta)
-- **PR #66973** (2026-11-14): fs: Optimize filesystem watcher path matching (@RemcoSmitsDev)
-- **PR #66968** (2026-11-14): Switch async-task back to upstream (@benbrandt)
-- **PR #66962** (2026-11-14): worktree: Sort removed entry ids once (@ptweezy)
-- **PR #66961** (2026-11-14): proto: Split worktree updates in linear time (@ptweezy)
-- **PR #66949** (closed): theme: Allow icon themes to match files by path pattern (@Halvanhelv)
+- **PR #67020** (2026-11-16): agent_ui: Check for an empty message without copying the text (@ptweezy)
+- **PR #67019** (2026-11-16): util: Avoid allocating when sorting paths by extension (@ptweezy)
+- **PR #67016** (2026-11-16): util: Return early from natural_sort for equal strings (@ptweezy)
+- **PR #67014** (2026-11-15): language: Split buffer operations in linear time (@ptweezy)
+- **PR #67013** (2026-11-15): terminal_view: Avoid cloning text runs before shaping (@ptweezy)
+- **PR #67006** (2026-11-15): fs: Fix wrong cfg guard for fast path for macos only  (@RemcoSmitsDev)
 
 ---
 
@@ -2930,56 +2654,31 @@ Zed
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpui_web: Fix safe-area insets under a strict style CSP
+## X. agent_ui: Check for an empty message without copying the text
 
 **RULE**:
-When implementing operations in `crates/gpui_web/src/viewport.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/agent_ui/src/conversation_view/thread_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5a40bc8b`: gpui_web: Fix safe-area insets under a strict style CSP. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `053d91cb`: agent_ui: Check for an empty message without copying the text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui_web/src/viewport.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view/thread_view.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let height = format!("env(safe-area-inset-{edge},0px)");
-    // A CSP that blocks inline styles still allows per-property CSSOM writes.
-    let style = probe.style();
-    for (property, value) in [
-        ("position", "fixed"),
-        ("left", "0"),
-        ("top", "0"),
-        ("width", "0"),
-        ("padding", "0"),
-        ("border", "0"),
-        ("visibility", "hidden"),
-        ("pointer-events", "none"),
-        ("height", height.as_str()),
-    ] {
-        style.set_property(property, value).map_err(|error| {
-            anyhow::anyhow!("Failed to set safe-area probe {property} style: {error:?}")
-        })?;
-    }
+            let is_empty = editor.read(cx).editor().read(cx).is_empty(cx);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    probe
-        .set_attribute(
-            "style",
-            &format!(
-                "position:fixed;left:0;top:0;width:0;padding:0;border:0;visibility:hidden;\
-                 pointer-events:none;height:env(safe-area-inset-{edge},0px)"
-            ),
-        )
-        .map_err(|error| anyhow::anyhow!("Failed to style safe-area probe: {error:?}"))?;
+            let is_empty = editor.read(cx).text(cx).is_empty();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5a40bc8b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `053d91cb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

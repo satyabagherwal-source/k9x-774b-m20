@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T07:45:12.796Z",
+  "last_updated": "2026-11-16T08:11:25.378Z",
   "total_records": 1244,
   "domains": {
     "A": {
@@ -7821,8 +7821,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "2a5b160d0eeb3236c7971c02f410403de0c07e6215a9b4dcd24780b14c8e32d6",
-      "created_at": "2026-11-15T00:50:49.638Z"
+      "content_hash": "e86c2d8f58c4f6a43b1bdae5de918c26cee3f425f6dee2d958566dfcee8811bf",
+      "created_at": "2026-11-16T08:06:43.581Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -7890,8 +7890,8 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
       "repository": "volcengine-openviking-learnings",
-      "content_hash": "4119b20b86c941b8b9027d27f9101a3cc80b3128541cc67cfb8c130f45f43b38",
-      "created_at": "2026-11-13T16:49:53.991Z"
+      "content_hash": "1c97967d762656fcbc37b1616a16d467193d874b45e0891e1ef783f108375b5b",
+      "created_at": "2026-11-16T08:11:24.440Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -7977,8 +7977,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b5ae422a6921881ac80c94e0afa8ef3d657843ce76dbd3ab1d7853eaff69a9be",
-      "created_at": "2026-11-16T07:45:12.350Z"
+      "content_hash": "17a1a783e26bdf6f91dc8da11248032a2341f3cece1166141bfd5258709e95d9",
+      "created_at": "2026-11-16T08:11:25.378Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15589,8 +15589,8 @@
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "repository": "zed-industries/zed",
-      "content_hash": "5bf0c7f1f69b0b880f09366b06ecf97e751130e62ceb0a2d92826b52c5eaad2c",
-      "created_at": "2026-11-14T15:59:49.560Z"
+      "content_hash": "57a0000263e9cddb02faac159bf18d46e36bffc75423b09bb66331d41cbd5cf2",
+      "created_at": "2026-11-16T08:11:20.038Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
@@ -15598,8 +15598,8 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-learnings-content-information-intelligence-zed-industries-zed.md",
       "repository": "zed-industries-zed-learnings",
-      "content_hash": "0ecb3bf4c0cbff198a13c70c193e8ea1a083e0727a001e3dd098958434911553",
-      "created_at": "2026-11-14T15:59:55.731Z"
+      "content_hash": "677ded067faacaa943cc1543a27eab6b24af409fd6417d35643737c3daf20c3d",
+      "created_at": "2026-11-16T08:11:23.601Z"
     },
     "DOM-D-C9202D2F": {
       "record_id": "DOM-D-C9202D2F",

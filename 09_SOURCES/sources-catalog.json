@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "00c8e7b1",
+    "sourceVersion": "bfd935f4",
     "license": "AGPL-3.0",
-    "contentHash": "9f450dc26c42a5ba948ff110e4bfd3d20dab920d1b2e32b56755dd86f1b8ad50",
-    "lastHarvestedAt": "2026-11-15T00:50:49.311Z",
+    "contentHash": "01b2d3ce23cdef16f359cbe25f65ec6e63c8f9aed6a3eba7609f482a4388bfa4",
+    "lastHarvestedAt": "2026-11-16T08:06:43.155Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "99c890d3",
+    "sourceVersion": "a57e2fdc",
     "license": "NOASSERTION",
-    "contentHash": "ff5c53b9a582464d161f7a7bc0c0c0943126f93d3fefccaede506a3ab680288d",
-    "lastHarvestedAt": "2026-11-14T15:59:49.325Z",
+    "contentHash": "b1d9abf3e5bbda3730582bf8ebeee6786e9ca44054f38093f3bf88134b05d9e5",
+    "lastHarvestedAt": "2026-11-16T08:11:19.652Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

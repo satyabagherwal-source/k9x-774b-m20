@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T07:45:12.894Z",
+  "last_updated": "2026-11-16T08:11:25.558Z",
   "total_verified_learnings": 8769,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19018,
+  "total_items": 19024,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113521,10 +113521,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "00c8e7b1",
-      "content_hash": "2a5b160d0eeb3236c7971c02f410403de0c07e6215a9b4dcd24780b14c8e32d6",
+      "source_version": "bfd935f4",
+      "content_hash": "e86c2d8f58c4f6a43b1bdae5de918c26cee3f425f6dee2d958566dfcee8811bf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T00:50:49.638Z"
+      "persisted_at": "2026-11-16T08:06:43.581Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113533,10 +113533,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "00c8e7b1",
-      "content_hash": "d9badbe2d9ef5446a69636bda2fe49d72fec19c18030ab590dca2fef0d24270c",
+      "source_version": "bfd935f4",
+      "content_hash": "6d2126a3745cb363405d2ae2a5f7a027080a90b6f55aff6b84987cc3b4746204",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T00:50:49.762Z"
+      "persisted_at": "2026-11-16T08:06:43.767Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -113582,9 +113582,9 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "4119b20b86c941b8b9027d27f9101a3cc80b3128541cc67cfb8c130f45f43b38",
+      "content_hash": "1c97967d762656fcbc37b1616a16d467193d874b45e0891e1ef783f108375b5b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:49:53.991Z"
+      "persisted_at": "2026-11-16T08:11:24.440Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning",
@@ -113594,9 +113594,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for volcengine-openviking-learnings",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b19511e2adee878fb5db7871eb4cc0c2db5b4eb4b4037be6c75478513241042",
+      "content_hash": "84b629733cd66f51f2961d3ba564f960e7c9eb2cecc590a89396285536e99a69",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:49:54.085Z"
+      "persisted_at": "2026-11-16T08:11:24.609Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KRWC-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IHL3-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "eff834f6540efdb84010973b74dc01ee0033f9188cd690f0c618bd19ac11e3a8",
+      "content_hash": "2cf17d6008eaddfc0d60b9518f9e18174f0bc26b46572ab519d518a211e0c9cc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T07:45:12.255Z"
+      "persisted_at": "2026-11-16T08:11:25.195Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5ae422a6921881ac80c94e0afa8ef3d657843ce76dbd3ab1d7853eaff69a9be",
+      "content_hash": "17a1a783e26bdf6f91dc8da11248032a2341f3cece1166141bfd5258709e95d9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T07:45:12.350Z"
+      "persisted_at": "2026-11-16T08:11:25.378Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee6c70c0632cf2b4c5143e64d3cb84759580ef2e033766852807f2ced3b7f278",
+      "content_hash": "547fd72586c5ff2604f67e8b0c382ca0c7e16e75c81373a36067a9853bde9ac0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:45:12.449Z"
+      "persisted_at": "2026-11-16T08:11:25.558Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -230652,14 +230652,19 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "99c890d3",
-      "content_hash": "ff5c53b9a582464d161f7a7bc0c0c0943126f93d3fefccaede506a3ab680288d",
+      "source_version": "a57e2fdc",
+      "content_hash": "b1d9abf3e5bbda3730582bf8ebeee6786e9ca44054f38093f3bf88134b05d9e5",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
         {
           "number": 8504,
           "title": "Fix safe-area insets under a strict style CSP",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8728,
+          "title": "Check for an empty message without copying the text",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -230668,7 +230673,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:59:49.214Z",
+      "verified_at": "2026-11-16T08:11:19.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230710,10 +230715,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "99c890d3",
-      "content_hash": "5bf0c7f1f69b0b880f09366b06ecf97e751130e62ceb0a2d92826b52c5eaad2c",
+      "source_version": "a57e2fdc",
+      "content_hash": "57a0000263e9cddb02faac159bf18d46e36bffc75423b09bb66331d41cbd5cf2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T15:59:49.560Z"
+      "persisted_at": "2026-11-16T08:11:20.038Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -230722,10 +230727,10 @@
       "relative_path": "08_VERIFICATION/zed-industries-zed-verification-protocol-empirical-defect-shield-for-zed-industr.md",
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries/zed",
       "repository": "zed-industries/zed",
-      "source_version": "99c890d3",
-      "content_hash": "76a22bcef97067fae8effc2ed827e6e6fe8e4fe2001891158950c6677c0afca7",
+      "source_version": "a57e2fdc",
+      "content_hash": "d3e882ac31607bbb4a13467eb60d19506af9c5a85d3e7a58dd848db1f57d5489",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:59:49.638Z"
+      "persisted_at": "2026-11-16T08:11:20.197Z"
     },
     "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp": {
       "item_id": "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp",
@@ -230747,9 +230752,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ecb3bf4c0cbff198a13c70c193e8ea1a083e0727a001e3dd098958434911553",
+      "content_hash": "677ded067faacaa943cc1543a27eab6b24af409fd6417d35643737c3daf20c3d",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T15:59:55.731Z"
+      "persisted_at": "2026-11-16T08:11:23.601Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -230759,9 +230764,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries-zed-learnings",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f2ebc110c63433c54334f526e6b74d4f653cc42d8382e445027948d44be14ad",
+      "content_hash": "40b7e488501310f6f081a2b02f8b1a72957e2cfec859ea7a36c1555fbdba828f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:59:55.812Z"
+      "persisted_at": "2026-11-16T08:11:23.761Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
@@ -237303,17 +237308,23 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "00c8e7b1",
-      "content_hash": "9f450dc26c42a5ba948ff110e4bfd3d20dab920d1b2e32b56755dd86f1b8ad50",
+      "source_version": "bfd935f4",
+      "content_hash": "01b2d3ce23cdef16f359cbe25f65ec6e63c8f9aed6a3eba7609f482a4388bfa4",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 8727,
+          "title": "route Linux API jobs and wheel builds to dedicated runner",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T00:50:49.123Z",
+      "verified_at": "2026-11-16T08:06:42.904Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252738,6 +252749,82 @@
       "content_hash": "33580de3147a95b5f31ed654b7af862edb12871dc3c384027bfdb237b1b6dae8",
       "domain_letter": "H",
       "persisted_at": "2026-11-16T07:45:11.796Z"
+    },
+    "rule-8727": {
+      "learning_id": "rule-8727",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8727,
+      "title": "route Linux API jobs and wheel builds to dedicated runner",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "bfd935f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T08:06:42.904Z"
+    },
+    "candidate_directive-route-linux-api-jobs-and-wheel-builds-to-dedicated-runner": {
+      "item_id": "candidate_directive-route-linux-api-jobs-and-wheel-builds-to-dedicated-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CG5G-route-linux-api-jobs-and-wheel-builds-to-dedicated-runner.md",
+      "title": "route Linux API jobs and wheel builds to dedicated runner",
+      "repository": "volcengine/OpenViking",
+      "source_version": "bfd935f4",
+      "content_hash": "0ffe5c9a72693a17105da8c0a6d582d3a67e640c897850a36352a56ddcc41ae8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T08:06:43.400Z"
+    },
+    "rule-8728": {
+      "learning_id": "rule-8728",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8728,
+      "title": "Check for an empty message without copying the text",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "a57e2fdc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T08:11:19.422Z"
+    },
+    "candidate_directive-check-for-an-empty-message-without-copying-the-text": {
+      "item_id": "candidate_directive-check-for-an-empty-message-without-copying-the-text",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IDHG-check-for-an-empty-message-without-copying-the-text.md",
+      "title": "Check for an empty message without copying the text",
+      "repository": "zed-industries/zed",
+      "source_version": "a57e2fdc",
+      "content_hash": "6e22d529d092710da7087bb820d9c45ca02f28fdd8a6afd47548879c71162ce7",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T08:11:19.880Z"
+    },
+    "candidate_directive-agent_ui-check-for-an-empty-message-without-copying-the-text": {
+      "item_id": "candidate_directive-agent_ui-check-for-an-empty-message-without-copying-the-text",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IG8Q-agent_ui-check-for-an-empty-message-without-copying-the-text.md",
+      "title": "agent_ui: Check for an empty message without copying the text",
+      "repository": "zed-industries-zed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bb679a29b70e0e26496507e2bdf05b2c2e3428bfe56b755aff05b49472d25240",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T08:11:23.453Z"
+    },
+    "candidate_directive-ci-route-linux-api-jobs-and-wheel-builds-to-dedicated-runner": {
+      "item_id": "candidate_directive-ci-route-linux-api-jobs-and-wheel-builds-to-dedicated-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IGVK-ci-route-linux-api-jobs-and-wheel-builds-to-dedicated-runner.md",
+      "title": "ci): route Linux API jobs and wheel builds to dedicated runner",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d28771ebcc1512fe14cb1b030f67b0c253b853691ee9b9e3603b4ae7fafb2f9e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T08:11:24.275Z"
     }
   },
   "ai-builder-brain": {

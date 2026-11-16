@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T07:45:11.550Z",
+  "updated_at": "2026-11-16T08:11:24.065Z",
   "stats": {
-    "total_discovered": 4175,
-    "approved_pending_harvest": 3924,
+    "total_discovered": 4182,
+    "approved_pending_harvest": 3929,
     "harvested_count": 0,
-    "rejected_count": 251,
+    "rejected_count": 253,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3923,
+      "COMMUNITY_AND_EXPERT": 3930,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -90114,6 +90114,146 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
         "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-9D3BFE7665FE": {
+      "id": "SRC-9D3BFE7665FE",
+      "url": "https://zed.dev/docs/development/ui-checklist",
+      "title": "https://zed.dev/docs/development/ui-checklist",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:11:23.140Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-1D7B0C371AAC": {
+      "id": "SRC-1D7B0C371AAC",
+      "url": "https://github.com/zed-industries/zed/pull/66973",
+      "title": "https://github.com/zed-industries/zed/pull/66973",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:11:23.179Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-A7738B8864C9": {
+      "id": "SRC-A7738B8864C9",
+      "url": "https://github.com/zed-industries/zed/blob/596dfdcf32d85d4d8d17a8887b4d0979ec7c5e14/crates/fs/src/fs_watcher.rs",
+      "title": "https://github.com/zed-industries/zed/blob/596dfdcf32d85d4d8d17a8887b4d0979ec7c5e14/crates/fs/src/fs_watcher.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:11:23.216Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-D7BD192A8A4C": {
+      "id": "SRC-D7BD192A8A4C",
+      "url": "http://|https://|g",
+      "title": "http://|https://|g",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T08:11:23.958Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-F601C9A67ED3": {
+      "id": "SRC-F601C9A67ED3",
+      "url": "https://*/",
+      "title": "https://*/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T08:11:23.992Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-922489F29A9C": {
+      "id": "SRC-922489F29A9C",
+      "url": "https://archive.ubuntu.com/ubuntu|$%7BUBUNTU_MIRROR%",
+      "title": "https://archive.ubuntu.com/ubuntu|$%7BUBUNTU_MIRROR%",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:11:24.023Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-65B02CA90191": {
+      "id": "SRC-65B02CA90191",
+      "url": "https://security.ubuntu.com/ubuntu|$%7BUBUNTU_MIRROR%",
+      "title": "https://security.ubuntu.com/ubuntu|$%7BUBUNTU_MIRROR%",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:11:24.065Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
       }
     }
   }

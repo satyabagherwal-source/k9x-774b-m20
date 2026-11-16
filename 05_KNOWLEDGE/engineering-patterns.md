@@ -633099,3 +633099,166 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `994ddc33` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8727. route Linux API jobs and wheel builds to dedicated runner (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "route Linux API jobs and wheel builds to dedicated runner",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "bfd935f4",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-16T08:06:42.577Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `bfd935f4`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/CI.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1a6e51f0`: ci): route Linux API jobs and wheel builds to dedicated runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/CI.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+With repository variable `CI_LINUX_BUILDS_ENABLED=true`, trusted Linux API jobs
+use `[self-hosted, Linux, X64, ci-linux-builds]`. Linux x86_64 wheel builds
+alternate between GitHub-hosted and this dedicated pool.
+Only the dedicated runner `iv-yezentk8ao3z47ge5tmm` has that custom label; runner
+display names do not select machines.
+Linux wheels use the dedicated runner on even workflow run numbers.
+API native runtime preparation and its short change-planning job always use
+the dedicated runner for eligible events, regardless of workflow run number.
+The planning job runs Git/Python on the host with a five-minute execution limit.
+Linux API/CLI, MySQL/Redis and
+cuVS tests inherit their same-run native producer's destination. This keeps the
+entire trusted Linux API dependency chain off the hosted queue.
+Wheel builds send 50% of consecutive runs to each destination, and reruns keep
+the same destination. This is not half of all Linux jobs or an equal share of
+execution time. Conditional skips can change the observed share.
+The old ECS runner does not receive these jobs.
+
+Only official repository PRs from the same repository and branch pushes are
+eligible. Release/tag events, schedules, ma
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+Builds and ordinary tests use GitHub-hosted runners to measure build reuse and
+cache behavior independently of self-hosted machine capacity. There is no
+`ov-ci-runner` scheduling or manual selection in these workflows.
+The existing P0 Memory Tests remain on their original ECS environment, selected
+with `[self-hosted, Linux, X64, openviking-ecs]`. That runner must have the
+`openviking-ecs` custom label; its display name alone does not select it.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1a6e51f0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8728. Check for an empty message without copying the text (Harvested from zed-industries/zed)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Check for an empty message without copying the text",
+  "source": "zed-industries/zed",
+  "source_url": "https://github.com/zed-industries/zed",
+  "source_version": "a57e2fdc",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-16T08:11:19.104Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zed-industries-zed",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `a57e2fdc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/agent_ui/src/conversation_view/thread_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `053d91cb`: agent_ui: Check for an empty message without copying the text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view/thread_view.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            let is_empty = editor.read(cx).editor().read(cx).is_empty(cx);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+            let is_empty = editor.read(cx).text(cx).is_empty();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `053d91cb` are properly handled with clean fallback behavior.

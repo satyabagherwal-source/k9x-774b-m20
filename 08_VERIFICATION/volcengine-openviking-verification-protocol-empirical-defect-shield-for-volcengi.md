@@ -4,22 +4,22 @@
 {
   "source_repository": "volcengine/OpenViking",
   "source_url": "https://github.com/volcengine/OpenViking",
-  "source_version": "00c8e7b1",
+  "source_version": "bfd935f4",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-15T00:50:49.517Z",
+  "timestamp": "2026-11-16T08:06:43.399Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-volcengine-openviking",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `00c8e7b1`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-15T00:50:49.517Z`  
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `bfd935f4`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-16T08:06:43.399Z`  
 > **Learning ID**: `learn-github-volcengine-openviking`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `volcengine/OpenViking` (Commit: `00c8e7b1`)
+- **Target Repository**: `volcengine/OpenViking` (Commit: `bfd935f4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T00:50:48.846Z  
+> **Harvest Timestamp**: 2026-11-16T08:01:29.212Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42236 stars
+- **Stars / Engagement**: 42292 stars
 
 ---
 
@@ -1485,13 +1485,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7713** (2026-11-16): **[Bug]: non-object pending queue JSON blocks replay of healthy messages**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  A pending queue file containing valid JSON null blocks replay of otherwise healthy offline messages. listPending() catches JSON parse errors but accepts non-object values; sorting reads entry.createdAt outside that catch. Reproduced locally through the shared production enqueue/replay functions by an AI agent.  ### Steps to Reproduce  1. Set OPENVIKING_PENDING_DIR to a temporary directory. 2. Call enqueue("addMessage", "session", {role:"user",content:"offline message"}). 3. Write null into another .json file in the directory. 4. Call replayPending(async () => ({ok:true}), () => {}).  ### Expected Behavior  Skip non-object queue values, as with invalid JSON, and replay healthy queued messages.  ### Actual Behavior  TypeError: Cannot read properties of null (reading createdAt). No HTTP replay is attempted.  ### Minimal Reproducible Example  ```python  ```  ### Error Logs  ```shell  ```  ### OpenViking Version  main at 1a6e51f0c62462da43a79e9794f03efb485cc17f  ### Python Version  Not applicable; shared JavaScript memory plugin running in Node.js  ### Operating System  Linux  ### Model Backend  None  ### Additional Context  The malformed file is deliberately injected to exercise the corruption boundary; this is not a claim that normal enqueue writes null. Searches of existing pending/null and pending/malformed issues and PRs found no matching fix.  Proposed scope: skip null, scalar and array JSON
+
 - **Issue #7412** (2026-11-13): **[Bug]: Gateway session memory_policy overrides user-level memory_types**
   *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  ### Version  - OpenViking: v0.5.3 - Also reproducible on main `9c48090b0e6a48303909cb87333c778acca34cd6`  ### Description  OpenViking Gateway creates every capture session with:  ```json {"memory_policy":{"working_memory":{"enabled":false}}}   Session policy precedence selects the whole Session policy before the User policy. It does not merge missing fields from lower-priority policies. Therefore a User-level memory_policy.memory_types allowlist is ignored for Gateway-created sessions.  Because the Gateway policy omits memory_types, it resolves to null, meaning all enabled memory types are allowed.  ### Steps to Reproduce  Configure a User policy such as:   {"memory_policy":{"memory_types":["events"]}}   Start a new conversation through OpenViking Gateway.  Inspect the generated OV session and commit it.  The session carries a Session-level policy with Working Memory disabled but no memory_types restriction; extraction is not limited to events.  ### Expected Behavior  Gateway should disable only Working Memory while preserving User-level self, peer, and memory_types policy resolution.  ### Actual Behavior  The partial Session policy masks the complete User policy.   ### Minimal Reproducible Example  ```python Remove memory_policy from Gateway create_session().  Send enable_working_memory: false in the Gateway commit request. This existing per-commit field overrides only Working Memory and pre
-
-- **Issue #7356** (2026-11-12): **[Bug]: 同一用户批量 session commit 时，记忆操作组产生同 URI 冲突并导致任务失败**
-  *Symptoms*: ## 问题描述  在为记忆编译准备真实会议记忆时，同一用户下的多个 session 正常完成消息写入，`session commit` 请求也已受理，但部分后台任务最终失败，报 `Conflicting add/update/delete results for URIs`。  本轮错误表明，不同操作组的结果落到了同一个记忆 URI，合并时判定冲突，导致对应 `session commit` 失败；日志反复指向同一条“录音项目”记忆。  这是**真实环境观察到的问题**。失败发生在 `session commit` 的记忆提取／更新阶段，当时尚未开始调用 `POST /api/v1/compile`。  ## 环境与输入  - 服务端：商业个人版，`/health` 返回版本 `v0.5.2.5`；同一个用户、同一个 API Key。 - 客户端：Linux 容器，Python 3.12，通过 HTTP API 调用；模型服务为 Volcengine。 - 数据：公开 [ICSI 会议转写](https://groups.inf.ed.ac.uk/ami/icsi/download/)，50 场不同的完整会议，对应 **50 个 session**。 - 每段会议发言作为一条 `role=user` 的 message，正文保留说话人标签，保留 `created_at` 和 `turn_id`。 - 共 **71,998 条 message**；每个 session 平均约 **1,440 条**，实际范围 256–2,494 条。每个 session 仅执行一次手动 `session commit`。 - 创建 session 时设置 `auto_commit_policy=null`，未设置自定义 `memory_extraction_config`。  ## 实际操作流程  1. 在同一用户下创建 50 个不同 session：     ```http    POST /api/v1/sessions    {"session_id": "<每场会议独立的 session_id>", "auto_commit_policy": null}    ```  2. 通过 `POST /api/v1/sessions/{session_id}/messages/batch` 写入各自的会议转写，每个请求最多 100 条；同一个 session 内按原顺序写入。 3. **全部 session 的消息写入完成后**，以 HTTP 并发 16 提交整批 50 个 commit：     ```http    POST /api/v1/sessions/{session_id}/commit    {"keep_recent_count": 0}    ```  4. 收集所有已受理请求返回的 `task_id`，整批提交完成后，再通过 `GET /api/v1/tasks/{task_id}` 等待各自终态。  以上是本次实测流程，尚未缩减为每次运行都必然触发的最小复现。  ## 实际结果与错误  已核对完整任务回执，50 个 commit 均已进入终态：  | 已受理 commit | 成功 | 失败 | 尚未确认终态 | | --- | --- | --- | --- | | 50 | 34 | 16 | 0 |  最终任务失败率为 **32%（16/50）**。16 个失败任务均包含同类 URI 操作冲突错误。  一条真实任务回执：  ```j
-  **Post-Mortem & Fix Analysis**:
-  > I reproduced a **target-selection collision with disjoint input URIs** at `main@32de68480d36593648563f749d9af7a4a817489f`, using fixed completion responses and the real `StreamingMemoryUpdater.submit` → patch prefetch → `ExtractLoop` → apply path.  The inputs use the repository's `_registry`, `_note_op`, `_note_update_op`, `_ctx` and `InMemoryVikingFS` fixtures:  ```text Stored: canonical.md = "old canonical" Session A: ADD alias_0.md; UPDATE canonical.md Session B: ADD alias_1.md ```  All three input targets are distinct. The search fixture returns `canonical.md` as a candidate for the add group. Its real read tool assigns `page_id=1`. The scripted completion selects that existing page:  ```json {"notes":[{"page_id":1,"content":{"blocks":[{"search":"old canonical","replace":"old canonical\nfrom_adds"}]}}],"delete_ids":[]} ```  The real parser/resolver returns an **update** to `canonical.md` (`old_memory_file_content` is populated). However, the final conflict check still associates th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1508,879 +1506,849 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f9195e5` (2026-11-14)
-**Commit Message**: fix(react): align FileBrowser and VikingBot interactions (#7651)
+### Incident Patch 1: `1a6e51f0` (2026-11-15)
+**Commit Message**: feat(ci): route Linux API jobs and wheel builds to dedicated runner (#6806)
 
-* feat(studio): improve Compile first-use workflow
+* feat(ci): route Linux tests and CLI builds across available compute pools
 
-* fix(studio): refresh filesystem caches after Compile completes
+Use prepared self-hosted hosts for ordinary Linux jobs with isolated build environments, shared pool scheduling without inventory credentials, and hosted fallback when selection is unavailable.
 
-* feat(react): 封装可配置的认证表单组件
+* fix(ci): let Linux distribution builds use available compute pools
 
-* feat(react): align file tree and preview with console UI
+Preserve the Ubuntu 20.04 wheel baseline while routing x64 wheels and shared Studio/source builds through the Linux pool selector.
 
-* feat(react): align shared file previews with console controls
+* fix(ci): avoid waiting for self-hosted capacity in pool selection
 
-Give standalone FilePreview and FileBrowser the same capability-based preview, source, copy and edit controls. Align tab spacing, summary indicators and source wrapping, and wire module editing and internal Markdown images through scoped native content requests.
+Default the selector to GitHub-hosted and retain an explicit runner-label override for prepared self-hosted machines.
 
-* chore(ui): reconcile fork navigation and theme formatting
+* fix(ci): resolve Hermes Python libraries in clean container environments
 
-* fix(react): decouple auth validation from localized copy
+Register setup-python libraries with the container loader so Hermes can clear its environment without losing the shared Python runtime.
 
-Store validation issue keys separately from rendered labels and resolve auth copy through the inherited locale. Cover empty label overrides, provider language changes, and invitation copy.
+* fix(ci): install zip for plugin archive tests in Linux containers
 
-* fix(react): localize experience injection rate formatting
+The hosted image supplied zip implicitly, but archive installation tests also need it in the isolated test container.
 
-* ci(react): automate npm releases with Changesets
+* fix(ci): supply and check plugin marketplace installer too
 
-* ci(react): publish source changes as next-stable betas
-
-* chore(react): release 0.1.8
-
-* fix(react): skip unavailable directory tour steps and match designs
-
-* fix(react): 
-
-**File**: `frontend/.changeset/file-browser-acl-picker.md` (added, +11/-0)
+**File**: `.github/CI.md` (modified, +62/-7)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Align the FileBrowser ACL picker with the OpenViking console, let hosts define which principal types are available, and restore inheritance through the hosted gateway’s supported ACL update endpoint.
-+
-+## zh-CN
-+
-+对齐 FileBrowser 权限弹窗与 OpenViking 控制台的交互，允许宿主指定可添加的主体类型，并通过网关支持的权限更新接口恢复继承。
-```
-
-**File**: `frontend/.changeset/file-browser-save-version-note.md` (modified, +2/-2)
-```diff
-@@ -4,8 +4,8 @@
+@@ -18,12 +18,65 @@ file checksum before writing it. Other test platforms build locally. Release
+ wheels build independently in Ubuntu 20.04/macOS/Windows; Ubuntu 24.04 test
+ binaries and musl CLI binaries are never reused in release wheels.
  
- ## en-US
+-Builds and ordinary tests use GitHub-hosted runners to measure build reuse and
+-cache behavior independently of self-hosted machine capacity. There is no
+-`ov-ci-runner` scheduling or manual selection in these workflows.
+-The existing P0 Memory Tests remain on their original ECS environment, selected
+-with `[self-hosted, Linux, X64, openviking-ecs]`. That runner must have the
+-`openviking-ecs` custom label; its display name alone does not select it.
++With repository variable `CI_LINUX_BUILDS_ENABLED=true`, trusted Linux API jobs
++use `[self-hosted, Linux, X64, ci-linux-builds]`. Linux x86_64 wheel builds
++alternate between GitHub-hosted and this dedicated pool.
++Only the dedicated runner `iv-yezentk8ao3z47ge5tmm` has that custom label; runner
++display names do not select machines.
++Linux wheels use the dedicated runner on even workflow run numbers.
++API native runtime preparation and its short change-planning job always use
++the dedicated runner for eligible events, regardless of workflow run number.
++The planning job runs Git/Python on the host with a five-minute execution limit.
++Linux API/CLI, MySQL/Redis and
++cuVS tests inherit their same-run native producer's destination. This keeps the
++entire trusted Linux API dependency chain off the hosted queue.
++Wheel builds send 50% of consecutive runs to each destination, and reruns keep
++the same destination. This is not half of all Linux jobs or an equal share of
++execution time. Conditional skips can change the observed share.
++The old ECS runner does not receive these jobs.
++
++Only official repository PRs from the same repository and branch pushes are
++eligible. Release/tag events, schedules, manual builds, fork PRs and other
++repositories use GitHub-hosted. The native producer publishes its selected labels
++and container image for its consumers; no extra selector job or token is needed.
++Studio, both musl CLI targets, other tests/checks and source packaging stay hosted. Native ARM,
++macOS and Windows assignments are unchanged.
++
++Self-hosted builds and tests require Docker access and use disposable containers with
++job-local HOME/Cargo/Rustup directories and post-job ownership cleanup.
++Wheels retain Ubuntu 20.04/glibc 2.31. API native runtime preparation uses Ubuntu
++24.04 on both destinations so its artifact remains compatible with hosted tests.
++Self-hosted API, database and cuVS consumers also use Ubuntu 24.04 containers;
++hosted consumers retain their existing host execution. Database consumers use
++service-container DNS inside containers and loopback on hosted runners.
++The Linux wheel execution timeout is 60 minutes and native preparation is limited
++to 30 minutes. Timeouts start when execution begins, not while queued; there is
++no automatic queue fallback.
++
++Before enabling routing, dispatch `_build.yml` on this branch with
++`check_linux_runner=true`, `build_wheels=false` and `build_sdist=false`. Its
++five-minute diagnostic checks Docker access, HTTPS package-index downloads and
++package installation in both container images without checking out repository
++code. Enable `CI_LINUX_BUILDS_ENABLED` only after it passes. The runner user must
++be able to access Docker without interactive sudo.
++
++Package sources use HTTPS. Minimal Ubuntu images bootstrap TLS verification with
++the host's `/etc/ssl/certs/ca-certificates.crt`, mounted read-only at a temporary
++path until the container installs its own certificates. The host CA bundle must
++exist. Incomplete apt index downloads fail the job instead of continuing with
++missing package metadata.
++If official Ubuntu endpoints are unreachable from the dedicated machine, set
++`CI_UBUNTU_MIRROR` to a reachable HTTPS Ubuntu mirror, including its `/ubuntu` path.
++The override applies only to self-hosted builds/tests and the readiness diagnostic;
++hosted builds retain the official sources. The diagnostic prints host/container
++TCP reachability to help distinguish mirror access from Docker networking issues.
++
++If the dedicated runner is offline or stuck, set repository Actions variable
++`CI_DISABLE_SELF_HOSTED=true`, cancel affected runs and trigger new runs.
++New jobs use hosted runners; already queued jobs retain their original labels.
++After repairing/updating the runner, remove the disable variable to resume the
++dedicated routing. Removing `CI_LINUX_BUILDS_ENABLED` also leaves these builds/tests hosted.
++Release builds remain hosted regardless of either variable.
  
--Allow a version note when saving an ordinary file. If the file is saved but the snapshot is not created, show a warning. Wiki files keep their existing save flow.
-+Save edits to ordinary files directly. To create a version with a note, open **Version history**, enter a note, and select **Save snapshot**.
+ The cuVS check now lives in the API workflow so it can consume the same artifact.
+ Its check name stays `cuvs-tests / Lite Test (ubuntu-24.04, 3.11)`, matching the
+@@ -54,9 +107,11 @@ select API tests, including newly introduced runtime paths.
+ Local checks:
  
- ## zh-CN
+ ```sh
++python3 -m pip install pytest PyYAML
  
--保存普通文件时可填写版本备注。如果正文已保存但未创建快照，则显示提示。Wiki 保持原有保存流程。
-+直接保存普通文件的编辑内容。要创建带备注的版本，打开「历史版本」，填写备注并点击「保存快照」。
 ```
 
-**File**: `frontend/.changeset/file-browser-search-empty.md` (added, +11/-0)
+**File**: `.github/actionlint.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Match the context search empty state to the console design and keep the selected file preview tab's background on hover.
-+
-+## zh-CN
-+
-+将上下文搜索空态对齐控制台设计，并在鼠标悬停时保留选中文件页签的原有背景。
+@@ -1,3 +1,3 @@
+ self-hosted-runner:
+   labels:
+-    - openviking-ecs
++    - ci-linux-builds
 ```
 
-**File**: `frontend/.changeset/fix-upload-owner-acl-source.md` (added, +11/-0)
+**File**: `.github/actions/linux-test-env/action.yml` (added, +7/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Cancel and clear managed attachments when the chat identity, explicit session or request lifetime changes, while preserving uploads when a newly created session ID is echoed by the host. Show inherited ACL grants correctly when they exceed a principal's direct permission.
-+
-+## zh-CN
-+
-+聊天身份、显式会话或请求生命周期变化时，取消并清空托管附件；宿主回写新建会话 ID 时保留正常上传。修正同一主体的继承权限高于直接权限时，有效授权来源显示错误的问题。
+@@ -0,0 +1,7 @@
++name: Bootstrap Linux build container
++description: Supply a job-local home before language setup and restore workspace ownership
++runs:
++  using: node24
++  main: bootstrap.mjs
++  post: cleanup.mjs
++  post-if: always()
 ```
 
-**File**: `frontend/.changeset/tidy-session-buttons.md` (added, +11/-0)
+**File**: `.github/actions/linux-test-env/bootstrap.mjs` (added, +14/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
+@@ -0,0 +1,14 @@
++import { execFileSync } from 'node:child_process';
++import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
++import { join } from 'node:path';
 +
-+## en-US
-+
-+Restore the original session toolbar icon proportions, strokes, button sizes and spacing in VikingBot and Console.
-+
-+## zh-CN
-+
-+还原 VikingBot 与 Console 会话工具栏的原始图标比例、描边、按钮尺寸与间距。
++const env = process.env;
++const workspace = env.GITHUB_WORKSPACE;
++// Preserve the host runner's ownership before any build writes root-owned files.
++const owner = execFileSync('stat', ['-c', '%u:%g', workspace], { encoding: 'utf8' }).trim();
++const home = mkdtempSync(join(env.RUNNER_TEMP, 'linux-test-home.'));
++appendFileSync(env.GITHUB_STATE, `owner=${owner}\nworkspace=${workspace}\nhome=${home}\n`);
++appendFileSync(env.GITHUB_ENV, `HOME=${home}\nCARGO_HOME=${home}/.cargo\nRUSTUP_HOME=${home}/.rustup\n`);
++// Checkout used the original container HOME; restrict trust to these workspaces.
++writeFileSync(join(home, '.gitconfig'),
++  `[safe]\n\tdirectory = ${workspace}\n`);
 ```
 
-**File**: `frontend/.changeset/viking-bot-resource-upload.md` (added, +11/-0)
+**File**: `.github/actions/linux-test-env/cleanup.mjs` (added, +9/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
+@@ -0,0 +1,9 @@
++import { execFileSync } from 'node:child_process';
 +
-+## en-US
-+
-+Add a resource picker to VikingBot when the Console service supports attachment uploads. Wait for uploads to finish before sending and clear selected attachments when changing sessions.
-+
-+## zh-CN
-+
-+当 Console 服务支持附件上传时，在 VikingBot 中显示添加资源入口。等待附件上传完成后再发送，切换会话时清除已选附件。
++const { STATE_owner: owner, STATE_workspace: workspace, STATE_home: home } = process.env;
++if (owner && workspace && home) {
++  // Run after test/cache steps, before checkout's post-job cleanup. Do not follow
++  // symlinks into host paths. The next host job must be able to
++  // clean the shared checkout and runner temp directory.
++  execFileSync('chown', ['-hR', owner, workspace, home], { stdio: 'inherit' });
++}
 ```
 
-**File**: `frontend/docs/docs/_demos/file-browser-basic-data.ts` (modified, +1/-1)
+**File**: `.github/workflows/_build.yml` (modified, +95/-7)
 ```diff
-@@ -160,7 +160,7 @@ export function offlineFetch(
-   if (url.searchParams.has('uri')) url.searchParams.set('uri', uri);
-   const body = typeof init?.body === 'string' ? init.body : '';
+@@ -25,6 +25,11 @@ on:
+         default: true
+   workflow_dispatch:
+     inputs:
++      check_linux_runner:
++        description: 'Check Docker and HTTPS package downloads on the dedicated Linux build runner'
++        required: false
++        type: boolean
++        default: false
+       build_sdist:
+         description: 'Whether to build source distribution'
+         required: false
+@@ -45,6 +50,63 @@ on:
+         default: '["3.10"]'
  
--  const native = nativePreviewDemoResponse(url, init);
-+  const native = nativePreviewDemoResponse(url, FILES, init);
-   if (native) return Promise.resolve(native);
-   const board = dashboardDemoResponse(url);
-   if (board) return Promise.resolve(board);
+ jobs:
++  check-linux-runner:
++    name: Check dedicated Linux runner
++    if: github.event_name == 'workflow_dispatch' && inputs.check_linux_runner && github.repository == 'volcengine/OpenViking'
++    runs-on: [self-hosted, Linux, X64, ci-linux-builds]
++    permissions: {}
++    timeout-minutes: 5
++    env:
++      UBUNTU_MIRROR: ${{ vars.CI_UBUNTU_MIRROR }}
++    steps:
++      - name: Verify runner and disposable build containers
++        shell: bash
++        run: |
++          set -euo pipefail
++          id
++          uname -m
++          nproc
++          df -h "$RUNNER_TEMP"
++          docker version
++          test -s /etc/ssl/certs/ca-certificates.crt
++          for host in archive.ubuntu.com mirrors.aliyun.com; do
++            if timeout 5 bash -c 'exec 3<>/dev/tcp/$1/443' _ "$host"; then
++              echo "Host TCP reachable: $host:443"
++            else
++              echo "Host TCP unreachable: $host:443"
++            fi
++            if docker run --rm ubuntu:24.04 timeout 5 \
++              bash -c 'exec 3<>/dev/tcp/$1/443' _ "$host"; then
++              echo "Container TCP reachable: $host:443"
++            else
++              echo "Container TCP unreachable: $host:443"
++            fi
++          done
++          for image in ubuntu:20.04 ubuntu:24.04; do
++            docker run --rm -i \
++              --env UBUNTU_MIRROR \
++              --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro \
++              "$image" bash -e <<'BOOTSTRAP'
++          for source in /etc/apt/sources.list /etc/apt/sources.list.d/ubuntu.sources; do
++            if [ -f "$source" ]; then
++              sed -i 's|http://|https://|g' "$source"
++              if [ -n "$UBUNTU_MIRROR" ]; then
++                case "$UBUNTU_MIRROR" in https://*) ;; *) exit 1 ;; esac
++                sed -i \
++                  "s|https://archive.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g; s|https://security.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g" \
++                  "$source"
++              fi
++            fi
++          done
++          apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++            -o Acquire::Retries=2 -o Acquire::https::Timeout=20 \
++            -o APT::Update::Error-Mode=any update
++          apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++            -o Acquire::Retries=2 install -y ca-certificates git
++          getconf GNU_LIBC_VERSION
++          BOOTSTRAP
++          done
++
+   build-studio:
+     name: Build shared Studio bundle
+     if: inputs.build_wheels
+@@ -145,8 +207,22 @@ jobs:
+         contains(inputs.os_json, '"ubuntu-24.04"') ||
+         contains(inputs.os_json, 'ubuntu-24.04-arm')
+       )
+-    runs-on: ${{ matrix.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+-    container: ubuntu:20.04
++    runs-on: >-
++      ${{ fromJSON(matrix.arch == 'aarch64' && '["ubuntu-24.04-arm"]' ||
++          github.repository == 'volcengine/OpenViking' &&
++          (github.event_name == 'pull_request' || github.event_name == 'push') &&
++          !startsWith(github.ref, 'refs/tags/') && vars.CI_DISABLE_SELF_HOSTED != 'true' &&
++          vars.CI_LINUX_BUILDS_ENABLED == 'true' &&
++          (!github.event.pull_request || github.event.pull_request.head.repo.full_name == github.repository) &&
++          (endsWith(github.run_number, '0') || endsWith(github.run_number, '2') ||
++           endsWith(github.run_number, '4') || endsWith(github.run_number, '6') ||
++           endsWith(github.run_number, '8')) &&
++          '["self-hosted","Linux","X64","ci-linux-builds"]' || '["ubuntu-24.04"]') }}
++    container:
++      image: ubuntu:20.04
++      # Minimal Ubuntu images lack CA certificates before the first apt install.
++      options: --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro
++    timeout-minutes: 60
+     env:
+       DEBIAN_FRONTEND: noninteractive
+       TZ: Etc/UTC
+@@ -158,13 +234,23 @@ jobs:
+     
+     steps:
+     - name: Install system dependencies (Linux)
++      env:
++        UBUNTU_MIRROR: ${{ runner.environment == 'self-hosted' && vars.CI_UBUNTU_MIRROR || '' }}
+       run: |
+-        # Replace archive.ubuntu.com with azure.archive.ubuntu.com for better stability in GH Actions
+-        sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/azure.archive.ubuntu.com\/ubuntu\//g' /etc/apt/sources.list
+-        # Retry apt-get update
+-        for i in 1 2 3 4 5; do apt-get update && break || sleep 5; done
+-        apt-get install -y \
++        sed -i 's|http://|https://|g' /etc/apt/sources.li
 ```
 
-**File**: `frontend/docs/docs/_demos/file-browser-native-demo.ts` (modified, +54/-11)
+**File**: `.github/workflows/_test_lite.yml` (modified, +40/-2)
 ```diff
-@@ -22,10 +22,24 @@ const systemDirectories = new Map([
-   [COMPILE, [EXAMPLE_SKILLS]],
-   [EXAMPLE_SKILLS, []],
- ]);
-+const originalSnapshot = {
-+  oid: 'demo-snapshot',
-+  message: 'Offline example revision',
-+  author: { time_seconds: 1794268800 },
-+  committer: { time_seconds: 1794268800 },
-+};
-+const savedSnapshots = new Map<
-+  string,
-+  { info: typeof originalSnapshot; content: string }[]
-+>();
-+let nextSnapshot = 1;
-+const canonicalUri = (path: string) =>
-+  path.replace(/^viking:\/\/~(?=\/|$)/, DEMO_USER);
+@@ -3,6 +3,16 @@ name: 12. _Test Suite (Lite)
+ on:
+   workflow_call:
+     inputs:
++      linux_runner_json:
++        description: 'Linux labels selected by the same-run native producer'
++        required: false
++        type: string
++        default: '["ubuntu-24.04"]'
++      linux_container:
++        description: 'Disposable Linux test container; empty keeps hosted execution'
++        required: false
++        type: string
++        default: ''
+       native_artifact:
+         description: 'Validated same-run cp310-abi3 native runtime (empty builds locally)'
+         required: false
+@@ -32,17 +42,45 @@ on:
+ jobs:
+   test-lite:
+     name: Lite Test (${{ matrix.os }}, ${{ matrix.python-version }})
+-    runs-on: ${{ matrix.os }}
++    runs-on: ${{ matrix.os == 'ubuntu-24.04' && fromJSON(inputs.linux_runner_json || '["ubuntu-24.04"]') || matrix.os }}
++    container:
++      image: ${{ matrix.os == 'ubuntu-24.04' && inputs.linux_container || '' }}
++      options: --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro
++    timeout-minutes: 30
++    defaults:
++      run:
++        shell: ${{ matrix.os == 'windows-latest' && 'pwsh' || 'bash' }}
+     strategy:
+       fail-fast: false
+       matrix:
+         os: ${{ fromJson(inputs.os_json) }}
+         python-version: ${{ fromJson(inputs.python_json) }}
  
- /** Fictional native API responses; package bytes are demo text, not an actual backup. */
- export function nativePreviewDemoResponse(
-   url: URL,
-+  files: Readonly<Record<string, string>>,
-   init?: RequestInit,
- ): Response | undefined {
-   const uri = url.searchParams.get('uri') ?? '';
-@@ -43,15 +57,37 @@ export function nativePreviewDemoResponse(
-             { headers: { 'content-type': 'video/webm' } },
-           )
-         : undefined;
--    case '/api/v1/snapshot/log':
--      return ok([
--        {
--          oid: 'demo-snapshot',
--          message: 'Offline example revision',
--          author: { time_seconds: 1794268800 },
--          committer: { time_seconds: 1794268800 },
--        },
--      ]);
-+    case '/api/v1/snapshot/commit': {
-+      const { message, paths } = JSON.parse(body) as {
-+        message: string;
-+        paths: string[];
-+      };
-+      const targets = paths.map(canonicalUri);
-+      const changed = targets.filter((target) => {
-+        const latest = savedSnapshots.get(target)?.[0];
-+        return latest?.content !== files[target];
-+      });
-+      if (changed.length === 0) {
-+        const latest = savedSnapshots.get(targets[0] ?? '')?.[0];
-+        return ok({ result: 'noop', commit_oid: latest?.info.oid });
-+      }
-+      const oid = `demo-snapshot-${nextSnapshot++}`;
-+      const timestamp = { time_seconds: Math.floor(Date.now() / 1000) };
-+      const info = { oid, message, author: timestamp, committer: timestamp };
-+      for (const target of changed) {
-+        const snapshot = { info, content: files[target] ?? '' };
-+        savedSnapshots.set(target, [
-+          snapshot,
-+          ...(savedSnapshots.get(target) ?? []),
-+        ]);
-+      }
-+      return ok({ result: 'created', commit_oid: oid });
-+    }
-+    case '/api/v1/snapshot/log': {
-+      const path = canonicalUri(url.searchParams.get('paths') ?? '');
-+      const history = (savedSnapshots.get(path) ?? []).map(({ info }) => info);
-+      return ok([...history, originalSnapshot]);
-+    }
-     case '/api/v1/snapshot/versions':
-       return ok({
-         versions: [
-@@ -65,10 +101,17 @@ export function nativePreviewDemoResponse(
-         ],
-         next_before_version: null,
-       });
--    case '/api/v1/snapshot/show':
-+    case '/api/v1/snapshot/show': {
-+      const path = canonicalUri(url.searchParams.get('path') ?? '');
-+      const target = url.searchParams.get('target_ref');
-+      const snapshot = savedSnapshots
-+        .get(path)
-+        ?.find(({ info }) => info.oid === target);
-       return new Response(
--        '# Historical content\n\nThis revision is simulated.',
-+        snapshot?.content ??
-+          '# Historical content\n\nThis revision is simulated.',
-       );
-+    }
-     case '/api/v1/compile/config':
-       return ok(config);
-     case '/api/v1/compile/config/update':
+     steps:
++    - name: Bootstrap self-hosted Ubuntu test container
++      if: runner.environment == 'self-hosted'
++      env:
++        UBUNTU_MIRROR: ${{ vars.CI_UBUNTU_MIRROR }}
++        DEBIAN_FRONTEND: noninteractive
++      run: |
++        sed -i 's|http://|https://|g' /etc/apt/sources.list.d/ubuntu.sources
++        if [ -n "$UBUNTU_MIRROR" ]; then
++          case "$UBUNTU_MIRROR" in https://*) ;; *) exit 1 ;; esac
++          sed -i \
++            "s|https://archive.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g; s|https://security.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g" \
++            /etc/apt/sources.list.d/ubuntu.sources
++        fi
++        apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++          -o Acquire::Retries=2 -o Acquire::https::Timeout=20 \
++          -o APT::Update::Error-Mode=any update
++        apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++          -o Acquire::Retries=2 install -y --no-install-recommends \
++          git ca-certificates curl python3 cmake build-essential
+     - uses: actions/checkout@v6
+       with:
+         submodules: recursive
++    - uses: ./.github/actions/linux-test-env
++      if: runner.environment == 'self-hosted'
+ 
+     - name: Set up Python ${{ matrix.python-version }}
+       uses: actions/setup-python@v6
+@@ -55,7 +93,7 @@ jobs:
+         enable-cache: true
+ 
+     - name: Install system dependencies (Ubuntu)
+-      if: runner.os == 'Linux'
++      if: runner.os == 'Linux' && runner.environment != 'self-hosted'
+       run: |
+         sudo apt-get update
+         sudo apt-get install -y cmake build-essential
+```
+
+**File**: `.github/workflows/api_test.yml` (modified, +118/-10)
+```diff
+@@ -30,7 +30,14 @@ concurrency:
+ 
+ jobs:
+   prepare:
+-    runs-on: ubuntu-24.04
++    runs-on: >-
++      ${{ fromJSON(github.repository == 'volcengine/OpenViking' &&
++          (github.event_name == 'pull_request' || github.event_name == 'push') &&
++          !startsWith(github.ref, 'refs/tags/') && vars.CI_DISABLE_SELF_HOSTED != 'true' &&
++          vars.CI_LINUX_BUILDS_ENABLED == 'true' &&
++          (!github.event.pull_request || github.event.pull_request.head.repo.full_name == github.repository) &&
++          '["self-hosted","Linux","X64","ci-linux-builds"]' || '["ubuntu-24.04"]') }}
++    timeout-minutes: 5
+     outputs:
+       api_changed: ${{ steps.plan.outputs.api_changed }}
+       cuvs_changed: ${{ steps.plan.outputs.cuvs_changed }}
+@@ -50,18 +57,63 @@ jobs:
+ 
+   native-runtime:
+     needs: prepare
++    outputs:
++      test_runner: ${{ steps.test-pool.outputs.runner }}
++      test_container: ${{ steps.test-pool.outputs.container }}
+     if: >-
+       (needs.prepare.outputs.api_changed == 'true' || needs.prepare.outputs.cuvs_changed == 'true') &&
+       (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' ||
+        (github.repository == 'volcengine/OpenViking' &&
+         (github.event_name != 'release' || startsWith(github.event.release.tag_name, 'v'))))
+-    runs-on: ubuntu-24.04
++    runs-on: >-
++      ${{ fromJSON(github.repository == 'volcengine/OpenViking' &&
++          (github.event_name == 'pull_request' || github.event_name == 'push') &&
++          !startsWith(github.ref, 'refs/tags/') && vars.CI_DISABLE_SELF_HOSTED != 'true' &&
++          vars.CI_LINUX_BUILDS_ENABLED == 'true' &&
++          (!github.event.pull_request || github.event.pull_request.head.repo.full_name == github.repository) &&
++          '["self-hosted","Linux","X64","ci-linux-builds"]' || '["ubuntu-24.04"]') }}
++    container:
++      image: ubuntu:24.04
++      # Bootstrap HTTPS apt with the host's read-only CA bundle.
++      options: --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro
+     timeout-minutes: 30
++    defaults:
++      run:
++        shell: bash
++    env:
++      DEBIAN_FRONTEND: noninteractive
+     steps:
++      - name: Share the Linux test destination
++        id: test-pool
++        env:
++          TEST_RUNNER: ${{ runner.environment == 'self-hosted' && '["self-hosted","Linux","X64","ci-linux-builds"]' || '["ubuntu-24.04"]' }}
++          TEST_CONTAINER: ${{ runner.environment == 'self-hosted' && 'ubuntu:24.04' || '' }}
++        run: |
++          echo "runner=$TEST_RUNNER" >> "$GITHUB_OUTPUT"
++          echo "container=$TEST_CONTAINER" >> "$GITHUB_OUTPUT"
++      - name: Install native build system dependencies
++        env:
++          UBUNTU_MIRROR: ${{ runner.environment == 'self-hosted' && vars.CI_UBUNTU_MIRROR || '' }}
++        run: |
++          sed -i 's|http://|https://|g' /etc/apt/sources.list.d/ubuntu.sources
++          if [ -n "$UBUNTU_MIRROR" ]; then
++            case "$UBUNTU_MIRROR" in https://*) ;; *) exit 1 ;; esac
++            sed -i \
++              "s|https://archive.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g; s|https://security.ubuntu.com/ubuntu|${UBUNTU_MIRROR%/}|g" \
++              /etc/apt/sources.list.d/ubuntu.sources
++          fi
++          apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++            -o Acquire::Retries=2 -o Acquire::https::Timeout=20 \
++            -o APT::Update::Error-Mode=any update
++          apt-get -o Acquire::https::CaInfo=/tmp/runner-ca-certificates.crt \
++            -o Acquire::Retries=2 install -y \
++            git ca-certificates build-essential clang pkg-config curl unzip xz-utils \
++            python3 libssl-dev
+       - uses: actions/checkout@v6
+         with:
+           submodules: recursive
+           fetch-depth: 0
++      - uses: ./.github/actions/linux-test-env
+       - uses: actions/setup-python@v6
+         with:
+           python-version: '3.10'
+@@ -88,12 +140,20 @@ jobs:
+       os_json: '["ubuntu-24.04"]'
+       python_json: '["3.11"]'
+       native_artifact: native-runtime-linux-x64-cp310-abi3
++      linux_runner_json: ${{ needs.native-runtime.outputs.test_runner }}
++      linux_container: ${{ needs.native-runtime.outputs.test_container }}
+ 
+   database-tests:
+     name: MySQL & Redis Integration Tests
+     needs: [prepare, native-runtime]
+     if: needs.prepare.outputs.api_changed == 'true'
+-    runs-on: ubuntu-24.04
++    runs-on: ${{ fromJSON(needs.native-runtime.outputs.test_runner) }}
++    container:
++      image: ${{ needs.native-runtime.outputs.test_container }}
++      options: --volume /etc/ssl/certs/ca-certificates.crt:/tmp/runner-ca-certificates.crt:ro
++    defaults:
++      run:
++        shell: bash
+     timeout-minutes: 20
+     services:
+       mysql:
+@@ -104,7 +164,7 @@ jobs:
+           MYSQL_USER: openviking_test
+           MYSQL_PASSWORD: integration-test-password
+         ports:
+-          - 3306:3306
++          - ${{ needs.native-runtime.outputs.test_container != ''
 ```
 
 ---
 
-### Incident Patch 2: `90f4edce` (2026-11-13)
-**Commit Message**: fix(react): stabilize file search previews and align VikingBot (#7587)
+### Incident Patch 2: `26be9df8` (2026-11-16)
+**Commit Message**: Feat/queuefs memory integration (#7606)
 
-* feat(studio): improve Compile first-use workflow
+* fix(tests): isolate domain fixtures from Watch leadership
 
-* fix(studio): refresh filesystem caches after Compile completes
+Disable the background Watch scheduler for file-only domain fixtures so Session tests do not require native leadership APIs.
 
-* feat(react): 封装可配置的认证表单组件
+* feat(memory): integrate grouped queues with native retry
 
-* feat(react): align file tree and preview with console UI
+Keep account/user memory batches on one consumer and settle deliveries after shared work finishes, while preserving existing batching windows, flush cancellation, and first-failure semantics.
 
-* feat(react): align shared file previews with console controls
-
-Give standalone FilePreview and FileBrowser the same capability-based preview, source, copy and edit controls. Align tab spacing, summary indicators and source wrapping, and wire module editing and internal Markdown images through scoped native content requests.
-
-* chore(ui): reconcile fork navigation and theme formatting
-
-* fix(react): decouple auth validation from localized copy
-
-Store validation issue keys separately from rendered labels and resolve auth copy through the inherited locale. Cover empty label overrides, provider language changes, and invitation copy.
-
-* fix(react): localize experience injection rate formatting
-
-* ci(react): automate npm releases with Changesets
-
-* ci(react): publish source changes as next-stable betas
-
-* chore(react): release 0.1.8
-
-* fix(react): skip unavailable directory tour steps and match designs
-
-* fix(re
-
-**File**: `frontend/.changeset/file-browser-preview-footer.md` (added, +11/-0)
+**File**: `docs/en/concepts/16-queue-lifecycle.md` (modified, +13/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
+@@ -169,3 +169,16 @@ a warning and leaves the delivery for recovery while consumption continues.
+ For this release, ExternalTaskService retains its baseline target reservations
+ and execution guard for pre-key deliveries, restoring reservations before workers
+ start. These transitional guards are scheduled for removal in the next release.
 +
-+## en-US
-+
-+Show character counts, available modification times, and a localized model notice in the FileBrowser preview footer.
-+
-+## zh-CN
-+
-+文件浏览预览页脚显示字符数、可用的更新时间和本地化的模型解析提示。
++SessionCommit uses an account/user `group_key` on initial and recovery enqueue,
++allowing concurrent sessions to share the streaming-memory batcher. Waiting for
++a predecessor archive returns `ProcessResult.retry()` without publishing a
++replacement. The original message returns to its group tail, allowing the
++predecessor to continue. RETRY and REQUEUED both increment the persisted Work
++`requeue_count`; this counter has no retry limit.
++Batch work and all merge groups finish before processing returns, including on
++failure or cancellation; shutdown leaves the message unacknowledged.
++Submit cancellation keeps the existing count/time/close batching window.
++Cancelling a flush propagates to batch processing and settles its waiting items
++as cancelled. Multiple group failures preserve the first observed exception
++after the remaining groups finish.
 ```
 
-**File**: `frontend/.changeset/file-browser-save-version-note.md` (added, +11/-0)
+**File**: `docs/zh/concepts/16-queue-lifecycle.md` (modified, +10/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
+@@ -147,3 +147,13 @@ Task/Work 保存异常均不 ACK，已处理的业务失败在 Work 结算后 AC
+ warning，消息留待恢复，消费继续。本版本 ExternalTaskService 保留基线的目标
+ 占用和执行保护，并在 worker 启动前恢复占用，以兼容未携带 key 的旧消息；
+ 这些过渡保护计划在下个版本移除。
 +
-+## en-US
-+
-+Allow a version note when saving an ordinary file. If the file is saved but the snapshot is not created, show a warning. Wiki files keep their existing save flow.
-+
-+## zh-CN
-+
-+保存普通文件时可填写版本备注。如果正文已保存但未创建快照，则显示提示。Wiki 保持原有保存流程。
++SessionCommit 的首次提交和恢复入队均按账号/用户生成 `group_key`，
++让同用户的并发会话共用流式 Memory 批处理器。等待前一个 archive 时返回
++`ProcessResult.retry()`，不发布替代消息；原消息回到该组队尾，让前一个 archive
++可继续消费。RETRY 与 REQUEUED 都会累加持久化 Work 的 `requeue_count`，
++该计数不设重投上限。批处理及全部合并分组结束后才返回，
++失败或取消也须等待实际写回结束；停机取消保留未 ACK 消息。
++取消 submit 不改变原有 count/time/close 批处理窗口；取消 flush 会传递给
++批处理，并将等待项结算为取消。多个合并分组失败时，等待其他组结束后仍抛出
++最先发生的异常。
 ```
 
-**File**: `frontend/.changeset/file-browser-search-results.md` (added, +11/-0)
+**File**: `openviking/session/memory/streaming_memory_updater.py` (modified, +10/-2)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Update advanced search styling, let users browse subdirectories to narrow the search, and show the date range after a time field is selected.
-+
-+## zh-CN
-+
-+更新高级搜索样式，支持浏览子目录以缩小检索范围，并在选定时间字段后显示日期范围。
+@@ -23,6 +23,7 @@
+ from openviking.core.peer_id import safe_peer_id
+ from openviking.message import Message
+ from openviking.server.identity import RequestContext
++from openviking.service.task_tracker_concurrency import run_to_completion
+ from openviking.session.memory.dataclass import (
+     MemoryFile,
+     MemoryOperationSource,
+@@ -232,9 +233,16 @@ async def _submit_grouped_merge_request(
+             (await self._get_group_batcher(group_key)).submit(group_request)
+             for group_key, group_request in grouped_requests
+         ]
+-        group_results = list(await asyncio.gather(*submissions))
++        submissions = [asyncio.ensure_future(submission) for submission in submissions]
++        try:
++            group_results = list(await asyncio.gather(*submissions))
++        except (Exception, asyncio.CancelledError):
++            # Drain accepted groups before delivery settlement while preserving
++            # gather's first failure, rather than choosing by group order.
++            await run_to_completion(lambda: asyncio.gather(*submissions, return_exceptions=True))
++            raise
+         result = combine_streaming_memory_results(*group_results, fallback_request_count=1)
+-        await self._apply_post_group_links(request, result)
++        await run_to_completion(lambda: self._apply_post_group_links(request, result))
+         return result
+ 
+     async def _apply_post_group_links(
 ```
 
-**File**: `frontend/.changeset/viking-bot-conversation-layout.md` (added, +11/-0)
+**File**: `openviking/session/memory/utils/streaming_batcher.py` (modified, +16/-3)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Align the VikingBot conversation panel, session controls, activity timeline, and code blocks. Keep session and message actions accessible in narrow panels.
-+
-+## zh-CN
-+
-+调整 VikingBot 的会话面板、会话操作、执行时间线和代码块，确保窄面板仍能使用会话与消息操作。
+@@ -12,6 +12,7 @@
+ from dataclasses import dataclass, field
+ from typing import Any, Generic, TypeVar
+ 
++from openviking.service.task_tracker_concurrency import run_to_completion
+ from openviking.service.task_work_index import detach_task_context
+ from openviking.telemetry import tracer
+ from openviking_cli.utils import get_logger
+@@ -115,7 +116,16 @@ async def submit(self, payload: T) -> R:
+         if should_flush:
+             self._trigger_background_flush("count")
+ 
+-        return await future
++        try:
++            return await asyncio.shield(future)
++        except asyncio.CancelledError:
++            # Keep delivery settlement behind accepted shared work. Cancellation
++            # does not change the existing count/time/close batching window.
++            try:
++                await run_to_completion(lambda: future)
++            except Exception:
++                pass
++            raise
+ 
+     async def close(self) -> R | None:
+         if self._closed:
+@@ -151,10 +161,13 @@ async def flush(self, reason: str) -> R | None:
+                     if metadata is not None:
+                         metadata.setdefault("batch_id", batch_id)
+                         metadata.setdefault("batch_trace_id", batch_trace_id)
+-            except Exception as exc:
++            except (Exception, asyncio.CancelledError) as exc:
+                 for item in items:
+                     if not item.future.done():
+-                        item.future.set_exception(exc)
++                        if isinstance(exc, asyncio.CancelledError):
++                            item.future.cancel()
++                        else:
++                            item.future.set_exception(exc)
+                 raise
+ 
+             self._last_result = result
 ```
 
-**File**: `frontend/docs/docs/_demos/file-browser-basic-data.ts` (modified, +3/-1)
+**File**: `openviking/session/session.py` (modified, +4/-1)
 ```diff
-@@ -209,7 +209,9 @@ export function offlineFetch(
-       if (query?.trim().toLowerCase() === 'error')
-         return Promise.resolve(searchFailure());
-       return Promise.resolve(
--        ok(semanticSearch(query ?? '', Object.values(DIRS).flat(), USER)),
-+        ok(
-+          semanticSearch(query ?? '', Object.values(DIRS).flat(), USER, FILES),
-+        ),
-       );
-     }
-     case '/api/v1/search/grep': {
+@@ -1935,6 +1935,7 @@ async def commit_async(
+                     await get_queue_manager().enqueue(
+                         QueueManager.SESSION_COMMIT,
+                         queue_msg.to_dict(),
++                        group_key=queue_msg.queue_group_key,
+                     )
+             except Exception as exc:
+                 try:
+@@ -2324,7 +2325,9 @@ async def retry_archive(
+             )
+             try:
+                 with bind_task_context(new_task_id, self.ctx.account_id, self.ctx.user.user_id):
+-                    await get_queue_manager().enqueue(QueueManager.SESSION_COMMIT, msg.to_dict())
++                    await get_queue_manager().enqueue(
++                        QueueManager.SESSION_COMMIT, msg.to_dict(), group_key=msg.queue_group_key
++                    )
+             except Exception as exc:
+                 await tracker.fail(
+                     new_task_id,
 ```
 
-**File**: `frontend/docs/docs/_demos/file-browser-search-data.ts` (modified, +8/-3)
+**File**: `openviking/storage/queuefs/session_commit_msg.py` (modified, +10/-0)
 ```diff
-@@ -21,6 +21,7 @@
- /** 一条目录项的形状，与 `fs/ls` 的返回一致。One directory entry, shaped like `fs/ls`. */
- interface Entry {
-   uri: string;
-+  abstract?: string;
- }
+@@ -2,6 +2,7 @@
+ # SPDX-License-Identifier: AGPL-3.0
+ """Persistent Session Phase 2 queue message."""
  
- /** 语义检索的分组结果。Grouped result of a semantic search. */
-@@ -56,12 +57,16 @@ export function semanticSearch(
-   query: string,
-   entries: readonly Entry[],
-   userRoot: string,
-+  files: Readonly<Record<string, string>>,
- ): FindPayload {
-   const needle = query.trim().toLowerCase();
-   if (!needle) return {};
--  const hits = entries.filter((entry) =>
--    entry.uri.toLowerCase().includes(needle),
--  );
-+  const hits = entries
-+    .filter((entry) => entry.uri.toLowerCase().includes(needle))
-+    .map((entry) => ({
-+      ...entry,
-+      abstract: files[entry.uri]?.split('\n\n')[1]?.trim(),
-+    }));
-   return {
-     memories: hits.filter((entry) => entry.uri.startsWith(userRoot)),
-     resources: hits.filter((entry) =>
++import json
+ from dataclasses import asdict, dataclass, field, fields
+ from typing import Any, Dict, List
+ 
+@@ -35,6 +36,15 @@ class SessionCommitMsg:
+     # omitted true; only queued work, never saved user intent, inherits that value.
+     memory_policy_version: int = 1
+ 
++    @property
++    def queue_group_key(self) -> str:
++        """All sessions of one account/user share a streaming-memory consumer."""
++        return json.dumps(
++            [self.user["account_id"], self.user["user_id"]],
++            ensure_ascii=False,
++            separators=(",", ":"),
++        )
++
+     def to_dict(self) -> Dict[str, Any]:
+         return asdict(self)
+ 
 ```
 
-**File**: `frontend/docs/docs/en/components/file-preview.mdx` (modified, +41/-34)
+**File**: `openviking/storage/queuefs/session_commit_processor.py` (modified, +2/-10)
 ```diff
-@@ -210,12 +210,13 @@ The component calls these methods to carry out an operation, and fires the match
+@@ -75,15 +75,7 @@ async def _process_bound(self, msg: SessionCommitMsg, ctx: RequestContext) -> bo
+                     user_id=ctx.user.user_id,
+                 )
+                 return True
+-            processed = await session.resume_queued_commit(msg)
+-            if not processed:
+-                from openviking.storage.queuefs import QueueManager, get_queue_manager
+-
+-                await get_queue_manager().enqueue(
+-                    QueueManager.SESSION_COMMIT,
+-                    msg.to_dict(),
+-                )
+-            return processed
++            return await session.resume_queued_commit(msg)
+         finally:
+             reset_root_observability_context(root_context_token)
  
- ### FilePreviewEditing
- 
--| Property    | Description                                                                                                                                                                 | Type                                                          | Default  |
--| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | -------- |
--| save        | Saves the draft; a throw or rejection keeps the draft and shows the save-failed message                                                                                     | `(value: string) => Promise<void>`                            | Required |
--| loadContent | Reads the full text when editing starts; returning `undefined` abandons the edit. Without it, text from `content` or `file` is used, and a `url`-only source must supply it | `(source: FilePreviewSource) => Promise<string \| undefined>` | -        |
--| onSave      | Called after saving succeeds, with the saved text                                                                                                                           | `(value: string) => void`                                     | -        |
--| onCancel    | Called after editing is cancelled, or a tab or level switch discards the draft, with the discarded text; not called after a successful save                                 | `(value: string) => void`                                     | -        |
-+| Property             | Description                                                                                                                                                                 | Type                                                                                           | Default  |
-+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | -------- |
-+| save                 | Saves the draft with the optional note. Rejection keeps the draft; returning `{ warning: 'version-not-created' }` shows a warning and still calls `onSave`.                 | `(value: string, versionNote?: string) => Promise<void \| { warning: 'version-not-created' }>` | Required |
-+| promptForVersionNote | Prompts for a version note before calling `save`; cancelling keeps the draft.                                                                                               | `boolean`                                                                                      | `false`  |
-+| loadContent          | Reads the full text when editing starts; returning `undefined` abandons the edit. Without it, text from `content` or `file` is used, and a `url`-only source must supply it | `(source: FilePreviewSource) => Promise<string \| undefined>`                                  | -        |
-+| onSave               | Called after saving succeeds, with the saved text                                                                                                                           | `(value: string) => void`                                                                      | -        |
-+| onCancel             | Called after editing is cancelled, or a tab or level switch discards the draft, with the discarded text; not called after a successful save                                 | `(value: string) => void`                                                                      | -        |
- 
- ### FilePreviewAction
- 
-@@ -285,34 +286,40 @@ The context the component passes to an `actions` function and a `slots.actions`
- 
- Every field is an optional `string`; omitted fields use the default text of the current language.
- 
--| Property         | Description                                                                                                          | Type     | Default                                      |
--| ---------------- | -------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------- |
--| previewImage     | Accessible name of the enlarge-image button, followed by the file name                                               | `string` | `'Enlarge image'`                            |
--| closePreview     | Text of the close button in the enlarged-image dialog                                                                | `string` | `'Close preview'`                            |
--| showHiddenPath   | Accessible name of the "…" button that holds the collapsed breadcru
+@@ -129,4 +121,4 @@ async def on_dequeue(self, data: Optional[Dict[str, Any]]) -> ProcessResult:
+                 processed = await self._process(msg, ctx)
+             except Exception as exc:
+                 return ProcessResult.failed(str(exc))
+-        return ProcessResult.success() if processed else ProcessResult.requeued()
++        return ProcessResult.success() if processed else ProcessResult.retry()
 ```
 
-**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +4/-0)
+**File**: `tests/conftest.py` (modified, +2/-0)
 ```diff
-@@ -265,6 +265,8 @@ All fields are optional, and omitted fields follow `locale`.
- | summaryEmpty            | Message for a summary level not generated yet; the preview does not show it, so overriding it has no effect                  | `string`                             | `'No summary generated yet'`                                          |
- | summaryFailed           | Message when a summary level fails to load and the server gives no message                                                   | `string`                             | `'The summary could not be loaded.'`                                  |
- | formatCharacterCount    | Character count text in the preview footer                                                                                   | `(count: number) => string`          | Formatted per `locale`, for example `'1,234 characters'`              |
-+| formatPreviewUpdatedAt  | Update time text in the preview footer                                                                                       | `(time: string) => string`           | `'Updated on {time}'`                                                 |
-+| previewModelNotice      | Model notice in resource previews; pass an empty string to hide it                                                           | `string`                             | `'Content parsing provided by the Content Understanding Model'`       |
- | actionBar               | Text passed to the [FileBrowserActionBar](../components/file-browser-action-bar) action bar, including its connection drawer | `FileBrowserActionBarLabels`         | -                                                                     |
- | tree                    | Text passed to the [FileTree](../components/file-tree) file tree                                                             | `FileTreeLabels`                     | -                                                                     |
- | preview                 | Text passed to the [FilePreview](../components/file-preview) file preview; takes precedence over same-named fields above     | `FilePreviewLabels`                  | -                                                                     |
-@@ -427,6 +429,7 @@ Reveal defaults to `true`; `{ reveal: false }` only requests a preview and resol
- - Semantic results rank by score and deduplicate by URI. `grep` keeps each match and its line number, even when several matches share a file.
- - A `glob` pattern without `/` gains a `**/` prefix; a directory match drops its trailing slash before navigation and records the directory fact on `isDir`.
- - Filter groups enable or disable with the mode. A disabled group stays visible but dimmed, with the reason beside its title. Directory candidates derive from `rootUri` with the `~` alias; selections invalidated by a root change are dropped.
-+- In Advanced, select a suggested directory or use “Choose a directory” to browse its subdirectories. Choose a time field to show the date range. Ignore case is shown in `grep` mode.
- - Use **↑ / ↓** to move the current result. Click or press **Enter** to close the dialog, open the resource and reveal its tree row.
- 
- ### Preview actions
-@@ -436,6 +439,7 @@ Reveal defaults to `true`; `{ reveal: false }` only requests a preview and resol
- - `readOnly` disables all writes, including saving the compile configuration. With `acl` on, editing, import and saving the compile configuration require `write` or `manage`, and deletion requires `manage`.
- - Copy content, download, export, version history and viewing the compile configuration are not restricted by `readOnly` or ACL.
- - Without `acl`, or for resources outside `viking://resources/`, the block does not probe permissions and the server enforces access.
-+- Saving an ordinary file prompts for a version note. After confirmation, FileBrowser writes the file and then creates a snapshot for that file. If the snapshot is not created, the file stays saved and the preview shows a warning. Wiki files save directly.
- - Version history reads up to 500 snapshots with `GET /api/v1/snapshot/log`, or up to 100 retained versions with `GET /api/v1/snapshot/versions` for a Wiki compile output file. You can preview or copy historical text and compare it with the current file. The history dialog is read-only.
- - Compile configuration: `GET /api/v1/compile/config` reads it, and `POST /api/v1/compile/config/update` saves the source directories, skill, instructions, automatic updates and daily or weekly schedule.
- - Import .ovpack: the file is first uploaded through `POST /api/v1/resources/temp_upload`, then `POST /api/v1/pack/import` imports it into the current directory. On failure the chosen file is kept, and a retry uploads it again.
+@@ -162,6 +162,8 @@ def get_dimension(self) -> int:
+     OpenVikingConfigSingleton.reset_instance()
+     OpenVikingConfigSingleton.initialize(
+         config_dict={
++            # Domain tests use a file-only fake; Watch leadership has dedicated fixtures.
++            "enable_watch_scheduler": False,
+             "storage": {
+                 "workspace": str(test_data_dir),
+                 "agfs": {"backend": "local"},
 ```
 
 ---
 
-### Incident Patch 3: `0ccde8b5` (2026-11-14)
-**Commit Message**: feat(react): illustrate the rendering-failure fallback (#7658)
+### Incident Patch 3: `bfd935f4` (2026-11-16)
+**Commit Message**: fix(session): serialize explicit session creation (#6044)
 
-* feat(react): illustrate the rendering-failure fallback
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
 
-The default fallback shown when a component or region fails to render was a
-plain sentence and a text link. It now uses the shared Empty primitive with a
-new crash illustration — a card split by a jagged crack — in the same
-258 × 140 dashed-grid style as the empty states, plus a secondary Retry button.
-The illustration, message and button follow the theme.
-
-Empty gains an optional `action` slot and a `role` prop so a failure can be
-announced at once with `role="alert"`. In the FileBrowser tree and preview
-panes and the VikingBot message area the fallback fills the pane and is
-vertically centred; elsewhere it keeps its content height so a short toolbar
-is not stretched.
-
-Add a Rendering failure example to every component and block that isolates
-renders — CommandConsole, VikingBot, WikiDashboard, ExperienceDashboard,
-Console, FileBrowser and ScopeCascade — each injecting the failure through a
-public prop and documenting the Chinese and English pages. A shared
-`#render-failure` demo helper provides the toggle and the throwing node.
-
-Co-Authored-By: Claude Code <[RE
-
-**File**: `frontend/.changeset/illustrated-crash-fallback.md` (added, +11/-0)
+**File**: `openviking/service/session_service.py` (modified, +3/-5)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+When a component or region fails to render, the built-in fallback now shows a line illustration of a cracked card above the message, with a secondary Retry button, in the same style as the empty states. In the FileBrowser tree and preview panes, including a failing host-provided preview action, and the VikingBot message area it fills the pane and is vertically centred. Hosts that pass their own fallback are unaffected.
-+
-+## zh-CN
-+
-+组件或区域渲染失败时，内置兜底改为与空态同一风格的裂开卡片线稿插画，下方是提示文案和次要样式的重试按钮；在 FileBrowser 的目录树、预览区（包括宿主传入的预览操作区出错）和 VikingBot 消息区中占满面板并垂直居中。宿主自行传入的兜底不受影响。
+@@ -295,10 +295,6 @@ async def create(
+         """
+         self._record_lifecycle_metric("create", "attempt")
+         try:
+-            if session_id:
+-                existing = self.session(ctx, session_id)
+-                if await existing.exists():
+-                    raise AlreadyExistsError(f"Session '{session_id}' already exists")
+             session = self.session(ctx, session_id)
+             if memory_policy is not None:
+                 policy = MemoryPolicy.from_dict(memory_policy)
+@@ -321,7 +317,9 @@ async def create(
+                     event_tags,
+                     discard_invalid=True,
+                 )
+-            await session.ensure_exists()
++            created = await session.ensure_exists()
++            if session_id and not created:
++                raise AlreadyExistsError(f"Session '{session_id}' already exists")
+             self._record_lifecycle_metric("create", "ok")
+             return session
+         except Exception:
 ```
 
-**File**: `frontend/docs/docs/_demos/command-console-crash.tsx` (added, +55/-0)
+**File**: `openviking/session/session.py` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,55 @@
-+import { useState } from 'react';
-+import { useLang } from '@rspress/core/runtime';
-+import {
-+  CommandConsole,
-+  type CommandConsoleRecord,
-+} from '@openviking/react/components/command-console';
-+import '@openviking/react/components/command-console/style.css';
-+import { Fault, RenderFailureDemo } from '#render-failure';
-+
-+export default function CommandConsoleCrash() {
-+  const zh = useLang() === 'zh';
-+  const [value, setValue] = useState('');
-+  const records: readonly CommandConsoleRecord[] = [
-+    {
-+      id: 'broken',
-+      command: 'ov write viking://resources/acme/notes.md',
-+      status: 'success',
-+      content: {
-+        variant: 'write-result',
-+        lines: [
-+          <Fault key="line">
-+            {zh ? '已写入 1 个文件。' : 'Wrote 1 file.'}
-+          </Fault>,
-+        ],
-+      },
-+    },
-+    {
-+      id: 'healthy',
-+      command: 'ov health',
-+      status: 'success',
-+      content: {
-+        variant: 'write-result',
-+        lines: [zh ? '服务运行正常。' : 'The service is healthy.'],
-+      },
-+    },
-+  ];
-+  return (
-+    <RenderFailureDemo
-+      hint={
-+        zh
-+          ? '宿主渲染的第一条结果出错时，只有这条结果显示兜底，其他记录和输入区照常可用。'
-+          : 'When the first host-rendered result fails, only that result shows the fallback; the other record and the input stay usable.'
-+      }
-+    >
-+      <div style={{ height: 420 }}>
-+        <CommandConsole
-+          locale={zh ? 'zh-CN' : 'en-US'}
-+          records={records}
-+          value={value}
-+          onValueChange={setValue}
-+        />
-+      </div>
-+    </RenderFailureDemo>
-+  );
-+}
+@@ -790,23 +790,24 @@ async def is_materialized(self) -> bool:
+                 raise
+             return False
+ 
+-    async def ensure_exists(self) -> None:
+-        """Materialize session root and messages file if missing."""
++    async def ensure_exists(self) -> bool:
++        """Materialize session state and return whether this call created it."""
+         # Initial state must not overwrite a concurrent append or commit.
+         session_path = self._viking_fs._uri_to_path(self._session_uri, ctx=self.ctx)
+         lease = await self._viking_fs._async_agfs.pathlock_acquire_exact(
+             session_path, timeout_secs=_SESSION_PHASE1_LOCK_TIMEOUT_SECONDS
+         )
+         try:
+             if await self.exists():
+-                return
++                return False
+             await self._viking_fs.mkdir(self._session_uri, exist_ok=True, ctx=self.ctx)
+             await self._viking_fs.write_file(
+                 f"{self._session_uri}/messages.jsonl",
+                 "",
+                 ctx=self.ctx,
+             )
+             await self._save_meta()
++            return True
+         finally:
+             await self._viking_fs._async_agfs.pathlock_release(lease)
+ 
 ```
 
-**File**: `frontend/docs/docs/_demos/console-crash.tsx` (added, +31/-0)
+**File**: `tests/server/test_api_sessions.py` (modified, +49/-0)
 ```diff
-@@ -0,0 +1,31 @@
-+import { useLang } from '@rspress/core/runtime';
-+import { OpenVikingProvider } from '@openviking/react/client';
-+import { Console } from '@openviking/react/modules/console';
-+import '@openviking/react/modules/console/style.css';
-+import { consoleTransport } from '#console-transport';
-+import { Fault, RenderFailureDemo } from '#render-failure';
+@@ -642,6 +642,55 @@ async def append(self, messages):
+     assert meta["last_message_at"]
+ 
+ 
++async def test_concurrent_create_with_explicit_id_has_single_winner(
++    client: httpx.AsyncClient,
++    monkeypatch,
++):
++    session_id = "concurrent-explicit-create"
++    request_count = 8
++    ready_count = 0
++    ready_lock = asyncio.Lock()
++    all_ready = asyncio.Event()
++    original_ensure_exists = Session.ensure_exists
 +
-+const transport = consoleTransport();
++    async def synchronize_before_create(session):
++        nonlocal ready_count
++        if session.session_id == session_id:
++            async with ready_lock:
++                ready_count += 1
++                if ready_count == request_count:
++                    all_ready.set()
++            await asyncio.wait_for(all_ready.wait(), timeout=5)
++        return await original_ensure_exists(session)
 +
-+export default function ConsoleCrash() {
-+  const zh = useLang() === 'zh';
-+  return (
-+    <RenderFailureDemo
-+      hint={
-+        zh
-+          ? '宿主追加到工具栏的内容出错时，只有工具栏显示兜底，命令面板照常可用。'
-+          : 'When host content added to the toolbar fails, only the toolbar shows the fallback; the command panel stays usable.'
-+      }
-+    >
-+      <OpenVikingProvider fetch={transport}>
-+        <div style={{ display: 'flex', flexDirection: 'column', height: 480 }}>
-+          <Console
-+            locale={zh ? 'zh-CN' : 'en-US'}
-+            defaultMode="command"
-+            slots={{ toolbar: <Fault /> }}
-+          />
-+        </div>
-+      </OpenVikingProvider>
-+    </RenderFailureDemo>
-+  );
-+}
++    monkeypatch.setattr(Session, "ensure_exists", synchronize_before_create)
++    requests = [
++        {
++            "session_id": session_id,
++            "auto_commit_policy": {"message_count_threshold": threshold},
++        }
++        for threshold in range(10, 10 + request_count)
++    ]
++
++    responses = await asyncio.wait_for(
++        asyncio.gather(*(client.post("/api/v1/sessions", json=request) for request in requests)),
++        timeout=10,
++    )
++
++    winners = [response for response in responses if response.status_code == 200]
++    conflicts = [response for response in responses if response.status_code == 409]
++    assert len(winners) == 1
++    assert len(conflicts) == request_count - 1
++    assert all(response.json()["error"]["code"] == "ALREADY_EXISTS" for response in conflicts)
++
++    persisted = await client.get(f"/api/v1/sessions/{session_id}")
++    assert persisted.status_code == 200
++    assert (
++        persisted.json()["result"]["auto_commit_policy"]
++        == winners[0].json()["result"]["auto_commit_policy"]
++    )
++
++
+ async def test_add_message_ignores_extra_metadata_fields(client: httpx.AsyncClient):
+     create_resp = await client.post("/api/v1/sessions", json={})
+     session_id = create_resp.json()["result"]["session_id"]
 ```
 
-**File**: `frontend/docs/docs/_demos/experience-dashboard-crash.tsx` (added, +46/-0)
+**File**: `tests/service/test_session_service_metrics.py` (modified, +1/-3)
 ```diff
-@@ -0,0 +1,46 @@
-+import { useLang } from '@rspress/core/runtime';
-+import {
-+  ExperienceDashboard,
-+  type ExperienceTrajectory,
-+} from '@openviking/react/components/experience-dashboard';
-+import '@openviking/react/components/experience-dashboard/style.css';
-+import { DEMO_EXPERIENCE, DEMO_TRAJECTORY } from '#dashboard-demo-data';
-+import { RenderFailureDemo, useFailing } from '#render-failure';
-+
-+function Dashboard() {
-+  const zh = useLang() === 'zh';
-+  const failing = useFailing();
-+  const trajectory = {
-+    uri: DEMO_TRAJECTORY,
-+    name: 'Release verification',
-+    created_at: '2026-11-09T12:03:00Z',
-+  };
-+  // 模拟宿主传入不完整的数据：轨迹名称为空，且缺少必填的 uri。
-+  const broken = { name: '' } as ExperienceTrajectory;
-+  return (
-+    <ExperienceDashboard
-+      locale={zh ? 'zh-CN' : 'en-US'}
-+      uri={DEMO_EXPERIENCE}
-+      kind="file"
-+      data={{
-+        trajectories: [failing ? broken : trajectory],
-+        trajectoryTotal: 1,
-+      }}
-+    />
-+  );
-+}
-+
-+export default function ExperienceDashboardCrash() {
-+  const zh = useLang() === 'zh';
-+  return (
-+    <RenderFailureDemo
-+      hint={
-+        zh
-+          ? '宿主传入的轨迹名称为空、又缺少必填的 uri 时，看板整体显示兜底。'
-+          : 'When a host-supplied trajectory has an empty name and no required uri, the board shows the fallback.'
-+      }
-+    >
-+      <Dashboard />
-+    </RenderFailureDemo>
-+  );
-+}
-```
-
-**File**: `frontend/docs/docs/_demos/file-browser-crash.tsx` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+import { useState } from 'react';
-+import { useLang } from '@rspress/core/runtime';
-+import { OpenVikingProvider } from '@openviking/react/client';
-+import { FileBrowser } from '@openviking/react/modules/file-browser';
-+import '@openviking/react/modules/file-browser/style.css';
-+import { Button } from '#demo-controls';
-+import { usePreviewControls } from '#file-browser-preview-controls';
-+import { MEMORIES } from '#file-browser-basic-data';
-+
-+const PROFILE = `${MEMORIES}/profile.md`;
-+import { Fault, RenderFailureDemo } from '#render-failure';
-+
-+type Target = 'tree' | 'preview';
-+
-+function Browser({
-+  locale,
-+  target,
-+}: {
-+  locale: 'zh-CN' | 'en-US';
-+  target: Target;
-+}) {
-+  const preview = usePreviewControls(locale);
-+  return (
-+    <OpenVikingProvider fetch={preview.fetch}>
-+      <div style={{ height: 480, display: 'flex' }}>
-+        <FileBrowser
-+          locale={locale}
-+          defaultExpandedUri={MEMORIES}
-+          defaultUri={PROFILE}
-+          onImportResources={() => undefined}
-+          renderImportResources={(trigger) =>
-+            target === 'tree' ? <Fault>{trigger}</Fault> : trigger
-+          }
-+          previewSlots={{
-+            // 预览操作区由组件内的错误边界接住，和目录树是两个独立区域。
-+            actions:
-+              target === 'preview'
-+                ? () => (
-+                    <Fault>
-+                      <span />
-+                    </Fault>
-+                  )
-+                : undefined,
-+          }}
-+        />
-+      </div>
-+    </OpenVikingProvider>
-+  );
-+}
-+
-+export default function FileBrowserCrash() {
-+  const zh = useLang() === 'zh';
-+  const locale = zh ? 'zh-CN' : 'en-US';
-+  const [target, setTarget] = useState<Target>('tree');
-+  return (
-+    <RenderFailureDemo
-+      hint={
-+        zh
-+          ? '两个区域各自隔离：目录树出错时预览区照常可用，预览操作区出错时目录树照常可用。'
-+          : 'Each region is isolated: when the tree fails the preview stays usable, and when the preview actions fail the tree stays usable.'
-+      }
-+    >
-+      <p className="ov-demo-controls">
-+        {(
-+          [
-+            ['tree', zh ? '目录树失败' : 'Tree failure'],
-+            ['preview', zh ? '预览操作区失败' : 'Preview actions failure'],
-+          ] as const
-+        ).map(([value, label]) => (
-+          <Button
-+            key={value}
-+            size="small"
-+            type={target === value ? 'primary' : 'secondary'}
-+            htmlType="button"
-+            aria-pressed={target === value}
-+            onClick={() => setTarget(value)}
-+          >
-+            {label}
-+          </Button>
-+        ))}
-+      </p>
-+      <Browser key={target} locale={locale} target={target} />
-+    </RenderFailureDemo>
-+  );
-+}
-```
-
-**File**: `frontend/docs/docs/_demos/render-failure.tsx` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+import { Checkbox } from '#demo-controls';
-+import { useLang } from '@rspress/core/runtime';
-+import { createContext, useContext, useState } from 'react';
-+import type { ReactNode } from 'react';
-+
-+const Failing = createContext(false);
-+
-+/**
-+ * 示例里的故障注入点：平时原样渲染子内容，勾选「模拟渲染失败」后抛错，
-+ * 由所在组件的错误边界接住。
-+ */
-+export function Fault({ children }: { children?: ReactNode }) {
-+  if (useContext(Failing)) throw new Error('Simulated rendering failure');
-+  return <>{children}</>;
-+}
-+
-+/** 当前是否在模拟失败，供需要改造数据而非插入节点的示例使用。 */
-+export function useFailing() {
-+  return useContext(Failing);
-+}
-+
-+/** 勾选框与说明；子内容中的 `Fault` 随勾选状态抛错。 */
-+export function RenderFailureDemo({
-+  children,
-+  hint,
-+}: {
-+  children: ReactNode;
-+  hint?: string;
-+}) {
-+  const zh = useLang() === 'zh';
-+  const [failing, setFailing] = useState(false);
-+  return (
-+    <div>
-+      {hint ? <p>{hint}</p> : null}
-+      <p>
-+        {zh
-+          ? '勾选后对应区域渲染失败并显示默认兜底；取消勾选后点击「重试显示」恢复。'
-+          : 'Check the box to make the region fail and show the default fallback; uncheck it, then select Retry display to recover.'}
-+      </p>
-+      <p className="ov-demo-controls">
-+        <Checkbox checked={failing} onChange={setFailing}>
-+          {zh ? '模拟渲染失败' : 'Simulate a rendering failure'}
-+        </Checkbox>
-+      </p>
-+      <Failing.Provider value={failing}>{children}</Failing.Provider>
-+    </div>
-+  );
-+}
-```
-
-**File**: `frontend/docs/docs/_demos/scope-cascade-crash.tsx` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+import { useLang } from '@rspress/core/runtime';
-+import { ScopeCascade } from '@openviking/react/modules/scope-cascade';
-+import '@openviking/react/modules/scope-cascade/style.css';
-+import { LibraryIcon } from '@openviking/react/icons';
-+import { Fault, RenderFailureDemo } from '#render-failure';
-+
-+// Mock interfaces only: the library icon is the host-rendered node that fails.
-+const api = {
-+  loadLibraries: () =>
-+    Promise.resolve(
-+      ['research', 'support'].map((id) => ({
-+        id,
-+        label: id === 'research' ? 'Research' : 'Support',
-+        icon: (
-+          <Fault>
-+            <LibraryIcon name={id} />
-+          </Fault>
-+        ),
-+      })),
-+    ),
-+  loadSpaces: (libraryId: string) =>
-+    Promise.resolve([{ id: `${libraryId}-public`, label: 'Public space' }]),
-+  loadUsers: (_libraryId: string, spaceId: string) =>
-+    Promise.resolve([{ id: `${spaceId}-alice`, label: 'Alice' }]),
-+};
-+
-+export default function ScopeCascadeCrash() {
-+  const zh = useLang() === 'zh';
-+  return (
-+    <RenderFailureDemo
-+      hint={
-+        zh
-+          ? '宿主提供的库图标渲染出错时，级联选择器整体显示兜底。'
-+          : 'When a host-provided library icon fails to render, the cascade shows the fallback.'
-+      }
-+    >
-+      <div style={{ minHeight: 200 }}>
-+        <ScopeCascade locale={zh ? 'zh-CN' : 'en-US'} {...api} />
-+      </div>
-+    </RenderFailureDemo>
-+  );
-+}
-```
-
-**File**: `frontend/docs/docs/_demos/viking-bot-crash.tsx` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+import { useState } from 'react';
-+import { useLang } from '@rspress/core/runtime';
-+import { VikingBot } from '@openviking/react/components/viking-bot';
-+import '@openviking/react/components/viking-bot/style.css';
-+import { Fault, RenderFailureDemo } from '#render-failure';
-+
-+export default function VikingBotCrash() {
-+  const zh = useLang() === 'zh';
-+  const [draft, setDraft] = useState('');
-+  return (
-+    <RenderFailureDemo
-+      hint={
-+        zh
-+          ? '宿主传入的消息列表出错时，只有消息区显示兜底，输入区仍可编辑。'
-+          : 'When the host-supplied message list fails, only the message area shows the fallback; the composer stays editable.'
-+      }
-+    >
-+      <div style={{ height: 420 }}>
-+        <VikingBot
-+          locale={zh ? 'zh-CN' : 'en-US'}
-+          messages={[]}
-+          messageList={
-+            <Fault>
-+              <p style={{ padding: 16 }}>
-+                {zh ? '宿主渲染的消息列表。' : 'Host-rendered message list.'}
-+              </p>
-+            </Fault>
-+          }
-+          draft={draft}
-+          onDraftChange={setDraft}
-+          onSend={() => setDraft('')}
-+        />
-+      </div>
-+    </RenderFailureDemo>
-+  );
-+}
+@@ -25,8 +25,7 @@ async def test_create_keeps_working_when_lifecycle_metrics_fail(monkeypatch: pyt
+     service = SessionService()
+     ctx = _make_ctx()
+     session = Mock()
+-    session.exists = AsyncMock(return_value=False)
+-    session.ensure_exists = AsyncMock()
++    session.ensure_exists = AsyncMock(return_value=True)
+     debug = Mock()
+ 
+     def _boom(*_args, **_kwargs):
+@@ -39,7 +38,6 @@ def _boom(*_args, **_kwargs):
+     result = await service.create(ctx, "sess-1")
+ 
+     assert result is session
+-    session.exists.assert_awaited_once()
+     session.ensure_exists.assert_awaited_once()
+     assert debug.call_count == 2
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7706** (2026-11-14): chore(react): prepare 0.1.12 stable release (@LaamGinghong)
-- **PR #7704** (2026-11-14): feat(react): connect Console HITL flow and extensible form fields (@LaamGinghong)
-- **PR #7698** (2026-11-14): fix(react): isolate file tree dashboard tooltips (@LaamGinghong)
-- **PR #7696** (2026-11-14): feat(react): add opt-in frontend monitoring and target CSR (@LaamGinghong)
-- **PR #7695** (2026-11-14): feat(react): unify error feedback with Toast and copyable notifications (@LaamGinghong)
-- **PR #7694** (2026-11-14): feat(react): add built-in HITL validation and step navigation (@LaamGinghong)
+- **PR #7746** (2026-11-16): fix(parse): keep Markdown that is not YAML frontmatter (@123XieC)
+- **PR #7744** (2026-11-16): feat(studio): show the connected OpenViking version in the sidebar footer (@zuoanCo)
+- **PR #7740** (closed): fix(dsh-memory-plugin): never give up on a returning server (@lztxwd6666)
+- **PR #7735** (closed): parse: resolve percent-encoded image destinations (@Batianxieshen1)
+- **PR #7734** (closed): fix(mcp): expose metadata-only retrieval tag updates (@xixi-box)
+- **PR #7733** (2026-11-16): fix(superagent): accept reactions from other Lark apps (@r266-tech)
 
 ---
 
@@ -2400,41 +2368,54 @@ Co-Authored-By: Claude Code <[RE
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react): align FileBrowser and VikingBot interactions
+## X. ci): route Linux API jobs and wheel builds to dedicated runner
 
 **RULE**:
-When implementing operations in `frontend/.changeset/file-browser-acl-picker.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/CI.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f9195e5`: react): align FileBrowser and VikingBot interactions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a6e51f0`: ci): route Linux API jobs and wheel builds to dedicated runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/.changeset/file-browser-acl-picker.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/CI.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
----
-'@openviking/react': patch
----
+With repository variable `CI_LINUX_BUILDS_ENABLED=true`, trusted Linux API jobs
+use `[self-hosted, Linux, X64, ci-linux-builds]`. Linux x86_64 wheel builds
+alternate between GitHub-hosted and this dedicated pool.
+Only the dedicated runner `iv-yezentk8ao3z47ge5tmm` has that custom label; runner
+display names do not select machines.
+Linux wheels use the dedicated runner on even workflow run numbers.
+API native runtime preparation and its short change-planning job always use
+the dedicated runner for eligible events, regardless of workflow run number.
+The planning job runs Git/Python on the host with a five-minute execution limit.
+Linux API/CLI, MySQL/Redis and
+cuVS tests inherit their same-run native producer's destination. This keeps the
+entire trusted Linux API dependency chain off the hosted queue.
+Wheel builds send 50% of consecutive runs to each destination, and reruns keep
+the same destination. This is not half of all Linux jobs or an equal share of
+execution time. Conditional skips can change the observed share.
+The old ECS runner does not receive these jobs.
 
-## en-US
-
-Align the FileBrowser ACL picker with the OpenViking console, let hosts define which principal types are available, and restore inheritance through the hosted gateway’s supported ACL update endpoint.
-
-## zh-CN
-
-对齐 FileBrowser 权限弹窗与 OpenViking 控制台的交互，允许宿主指定可添加的主体类型，并通过网关支持的权限更新接口恢复继承。
+Only official repository PRs from the same repository and branch pushes are
+eligible. Release/tag events, schedules, ma
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+Builds and ordinary tests use GitHub-hosted runners to measure build reuse and
+cache behavior independently of self-hosted machine capacity. There is no
+`ov-ci-runner` scheduling or manual selection in these workflows.
+The existing P0 Memory Tests remain on their original ECS environment, selected
+with `[self-hosted, Linux, X64, openviking-ecs]`. That runner must have the
+`openviking-ecs` custom label; its display name alone does not select it.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f9195e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a6e51f0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
