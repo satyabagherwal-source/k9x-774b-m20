@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source**: github ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
-> **Source Version**: `af5fb956`  
+> **Source Version**: `17185d1d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T09:56:53.395Z  
+> **Timestamp**: 2026-11-16T23:34:59.959Z  
 > **Learning ID**: `learn-github-wzh4869-appports`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T09:56:53.385Z  
+> **Harvest Timestamp**: 2026-11-16T23:34:59.953Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📦 A macOS utility to seamlessly migrate applications to external storage and reclaim local disk space.【一款 macOS 工具，无缝迁移应用到外部存储并自动建立链接，释放宝贵的本地空间】
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2224 stars
+- **Stars / Engagement**: 2268 stars
 
 ---
 
@@ -199,6 +199,47 @@ final class AppOperationState: ObservableObject {
         terminationReply = reply
         cancellation?()
         return true
+    }
+}
+
+```
+
+### Core Architecture Module: `AppPorts/Services/ShipItInstallerState.swift`
+```
+import Foundation
+
+/// ShipIt stores resumable state per host, separately from its downloaded update.
+enum ShipItInstallerState {
+    static let ownedBundleKey = "SQRLInstallerOwnedBundle"
+    static let attemptsKey = "SQRLShipItInstallationAttempts"
+
+    static func clear(for candidate: ShipItUpdateRecovery.Candidate, domain override: String? = nil) throws {
+        guard try SignatureRecordFile.data(at: candidate.stateURL) == candidate.requestBytes else {
+            throw CocoaError(.fileReadUnknown)
+        }
+        let domain = (override ?? (candidate.request.bundleIdentifier + ".ShipIt")) as CFString
+        if let value = read(ownedBundleKey, domain: domain) {
+            guard let data = value as? Data,
+                  let archive = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+                  archive["$archiver"] as? String == "NSKeyedArchiver",
+                  let objects = archive["$objects"] as? [Any],
+                  objects.compactMap({ $0 as? String }).contains(where: {
+                      guard let url = URL(string: $0), url.isFileURL else { return false }
+                      return url.standardizedFileURL.path == candidate.request.targetBundleURL.standardizedFileURL.path
+                  }) else { throw CocoaError(.fileReadCorruptFile) }
+        }
+        // No unarchiving: a third-party class must never execute while inspecting this record.
+        for key in [ownedBundleKey, attemptsKey] {
+            CFPreferencesSetValue(key as CFString, nil, domain, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
+        }
+        guard CFPreferencesSynchronize(domain, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost),
+              read(ownedBundleKey, domain: domain) == nil, read(attemptsKey, domain: domain) == nil else {
+            throw CocoaError(.fileWriteUnknown)
+        }
+    }
+
+    private static func read(_ key: String, domain: CFString) -> CFPropertyList? {
+        CFPreferencesCopyValue(key as CFString, domain, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
     }
 }
 
@@ -984,63 +1025,6 @@ actor AppScanner {
                             || runningAppURLs.contains(itemURL.appendingPathComponent(bundleURL.lastPathCompo
 ```
 
-### Core Architecture Module: `AppPorts/Utils/ApplicationLaunchGate.swift`
-```
-import CryptoKit
-import Darwin
-import Foundation
-
-/// Shared by AppPorts and its native portal launcher. Never unlink lock files:
-/// all participants must keep referring to the same inode.
-enum ApplicationLaunchGate {
-    enum Failure: Error, Equatable { case busy, inspection }
-
-    final class Lease: @unchecked Sendable {
-        private let descriptor: Int32
-        fileprivate init(_ descriptor: Int32) { self.descriptor = descriptor }
-        deinit { close(descriptor) }
-    }
-
-    static var defaultDirectory: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("AppPorts/launch-locks", isDirectory: true)
-    }
-
-    static func acquire(bundleIdentifier: String, migrating: Bool,
-                        directory: URL = defaultDirectory) throws -> Lease {
-        guard !bundleIdentifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw Failure.inspection }
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true,
-            attributes: [.posixPermissions: 0o700])
-        let parent = open(directory.path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
-        guard parent >= 0 else { throw Failure.inspection }
-        defer { close(parent) }
-        var info = stat()
-        guard fstat(parent, &info) == 0, info.st_uid == getuid(), info.st_mode & 0o077 == 0 else { throw Failure.inspection }
-        let name = SHA256.hash(data: Data(bundleIdentifier.utf8)).map { String(format: "%02x", $0) }.joined() + ".lock"
-        let fd = openat(parent, name, O_CREAT | O_RDWR | O_NOFOLLOW | O_CLOEXEC | O_NONBLOCK, 0o600)
-        guard fd >= 0 else { throw Failure.inspection }
-        guard fstat(fd, &info) == 0, info.st_mode & S_IFMT == S_IFREG,
-              info.st_uid == getuid(), info.st_nlink == 1, info.st_mode & 0o077 == 0 else {
-            close(fd)
-            throw Failure.inspection
-        }
-        guard flock(fd, (migrating ? LOCK_EX : LOCK_SH) | LOCK_NB) == 0 else {
-            let code = errno
-            close(fd)
-            throw code == EWOULDBLOCK ? Failure.busy : .inspection
-        }
-        return Lease(fd)
-    }
-
-    static let busyMessage = "正在迁移或迁回应用数据，请等待完成后再打开。"
-    static let unavailableMessage = "无法确认应用数据迁移状态，请打开 AppPorts 检查后重试。"
-    static func message(busy: Bool, languages: [String] = Locale.preferredLanguages) -> String {
-        PortalLocalizedStrings.text(busy ? busyMessage : unavailableMessage, languages: languages)
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1050,8 +1034,8 @@ enum ApplicationLaunchGate {
 - **Issue #106** (2026-11-11): **[BUG] 在MAC 27.2.1 中v2.2版本不能迁移微信**
   *Symptoms*: ### 问题描述 / Problem  路径对应的对象或磁盘已改变，已保留内容。 /Applications   ### 复现步骤（选填） / Steps to reproduce (optional)  1、此前删除过之前迁移过的微信 2、重新安装后的微信无法迁移 3、v2.1也存在过问题  ### 发生问题的操作 / Affected operation  应用迁出或迁回 / Move an app out or back  ### AppPorts 版本 / AppPorts version  2.0.0  ### Build 号（选填） / Build number (optional)  2.2.0 (51)  ### macOS 版本 / macOS version  macOS 27  ### Mac 芯片 / Mac processor  Apple Silicon（M 系列 / M-series）  ### 外置存储类型 / External storage type  外置 SSD / External SSD  ### 目标存储的文件系统 / Destination filesystem  APFS  ### 相关外置卷或数据卷是否加密 / External or data volume encryption  None  ### 环境补充（选填） / Additional environment details (optional)  _No response_  ### 截图（选填） / Screenshots (optional)  <img width="952" height="652" alt="Image" src="https://github.com/user-attachments/assets/f1cddb34-9d31-4bad-8303-b25949c5efbe" />  ### 诊断包或相关日志（选填） / Diagnostic package or relevant logs (optional)  [AppPorts-Diagnostic-20261110-152123.zip](https://github.com/user-attachments/files/34616550/AppPorts-Diagnostic-20261110-152123.zip)
 
-- **Issue #93** (2026-10-28): **[BUG] 文件很多的目录做挂载迁移时，lsof +D 超过 30 秒导致「无法完成数据安全检查」**
-  *Symptoms*: ### 问题描述 / Problem  **环境** - AppPorts 2.0.0 (50) - Mac17,14（M5 Max），macOS 27.2 - 微信 4.1.15，拆分迁移（msg + business）到外置 APFS 盘  **现象** 迁移微信 msg 目录（约 140 万个文件，约 228GB）时，任务在 0% 失败，提示「无法完成数据安全检查」。重试多次都一样。  **原因** DataOperationSafety.swift 中 requireNoKnownWriters（约第 141 行）调用： `/usr/sbin/lsof -nP -F pcfa +D <path>，timeout: 30` 在这台机器上，对 msg 目录单独执行这条命令需要约 32 秒（缓存已热），超过 30 秒就会被当作检查失败抛出 .inspection。文件越多越容易触发。  **验证** 我把 timeout 从 30 改为 1800，本地编译（ad-hoc 签名），重新授予完全磁盘访问权限和 App 管理权限后重试，同一目录迁移成功。  **建议** 1. 放宽这一步的超时，或按文件数量动态计算； 2. 或者改为不带 +D，执行一次 lsof -F 取全量输出，再在代码里按路径前缀过滤，速度会快很多； 3. 超时的时候，错误提示里最好写明是“检查超时”，而不是笼统的“无法完成数据安全检查”。  ### 复现步骤（选填） / Steps to reproduce (optional)  _No response_  ### 发生问题的操作 / Affected operation  微信账号全部或拆分迁移 / Whole or split WeChat account migration  ### AppPorts 版本 / AppPorts version  2.0.0  ### Build 号（选填） / Build number (optional)  50  ### macOS 版本 / macOS version  macOS 27  ### Mac 芯片 / Mac processor  Apple Silicon（M 系列 / M-series）  ### 外置存储类型 / External storage type  None  ### 目标存储的文件系统 / Destination filesystem  APFS  ### 相关外置卷或数据卷是否加密 / External or data volume encryption  None  ### 环境补充（选填） / Additional environment details (optional)  macOS 27.2；Mac17,14（M5 Max）；微信 4.1.15  ### 截图（选填） / Screenshots (optional)  _No response_  ### 诊断包或相关日志（选填） / Diagnostic package or relevant logs (optional)  _No response_
+- **Issue #105** (2026-11-16): **[BUG] Chrome 缓存迁移失败后无法在界面恢复；Synology Drive 迁移后签名校验失败及后台组件缺失**
+  *Symptoms*: ### 问题描述 / Problem  2026-11-04 至 2026-11-05 使用 AppPorts 时遇到两类独立问题，均已在本机恢复，下面记录复现过程、证据和修复建议，便于排查；可按模块拆分跟踪。  预期：迁移失败后能在界面安全恢复；迁移成功后保留原厂签名，且主程序与后台功能均可运行。  环境：AppPorts 2.1.0（Build 51）；macOS 15.6.1（24G90）；Apple Silicon M4；外置 SSD，APFS，FileVault=false、忽略所有权。Synology Drive Client 主应用 Info.plist 显示 8.0.3 / 17892，UI 日志显示 build-17892。路径已用 ~ 和 /Volumes/<外置盘> 脱敏。  ## A. Chrome 缓存迁移失败后，界面重试反复卡住  ### 实际过程与证据  1. 从“应用数据”将 ~/Library/Caches/Google 迁至 /Volumes/<外置盘>/Caches/Google。 2. 报错：“复制失败：数据在操作期间发生变化或校验不一致，已保留副本，请检查后重试”，涉及 Chrome/Default/Cache/Cache_Data/b550fb6659d982f9_0。 3. 排查时 Chrome 已退出，外置盘正常挂载且空间充足。点击“重试”，进入“正在检查待清理的副本”，随后仍失败，停在约 3%。 4. 记录中 phase=needsRecovery、retryFailureCount=5，保留首次迁移的 sourceBaseline。当前源文件内容和修改时间已与该记录不同。 5. 本地源目录仍是普通目录、尚未切换；最终目标目录不存在，外置盘存在未完成的 .appports-copy-<operationID> 临时副本。界面提到的本地 backupPath 当时并未实际存在。 6. 仅将临时副本另行保留，再重试，仍然失败。  规模：界面约 1.61 GB，首次校验记录包含 201445 项。  ### 建议的故障注入复现  在专用测试目录首次扫描后、复制或校验完成前修改部分源文件；等待任务失败，停止所有写入，再通过界面重试。首次故障发生时 Chrome 是否正在写入，本次没有直接证据。  ### 实际恢复及结果  退出 AppPorts，备份配置及失败记录，单独保留旧临时副本；确认本地源目录仍在且未切换后，仅重置对应失败记录，再从 AppPorts 界面重新迁移。新任务完成复制、校验、切换和清理，显示 100%。原报错文件内容与重新迁移前一致，未完成任务和待清理记录归零。  这只是本次救援记录，不建议让普通用户编辑账本作为常规解决方案。  ### 机制分析与修复建议  内部机制尚未通过源码确认。从本次行为推测，恢复流程仍依赖旧校验基线；源数据变化后，恢复或清理检查无法通过，“重试”缺少安全归档旧状态、重新建立任务的分支。发现差异后保留文件是合理的，缺少的是下一步恢复入口。  - 区分临时条件不满足与源数据冲突。磁盘断开、权限不足、应用未退出可继续原任务；源数据变化则停止无效自动重试。 - 增加 **“保留副本并重新迁移”**，说明：“当前数据与上次迁移记录不一致。将保留上次迁移的临时副本，以当前本地数据重新复制和校验。” - 尚未切换时：确认应用退出、源目录和卷身份正常 → 将旧副本移入独立恢复目录并登记 → 归档失败任务及诊断信息 → 创建新 operationID → 重新扫描和完整校验。 -
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1068,176 +1052,133 @@ enum ApplicationLaunchGate {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `af5fb956` (2026-11-11)
-**Commit Message**: Merge pull request #108 from aurorax-neo/fix/storage-limitation-confirm-loop
+### Incident Patch 1: `17185d1d` (2026-11-16)
+**Commit Message**: docs: 记录 2.3.0 build 68 完整验证与 CI 修复
 
-fix: 修复存储能力提示弹窗点击「仍要迁移」陷入死循环的问题
-
-**File**: `AppPorts/ContentView.swift` (modified, +12/-3)
+**File**: `.agents/notes/implemented/feature/2026-11-16-就绪权限展示与默认窗口尺寸.md` (modified, +2/-0)
 ```diff
-@@ -2081,9 +2081,14 @@ struct ContentView: View {
-     }
+@@ -45,3 +45,5 @@ build 62 专项执行 MainWindowAppearanceTests、AppUpdateTests 与 FullDiskAcc
+ 首帧修改之前的完整 runner 验证与英文回退审计缺口见 [build 61 验证记录](../../../../.github/pr-assets/settings-build61.md)，该记录不覆盖后来 build 62 的首帧修改。[d2cf903 的远端回归](https://github.com/wzh4869/AppPorts/actions/runs/43853013283)中，MainWindowAppearanceTests 的重开测试在最后一条断言失败：固定 1000 × 700 的夹具首次显示后变为 1000 × 677；显示前的尺寸断言与首帧专项通过。
  
-     /// 校验通过后的迁移收尾：先处理目标存储能力提示，再处理自更新应用确认。
--    func proceedWithMigration(validApps: [AppItem], dest: URL) {
-+    func proceedWithMigration(
-+        validApps: [AppItem],
-+        dest: URL,
-+        skipStorageLimitationCheck: Bool = false
-+    ) {
-         // 目标盘存不住应用需要的元数据时先说明代价；只提示，不阻断。
--        if storageLimitationRequest == nil,
-+        if !skipStorageLimitationCheck,
-+           storageLimitationRequest == nil,
-            let capabilities = StorageCapabilityProbe.probe(destination: dest),
-            !capabilities.missing.isEmpty {
-             pendingStorageLimitationApps = validApps
-@@ -2185,7 +2190,11 @@ struct ContentView: View {
-                     let apps = pendingStorageLimitationApps
-                     pendingStorageLimitationApps = []
-                     storageLimitationRequest = nil
--                    proceedWithMigration(validApps: apps, dest: dest)
-+                    proceedWithMigration(
-+                        validApps: apps,
-+                        dest: dest,
-+                        skipStorageLimitationCheck: true
-+                    )
-                 }
-             ]
-         )
+ 维护者授权单独修正测试夹具：按窗口屏幕或主屏幕的 visibleFrame 限制期望尺寸，并留出 40 点边界，避免 AppKit 显示窗口时因屏幕边界缩小夹具。既有首帧、替换桥接和隐藏重开断言全部保留，不修改应用窗口代码。build 升至 67。本机 MainWindowAppearanceTests 两项通过，完整 runner 结论另行记录；本机通过不代替小屏幕 runner 验证。
++
++最终 build 68 的 runner 两项窗口测试均通过，完整应用回归、独立进程计时与 Release 构建通过；批准延期的翻译完整性审计仍失败。当前完整结论见 [2.3.0（68）验证记录](../../../../.github/pr-assets/main-build68.md)，不再使用 build 61 的结果代表首帧修改。
 ```
 
-**File**: `AppPortsTests/WarningSheetDismissalAuditTests.swift` (modified, +19/-0)
+**File**: `.agents/notes/implemented/feature/2026-11-16-非锁定迁移默认选择与普通更新应用.md` (modified, +2/-0)
 ```diff
-@@ -73,6 +73,25 @@ final class WarningSheetDismissalAuditTests: XCTestCase {
-         }
-     }
+@@ -43,4 +43,6 @@ Debug build-for-testing、同证书双架构 Release clean build 和严格全架
  
-+    func testStorageLimitationConfirmationSkipsCapabilityRecheck() throws {
-+        let contentViewURL = try repositoryRootURL()
-+            .appendingPathComponent("AppPorts/ContentView.swift")
-+        let content = try String(contentsOf: contentViewURL, encoding: .utf8)
+ ## Consequences
+ 
++后续维护者指定版本为 2.3.0，修正 CI 的窗口与镜像测试夹具后 build 为 68。本篇生产行为未再改动，最终完整 runner 回归与 Release 构建通过；延期翻译审计仍失败。完整验证范围及未重测流程见 [2.3.0（68）验证记录](../../../../.github/pr-assets/main-build68.md)。
 +
-+        guard let methodRange = content.range(of: "private func makeStorageLimitationRequest(") else {
-+            XCTFail("未找到 ContentView.makeStorageLimitationRequest")
-+            return
-+        }
-+        let tail = String(content[methodRange.lowerBound...])
-+        let methodBody = tail.components(separatedBy: "\n    private func ").first ?? tail
+ 普通应用少一次选择，其他应用可直接选择高亮的非锁定迁移，框架标记不再占用列表空间。两个固定应用标识需要在实际更新行为改变时重新评估；这不是未知更新器的通用推断。已锁定迁移不会因升级 AppPorts 自动撤锁。全量测试与真实第三方应用更新不由本轮局部渲染或夹具往返代表。
+```
+
+**File**: `.agents/notes/implemented/testing/2026-10-15-ownership-image-detach.md` (modified, +3/-0)
+```diff
+@@ -64,3 +64,6 @@ OwnershipTestImage 的正常卸载最多尝试五次，仅对未超时的 EBUSY
+ 修复后本机专项通过：MainWindowAppearanceTests 两项 XCTest、TreeCopyOwnershipTests 与
+ OwnershipImageDetachTests 共 14 项 Swift Testing，0 失败。真实“卷先卸载、镜像后分离”用例通过，
+ busy、持续错误、其他错误、超时和取消结果保持原边界；全量 runner 结果另行记录。
 +
-+        XCTAssertTrue(
-+            methodBody.contains("skipStorageLimitationCheck: true"),
-+            "makeStorageLimitationRequest 的「仍要迁移」回调在关闭弹窗（storageLimitationRequest = nil）后"
-+                + "调用 proceedWithMigration 时必须传入 skipStorageLimitationCheck: true，否则会再次触发存储能力弹窗死循环"
-+        )
-+    }
++最终 build 68 的真实卸载后清理用例与完整应用回归均在 runner 通过，进程计时和 Release
++构建通过；批准延期的翻译完整性审计仍失败。完整结果见 [2.3.0（68）验证记录](../../../../.github/pr-assets/main-build68.md)。
+```
+
+**File**: `.github/pr-assets/main-build68.md` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++# AppPorts 2.3.0（68）验证记录
 +
-     private func hasNonNilAssignment(to name: String, in source: String) throws -> Bool {
-         // This is a source audit, not a Swift parser or a reachability proof.
-         let code = source.components(separatedBy: .newlines)
++本批改动将“检查”入口移入准备情况卡片，调整自更新应用的迁移选择和文案，移除列表中的框架标记，更新版本号，并修复两项 CI 测试夹具问题。WorkBuddy、网易云按普通应用迁移；其他检测到更新器的应用仍保留锁定与非锁定选择，非锁定高亮。提示不保证所有应用的更新都能恢复成功。
++
++## 完整 runner 验证
++
++验证对象为 `000cea9e1144b2fffdc7b7f3c5fea3ad2a646259`，版本 2.3.0（68）。[完整运行与诊断](https://github.com/wzh4869/AppPorts/actions/runs/43890629285)使用现有 workflow 和一次性 macOS runner，没有设置外盘或界面渲染环境变量。317 项构建输入的哈希与本地构建一致；后续验证记录提交只修改 Markdown，不改变构建输入。
++
++| 检查 | 实际结果 |
++| --- | --- |
++| Debug 测试包构建 | 通过 |
++| 完整应用回归 | XCTest 806 通过、31 跳过；Swift Testing 771 通过；0 失败 |
++| 独立进程计时 | 14 通过，0 失败 |
++| 本地化审计 | 18 通过、翻译完整性 1 失败 |
++| arm64 / x86_64 Release clean build | 通过 |
++| 应用包、可执行文件与 ZIP 校验 | 通过 |
++
++本地化唯一失败是 `LocalizationAuditTests.testStringCatalogContainsTranslationsForAllSupportedLanguages`。维护者批准新增文案只完成中英文，其余语言暂用英文；目录仍有 420 个延期翻译槽位。没有填写假的翻译或放宽断言。workflow 为 success 是因为本地化属于 advisory，不代表全部翻译审计通过。
++
++## CI 失败与修复
++
++[旧 main 的窗口测试](https://github.com/wzh4869/AppPorts/actions/runs/43853013283)固定要求 1000 × 700；窗口显示后被屏幕边界限制为 1000 × 677，最后一条重开断言失败。夹具按可见屏幕限制尺寸并留出边界，首帧、替换桥接和重开断言全部保留，应用窗口代码没有修改。最终 runner 两项窗口测试均通过。
++
++[build 67 第一轮](https://github.com/wzh4869/AppPorts/actions/runs/43885579492/attempts/1)的窗口测试通过，兼容性校验测试在私有镜像清理阶段失败：`hdiutil detach` 按挂载目录报 No such file or directory，lsof 确认目录已经不是挂载点。原代码重跑回归通过，说明该失败不是每轮必现；未确定 CI 中卷为何先被卸载。
++
++本机用私有 APFS 镜像实际复现同类场景：先 `diskutil unmount`，旧夹具按目录分离失败，但只读查询确认镜像设备仍连接。修复记录本次 `hdiutil attach -plist` 返回的整盘设备号，以设备分离镜像，不把“目录不再挂载”直接当成分离成功。正常 busy 有限重试、持续错误、超时和取消边界不变，不使用强制卸载。新增真实回归在本机和最终 runner 均通过；生产迁移和卸载实现不变。
++
++## 本地与界面
++
++同批源码的功能专项 168 项通过；迁移提示渲染补拍 1 项通过。最后窗口与镜像专项合计 16 项通过，同证书双架构 Release clean build、严格全架构嵌套签名及产物版本核对通过。专项与完整 runner 结果分别记录。
++
++- [准备情况检查入口](readiness-check-build63.md)
++- [中英文更新迁移提示](update-migration-build65.md)
++
++截图使用生产组件和隔离偏好，标明各自拍摄 build，不代表用户真实权限或第三方应用更新结果。此次没有重新执行真实第三方应用更新、权限切换、登录重启或物理断盘流程。安装版仍为 `/Applications/AppPorts.app` 的 2.2.1（65）；本轮没有替换安装版、创建版本标签或发布 Release。
 ```
 
 ---
 
-### Incident Patch 2: `9e6af5ad` (2026-11-10)
-**Commit Message**: fix: 修复存储能力提示弹窗点击「仍要迁移」陷入死循环的问题 (#107)
+### Incident Patch 2: `000cea9e` (2026-11-16)
+**Commit Message**: chore: 将镜像夹具修正版 build 更新为 68
 
-**File**: `AppPorts/ContentView.swift` (modified, +12/-3)
+**File**: `AppPorts.xcodeproj/project.pbxproj` (modified, +2/-2)
 ```diff
-@@ -2081,9 +2081,14 @@ struct ContentView: View {
-     }
- 
-     /// 校验通过后的迁移收尾：先处理目标存储能力提示，再处理自更新应用确认。
--    func proceedWithMigration(validApps: [AppItem], dest: URL) {
-+    func proceedWithMigration(
-+        validApps: [AppItem],
-+        dest: URL,
-+        skipStorageLimitationCheck: Bool = false
-+    ) {
-         // 目标盘存不住应用需要的元数据时先说明代价；只提示，不阻断。
--        if storageLimitationRequest == nil,
-+        if !skipStorageLimitationCheck,
-+           storageLimitationRequest == nil,
-            let capabilities = StorageCapabilityProbe.probe(destination: dest),
-            !capabilities.missing.isEmpty {
-             pendingStorageLimitationApps = validApps
-@@ -2185,7 +2190,11 @@ struct ContentView: View {
-                     let apps = pendingStorageLimitationApps
-                     pendingStorageLimitationApps = []
-                     storageLimitationRequest = nil
--                    proceedWithMigration(validApps: apps, dest: dest)
-+                    proceedWithMigration(
-+                        validApps: apps,
-+                        dest: dest,
-+                        skipStorageLimitationCheck: true
-+                    )
-                 }
-             ]
-         )
-```
-
-**File**: `AppPortsTests/WarningSheetDismissalAuditTests.swift` (modified, +19/-0)
-```diff
-@@ -73,6 +73,25 @@ final class WarningSheetDismissalAuditTests: XCTestCase {
-         }
-     }
- 
-+    func testStorageLimitationConfirmationSkipsCapabilityRecheck() throws {
-+        let contentViewURL = try repositoryRootURL()
-+            .appendingPathComponent("AppPorts/ContentView.swift")
-+        let content = try String(contentsOf: contentViewURL, encoding: .utf8)
-+
-+        guard let methodRange = content.range(of: "private func makeStorageLimitationRequest(") else {
-+            XCTFail("未找到 ContentView.makeStorageLimitationRequest")
-+            return
-+        }
-+        let tail = String(content[methodRange.lowerBound...])
-+        let methodBody = tail.components(separatedBy: "\n    private func ").first ?? tail
-+
-+        XCTAssertTrue(
-+            methodBody.contains("skipStorageLimitationCheck: true"),
-+            "makeStorageLimitationRequest 的「仍要迁移」回调在关闭弹窗（storageLimitationRequest = nil）后"
-+                + "调用 proceedWithMigration 时必须传入 skipStorageLimitationCheck: true，否则会再次触发存储能力弹窗死循环"
-+        )
-+    }
-+
-     private func hasNonNilAssignment(to name: String, in source: String) throws -> Bool {
-         // This is a source audit, not a Swift parser or a reachability proof.
-         let code = source.components(separatedBy: .newlines)
+@@ -404,7 +404,7 @@
+ 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 67;
++				CURRENT_PROJECT_VERSION = 68;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEVELOPMENT_TEAM = MQ7XG7WM3F;
+ 				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
+@@ -441,7 +441,7 @@
+ 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 67;
++				CURRENT_PROJECT_VERSION = 68;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEVELOPMENT_TEAM = MQ7XG7WM3F;
+ 				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
 ```
 
 ---
 
-### Incident Patch 3: `e3b5a73a` (2026-11-09)
-**Commit Message**: fix: 更新确认方法以支持主线程执行的回调
-fix: 修复异步操作的上下文传递逻辑
+### Incident Patch 3: `a07bf926` (2026-11-16)
+**Commit Message**: chore: 将验证修正版 build 更新为 67
 
-**File**: `AppPorts/Services/AppInstallationLocation.swift` (modified, +1/-1)
+**File**: `AppPorts.xcodeproj/project.pbxproj` (modified, +2/-2)
 ```diff
-@@ -21,7 +21,7 @@ enum AppInstallationLocation {
-     @MainActor
-     static func confirmIfNeeded(applicationURL: URL = Bundle.main.bundleURL,
-                                 homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser,
--                                present: () -> Void = presentGuidance) -> Bool {
-+                                present: @MainActor () -> Void = presentGuidance) -> Bool {
-         guard !isAllowed(applicationURL, homeDirectory: homeDirectory) else { return true }
-         present()
-         return false
-```
-
-**File**: `AppPorts/Services/ApplicationLaunchProtection.swift` (modified, +3/-1)
-```diff
-@@ -28,7 +28,9 @@ enum ApplicationLaunchProtection {
-     static func detached<T: Sendable>(priority: TaskPriority, operation: @escaping @Sendable () async throws -> T) async throws -> T {
-         let context = held
-         return try await Task.detached(priority: priority) {
--            try await $held.withValue(context, operation: operation)
-+            try await $held.withValue(context) {
-+                try await operation()
-+            }
-         }.value
-     }
- }
+@@ -404,7 +404,7 @@
+ 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 66;
++				CURRENT_PROJECT_VERSION = 67;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEVELOPMENT_TEAM = MQ7XG7WM3F;
+ 				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
+@@ -441,7 +441,7 @@
+ 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 66;
++				CURRENT_PROJECT_VERSION = 67;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEVELOPMENT_TEAM = MQ7XG7WM3F;
+ 				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
 ```
 
 #### Recent Merged Pull Requests:
@@ -1266,41 +1207,29 @@ fix: 修复异步操作的上下文传递逻辑
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #108 from aurorax-neo/fix/storage-limitation-confirm-loop
+## X. docs: 记录 2.3.0 build 68 完整验证与 CI 修复
 
 **RULE**:
-When implementing operations in `AppPorts/ContentView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/notes/implemented/feature/2026-11-16-就绪权限展示与默认窗口尺寸.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `af5fb956`: Merge pull request #108 from aurorax-neo/fix/storage-limitation-confirm-loop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17185d1d`: docs: 记录 2.3.0 build 68 完整验证与 CI 修复. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AppPorts/ContentView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/feature/2026-11-16-就绪权限展示与默认窗口尺寸.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    func proceedWithMigration(
-        validApps: [AppItem],
-        dest: URL,
-        skipStorageLimitationCheck: Bool = false
-    ) {
-        if !skipStorageLimitationCheck,
-           storageLimitationRequest == nil,
-                    proceedWithMigration(
-                        validApps: apps,
-                        dest: dest,
-                        skipStorageLimitationCheck: true
-                    )
+
+最终 build 68 的 runner 两项窗口测试均通过，完整应用回归、独立进程计时与 Release 构建通过；批准延期的翻译完整性审计仍失败。当前完整结论见 [2.3.0（68）验证记录](../../../../.github/pr-assets/main-build68.md)，不再使用 build 61 的结果代表首帧修改。
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-    func proceedWithMigration(validApps: [AppItem], dest: URL) {
-        if storageLimitationRequest == nil,
-                    proceedWithMigration(validApps: apps, dest: dest)
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `af5fb956` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17185d1d` are properly handled with clean fallback behavior.

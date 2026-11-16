@@ -4,22 +4,22 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "c160c4ff",
+  "source_version": "f1e6395b",
   "license": "MIT",
-  "timestamp": "2026-11-16T16:00:13.545Z",
+  "timestamp": "2026-11-16T23:35:06.421Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `c160c4ff`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T16:00:13.545Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `f1e6395b`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T23:35:06.421Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `projectdiscovery/nuclei` (Commit: `c160c4ff`)
+- **Target Repository**: `projectdiscovery/nuclei` (Commit: `f1e6395b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T16:00:12.424Z  
+> **Harvest Timestamp**: 2026-11-16T23:35:05.284Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32979 stars
+- **Stars / Engagement**: 33001 stars
 
 ---
 
@@ -1605,272 +1605,246 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c160c4ff` (2026-11-16)
-**Commit Message**: docs: update README links to moved ProjectDiscovery docs pages (#8126)
+### Incident Patch 1: `f1e6395b` (2026-11-16)
+**Commit Message**: Merge pull request #8149 from gnuletik/fix/interactsh-drop-expired-requests
 
-**File**: `README.md` (modified, +2/-2)
+fix(interactsh): drop expired request registrations
+
+**File**: `pkg/protocols/common/interactsh/interactsh.go` (modified, +31/-0)
 ```diff
-@@ -416,11 +416,11 @@ Run nuclei with a JSON output:
- Run nuclei with sorted Markdown outputs (with environment variables):
- 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+@@ -58,6 +58,8 @@ type Client struct {
+ 	// determines if wait the cooldown period in case of generated URL
+ 	generated atomic.Bool
+ 	matched   atomic.Bool
++	// lastExpirySweep is when dropExpiredRequests last ran, in Unix nanoseconds.
++	lastExpirySweep atomic.Int64
  
--Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 	onInteractionMu sync.RWMutex
+ 	onInteraction   func(i *server.Interaction, foundRequest *RequestData)
+@@ -524,6 +526,7 @@ func (c *Client) RequestEvent(interactshURLs []string, data *RequestData) {
+ 		return
+ 	}
+ 	c.initializeCaches()
++	c.dropExpiredRequests()
+ 	for _, interactshURL := range interactshURLs {
+ 		id := strings.TrimRight(strings.TrimSuffix(interactshURL, c.getHostname()), ".")
  
- ```
+@@ -557,6 +560,34 @@ func (c *Client) RequestEvent(interactshURLs []string, data *RequestData) {
+ 	}
+ }
  
--Additional documentation is available at: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
-+Additional documentation is available at: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
- 
- </details>
- 
++// dropExpiredRequests removes the registrations past their eviction deadline,
++// at most once per poll interval.
++//
++// The cache drops an expired entry only when its key is read again or the LRU
++// needs room, and the key of a target that never calls back is never read. So
++// without this, a scan keeps the event of every OOB request, response body and
++// full response included, until the cache is full: CacheSize times the response
++// read size. An expired entry can no longer match anyway, since the poller's
++// lookup drops it unprocessed.
++func (c *Client) dropExpiredRequests() {
++	now := time.Now().UnixNano()
++	last := c.lastExpirySweep.Load()
++	if now-last < int64(c.pollDuration) || !c.lastExpirySweep.CompareAndSwap(last, now) {
++		return
++	}
++
++	// The write lock keeps a registration from being replaced between its
++	// expiry check and its removal.
++	c.requestLifecycleMu.Lock()
++	defer c.requestLifecycleMu.Unlock()
++
++	for _, id := range c.requests.Keys(false) {
++		if !c.requests.Has(id) {
++			c.requests.Remove(id)
++		}
++	}
++}
++
+ // HasMatchers returns true if an operator has interactsh part
+ // matchers or extractors.
+ //
 ```
 
-**File**: `README_CN.md` (modified, +3/-3)
+**File**: `pkg/protocols/common/interactsh/interactsh_test.go` (modified, +36/-0)
 ```diff
-@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
- Run nuclei with sorted Markdown outputs (with environment variables):
- 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+@@ -204,6 +204,42 @@ func TestRequestScopeCloseWaitsForInFlightCallback(t *testing.T) {
+ 	require.False(t, scope.beginCallback(), "a closed scope must reject later callbacks")
+ }
  
--Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
- 
- ```
- 
--更多文档请访问：[**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
-+更多文档请访问：[**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
- 
- </details>
- 
-@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
- ```
- 
- > [!NOTE]
--> 此功能完全免费，无需订阅。详细指引请参阅[**`文档`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)。
-+> 此功能完全免费，无需订阅。详细指引请参阅[**`文档`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)。
- 
- <br>
- <br>
-```
-
-**File**: `README_ES.md` (modified, +3/-3)
-```diff
-@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
- Run nuclei with sorted Markdown outputs (with environment variables):
- 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
- 
--Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
- 
- ```
- 
--Documentación adicional disponible en: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
-+Documentación adicional disponible en: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
- 
- </details>
- 
-@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
- ```
- 
- > [!NOTE]
--> Esta funcionalidad es totalmente gratuita y no requiere suscripción. Para una guía detallada, consulta la [**`documentación`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
-+> Esta funcionalidad es totalmente gratuita y no requiere suscripción. Para una guía detallada, consulta la [**`documentación`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
- 
- <br>
- <br>
-```
-
-**File**: `README_FA.md` (modified, +2/-2)
-```diff
-@@ -428,13 +428,13 @@ Run nuclei with a JSON output:
- Run nuclei with sorted Markdown outputs (with environment variables):
- 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
- 
--Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
- 
- ```
- 
- </div>
- 
--مستندات تکمیلی در این آدرس در دسترس است: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
-+مستندات تکمیلی در این آدرس در دسترس است: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
- 
- </details>
- 
-```
-
-**File**: `README_ID.md` (modified, +3/-3)
-```diff
-@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
- Run nuclei with sorted Markdown outputs (with environment variables):
- 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
- 
--Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
- 
- ```
- 
--Dokumentasi tambahan tersedia di: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
-+Dokumentasi tambahan tersedia di: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
- 
- </details>
- 
-@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
- ```
- 
- > [!NOTE]
--> Fitur ini sepenuhnya gratis dan tidak memerlukan langganan. Untuk panduan rinci, lihat [**`dokumentasi`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
-+> Fitur ini sepenuhnya gratis dan tidak memerlukan langganan. Untuk panduan rinci, lihat [**`dokumentasi`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
- 
- <br>
- <br>
-```
-
-**File**: `README_JP.md` (modified, +3/-3)
-```diff
-@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
- Run nuclei with sorted Markdown outputs (with environment variables):
- 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
- 
--Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
- 
- ```
- 
--追加のドキュメントは以下で参照できます: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
-+追加のドキュメントは以下で参照できます: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
- 
- </details>
- 
-@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
- ```
- 
- > [!NOTE]
--> この機能は完全に無料で、サブスクリプションは不要です。詳しいガイドは[**`ドキュメント`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)を参照してください。
-+> この機能は完全に無料で、サブスクリプションは不要です。詳しいガイドは[**`ドキュメント`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)を参照してください。
- 
- <br>
- <br>
-```
-
-**File**: `README_KR.md` (modified, +3/-3)
-```diff
-@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
- Run nuclei with sorted Markdown outputs (with environment variables):
- 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
- 
--Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
- 
- ```
- 
--추가 문서는 다음 주소에서 확인할 수 있습니다: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
-+추가 문서는 다음 주소에서 확인할 수 있습니다: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
- 
- </details>
- 
-@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
- ```
- 
- > [!NOTE]
--> 이 기능은 완전히 무료이며 구독이 필요하지 않습니다. 자세한 가이드는 [**`문서`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)를 참조하세요.
-+> 이 기능은 완전히 무료이며 구독이 필요하지 않습니다. 자세한 가이드는 [**`문서`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)를 참조하세요.
- 
- <br>
- <br>
-```
-
-**File**: `README_PT-BR.md` (modified, +3/-3)
-```diff
-@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
- Run nuclei with sorted Markdown outputs (with environment variables):
- 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
- 
--Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
- 
- ```
- 
--Documentação adicional disponível em: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
-+Documentação adicional disponível em: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
- 
- </details>
- 
-@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
- ```
- 
- > [!NOTE]
--> Este recurso é totalmente gratuito e não requer assinatura. Para um guia detalhado, consulte a [**`documentação`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
-+> Este recurso é totalmente gratuito e não requer assinatura. Para um guia detalhado, consulte a [**`documentação`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
- 
- <br>
- <br>
++func TestRequestEventDropsExpiredRegistrations(t *testing.T) {
++	options := DefaultOptions(nil, nil, nil)
++	options.Eviction = time.Millisecond
++	options.PollDuration = time.Millisecond
++	client, err := New(options)
++	require.NoError(t, err)
++	client.setHostname("oast.test")
++
++	client.RequestEvent([]string{"stale.oast.test"}, newTestRequestData())
++	require.ElementsMatch(t, []string{"stale"}, client.requests.Keys(false))
++
++	time.Sleep(10 * time.Millisecond)
++	client.RequestEvent([]string{"fresh.oast.test"}, newTestRequestData())
++
++	require.ElementsMatch(t, []string{"fresh"}, client.requests.Keys(false),
++		"a registration past its eviction can no longer match and must not stay cached")
++}
++
++func TestRequestEventKeepsLiveRegistrations(t *testing.T) {
++	options := DefaultOptions(nil, nil, nil)
++	options.PollDuration = time.Millisecond
++	client, err := New(options)
++	require.NoError(t, err)
++	client.setHostname("oast.test")
++
++	client.RequestEvent([]string{"first.oast.test"}, newTestRequestData())
++	time.Sleep(10 * time.Millisecond)
++	client.RequestEvent([]string{"second.oast.test"}, newTestRequestData())
++
++	require.ElementsMatch(t, []string{"first", "second"}, client.requests.Keys(false))
++}
++
++func newTestRequestData() *RequestData {
++	return &RequestData{Event: &output.InternalWrappedEvent{InternalEvent: output.InternalEvent{}}}
++}
++
+ func TestHasMarkersDoesNotTreatPipeAsEncodedBrace(t *testing.T) {
+ 	require.True(t, HasMarkers("{{interactsh-url}}"))
+ 	require.True(t, HasMarkers("%7B%7Binteractsh-url%7D%7D"))
 ```
 
 ---
 
-### Incident Patch 2: `1a762d9f` (2026-11-16)
-**Commit Message**: chore(deps): bump the workflows group with 2 updates (#8146)
+### Incident Patch 2: `49634178` (2026-11-16)
+**Commit Message**: Merge pull request #8140 from Manuel-1312/fix/nil-safe-raw-stringslice
 
-Bumps the workflows group with 2 updates: [peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-request) and [crate-ci/typos](https://github.com/crate-ci/typos).
+fix(model): make String() on a nil RawStringSlice safe
 
-
-Updates `peter-evans/create-pull-request` from 8.1.1 to 8.1.3
-- [Release notes](https://github.com/peter-evans/create-pull-request/releases)
-- [Commits](https://github.com/peter-evans/create-pull-request/compare/5f6978faf089d4d20b00c7766989d076bb2fc7f1...3ffccacd46053766916f087ce41d627c0b8cf2d1)
-
-Updates `crate-ci/typos` from 1.52.0 to 1.52.2
-- [Release notes](https://github.com/crate-ci/typos/releases)
-- [Changelog](https://github.com/crate-ci/typos/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/crate-ci/typos/compare/v1.52.0...v1.52.2)
-
----
-updated-dependencies:
-- dependency-name: peter-evans/create-pull-request
-  dependency-version: 8.1.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: workflows
-- dependency-name: crate-ci/typos
-  dependency-version: 1.52.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: workflows
-...
-
-Signe
-
-**File**: `.github/workflows/security-context.yml` (modified, +1/-1)
+**File**: `pkg/model/types/stringslice/stringslice_raw.go` (modified, +9/-0)
 ```diff
-@@ -107,7 +107,7 @@ jobs:
-           } >> "$GITHUB_OUTPUT"
+@@ -8,6 +8,15 @@ func NewRawStringSlice(value interface{}) *RawStringSlice {
+ 	return &RawStringSlice{StringSlice: StringSlice{Value: value}}
+ }
  
-       - name: Open an update pull request
--        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
-+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
-         with:
-           branch: security-context/refresh
-           commit-message: ${{ steps.agents.outputs.subject }}
++// String is nil-safe: model.Info.Reference is nil for templates without
++// references, and the promoted StringSlice.String would dereference it.
++func (rawStringSlice *RawStringSlice) String() string {
++	if rawStringSlice == nil {
++		return ""
++	}
++	return rawStringSlice.StringSlice.String()
++}
++
+ func (rawStringSlice *RawStringSlice) Normalize(value string) string {
+ 	return value
+ }
 ```
 
-**File**: `.github/workflows/typos.yaml` (modified, +1/-1)
+**File**: `pkg/model/types/stringslice/stringslice_raw_test.go` (added, +15/-0)
 ```diff
-@@ -17,4 +17,4 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v7
--      - uses: crate-ci/typos@v1.52.0
-+      - uses: crate-ci/typos@v1.52.2
+@@ -0,0 +1,15 @@
++package stringslice
++
++import (
++	"fmt"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++func TestRawStringSliceStringNilSafe(t *testing.T) {
++	var nilSlice *RawStringSlice
++	require.Equal(t, "", nilSlice.String())
++	require.Equal(t, "", fmt.Sprint(nilSlice))
++	require.Equal(t, "a, b", NewRawStringSlice([]string{"a", "b"}).String())
++}
+```
+
+---
+
+### Incident Patch 3: `6ffc30d2` (2026-11-16)
+**Commit Message**: Merge pull request #8139 from CJstate/fix/user-agent-include-random
+
+fix(model): include Random in supported user-agent options
+
+**File**: `pkg/model/types/userAgent/user_agent.go` (modified, +3/-1)
+```diff
+@@ -32,7 +32,9 @@ var userAgentMappings = map[UserAgent]string{
+ 
+ func GetSupportedUserAgentOptions() []UserAgent {
+ 	var result []UserAgent
+-	for index := UserAgent(1); index < limit; index++ {
++	// Random is the zero value and a valid option (the headless default), so
++	// the range starts at 0; unlike severity, there is no sentinel to skip.
++	for index := UserAgent(0); index < limit; index++ {
+ 		result = append(result, index)
+ 	}
+ 	return result
+```
+
+**File**: `pkg/model/types/userAgent/user_agent_test.go` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++package userAgent
++
++import (
++	"fmt"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++// every named UserAgent value (i.e. every key in userAgentMappings) is a valid
++// user_agent option. Random is the zero value and is the default for headless
++// requests, so it must be offered alongside the others.
++var allNamedUserAgents = []UserAgent{Random, Off, Default, Custom}
++
++func TestGetSupportedUserAgentOptions(t *testing.T) {
++	got := GetSupportedUserAgentOptions()
++
++	for _, option := range allNamedUserAgents {
++		t.Run(option.String(), func(t *testing.T) {
++			require.Contains(t, got, option, "named user-agent option %q must be returned", option)
++		})
++	}
++
++	require.Len(t, got, len(userAgentMappings), "exactly the named options must be returned")
++	require.NotContains(t, got, limit, "the limit sentinel must not be exposed as an option")
++}
++
++func TestUserAgentHolderJSONSchemaEnum(t *testing.T) {
++	schema := (UserAgentHolder{}).JSONSchema()
++
++	got := make([]string, 0, len(schema.Enum))
++	for _, value := range schema.Enum {
++		got = append(got, fmt.Sprint(value))
++	}
++
++	want := make([]string, 0, len(userAgentMappings))
++	for _, name := range userAgentMappings {
++		want = append(want, name)
++	}
++
++	require.ElementsMatch(t, want, got, "schema enum must list every named user-agent option")
++}
++
++func TestUserAgentHolderUnmarshalYAMLRandom(t *testing.T) {
++	var holder UserAgentHolder
++	require.NoError(t, holder.UnmarshalYAML(func(v interface{}) error {
++		*(v.(*string)) = "random"
++		return nil
++	}))
++	require.Equal(t, Random, holder.Value, `"random" must remain a valid user_agent value`)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8149** (2026-11-16): fix(interactsh): drop expired request registrations (@gnuletik)
 - **PR #8146** (2026-11-16): chore(deps): bump the workflows group with 2 updates (@dependabot[bot])
 - **PR #8141** (2026-11-15): fix(deps): bump golang.org/x/crypto v0.58.0 → v0.59.0 (GO-2026-5932) (@neo-by-projectdiscovery[bot])
+- **PR #8140** (2026-11-16): fix(model): make String() on a nil RawStringSlice safe (@Manuel-1312)
+- **PR #8139** (2026-11-16): fix(model): include Random in supported user-agent options (@CJstate)
 - **PR #8138** (2026-11-14): add -auto-tech to skip templates bound to products the tech templates did not detect (@dogancanbakir)
-- **PR #8136** (2026-11-14): follow appends to a running plan and its cancel log (@dogancanbakir)
-- **PR #8135** (2026-11-14): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
-- **PR #8126** (2026-11-16): docs: update README links to moved ProjectDiscovery docs pages (@abd1rahmane)
 
 ---
 
@@ -1890,33 +1864,61 @@ Signe
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: update README links to moved ProjectDiscovery docs pages
+## X. Empirical Invariant Guard in interactsh.go
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/common/interactsh/interactsh.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c160c4ff`: docs: update README links to moved ProjectDiscovery docs pages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1e6395b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/common/interactsh/interactsh.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
-Additional documentation is available at: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+	// lastExpirySweep is when dropExpiredRequests last ran, in Unix nanoseconds.
+	lastExpirySweep atomic.Int64
+	c.dropExpiredRequests()
+// dropExpiredRequests removes the registrations past their eviction deadline,
+// at most once per poll interval.
+//
+// The cache drops an expired entry only when its key is read again or the LRU
+// needs room, and the key of a target that never calls back is never read. So
+// without this, a scan keeps the event of every OOB request, response body and
+// full response included, until the cache is full: CacheSize times the response
+// read size. An expired entry can no longer match anyway, since the poller's
+// lookup drops it unprocessed.
+func (c *Client) dropExpiredRequests() {
+	now := time.Now().UnixNano()
+	last := c.lastExpirySweep.Load()
+	if now-last < int64(c.pollDuration) || !c.lastExpirySweep.CompareAndSwap(last, now) {
+		return
+	}
+
+	// The write lock keeps a registration from being replaced between its
+	// expiry check and its removal.
+	c.requestLifecycleMu.Lock()
+	defer c.requestLifecycleMu.Unlock()
+
+	for _, id := range c.requests.Keys(false) {
+		if !c.requests.Has(id) {
+			c.requests.Remove(id)
+		}
+	}
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
-Additional documentation is available at: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c160c4ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1e6395b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

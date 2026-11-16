@@ -10371,3 +10371,8 @@
 | `CYCLE-20261116-21AC` | `2026-11-16T23:22:24.900Z` | `encode/httpx` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/encode-httpx-learnings.md` | Yes (`aec9bac2...`) |
 | `CYCLE-20261116-261D` | `2026-11-16T23:22:31.057Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8812` | Yes (`9b46787c...`) |
 | `CYCLE-20261116-28P2` | `2026-11-16T23:22:34.502Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8813` | Yes (`bd2c8928...`) |
+| `CYCLE-20261116-I6FZ` | `2026-11-16T23:34:58.079Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8814` | Yes (`e1111168...`) |
+| `CYCLE-20261116-I8L7` | `2026-11-16T23:35:00.859Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8815` | Yes (`752fc2a4...`) |
+| `CYCLE-20261116-IBOE` | `2026-11-16T23:35:04.862Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8816` | Yes (`4e463c0b...`) |
+| `CYCLE-20261116-ICQ7` | `2026-11-16T23:35:06.223Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8817` | Yes (`4f0c31ba...`) |
+| `CYCLE-20261116-IGDS` | `2026-11-16T23:35:10.960Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8818` | Yes (`8487f964...`) |

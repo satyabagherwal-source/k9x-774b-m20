@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T23:22:39.701Z",
+  "updated_at": "2026-11-16T23:35:15.301Z",
   "stats": {
-    "total_discovered": 4533,
-    "approved_pending_harvest": 4267,
+    "total_discovered": 4543,
+    "approved_pending_harvest": 4277,
     "harvested_count": 0,
     "rejected_count": 266,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4264,
+      "COMMUNITY_AND_EXPERT": 4274,
       "OFFICIAL_DOCUMENTATION": 144,
       "STANDARDS_AND_SPECIFICATIONS": 98,
       "ENGINEERING_BLOGS": 3,
@@ -97885,6 +97885,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
         "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-9F14A6224E73": {
+      "id": "SRC-9F14A6224E73",
+      "url": "https://github.com/benoitc/gunicorn",
+      "title": "https://github.com/benoitc/gunicorn",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:14.269Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-887BFCD5C20C": {
+      "id": "SRC-887BFCD5C20C",
+      "url": "https://github.com/benoitc/gunicorn/releases",
+      "title": "https://github.com/benoitc/gunicorn/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:14.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-60BD0B0C7B2A": {
+      "id": "SRC-60BD0B0C7B2A",
+      "url": "https://github.com/benoitc/gunicorn/compare/26.2.0...27.0.1",
+      "title": "https://github.com/benoitc/gunicorn/compare/26.2.0...27.0.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:14.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-5B8FF7816923": {
+      "id": "SRC-5B8FF7816923",
+      "url": "https://github.com/executablebooks/markdown-it-py",
+      "title": "https://github.com/executablebooks/markdown-it-py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:14.368Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-16D45F2F343B": {
+      "id": "SRC-16D45F2F343B",
+      "url": "https://github.com/executablebooks/markdown-it-py/releases",
+      "title": "https://github.com/executablebooks/markdown-it-py/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:14.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-A0E25DF7CAC4": {
+      "id": "SRC-A0E25DF7CAC4",
+      "url": "https://github.com/executablebooks/markdown-it-py/blob/master/CHANGELOG.md",
+      "title": "https://github.com/executablebooks/markdown-it-py/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:14.431Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-2658A81115A2": {
+      "id": "SRC-2658A81115A2",
+      "url": "https://github.com/executablebooks/markdown-it-py/compare/v4.2.0...v4.3.0",
+      "title": "https://github.com/executablebooks/markdown-it-py/compare/v4.2.0...v4.3.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:14.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-9BD137238AF6": {
+      "id": "SRC-9BD137238AF6",
+      "url": "https://github.com/wzh4869/AppPorts/actions/runs/43853013283",
+      "title": "https://github.com/wzh4869/AppPorts/actions/runs/43853013283",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:15.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-DF9E86869F46": {
+      "id": "SRC-DF9E86869F46",
+      "url": "https://github.com/wzh4869/AppPorts/actions/runs/43890629285",
+      "title": "https://github.com/wzh4869/AppPorts/actions/runs/43890629285",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:15.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-DABAFF0A4DF4": {
+      "id": "SRC-DABAFF0A4DF4",
+      "url": "https://github.com/wzh4869/AppPorts/actions/runs/43885579492/attempts/1",
+      "title": "https://github.com/wzh4869/AppPorts/actions/runs/43885579492/attempts/1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:35:15.301Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
       }
     }
   }

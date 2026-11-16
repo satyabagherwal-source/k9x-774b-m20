@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:22:39.859Z",
+  "last_updated": "2026-11-16T23:35:16.039Z",
   "directives": [
     {
       "id": "CD-001",
@@ -20749,6 +20749,90 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-IJCK",
+      "directive_title": "Bump gunicorn from 26.2.0 to 27.0.1",
+      "source_repo": "aio-libs-aiohttp-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IJCK-bump-gunicorn-from-26-2-0-to-27-0-1.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-I8QA",
+      "directive_title": "记录 2.3.0 build 68 完整验证与 CI 修复",
+      "source_repo": "wzh4869/AppPorts",
+      "source_commit": "17185d1d",
+      "staged_file": "11_INBOX/candidate-directives/CD-I8QA-2-3-0-build-68-ci.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-IKAV",
+      "directive_title": "Empirical Invariant Guard in configupdatejob_handler.go",
+      "source_repo": "kubeedge-kubeedge-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IKAV-empirical-invariant-guard-in-configupdatejob_handler-go.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-ICVM",
+      "directive_title": "Empirical Invariant Guard in interactsh.go",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "f1e6395b",
+      "staged_file": "11_INBOX/candidate-directives/CD-ICVM-empirical-invariant-guard-in-interactsh-go.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-IGJ5",
+      "directive_title": "Draft NUC 110 Python String Method Aliases",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "6b0edc20",
+      "staged_file": "11_INBOX/candidate-directives/CD-IGJ5-draft-nuc-110-python-string-method-aliases.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-434CA0",
+      "directive_title": "Bump gunicorn from 26.2.0 to 27.0.1",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aio-libs-aiohttp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-434CA0-bump-gunicorn-from-26-2-0-to-27-0-1.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-IJV7",
+      "directive_title": "docs: 记录 2.3.0 build 68 完整验证与 CI 修复",
+      "source_repo": "wzh4869-appports-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IJV7-docs-2-3-0-build-68-ci.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-97B3BB",
+      "directive_title": "Empirical Invariant Guard in configupdatejob_handler.go",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kubeedge-kubeedge",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-97B3BB-empirical-invariant-guard-in-configupdat.md",
+      "staged_date": "2026-11-16"
     }
   ]
 }

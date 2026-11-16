@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:22:34.510Z",
-  "total_cycles_completed": 9958,
-  "total_learnings_persisted": 9958,
-  "total_rules_promoted": 9550,
+  "last_updated": "2026-11-16T23:35:10.969Z",
+  "total_cycles_completed": 9963,
+  "total_learnings_persisted": 9963,
+  "total_rules_promoted": 9555,
   "history": [
-    {
-      "timestamp": "2026-11-15T20:51:01.794Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T20:51:03.425Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T20:51:05.396Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T21:15:33.357Z",
-      "repository": "MiniMaxAI/MiniMax-H3-Image",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T21:15:35.104Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T21:15:40.816Z",
       "repository": "maziyarpanahi/openmed",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-16T23:22:34.510Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:34:58.088Z",
+      "repository": "aio-libs/aiohttp",
+      "learningId": "learn-github-aio-libs-aiohttp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:35:00.868Z",
+      "repository": "wzh4869/AppPorts",
+      "learningId": "learn-github-wzh4869-appports",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:35:04.871Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:35:06.233Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:35:10.969Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

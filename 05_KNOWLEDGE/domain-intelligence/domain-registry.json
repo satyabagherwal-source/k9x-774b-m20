@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T23:22:39.971Z",
-  "total_records": 1358,
+  "last_updated": "2026-11-16T23:35:16.159Z",
+  "total_records": 1364,
   "domains": {
     "A": {
       "total": 9,
@@ -690,7 +690,7 @@
       ]
     },
     "G": {
-      "total": 245,
+      "total": 249,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -936,11 +936,15 @@
         "domain_intelligence-architecture-intelligence-nats-io-nats-server-core-invariants",
         "domain_intelligence-architecture-intelligence-nats-io-nats-server-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-iplug2-iplug2-core-invariants",
-        "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants",
+        "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants",
+        "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 300,
+      "total": 302,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1241,7 +1245,9 @@
         "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants",
         "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants"
       ]
     },
     "I": {
@@ -14707,8 +14713,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "9029c4f42db0f62eaccb912388bfb67d3b78d383b538f16fc552cabeb32df06c",
-      "created_at": "2026-11-16T16:00:13.661Z"
+      "content_hash": "b52f01af74064097af6c9bf384776c442be5f3a8da9e9cd6cca72aa6376e1752",
+      "created_at": "2026-11-16T23:35:06.541Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -15121,8 +15127,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "84a6f4ee2c24048afed2a2a08800ed8332e1d260df60c8bf057cd865a5433f88",
-      "created_at": "2026-11-16T22:04:03.528Z"
+      "content_hash": "a23c2e58a9840a4a39d093a50162a1fbf293621e65209bf02a0a7a85a8b6d3f3",
+      "created_at": "2026-11-16T23:35:11.279Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -24200,6 +24206,60 @@
       "repository": "chaos-mesh-chaos-mesh-learnings",
       "content_hash": "76a6b98fc36be09c3a8eaa2cadae16fc82c41f642e759449d260f70c1c8e7c6e",
       "created_at": "2026-11-16T23:22:39.971Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: aio-libs/aiohttp Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-technical-construction-intelligence-aio-libs-aiohttp-core-invar.md",
+      "repository": "aio-libs/aiohttp",
+      "content_hash": "0631f9ac7ae0f3b2a3dfd0f412c1a1727cbc7307516342fa0040a5ace67b4c8c",
+      "created_at": "2026-11-16T23:34:58.384Z"
+    },
+    "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
+      "repository": "wzh4869/AppPorts",
+      "content_hash": "79b37844e7e8f9ae4124af2b4de6b0c3f8a0ac5fcf1c0c847eec9978e869b9a0",
+      "created_at": "2026-11-16T23:35:01.167Z"
+    },
+    "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kubeedge/kubeedge Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-architecture-intelligence-kubeedge-kubeedge-core-invariants.md",
+      "repository": "kubeedge/kubeedge",
+      "content_hash": "924cf2b5af2ba6bed118f60af7d72836de27d088adcc596a12bc5aa1662d71c6",
+      "created_at": "2026-11-16T23:35:05.176Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: aio-libs-aiohttp-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-learnings-technical-construction-intelligence-aio-libs-aiohttp-.md",
+      "repository": "aio-libs-aiohttp-learnings",
+      "content_hash": "37494d9a4d799331ebb6e767b9fc2bc6f9339ed1ef253c3e09488816421139d8",
+      "created_at": "2026-11-16T23:35:14.926Z"
+    },
+    "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-learnings-architecture-intelligence-wzh4869-appports-learnings-.md",
+      "repository": "wzh4869-appports-learnings",
+      "content_hash": "ca85469c842b1962469930c0b60ddb4c760048fe3f4389a846b4703b60f206d2",
+      "created_at": "2026-11-16T23:35:15.596Z"
+    },
+    "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kubeedge-kubeedge-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-learnings-architecture-intelligence-kubeedge-kubeedge-learning.md",
+      "repository": "kubeedge-kubeedge-learnings",
+      "content_hash": "0a3db6803d546e8d7a0beba766f677516c280ab85df20421f4fec8c97d294b4a",
+      "created_at": "2026-11-16T23:35:16.159Z"
     }
   }
 }

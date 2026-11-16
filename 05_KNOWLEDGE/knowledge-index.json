@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T23:22:40.083Z",
-  "total_verified_learnings": 8814,
+  "last_updated": "2026-11-16T23:35:16.284Z",
+  "total_verified_learnings": 8817,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19466,
+  "total_items": 19492,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -227687,8 +227687,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "33fb6d38",
-      "content_hash": "20c333ace5439aca5a399e68011d226c335fe72f698f474e79deb0c1363b00eb",
+      "source_version": "6b0edc20",
+      "content_hash": "8487f964c05272ad0c3ccd7b8380ca153df19234d7e7e1371565516f13ef3b81",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -227736,6 +227736,11 @@
           "number": 8798,
           "title": "Add LLM-based training synthesis",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8818,
+          "title": "Draft NUC 110 Python String Method Aliases",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227743,7 +227748,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T22:04:03.082Z",
+      "verified_at": "2026-11-16T23:35:10.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227797,10 +227802,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "33fb6d38",
-      "content_hash": "a230778f7b4a8e1db666f3399b1e22d387f65838c678e8c49e3779f88dfc6852",
+      "source_version": "6b0edc20",
+      "content_hash": "3ef93d35e9d647cf83f24ea815573f33949d764ebb258be3e74014e05a49489b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:04:03.644Z"
+      "persisted_at": "2026-11-16T23:35:11.406Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -228495,8 +228500,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "c160c4ff",
-      "content_hash": "5160ad3e200d08a8b9cdec6884407cd5e2a900fe6b69d58b1f23d4f547b757a0",
+      "source_version": "f1e6395b",
+      "content_hash": "4f0c31bac81daf8857571bd7b74e4232eaa5502df25a07e00616da34acfcf78f",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -228519,6 +228524,11 @@
           "number": 8758,
           "title": "update README links to moved ProjectDiscovery docs pages",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8817,
+          "title": "Empirical Invariant Guard in interactsh.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228526,7 +228536,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T16:00:13.169Z",
+      "verified_at": "2026-11-16T23:35:06.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228568,10 +228578,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "c160c4ff",
-      "content_hash": "9029c4f42db0f62eaccb912388bfb67d3b78d383b538f16fc552cabeb32df06c",
+      "source_version": "f1e6395b",
+      "content_hash": "b52f01af74064097af6c9bf384776c442be5f3a8da9e9cd6cca72aa6376e1752",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T16:00:13.661Z"
+      "persisted_at": "2026-11-16T23:35:06.541Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -228580,10 +228590,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "c160c4ff",
-      "content_hash": "0550b5f56f850f385af0943a5ed3aad844d7b0c29c5ae0e3512b262fa5604c81",
+      "source_version": "f1e6395b",
+      "content_hash": "93d4bab5be1e37a03938b59942264d209a89397a810b9defc18234006c4bce4a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:00:13.780Z"
+      "persisted_at": "2026-11-16T23:35:06.673Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -229255,10 +229265,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "33fb6d38",
-      "content_hash": "84a6f4ee2c24048afed2a2a08800ed8332e1d260df60c8bf057cd865a5433f88",
+      "source_version": "6b0edc20",
+      "content_hash": "a23c2e58a9840a4a39d093a50162a1fbf293621e65209bf02a0a7a85a8b6d3f3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:04:03.528Z"
+      "persisted_at": "2026-11-16T23:35:11.279Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -259442,6 +259452,391 @@
       "content_hash": "87054c30bfa22a171facfafb1427bf193732ac7325e7da80db7e7a641656f41a",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T23:22:40.083Z"
+    },
+    "learn-github-aio-libs-aiohttp": {
+      "learning_id": "learn-github-aio-libs-aiohttp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "aio-libs/aiohttp",
+      "repository": "aio-libs/aiohttp",
+      "slug": "aio-libs-aiohttp",
+      "platform": "github",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "source_version": "b2350c3d",
+      "content_hash": "e1111168cea786fd67d0fafcdfb2de23a0ef3d2defdd6862258a2be80cb6de98",
+      "dossier_path": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8814,
+          "title": "Bump gunicorn from 26.2.0 to 27.0.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:34:57.909Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8814": {
+      "learning_id": "rule-8814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8814,
+      "title": "Bump gunicorn from 26.2.0 to 27.0.1",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "source_version": "b2350c3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:34:57.910Z"
+    },
+    "candidate_directive-bump-gunicorn-from-26-2-0-to-27-0-1": {
+      "item_id": "candidate_directive-bump-gunicorn-from-26-2-0-to-27-0-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IJCK-bump-gunicorn-from-26-2-0-to-27-0-1.md",
+      "title": "Bump gunicorn from 26.2.0 to 27.0.1",
+      "repository": "aio-libs-aiohttp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c8c5f34b6d938de2258c3068dd6a25d7f28a8a73a9cb64627f71e6cb6a7d0fa5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T23:35:14.807Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-technical-construction-intelligence-aio-libs-aiohttp-core-invar.md",
+      "title": "Technical Construction Intelligence: aio-libs/aiohttp Core Invariants",
+      "repository": "aio-libs/aiohttp",
+      "source_version": "b2350c3d",
+      "content_hash": "0631f9ac7ae0f3b2a3dfd0f412c1a1727cbc7307516342fa0040a5ace67b4c8c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T23:34:58.384Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aio-libs-aiohttp-verification-protocol-empirical-defect-shield-for-aio-libs-aioh.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aio-libs/aiohttp",
+      "repository": "aio-libs/aiohttp",
+      "source_version": "b2350c3d",
+      "content_hash": "6fe3e0ffe4d66ab0ae770537f588a01bc4b563e3d03923271601e99583ac7bcb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:34:58.508Z"
+    },
+    "learn-github-wzh4869-appports": {
+      "learning_id": "learn-github-wzh4869-appports",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "wzh4869/AppPorts",
+      "repository": "wzh4869/AppPorts",
+      "slug": "wzh4869-appports",
+      "platform": "github",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "17185d1d",
+      "content_hash": "752fc2a4dc36dadcf3fe5e04ae849960735807f95a614ff245e23cf0b9327440",
+      "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8815,
+          "title": "记录 2.3.0 build 68 完整验证与 CI 修复",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:35:00.690Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8815": {
+      "learning_id": "rule-8815",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8815,
+      "title": "记录 2.3.0 build 68 完整验证与 CI 修复",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "17185d1d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:35:00.690Z"
+    },
+    "candidate_directive-2-3-0-build-68-ci": {
+      "item_id": "candidate_directive-2-3-0-build-68-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I8QA-2-3-0-build-68-ci.md",
+      "title": "记录 2.3.0 build 68 完整验证与 CI 修复",
+      "repository": "wzh4869/AppPorts",
+      "source_version": "17185d1d",
+      "content_hash": "a2903f1eeb40b16dd0cbed4d769a740723b0bc472ecb4f5491b6c54dc0867709",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:35:01.043Z"
+    },
+    "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
+      "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
+      "repository": "wzh4869/AppPorts",
+      "source_version": "17185d1d",
+      "content_hash": "79b37844e7e8f9ae4124af2b4de6b0c3f8a0ac5fcf1c0c847eec9978e869b9a0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:35:01.167Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/wzh4869-appports-verification-protocol-empirical-defect-shield-for-wzh4869-apppo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for wzh4869/AppPorts",
+      "repository": "wzh4869/AppPorts",
+      "source_version": "17185d1d",
+      "content_hash": "f1aa351b1650531946237764c8c0a033b0e6fe22bd2ee610bcbbdfc596de290c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:35:01.300Z"
+    },
+    "learn-github-kubeedge-kubeedge": {
+      "learning_id": "learn-github-kubeedge-kubeedge",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kubeedge/kubeedge",
+      "repository": "kubeedge/kubeedge",
+      "slug": "kubeedge-kubeedge",
+      "platform": "github",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "5251e89f",
+      "content_hash": "4e463c0b04a9781a794247ff0ef8999dd44149292f7e367a76fe8f0dc013fb04",
+      "dossier_path": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8816,
+          "title": "Empirical Invariant Guard in configupdatejob_handler.go",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:35:04.690Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8816": {
+      "learning_id": "rule-8816",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8816,
+      "title": "Empirical Invariant Guard in configupdatejob_handler.go",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "5251e89f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:35:04.690Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-configupdatejob_handler-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-configupdatejob_handler-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IKAV-empirical-invariant-guard-in-configupdatejob_handler-go.md",
+      "title": "Empirical Invariant Guard in configupdatejob_handler.go",
+      "repository": "kubeedge-kubeedge-learnings",
+      "source_version": "HEAD",
+      "content_hash": "576ff49bb6b0d8d345ae38b04b774da06172feff445838a122c97322a358fd31",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T23:35:16.039Z"
+    },
+    "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-architecture-intelligence-kubeedge-kubeedge-core-invariants.md",
+      "title": "Architecture Intelligence: kubeedge/kubeedge Core Invariants",
+      "repository": "kubeedge/kubeedge",
+      "source_version": "5251e89f",
+      "content_hash": "924cf2b5af2ba6bed118f60af7d72836de27d088adcc596a12bc5aa1662d71c6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:35:05.176Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kubeedge-kubeedge-verification-protocol-empirical-defect-shield-for-kubeedge-kub.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kubeedge/kubeedge",
+      "repository": "kubeedge/kubeedge",
+      "source_version": "5251e89f",
+      "content_hash": "a9e6a2c0858c63fbe52f8c660dfac2a8ab67bcfaa489b5c227928c030ec6d371",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:35:05.301Z"
+    },
+    "rule-8817": {
+      "learning_id": "rule-8817",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8817,
+      "title": "Empirical Invariant Guard in interactsh.go",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "f1e6395b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:35:06.047Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-interactsh-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-interactsh-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ICVM-empirical-invariant-guard-in-interactsh-go.md",
+      "title": "Empirical Invariant Guard in interactsh.go",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "f1e6395b",
+      "content_hash": "d8b82afdf6e94ad48e004139025d2d69c2f8be12c5ff6e08b66cc0429e0b52d8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T23:35:06.421Z"
+    },
+    "rule-8818": {
+      "learning_id": "rule-8818",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8818,
+      "title": "Draft NUC 110 Python String Method Aliases",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "6b0edc20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:35:10.784Z"
+    },
+    "candidate_directive-draft-nuc-110-python-string-method-aliases": {
+      "item_id": "candidate_directive-draft-nuc-110-python-string-method-aliases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IGJ5-draft-nuc-110-python-string-method-aliases.md",
+      "title": "Draft NUC 110 Python String Method Aliases",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "6b0edc20",
+      "content_hash": "afd658e2701524b3babd94e2179002c74d8f2a45b2ddda94d30e94990ffe6383",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T23:35:11.156Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-learnings-technical-construction-intelligence-aio-libs-aiohttp-.md",
+      "title": "Technical Construction Intelligence: aio-libs-aiohttp-learnings Core Invariants",
+      "repository": "aio-libs-aiohttp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "37494d9a4d799331ebb6e767b9fc2bc6f9339ed1ef253c3e09488816421139d8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T23:35:14.926Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aio-libs-aiohttp-learnings-verification-protocol-empirical-defect-shield-for-aio.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aio-libs-aiohttp-learnings",
+      "repository": "aio-libs-aiohttp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b964e263cfaf9709da6587ac68125c66bda992c732afa3922a7f259250c1dbbf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:35:15.056Z"
+    },
+    "candidate_directive-docs-2-3-0-build-68-ci": {
+      "item_id": "candidate_directive-docs-2-3-0-build-68-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IJV7-docs-2-3-0-build-68-ci.md",
+      "title": "docs: 记录 2.3.0 build 68 完整验证与 CI 修复",
+      "repository": "wzh4869-appports-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3773f9b67118860e82e9b678fc2278793bf2c45b287ad452ce6bae1246d636dd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:35:15.476Z"
+    },
+    "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-learnings-architecture-intelligence-wzh4869-appports-learnings-.md",
+      "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
+      "repository": "wzh4869-appports-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca85469c842b1962469930c0b60ddb4c760048fe3f4389a846b4703b60f206d2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:35:15.596Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/wzh4869-appports-learnings-verification-protocol-empirical-defect-shield-for-wzh.md",
+      "title": "Verification Protocol: Empirical Defect Shield for wzh4869-appports-learnings",
+      "repository": "wzh4869-appports-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b889de7a4485480cf15c03c61384c529560811a5150956f435a0f7101a8f1bf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:35:15.723Z"
+    },
+    "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-learnings-architecture-intelligence-kubeedge-kubeedge-learning.md",
+      "title": "Architecture Intelligence: kubeedge-kubeedge-learnings Core Invariants",
+      "repository": "kubeedge-kubeedge-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0a3db6803d546e8d7a0beba766f677516c280ab85df20421f4fec8c97d294b4a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:35:16.159Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kubeedge-kubeedge-learnings-verification-protocol-empirical-defect-shield-for-ku.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kubeedge-kubeedge-learnings",
+      "repository": "kubeedge-kubeedge-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ba643fa138221bf1845fe32d3d5aad05080499955f61280eef77861a71d217dc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:35:16.284Z"
     }
   },
   "ai-builder-brain": {

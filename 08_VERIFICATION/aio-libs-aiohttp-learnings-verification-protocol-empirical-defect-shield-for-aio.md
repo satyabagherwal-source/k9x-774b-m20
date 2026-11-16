@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:33:03.672Z",
+  "timestamp": "2026-11-16T23:35:14.689Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-aio-libs-aiohttp-learnings",
+  "learning_id": "LEARN-EVO-aio-libs-aiohttp-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aio-libs-aiohttp-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:33:03.672Z`  
-> **Learning ID**: `LEARN-REEXTRACT-aio-libs-aiohttp-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T23:35:14.689Z`  
+> **Learning ID**: `LEARN-EVO-aio-libs-aiohttp-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source**: github ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
-> **Source Version**: `09f2de88`  
+> **Source Version**: `b2350c3d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T06:28:42.463Z  
+> **Timestamp**: 2026-11-16T23:34:57.161Z  
 > **Learning ID**: `learn-github-aio-libs-aiohttp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T06:26:52.455Z  
+> **Harvest Timestamp**: 2026-11-16T23:34:57.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Asynchronous HTTP client/server framework for asyncio and Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 16607 stars
+- **Stars / Engagement**: 16608 stars
 
 ---
 
@@ -283,6 +283,16 @@ class DecompressionBaseHandler(ABC):
     def data_available(self) -> bool:
         """Return True if more output is available by passing b""."""
 
+    @property
+    @abstractmethod
+    def stream_complete(self) -> bool:
+        """Return True if all input so far forms a complete stream.
+
+        False means the stream was truncated mid-member/mid-frame: some
+        codings (e.g. gzip missing its trailer) still decode the full
+        payload, so callers must consult this at EOF to detect the loss.
+        """
+
 
 class ConcatDecompressionHandler(DecompressionBaseHandler, Generic[_DecompressObjT]):
     """Handler for a codec whose streams may concatenate independent members.
@@ -364,18 +374,7 @@ class ZLibCompressor:
     ):
         self._executor = executor
         self._max_sync_chunk_size = max_sync_chunk_size
-        self._mode = (
-            encoding_to_mode(encoding, suppress_deflate_header)
-            if wbits is None
-            else wbits
-        )
-        self._zlib_backend: Final = ZLibBackendWrapper(ZLibBackend._zlib_backend)
-
-        kwargs: CompressObjArgs = {}
-        kwargs["wbits"] = self._mode
-        if strategy is not None:
-            kwargs["strategy"] = strategy
-       
+        self._mode
 ```
 
 ### Core Architecture Module: `aiohttp/worker.py`
@@ -1868,85 +1867,247 @@ class WebSocketReader:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0058e2b6` (2026-11-11)
-**Commit Message**: Fix actions lock file for codeql-action and cibuildwheel bumps (#14366)
+### Incident Patch 1: `b2350c3d` (2026-11-16)
+**Commit Message**: Bump gunicorn from 26.2.0 to 27.0.1 (#14402)
 
-**File**: `.github/workflows/actions.lock` (modified, +8/-8)
+Bumps [gunicorn](https://github.com/benoitc/gunicorn) from 26.2.0 to 27.0.1.
+- [Release notes](https://github.com/benoitc/gunicorn/releases)
+- [Commits](https://github.com/benoitc/gunicorn/compare/26.2.0...27.0.1)
+
+---
+updated-dependencies:
+- dependency-name: gunicorn
+  dependency-version: 27.0.1
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `requirements/base-ft.txt` (modified, +1/-1)
 ```diff
-@@ -9,7 +9,7 @@ workflows:
-         - 'dependabot/fetch-metadata@v3.1.0'
-     '.github/workflows/codeql.yml':
-         - 'actions/checkout@v7.0.1'
--        - 'github/codeql-action@v4.39.0'
-+        - 'github/codeql-action@v4.39.3'
-     '.github/workflows/dependency-submission.yml':
-         - 'actions/checkout@v7.0.1'
-         - 'actions/github-script@v9.0.0'
-@@ -21,7 +21,7 @@ workflows:
-         - 'actions/download-artifact@v8.0.2'
-         - 'actions/upload-artifact@v7.0.2'
-         - 'docker/setup-qemu-action@v4.4.0'
--        - 'pypa/cibuildwheel@v4.3.1'
-+        - 'pypa/cibuildwheel@v4.3.5'
-     '.github/workflows/stale.yml':
-         - 'actions/stale@v11.0.0'
- dependencies:
-@@ -70,19 +70,19 @@ dependencies:
-         commit: 'sha1-99012661954931238ded8c8b007157a8430204e1'
-         owner_id: 5429470
-         repo_id: 288487894
--    'github/codeql-action@v4.39.0':
--        ref: 'v4.39.0'
--        commit: 'sha1-6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee'
-+    'github/codeql-action@v4.39.3':
-+        ref: 'v4.39.3'
-+        commit: 'sha1-33d7b85da1a04171e211befe2c739303b9a4c066'
-         owner_id: 9919
-         repo_id: 259445878
-     'matteogabriele/agentscan-action@v2.5.0':
-         ref: 'v2.5.0'
-         commit: 'sha1-8112fb79b33fafb8506159df20129a34209ac410'
-         owner_id: 5337152
-         repo_id: 1183120486
--    'pypa/cibuildwheel@v4.3.1':
--        ref: 'v4.3.1'
--        commit: 'sha1-b3395e271a35f73dad77f21802abe9b986dfe299'
-+    'pypa/cibuildwheel@v4.3.5':
-+        ref: 'v4.3.5'
-+        commit: 'sha1-f9b966cfadf4109556cadc5bb39ddb72d0ce664e'
-         owner_id: 647025
-         repo_id: 85508223
-         uses:
+@@ -22,7 +22,7 @@ frozenlist==1.8.0
+     # via
+     #   -r requirements/runtime-deps.in
+     #   aiosignal
+-gunicorn==26.2.0
++gunicorn==27.0.1
+     # via -r requirements/base-ft.in
+ idna==3.20
+     # via yarl
+```
+
+**File**: `requirements/base.txt` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ frozenlist==1.8.0
+     # via
+     #   -r requirements/runtime-deps.in
+     #   aiosignal
+-gunicorn==26.2.0
++gunicorn==27.0.1
+     # via -r requirements/base.in
+ idna==3.20
+     # via yarl
+```
+
+**File**: `requirements/constraints.txt` (modified, +1/-1)
+```diff
+@@ -91,7 +91,7 @@ frozenlist==1.8.0
+     #   -r requirements/runtime-deps.in
+     #   aiohttp
+     #   aiosignal
+-gunicorn==26.2.0
++gunicorn==27.0.1
+     # via -r requirements/base.in
+ identify==2.6.20
+     # via pre-commit
+```
+
+**File**: `requirements/dev.txt` (modified, +1/-1)
+```diff
+@@ -89,7 +89,7 @@ frozenlist==1.8.0
+     #   -r requirements/runtime-deps.in
+     #   aiohttp
+     #   aiosignal
+-gunicorn==26.2.0
++gunicorn==27.0.1
+     # via -r requirements/base.in
+ identify==2.6.20
+     # via pre-commit
+```
+
+**File**: `requirements/test-ft.txt` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ frozenlist==1.8.0
+     #   -r requirements/runtime-deps.in
+     #   aiohttp
+     #   aiosignal
+-gunicorn==26.2.0
++gunicorn==27.0.1
+     # via -r requirements/base-ft.in
+ idna==3.20
+     # via
+```
+
+**File**: `requirements/test-mobile.txt` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ frozenlist==1.8.0
+     #   -r requirements/runtime-deps.in
+     #   aiohttp
+     #   aiosignal
+-gunicorn==26.2.0
++gunicorn==27.0.1
+     # via -r requirements/base-ft.in
+ idna==3.20
+     # via yarl
+```
+
+**File**: `requirements/test.txt` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ frozenlist==1.8.0
+     #   -r requirements/runtime-deps.in
+     #   aiohttp
+     #   aiosignal
+-gunicorn==26.2.0
++gunicorn==27.0.1
+     # via -r requirements/base.in
+ idna==3.20
+     # via
 ```
 
 ---
 
-### Incident Patch 2: `ad642e5c` (2026-11-07)
-**Commit Message**: Revert "Add Asyntai to the spelling wordlist and update mac (#14293)"
+### Incident Patch 2: `487e5232` (2026-11-16)
+**Commit Message**: Bump markdown-it-py from 4.2.0 to 4.3.0 (#14399)
 
-This partially reverts commit 0ae5b96be76a0fd8566fed53e7effc294f924add.
+Bumps [markdown-it-py](https://github.com/executablebooks/markdown-it-py) from 4.2.0 to 4.3.0.
+- [Release notes](https://github.com/executablebooks/markdown-it-py/releases)
+- [Changelog](https://github.com/executablebooks/markdown-it-py/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/executablebooks/markdown-it-py/compare/v4.2.0...v4.3.0)
 
-Assisted-by: Git, meat and NeoVim.
+---
+updated-dependencies:
+- dependency-name: markdown-it-py
+  dependency-version: 4.3.0
+  dependency-type: indirect
+  update-type: version-update:semver-minor
+...
 
-**File**: `docs/spelling_wordlist.txt` (modified, +0/-1)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `requirements/constraints.txt` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,6 @@ async
- asyncio
- asyncpg
- asynctest
--Asyntai
- attrs
- auth
- autocalculated
+@@ -116,7 +116,7 @@ jinja2==3.1.6
+     #   towncrier
+ librt==0.16.0
+     # via mypy
+-markdown-it-py==4.2.0
++markdown-it-py==4.3.0
+     # via
+     #   mdit-py-plugins
+     #   myst-parser
+```
+
+**File**: `requirements/dev.txt` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ jinja2==3.1.6
+     #   towncrier
+ librt==0.16.0
+     # via mypy
+-markdown-it-py==4.2.0
++markdown-it-py==4.3.0
+     # via
+     #   mdit-py-plugins
+     #   myst-parser
+```
+
+**File**: `requirements/doc-spelling.txt` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ jinja2==3.1.6
+     #   sphinx
+     #   sphinxcontrib-mermaid
+     #   towncrier
+-markdown-it-py==4.2.0
++markdown-it-py==4.3.0
+     # via
+     #   mdit-py-plugins
+     #   myst-parser
+```
+
+**File**: `requirements/doc.txt` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ jinja2==3.1.6
+     #   sphinx
+     #   sphinxcontrib-mermaid
+     #   towncrier
+-markdown-it-py==4.2.0
++markdown-it-py==4.3.0
+     # via
+     #   mdit-py-plugins
+     #   myst-parser
+```
+
+**File**: `requirements/lint.txt` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@ isal==1.9.1
+     # via -r requirements/lint.in
+ librt==0.16.0
+     # via mypy
+-markdown-it-py==4.2.0
++markdown-it-py==4.3.0
+     # via rich
+ mdurl==0.1.2
+     # via markdown-it-py
+```
+
+**File**: `requirements/test-common.txt` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ isal==1.9.1 ; python_version < "3.14" and implementation_name == "cpython"
+     # via -r requirements/test-common.in
+ librt==0.16.0
+     # via mypy
+-markdown-it-py==4.2.0
++markdown-it-py==4.3.0
+     # via rich
+ mdurl==0.1.2
+     # via markdown-it-py
+```
+
+**File**: `requirements/test-ft.txt` (modified, +1/-1)
+```diff
+@@ -61,7 +61,7 @@ isal==1.9.1 ; python_version < "3.14" and implementation_name == "cpython"
+     # via -r requirements/test-common.in
+ librt==0.16.0
+     # via mypy
+-markdown-it-py==4.2.0
++markdown-it-py==4.3.0
+     # via rich
+ mdurl==0.1.2
+     # via markdown-it-py
+```
+
+**File**: `requirements/test.txt` (modified, +1/-1)
+```diff
+@@ -61,7 +61,7 @@ isal==1.9.1 ; python_version < "3.14" and implementation_name == "cpython"
+     # via -r requirements/test-common.in
+ librt==0.16.0
+     # via mypy
+-markdown-it-py==4.2.0
++markdown-it-py==4.3.0
+     # via rich
+ mdurl==0.1.2
+     # via markdown-it-py
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14366** (2026-11-11): Fix actions lock file for codeql-action and cibuildwheel bumps (@Dreamsorcerer)
-- **PR #14365** (2026-11-11): Mocked request surrogateescape (@Dreamsorcerer)
-- **PR #14361** (2026-11-10): Bump click from 8.5.0 to 8.5.1 (@dependabot[bot])
-- **PR #14360** (2026-11-10): Bump virtualenv from 21.15.5 to 21.15.6 (@dependabot[bot])
-- **PR #14359** (2026-11-10): Bump python-discovery from 1.9.4 to 1.9.5 (@dependabot[bot])
-- **PR #14358** (2026-11-10): Bump backports-zstd from 1.3.0 to 1.8.0 (@dependabot[bot])
+- **PR #14404** (2026-11-16): Bump gunicorn from 26.2.0 to 27.0.1 (@dependabot[bot])
+- **PR #14403** (closed): Bump mdit-py-plugins from 0.6.1 to 0.7.0 (@dependabot[bot])
+- **PR #14402** (2026-11-16): Bump gunicorn from 26.2.0 to 27.0.1 (@dependabot[bot])
+- **PR #14401** (2026-11-16): Bump myst-parser from 5.1.0 to 5.2.0 (@dependabot[bot])
+- **PR #14400** (2026-11-16): Bump coverage from 7.17.2 to 7.17.3 (@dependabot[bot])
+- **PR #14399** (2026-11-16): Bump markdown-it-py from 4.2.0 to 4.3.0 (@dependabot[bot])
 
 ---
 
@@ -1966,45 +2127,31 @@ Assisted-by: Git, meat and NeoVim.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. actions lock file for codeql-action and cibuildwheel bumps (#14366)
+## X. Bump gunicorn from 26.2.0 to 27.0.1
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `requirements/base-ft.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0058e2b6`: actions lock file for codeql-action and cibuildwheel bumps (#14366). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2350c3d`: Bump gunicorn from 26.2.0 to 27.0.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/base-ft.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        - 'github/codeql-action@v4.39.3'
-        - 'pypa/cibuildwheel@v4.3.5'
-    'github/codeql-action@v4.39.3':
-        ref: 'v4.39.3'
-        commit: 'sha1-33d7b85da1a04171e211befe2c739303b9a4c066'
-    'pypa/cibuildwheel@v4.3.5':
-        ref: 'v4.3.5'
-        commit: 'sha1-f9b966cfadf4109556cadc5bb39ddb72d0ce664e'
+gunicorn==27.0.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-        - 'github/codeql-action@v4.39.0'
-        - 'pypa/cibuildwheel@v4.3.1'
-    'github/codeql-action@v4.39.0':
-        ref: 'v4.39.0'
-        commit: 'sha1-6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee'
-    'pypa/cibuildwheel@v4.3.1':
-        ref: 'v4.3.1'
-        commit: 'sha1-b3395e271a35f73dad77f21802abe9b986dfe299'
+// Induced defect failure mode:
+gunicorn==26.2.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0058e2b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2350c3d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

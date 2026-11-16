@@ -10404,3 +10404,8 @@ Every entry in this ledger must capture:
 | `learn-github-encode-httpx` | `https://github.com/encode/httpx` | `7cff5f79` | Multi-dimensional audit evidence | 2026-11-16T23:22:24.903Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `a19f8762` | Multi-dimensional audit evidence | 2026-11-16T23:22:31.060Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `5ec5829e` | Multi-dimensional audit evidence | 2026-11-16T23:22:34.505Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `b2350c3d` | Multi-dimensional audit evidence | 2026-11-16T23:34:58.083Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `17185d1d` | Multi-dimensional audit evidence | 2026-11-16T23:35:00.863Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `5251e89f` | Multi-dimensional audit evidence | 2026-11-16T23:35:04.866Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `f1e6395b` | Multi-dimensional audit evidence | 2026-11-16T23:35:06.227Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6b0edc20` | Multi-dimensional audit evidence | 2026-11-16T23:35:10.964Z |
