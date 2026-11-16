@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T21:10:40.685Z",
+  "last_updated": "2026-11-16T21:28:31.075Z",
   "total_verified_learnings": 8804,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19355,
+  "total_items": 19362,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217123,8 +217123,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "9e4744a6",
-      "content_hash": "910723abce1fbddad86ae0c0fd567fb41e218f8361685db29fe1d19eb3b25c6a",
+      "source_version": "1d25918c",
+      "content_hash": "cbbb2d2fa65bbf1c237a4c5730a7022f7d0f8ef543cb8d46bd755e0b9a2b9b1c",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -217137,6 +217137,11 @@
           "number": 8610,
           "title": "retry native Stressgres cancellation during shutdown",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8792,
+          "title": "retain CPU-clock samples in ARM vector profiles",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217144,7 +217149,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T11:12:46.669Z",
+      "verified_at": "2026-11-16T21:23:29.567Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217198,10 +217203,10 @@
       "relative_path": "08_VERIFICATION/paradedb-paradedb-verification-protocol-empirical-defect-shield-for-paradedb-par.md",
       "title": "Verification Protocol: Empirical Defect Shield for paradedb/paradedb",
       "repository": "paradedb/paradedb",
-      "source_version": "9e4744a6",
-      "content_hash": "af6ca971aaaa588e8493c625e15400614e423f5d8fda5a355c2c129dbc89eada",
+      "source_version": "1d25918c",
+      "content_hash": "f75abb4fb79f510031a8ea3327d2d997e8102d8eb89eaae8552e8f316c115d80",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T11:12:47.295Z"
+      "persisted_at": "2026-11-16T21:23:30.289Z"
     },
     "learn-huggingface-amazon-chronos-2": {
       "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -218033,13 +218038,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-N6RT-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZK1K-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6bb14ae9dddde277b6b677bd1485d08236a555d28133595e473fc9cea4e2c76",
+      "content_hash": "d5918d274ef5fe9945589145de033eb0c6df9a1705d167686ca4a9d95ed7181f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T13:23:00.234Z"
+      "persisted_at": "2026-11-16T21:28:30.776Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218049,9 +218054,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "64ed158012e491f387e69523b9a7e1d1786da627f3162d9e4e7b5b0dbee85484",
+      "content_hash": "c967a12b1e5600bbad48bcc3091597a24f7c088713daa5c78ba3b3b5050d21dc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T13:23:00.373Z"
+      "persisted_at": "2026-11-16T21:28:30.923Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218061,9 +218066,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "34c358179cd13549e51651d3f5fd0a458479e17be86ea7ab8a4d4fcb754dca85",
+      "content_hash": "1fabffba774a380f2dac8e8331c7bd2746a4f4582b7f1ccbf21a80ceafe4fd05",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T13:23:00.520Z"
+      "persisted_at": "2026-11-16T21:28:31.075Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -220064,8 +220069,8 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "1450dba7",
-      "content_hash": "7f90b2af7ff56247c587a151bfcf35c953ef072682965115f513b1ee2077e30f",
+      "source_version": "3628771a",
+      "content_hash": "1317570e6c9cb08fe5a99e74a9ace90473d637e1212feeb94651204d78a1036f",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
@@ -220078,6 +220083,11 @@
           "number": 8618,
           "title": "bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.10.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8793,
+          "title": "prepare v1.11.0 release",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220085,7 +220095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T13:27:27.724Z",
+      "verified_at": "2026-11-16T21:28:25.155Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220127,10 +220137,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-architecture-intelligence-zeromicro-go-zero-core-invariants.md",
       "title": "Architecture Intelligence: zeromicro/go-zero Core Invariants",
       "repository": "zeromicro/go-zero",
-      "source_version": "1450dba7",
-      "content_hash": "64bad08b7c9224e7b61deaa1e904b81c17133efcebec49ccaf731cad48be3332",
+      "source_version": "3628771a",
+      "content_hash": "78f7c9e5694e06edbbdd00dc5772a64579aa2609bc53a8df05d3f53e8a9d179a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T13:27:28.147Z"
+      "persisted_at": "2026-11-16T21:28:25.720Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zeromicro-go-zero": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeromicro-go-zero",
@@ -220139,10 +220149,10 @@
       "relative_path": "08_VERIFICATION/zeromicro-go-zero-verification-protocol-empirical-defect-shield-for-zeromicro-go.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeromicro/go-zero",
       "repository": "zeromicro/go-zero",
-      "source_version": "1450dba7",
-      "content_hash": "f5ac2155ff56fe967f1084aaa4c1d83d3dc6051e7b140f069613ffbae6f54f88",
+      "source_version": "3628771a",
+      "content_hash": "c8cb5b96162a2a9f8128cd8e4d238e44c935ff072e70d206bf1ea592665d56b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:27:28.250Z"
+      "persisted_at": "2026-11-16T21:28:25.868Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari",
@@ -220200,9 +220210,9 @@
       "title": "Architecture Intelligence: zeromicro-go-zero-learnings Core Invariants",
       "repository": "zeromicro-go-zero-learnings",
       "source_version": "HEAD",
-      "content_hash": "b1878827aef7d92098f0e7d7a83896d93e821c2b03eb6a3ee9c15d73959a0849",
+      "content_hash": "8c2fe07485c6124493240bdd6edf40b1471a2e47955c81eb36f60a58c6a107f9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T13:27:58.055Z"
+      "persisted_at": "2026-11-16T21:28:29.276Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zeromicro-go-zero-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeromicro-go-zero-learnings",
@@ -220212,9 +220222,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeromicro-go-zero-learnings",
       "repository": "zeromicro-go-zero-learnings",
       "source_version": "HEAD",
-      "content_hash": "52b8de16038c214fc69c19a8e7d8dab2019570ec9977340f89f90ddb7c528a5e",
+      "content_hash": "246fc4ed911afe7840d80ecab1eddb22bc6c7c0e339107bf7c3f00f59fe5af3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:27:58.174Z"
+      "persisted_at": "2026-11-16T21:28:29.438Z"
     },
     "learn-huggingface-deepseek-ai-deepseek-v4-pro": {
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
@@ -243293,10 +243303,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "repository": "paradedb/paradedb",
-      "source_version": "9e4744a6",
-      "content_hash": "1465b67065b3d576d00e9c328238993f84e24aa98331521c33e73c7daf022c91",
+      "source_version": "1d25918c",
+      "content_hash": "bdf7300597b98edeba730f09fd0a9144517af22e585302f1925a88516f72a5c0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T11:12:47.152Z"
+      "persisted_at": "2026-11-16T21:23:30.140Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
@@ -257799,6 +257809,94 @@
       "content_hash": "70605191a65c690d2315efe6ae843ca6dc16bace3f90a01131d8266f5180d25d",
       "domain_letter": "G",
       "persisted_at": "2026-11-16T21:10:40.575Z"
+    },
+    "rule-8792": {
+      "learning_id": "rule-8792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8792,
+      "title": "retain CPU-clock samples in ARM vector profiles",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "1d25918c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T21:23:29.567Z"
+    },
+    "candidate_directive-retain-cpu-clock-samples-in-arm-vector-profiles": {
+      "item_id": "candidate_directive-retain-cpu-clock-samples-in-arm-vector-profiles",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZJJ1-retain-cpu-clock-samples-in-arm-vector-profiles.md",
+      "title": "retain CPU-clock samples in ARM vector profiles",
+      "repository": "paradedb-paradedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bcea909bdaa79b0f9f9d4fda05ee114f7536872409a8b8d19cf71b35fec80b1f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:28:30.114Z"
+    },
+    "rule-8793": {
+      "learning_id": "rule-8793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8793,
+      "title": "prepare v1.11.0 release",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "3628771a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T21:28:25.155Z"
+    },
+    "candidate_directive-prepare-v1-11-0-release": {
+      "item_id": "candidate_directive-prepare-v1-11-0-release",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZG12-prepare-v1-11-0-release.md",
+      "title": "prepare v1.11.0 release",
+      "repository": "zeromicro/go-zero",
+      "source_version": "3628771a",
+      "content_hash": "c2064ff5a1dae5bed6e95a793a24a6e95c04a4a18bb638a777280dd1b73e124a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:28:25.576Z"
+    },
+    "candidate_directive-goctl-prepare-v1-11-0-release": {
+      "item_id": "candidate_directive-goctl-prepare-v1-11-0-release",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZIR8-goctl-prepare-v1-11-0-release.md",
+      "title": "goctl): prepare v1.11.0 release",
+      "repository": "zeromicro-go-zero-learnings",
+      "source_version": "HEAD",
+      "content_hash": "676f2d83a0e71a67d85a4473cc58c45a9105bb1bb773834f5b8f458a71c4d1b7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:28:29.109Z"
+    },
+    "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-learnings-architecture-intelligence-paradedb-paradedb-learning.md",
+      "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
+      "repository": "paradedb-paradedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fbd11a850bd94293518165efa6842415c475ced80398520b1a3bffa22622cba2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:28:30.254Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/paradedb-paradedb-learnings-verification-protocol-empirical-defect-shield-for-pa.md",
+      "title": "Verification Protocol: Empirical Defect Shield for paradedb-paradedb-learnings",
+      "repository": "paradedb-paradedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "994aba1f907a02c04d6fac16b27c550adc1a0f465998bcfc8832233231f7e560",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T21:28:30.403Z"
     }
   },
   "ai-builder-brain": {

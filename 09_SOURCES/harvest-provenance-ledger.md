@@ -10376,3 +10376,5 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `554cb1b7` | Multi-dimensional audit evidence | 2026-11-16T21:10:24.537Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `573231ac` | Multi-dimensional audit evidence | 2026-11-16T21:10:31.051Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `342ec629` | Multi-dimensional audit evidence | 2026-11-16T21:10:35.764Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `1d25918c` | Multi-dimensional audit evidence | 2026-11-16T21:23:29.761Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `3628771a` | Multi-dimensional audit evidence | 2026-11-16T21:28:25.354Z |

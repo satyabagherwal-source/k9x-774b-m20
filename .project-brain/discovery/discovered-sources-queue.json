@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T21:10:39.134Z",
+  "updated_at": "2026-11-16T21:28:29.892Z",
   "stats": {
-    "total_discovered": 4455,
-    "approved_pending_harvest": 4191,
+    "total_discovered": 4459,
+    "approved_pending_harvest": 4195,
     "harvested_count": 0,
     "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4192,
+      "COMMUNITY_AND_EXPERT": 4196,
       "OFFICIAL_DOCUMENTATION": 140,
       "STANDARDS_AND_SPECIFICATIONS": 96,
       "ENGINEERING_BLOGS": 3,
@@ -96183,6 +96183,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
         "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-204344ADF16D": {
+      "id": "SRC-204344ADF16D",
+      "url": "https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c",
+      "title": "https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:28:29.758Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-15AFC5FA38CF": {
+      "id": "SRC-15AFC5FA38CF",
+      "url": "https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa",
+      "title": "https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:28:29.796Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-924748299C5A": {
+      "id": "SRC-924748299C5A",
+      "url": "https://github.com/paradedb/tantivy/pull/416",
+      "title": "https://github.com/paradedb/tantivy/pull/416",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:28:29.852Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-42A34C0A88D8": {
+      "id": "SRC-42A34C0A88D8",
+      "url": "https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4",
+      "title": "https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:28:29.892Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
       }
     }
   }

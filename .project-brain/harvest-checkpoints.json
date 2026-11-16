@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T21:10:35.773Z",
+  "last_updated": "2026-11-16T21:28:25.365Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "7f90b2af7ff56247c587a151bfcf35c953ef072682965115f513b1ee2077e30f",
-      "verified_at": "2026-11-15T13:27:27.877Z",
+      "content_hash": "1317570e6c9cb08fe5a99e74a9ace90473d637e1212feeb94651204d78a1036f",
+      "verified_at": "2026-11-16T21:28:25.365Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T13:27:27.877Z"
+      "last_updated": "2026-11-16T21:28:25.365Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "910723abce1fbddad86ae0c0fd567fb41e218f8361685db29fe1d19eb3b25c6a",
-      "verified_at": "2026-11-15T11:12:46.862Z",
+      "content_hash": "cbbb2d2fa65bbf1c237a4c5730a7022f7d0f8ef543cb8d46bd755e0b9a2b9b1c",
+      "verified_at": "2026-11-16T21:23:29.771Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T11:12:46.862Z"
+      "last_updated": "2026-11-16T21:23:29.771Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-LBH0",
-    "timestamp": "2026-11-14T02:06:21.780Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "173d139b7688e07773db8f38e0327249cc97e27760e8d1623c687afb6eba5c46",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-LFOP",
-    "timestamp": "2026-11-14T02:06:27.241Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "bf8378e742a8e5153646614e05b65cbdfbb6d09d964f59658103fdbc259c583e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-4ODG",
     "timestamp": "2026-11-14T02:21:24.964Z",
     "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -7490,6 +7460,36 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "2d407fbe529c2f138259823d5734173a7197114a47f19d916867f9740e678ccb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-T3RX",
+    "timestamp": "2026-11-16T21:23:29.757Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "cbbb2d2fa65bbf1c237a4c5730a7022f7d0f8ef543cb8d46bd755e0b9a2b9b1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-ZFUU",
+    "timestamp": "2026-11-16T21:28:25.350Z",
+    "repository": "zeromicro/go-zero",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "1317570e6c9cb08fe5a99e74a9ace90473d637e1212feeb94651204d78a1036f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

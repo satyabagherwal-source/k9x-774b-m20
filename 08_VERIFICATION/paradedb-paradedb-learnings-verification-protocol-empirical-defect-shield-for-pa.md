@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:43:12.263Z",
+  "timestamp": "2026-11-16T21:28:29.990Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-paradedb-paradedb-learnings",
+  "learning_id": "LEARN-EVO-paradedb-paradedb-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [paradedb-paradedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:43:12.263Z`  
-> **Learning ID**: `LEARN-REEXTRACT-paradedb-paradedb-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T21:28:29.990Z`  
+> **Learning ID**: `LEARN-EVO-paradedb-paradedb-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `781cb511`  
+> **Source Version**: `1d25918c`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:17:26.254Z  
+> **Timestamp**: 2026-11-16T21:23:28.686Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:17:26.242Z  
+> **Harvest Timestamp**: 2026-11-16T21:23:28.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9504 stars
+- **Stars / Engagement**: 9530 stars
 
 ---
 
@@ -1155,7 +1155,7 @@ pub trait PgMemoryContextsExt {
     /// std, tokio, tantivy and DataFusion types: there is no `Drop` of ours on them to put
     /// `impl_safe_drop!` on. Our own `Drop`s are checked by `.github/scripts/check_impl_drop.py`.
     ///
-    /// The body mirrors pgrx 0.19.2's `leak_and_drop_on_delete` (`memcxt.rs`) plus the
+    /// The body mirrors pgrx 0.20.0's `leak_and_drop_on_delete` (`memcxt.rs`) plus the
     /// `proc_exit` check; keep it in sync when bumping pgrx.
     fn leak_and_drop_unless_exiting<T>(&mut self, v: T) -> *mut T;
 }
@@ -1172,15 +1172,16 @@ impl PgMemoryContextsExt for PgMemoryContexts {
             drop(unsafe { Box::from_raw(ptr.cast::<T>()) });
         }
 
-        let leaked = Box::leak(Box::new(v));
         unsafe {
             // SAFETY: the callback struct is plain pointers, all set before it is registered.
             let callback = self.palloc_struct::<pg_sys::MemoryContextCallback>();
+            // Keep Rust ownership until callback allocation succeeds.
+            let leaked = Box::leak(Box::new(v));
             (*callback).func = Some(drop_unless_exiting::<T>);
             (*callback).arg = (leaked as *mut T).cast();
             pg_sys::MemoryContextRegisterResetCallback(self.value(), callback);
+            leaked
         }
-        leaked
     }
 }
 
@@ -1201,8 +1202,7 @@ pub fn proc_exit_in_progress() -> bool {
 /// Automatically frees the context when dropped
 ///
 /// let context_guard = ExprContextGuard::new();
-/// // Use context_guard.as_ptr() to get the raw pointer
-/// // Context is automatically freed when
+/// // Use context_g
 ```
 
 ### Core Architecture Module: `index_read/src/index/directory/utils.rs`
@@ -2229,11 +2229,11 @@ impl AggregateScanState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7433** (2026-11-12): **CI: Citus 13 build fails on PostgreSQL 15.20 with a redeclared `have_createdb_privilege`**
+  *Symptoms*: # What happens?  Since PostgreSQL 15.20 reached `apt.postgresql.org` on 2026-11-12, the `Build & install Citus 13 (PG 15)` step of `Test pg_search` fails.  ``` citus/src/include/pg_version_compat.h:604:1: error: static declaration of ‘have_createdb_privilege’ follows non-static declaration /usr/include/postgresql/15/server/commands/dbcommands.h:33:13: note: previous declaration of ‘have_createdb_privilege’ with type ‘_Bool(void)’ ```  PostgreSQL 15.20 exports `have_createdb_privilege` from `commands/dbcommands.h` (postgres/postgres@98ec97f673). Citus 13 has a `static inline` copy of it for PostgreSQL versions before 16 in `src/include/pg_version_compat.h`, so the two declarations collide. `v13.4.0` and `v13.5.0` have the same copy, so a newer 13.x tag doesn't help.  The last green run of this job installed `postgresql-server-dev-15` `15.19-1.pgdg26.04+2`. The red runs install `15.20-1.pgdg26.04+1`. PostgreSQL 16 to 18 aren't affected, because those jobs build Citus 14.  These runs fail at the same step.  - https://github.com/paradedb/paradedb/actions/runs/43280487148/job/131400357675 (#7430) - https://github.com/paradedb/paradedb/actions/runs/43272838607 - https://github.com/paradedb/paradedb/actions/runs/43267298415 - https://github.com/paradedb/paradedb/actions/runs/43266693756  ## To Reproduce  Run this on Ubuntu with the PGDG apt repository.  ```bash sudo apt-get install -y postgresql-15 postgresql-server-dev-15 git clone --depth 1 --branch v13.3.0 https://github.com/citu
+
 - **Issue #7313** (2026-11-08): **JoinScan segfaults when a projected expression contains a scalar subquery**
   *Symptoms*: ### What happens?  ParadeDB Join Scan crashes the server (segmentation fault) when an expression in the SELECT list contains a scalar subquery, such as `a.q + (SELECT 1)`. Postgres then restarts all connections. A prepared statement parameter in the same place, with a generic plan, fails with ERROR: no value found for parameter 1.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE a (id int PRIMARY KEY, q int); CREATE TABLE b (id int PRIMARY KEY, a_id int);  INSERT INTO a VALUES (1, 5); INSERT INTO b VALUES (1, 1);  CREATE INDEX a_idx ON a USING paradedb (id, q); CREATE INDEX b_idx ON b USING paradedb (id, a_id);  SELECT a.id, a.q + (SELECT 1) FROM a JOIN b ON b.a_id = a.id WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; ```  The server crashes with "terminated by signal 11: Segmentation fault". Expected 1 | 6. With SET paradedb.enable_join_custom_scan = off; it returns 1 | 6.  The parameter case:  ```sql SET plan_cache_mode = force_generic_plan; PREPARE s(int) AS   SELECT a.id, a.q + $1 FROM a JOIN b ON b.a_id = a.id   WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; EXECUTE s(1); ```  Returns ERROR: no value found for parameter 1. Expected 1 | 6.  ### OS:  macOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  e80cf37  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB pg_search Extension  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant da
-
-- **Issue #7293** (2026-11-10): **Server crashes when a join filter compares an expression over two tables to a scalar subquery**
-  *Symptoms*: ### What happens?  ParadeDB crashes the backend with a segmentation fault when a join query has a filter that uses columns from both tables and an uncorrelated scalar subquery, for example `a.price * b.qty > (SELECT 1)`. Postgres then terminates all active connections and restarts. Plain `EXPLAIN` crashes too, because the fault happens during planning.  Both Aggregate Scan and Join Scan are affected. The same query without aggregates crashes through Join Scan when it has an `ORDER BY` and `LIMIT`.  The crash report shows DataFusion's constant evaluator calling `PgExprUdf`, which faults in `ExecEvalParamExec` on a NULL address:  ``` ExecEvalParamExec        (KERN_INVALID_ADDRESS at 0x0) ExecInterpExpr ExecEvalExpr PgExprUdf                (pg_expr_udf.rs) ScalarUDF::invoke_with_args ConstEvaluator           (datafusion_optimizer expr_simplifier) ```  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE ca (id int PRIMARY KEY, name text, price float8); CREATE TABLE cb (id int PRIMARY KEY, a_id int, qty float8);  INSERT INTO ca VALUES (1, 'x shoes', 1.5), (2, 'y shoes', 2.5); INSERT INTO cb VALUES (1, 1, 1), (2, 2, 2);  CREATE INDEX ca_idx ON ca USING paradedb (id, name, price); CREATE INDEX cb_idx ON cb USING paradedb (id, a_id, qty);  SELECT COUNT(*) FROM ca JOIN cb ON cb.a_id = ca.id WHERE ca.id @@@ pdb.all()   AND ca.price * cb.qty > (SELECT 1); ```  Crashes with `server closed the connection unexpectedly`. The Postgres log shows `terminated by si
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2250,68 +2250,144 @@ impl AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61edff0a` (2026-11-10)
-**Commit Message**: fix: correct Tantivy revision after clustering update (#7365)
+### Incident Patch 1: `8d5419ed` (2026-11-16)
+**Commit Message**: fix: retain CPU-clock samples in ARM vector profiles (#7482)
+
+## What
+Restore CPU-clock sampling in the vector benchmark profiler on ARM and
+fail profiling when either requested event has no samples.
+
+## Why
+Perf includes the SVE `vg` register when selecting default DWARF
+registers on the benchmark runner. The software CPU-clock PMU rejects
+that register, so perf silently drops CPU-clock and produces a
+branch-miss-only profile.
+
+## How
+Explicitly select ARM general-purpose registers for DWARF sampling and
+require nonzero `cpu-clock` and `branch-misses` sample headers in the
+report. Changes are limited to the existing profiler script.
+
+## Tests
+- Bash syntax, ShellCheck, shfmt, and commit hooks pass.
+- Native ARM recording with the explicit register set captured 198
+CPU-clock samples and 34 branch-miss samples, verified directly in
+`perf.data`.
+- Native report generation was not validated end to end: the temporary
+smoke harness changed ownership before reporting. That harness is not
+included in this PR; the existing profiler reports before changing
+ownership.
+
+**File**: `.github/scripts/profile-postgres.sh` (modified, +20/-1)
+```diff
+@@ -1,5 +1,6 @@
+ #!/usr/bin/env bash
+ set -euo pipefail
++export LC_ALL=C
+ 
+ if [ "$#" -lt 4 ] || [ "$3" != -- ]; then
+   echo "Usage: $0 CONTAINER OUTPUT_DIRECTORY -- COMMAND [ARGS...]" >&2
+@@ -15,6 +16,13 @@ readonly stack_bytes=16384
+ readonly startup_timeout_seconds=30
+ readonly callgraph_min_percent=0.5
+ 
++callgraph_args=(--call-graph "dwarf,$stack_bytes")
++if [ "$(uname -m)" = aarch64 ]; then
++  # The software clock PMU rejects the SVE vg register selected by perf's hardware probe.
++  printf -v user_regs '%s,' x{0..29} lr sp pc
++  callgraph_args+=("--user-regs=${user_regs%,}")
++fi
++
+ mkdir -p "$output"
+ output="$(realpath "$output")"
+ if [ -e "$output/perf.data" ]; then
+@@ -80,6 +88,17 @@ cleanup() {
+       echo "::group::PostgreSQL perf report: $output"
+       cat "$output/report.txt" "$output/report-callgraph.txt" "$output/report.log"
+       echo '::endgroup::'
++      if ! awk '
++        /^# Samples: [1-9]/ {
++          split($0, fields, "\047")
++          split(fields[2], event, ":")
++          seen[event[1]] = 1
++        }
++        END { exit !(seen["cpu-clock"] && seen["branch-misses"]) }
++      ' "$output/report.txt"; then
++        echo "perf must record nonzero cpu-clock and branch-misses samples" >&2
++        report_status=1
++      fi
+     else
+       echo "perf produced no profile: $output/perf.data" >&2
+       report_status=1
+@@ -99,7 +118,7 @@ trap 'exit 129' HUP
+ 
+ run_perf record --output "$output/perf.data" \
+   --event "$events" --freq "$sample_frequency" \
+-  --call-graph "dwarf,$stack_bytes" --inherit --namespaces --pid "$pids" \
++  "${callgraph_args[@]}" --inherit --namespaces --pid "$pids" \
+   --delay=-1 --control="fifo:$control_dir/control,$control_dir/ack" \
+   >"$output/record.log" 2>&1 &
+ perf_pid=$!
+```
+
+---
+
+### Incident Patch 2: `44ce675c` (2026-11-16)
+**Commit Message**: perf(vector): lower fixed cost per query and per page read (#7450)
 
 ## What
 
-Restore compilation on main by pinning Tantivy to
-`05b861b5ef138c4f4a3d93544d3b174e1994e207`, the merged revision of
-paradedb/tantivy#392.
+Pins Tantivy to `main` at `8fe9139b4`, including paradedb/tantivy#420,
+paradedb/tantivy#422, paradedb/tantivy#426 and paradedb/tantivy#428.
+These changes lower the vector scan's per-query fixed cost, score the
+best estimates first in the exact phase, walk router lists in score
+order on demand, streamline sign scoring and vector reads, and retain
+pruning-threshold refinements when adaptive probing is off. This PR also
+removes two fixed costs from pg_search's vector Top K path: the plan
+carries the query vector once, as one hex string, and per-segment scan
+statistics are built only when something shows them. It also plans a
+query that matches everything without opening the index, and page reads
+re-pin the buffer that last held the page.
 
 ## Why
 
-#7346 pinned the pre-merge branch commit `1c7c2150`, which lacks the
-vector-routing APIs already required by #7295, including
-`VectorSearchBudget`, `AtomicVectorWork`, and
-`TopClustersBySimilarityCollector`. Both
-[HN](https://github.com/paradedb/paradedb/actions/runs/42894121461) and
-[MS
-MARCO](https://github.com/paradedb/paradedb/actions/runs/42894122837)
-pg_vectorsearch runs failed while compiling `pg_search` during cluster
-setup.
+On Cohere 1M at probe 1, 327 µs of main's 639 µs round trip (51%) does
+not grow with the data scanned (fit: intercept of round-trip p50 against
+buffer hits over probes 1, 24 and 59).
+For k = 10 the exact phase scores 94.6 rows per query at probe 1, 120.2
+at probe 24 and 137.9 at probe 59.
 
 ## How
 
-Update all four Tantivy dependency/patch pins and the ten Tantivy-family
-lockfile entries. The merged revision retains the geometric
-`target_leaf_size` changes and includes the required routing APIs. No
-other dependency versions change. The existing Nix CI workflow will
-refresh `cargoHash` for the updated lockfile.
+**Tantivy pin.** `tantivy`, `tantivy-common`, `tantivy-tokenizer-api`
 
-## Tests
-
-- `cargo metadata --format-version 1 --locked`: all ten Tantivy-family
-packages resolve to the new revision.
-- `cargo check --workspace --all-targets --locked`: passed locally with
-PostgreSQL 18, including 
 
 **File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -5254,7 +5254,7 @@ dependencies = [
+@@ -5183,7 +5183,7 @@ dependencies = [
  [[package]]
  name = "ownedbytes"
  version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "stable_deref_trait",
  ]
-@@ -7513,7 +7513,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
+@@ -7405,7 +7405,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
  [[package]]
  name = "tantivy"
  version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "aho-corasick",
   "arc-swap",
-@@ -7572,15 +7572,15 @@ dependencies = [
+@@ -7464,15 +7464,15 @@ dependencies = [
  [[package]]
  name = "tantivy-bitpacker"
  version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "bitpacking",
  ]
@@ -2319,505 +2395,62 @@ PostgreSQL 18, including
  [[package]]
  name = "tantivy-columnar"
  version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "downcast-rs",
   "fastdivide",
-@@ -7595,7 +7595,7 @@ dependencies = [
+@@ -7487,7 +7487,7 @@ dependencies = [
  [[package]]
  name = "tantivy-common"
  version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "async-trait",
   "byteorder",
-@@ -7628,7 +7628,7 @@ dependencies = [
+@@ -7520,7 +7520,7 @@ dependencies = [
  [[package]]
  name = "tantivy-quant"
  version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "rand_chacha 0.3.1",
   "rand_core 0.6.4",
-@@ -7637,7 +7637,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7649,7 +7649,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7662,7 +7662,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7699,7 +7699,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "serde",
- ]
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -89,7 +89,7 @@ pgrx-tests = "=0.19.3"
- 
- # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
- # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207", features = [
-   "columnar-zstd-compression",
-   "lz4-compression",
-   "paradedb",
-@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
-   "stemmer",
-   "stopwords",
- ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
- tantivy-jieba = "0.21.0"
- 
- async-trait = "0.1.92"
-@@ -185,8 +185,8 @@ rstest = "0.28.0"
- postgres = "0.19.14"
- 
- [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
- 
- [workspace.lints.rust]
- unused_crate_dependencies = "warn"
-```
-
----
-
-### Incident Patch 2: `29cca447` (2026-11-09)
-**Commit Message**: fix: bypass planner hooks during mutable sweeps (#7301)
-
-# Ticket(s) Closed
-
-- Addresses #7299
-
-## What
-
-Make mutable-sweep catalog discovery bypass planner hooks, allowing the
-worker to find Citus shard indexes and avoid the Citus crash path during
-concurrent table drops.
-
-## Why
-
-Citus rewrites SQL queries against `pg_class` to hide shard indexes. Its
-visibility check can dereference a null relation name during concurrent
-`DROP TABLE`, crashing the sweeper and causing PostgreSQL to terminate
-other backends.
-
-## How
-
-Read the extension version through `pg_extension_name_index`, avoiding
-an extension syscache that is unavailable on older PostgreSQL minor
-releases.
-
-Scan `pg_class` directly and filter relation kind, persistence, and
-access method before looking up `INDEXRELID` to check index validity and
-readiness. This limits per-pass index syscache probes to ParadeDB
-candidates. Reuse the existing syscache guard and access-method checks,
-preserving the extension-version gate, OID ordering, and nonblocking
-relation locking.
-
-## Tests
-
-- Passed the catalog-discovery regression test on PostgreSQL 17.6 and
-18.3. The test rejects every planner-hook invocation and checks
-filtering of te
-
-**File**: `pg_search/src/postgres/catalog.rs` (modified, +146/-0)
-```diff
-@@ -78,6 +78,87 @@ pub fn lookup_namespace(namespace: &CStr) -> Option<pg_sys::Oid> {
-     }
- }
- 
-+pub fn lookup_extension_version(name: &CStr) -> Option<String> {
-+    unsafe {
-+        let relation =
-+            pg_sys::table_open(pg_sys::ExtensionRelationId, pg_sys::AccessShareLock as _);
-+        let mut key = pg_sys::ScanKeyData::default();
-+        pg_sys::ScanKeyInit(
-+            &mut key,
-+            pg_sys::Anum_pg_extension_extname as _,
-+            pg_sys::BTEqualStrategyNumber as _,
-+            pg_sys::F_NAMEEQ.into(),
-+            pg_sys::Datum::from(name.as_ptr()),
-+        );
-+        let scan = pg_sys::systable_beginscan(
-+            relation,
-+            pg_sys::ExtensionNameIndexId.into(),
-+            true,
-+            std::ptr::null_mut(),
-+            1,
-+            &mut key,
-+        );
-+        let tuple = pg_sys::systable_getnext(scan);
-+        let version = if tuple.is_null() {
-+            None
-+        } else {
-+            let mut is_null = false;
-+            let datum = pg_sys::heap_getattr(
-+                tuple,
-+                pg_sys::Anum_pg_extension_extversion as _,
-+                (*relation).rd_att,
-+                &mut is_null,
-+            );
-+            String::from_datum(datum, is_null)
-+        };
-+        pg_sys::systable_endscan(scan);
-+        pg_sys::table_close(relation, pg_sys::AccessShareLock as _);
-+        version
-+    }
-+}
-+
-+pub fn paradedb_index_oids() -> Vec<pg_sys::Oid> {
-+    unsafe {
-+        let relation = pg_sys::table_open(pg_sys::RelationRelationId, pg_sys::AccessShareLock as _);
-+        let scan = pg_sys::systable_beginscan(
-+            relation,
-+            pg_sys::InvalidOid,
-+            false,
-+            std::ptr::null_mut(),
-+            0,
-+            std::ptr::null_mut(),
-+        );
-+        let mut indexes = Vec::new();
-+        loop {
-+            let tuple = pg_sys::systable_getnext(scan);
-+            if tuple.is_null() {
-+                break;
-+            }
-+            let class = &*pg_sys::GETSTRUCT(tuple).cast::<pg_sys::FormData_pg_class>();
-+            if class.relkind as u8 != pg_sys::RELKIND_INDEX
-+                || class.relpersistence as u8 == pg_sys::RELPERSISTENCE_TEMP
-+                || !class.relam.is_paradedb_am()
-+            {
-+                continue;
-+            }
-+            let Some(entry) = SysCacheEntry::search1(
-+                pg_sys::SysCacheIdentifier::INDEXRELID,
-+                class.oid.into_datum().unwrap(),
-+            ) else {
-+                continue;
-+            };
-+            let index = &*pg_sys::GETSTRUCT(entry.tuple).cast::<pg_sys::FormData_pg_index>();
-+            if index.indisvalid && index.indisready {
-+                indexes.push(class.oid);
-+            }
-+        }
-+        pg_sys::systable_endscan(scan);
-+        pg_sys::table_close(relation, pg_sys::AccessShareLock as _);
-+        indexes.sort_unstable_by_key(|oid| oid.to_u32());
-+        indexes
-+    }
-+}
-+
- /// Helper function to lookup a type's assigned `typcategory` attribute from `pg_catalog.pg_type`
- pub fn lookup_type_category(typoid: pg_sys::Oid) -> Option<u8> {
-     unsafe {
-@@ -320,3 +401,68 @@ pub fn lookup_collation_locale(collation: pg_sys::Oid) -> Option<CollationLocale
-         })
-     }
- }
-+
-+#[cfg(any(test, feature = "pg_test"))]
-+#[pgrx::pg_schema]
-+mod tests {
-+    use super::*;
-+    use pgrx::{PgTryBuilder, Spi, pg_guard, pg_test};
-+
-+    #[pg_guard]
-+    unsafe extern "C-unwind" fn reject_planning(
-+        _parse: *mut pg_sys::Query,
-+        _query: *const std::ffi::c_char,
-+        _options: std::ffi::c_int,
-+        _params: pg_sys::ParamListInfo,
-+    ) -> *mut pg_sys::PlannedStmt {
-+        pgrx::error!("catalog discovery must not invoke planner hooks");
-+    }
-+
-+    #[pg_test]
-+    fn sweep_catalog_discovery_bypasses_planner_hooks() {
-+        let mut expected = paradedb_index_oids();
-+        Spi::run(
-+            "CREATE TABLE sweep_catalog (id int, body text);
-+             CREATE INDEX sweep_catalog_idx ON sweep_catalog USING paradedb(id, body);
-+             CREATE INDEX sweep_catalog_btree ON sweep_catalog(id);
-+             CREATE TABLE sweep_catalog_invalid_table (id int, body text);
-+             CREATE INDEX sweep_catalog_invalid ON sweep_catalog_invalid_table USING paradedb(id, body);
-+             CREATE TABLE sweep_catalog_unready_table (id int, body text);
-+             CREATE INDEX sweep_catalog_unready ON sweep_catalog_unready_table USING paradedb(id, body);
-+             UPDATE pg_index SET indisvalid = false WHERE indexrelid = 'sweep_catalog_invalid'::regclass;
-+             UPDATE pg_index SET indisready = false WHERE indexrelid = 'sweep_catalog_unready'::regclass;
-+             CREATE TEMP TABLE sweep_catalog_temp (id int, body text);
-+             CREATE INDEX sweep_catalog_temp_idx ON sweep_catalog_temp USING paradedb(id, body);
-+             CREATE UNLOGGED TABLE sweep_catalog_unlogged (id int, body text);
-+             CREATE INDEX sweep_catalog_u
-```
-
-**File**: `pg_search/src/postgres/mutable_sweep.rs` (modified, +28/-27)
-```diff
-@@ -19,7 +19,7 @@ use crate::api::{HashMap, HashSet};
- use crate::index::merge_policy::LayeredMergePolicy;
- use crate::index::mvcc::MvccSatisfies;
- use crate::index::writer::index::SearchIndexMerger;
--use crate::postgres::catalog::OidExt;
-+use crate::postgres::catalog::{OidExt, lookup_extension_version, paradedb_index_oids};
- use crate::postgres::delete::VacuumSignal;
- use crate::postgres::index::free_leaf_partition_indexes;
- use crate::postgres::locks::AdvisoryLock;
-@@ -31,8 +31,8 @@ use crate::postgres::ps_status::{MERGING, set_ps_display_suffix};
- use crate::postgres::storage::metadata::MetaPage;
- use pgrx::bgworkers::{BackgroundWorker, BackgroundWorkerBuilder, SignalWakeFlags};
- use pgrx::{
--    GucContext, GucFlags, GucRegistry, GucSetting, IntoDatum, PgTryBuilder, Spi,
--    check_for_interrupts, pg_guard, pg_sys,
-+    GucContext, GucFlags, GucRegistry, GucSetting, IntoDatum, PgTryBuilder, check_for_interrupts,
-+    pg_guard, pg_sys,
- };
- use std::ffi::CStr;
- use std::panic::AssertUnwindSafe;
-@@ -226,25 +226,12 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-         if sweeping {
-             let observed_counts = pass_context.switch_to(|_| {
-                 let indexes = BackgroundWorker::transaction(|| {
--                    let version = Spi::get_one::<String>(
--                        "SELECT max(extversion::text) FROM pg_catalog.pg_extension WHERE extname = 'pg_search'",
--                    )
--                    .expect("should be able to inspect pg_search version");
-+                    let version = lookup_extension_version(c"pg_search");
-                     if version.as_deref() != Some(env!("CARGO_PKG_VERSION")) {
-                         return None;
-                     }
--                    let indexes = Spi::get_one::<Vec<pg_sys::Oid>>(
--                        "SELECT array_agg(i.indexrelid ORDER BY i.indexrelid)
--                         FROM pg_catalog.pg_index i
--                         JOIN pg_catalog.pg_class c ON c.oid = i.indexrelid
--                         JOIN pg_catalog.pg_am am ON am.oid = c.relam
--                         JOIN pg_catalog.pg_proc p ON p.oid = am.amhandler
--                         JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
--                         WHERE n.nspname = 'paradedb' AND p.proname = 'bm25_handler'
--                           AND i.indisvalid AND i.indisready AND c.relkind = 'i' AND c.relpersistence <> 't'",
--                    )
--                    .expect("should be able to discover ParadeDB indexes")
--                    .unwrap_or_default();
-+                    // Planner hooks can hide shard indexes or race with concurrent drops.
-+                    let indexes = paradedb_index_oids();
-                     let mut current_counts = HashMap::default();
-                     let indexes = free_leaf_partition_indexes(&indexes)
-                         .filter_map(|index| {
-@@ -253,7 +240,9 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             }
-                             let mut idle_segments = HashMap::default();
-                             MetaPage::open(&index).segment_metas().for_each(|_, entry| {
--                                if entry.is_mutable() && entry.xmax() == pg_sys::InvalidTransactionId {
-+                                if entry.is_mutable()
-+                                    && entry.xmax() == pg_sys::InvalidTransactionId
-+                                {
-                                     let key = (index.oid(), entry.segment_id());
-                                     let count = entry.num_docs();
-                                     current_counts.insert(key, count);
-@@ -282,7 +271,8 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             if VacuumSignal::new(index.oid()).wants_cancel() {
-                                 return;
-                             }
--                            let Some(_slot) = MergeSlot::new(index.oid(), MergeSlotVariant::Small).lock()
-+                            let Some(_slot) =
-+                                MergeSlot::new(index.oid(), MergeSlotVariant::Small).lock()
-                             else {
-                                 return;
-                             };
-@@ -293,7 +283,8 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             let merge_lock = metadata.acquire_merge_lock();
-                             PgTryBuilder::new(AssertUnwindSafe(|| {
-                                 let frozen = metadata.freeze_mutable_segments_matching(|entry| {
--                                    idle_segments.get(&entry.segment_id()) == Some(&entry.num_docs())
-+                                    idle_segments.get(&entry.segment_id())
-+                                        == Some(&entry.num_docs())
-                                 });
-                                 if 
-```
-
----
-
-### Incident Patch 3: `781cb511` (2026-11-11)
-**Commit Message**: fix: restore IVF split logic while keeping target_leaf_size (#7377)
-
-## What
-
-Soft-revert geometric clustering while keeping the `target_leaf_size`
-name and default of 200. ParadeDB's source integration, option names,
-and SQL regression fixtures remain identical to the PR base. Update the
-dependency pins and correct two descriptions of the training-leaf cap;
-retain the original option-rename changelog entry.
-
-## Dependencies and scope
-
-- [superkmeans-rs
-#45](https://github.com/paradedb/superkmeans-rs/pull/45),
-`6b0d0bc08e2071220b99222db0c79ad49305f8dc`: restore `ceil(n_sub /
-target_leaf_size)` recursive splitting and enforce the training-leaf cap
-while preserving the API name.
-- [Tantivy #399](https://github.com/paradedb/tantivy/pull/399),
-`98b3d5c1570c912f51f40530ba1645f1695b458b` (merged): use that
-implementation for IVF and stacked routing; preserve
-`with_target_leaf_size` and `DEFAULT_TARGET_LEAF_SIZE`.
-- Preserve donor revival, convergence guards, statistics, and later
-dependency changes. Sampling remains 0.32. Explicit `k` sizing is
-separate. Both dependency PRs are merged; the direct superkmeans pin
-matches the revision used by the merged Tantivy commit.
-
-Updated against cur
-
-**File**: `.github/scripts/docs_snippet_coverage.json` (modified, +4/-4)
-```diff
-@@ -176,13 +176,13 @@
-       ]
-     },
-     {
--      "reason": "Uses the 0.27 target_leaf_size option before the published ORM client packages ship support; the SQL fence runs in the standalone inventory.",
-+      "reason": "The vector index-options CodeGroup contains 0.27 target_leaf_size examples awaiting ORM client support; its SQL fence runs in the standalone inventory.",
-       "fences": [
-         ["reference/indexing/indexing-vectors.mdx::fence-014", "53c92670d4bf64621e64b1db4aa59eb7476bfc799d4ba4134ef9fd8372135c15"],
--        ["reference/indexing/indexing-vectors.mdx::fence-015", "821236f776b5cb115dc2ea7124ab3edd9d7e2fa853164d4f00c2f0a98ad5bcc3"],
-+        ["reference/indexing/indexing-vectors.mdx::fence-015", "5cab4e761805be2b46f77a7b2cc649fe55e0d6c6bdb0a6e327e6fb1246764812"],
-         ["reference/indexing/indexing-vectors.mdx::fence-016", "cd2cc9292117f96cd302bdb88ca5a30074992a9ca9c106eb1d948e99df350d73"],
--        ["reference/indexing/indexing-vectors.mdx::fence-017", "61bbc3322127cc2c471e9e161cafbeae0ef27a0172362974e1fdcdbfd2078388"],
--        ["reference/indexing/indexing-vectors.mdx::fence-018", "e3cd48db5fa758ad4e47dfdf5c3426af64262a260ebdea73337ac4c56ef9bcf4"]
-+        ["reference/indexing/indexing-vectors.mdx::fence-017", "582e688c81c32cf2ef26addb3286c298067a04f5e5250d448e6e8bc3b8aecf5f"],
-+        ["reference/indexing/indexing-vectors.mdx::fence-018", "126340fc1e720d46471e7e7e121434ad4ec13784b130d13ee5b814de15becdee"]
-       ]
-     }
-   ],
-```
-
-**File**: `Cargo.lock` (modified, +11/-11)
-```diff
-@@ -5192,7 +5192,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7329,7 +7329,7 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
- [[package]]
- name = "superkmeans-rs"
- version = "0.4.0"
--source = "git+https://github.com/paradedb/superkmeans-rs?rev=06c8e247a6a0241a996a640080c7245f6c7b5940#06c8e247a6a0241a996a640080c7245f6c7b5940"
-+source = "git+https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc#6b0d0bc08e2071220b99222db0c79ad49305f8dc"
- dependencies = [
-  "matrixmultiply",
-  "pkg-config",
-@@ -7414,7 +7414,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7473,15 +7473,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "bitpacking",
- ]
- 
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7496,7 +7496,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "async-trait",
-  "byteorder",
 @@ -7529,7 +7529,7 @@ dependencies = [
  [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7538,7 +7538,7 @@ dependencies = [
- [[package]]
  name = "tantivy-query-grammar"
  version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "fnv",
   "nom 7.1.3",
-@@ -7550,7 +7550,7 @@ dependencies = [
+@@ -7541,7 +7541,7 @@ dependencies = [
  [[package]]
  name = "tantivy-sstable"
  version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "futures-util",
   "itertools 0.14.0",
-@@ -7563,7 +7563,7 @@ dependencies = [
+@@ -7554,7 +7554,7 @@ dependencies = [
  [[package]]
  name = "tantivy-stacker"
  version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "fixedbitset",
   "murmurhash32",
-@@ -7600,7 +7600,7 @@ dependencies = [
+@@ -7591,7 +7591,7 @@ dependencies = [
  [[package]]
  name = "tantivy-tokenizer-api"
  version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
++source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
  dependencies = [
   "serde",
  ]
@@ -2825,12 +2458,12 @@ Updated against cur
 
 **File**: `Cargo.toml` (modified, +4/-4)
 ```diff
-@@ -89,7 +89,7 @@ pgrx-tests = "=0.20.0-beta.1"
+@@ -89,7 +89,7 @@ pgrx-tests = "=0.20.0"
  
  # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
  # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b", features = [
+-tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "3df23dd559e4731e83e81c04cbbc797a0a79479c", features = [
++tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa", features = [
    "columnar-zstd-compression",
    "lz4-compression",
    "paradedb",
@@ -2838,70 +2471,520 @@ Updated against cur
    "stemmer",
    "stopwords",
  ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "3df23dd559e4731e83e81c04cbbc797a0a79479c" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
  tantivy-jieba = "0.21.0"
  
  async-trait = "0.1.92"
-@@ -185,8 +185,8 @@ rstest = "0.28.0"
+@@ -184,8 +184,8 @@ rstest = "0.28.0"
  postgres = "0.19.14"
  
  [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "3df23dd559e4731e83e81c04cbbc797a0a79479c" }
+-tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "3df23dd559e4731e83e81c04cbbc797a0a79479c" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
++tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
  
- [workspace.lints.rust]
- unused_crate_dependencies = "warn"
+ [workspace.lints.cargo]
+ missing_lints_inheritance = "deny"
 ```
 
-**File**: `docs/project/changelog/unreleased/7346.breaking.mdx` (modified, +1/-1)
+**File**: `basescan/src/postgres/customscan/basescan/mod.rs` (modified, +16/-0)
 ```diff
-@@ -2,4 +2,4 @@
- header: breaking
- ---
+@@ -202,6 +202,11 @@ impl BaseScan {
+         )
+         .expect("should be able to open the search index reader");
+         search_reader.vector_routing_plan = state.custom_state().vector_routing_plan.clone();
++        // Per-segment vector statistics are read by EXPLAIN ANALYZE's stage accounting, its I/O
++        // trace and the `paradedb.vector_stats` display; otherwise nothing reads them.
++        search_reader.vector_segment_info = gucs::vector_stats()
++            || state.custom_state().explain_stage_accounting
++            || state.custom_state().io_trace.is_some();
+         let ffhelper = Arc::new(FFHelper::for_ctid(&search_reader));
+         if let Some(checker) = state.custom_state_mut().visibility_checker.as_mut() {
+             checker.set_ffhelper(Arc::clone(&ffhelper));
+@@ -1613,6 +1618,17 @@ impl CustomScan for BaseScan {
+                 .map(|q| q.collect_expression_nodes())
+                 .unwrap_or_default();
  
--Renamed the IVF index option `max_leaf_size` to `target_leaf_size`. The value is a clustering target rather than a hard cap; actual leaves may be somewhat larger. Indexes that explicitly store `max_leaf_size` must be updated with `ALTER INDEX ... SET (target_leaf_size = ...)` or recreated.
-+Renamed the IVF index option `max_leaf_size` to `target_leaf_size`. The value caps the number of sampled training vectors per leaf; it does not cap the number of indexed vectors assigned to a cluster. Indexes that explicitly store `max_leaf_size` must be updated with `ALTER INDEX ... SET (target_leaf_size = ...)` or recreated.
++            // A Top K method carries the ORDER BY, query vector included, from here on.
++            if matches!(
++                builder.custom_private().exec_method_type(),
++                ExecMethodType::TopK {
++                    orderby_info: Some(_),
++                    ..
++                }
++            ) {
++                builder.custom_private_mut().clear_maybe_orderby_info();
++            }
++
+             let mut scan = builder.build();
+             if !subplan_quals.is_empty() {
+                 scan.scan.plan.qual = subplan_quals.into_pg();
 ```
 
-**File**: `docs/reference/indexing/indexing-vectors.mdx` (modified, +4/-4)
+**File**: `basescan/src/postgres/customscan/basescan/privdat.rs` (modified, +6/-0)
 ```diff
-@@ -254,10 +254,10 @@ modelBuilder.Entity<MockItem>()
- <ParamField body="target_leaf_size" default={200}>
-   The target number of sampled training vectors in a leaf of the hierarchical
-   clustering tree. Must be an integer between `1` and `2147483647`. Smaller
--  values generally produce more centroids and smaller clusters. Actual leaves
--  may be somewhat larger than the target. This setting is independent of
--  `training_sample_ratio` and does not cap the number of indexed vectors
--  assigned to a cluster.
-+  values generally produce more centroids and smaller clusters. Training leaves
-+  are split until they contain at most this many vectors. This setting is
-+  independent of `training_sample_ratio` and does not cap the number of indexed
-+  vectors assigned to a cluster.
- </ParamField>
- <ParamField body="vector_router_quantization" default={true}>
-   Route each query through one-bit codes of the IVF centroids, then rerank the
+@@ -194,6 +194,12 @@ impl PrivateData {
+         self.maybe_orderby_info = Some(OrderByStyle::extract_orderby_info(style));
+     }
+ 
++    /// Drops the candidate ORDER BY once the chosen exec method carries it, so the plan holds
++    /// one copy of it (and of any query vector in it).
++    pub fn clear_maybe_orderby_info(&mut self) {
++        self.maybe_orderby_info = None;
++    }
++
+     pub fn set_var_attname_lookup(
+         &mut self,
+         var_attname_lookup: HashMap<(Varno, pg_sys::AttrNumber), FieldName>,
 ```
 
-**File**: `index_write/Cargo.toml` (modified, +2/-2)
+**File**: `common/src/api/mod.rs` (modified, +92/-1)
 ```diff
-@@ -31,12 +31,12 @@ serde_json.workspace = true
- tantivy.workspace = true
+@@ -334,11 +334,55 @@ impl SortDirection {
  
- [target.'cfg(target_os = "macos")'.dependencies]
--superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "06c8e247a6a0241a996a640080c7245f6c7b5940", features = [
-+superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
-   "accelerate",
- ] }
+ #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+ pub enum QueryVector {
+-    Resolved(Vec<f32>),
++    Resolved(#[serde(with = "query_vector_bytes")] Vec<f32>),
+     Param(i32),
+     Expr(String),
+ }
  
- [target.'cfg(not(target_os = "macos"))'.dependencies]
--superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "06c8e247a6a0241a996a640080c7245f6c7b5940", features = [
-+superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
-   "openblas",
- ] }
++/// A resolved query vector in serialized private data: one hex string of its little-endian
++/// `f32` bytes, written and parsed as a single token rather than one JSON number per element.
++mod query_vector_bytes {
++    use serde::de::Error;
++    use serde::{Deserialize, Deserializer, Serializer};
++
++    const HEX: &[u8; 16] = b"0123456789abcdef";
++
++    pub fn serialize<S: Serializer>(floats: &[f32], serializer: S) -> Result<S::Ok, S::Error> {
++        let mut text = String::with_capacity(floats.len() * 8);
++        for byte in floats.iter().flat_map(|value| value.to_le_bytes()) {
++            text.push(char::from(HEX[usize::from(byte >> 4)]));
++            text.push(char::from(HEX[usize::from(byte & 0x0f)]));
++        }
++        serializer.serialize_str(&text)
++    }
++
++    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<f32>, D::Error> {
++        let text = String::deserialize(deserializer)?;
++        if text.len() % 8 != 0 {
++            return Err(D::Error::custom(
++                "query vector bytes are not whole f32 values",
++            ));
++        }
++        let nibble = |digit: u8| match digit {
++            b'0'..=b'9' => Ok(digit - b'0'),
++            b'a'..=b'f' => Ok(digit - b'a' + 10),
++            _ => Err(D::Error::custom("query vector bytes are not lowercase hex")),
++        };
++        text.as_bytes()
++            .as_chunks::<8>()
++            .0
++            .iter()
++            .map(|digits| {
++                let mut bytes = [0u8; 4];
++                for (byte, [high, low]) in bytes.iter_mut().zip(digits.as_chunks::<2>().0) {
++                    *byte = (nibble(*high)? << 4) | nibble(*low)?;
++                }
++                Ok(f32::from_le_bytes(bytes))
++            })
++            .collect()
++    }
++}
++
+ impl QueryVector {
+     pub fn resolved(&self) -> Option<&[f32]> {
+         match self {
+@@ -518,3 +562,50 @@ impl OrderByInfo {
+         }
+     }
+ }
++
++#[cfg(test)]
++mod query_vector_tests {
++    use super::QueryVector;
++
++    /// A resolved vector serializes as one hex string and parses back bit for bit, signed zeros,
++    /// infinities, subnormals and NaN payloads included; malformed text is rejected.
++    #[test]
++    fn resolved_vector_round_trips_as_one_hex_string() {
++        let floats = vec![
++            0.0,
++            -0.0,
++            1.5,
++            -2.25e-3,
++            f32::MIN_POSITIVE / 4.0,
++            f32::INFINITY,
++            f32::NEG_INFINITY,
++            f32::from_bits(0x7fc0_1234),
++        ];
++        assert_eq!(
++            serde_json::to_string(&QueryVector::Resolved(vec![1.0, -2.0])).unwrap(),
++            r#"{"Resolved":"0000803f000000c0"}"#
++        );
++        let json = serde_json::to_string(&QueryVector::Resolved(floats.clone())).unwrap();
++        assert_eq!(
++            json.len(),
++            r#"{"Resolved":""}"#.len() + floats.len() * 8,
++            "{json}"
++        );
++        let QueryVector::Resolved(parsed) = serde_json::from_str(&json).unwrap() else {
++            panic!("{json}");
++        };
++        assert_eq!(
++            parsed
++                .iter()
++                .map(|value| value.to_bits())
++                .collect::<Vec<_>>(),
++            floats
++                .iter()
++                .map(|value| value.to_bits())
++                .collect::<Vec<_>>()
++        );
++        for bad in [r#"{"Resolved":"0000803"}"#, r#"{"Resolved":"0000803G"}"#] {
++            assert!(serde_json::from_str::<QueryVector>(bad).is_err(), "{bad}");
++        }
++    }
++}
+```
+
+**File**: `common/src/api/operator.rs` (modified, +27/-18)
+```diff
+@@ -62,7 +62,8 @@ unsafe impl SqlTranslatable for ReturnedNodePointer {
+ }
  
+ pub fn with_index_procoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         direct_function_call::<pg_sys::Oid>(
+             pg_sys::regprocedurein,
+             // NB:  the SQL signature here needs to match our Rust implementation
+@@ -71,17 +72,18 @@ pub fn with_index_procoid() -> pg_sys::Oid {
+         .expect(
+             "the `paradedb.with_index(regclass, paradedb.searchqueryinput)` function should exist",
+         )
+-    }
++    })
+ }
+ 
+ pub fn anyelement_query_input_procoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         direct_function_call::<pg_sys::Oid>(
+             pg_sys::regprocedurein,
+             &[c"paradedb.search_with_query_input(anyelement, paradedb.searchqueryinput)".into_datum()],
+         )
+             .expect("the `paradedb.search_with_query_input(anyelement, paradedb.searchqueryinput) function should exist")
+-    }
++    })
+ }
+ 
+ pub fn search_with_query_input_exec_procoids() -> [pg_sys::Oid; 4] {
+@@ -243,7 +245,8 @@ pub fn operator_name_from_oid(opno: pg_sys::Oid) -> String {
+ }
+ 
+ pub fn searchqueryinput_typoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         let oid = direct_function_call::<pg_sys::Oid>(
+             pg_sys::regtypein,
+             &[c"paradedb.SearchQueryInput".into_datum()],
+@@ -253,71 +256,77 @@ pub fn searchqueryinput_typoid() -> pg_sys::Oid {
+             panic!("type `paradedb.SearchQueryInput` should exist");
+         }
+         oid
+-    }
++    })
+ }
+ 
+ pub fn pdb_query_typoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         let oid =
+             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.Query".into_datum()])
+                 .expect("type `pdb.Query` should exist");
+         if oid == pg_sys::Oid::INVALID {
+             panic!("type `pdb.Query` should exist");
+         }
+         oid
+-    }
++    })
+ }
+ 
+ pub fn boost_typoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         let oid =
+             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.boost".into_datum()])
+                 .expect("type `pdb.boost` should exist");
+         if oid == pg_sys::Oid::INVALID {
+             panic!("type `pdb.boost` should exist");
+         }
+         oid
+-    }
++    })
+ }
+ 
+ pub fn const_typoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         let oid =
+             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.const".into_datum()])
+                 .expect("type `pdb.const` should exist");
+         if oid == pg_sys::Oid::INVALID {
+             panic!("type `pdb.const` should exist");
+         }
+         oid
+-    }
++    })
+ }
+ 
+ pub fn fuzzy_typoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         let oid =
+             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.fuzzy".into_datum()])
+                 .expect("type `pdb.fuzzy` should exist");
+         if oid == pg_sys::Oid::INVALID {
+             panic!("type `pdb.fuzzy` should exist");
+         }
+         oid
+-    }
++    })
+ }
+ 
+ pub fn slop_typoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         let oid =
+             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.slop".into_datum()])
+                 .expect("type `pdb.slop` should exist");
+         if oid == pg_sys::Oid::INVALID {
+             panic!("type `pdb.slop` should exist");
+         }
+         oid
+-    }
++    })
+ }
+ 
+ pub fn pdb_proximityclause_typoid() -> pg_sys::Oid {
+-    unsafe {
++    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
++    *CACHE.get_or_init(|| unsafe {
+         let oid = direct_function_call::<pg_sys::Oid>(
+             pg_sys::regtypein,
+             &[c"pdb.ProximityClause".into_datum()],
+@@ -327,7 +336,7 @@ pub fn pdb_proximityclause_typoid() -> pg_sys::Oid {
+             panic!("type `pdb.ProximityClause` should exist");
+         }
+         oid
+-    }
++    })
+ }
+ 
+ pub unsafe fn row_expr_from_indexed_expr(
+```
+
+**File**: `docs/project/changelog/unreleased/7450.performance.mdx` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++header: performance
++---
++
++Vector `ORDER BY` searches cost less per query. The plan carries the query vector once, in a compact form, instead of twice as a list of numbers; per-segment scan statistics are built only when `EXPLAIN ANALYZE` or `paradedb.vector_stats` shows them; and the exact phase scores the most promising candidates first, so fewer of the rest are read and scored. Because that order changes which candidates near the cutoff are dropped, a top-k result can differ in rare cases. Planning a query that matches every row, such as `@@@ paradedb.all()`, on an index without a `WHERE` predicate estimates its selectivity and segment count without opening the index, so the planner's row estimate for it is the table's row count. Index page reads first try the shared buffer that last held the page and fall back to the usual buffer lookup. The index format is unchanged.
+```
+
+**File**: `index_read/src/api/operator.rs` (modified, +10/-0)
+```diff
+@@ -178,10 +178,20 @@ pub fn estimate_selectivity_and_cost(
+     }
+ }
+ 
++/// The fraction of heap rows matching `search_query_input`, or `None` when it cannot be estimated.
++///
++/// A query that matches every indexed row of an index without a predicate matches every row, so
++/// it is answered without opening the index.
+ pub fn estimate_selectivity(
+     indexrel: &PgSearchRelation,
+     search_query_input: SearchQueryInput,
+ ) -> Option<f64> {
++    // SAFETY: `indexrel` is an open index; its predicate list comes from the relcache.
++    if search_query_input.is_match_all()
++        && unsafe { pg_sys::RelationGetIndexPredicate(indexrel.as_ptr()) }.is_null()
++    {
++        return Some(crate::FULL_RELATION_SELECTIVITY);
++    }
+     estimate_selectivity_and_cost(indexrel, search_query_input, None).selectivity
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `a4171971` (2026-11-16)
+**Commit Message**: fix: scale adaptive vector stopping with the probe budget (#7440)
+
+Adaptive vector probing can stop too early when its stopping condition
+is only briefly satisfied. Pin [Tantivy
+#416](https://github.com/paradedb/tantivy/pull/416), which requires a
+consecutive quiet-work window: no added patience through 500 resolved
+work units, a linear ramp to 5% at 2,000, and 5% above that. Activity
+resets the window; refinement checks without additional scanning do not
+accumulate quiet work. The existing hard budgets and main's pruning
+fixes remain intact.
+
+Rebased onto main after the 32-GiB, Cohere, and below-100-probe adaptive
+cutoff changes merged. Pin Tantivy merge commit
+`728a4355923d80d647d866ffe92b821186bc90d4`, whose tree is identical to
+the tested PR source. Also stabilize the existing MPP spill fixture: its
+6 MB MultiType budget could fit when task allocations did not overlap,
+making the nonzero-spill assertion depend on scheduling. A named 4 MB
+budget, matching the other MPP cases, retains the disabled-spill error,
+nonzero spill metrics, and exact result-parity assertions.
+
+Validation:
+- Tantivy CI is green; 342 local vector tests passed, with 2 existing
+ignored tests.
+- Fifty isolate
+
+**File**: `Cargo.lock` (modified, +10/-10)
+```diff
+@@ -5183,7 +5183,7 @@ dependencies = [
+ [[package]]
+ name = "ownedbytes"
+ version = "0.9.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "stable_deref_trait",
+ ]
+@@ -7405,7 +7405,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
+ [[package]]
+ name = "tantivy"
+ version = "0.27.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "aho-corasick",
+  "arc-swap",
+@@ -7464,15 +7464,15 @@ dependencies = [
+ [[package]]
+ name = "tantivy-bitpacker"
+ version = "0.10.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "bitpacking",
+ ]
+ 
+ [[package]]
+ name = "tantivy-columnar"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "downcast-rs",
+  "fastdivide",
+@@ -7487,7 +7487,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-common"
+ version = "0.11.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "async-trait",
+  "byteorder",
+@@ -7520,7 +7520,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-quant"
+ version = "0.1.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "rand_chacha 0.3.1",
+  "rand_core 0.6.4",
+@@ -7529,7 +7529,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-query-grammar"
+ version = "0.26.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "fnv",
+  "nom 7.1.3",
+@@ -7541,7 +7541,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-sstable"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "futures-util",
+  "itertools 0.14.0",
+@@ -7554,7 +7554,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-stacker"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "fixedbitset",
+  "murmurhash32",
+@@ -7591,7 +7591,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-tokenizer-api"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
++source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
+ dependencies = [
+  "serde",
+ ]
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -89,7 +89,7 @@ pgrx-tests = "=0.20.0"
+ 
+ # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
+ # patches in sync.
+-tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa", features = [
++tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "728a4355923d80d647d866ffe92b821186bc90d4", features = [
+   "columnar-zstd-compression",
+   "lz4-compression",
+   "paradedb",
+@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
+   "stemmer",
+   "stopwords",
+ ], default-features = false }
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "728a4355923d80d647d866ffe92b821186bc90d4" }
+ tantivy-jieba = "0.21.0"
+ 
+ async-trait = "0.1.92"
+@@ -184,8 +184,8 @@ rstest = "0.28.0"
+ postgres = "0.19.14"
+ 
+ [patch.crates-io]
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
+-tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "728a4355923d80d647d866ffe92b821186bc90d4" }
++tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "728a4355923d80d647d866ffe92b821186bc90d4" }
+ 
+ [workspace.lints.cargo]
+ missing_lints_inheritance = "deny"
 ```
 
 **File**: `nix/pg_search.nix` (modified, +1/-1)
@@ -2910,20 +2993,52 @@ Updated against cur
    # If maintainers forget to do so, Nix will throw an error message that begins
    # like this and then provides the correct new hash:
    # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-4BtZK4+7KXsuqsJODOvlUzTsRXtvx1yTlxFt3ePUHJg=";
-+  cargoHash = "sha256-3VMVjQ0izB1fY6hX9LDapCcUJyiCOFviV4wsj4Dt+vU=";
+-  cargoHash = "sha256-k/jBGg20FCJxrU0M+IClInbR6x6N5UxYCMxo2tgxjoY=";
++  cargoHash = "sha256-beGzBCa6ZA7Yq09Yafrx0ndYR5h981fTtC7yRUUcEc8=";
  
    inherit postgresql;
    # The Nix builder also passes cargoPgrxFlags to `stop`, which does not accept
 ```
 
+**File**: `tests/tests/spill.rs` (modified, +5/-4)
+```diff
+@@ -23,6 +23,8 @@ use rstest::*;
+ use sqlx::{PgConnection, Row};
+ use tests::fixtures::*;
+ 
++const MPP_SPILL_WORK_MEM: &str = "4MB";
++
+ #[derive(Clone, Copy, Debug)]
+ enum ExecutionMode {
+     Serial,
+@@ -54,15 +56,14 @@ impl SpillShape {
+     ///
+     /// Serial execution processes all ~28k groups in one `AggregateExec` pipeline,
+     /// whereas 3-worker MPP partitions the 3 immutable segments evenly across three
+-    /// workers (~9.3k groups per worker).
++    /// workers (~9.3k groups per worker). The MPP budget forces spilling without
++    /// depending on concurrent partitions overlapping their memory use.
+     fn work_mem(self, mode: ExecutionMode) -> &'static str {
+         match (mode, self) {
+             (ExecutionMode::Serial, Self::MultiType) => "16MB",
+             (ExecutionMode::Serial, Self::DependentRowValue) => "12MB",
+             (ExecutionMode::Serial, Self::SmallBuildJoin) => "10MB",
+-            (ExecutionMode::Mpp, Self::MultiType) => "6MB",
+-            (ExecutionMode::Mpp, Self::DependentRowValue) => "4MB",
+-            (ExecutionMode::Mpp, Self::SmallBuildJoin) => "4MB",
++            (ExecutionMode::Mpp, _) => MPP_SPILL_WORK_MEM,
+         }
+     }
+ 
+```
+
 #### Recent Merged Pull Requests:
-- **PR #7378** (closed): perf: pin Tantivy with SIMD rotation kernels for vector quantization (@walter-woodall)
-- **PR #7377** (2026-11-11): fix: restore IVF split logic while keeping target_leaf_size (@rebasedming)
-- **PR #7373** (closed): perf(vector): lower default target leaf size to 150 (@rebasedming)
-- **PR #7371** (2026-11-10): chore: Fix docs after vector updates. (@stuhood)
-- **PR #7367** (closed): chore: Ignore (@stuhood)
-- **PR #7365** (2026-11-10): fix: correct Tantivy revision after clustering update (@rebasedming)
+- **PR #7491** (2026-11-16): chore: Consume the latest version of RHEL PG releases from pgdg. (@paradedb-github-bot[bot])
+- **PR #7490** (2026-11-16): chore: Consume the latest version of RHEL PG releases from pgdg. (@stuhood)
+- **PR #7488** (2026-11-16): chore: Generate Dockerfiles for v0.26.7 (@paradedb-github-bot[bot])
+- **PR #7487** (2026-11-16): chore: Generate Dockerfiles for v0.26.7 (@paradedb-github-bot[bot])
+- **PR #7485** (2026-11-16): docs: Use the new Python ORM versions (@isaacvando)
+- **PR #7482** (2026-11-16): fix: retain CPU-clock samples in ARM vector profiles (@rebasedming)
 
 ---
 
@@ -2943,47 +3058,50 @@ Updated against cur
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. correct Tantivy revision after clustering update (#7365)
+## X. retain CPU-clock samples in ARM vector profiles
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/profile-postgres.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61edff0a`: correct Tantivy revision after clustering update (#7365). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d5419ed`: retain CPU-clock samples in ARM vector profiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/profile-postgres.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c
+export LC_ALL=C
+callgraph_args=(--call-graph "dwarf,$stack_bytes")
+if [ "$(uname -m)" = aarch64 ]; then
+  # The software clock PMU rejects the SVE vg register selected by perf's hardware probe.
+  printf -v user_regs '%s,' x{0..29} lr sp pc
+  callgraph_args+=("--user-regs=${user_regs%,}")
+fi
+
+      if ! awk '
+        /^# Samples: [1-9]/ {
+          split($0, fields, "\047")
+          split(fields[2], event, ":")
+          seen[event[1]] = 1
+        }
+        END { exit !(seen["cpu-clock"] && seen["branch-misses"]) }
+      ' "$output/report.txt"; then
+        echo "perf must record nonzero cpu-clock and branch-misses samples" >&2
+        report_status=1
+      fi
+  "${callgraph_args[@]}" --inherit --namespaces --pid "$pids" \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc0
+// Induced defect failure mode:
+  --call-graph "dwarf,$stack_bytes" --inherit --namespaces --pid "$pids" \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61edff0a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d5419ed` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

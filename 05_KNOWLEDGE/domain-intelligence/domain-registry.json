@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T21:10:40.575Z",
-  "total_records": 1329,
+  "last_updated": "2026-11-16T21:28:30.923Z",
+  "total_records": 1330,
   "domains": {
     "A": {
       "total": 9,
@@ -687,7 +687,7 @@
       ]
     },
     "G": {
-      "total": 240,
+      "total": 241,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -928,7 +928,8 @@
         "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants",
         "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants",
-        "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10720,8 +10721,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "64ed158012e491f387e69523b9a7e1d1786da627f3162d9e4e7b5b0dbee85484",
-      "created_at": "2026-11-16T13:23:00.373Z"
+      "content_hash": "c967a12b1e5600bbad48bcc3091597a24f7c088713daa5c78ba3b3b5050d21dc",
+      "created_at": "2026-11-16T21:28:30.923Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -11482,8 +11483,8 @@
       "title": "Architecture Intelligence: zeromicro/go-zero Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-architecture-intelligence-zeromicro-go-zero-core-invariants.md",
       "repository": "zeromicro/go-zero",
-      "content_hash": "64bad08b7c9224e7b61deaa1e904b81c17133efcebec49ccaf731cad48be3332",
-      "created_at": "2026-11-15T13:27:28.147Z"
+      "content_hash": "78f7c9e5694e06edbbdd00dc5772a64579aa2609bc53a8df05d3f53e8a9d179a",
+      "created_at": "2026-11-16T21:28:25.720Z"
     },
     "DOM-D-79605CEE": {
       "record_id": "DOM-D-79605CEE",
@@ -11551,8 +11552,8 @@
       "title": "Architecture Intelligence: zeromicro-go-zero-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-learnings-architecture-intelligence-zeromicro-go-zero-learning.md",
       "repository": "zeromicro-go-zero-learnings",
-      "content_hash": "b1878827aef7d92098f0e7d7a83896d93e821c2b03eb6a3ee9c15d73959a0849",
-      "created_at": "2026-11-15T13:27:58.055Z"
+      "content_hash": "8c2fe07485c6124493240bdd6edf40b1471a2e47955c81eb36f60a58c6a107f9",
+      "created_at": "2026-11-16T21:28:29.276Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants",
@@ -20145,8 +20146,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "1465b67065b3d576d00e9c328238993f84e24aa98331521c33e73c7daf022c91",
-      "created_at": "2026-11-15T11:12:47.152Z"
+      "content_hash": "bdf7300597b98edeba730f09fd0a9144517af22e585302f1925a88516f72a5c0",
+      "created_at": "2026-11-16T21:23:30.140Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -23910,6 +23911,15 @@
       "repository": "databendlabs-databend-learnings",
       "content_hash": "70605191a65c690d2315efe6ae843ca6dc16bace3f90a01131d8266f5180d25d",
       "created_at": "2026-11-16T21:10:40.575Z"
+    },
+    "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-learnings-architecture-intelligence-paradedb-paradedb-learning.md",
+      "repository": "paradedb-paradedb-learnings",
+      "content_hash": "fbd11a850bd94293518165efa6842415c475ced80398520b1a3bffa22622cba2",
+      "created_at": "2026-11-16T21:28:30.254Z"
     }
   }
 }

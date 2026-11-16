@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "1450dba7",
+    "sourceVersion": "3628771a",
     "license": "MIT",
-    "contentHash": "7f90b2af7ff56247c587a151bfcf35c953ef072682965115f513b1ee2077e30f",
-    "lastHarvestedAt": "2026-11-15T13:27:27.868Z",
+    "contentHash": "1317570e6c9cb08fe5a99e74a9ace90473d637e1212feeb94651204d78a1036f",
+    "lastHarvestedAt": "2026-11-16T21:28:25.354Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "9e4744a6",
+    "sourceVersion": "1d25918c",
     "license": "AGPL-3.0",
-    "contentHash": "910723abce1fbddad86ae0c0fd567fb41e218f8361685db29fe1d19eb3b25c6a",
-    "lastHarvestedAt": "2026-11-15T11:12:46.853Z",
+    "contentHash": "cbbb2d2fa65bbf1c237a4c5730a7022f7d0f8ef543cb8d46bd755e0b9a2b9b1c",
+    "lastHarvestedAt": "2026-11-16T21:23:29.761Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
