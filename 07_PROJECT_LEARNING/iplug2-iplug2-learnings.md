@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source**: github ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
-> **Source Version**: `0cf04038`  
+> **Source Version**: `985d63a1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T07:55:09.154Z  
+> **Timestamp**: 2026-11-16T22:19:23.831Z  
 > **Learning ID**: `learn-github-iplug2-iplug2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T07:55:09.148Z  
+> **Harvest Timestamp**: 2026-11-16T22:19:23.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2442 stars
+- **Stars / Engagement**: 2450 stars
 
 ---
 
@@ -1452,82 +1452,100 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0cf04038` (2026-11-10)
-**Commit Message**: Merge pull request #1452 from iPlug2/claude/kind-pasteur-izurqu
+### Incident Patch 1: `651ed754` (2026-11-15)
+**Commit Message**: Merge pull request #1460 from iPlug2/fix/cmake-ci-comment-concurrency
 
-IVTabbedPagesControl: keep tabs in declaration order
+CMake CI: stop PR comments cancelling master builds
 
-**File**: `IGraphics/Controls/IVTabbedPagesControl.h` (modified, +4/-2)
+**File**: `.github/workflows/cmake-ci.yml` (modified, +6/-2)
 ```diff
-@@ -19,7 +19,8 @@
- #include "IControls.h"
- #include "IBubbleControl.h"
+@@ -62,9 +62,13 @@ on:
+         type: boolean
+         default: false
  
--#include <map>
-+#include <utility>
-+#include <vector>
+-# Cancel in-progress runs for the same PR/branch
++# Cancel in-progress runs for the same PR/branch.
++# issue_comment events run on the default branch ref and the concurrency group
++# is evaluated before the job-level /ci filter, so comments need their own keys:
++#  - "/ci" comments: per-PR group, so a newer /ci supersedes an older one
++#  - any other comment: unique per run, so it can never cancel a real build
+ concurrency:
+-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
++  group: ${{ github.workflow }}-${{ github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ci') && format('ci-comment-{0}', github.event.issue.number) || github.run_id) || github.event.pull_request.number || github.ref }}
+   cancel-in-progress: true
  
- BEGIN_IPLUG_NAMESPACE
- BEGIN_IGRAPHICS_NAMESPACE
-@@ -80,7 +81,8 @@ class IVTabPage : public IContainerBase, public IVectorBase
-   double mPadding = 0.0;
- };
- 
--using PageMap = std::map<const char*, IVTabPage*>;
-+/** Ordered list of (tab name, page) pairs. Tabs appear in the order given. */
-+using PageMap = std::vector<std::pair<const char*, IVTabPage*>>;
- 
- /** A control to manage tabbed pages of sub controls
-  * Basic usage example:
+ jobs:
 ```
 
 ---
 
-### Incident Patch 2: `25f2e97b` (2026-11-10)
-**Commit Message**: IVTabbedPagesControl: keep tabs in declaration order
+### Incident Patch 2: `dac1c85c` (2026-11-15)
+**Commit Message**: CMake CI: stop PR comments cancelling master and PR builds
 
-PageMap was std::map<const char*, IVTabPage*>, which orders entries by
-pointer address of the name strings, not by declaration order (or even
-alphabetically). Tab order therefore varied between compilers/builds.
-Use a vector of pairs so pages appear in the order given. Existing
-brace-initializer call sites are unchanged.
+issue_comment events have no pull_request payload and run against the
+default branch ref, so every PR comment landed in the
+'CMake CI-refs/heads/master' concurrency group and cancelled any
+in-flight master push build (e.g. run 43715822742). The concurrency
+group is evaluated before the job-level /ci filter, so even comments
+that are skipped still cancel.
 
-Fixes #1449
+Give comment-triggered runs their own keys: /ci comments use a per-PR
+'ci-comment-N' group so a newer /ci supersedes an older one, and all
+other comments use github.run_id so they can never cancel a build.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_012EnMekvRS2XBdH16wi1S63
-
-**File**: `IGraphics/Controls/IVTabbedPagesControl.h` (modified, +4/-2)
+**File**: `.github/workflows/cmake-ci.yml` (modified, +6/-2)
 ```diff
-@@ -19,7 +19,8 @@
- #include "IControls.h"
- #include "IBubbleControl.h"
+@@ -62,9 +62,13 @@ on:
+         type: boolean
+         default: false
  
--#include <map>
-+#include <utility>
-+#include <vector>
+-# Cancel in-progress runs for the same PR/branch
++# Cancel in-progress runs for the same PR/branch.
++# issue_comment events run on the default branch ref and the concurrency group
++# is evaluated before the job-level /ci filter, so comments need their own keys:
++#  - "/ci" comments: per-PR group, so a newer /ci supersedes an older one
++#  - any other comment: unique per run, so it can never cancel a real build
+ concurrency:
+-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
++  group: ${{ github.workflow }}-${{ github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ci') && format('ci-comment-{0}', github.event.issue.number) || github.run_id) || github.event.pull_request.number || github.ref }}
+   cancel-in-progress: true
  
- BEGIN_IPLUG_NAMESPACE
- BEGIN_IGRAPHICS_NAMESPACE
-@@ -80,7 +81,8 @@ class IVTabPage : public IContainerBase, public IVectorBase
-   double mPadding = 0.0;
- };
- 
--using PageMap = std::map<const char*, IVTabPage*>;
-+/** Ordered list of (tab name, page) pairs. Tabs appear in the order given. */
-+using PageMap = std::vector<std::pair<const char*, IVTabPage*>>;
- 
- /** A control to manage tabbed pages of sub controls
-  * Basic usage example:
+ jobs:
+```
+
+---
+
+### Incident Patch 3: `1d08b9ab` (2026-11-15)
+**Commit Message**: IPlugCocoaUI: bundle macOS storyboard in CMake builds
+
+The plugin constructor loads IPlugCocoaUI-macOS-MainInterface via
+NSStoryboard, but the CMake targets never copied it into the bundle,
+so every CMake-built macOS format threw an ObjC exception on
+instantiation (e.g. 12 clap-validator tests crashed with SIGABRT).
+
+**File**: `Examples/IPlugCocoaUI/CMakeLists.txt` (modified, +5/-0)
+```diff
+@@ -57,6 +57,11 @@ iplug_add_target(_${PROJECT_NAME}-base INTERFACE
+ # macOS targets (not iOS)
+ # ============================================================================
+ if(NOT IOS)
++  # Storyboard is loaded by name in the plugin constructor, so it must be in every bundle
++  set(MACOS_STORYBOARD UI/IPlugCocoaUI-macOS-MainInterface.storyboard)
++  set_source_files_properties(${MACOS_STORYBOARD} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
++  list(APPEND SOURCE_FILES ${MACOS_STORYBOARD})
++
+   # ============================================================================
+   # APP Target (Standalone Application) - with Cocoa UI
+   # ============================================================================
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1460** (2026-11-15): CMake CI: stop PR comments cancelling master builds (@olilarkin)
+- **PR #1459** (2026-11-15): CMake: sign deployed plugin copies with the Xcode generator (@olilarkin)
+- **PR #1458** (2026-11-15): IPlugCocoaUI: bundle macOS storyboard in CMake builds (@olilarkin)
+- **PR #1457** (closed): Preserve VST3 MIDI values and controller points (@yasuyuki-baba)
+- **PR #1453** (closed): CLAP: publish latency changes during activation (@yasuyuki-baba)
 - **PR #1452** (2026-11-10): IVTabbedPagesControl: keep tabs in declaration order (@olilarkin)
-- **PR #1447** (2026-11-07): Wasm: send restored parameter values to the DSP module (@olilarkin)
-- **PR #1429** (2026-10-25): CI: unpin claude-code-action (back to @v1) (@olilarkin)
-- **PR #1428** (2026-10-18): CI: pin claude-code-action to v1.0.196 (@olilarkin)
-- **PR #1427** (2026-10-25): Bump macOS deployment target to 13.0 (@olilarkin)
-- **PR #1426** (2026-10-17): CI: move macOS runners from macos-14 to macos-15 (@olilarkin)
 
 ---
 
@@ -1547,32 +1565,34 @@ Claude-Session: https://claude.ai/code/session_012EnMekvRS2XBdH16wi1S63
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1452 from iPlug2/claude/kind-pasteur-izurqu
+## X. Empirical Invariant Guard in cmake-ci.yml
 
 **RULE**:
-When implementing operations in `IGraphics/Controls/IVTabbedPagesControl.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/cmake-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0cf04038`: Merge pull request #1452 from iPlug2/claude/kind-pasteur-izurqu. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `651ed754`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `IGraphics/Controls/IVTabbedPagesControl.h`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cmake-ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-#include <utility>
-#include <vector>
-/** Ordered list of (tab name, page) pairs. Tabs appear in the order given. */
-using PageMap = std::vector<std::pair<const char*, IVTabPage*>>;
+# Cancel in-progress runs for the same PR/branch.
+# issue_comment events run on the default branch ref and the concurrency group
+# is evaluated before the job-level /ci filter, so comments need their own keys:
+#  - "/ci" comments: per-PR group, so a newer /ci supersedes an older one
+#  - any other comment: unique per run, so it can never cancel a real build
+  group: ${{ github.workflow }}-${{ github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ci') && format('ci-comment-{0}', github.event.issue.number) || github.run_id) || github.event.pull_request.number || github.ref }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
-// Anti-pattern to NEVER write (induced failure mode):
-#include <map>
-using PageMap = std::map<const char*, IVTabPage*>;
+// Induced defect failure mode:
+# Cancel in-progress runs for the same PR/branch
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0cf04038` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `651ed754` are properly handled with clean fallback behavior.

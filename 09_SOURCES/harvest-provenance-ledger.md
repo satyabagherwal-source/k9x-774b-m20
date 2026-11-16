@@ -10384,3 +10384,7 @@ Every entry in this ledger must capture:
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `46dbc57a` | Multi-dimensional audit evidence | 2026-11-16T21:55:38.034Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `08f7bd21` | Multi-dimensional audit evidence | 2026-11-16T22:03:56.416Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `33fb6d38` | Multi-dimensional audit evidence | 2026-11-16T22:04:03.242Z |
+| `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m` | `https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-16T22:19:16.438Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `543357f1` | Multi-dimensional audit evidence | 2026-11-16T22:19:20.041Z |
+| `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `985d63a1` | Multi-dimensional audit evidence | 2026-11-16T22:19:24.904Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `87e6cde2` | Multi-dimensional audit evidence | 2026-11-16T22:19:30.759Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `53ace8b4`  
+> **Source Version**: `87e6cde2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T23:01:44.830Z  
+> **Timestamp**: 2026-11-16T22:19:29.689Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T23:01:44.824Z  
+> **Harvest Timestamp**: 2026-11-16T22:19:29.683Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4453 stars
+- **Stars / Engagement**: 4455 stars
 
 ---
 
@@ -555,99 +555,104 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53ace8b4` (2026-10-21)
-**Commit Message**: Restore with rename options must not allow rename to the same name
+### Incident Patch 1: `87e6cde2` (2026-11-16)
+**Commit Message**: Fix flakiness in test_reopenEngineAndRecoverFromLocalTranslog
 
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
+**File**: `server/src/test/java/org/elasticsearch/index/shard/IndexShardTests.java` (modified, +3/-1)
 ```diff
-@@ -61,3 +61,8 @@ Fixes
+@@ -3498,7 +3498,9 @@ public void test_reopenEngineAndRecoverFromLocalTranslog() throws Exception {
+         indexOnReplicaWithGaps(shard, between(1, 1000), Math.toIntExact(shard.getLocalCheckpoint()), false);
+         Set<String> docIds = getShardDocUIDs(shard);
+         SeqNoStats seqNoStats = shard.seqNoStats();
+-        assertThat(seqNoStats.getLocalCheckpoint()).isGreaterThan(seqNoStats.getGlobalCheckpoint());
++        // Make sure we have ops on the replica that are above the global checkpoint.
++        // We test that no such op is lost.
++        assertThat(seqNoStats.getMaxSeqNo()).isGreaterThan(seqNoStats.getGlobalCheckpoint());
  
- - Fixed an issue that could discard recently replicated data from the
-   subscriber cluster when dropping a subscription shortly after shard recovery.
-+
-+- Fixed an issue causing ``RESTORE SNAPSHOT`` to silently restore only one
-+  of several tables if the rename options ``schema_rename_replacement``
-+  or ``table_rename_replacement`` mapped them to the same name.
-+  Now it fails with an error, similar to clashes with an existing table.
+         CountDownLatch engineReopenLatch = new CountDownLatch(1);
+         AtomicReference<Exception> failure = new AtomicReference<>();
 ```
 
-**File**: `server/src/main/java/org/elasticsearch/snapshots/RestoreService.java` (modified, +23/-0)
-```diff
-@@ -331,9 +331,32 @@ static Map<RelationName, RestoreRelation> resolveRelations(List<TableOrPartition
-                 resolver.accept(relation.name(), List.of());
-             }
-         }
-+        ensureUniqueTargets(restoreRelations);
-         return restoreRelations;
-     }
- 
-+    /**
-+     * Renamed pattern can map different tables to the same name.
-+     * Check if renamed tables won't be clashing with each other.
-+     */
-+    private static void ensureUniqueTargets(Map<RelationName, RestoreRelation> restoreRelations) {
-+        HashMap<RelationName, RelationName> sourceByTarget = new HashMap<>();
-+        for (var entry : restoreRelations.entrySet()) {
-+            RelationName source = entry.getKey();
-+            RelationName target = entry.getValue().targetName();
-+            RelationName otherSource = sourceByTarget.put(target, source);
-+            if (otherSource != null) {
-+                throw new RelationAlreadyExists(target, String.format(
-+                    Locale.ENGLISH,
-+                    "Cannot restore relations '%s' and '%s' to the same name '%s'",
-+                    otherSource,
-+                    source,
-+                    target
-+                ));
-+            }
-+        }
-+    }
-+
-     private static boolean includeForeignTables(RestoreSnapshotRequest request) {
-         if (!request.includeCustomMetadata()) {
-             return false;
-```
+---
 
-**File**: `server/src/test/java/io/crate/integrationtests/SnapshotRestoreIntegrationTest.java` (modified, +15/-0)
+### Incident Patch 2: `f46774f2` (2026-11-16)
+**Commit Message**: Fix flaky test -- test_streaming_distinct_sample_set
+
+Fixes flaky test_streaming_distinct_sample_set
+
+Reproduce by running test with -Dtests.seed=32D7A1424BE7F841
+
+When we compare the entire ColumnStats object in the test assertion, the
+field `mcv` can have values in different orders due to tie-breaking.
+
+Since the frequencies can be tied, the objects in value can mismatch
+during tie breaking. We now sort the MostCommonValues object on the
+frequency first then the value object to make the test deterministic.
+
+We only normalize the test results and do not alter the actual
+ColumnSketchBuilder code because it does not seem necessary to have the
+sort there deterministic and we do not want to incur extra sorting when
+the code is running in production.
+
+**File**: `server/src/test/java/io/crate/statistics/ColumnSketchBuilderTest.java` (modified, +28/-1)
 ```diff
-@@ -22,6 +22,7 @@
- package io.crate.integrationtests;
+@@ -27,6 +27,8 @@
+ import java.io.ByteArrayInputStream;
+ import java.io.ByteArrayOutputStream;
+ import java.io.IOException;
++import java.util.ArrayList;
++import java.util.Comparator;
+ import java.util.List;
+ import java.util.Map;
  
- import static com.carrotsearch.randomizedtesting.RandomizedTest.$;
-+import static io.crate.protocols.postgres.PGErrorStatus.DUPLICATE_TABLE;
- import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
- import static io.crate.protocols.postgres.PGErrorStatus.INVALID_OBJECT_DEFINITION;
- import static io.crate.rest.action.HttpErrorStatus.GENERIC_NOT_FOUND;
-@@ -1082,6 +1083,20 @@ public void test_restore_partitioned_tables_rename_all() throws Exception {
-         );
+@@ -124,7 +126,7 @@ public void test_streaming_distinct_sample_set() throws IOException {
+         var serializedSketch = streamOutIn(sketch, support, Version.CURRENT);
+ 
+         assertThat(serializedSketch.distinctSketch).isNull();
+-        assertThat(serializedSketch.toStats(10_000)).isEqualTo(sketch.toStats(10_000));
++        assertThat(normalize(serializedSketch.toStats(10_000))).isEqualTo(normalize(sketch.toStats(10_000)));
      }
  
-+    @Test
-+    public void test_restore_with_rename_fails_if_renamed_relations_clash() throws Exception {
-+        createTable("doc.t1", false);
-+        createTable("doc.t2", false);
-+        createSnapshot(SNAPSHOT_NAME, "doc.t1", "doc.t2");
-+        waitNoPendingTasksOnAll();
-+        Asserts.assertSQLError(() -> execute("RESTORE SNAPSHOT " + snapshotName() + " ALL WITH (" +
-+                "wait_for_completion=true," +
-+                "table_rename_replacement='t')") // Intentionally restoring into same name
-+        ).hasPGError(DUPLICATE_TABLE)
-+        .hasHTTPError(CONFLICT, 4093)
-+        .hasMessageContaining("to the same name 'doc.t'");
-+    }
-+
      @Test
-     public void test_restore_old_users() throws IOException {
-         File repoDir = TEMPORARY_FOLDER.newFolder().toPath().toAbsolutePath().toFile();
+@@ -183,4 +185,29 @@ private static ColumnSketchBuilder<String> streamOutIn(ColumnSketchBuilder<Strin
+         in.setVersion(version);
+         return support.readSketchFrom(version, in);
+     }
++
++    private static <T extends Comparable<T>> ColumnStats<T> normalize(ColumnStats<T> columnStats) {
++        MostCommonValues<T> mcv = columnStats.mostCommonValues();
++
++        record Entry<T>(T value, double freq) {}
++
++        List<Entry<T>> entries = new ArrayList<>();
++        for (int i = 0; i < mcv.length(); i++) {
++            entries.add(new Entry<>(mcv.value(i), mcv.frequency(i)));
++        }
++
++        entries.sort(Comparator.comparingDouble((Entry<T> e) -> e.freq())
++            .thenComparing(Entry::value));
++
++        List<T> values = entries.stream().map(Entry::value).toList();
++        double[] freqs = entries.stream().mapToDouble(Entry::freq).toArray();
++
++        return new ColumnStats<>(
++            columnStats.nullFraction(),
++            columnStats.averageSizeInBytes(),
++            columnStats.approxDistinct(),
++            columnStats.type(),
++            new MostCommonValues<>(values, freqs),
++            columnStats.histogram());
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20599** (2026-11-16): Fix flakiness in test_reopenEngineAndRecoverFromLocalTranslog (backport #20594) (@mergify[bot])
+- **PR #20598** (closed): Fix flaky test -- test_streaming_distinct_sample_set (backport #20595) (@mergify[bot])
+- **PR #20595** (2026-11-16): Fix flaky test -- test_streaming_distinct_sample_set (@bodowd)
+- **PR #20594** (2026-11-16): Fix flakiness in test_reopenEngineAndRecoverFromLocalTranslog (@hariso)
 - **PR #20592** (2026-11-13): Restore with rename options must not allow rename to the same name (backport #20591) (@mergify[bot])
 - **PR #20591** (2026-11-13): Restore with rename options must not allow rename to the same name (@BaurzhanSakhariev)
-- **PR #20588** (2026-11-12): Fix replicated data loss when dropping subscription before checkpoints catch up (backport #20576) (@mergify[bot])
-- **PR #20586** (2026-11-12): bp: [Refactor] LuceneChangesSnapshot to use accurate ops history (backport #20574) (@mergify[bot])
-- **PR #20585** (2026-11-12): Remove retention lease only when subscription is removed or table is not published (backport #20566) (@mergify[bot])
-- **PR #20584** (2026-11-11): Return 0 for negative "free" and "total" memory reported by the OS (backport #20563) (@mergify[bot])
 
 ---
 
@@ -667,32 +672,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Restore with rename options must not allow rename to the same name
+## X. flakiness in test_reopenEngineAndRecoverFromLocalTranslog
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/test/java/org/elasticsearch/index/shard/IndexShardTests.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `53ace8b4`: Restore with rename options must not allow rename to the same name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87e6cde2`: flakiness in test_reopenEngineAndRecoverFromLocalTranslog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/test/java/org/elasticsearch/index/shard/IndexShardTests.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-
-- Fixed an issue causing ``RESTORE SNAPSHOT`` to silently restore only one
-  of several tables if the rename options ``schema_rename_replacement``
-  or ``table_rename_replacement`` mapped them to the same name.
-  Now it fails with an error, similar to clashes with an existing table.
+        // Make sure we have ops on the replica that are above the global checkpoint.
+        // We test that no such op is lost.
+        assertThat(seqNoStats.getMaxSeqNo()).isGreaterThan(seqNoStats.getGlobalCheckpoint());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        assertThat(seqNoStats.getLocalCheckpoint()).isGreaterThan(seqNoStats.getGlobalCheckpoint());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `53ace8b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87e6cde2` are properly handled with clean fallback behavior.

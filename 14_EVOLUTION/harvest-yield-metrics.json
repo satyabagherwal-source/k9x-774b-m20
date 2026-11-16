@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T22:04:03.247Z",
-  "total_cycles_completed": 9938,
-  "total_learnings_persisted": 9938,
-  "total_rules_promoted": 9535,
+  "last_updated": "2026-11-16T22:19:30.765Z",
+  "total_cycles_completed": 9942,
+  "total_learnings_persisted": 9942,
+  "total_rules_promoted": 9538,
   "history": [
-    {
-      "timestamp": "2026-11-15T17:31:49.523Z",
-      "repository": "nats-io/nats.go",
-      "learningId": "learn-github-nats-io-nats-go",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T17:31:55.235Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T17:40:14.535Z",
-      "repository": "lottie-react-native/lottie-react-native",
-      "learningId": "learn-github-lottie-react-native-lottie-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T17:40:17.348Z",
-      "repository": "goodrain/rainbond",
-      "learningId": "learn-github-goodrain-rainbond",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T17:40:21.547Z",
       "repository": "SeekStorm/SeekStorm",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-16T22:04:03.247Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:19:16.444Z",
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:19:20.048Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:19:24.910Z",
+      "repository": "iPlug2/iPlug2",
+      "learningId": "learn-github-iplug2-iplug2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:19:30.765Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

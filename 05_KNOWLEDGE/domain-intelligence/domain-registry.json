@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T22:04:08.106Z",
-  "total_records": 1334,
+  "last_updated": "2026-11-16T22:19:35.563Z",
+  "total_records": 1341,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 595,
+      "total": 597,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -638,7 +638,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-divagr1925-qwen3-5-4b-qwenputer-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor"
+        "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor",
+        "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in",
+        "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear"
       ]
     },
     "E": {
@@ -687,7 +689,7 @@
       ]
     },
     "G": {
-      "total": 243,
+      "total": 245,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -931,7 +933,9 @@
         "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-nats-io-nats-server-core-invariants",
-        "domain_intelligence-architecture-intelligence-nats-io-nats-server-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nats-io-nats-server-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-iplug2-iplug2-core-invariants",
+        "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants"
       ]
     },
     "H": {
@@ -1325,7 +1329,7 @@
       ]
     },
     "K": {
-      "total": 50,
+      "total": 53,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1376,7 +1380,10 @@
         "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-learnings-core-invariant",
         "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-core-invariants",
         "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants"
       ]
     },
     "L": {
@@ -23960,6 +23967,69 @@
       "repository": "nats-io-nats-server-learnings",
       "content_hash": "3a5a784ea5dfe20cd28d8fbbf1e2a2972da7f97d3bc876d18e0c5370bd2f4216",
       "created_at": "2026-11-16T22:04:06.821Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: facebook/dinov3-vitl16-pretrain-lvd1689m Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-research-knowledge-intelligence-face.md",
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "content_hash": "5fa40046be27126b95fad7a1051b30ad8ac21a4abd632c73afd4d9fd4793f0e6",
+      "created_at": "2026-11-16T22:19:16.649Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: FalkorDB/FalkorDB Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-falkordb-falkordb-quality-verification-intelligence-falkordb-falkordb-core-invar.md",
+      "repository": "FalkorDB/FalkorDB",
+      "content_hash": "5a04ec8d1727dc88b357354c0a1069b1707940c2e4a67d1b8ca0c0e293862634",
+      "created_at": "2026-11-16T22:19:20.439Z"
+    },
+    "domain_intelligence-architecture-intelligence-iplug2-iplug2-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-iplug2-iplug2-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: iPlug2/iPlug2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-architecture-intelligence-iplug2-iplug2-core-invariants.md",
+      "repository": "iPlug2/iPlug2",
+      "content_hash": "82640a512908f53532d9829af44b235bee6501f94fd946dd8d93fee35a844107",
+      "created_at": "2026-11-16T22:19:25.295Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: crate/crate Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crate-crate-quality-verification-intelligence-crate-crate-core-invariants.md",
+      "repository": "crate/crate",
+      "content_hash": "989ed2e5a7cf54cc5dadbde69e91a618b3d36136e7754345bab00168225a669f",
+      "created_at": "2026-11-16T22:19:31.124Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: falkordb-falkordb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-falkordb-falkordb-learnings-quality-verification-intelligence-falkordb-falkordb-.md",
+      "repository": "falkordb-falkordb-learnings",
+      "content_hash": "6a5058137544b168a5b7d08152989640c1dc34354fc8eac013154173e94b753a",
+      "created_at": "2026-11-16T22:19:34.466Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings-research-knowledge-intelli.md",
+      "repository": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings",
+      "content_hash": "86eb7e9ff0e9e0074ebc6e8278ca97b1c696b63807fa12bd8e0cf86a7742b72e",
+      "created_at": "2026-11-16T22:19:34.974Z"
+    },
+    "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: iplug2-iplug2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-learnings-architecture-intelligence-iplug2-iplug2-learnings-core-i.md",
+      "repository": "iplug2-iplug2-learnings",
+      "content_hash": "aec68484d0a0963e6287d231d4b4c39a773b7d8fad1a29e89dcddf0f43d2df8e",
+      "created_at": "2026-11-16T22:19:35.563Z"
     }
   }
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T22:04:08.222Z",
-  "total_verified_learnings": 8804,
+  "last_updated": "2026-11-16T22:19:35.711Z",
+  "total_verified_learnings": 8806,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19377,
+  "total_items": 19394,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218288,14 +218288,19 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "53ace8b4",
-      "content_hash": "f309f50897935dd860fd4ef0fb6603ca348e6d47b257da0409765ffdb56edecb",
+      "source_version": "87e6cde2",
+      "content_hash": "a8f7fdff6627b84b88323e7709e495bdd1955ea34bcb5cd225e9ba6621ecb7ee",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
         {
           "number": 8403,
           "title": "Restore with rename options must not allow rename to the same name",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8801,
+          "title": "flakiness in test_reopenEngineAndRecoverFromLocalTranslog",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -218304,7 +218309,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T23:01:45.676Z",
+      "verified_at": "2026-11-16T22:19:30.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218358,10 +218363,10 @@
       "relative_path": "08_VERIFICATION/crate-crate-verification-protocol-empirical-defect-shield-for-crate-crate.md",
       "title": "Verification Protocol: Empirical Defect Shield for crate/crate",
       "repository": "crate/crate",
-      "source_version": "53ace8b4",
-      "content_hash": "87afee997aac88bfed74cc42213f1102576bddc958798f2b0c2504ad6fc05d93",
+      "source_version": "87e6cde2",
+      "content_hash": "cb00703fd988a5788efc5e76f31caa509d17b0c2667bad676077996e3805b4b4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T23:01:46.269Z"
+      "persisted_at": "2026-11-16T22:19:31.272Z"
     },
     "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action": {
       "item_id": "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action",
@@ -237919,14 +237924,19 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "d6fcd5aa",
-      "content_hash": "3533a4c7b1ea8e7a6bbe25e4df1a0f82ec5291ad21c049412a420726bc3494d3",
+      "source_version": "543357f1",
+      "content_hash": "b50a90a220af510138105ffcedc3047cdfe10707de3b11e0e61509bc720b65c9",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
         {
           "number": 8559,
           "title": "build the Valkey images on Ubuntu 26.04 LTS",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8799,
+          "title": "fix all pedantic/nursery/cargo clippy warnings",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -237935,7 +237945,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T01:32:39.430Z",
+      "verified_at": "2026-11-16T22:19:19.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237989,10 +237999,10 @@
       "relative_path": "08_VERIFICATION/falkordb-falkordb-verification-protocol-empirical-defect-shield-for-falkordb-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for FalkorDB/FalkorDB",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "d6fcd5aa",
-      "content_hash": "e61c65521aa861cfa906d07483ee59e03af045948730c1c1358ee0f23ac1bb52",
+      "source_version": "543357f1",
+      "content_hash": "56a36421f04a3a0a52d7bb0b3bc1a54088829c7d2dc97721df97a021d716c63e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T01:32:39.966Z"
+      "persisted_at": "2026-11-16T22:19:20.591Z"
     },
     "learn-github-tencent-tds-kuiklyui": {
       "learning_id": "learn-github-tencent-tds-kuiklyui",
@@ -238089,9 +238099,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for falkordb-falkordb-learnings",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "84204ff52c4ca5a002b7bf487f997440d77c9869c1783418efe67c46fa15298d",
+      "content_hash": "d55157aef8d30ba2d07688133c66dd4dfa792f6bd8c4a45611a2887d6af96272",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T01:32:51.148Z"
+      "persisted_at": "2026-11-16T22:19:34.617Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
@@ -258112,6 +258122,252 @@
       "content_hash": "3a5a784ea5dfe20cd28d8fbbf1e2a2972da7f97d3bc876d18e0c5370bd2f4216",
       "domain_letter": "G",
       "persisted_at": "2026-11-16T22:04:06.821Z"
+    },
+    "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m": {
+      "learning_id": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "slug": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "source_version": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "content_hash": "b5247ff9e549c20b6498f08d701bf65d4f25ef2abb3381df937f5fe8f1838209",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T22:19:16.237Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-research-knowledge-intelligence-face.md",
+      "title": "Research & Knowledge Intelligence: facebook/dinov3-vitl16-pretrain-lvd1689m Core Invariants",
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "source_version": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "content_hash": "5fa40046be27126b95fad7a1051b30ad8ac21a4abd632c73afd4d9fd4793f0e6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T22:19:16.649Z"
+    },
+    "rule-8799": {
+      "learning_id": "rule-8799",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8799,
+      "title": "fix all pedantic/nursery/cargo clippy warnings",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "543357f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T22:19:19.824Z"
+    },
+    "candidate_directive-fix-all-pedantic-nursery-cargo-clippy-warnings": {
+      "item_id": "candidate_directive-fix-all-pedantic-nursery-cargo-clippy-warnings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T7VY-fix-all-pedantic-nursery-cargo-clippy-warnings.md",
+      "title": "fix all pedantic/nursery/cargo clippy warnings",
+      "repository": "falkordb-falkordb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e06558716130c8f3ffe06afc3a52462b300857b16b5570aa83081990a2bd503b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:19:34.324Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-falkordb-falkordb-quality-verification-intelligence-falkordb-falkordb-core-invar.md",
+      "title": "Quality & Verification Intelligence: FalkorDB/FalkorDB Core Invariants",
+      "repository": "FalkorDB/FalkorDB",
+      "source_version": "543357f1",
+      "content_hash": "5a04ec8d1727dc88b357354c0a1069b1707940c2e4a67d1b8ca0c0e293862634",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:19:20.439Z"
+    },
+    "learn-github-iplug2-iplug2": {
+      "learning_id": "learn-github-iplug2-iplug2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "iPlug2/iPlug2",
+      "repository": "iPlug2/iPlug2",
+      "slug": "iplug2-iplug2",
+      "platform": "github",
+      "source_url": "https://github.com/iPlug2/iPlug2",
+      "source_version": "985d63a1",
+      "content_hash": "805246a871aed266af460fa26ecb88d58aefe77bc026cae5b2cdd9f031263439",
+      "dossier_path": "07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8800,
+          "title": "Empirical Invariant Guard in cmake-ci.yml",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T22:19:24.707Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8800": {
+      "learning_id": "rule-8800",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8800,
+      "title": "Empirical Invariant Guard in cmake-ci.yml",
+      "source_url": "https://github.com/iPlug2/iPlug2",
+      "source_version": "985d63a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T22:19:24.707Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-cmake-ci-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-cmake-ci-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T8QI-empirical-invariant-guard-in-cmake-ci-yml.md",
+      "title": "Empirical Invariant Guard in cmake-ci.yml",
+      "repository": "iplug2-iplug2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8655f5d4b129d434708cea3b5913684ef7f962d4cfa7ad4dd85a48a56c06e613",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T22:19:35.419Z"
+    },
+    "domain_intelligence-architecture-intelligence-iplug2-iplug2-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-iplug2-iplug2-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-architecture-intelligence-iplug2-iplug2-core-invariants.md",
+      "title": "Architecture Intelligence: iPlug2/iPlug2 Core Invariants",
+      "repository": "iPlug2/iPlug2",
+      "source_version": "985d63a1",
+      "content_hash": "82640a512908f53532d9829af44b235bee6501f94fd946dd8d93fee35a844107",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T22:19:25.295Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-iplug2-iplug2": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iplug2-iplug2",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/iplug2-iplug2-verification-protocol-empirical-defect-shield-for-iplug2-iplug2.md",
+      "title": "Verification Protocol: Empirical Defect Shield for iPlug2/iPlug2",
+      "repository": "iPlug2/iPlug2",
+      "source_version": "985d63a1",
+      "content_hash": "92f4ac4477a99a3a17ae4c8bb89f0d424e7f24c0cbfe72f84fbfb802d742159b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:19:25.443Z"
+    },
+    "rule-8801": {
+      "learning_id": "rule-8801",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8801,
+      "title": "flakiness in test_reopenEngineAndRecoverFromLocalTranslog",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "87e6cde2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T22:19:30.561Z"
+    },
+    "candidate_directive-flakiness-in-test_reopenengineandrecoverfromlocaltranslog": {
+      "item_id": "candidate_directive-flakiness-in-test_reopenengineandrecoverfromlocaltranslog",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T5B5-flakiness-in-test_reopenengineandrecoverfromlocaltranslog.md",
+      "title": "flakiness in test_reopenEngineAndRecoverFromLocalTranslog",
+      "repository": "crate/crate",
+      "source_version": "87e6cde2",
+      "content_hash": "b7e0fc74eb1eb02957b1d3728e8843f33473390b7333a64da840adb3d2f893cf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:19:30.979Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crate-crate-quality-verification-intelligence-crate-crate-core-invariants.md",
+      "title": "Quality & Verification Intelligence: crate/crate Core Invariants",
+      "repository": "crate/crate",
+      "source_version": "87e6cde2",
+      "content_hash": "989ed2e5a7cf54cc5dadbde69e91a618b3d36136e7754345bab00168225a669f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:19:31.124Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-falkordb-falkordb-learnings-quality-verification-intelligence-falkordb-falkordb-.md",
+      "title": "Quality & Verification Intelligence: falkordb-falkordb-learnings Core Invariants",
+      "repository": "falkordb-falkordb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a5058137544b168a5b7d08152989640c1dc34354fc8eac013154173e94b753a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:19:34.466Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings-research-knowledge-intelli.md",
+      "title": "Research & Knowledge Intelligence: hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings Core Invariants",
+      "repository": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings",
+      "source_version": "HEAD",
+      "content_hash": "86eb7e9ff0e9e0074ebc6e8278ca97b1c696b63807fa12bd8e0cf86a7742b72e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T22:19:34.974Z"
+    },
+    "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-learnings-architecture-intelligence-iplug2-iplug2-learnings-core-i.md",
+      "title": "Architecture Intelligence: iplug2-iplug2-learnings Core Invariants",
+      "repository": "iplug2-iplug2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aec68484d0a0963e6287d231d4b4c39a773b7d8fad1a29e89dcddf0f43d2df8e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T22:19:35.563Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-iplug2-iplug2-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iplug2-iplug2-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/iplug2-iplug2-learnings-verification-protocol-empirical-defect-shield-for-iplug2.md",
+      "title": "Verification Protocol: Empirical Defect Shield for iplug2-iplug2-learnings",
+      "repository": "iplug2-iplug2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aff5368eeccba21be440155072a90a0a13fab40877f47472f2b1b2ae4ebb5861",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:19:35.711Z"
     }
   },
   "ai-builder-brain": {

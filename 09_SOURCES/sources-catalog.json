@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "53ace8b4",
+    "sourceVersion": "87e6cde2",
     "license": "Apache-2.0",
-    "contentHash": "f309f50897935dd860fd4ef0fb6603ca348e6d47b257da0409765ffdb56edecb",
-    "lastHarvestedAt": "2026-11-13T23:01:45.840Z",
+    "contentHash": "a8f7fdff6627b84b88323e7709e495bdd1955ea34bcb5cd225e9ba6621ecb7ee",
+    "lastHarvestedAt": "2026-11-16T22:19:30.759Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "d6fcd5aa",
+    "sourceVersion": "543357f1",
     "license": "NOASSERTION",
-    "contentHash": "3533a4c7b1ea8e7a6bbe25e4df1a0f82ec5291ad21c049412a420726bc3494d3",
-    "lastHarvestedAt": "2026-11-15T01:32:39.580Z",
+    "contentHash": "b50a90a220af510138105ffcedc3047cdfe10707de3b11e0e61509bc720b65c9",
+    "lastHarvestedAt": "2026-11-16T22:19:20.041Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -9683,10 +9683,10 @@
     "repository": "iPlug2/iPlug2",
     "platform": "github",
     "sourceUrl": "https://github.com/iPlug2/iPlug2",
-    "sourceVersion": "0cf04038",
+    "sourceVersion": "985d63a1",
     "license": "NOASSERTION",
-    "contentHash": "58de453d95c9ff52e6734b990b60fcdfcce2fddca726377b6a6205cfb62e2419",
-    "lastHarvestedAt": "2026-11-13T07:55:23.882Z",
+    "contentHash": "805246a871aed266af460fa26ecb88d58aefe77bc026cae5b2cdd9f031263439",
+    "lastHarvestedAt": "2026-11-16T22:19:24.904Z",
     "learningId": "learn-github-iplug2-iplug2"
   },
   "digitalbazaar-jsonld.js": {
@@ -12395,8 +12395,8 @@
     "sourceUrl": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
     "sourceVersion": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
     "license": "Open-Source",
-    "contentHash": "25dac713a24cea0c0d42073676ee7a715a4fb3c5878193dfdf249699547242fb",
-    "lastHarvestedAt": "2026-11-12T05:13:03.127Z",
+    "contentHash": "b5247ff9e549c20b6498f08d701bf65d4f25ef2abb3381df937f5fe8f1838209",
+    "lastHarvestedAt": "2026-11-16T22:19:16.438Z",
     "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m"
   },
   "tonhowtf-omniget": {

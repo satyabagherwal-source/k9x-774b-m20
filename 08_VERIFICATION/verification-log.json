@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-KNF5",
-    "timestamp": "2026-11-14T03:01:49.841Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "1a3b0847f53aede32e63edf82a0fefbcd5a7ca1ddf1ea8288ffa2eee75020a1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-KRAP",
-    "timestamp": "2026-11-14T03:01:54.865Z",
-    "repository": "neuron-core/neuron-ai",
-    "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "551f515a22ba0da3009d78d7f27ba39d4b405bd997da682b5e682df05e6ce0db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-VT97",
-    "timestamp": "2026-11-14T03:10:30.619Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "91da2d06f39d26cb0da376f7b2352827d44e5a37bd5601de090f96ccd0888d1e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-VVY1",
-    "timestamp": "2026-11-14T03:10:34.105Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "e19f48d3f0f61193b5a257b90d914f0f39c05e41415e4aedde57468deaf56998",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-VXHA",
     "timestamp": "2026-11-14T03:10:36.094Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7490,6 +7430,66 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "20c333ace5439aca5a399e68011d226c335fe72f698f474e79deb0c1363b00eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-SU35",
+    "timestamp": "2026-11-16T22:19:16.433Z",
+    "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+    "contentHash": "b5247ff9e549c20b6498f08d701bf65d4f25ef2abb3381df937f5fe8f1838209",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-SWV8",
+    "timestamp": "2026-11-16T22:19:20.036Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "b50a90a220af510138105ffcedc3047cdfe10707de3b11e0e61509bc720b65c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-T0MC",
+    "timestamp": "2026-11-16T22:19:24.900Z",
+    "repository": "iPlug2/iPlug2",
+    "learningId": "learn-github-iplug2-iplug2",
+    "contentHash": "805246a871aed266af460fa26ecb88d58aefe77bc026cae5b2cdd9f031263439",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-T54Z",
+    "timestamp": "2026-11-16T22:19:30.755Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "a8f7fdff6627b84b88323e7709e495bdd1955ea34bcb5cd225e9ba6621ecb7ee",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

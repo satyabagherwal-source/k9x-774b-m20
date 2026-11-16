@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T22:04:03.250Z",
+  "last_updated": "2026-11-16T22:19:30.769Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "f309f50897935dd860fd4ef0fb6603ca348e6d47b257da0409765ffdb56edecb",
-      "verified_at": "2026-11-13T23:01:45.849Z",
+      "content_hash": "a8f7fdff6627b84b88323e7709e495bdd1955ea34bcb5cd225e9ba6621ecb7ee",
+      "verified_at": "2026-11-16T22:19:30.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T23:01:45.849Z"
+      "last_updated": "2026-11-16T22:19:30.768Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "3533a4c7b1ea8e7a6bbe25e4df1a0f82ec5291ad21c049412a420726bc3494d3",
-      "verified_at": "2026-11-15T01:32:39.588Z",
+      "content_hash": "b50a90a220af510138105ffcedc3047cdfe10707de3b11e0e61509bc720b65c9",
+      "verified_at": "2026-11-16T22:19:20.053Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T01:32:39.588Z"
+      "last_updated": "2026-11-16T22:19:20.053Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -14571,14 +14571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iplug2-iplug2",
-      "content_hash": "58de453d95c9ff52e6734b990b60fcdfcce2fddca726377b6a6205cfb62e2419",
-      "verified_at": "2026-11-13T07:55:23.920Z",
+      "content_hash": "805246a871aed266af460fa26ecb88d58aefe77bc026cae5b2cdd9f031263439",
+      "verified_at": "2026-11-16T22:19:24.914Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T07:55:23.920Z"
+      "last_updated": "2026-11-16T22:19:24.914Z"
     },
     "digitalbazaar/jsonld.js": {
       "repository": "digitalbazaar/jsonld.js",
@@ -18651,14 +18651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-      "content_hash": "25dac713a24cea0c0d42073676ee7a715a4fb3c5878193dfdf249699547242fb",
-      "verified_at": "2026-11-12T05:13:03.135Z",
+      "content_hash": "b5247ff9e549c20b6498f08d701bf65d4f25ef2abb3381df937f5fe8f1838209",
+      "verified_at": "2026-11-16T22:19:16.448Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T05:13:03.135Z"
+      "last_updated": "2026-11-16T22:19:16.448Z"
     },
     "tonhowtf/omniget": {
       "repository": "tonhowtf/omniget",
