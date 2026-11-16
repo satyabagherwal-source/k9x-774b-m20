@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T18:18:58.423Z",
+  "last_updated": "2026-11-16T18:27:20.095Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "745dfdd34ffddb75855db35e7abf8b47c84ce7894b4e5a95d167b6eef41d93b8",
-      "verified_at": "2026-11-16T17:43:49.906Z",
+      "content_hash": "68f5826399a02beb3c3040f1d1548d1774e3a9e044c4852964c1723b69b7f18e",
+      "verified_at": "2026-11-16T18:27:20.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T17:43:49.906Z"
+      "last_updated": "2026-11-16T18:27:20.095Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10191,14 +10191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
-      "content_hash": "7c8cc1c0afa2f22d7357bc6e8d3b483ad4616536e1672e5c482a86667673234c",
-      "verified_at": "2026-11-15T09:49:58.388Z",
+      "content_hash": "faed9a5296d5879fccdcac81f1e228545ac7a58e815b41d67451ab14035ec346",
+      "verified_at": "2026-11-16T18:27:12.679Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T09:49:58.388Z"
+      "last_updated": "2026-11-16T18:27:12.679Z"
     },
     "chakra-ui/chakra-ui": {
       "repository": "chakra-ui/chakra-ui",
@@ -10911,14 +10911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seaql-sea-orm",
-      "content_hash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
-      "verified_at": "2026-11-11T07:46:26.260Z",
+      "content_hash": "c8f114995afe521bdf07bcbd37ebd5a9399a3ef7ff045079b7d014d0530407f8",
+      "verified_at": "2026-11-16T18:27:17.596Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T07:46:26.260Z"
+      "last_updated": "2026-11-16T18:27:17.596Z"
     },
     "MobileNativeFoundation/Store": {
       "repository": "MobileNativeFoundation/Store",

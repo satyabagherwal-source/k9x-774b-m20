@@ -4,22 +4,22 @@
 {
   "source_repository": "open-policy-agent/gatekeeper",
   "source_url": "https://github.com/open-policy-agent/gatekeeper",
-  "source_version": "b6ac7a34",
+  "source_version": "874cc793",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T09:49:58.533Z",
+  "timestamp": "2026-11-16T18:27:12.849Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-policy-agent-gatekeeper",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `b6ac7a34`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T09:49:58.533Z`  
+> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `874cc793`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T18:27:12.849Z`  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `open-policy-agent/gatekeeper` (Commit: `b6ac7a34`)
+- **Target Repository**: `open-policy-agent/gatekeeper` (Commit: `874cc793`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T09:49:57.649Z  
+> **Harvest Timestamp**: 2026-11-16T18:27:11.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1296,501 +1296,105 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6ac7a34` (2026-11-13)
-**Commit Message**: fix: validate Connection names before status creation (#4912)
+### Incident Patch 1: `5f201c3d` (2026-11-16)
+**Commit Message**: chore: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (#4920)
 
-Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `apis/connection/v1alpha1/connection_name_test.go` (added, +203/-0)
+**File**: `go.mod` (modified, +5/-4)
 ```diff
-@@ -0,0 +1,203 @@
-+package v1alpha1_test
-+
-+import (
-+	"context"
-+	"fmt"
-+	"io"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	corev1 "k8s.io/api/core/v1"
-+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
-+	"k8s.io/client-go/dynamic"
-+	"k8s.io/client-go/rest"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/envtest"
-+)
-+
-+func TestConnectionNameValidation(t *testing.T) {
-+	ctx := context.Background()
-+	testEnv := &envtest.Environment{}
-+	cfg, err := testEnv.Start()
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, testEnv.Stop()) })
-+
-+	scheme := runtime.NewScheme()
-+	require.NoError(t, corev1.AddToScheme(scheme))
-+	k8sClient, err := client.New(cfg, client.Options{Scheme: scheme})
-+	require.NoError(t, err)
-+	namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "connection-name-validation"}}
-+	require.NoError(t, k8sClient.Create(ctx, namespace))
-+	dynamicClient, err := dynamic.NewForConfig(cfg)
-+	require.NoError(t, err)
-+
-+	root := filepath.Join("..", "..", "..")
-+	chartCRD := filepath.Join(root, "manifest_staging", "charts", "gatekeeper", "crds", "connection-customresourcedefinition.yaml")
-+	for _, artifact := range []struct {
-+		name string
-+		path string
-+	}{
-+		{name: "helm", path: chartCRD},
-+		{name: "deployment", path: filepath.Join(root, "manifest_staging", "deploy", "gatekeeper.yaml")},
-+	} {
-+		t.Run(artifact.name, func(t *testing.T) {
-+			crd := installConnectionCRD(t, cfg, artifact.path)
-+			for _, version := range crd.Spec.Versions {
-+				if !version.Served {
-+					continue
-+				}
-+				t.Run(version.Name, func(t *testing.T) {
-+					resource := dynamicClient.Resource(schema.GroupVersionResource{
-+						Group: crd.Spec.Group, Version: version.Name, Resource: crd.Spec.Names.Plural,
-+					}).Namespace(namespace.Name)
-+					for _, length := range []int{62, 63, 64} {
-+						t.Run(fmt.Sprint(length), func(t *testing.T) {
-+							name := strings.Repeat("c", length)
-+							obj := connectionForName(version.Name, namespace.Name, name)
-+							created, err := resource.Create(ctx, obj, metav1.CreateOptions{})
-+							if err == nil {
-+								t.Cleanup(func() { require.NoError(t, resource.Delete(ctx, name, metav1.DeleteOptions{})) })
-+							}
-+							if length > 63 {
-+								requireNameTooLong(t, err)
-+								_, err = resource.Get(ctx, name, metav1.GetOptions{})
-+								require.True(t, apierrors.IsNotFound(err), "rejected Connection must not be persisted: %v", err)
-+								return
-+							}
-+							require.NoError(t, err)
-+							stored, err := resource.Get(ctx, name, metav1.GetOptions{})
-+							require.NoError(t, err)
-+							require.Equal(t, name, stored.GetName())
-+							require.Equal(t, created.GetUID(), stored.GetUID())
-+							require.NoError(t, unstructured.SetNestedField(stored.Object, "updated", "spec", "config", "path"))
-+							_, err = resource.Update(ctx, stored, metav1.UpdateOptions{})
-+							require.NoError(t, err)
-+							stored, err = resource.Get(ctx, name, metav1.GetOptions{})
-+							require.NoError(t, err)
-+							path, found, err := unstructured.NestedString(stored.Object, "spec", "config", "path")
-+							require.NoError(t, err)
-+							require.True(t, found)
-+							require.Equal(t, "updated", path)
-+						})
-+					}
-+				})
-+			}
-+		})
-+	}
-+
-+	t.Run("existing alpha Connection survives schema tightening", func(t *testing.T) {
-+		// The generator's unpatched base reproduces the previously installable schema.
-+		installConnectionCRD(t, cfg, filepath.Join(root, "config", "crd", "bases", "connection.gatekeeper.sh_connections.yaml"))
-+		resource := dynamicClient.Resource(schema.GroupVersionResource{
-+			Group: "connection.gatekeeper.sh", Version: "v1alpha1", Resource: "connections",
-+		}).Namespace(namespace.Name)
-+		name := strings.Repeat("l", 64)
-+		obj := connectionForName("v1alpha1", namespace.Name, name)
-+		require.Eventually(t, func() bool {
-+			_, err := resource.Create(ctx, obj, metav1.CreateOptions{DryRun: []string{metav1.DryRunAll}})
-+			return err == nil
-+		}, 10*time.Second, 100*time.Millisecond, "unrestricted schema should accept the old name")
-+		created, err := resource.Create(ctx, obj, metav1.CreateOptions{})
-+		require.NoError(t, err)
-+
-+		installConnectionCRD(t, cfg, chartCRD)
-+		rejected := connectionForName("v1alpha1", namespace.Name, strings.Repeat("r", 64))
-+		var createErr error
-+		require.Eventually(t, func() bool {
-+			_, createErr = resource.Create(ctx, rejected, metav1.CreateOptions{DryRun: []string{metav1.DryRunAll}})
-+			return apierrors.HasStatusCause(createErr, metav1.CauseTypeTooLong)
-+		}, 10*time.Second, 100*time.Millisecond, "restri
+@@ -20,13 +20,13 @@ require (
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/prometheus/client_golang v1.23.2
+ 	github.com/spf13/cobra v1.10.2
+-	github.com/stretchr/testify v1.11.1
++	github.com/stretchr/testify v1.12.1
+ 	go.opentelemetry.io/contrib/detectors/aws/ec2 v1.21.1
+ 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0
+-	go.opentelemetry.io/otel v1.45.0
++	go.opentelemetry.io/otel v1.47.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0
+ 	go.opentelemetry.io/otel/exporters/prometheus v0.63.0
+-	go.opentelemetry.io/otel/metric v1.45.0
++	go.opentelemetry.io/otel/metric v1.47.0
+ 	go.opentelemetry.io/otel/sdk v1.45.0
+ 	go.opentelemetry.io/otel/sdk/metric v1.45.0
+ 	go.uber.org/zap v1.27.1
+@@ -122,7 +122,8 @@ require (
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
 ```
 
-**File**: `apis/status/v1alpha1/connectionpodstatus_name_test.go` (added, +136/-0)
+**File**: `go.sum` (modified, +12/-10)
 ```diff
-@@ -0,0 +1,136 @@
-+package v1alpha1_test
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	"github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
-+	"github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
-+	"github.com/stretchr/testify/require"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/util/validation"
-+)
-+
-+func TestKeyForConnectionNameBoundaries(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		pod          string
-+		namespace    string
-+		connection   string
-+		legacyLength int
-+		want         string
-+	}{
-+		{
-+			name: "ordinary legacy key",
-+			pod:  "some-gk-pod", namespace: "a-gk-ns", connection: "audit",
-+			legacyLength: 29,
-+			want:         "some--gk--pod-a--gk--ns-audit",
-+		},
-+		{
-+			name: "maximum unescaped components",
-+			pod:  strings.Repeat("p", 63), namespace: strings.Repeat("n", 63), connection: strings.Repeat("c", 63),
-+			legacyLength: 191,
-+		},
-+		{
-+			name: "252 byte legacy key",
-+			pod:  strings.Repeat("p", 63), namespace: "n" + strings.Repeat("-", 61) + "n", connection: strings.Repeat("c", 63),
-+			legacyLength: 252,
-+		},
-+		{
-+			name: "253 byte legacy key",
-+			pod:  "p-" + strings.Repeat("p", 61), namespace: "n" + strings.Repeat("-", 61) + "n", connection: strings.Repeat("c", 63),
-+			legacyLength: 253,
-+		},
-+		{
-+			name: "254 byte legacy key",
-+			pod:  "p--" + strings.Repeat("p", 60), namespace: "n" + strings.Repeat("-", 61) + "n", connection: strings.Repeat("c", 63),
-+			legacyLength: 254,
-+		},
-+		{
-+			name: "dash expansion in the default namespace",
-+			pod:  "p" + strings.Repeat("-", 61) + "p", namespace: "gatekeeper-system", connection: "c" + strings.Repeat("-", 61) + "c",
-+			legacyLength: 268,
-+			want:         "connection-29868b8ad5a78129ec364439add044673db70114c7ca1143501f5ea7fe46cf01",
-+		},
-+		{
-+			name: "dash expansion in a custom namespace",
-+			pod:  "p" + strings.Repeat("-", 61) + "p", namespace: "n" + strings.Repeat("-", 61) + "n", connection: "c" + strings.Repeat("-", 61) + "c",
-+			legacyLength: 374,
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			legacy, err := v1beta1.DashPacker(tt.pod, tt.namespace, tt.connection)
-+			require.NoError(t, err)
-+			require.Len(t, legacy, tt.legacyLength)
-+
-+			key, err := v1alpha1.KeyForConnection(tt.pod, tt.namespace, tt.connection)
-+			require.NoError(t, err)
-+			require.LessOrEqual(t, len(key), validation.DNS1123SubdomainMaxLength)
-+			require.Empty(t, validation.IsDNS1123Subdomain(key))
-+			if tt.legacyLength <= validation.DNS1123SubdomainMaxLength {
-+				require.Equal(t, legacy, key, "valid legacy keys must not change")
-+			} else {
-+				require.Len(t, key, len("connection-")+64)
-+				// A legacy three-component key has at least two separators.
-+				require.Equal(t, 1, strings.Count(key, "-"), "hashed keys must not overlap the legacy format")
-+			}
-+			if tt.want != "" {
-+				require.Equal(t, tt.want, key)
-+			}
-+			again, err := v1alpha1.KeyForConnection(tt.pod, tt.namespace, tt.connection)
-+			require.NoError(t, err)
-+			require.Equal(t, key, again)
-+
-+			t.Setenv("POD_NAMESPACE", tt.namespace)
-+			scheme := runtime.NewScheme()
-+			require.NoError(t, corev1.AddToScheme(scheme))
-+			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: tt.pod, Namespace: tt.namespace, UID: "pod-uid"}}
-+			status, err := v1alpha1.NewConnectionStatusForPod(pod, tt.namespace, tt.connection, scheme)
-+			require.NoError(t, err)
-+			require.Equal(t, key, status.Name)
-+			require.Equal(t, tt.namespace, status.Namespace)
-+			require.Equal(t, tt.connection, status.Labels[v1beta1.ConnectionNameLabel])
-+			require.Equal(t, tt.pod, status.Labels[v1beta1.PodLabel])
-+			require.Equal(t, tt.pod, status.Status.ID)
-+		})
-+	}
-+}
-+
-+func TestKeyForConnectionDistinctNames(t *testing.T) {
-+	pod := "p" + strings.Repeat("-", 61) + "p"
-+	namespace := "n" + strings.Repeat("-", 61) + "n"
-+	connection := "c" + strings.Repeat("-", 61) + "c"
-+	shortPod := "p" + strings.Repeat("-", 59) + "p"
-+	shortNamespace := "n" + strings.Repeat("-", 57) + "n"
-+	tuples := [][3]string{
-+		{pod, namespace, connection},
-+		{pod[:62] + "q", namespace, connection},
-+		{pod, namespace[:62] + "o", connection},
-+		{pod, namespace, connection[:62] + "d"},
-+		{shortPod + "-a", shortNamespace, connection},
-+		{shortPod, "a-" + shortNamespace, connection},
-+	}
-+	keys := make(map[string]bool)
-+	for _, tuple := range tuples {
-+		key, err := v1alpha1.KeyForConnection(tuple[0], tuple[1], tuple[2])
-+		require.NoError(t, err)
-+		require.LessOrEqual(t, len(key), validation.DNS1123SubdomainMaxLength)
-+		require.False(t, keys[key], "different pod/namespace/connection tuples must have different keys")
-+		keys[key] = true
-+	}
-+}
-+
-+func TestKeyForConnectionInvalidComponents(t *testing.T) {
-+	for _, invalid := range []string{"", "-invalid", "invalid-"} {
-+		for i := range 3 {
-+			tuple := []string{"pod", "namespace", "connection"}
-+			tu
-```
-
-**File**: `apis/status/v1alpha1/connectionpodstatus_types.go` (modified, +15/-1)
-```diff
-@@ -16,13 +16,17 @@ limitations under the License.
- package v1alpha1
- 
- import (
-+	"crypto/sha256"
-+	"fmt"
-+
- 	"github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/util"
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/validation"
- 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
- )
- 
-@@ -142,5 +146,15 @@ func NewConnectionStatusForPod(pod *corev1.Pod, connectionNamespace, connectionN
- 
- // KeyForConnection returns a unique status object name given the Pod ID and a connection object.
- func KeyForConnection(id string, connectionNamespace string, connectionName string) (string, error) {
--	return v1beta1.DashPacker(id, connectionNamespace, connectionName)
-+	key, err := v1beta1.DashPacker(id, connectionNamespace, connectionName)
-+	if err != nil {
-+		return "", err
-+	}
-+	if len(key) <= validation.DNS1123SubdomainMaxLength {
-+		return key, nil
-+	}
-+	// Preserve every valid legacy key. Hash the unambiguous packed tuple only
-+	// when dash escaping exceeds the API name limit. The single separator
-+	// keeps this format disjoint from legacy keys, which have at least two.
-+	return fmt.Sprintf("connection-%x", sha256.Sum256([]byte(key))), nil
- }
-```
-
-**File**: `config/crd/kustomization.yaml` (modified, +6/-0)
-```diff
-@@ -57,6 +57,12 @@ patchesJson6902:
-     kind: CustomResourceDefinition
-     name: syncsets.syncset.gatekeeper.sh
-   path: patches/max_name_size.yaml
-+- target:
-+    group: apiextensions.k8s.io
-+    version: v1
-+    kind: CustomResourceDefinition
-+    name: connections.connection.gatekeeper.sh
-+  path: patches/max_name_size.yaml
- 
- patchesStrategicMerge:
- #- patches/max_name_size_for_modifyset.yaml
-```
-
-**File**: `manifest_staging/charts/gatekeeper/crds/connection-customresourcedefinition.yaml` (modified, +4/-0)
-```diff
-@@ -37,6 +37,10 @@ spec:
-               More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-             type: string
-           metadata:
-+            properties:
-+              name:
-+                maxLength: 63
-+                type: string
-             type: object
-           spec:
-             description: spec defines the desired state of Connection.
-```
-
-**File**: `manifest_staging/deploy/gatekeeper.yaml` (modified, +4/-0)
-```diff
-@@ -3152,6 +3152,10 @@ spec:
-               More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-             type: string
-           metadata:
-+            properties:
-+              name:
-+                maxLength: 63
-+                type: string
-             type: object
-           spec:
-             description: spec defines the desired state of Connection.
-```
-
-**File**: `pkg/controller/export/connection_status_name_test.go` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+package export
-+
-+import (
-+	"context"
-+	"strings"
-+	"testing"
-+
-+	connectionv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1alpha1"
-+	statusv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
-+	statusv1beta1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
-+	anythingtypes "github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/types"
-+	"github.com/stretchr/testify/require"
-+	corev1 "k8s.io/api/core/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/validation"
-+	k8sscheme "k8s.io/client-go/kubernetes/scheme"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+)
-+
-+func TestConnectionPodStatusNameLifecycle(t *testing.T) {
-+	ctx := context.Background()
-+	namespace := "n" + strings.Repeat("-", 61) + "n"
-+	t.Setenv("POD_NAMESPACE", namespace)
-+	k8sClient, err := client.New(cfg, client.Options{Scheme: k8sscheme.Scheme})
-+	require.NoError(t, err)
-+	ns := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}}
-+	require.NoError(t, k8sClient.Create(ctx, ns))
-+	t.Cleanup(func() { require.NoError(t, k8sClient.Delete(ctx, ns)) })
-+
-+	for _, tt := range []struct {
-+		name       string
-+		pod        string
-+		connection string
-+	}{
-+		{name: "253 byte legacy key", pod: "p-" + strings.Repeat("p", 61), connection: strings.Repeat("c", 63)},
-+		{name: "254 byte legacy key", pod: "p--" + strings.Repeat("p", 60), connection: strings.Repeat("c", 63)},
-+		{name: "maximum dash expansion", pod: "p" + strings.Repeat("-", 61) + "p", connection: "c" + strings.Repeat("-", 61) + "c"},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			pod := &corev1.Pod{
-+				ObjectMeta: metav1.ObjectMeta{Name: tt.pod, Namespace: namespace},
-+				Spec:       corev1.PodSpec{Containers: []corev1.Container{{Name: "manager", Image: "unused"}}},
-+			}
-+			require.NoError(t, k8sClient.Create(ctx, pod))
-+			t.Cleanup(func() { require.NoError(t, k8sClient.Delete(ctx, pod)) })
-+			getPod := func(context.Context) (*corev1.Pod, error) { return pod, nil }
-+
-+			var statuses []types.NamespacedName
-+			for _, name := range []string{tt.connection, tt.connection[:62] + "d"} {
-+				conn := &connectionv1alpha1.Connection{
-+					ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: namespace},
-+					Spec: connectionv1alpha1.ConnectionSpec{
-+						Driver: "disk",
-+						Config: &anythingtypes.Anything{Value: map[string]interface{}{"path": "unused"}},
-+					},
-+				}
-+				require.NoError(t, k8sClient.Create(ctx, conn))
-+				t.Cleanup(func() { require.NoError(t, k8sClient.Delete(ctx, conn)) })
-+
-+				require.NoError(t, updateOrCreateConnectionPodStatus(ctx, k8sClient, k8sClient, k8sscheme.Scheme, conn, nil, nil, getPod))
-+				t.Cleanup(func() { require.NoError(t, deleteStatus(ctx, k8sClient, namespace, name, getPod)) })
-+				key, err := statusv1alpha1.KeyForConnection(pod.Name, namespace, name)
-+				require.NoError(t, err)
-+				require.LessOrEqual(t, len(key), validation.DNS1123SubdomainMaxLength)
-+				statusKey := types.NamespacedName{Namespace: namespace, Name: key}
-+				statuses = append(statuses, statusKey)
-+				status := &statusv1alpha1.ConnectionPodStatus{}
-+				require.NoError(t, k8sClient.Get(ctx, statusKey, status))
-+				require.Equal(t, name, status.Labels[statusv1beta1.ConnectionNameLabel])
-+				require.Equal(t, pod.Name, status.Labels[statusv1beta1.PodLabel])
-+				require.Equal(t, pod.Name, status.Status.ID)
-+				require.Equal(t, conn.UID, status.Status.ConnectionUID)
-+				require.Len(t, status.OwnerReferences, 1)
-+				require.Equal(t, pod.UID, status.OwnerReferences[0].UID)
-+				uid := status.UID
-+
-+				connectionErrors := []*statusv1alpha1.ConnectionError{{Type: statusv1alpha1.UpsertConnectionError, Message: "updated"}}
-+				require.NoError(t, updateOrCreateConnectionPodStatus(ctx, k8sClient, k8sClient, k8sscheme.Scheme, conn, connectionErrors, nil, getPod))
-+				require.NoError(t, k8sClient.Get(ctx, statusKey, status))
-+				require.Equal(t, uid, status.UID, "updates must find the original status object")
-+				require.Equal(t, connectionErrors, status.Status.ConnectionErrors)
-+			}
-+
-+			require.NotEqual(t, statuses[0], statuses[1], "distinct Connections must not share a status")
-+			list := &statusv1alpha1.ConnectionPodStatusList{}
-+			require.NoError(t, k8sClient.List(ctx, list, client.InNamespace(namespace), client.MatchingLabels{statusv1beta1.PodLabel: pod.Name}))
-+			require.Len(t, list.Items, 2)
-+
-+			require.NoError(t, deleteStatus(ctx, k8sClient, namespace, tt.connection, getPod))
-+			require.True(t, apierrors.IsNotFound(k8sClient.Get(ctx, statuses[0], &statusv1alpha1.ConnectionPodStatus{})))
-+			require.NoError(t, k8sClient.Get(ctx, statuses[1], &statusv1alpha1.ConnectionPodStatus{}), "deleting one status must preserve the other")
-+			require.NoError(t, deleteStatus(ctx, k8sClient, namespace, tt.connection[:62]+"d", getPod))
-+			require.NoError(t, k8sCli
-```
-
-**File**: `website/docs/export.md` (modified, +25/-0)
-```diff
-@@ -103,6 +103,31 @@ Each publisher replaces only the entry it owns. Audit updates `source: audit`, w
- 
- The Dapr export driver has been removed. Migrate existing Dapr Connections to disk, providing a writable volume and a consumer, or disable violation export while migrating.
- 
-+### Connection names and upgrade preflight
-+
-+`Connection.metadata.name` must be at most 63 characters so it can be used in status labels. Earlier alpha CRDs accepted longer names.
-+
-+Before upgrading the CRD, find existing Connections that need migration:
-+
-+```shell
-+kubectl get connections.connection.gatekeeper.sh --all-namespaces -o json |
-+  jq -r '.items[] | select(.metadata.name | length > 63) | [.metadata.namespace, .metadata.name] | @tsv'
-+```
-+
-+Existing long-named Connections remain readable but cannot produce valid status labels. They are not renamed or deleted automatically. New or restored Connections must satisfy the limit.
-+
-+For each long-named Connection:
-+
-+1. Back up its configuration and create a replacement in the same namespace with a distinct name of at most 63 characters and the intended driver/configuration.
-+2. Update `--audit-connection` on every exporting deployment, or `audit.connection` with Helm. Changing the Helm value replaces the chart-managed Connection; plan for interrupted or overlapping export during the rollout.
-+3. Check the replacement's `status.byPod`, export metrics, and consumer output before retiring the old Connection.
-+
-+#### ConnectionPodStatus names
-+
-+Status names that would exceed Kubernetes' 253-character limit use a hashed fallback; existing valid names are unchanged. Identify statuses using their `internal.gatekeeper.sh/connection-name` and `internal.gatekeeper.sh/pod` labels and `status.id`, rather than parsing their names.
-+
-+Downgrading to an older controller restores status-creation failures for these overlength combinations. Pod names remain subject to the separate 63-character status-label limit.
-+
- ## Enabling Gatekeeper to export admission violations
- 
- Admission violation export is independent from audit export and is disabled by default. Set `--enable-admission-violation-export=true` on the controller-manager deployment to enable it. Enabling `--enable-violation-export` on the audit deployment does not enable admission export.
+@@ -235,12 +235,12 @@ github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An
+ github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
+ github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+-github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
+-github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=
++github.com/stretchr/objx v0.5.3 h1:jmXUvGomnU1o3W/V5h2VEradbpJDwGrzugQQvL0POH4=
++github.com/stretchr/objx v0.5.3/go.mod h1:rDQraq+vQZU7Fde9LOZLr8Tax6zZvy4kuNKF+QYS+U0=
+ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+ github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+-github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
+-github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
++github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
++github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
+ github.com/tchap/go-patricia/v2 v2.3.3 h1:xfNEsODumaEcCcY3gI0hYPZ/PcpVv5ju6RMAhgwZDDc=
+ github.com/tchap/go-patricia/v2 v2.3.3/go.mod h1:VZRHKAb53DLaG+nA9EaYYiaEx6YztwDlLElMsnSHD4k=
+ github.com/valyala/fastjson v1.6.10 h1:/yjJg8jaVQdYR3arGxPE2X5z89xrlhS0eGXdv+ADTh4=
+@@ -271,8 +271,8 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
+ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.65.0/go.mod h1:KDgtbWKTQs4bM+VPUr6WlL9m/WXcmkCcBlIzqxPGzmI=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 h1:RuynHbfU8JUEw7DyONgkVYg2SVtsoF28y0LGIr69jgA=
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0/go.mod h1:qZF+/lBs71APw8mlnEZcqZHMzqrYrsFiJOv83lX1OGo=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
+@@ -281,16 +281,18 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MC
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
+ go.opentelemetry.io/otel/exporters/prometheus v0.63.0 h1:OLo1FNb0pBZykLqbKRZolKtGZd0Waqlr240YdMEnhhg=
+ go.opentelemetry.io/otel/exporters/prometheus v0.63.0/go.mod h1:8yeQAdhrK5xsWuFehO13Dk/Xb9FuhZoVpJfpoNCfJnw=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+ go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
+ go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
+ go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+ go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+ go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+ go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
+ go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
+ go.uber.org/atomic v1.11.0 h1:ZvwS0R+56ePWxUNi+Atn9dWONBPp/AUETXlHW0DxSjE=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4921** (2026-11-16): chore: bump js-yaml from 3.14.1 to 3.15.2 in /website (@dependabot[bot])
+- **PR #4920** (2026-11-16): chore: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
+- **PR #4918** (closed): chore: bump the all group with 7 updates (@dependabot[bot])
 - **PR #4912** (2026-11-13): fix: validate Connection names before status creation (@JaydipGabani)
 - **PR #4908** (2026-11-05): chore: bump follow-redirects from 1.16.1 to 1.16.2 in /website (@dependabot[bot])
 - **PR #4907** (2026-11-05): chore: bump body-parser from 1.20.6 to 1.20.9 in /website (@dependabot[bot])
-- **PR #4906** (2026-11-05): chore: bump the all group across 1 directory with 8 updates (@dependabot[bot])
-- **PR #4905** (2026-11-05): ci: update kubernetes test versions to 1.35-1.37 (@abhisheksheth28)
-- **PR #4904** (2026-11-05): chore: bump node-forge from 1.4.0 to 1.4.3 in /website (@dependabot[bot])
 
 ---
 
@@ -1810,70 +1414,38 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. validate Connection names before status creation
+## X. bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0
 
 **RULE**:
-When implementing operations in `apis/connection/v1alpha1/connection_name_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6ac7a34`: validate Connection names before status creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f201c3d`: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `apis/connection/v1alpha1/connection_name_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package v1alpha1_test
-
-import (
-	"context"
-	"fmt"
-	"io"
-	"os"
-	"path/filepath"
-	"strings"
-	"testing"
-	"time"
-
-	"github.com/stretchr/testify/require"
-	corev1 "k8s.io/api/core/v1"
-	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
-	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/rest"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/envtest"
-)
-
-func TestConnectionNameValidation(t *testing.T) {
-	ctx := context.Background()
-	testEnv := &envtest.Environment{}
-	cfg, err := testEnv.Start()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, testEnv.Stop()) })
-
-	scheme := runtime.NewScheme()
-	require.NoError(t, corev1.AddToScheme(scheme))
-	k8sClient, err := client.New(cfg, client.Options{Scheme: scheme})
-	require.NoError(t, err)
-	namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "connection-name-validation"}}
-	require.NoError(t, k8sClient.C
+	github.com/stretchr/testify v1.12.1
+	go.opentelemetry.io/otel v1.47.0
+	go.opentelemetry.io/otel/metric v1.47.0
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	github.com/stretchr/testify v1.11.1
+	go.opentelemetry.io/otel v1.45.0
+	go.opentelemetry.io/otel/metric v1.45.0
+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6ac7a34` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f201c3d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

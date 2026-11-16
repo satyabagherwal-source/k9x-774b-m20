@@ -10316,3 +10316,6 @@
 | `CYCLE-20261116-XGPT` | `2026-11-16T18:10:55.841Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8768` | Yes (`a63beb76...`) |
 | `CYCLE-20261116-7ML7` | `2026-11-16T18:18:50.011Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8769` | Yes (`de49ec6f...`) |
 | `CYCLE-20261116-7T2G` | `2026-11-16T18:18:58.408Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5802` | Yes (`22cd038f...`) |
+| `CYCLE-20261116-IEFV` | `2026-11-16T18:27:12.667Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8770` | Yes (`faed9a52...`) |
+| `CYCLE-20261116-II8H` | `2026-11-16T18:27:17.585Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8771` | Yes (`c8f11499...`) |
+| `CYCLE-20261116-IK5V` | `2026-11-16T18:27:20.083Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8772` | Yes (`68f58263...`) |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T18:19:03.980Z",
-  "total_records": 1303,
+  "last_updated": "2026-11-16T18:27:24.759Z",
+  "total_records": 1305,
   "domains": {
     "A": {
       "total": 7,
@@ -679,7 +679,7 @@
       ]
     },
     "G": {
-      "total": 232,
+      "total": 234,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -912,7 +912,9 @@
         "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants",
         "domain_intelligence-architecture-intelligence-louis-cfm-coucou-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-core-invariants",
-        "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants",
+        "domain_intelligence-architecture-intelligence-seaql-sea-orm-learnings-core-invariants"
       ]
     },
     "H": {
@@ -14382,8 +14384,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "c965c05c1e5fa7cfd897586988df71b0d4823b6a8c465dafb2238e893b4271d0",
-      "created_at": "2026-11-16T17:43:50.185Z"
+      "content_hash": "979e8cb2eee84edaa15bc304024b65f3efbc1acffa1f5ddc1dc4c3167ea3819c",
+      "created_at": "2026-11-16T18:27:20.375Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -14832,8 +14834,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "6a37961347c4789443a1b368224a50bee6d54f3f7ef07f52093fa7f3e2975f23",
-      "created_at": "2026-11-16T17:44:04.679Z"
+      "content_hash": "f5161d930b983041fa945c358ed29a91d7d3f3f9a1e416160bd9e85a458372ed",
+      "created_at": "2026-11-16T18:27:24.759Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -19876,8 +19878,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
       "repository": "open-policy-agent/gatekeeper",
-      "content_hash": "950f5c60cc44bb0d74b60f884bda9aa48b4851afd8cb025a2d3f080414245cce",
-      "created_at": "2026-11-15T09:49:58.621Z"
+      "content_hash": "aaedbacc4203628b57d0c320d4d612f4f2ad8ad0b2f05faabf3ba47f198ab9e0",
+      "created_at": "2026-11-16T18:27:12.967Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants",
@@ -19954,8 +19956,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent-gatekeeper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-learnings-quality-verification-intelligence-open-po.md",
       "repository": "open-policy-agent-gatekeeper-learnings",
-      "content_hash": "89022f6fb45b1246dfe7399a8f2e79d3101a330810e49eef5b9e6ddf2499c857",
-      "created_at": "2026-11-15T09:55:28.992Z"
+      "content_hash": "b9f21618773c16f28546a01092b5ef4b61858bdd387f04e3c8a6c7fad9242850",
+      "created_at": "2026-11-16T18:27:23.548Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants",
@@ -23617,6 +23619,24 @@
       "repository": "gravitl-netmaker-learnings",
       "content_hash": "c55407966f81e67927df7103a515cc9446ee1ba8b498fd799fb869e6489a3e30",
       "created_at": "2026-11-16T18:19:03.313Z"
+    },
+    "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: SeaQL/sea-orm Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-seaql-sea-orm-architecture-intelligence-seaql-sea-orm-core-invariants.md",
+      "repository": "SeaQL/sea-orm",
+      "content_hash": "ea885a5908d5f92a90f42564d880236afdf6cad53c019d34d07669dc585897ed",
+      "created_at": "2026-11-16T18:27:17.872Z"
+    },
+    "domain_intelligence-architecture-intelligence-seaql-sea-orm-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-seaql-sea-orm-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: seaql-sea-orm-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-seaql-sea-orm-learnings-architecture-intelligence-seaql-sea-orm-learnings-core-i.md",
+      "repository": "seaql-sea-orm-learnings",
+      "content_hash": "f0b04c6eeaaed2bcb9650a754997ca3b6faa6aaddab044591bbd22940deb0c9c",
+      "created_at": "2026-11-16T18:27:24.124Z"
     }
   }
 }

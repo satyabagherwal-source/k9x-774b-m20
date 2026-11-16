@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T18:19:04.260Z",
+  "last_updated": "2026-11-16T18:27:24.986Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T18:19:03.607Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-16T17:44:04.297Z",
+      "processed_at": "2026-11-16T18:27:24.349Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2938,7 +2938,7 @@
       "staged_for_review": 0
     },
     "open-policy-agent-gatekeeper-learnings.md": {
-      "processed_at": "2026-11-15T09:55:28.701Z",
+      "processed_at": "2026-11-16T18:27:23.251Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3206,9 +3206,14 @@
       "processed_at": "2026-11-16T18:02:18.915Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "seaql-sea-orm-learnings.md": {
+      "processed_at": "2026-11-16T18:27:23.778Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1332,
+  "total_dossiers_evaluated": 1335,
   "total_canonical_promoted": 290,
-  "total_staged_for_review": 1033
+  "total_staged_for_review": 1036
 }

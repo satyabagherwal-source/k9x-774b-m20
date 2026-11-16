@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T18:19:03.839Z",
+  "last_updated": "2026-11-16T18:27:24.646Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19669,6 +19669,68 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E85AF0-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-IMQW",
+      "directive_title": "bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0",
+      "source_repo": "open-policy-agent-gatekeeper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IMQW-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-IIDB",
+      "directive_title": "fix typos in comments and examples",
+      "source_repo": "SeaQL/sea-orm",
+      "source_commit": "18cbaa3d",
+      "staged_file": "11_INBOX/candidate-directives/CD-IIDB-fix-typos-in-comments-and-examples.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-INOJ",
+      "directive_title": "Draft NUC 109 Operator Section Arguments",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-INOJ-draft-nuc-109-operator-section-arguments.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-F1E33B",
+      "directive_title": "bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "open-policy-agent-gatekeeper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F1E33B-bump-go-opentelemetry-io-otel-trace-from.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-IN70",
+      "directive_title": "docs: fix typos in comments and examples",
+      "source_repo": "seaql-sea-orm-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IN70-docs-fix-typos-in-comments-and-examples.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-ADDDBB",
+      "directive_title": "Draft NUC 109 Operator Section Arguments",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ADDDBB-draft-nuc-109-operator-section-arguments.md",
       "staged_date": "2026-11-16"
     }
   ]

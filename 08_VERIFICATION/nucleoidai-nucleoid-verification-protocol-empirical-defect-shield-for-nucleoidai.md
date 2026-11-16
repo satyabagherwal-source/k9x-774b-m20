@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "8b9262f0",
+  "source_version": "8ee7817e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T17:43:50.074Z",
+  "timestamp": "2026-11-16T18:27:20.259Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8b9262f0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T17:43:50.074Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8ee7817e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T18:27:20.259Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `8b9262f0`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `8ee7817e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T17:43:49.271Z  
+> **Harvest Timestamp**: 2026-11-16T18:27:19.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1733,392 +1733,151 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b9262f0` (2026-11-16)
-**Commit Message**: NUC 108 List and Population Partitions
+### Incident Patch 1: `8ee7817e` (2026-11-16)
+**Commit Message**: Draft NUC 109 Operator Section Arguments
 
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Utility enhancement): the frozen candidate meets
-every hard criterion and passes every policy check, including the
-required token non-regression gate. The cycle found no stale Draft, drew
-Utility enhancement uniformly from the five eligible categories,
-allocated NUC 108 in 11001bac, and completed it with a fresh baseline,
-candidate, proposer, Rust improvement pass and evaluator.
+Category: Syntax enhancement, drawn uniformly at random (index 0 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle, so the token non-regression gate applies
+to this category.
 
-Adds the read-only list query partition to lists and class populations,
-the receivers of filter: xs.partition(predicate) returns a list of two
-lists, the items filter keeps and the items it drops, each in receiver
-order, so [3, 8, 1, 9].partition(x -> x > 4) is [[8, 9], [3, 1]]. The
-predicate runs once per item with only the item, the items are returned
-unchanged, the receiver is never written, and a standing declaration
-such as groups = Order.partition(o -> o.shipped) follows later instances
-and writes, as a standing filter does. Only calls that raised
-TypeError("<receiver>.partition is not a function") change; without a
-function argument they now raise TypeError("partition expects a
+Requested change: let a call argument that begins with a symbol binary
+operator that cannot begin an expression (==, !=, ===, !==, <, <=, >,
+>=, *, %, **, &&, || or ??) stand for the one-parameter function that
+applies the operator to its parameter, an operator section:
+xs.filter(> 4) passes x -> x > 4, so [3, 8, 1, 9].filter(> 4) is [8, 9].
+The rest of the argument, up to its "," or ")", is read as if the
+parameter stood before the operator, with the usual precedence, and its
+names read as in the body of the equivalent lambda, once per call. The
+parameter has no name. Sections are whole positional call arguments, as
+NUC 79's property selectors are; every other position keeps its accepted
+reading. + and - keep their unary readings, and / and the word operators
+are not section operators. Only inputs that raised
+SyntaxError("Unexpected '<operator>'") change; an accepted program that
+holds a section only in an i
 
-
-**File**: `README.md` (modified, +28/-0)
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -2248,6 +2248,34 @@ assert(account.balance, 105)
-   the receiver through `self`, as every method does. See the
-   [root contract](nucleoid.spec.md#python-style-self-parameters).
+@@ -66,6 +66,7 @@ Created: 31-Jul-2026
+ | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Accepted |
+ | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
+ | [104](nuc-0104.md) | Any and All Class References | Accepted |
++| [109](nuc-0109.md) | Operator Section Arguments | Draft |
  
-+## List and population partitions
-+
-+**Partition keeps shipped and pending orders apart in one live rule**
-+
-+```nuc
-+class Order(total, shipped):
-+    this.total = total
-+    this.shipped = shipped
-+totals = Order.partition(order -> order.shipped).map(side -> side.map(order -> order.total))
-+Order(40, true)
-+late = Order(15, false)
-+Order(90, true)
-+assert(totals, [[40, 90], [15]])
-+late.shipped = true
-+Order(25, false)
-+assert(totals, [[40, 15, 90], [25]])
-+```
-+
-+- [NUC 108](docs/nuc-0108.md) adds `partition(predicate)` to lists and class
-+  populations. `Order.partition(order -> order.shipped)` is a list of two
-+  lists: the orders the predicate keeps, as `filter` keeps them, and the
-+  orders it drops, each side in population order.
-+- The rule is stated once and runs once per order, where two `filter` calls
-+  state it twice, the second time negated. `totals` stays live: the late
-+  order joins the shipped side once it ships, and a new pending order takes
-+  its place on the other. See the
-+  [root contract](nucleoid.spec.md#list-and-population-partitions).
-+
- ## Reactive list flattening
+ ### Runtime features
  
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +22/-16)
-```diff
-@@ -748,19 +748,25 @@
- {"id":"spec-0748","description":"Nucleoid constructs subclasses through self parameter initializers and super","code":"class Vessel:\n    def __init__(self, name, capacity):\n        self.name = name\n        self.capacity = capacity\n    def describe(self):\n        return self.name + \" holds \" + self.capacity\nclass Tanker extends Vessel:\n    def __init__(self, name, capacity, cargo):\n        super(name, capacity * 1000)\n        self.cargo = cargo\n    def describe(self):\n        return self.name + \" carries \" + self.cargo\nbarge = Vessel(\"barge\", 40)\ntanker = Tanker(\"aurora\", 80, \"oil\")\nassert([tanker.name, tanker.capacity, tanker.cargo], [\"aurora\", 80000, \"oil\"])\nassert([barge.describe(), tanker.describe()], [\"barge holds 40\", \"aurora carries oil\"])\nassert([Vessel.length, Tanker.length], [1, 1])\ntanker.capacity","return":"80000"}
- {"id":"spec-0749","description":"Nucleoid applies class level rules to instances of self parameter methods","code":"class Tank:\n    def __init__(self, level, capacity):\n        self.level = level\n        self.capacity = capacity\n    def drain(self, amount):\n        self.level = self.level - amount\n$Tank.ratio = $Tank.level / $Tank.capacity\n$Tank.low = $Tank.ratio < 0.25\nnorth = Tank(30, 100)\nsouth = Tank(90, 100)\nreserve = north.level + south.level\nassert([north.low, south.low, reserve], [false, false, 120])\nnorth.drain(10)\nassert([north.ratio, north.low, reserve], [0.2, true, 110])\nsouth.drain(80)\nassert([south.low, reserve], [true, 30])\nreserve","return":"30"}
- {"id":"spec-0750","description":"Nucleoid rolls back failed self parameter method calls and constructions","code":"class Account:\n    def __init__(self, owner, balance):\n        if balance < 0:\n            throw \"NEGATIVE\"\n        self.owner = owner\n        self.balance = balance\n    def withdraw(self, amount):\n        self.balance = self.balance - amount\n        if self.balance < 0:\n            throw \"OVERDRAWN\"\n        return self.balance\naccount = Account(\"ada\", 50)\nfailure = \"\"\ntry:\n    account.withdraw(80)\ncatch error:\n    failure = error\nassert([failure, account.balance], [\"OVERDRAWN\", 50])\ntry:\n    Account(\"bo\", -5)\ncatch error:\n    failure = error\nassert([failure, Account.length], [\"NEGATIVE\", 1])\nassert(account.withdraw(20), 30)\naccount.balance","return":"30"}
--{"id":"spec-0751","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0752","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0753","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0754","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0755","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0756","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"
-```
-
-**File**: `dataset/nucleoid.synth.72.jsonl` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+{"id":"synth-72-0001","description":"Partition splits a list into the items a predicate keeps and the items it drops, each in list order","code":"readings = [12, 31, 7, 45, 18]\nreadings.partition(reading -> reading > 20)","return":"[[31,45],[12,7,18]]"}
-+{"id":"synth-72-0002","description":"A standing partition follows pushed items and a changed threshold that its predicate reads","code":"scores = [72, 45, 90]\nlimit = 60\nsplit = scores.partition(score -> score >= limit)\nscores.push(58)\nlimit = 50\nsplit","return":"[[72,90,58],[45]]"}
-+{"id":"synth-72-0003","description":"Partition of a class population keeps population order and moves an instance when its property changes","code":"class Order(item, shipped):\n    this.item = item\n    this.shipped = shipped\npen = Order(\"pen\", false)\nOrder(\"ink\", true)\nbook = Order.partition(order -> order.shipped)\npen.shipped = true\nbook.map(side -> side.map(order -> order.item))","return":"[[\"pen\",\"ink\"],[]]"}
-+{"id":"synth-72-0004","description":"Partition of an empty list or an empty class gives two empty lists","code":"class Crate\n[[].partition(x -> x > 0), Crate.partition(crate -> crate.full)]","return":"[[[],[]],[[],[]]]"}
-+{"id":"synth-72-0005","description":"Partition decides by truthiness as filter does: empty strings, zero and false go to the second list, an empty list to the first","code":"[\"yes\", \"\", 0, 7, false, \"no\", []].partition(answer -> answer)","return":"[[\"yes\",7,\"no\",[]],[\"\",0,false]]"}
-+{"id":"synth-72-0006","description":"Each side of a partition maps and counts like any other list","code":"class Shape(name, area):\n    this.name = name\n    this.area = area\nShape(\"square\", 16)\nShape(\"dot\", 1)\nShape(\"bar\", 12)\nparts = Shape.partition(shape -> shape.area >= 10)\n[parts.map(side -> side.length), parts[0].map(shape -> shape.name)]","return":"[[2,1],[\"square\",\"bar\"]]"}
-+{"id":"synth-72-0007","description":"A class-level rule partitions the list of every instance on its own","code":"class Room(name, tiles):\n    this.name = name\n    this.tiles = tiles\n$Room.split = $Room.tiles.partition(tile -> tile > 0)\nhall = Room(\"hall\", [3, 0, 5])\nden = Room(\"den\", [0])\nhall.tiles.push(2)\n[hall.split, den.split]","return":"[[[3,5,2],[0]],[[],[0]]]"}
-+{"id":"synth-72-0008","description":"Positional destructuring names the two lists of a partition as two standing declarations","code":"xs = [3, 8, 1, 9]\nkept, dropped = xs.partition(x -> x > 4)\nxs.push(5, 2)\n[kept, dropped]","return":"[[8,9,5],[3,1,2]]"}
-+{"id":"synth-72-0009","description":"Partition without a function as its first argument raises partition expects a function, even on an empty list","code":"message = \"\"\ntry:\n    [].partition(5)\ncatch error:\n    message = error\nmessage","return":"\"TypeError: partition expects a function\""}
-```
-
-**File**: `docs/README.md` (modified, +56/-1)
-```diff
-@@ -2507,7 +2507,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), and `sortBy` ([NUC 105](nuc-0105.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), and `partition` ([NUC 108](nuc-0108.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
- 
- ```
-@@ -3611,6 +3611,59 @@ book[1].who
-   [list and population sorting by key](../nucleoid.spec.md#list-and-population-sorting-by-key)
-   section.
- 
-+### List and population partitions
-+
-+```
-+scores = [72, 45, 90, 58]
-+passing = scores.partition(score -> score >= 60)
-+class Bid(who, amount):
-+    this.who = who
-+    this.amount = amount
-+ada = Bid("ada", 40)
-+Bid("bo", 65)
-+book = Bid.partition(bid -> bid.amount > 50)
-+assert(passing, [[72, 90], [45, 58]])
-+assert(book.map(side -> side.map(bid -> bid.who)), [["bo"], ["ada"]])
-+scores.push(61, 12)
-+Bid("col", 30)
-+ada.amount = 70
-+assert(passing, [[72, 90, 61], [45, 58, 12]])
-+assert(book.map(side -> side.map(bid -> bid.who)), [["ada", "bo"], ["col"]])
-+assert(scores[0], 72)
-+book[1][0].who
-+```
-+
-+- This is the complete
-+  `Nucleoid partitions lists and populations with partition` program in
-+  `tests/reference.md`, without its title and expected-return metadata; it
-+  returns `"col"`.
-+- [NUC 108](nuc-0108.md) adds `partition(predicate)` to lists and class
-+  instance lists. The result is a list of two lists: the items the predicate
-+  keeps, as `filter` keeps them, then every other item, each list in receiver
-+  order and each item the item itself. An empty list or class gives
-+  `[[], []]`.
-+- The predicate's result decides by truthiness, as for `filter`, so the second
-+  list is exactly what `filter(item -> not predicate(item))` keeps. A negated
-+  comparison is not always that complement: NaN, undefined, as a missing
-+  property reads, objects and strings that are not numeric fail both
-+  `item > 4` and `item <= 4`.
-+- For a predicate without side effects, `xs.partition(p)` is exactly
-+  `[xs.filter(p), xs.filter(item -> not p(item))]`, which calls the predicate
-+  twice for every item where `partition` calls it once.
-+- The predicate is required and is called once per item, in order, with only
-+  the item. A missing predicate, or one that is not a function, including
-+  `null`, raises `TypeError("partition expects a function")`, even on an empty
-+  receiver.
-+- Partitions are read-only and live: a declaration follows the list or
-+  population, the arguments and what the predicate reads, in class-level rules
-+  too, so an item moves to the other list when what its predicate reads
-+  changes, as `ada` does here. On a class name, `Name.partition(...)` is the
-+  population query even when the class declares an instance method
-+  `partition`; instances keep calling the method.
-+- The authoritative contract is the
-+  [list and population partitions](../nucl
-```
-
-**File**: `docs/examples.md` (modified, +27/-0)
-```diff
-@@ -3762,6 +3762,33 @@ assert(west.full, true)
-   same methods written without `self`. See [NUC 107](nuc-0107.md) and the
-   [root contract](../nucleoid.spec.md#python-style-self-parameters).
- 
-+## List and population partitions
-+
-+**Partition keeps every store's shelves to restock apart from the stocked ones**
-+
-+```nuc
-+class Store(name, shelves):
-+    this.name = name
-+    this.shelves = shelves
-+$Store.restock = $Store.shelves.partition(shelf -> shelf.have < shelf.need).map(side -> side.map(shelf -> shelf.item))
-+north = Store("north", [{item: "tea", have: 2, need: 5}, {item: "jam", have: 9, need: 4}, {item: "oat", have: 1, need: 3}])
-+south = Store("south", [{item: "rice", have: 8, need: 2}])
-+assert([north.restock, south.restock], [[["tea", "oat"], ["jam"]], [[], ["rice"]]])
-+north.shelves[0].have = 7
-+south.shelves.push({item: "salt", have: 0, need: 1})
-+[north.restock, south.restock]
-+# return: [[["oat"],["tea","jam"]],[["salt"],["rice"]]]
-+```
-+
-+- A class-level rule keeps each store's plan: the items of the shelves that
-+  have less than they need, then the items of the others.
-+  `$Store.shelves.partition(...)` splits the store's own list, so every store
-+  has its own two sides, each in shelf order.
-+- A refilled shelf moves to the stocked side, and a new empty shelf fills the
-+  south store's restock side, which started empty. See
-+  [NUC 108](nuc-0108.md) and the
-+  [root contract](../nucleoid.spec.md#list-and-population-partitions).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -124,7 +124,7 @@ Created: 31-Jul-2026
- | [100](nuc-0100.md) | Reactive Cotangent | Accepted |
- | [103](nuc-0103.md) | Reactive List Flattening | Accepted |
- | [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
--| [108](nuc-0108.md) | List and Population Partitions | Draft |
-+| [108](nuc-0108.md) | List and Population Partitions | Accepted |
- 
- ### Reasoning enhancement
- 
-@@ -270,7 +270,7 @@ Created: 31-Jul-2026
- | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
+@@ -271,6 +272,7 @@ Created: 31-Jul-2026
  | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Accepted |
--| [108](nuc-0108.md) | List and Population Partitions | Standards Track | Utility enhancement | Draft |
-+| [108](nuc-0108.md) | List and Population Partitions | Standards Track | Utility enhancement | Accepted |
+ | [108](nuc-0108.md) | List and Population Partitions | Standards Track | Utility enhancement | Accepted |
++| [109](nuc-0109.md) | Operator Section Arguments | Standards Track | Syntax enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0108.md` (modified, +1184/-9)
+**File**: `docs/nuc-0109.md` (added, +99/-0)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 108
- Title: List and Population Partitions
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Utility enhancement
- Created: 16-Nov-2026
-@@ -20,23 +20,27 @@ Requires: 61, 73
-     it drops, each in receiver order. So
-     `[3, 8, 1, 9].partition(x -> x > 4)` is `[[8, 9], [3, 1]]`.
-   - The predicate runs once for every item, in receiver order, and the items
--    are returned unchanged, so an instance stays the same instance. An empty
--    receiver gives `[[], []]`.
-+    are returned unchanged, so an instance stays the same instance. Every
-+    item lands in exactly one of the two lists, and an empty receiver gives
-+    `[[], []]`.
- - `partition` never writes its receiver.
-   `groups = Order.partition(o -> o.shipped)` is a standing split that
-   follows later instances and later writes of the properties its predicate
-   reads, as a standing `filter` does.
- - For a predicate without side effects, `xs.partition(p)` evaluates to
-   exactly the list that `[xs.filter(p), xs.filter(x -> not p(x))]`
-   evaluates to at the accepted revision, which runs the predicate twice for
--  every item.
-+  every item. Only a receiver that creates objects differs: the spelling
-+  evaluates it twice, so its second list holds equal objects of the second
-+  evaluation.
- - Only calls of `partition` on lists and class populations change. They
-   raised `TypeError("<receiver>.partition is not a function")` at the
-   accepted revision. Reading `xs.partition` without a call, object
-   properties named `partition`, instance methods named `partition` called
-   on an instance, and every other receiver keep their accepted behavior.
- - No token, keyword, syntax, error type or message format, option or public
--  item is added.
-+  item is added. The authoritative contract is
-+  [List and population partitions](../nucleoid.spec.md#list-and-population-partitions).
- 
- ## Motivation
- 
-@@ -71,22 +75,1193 @@ Requires: 61, 73
-   and Haskell's `partition`; Rust's `Iterator::partition`; Ruby's
-   `Enumerable#partition`; Elixir's `Enum.split_with`; and Lodash's
-   `_.partition`.
-+- `Order.partition(o -> o.shipped)` is ten lexer tokens against 24 for
-+  `[Order.filter(o -> o.shipped), Order.filter(o -> not o.shipped)]`, and 21
-+  when the kept side is the [NUC 79](nuc-0079.md) selector
-+  `Order.filter(.shipped)`. Both totals of the example above take 26 tokens
-+  as `Order.partition(o -> o.shipped).map(side -> side.map(o -> o.total))`
-+  against 42 for its last line.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The cycle that allocated this Draft made one
-+  tool-backed uniform draw over the five categories that NUC 1's registry
-+  marks eligible for automatic selection and selected Utility enhancement,
-+  index 2, with probability 1/5 and no redraw. Within it, the caller chose
-+  the two-sided `filter`, which no NUC proposed. Token comparison is
-+  required; runtime applicability does not apply to this category.
-+- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored, not zero. Strategy learning is `not_configured`, so this
-+  revision is unattributed, with no policy, selection receipt, trial or
-+  reward.
-+- **One more shared query.** `partition` joins `Runtime::list_query` beside
-+  `filter` and `count`, so lists however they are reached, through
-+  variables, members, slices, call results, `.value` snapshots and selected
-+  state versions, and class populations named by the class, by a variable
-+  that holds the class or by `$Name`, gain it at once, with the receiver
-+  snapshot, argument evaluation, receiver text and null-receiver routing of
-+  every other query. Rejected: a list-only method, which would leave
-+  `Name.partition(p)` raising where `Name.filter(p)` runs.
-+- **Two lists in a list.** The result is the list `[first, second]`, the
-+  shape of Kotlin's pair, Scala's and Haskell's tuples, Rust's tuple, Ruby's
-+  and Lodash's two-element arrays and Elixir's two-element tuple, all of
-+  which hold the kept items first. The language has no tuple, so a list of
-+  two lists indexes as `parts[0]` and `parts[1]`, maps as
-+  `parts.map(side -> side.length)`, and [NUC 67](nuc-0067.md)'s positional
-+  destructuring names the sides: `shipped, pending = Order.partition(...)`
-+  declares `shipped = Order.partition(...)[0]` and
-+  `pending = Order.partition(...)[1]`, each a standing declaration that runs
-+  its own partition.
-+- Rejected: an object with named sides such as `{kept, dropped}`, which no
-+  prior art uses and which would fix two property names in the language; a
-+  `groupBy` with more than two groups, which is another query; and the order
-+  of Python's `more_itertools.partition`, which yields the dropped items
-+  first, unlike every other prior art above and unlike `filter`, whose kept
-+  items the first list repeats.
-+- **Truthiness, as in `filter`.** An item goes to the first list exactly
-```
-
-**File**: `nucleoid.spec.md` (modified, +174/-0)
-```diff
-@@ -5555,6 +5555,79 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid rolls back failed key sorting updates` specify the executable
-   behavior. `tests/list_key_sorting.rs` executes the rest.
- 
-+## List and population partitions
+@@ -0,0 +1,99 @@
++# NUC 109 -- Operator Section Arguments
 +
-+- [NUC 108](docs/nuc-0108.md) adds the read-only list query `partition` to
-+  lists and class instance lists, the receivers of `filter`, through the same
-+  shared list-query route. No syntax, keyword or error type is added.
-+- `RECEIVER.partition(predicate)` returns a new list of exactly two new lists.
-+  The first holds the items whose predicate result is truthy, the items that
-+  `RECEIVER.filter(predicate)` keeps, and the second holds every other item.
-+  Both keep receiver order. The items are the items themselves, unchanged: an
-+  object or instance stays the same object. An empty receiver gives `[[], []]`.
-+- **Truthiness.** The predicate's result decides as it decides for `filter`:
-+  `false`, `0`, `-0`, NaN, `""`, `null` and undefined send an item to the
-+  second list, and every other value, including `[]`, `{}`, `"0"` and every
-+  date, to the first. The second list is therefore exactly the list that
-+  `RECEIVER.filter(item -> not predicate(item))` keeps. A negated comparison
-+  is not always that complement: for an item that is NaN, undefined, as a
-+  missing property reads, a string that is not numeric or an object, both
-+  `item > 4` and `item <= 4` are `false`, so `xs.partition(item -> item > 4)`
-+  puts that item in the second list, where `xs.filter(item -> item <= 4)`
-+  drops it. The keyword `undefined` is `null`, which compares as `0`.
-+- **Accepted spelling.** For a predicate without side effects,
-+  `RECEIVER.partition(p)` evaluates to exactly the list that
-+  `[RECEIVER.filter(p), RECEIVER.filter(item -> not p(item))]` evaluates to.
-+  `partition` reads the receiver once and calls the predicate once per item,
-+  where that spelling reads the receiver twice and calls the predicate twice
-+  for every item. So a receiver that creates objects, such as a list literal
-+  of records, gives the spelling's second list equal objects of its second
-+  evaluation, while `partition` keeps the objects of its one evaluation in
-+  both lists.
-+- **Read-only.** The receiver is never written, whatever its kind.
-+- **Predicates.** The predicate is required. It is called once for every item,
-+  in receiver order, with the item as its only argument; further parameters
-+  are `null`. The call order and the argument are those of `filter`. A missing
-+  first argument, or one that is not a function, including `null`, raises
-+  `TypeError("partition expects a function")`, even on an empty receiver.
-+- **Reads.** Reads inside a predicate follow the existing rules, so a
-+  predicate that reads a `null` binding, parameter or property settles a
-+  declaration to `null`, as it settles one that uses `filter`, while an item
-+  the predicate does not read stays an item: after `xs = [1, null]`,
-+  `r = xs.partition(x -> true)` stores `[[1, null], []]`.
-+- **Receivers.** The receiver is a list, however it is reached, or a class's
-+  instance list in population order, named by the class, by a variable that
-+  holds the class or by `$Name`. On a class name, `partition` is the
-+  population query even when the class declares an instance method
-+  `partition`; its instances keep calling that method.
-+- **Live.** `partition` follows the shared rules of the list queries: it reads
-+  the receiver before its arguments and evaluates every supplied argument
-+  once, left to right, including unused extras. A declaration that uses it
-+  depends on the list or population, on its argument expressions and on
-+  whatever the predicate reads for every item, so list mutations, new and
-+  deleted instances and property changes re-evaluate it, in class-level rules
-+  too, and an item moves to the other list when what its predicate reads
-+  changes. Predicate errors roll back through the existing transaction. A
-+  null or undefined receiver yields undefined without evaluating the
-+  arguments.
-+- **Cost.** A call makes one pass over the items and calls the predicate once
-+  per item, so its cost grows linearly with the receiver.
-+- **Rendering.** The call keeps its ordinary rendering, so
-+  `split = readings.partition(reading -> reading > limit)` explains as
-+  `split = readings.partition(function())`, and a `partition` call and its
-+  accepted spelling are different statements and graph keys.
-+- **Unchanged.** Only calls of `partition` on lists and class populations
-+  change; they raised `TypeError("<receiver>.partition is not a function")`.
-+  `partition of xs` stays `SyntaxError("Unexpected keyword 'of'")`. Property
-+  reads such as `xs.partition`, bindings and object properties named
-+  `partition`, `partition(...)` without a definition, `Math.partition` and
-+  the other built-in namespaces, instance methods named `partition` called on
-+  an instance, `filter` and `cou
++```
++NUC: 109
++Title: Operator Section Arguments
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Syntax enhancement
++Created: 16-Nov-2026
++Requires: 60, 64, 79
++```
++
++## Abstract
++
++- Lets a call argument that begins with a binary operator stand for the
++  function of one parameter that applies the operator to it, an *operator
++  section*:
++  - `xs.filter(> 4)` passes the function `x -> x > 4`, so
++    `[3, 8, 1, 9].filter(> 4)` is `[8, 9]`.
++  - The section's operator is one of the symbol binary operators that
++    cannot begin an expression: `==`, `!=`, `===`, `!==`, `<`, `<=`, `>`,
++    `>=`, `*`, `%`, `**`, `&&`, `||` and `??`.
++  - The rest of the argument, up to the `,` or `)` that ends it, is read as
++    if the parameter stood before the operator, with the usual precedence.
++    So `xs.count(% 2 == 0)` counts the even items, `xs.map(* 2 + 1)` maps
++    `x -> x * 2 + 1` and `xs.map(?? 0)` maps `x -> x ?? 0`.
++- The parameter has no name, so a section reads it only as the operator's
++  left operand, and no name in the argument can shadow it. Every name in
++  the operand reads as it does in the body of the equivalent lambda, once
++  per call of the function. So the standing declaration
++  `big = xs.filter(> limit)` follows later writes of `xs` and of `limit`,
++  as `xs.filter(x -> x > limit)` does.
++- A section is a whole positional argument of a call, as
++  [NUC 79](nuc-0079.md)'s property selectors are: of a method, a function
++  or a constructor. Grouping parentheses, list items, object values, named
++  arguments and every other position keep their accepted readings and
++  errors.
++- `+` and `-` keep their accepted unary readings, so `xs.map(- 1)` still
++  passes the number `-1`. `/`, which may begin a regular expression after
++  `(`, and the word operators `is`, `is not`, `in`, `not in`, `and` and
++  `or` are not section operators.
++- Only inputs that were errors at the accepted revision change: every
++  section raised `SyntaxError("Unexpected '<operator>'")` there. An accepted
++  program that holds a section where the accepted parser never reads it,
++  such as the ignored tail of the template interpolation
++  `` `v ${xs.length, xs.filter(> 4)}` ``, keeps its result.
++- No token, keyword, error type or message format, option or public item
++  is added.
++
++## Motivation
++
++- World models compare values with thresholds, categories and defaults
++  everywhere: the cells that are not background, the readings over a
++  limit, the even positions, the missing values and their defaults.
++  Accepted Nucleoid writes each such test as a lambda that names a
++  parameter only to use it once, at once, as the operator's left operand:
++
++  ```
++  cells = [0, 3, 0, 7, 7]
++  [cells.filter(c -> c != 0), cells.count(c -> c == 7), cells.map(c -> c * 2)]
++  ```
++
++  It returns `[[3, 7, 7], 2, [0, 6, 0, 14, 14]]`.
++- With sections the same line reads
++  `[cells.filter(!= 0), cells.count(== 7), cells.map(* 2)]`. Every section
++  saves three lexer tokens: the parameter, the arrow and the parameter's
++  one use.
++- [NUC 79](nuc-0079.md)'s property selectors already pass `.name` for
++  `x -> x.name`. It rejected operators over selectors and an implicit `it`
++  or `_` placeholder, because a named implicit parameter needs scope rules
++  of its own. A section needs none: its parameter has no name and stands
++  only where the operator's left operand would.
++- Prior art: Haskell's operator sections `(> 4)`, Scala's placeholder
++  `_ > 4`, Swift's `$0 > 4`, Kotlin's `it > 4` and Raku's Whatever-star
++  `* > 4`.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2147,48 +1906,22 @@ function argument they now raise TypeError("partition expects a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 108 List and Population Partitions
+## X. Draft NUC 109 Operator Section Arguments
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b9262f0`: NUC 108 List and Population Partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ee7817e`: Draft NUC 109 Operator Section Arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## List and population partitions
-
-**Partition keeps shipped and pending orders apart in one live rule**
-
-```nuc
-class Order(total, shipped):
-    this.total = total
-    this.shipped = shipped
-totals = Order.partition(order -> order.shipped).map(side -> side.map(order -> order.total))
-Order(40, true)
-late = Order(15, false)
-Order(90, true)
-assert(totals, [[40, 90], [15]])
-late.shipped = true
-Order(25, false)
-assert(totals, [[40, 15, 90], [25]])
-```
-
-- [NUC 108](docs/nuc-0108.md) adds `partition(predicate)` to lists and class
-  populations. `Order.partition(order -> order.shipped)` is a list of two
-  lists: the orders the predicate keeps, as `filter` keeps them, and the
-  orders it drops, each side in population order.
-- The rule is stated once and runs once per order, where two `filter` calls
-  state it twice, the second time negated. `totals` stays live: the late
-  order joins the shipped side once it ships, and a new pending order takes
-  its place on the other. See the
-  [root contract](nucleoid.spec.md#list-and-population-partitions).
-
+| [109](nuc-0109.md) | Operator Section Arguments | Draft |
+| [109](nuc-0109.md) | Operator Section Arguments | Standards Track | Syntax enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2198,7 +1931,7 @@ assert(totals, [[40, 15, 90], [25]])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b9262f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ee7817e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8b9262f0",
+    "sourceVersion": "8ee7817e",
     "license": "Apache-2.0",
-    "contentHash": "745dfdd34ffddb75855db35e7abf8b47c84ce7894b4e5a95d167b6eef41d93b8",
-    "lastHarvestedAt": "2026-11-16T17:43:49.888Z",
+    "contentHash": "68f5826399a02beb3c3040f1d1548d1774e3a9e044c4852964c1723b69b7f18e",
+    "lastHarvestedAt": "2026-11-16T18:27:20.087Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "b6ac7a34",
+    "sourceVersion": "874cc793",
     "license": "Apache-2.0",
-    "contentHash": "7c8cc1c0afa2f22d7357bc6e8d3b483ad4616536e1672e5c482a86667673234c",
-    "lastHarvestedAt": "2026-11-15T09:49:58.381Z",
+    "contentHash": "faed9a5296d5879fccdcac81f1e228545ac7a58e815b41d67451ab14035ec346",
+    "lastHarvestedAt": "2026-11-16T18:27:12.671Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -7243,10 +7243,10 @@
     "repository": "SeaQL/sea-orm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeaQL/sea-orm",
-    "sourceVersion": "1d4b1380",
+    "sourceVersion": "18cbaa3d",
     "license": "Apache-2.0",
-    "contentHash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
-    "lastHarvestedAt": "2026-11-11T07:46:26.238Z",
+    "contentHash": "c8f114995afe521bdf07bcbd37ebd5a9399a3ef7ff045079b7d014d0530407f8",
+    "lastHarvestedAt": "2026-11-16T18:27:17.589Z",
     "learningId": "learn-github-seaql-sea-orm"
   },
   "mobilenativefoundation-store": {
