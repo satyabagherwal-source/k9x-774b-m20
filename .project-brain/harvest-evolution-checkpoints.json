@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T21:28:31.212Z",
+  "last_updated": "2026-11-16T21:40:06.016Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-16T20:32:45.897Z",
+      "processed_at": "2026-11-16T21:40:05.477Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-16T20:32:45.248Z",
+      "processed_at": "2026-11-16T21:40:04.785Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2058,7 +2058,7 @@
       "staged_for_review": 1
     },
     "provablehq-snarkos-learnings.md": {
-      "processed_at": "2026-11-14T00:08:54.547Z",
+      "processed_at": "2026-11-16T21:40:04.199Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3218,7 +3218,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1362,
+  "total_dossiers_evaluated": 1365,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1061
+  "total_staged_for_review": 1064
 }

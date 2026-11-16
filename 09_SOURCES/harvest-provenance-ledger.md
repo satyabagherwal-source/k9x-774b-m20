@@ -10378,3 +10378,4 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `342ec629` | Multi-dimensional audit evidence | 2026-11-16T21:10:35.764Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `1d25918c` | Multi-dimensional audit evidence | 2026-11-16T21:23:29.761Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `3628771a` | Multi-dimensional audit evidence | 2026-11-16T21:28:25.354Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9419be28` | Multi-dimensional audit evidence | 2026-11-16T21:40:01.022Z |

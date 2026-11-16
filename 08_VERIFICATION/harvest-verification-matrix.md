@@ -10345,3 +10345,4 @@
 | `CYCLE-20261116-CIK1` | `2026-11-16T21:10:35.761Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8791` | Yes (`2d407fbe...`) |
 | `CYCLE-20261116-T3RX` | `2026-11-16T21:23:29.757Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8792` | Yes (`cbbb2d2f...`) |
 | `CYCLE-20261116-ZFUU` | `2026-11-16T21:28:25.350Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8793` | Yes (`1317570e...`) |
+| `CYCLE-20261116-ECMX` | `2026-11-16T21:40:01.017Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8765` | Yes (`167c2502...`) |

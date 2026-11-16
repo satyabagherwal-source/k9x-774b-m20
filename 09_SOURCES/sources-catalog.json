@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "2299a19b",
+    "sourceVersion": "9419be28",
     "license": "Apache-2.0",
-    "contentHash": "123f1b4873a59e75bc18a7657b3cc8ecd560698e26b58e6b185d1c04e9f83b62",
-    "lastHarvestedAt": "2026-11-16T01:45:22.181Z",
+    "contentHash": "167c2502d2f17bfbabe5914acf0feded6b50670df0a03d92181141bd91c201a3",
+    "lastHarvestedAt": "2026-11-16T21:40:01.022Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T21:28:30.776Z",
+  "last_updated": "2026-11-16T21:40:05.666Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-ZUUO",
+      "id": "CD-EFSO",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ZUUO-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-EFSO-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-ZV97",
+      "id": "CD-EG80",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ZV97-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-EG80-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -19530,11 +19530,11 @@
       "domain_letter": "J"
     },
     {
-      "id": "CD-MEME",
+      "id": "CD-EF9G",
       "directive_title": "Empirical Invariant Guard in mock.rs",
-      "source_repo": "aleo-labs-protocol-snarkos-learnings",
+      "source_repo": "provablehq-snarkos-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-MEME-empirical-invariant-guard-in-mock-rs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-EF9G-empirical-invariant-guard-in-mock-rs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -20229,6 +20229,33 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1EEA7F-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-DBA17B",
+      "directive_title": "Empirical Invariant Guard in mock.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "provablehq-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DBA17B-empirical-invariant-guard-in-mock-rs.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-04F88C",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-04F88C-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-338A6B",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-338A6B-puppet-fix-postgresql-failing-to-start-o.md",
       "staged_date": "2026-11-16"
     }
   ]

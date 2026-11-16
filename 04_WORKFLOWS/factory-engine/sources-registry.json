@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T21:28:28.554Z",
-    "lastVerified": "2026-11-16T21:28:28.554Z",
+    "lastChecked": "2026-11-16T21:40:04.081Z",
+    "lastVerified": "2026-11-16T21:40:04.081Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,8 +255,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T20:21:05.145Z",
-    "lastVerified": "2026-11-16T20:21:05.145Z",
+    "lastChecked": "2026-11-16T21:39:59.575Z",
+    "lastVerified": "2026-11-16T21:39:59.575Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1204,22 +1204,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T11:45:01.366Z",
-    "lastVerified": "2026-11-16T11:45:01.366Z",
+    "lastChecked": "2026-11-16T21:39:59.991Z",
+    "lastVerified": "2026-11-16T21:39:59.991Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "123f1b4873a59e75bc18a7657b3cc8ecd560698e26b58e6b185d1c04e9f83b62",
+    "contentHash": "167c2502d2f17bfbabe5914acf0feded6b50670df0a03d92181141bd91c201a3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2299a19b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -1577,8 +1576,8 @@
     "officialUrl": "https://github.com/goharbor/harbor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T13:39:41.813Z",
-    "lastVerified": "2026-11-15T13:39:41.813Z",
+    "lastChecked": "2026-11-16T21:39:52.148Z",
+    "lastVerified": "2026-11-16T21:39:52.148Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goharbor-harbor",
@@ -1619,8 +1618,8 @@
     "officialUrl": "https://github.com/googleworkspace/cli",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T00:37:17.253Z",
-    "lastVerified": "2026-11-15T00:37:17.253Z",
+    "lastChecked": "2026-11-16T21:39:44.555Z",
+    "lastVerified": "2026-11-16T21:39:44.555Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-googleworkspace-cli",
@@ -2703,9 +2702,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-15T11:40:30.158Z",
+    "lastChecked": "2026-11-16T21:39:57.034Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-15T11:40:30.158Z"
+    "lastVerified": "2026-11-16T21:39:57.034Z"
   },
   "zeronsh-zeron": {
     "name": "zeronsh/zeron",
@@ -11820,9 +11819,9 @@
   "remarkjs-remark": {
     "name": "remark",
     "officialUrl": "https://github.com/remarkjs/remark",
-    "lastChecked": "2026-11-12T04:23:46.317Z",
+    "lastChecked": "2026-11-16T21:39:47.024Z",
     "revisionIdentifier": "1146b3a2",
-    "lastVerified": "2026-11-12T04:23:46.317Z"
+    "lastVerified": "2026-11-16T21:39:47.024Z"
   },
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
@@ -12077,9 +12076,9 @@
   "simibac-confettiswiftui": {
     "name": "ConfettiSwiftUI",
     "officialUrl": "https://github.com/simibac/ConfettiSwiftUI",
-    "lastChecked": "2026-11-13T07:25:28.736Z",
+    "lastChecked": "2026-11-16T21:39:49.537Z",
     "revisionIdentifier": "9ae5bc2c",
-    "lastVerified": "2026-11-13T07:25:28.736Z"
+    "lastVerified": "2026-11-16T21:39:49.537Z"
   },
   "rdflib-rdflib": {
     "name": "rdflib",

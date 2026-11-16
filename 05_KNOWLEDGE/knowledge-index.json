@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T21:28:31.075Z",
+  "last_updated": "2026-11-16T21:40:05.904Z",
   "total_verified_learnings": 8804,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "77684cbef853dec235a2711c83c96e512e07e5e1fda4d41e419497cf065910b9",
+      "content_hash": "6f1dbb45496250ee24a0c566b55901357cc584f299a0947d17d5c06ea221b087",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T20:32:46.189Z"
+      "persisted_at": "2026-11-16T21:40:05.782Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7705961ea3ec80f1e68f7f3fc83f820b7173805d313dbf5bf126c07048bb7cc",
+      "content_hash": "ea47a0a2ce5e9f37716b196086b8eeb3b4a7e6e0eecca59b51b83d82adba831d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:32:46.301Z"
+      "persisted_at": "2026-11-16T21:40:05.904Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -112798,25 +112798,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "1c341ad3",
-      "content_hash": "a604d0dc8ec7e5c5619f2731f31c605ce8ebd37599fc041b682357eca1553808",
+      "source_version": "9419be28",
+      "content_hash": "7795b2c7cfd3784b9b34ac46d2237dab65b19ab286182a3b59d151cb5ab97ebf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:01:50.316Z"
+      "persisted_at": "2026-11-16T21:40:01.328Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "1c341ad3",
-      "content_hash": "75489e77a987549cb4f1487619a7676651503d960028b59251f228afbf72ae0e",
+      "source_version": "9419be28",
+      "content_hash": "c46501d450ade81770f7bcf4ba597e893cd2500694973706d286bb0f221243cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:01:50.408Z"
+      "persisted_at": "2026-11-16T21:40:01.447Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZUUO-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EFSO-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "364da14c0b517299598aa2f13392096281674618eda55df4ba782cd0fc5955db",
+      "content_hash": "ec33864e71416cf5f4a6a1f8f49bdd628e43f9e76edd88e1c769154266bab934",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T20:32:45.556Z"
+      "persisted_at": "2026-11-16T21:40:05.115Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffd4f75ccd8366fdf63b874476f0f5ac09537d33ebf390d24246df17404e0f52",
+      "content_hash": "22345e09ead73d19659b325cac04ae2d5f95787d1fd60ebca289c496c43c6bcc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T20:32:45.666Z"
+      "persisted_at": "2026-11-16T21:40:05.231Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9a5f12c2bf5828a5f14af4018626861dfefee0d0a46b9ba8d2f1c60f3e9bb74",
+      "content_hash": "de210b1e30929faa0c1c84331253d8815a511e898a2e448544253894a9ba77cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:32:45.783Z"
+      "persisted_at": "2026-11-16T21:40:05.353Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114578,9 +114578,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "98a0f2fcf658e9bffeb3d84aaccf7477f35b8519e4fa6411c0f58f1c2a13f530",
+      "content_hash": "1ec7bf81cfa5d21556275e44244632239499f662ab991db836c82e3859e09781",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T00:08:54.991Z"
+      "persisted_at": "2026-11-16T21:40:04.542Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -214871,13 +214871,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZV97-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EG80-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa7e372cd7958d430bdb362bb73b3f1d78383d23f5c4649f2ecfdaedc19e6744",
+      "content_hash": "8ba11bb76e685ec8957a61242811f86f9e854090d1fcd8e105fafa28e586d1b7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T20:32:46.078Z"
+      "persisted_at": "2026-11-16T21:40:05.666Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -215381,13 +215381,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "1c341ad3",
-      "content_hash": "63bf77338051da5f70ed160b031febc11d7ec911dc4b4730fd1178b83f707eef",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "9419be28",
+      "content_hash": "167c2502d2f17bfbabe5914acf0feded6b50670df0a03d92181141bd91c201a3",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215402,7 +215402,7 @@
         {
           "number": 8765,
           "title": "Empirical Invariant Guard in mock.rs",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215410,7 +215410,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:01:49.939Z",
+      "verified_at": "2026-11-16T21:40:00.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219074,9 +219074,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fb418e95bba4c4ef41b96c356bacb844acfb90997cdb5afa1ca63c86b5de79c",
+      "content_hash": "4af9b5a35edf9559d13b5f3d0a87cf59aca35c83b27dcb8c9a32d2bf1f5956c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T00:08:55.120Z"
+      "persisted_at": "2026-11-16T21:40:04.664Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -255768,26 +255768,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8765,
       "title": "Empirical Invariant Guard in mock.rs",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "1c341ad3",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "9419be28",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-16T18:01:49.939Z"
+      "verified_at": "2026-11-16T21:40:00.826Z"
     },
     "candidate_directive-empirical-invariant-guard-in-mock-rs": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-mock-rs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MEME-empirical-invariant-guard-in-mock-rs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EF9G-empirical-invariant-guard-in-mock-rs.md",
       "title": "Empirical Invariant Guard in mock.rs",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0f344e48cab57a53e35cf9023260b4396616410d5925313d33058ffe0873a8f",
+      "content_hash": "07702f765acdee93ac31b4d1541afe68da800c63bceddd33d5b0a9cb41f98a02",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T18:02:19.924Z"
+      "persisted_at": "2026-11-16T21:40:04.423Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants",
