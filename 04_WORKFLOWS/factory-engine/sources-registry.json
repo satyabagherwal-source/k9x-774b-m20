@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T22:19:33.955Z",
-    "lastVerified": "2026-11-16T22:19:33.955Z",
+    "lastChecked": "2026-11-16T22:34:19.806Z",
+    "lastVerified": "2026-11-16T22:34:19.806Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,8 +255,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T21:39:59.575Z",
-    "lastVerified": "2026-11-16T21:39:59.575Z",
+    "lastChecked": "2026-11-16T22:34:19.793Z",
+    "lastVerified": "2026-11-16T22:34:19.793Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1591,9 +1591,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-16T14:07:00.496Z",
+    "lastChecked": "2026-11-16T22:34:15.122Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-16T14:07:00.496Z"
+    "lastVerified": "2026-11-16T22:34:15.122Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -1918,8 +1918,8 @@
     "officialUrl": "https://github.com/loft-sh/vcluster",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T14:56:04.548Z",
-    "lastVerified": "2026-11-15T14:56:04.548Z",
+    "lastChecked": "2026-11-16T22:34:12.301Z",
+    "lastVerified": "2026-11-16T22:34:12.301Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-loft-sh-vcluster",
@@ -1971,8 +1971,8 @@
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T01:46:34.527Z",
-    "lastVerified": "2026-11-15T01:46:34.527Z",
+    "lastChecked": "2026-11-16T22:34:04.706Z",
+    "lastVerified": "2026-11-16T22:34:04.706Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-michael-a-kuykendall-shimmy",
@@ -2992,12 +2992,12 @@
     "revisionIdentifier": "b8d95290"
   },
   "ontos-ai-knowhere": {
-    "name": "Ontos-AI/knowhere",
+    "name": "knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T13:09:05.856Z",
-    "lastVerified": "2026-11-15T13:09:05.856Z",
+    "lastChecked": "2026-11-16T22:34:17.347Z",
+    "lastVerified": "2026-11-16T22:34:17.347Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
@@ -3006,7 +3006,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "208f3fc1"
   },
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
@@ -11882,14 +11883,14 @@
     "officialUrl": "https://github.com/nodejs/undici",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-12T05:13:10.934Z",
-    "lastVerified": "2026-11-12T05:13:10.934Z",
+    "lastChecked": "2026-11-16T22:34:12.640Z",
+    "lastVerified": "2026-11-16T22:34:12.640Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nodejs-undici",
-    "contentHash": "4678d5af2d3b162a06a5577229ea2eabeef43a2bc5616ff8b2c007c4fc1f8a93",
+    "contentHash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12171,9 +12172,9 @@
   "jtrivedi-wave": {
     "name": "Wave",
     "officialUrl": "https://github.com/jtrivedi/Wave",
-    "lastChecked": "2026-11-13T08:04:58.539Z",
+    "lastChecked": "2026-11-16T22:34:09.694Z",
     "revisionIdentifier": "27b7e1d2",
-    "lastVerified": "2026-11-13T08:04:58.539Z"
+    "lastVerified": "2026-11-16T22:34:09.694Z"
   },
   "rdfjs-namespace": {
     "name": "namespace",

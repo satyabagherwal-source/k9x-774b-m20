@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T22:19:35.851Z",
+  "last_updated": "2026-11-16T22:34:22.456Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-16T21:40:05.477Z",
+      "processed_at": "2026-11-16T22:34:20.943Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-16T20:32:46.413Z",
+      "processed_at": "2026-11-16T22:34:21.628Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -818,7 +818,7 @@
       "staged_for_review": 0
     },
     "nodejs-undici-learnings.md": {
-      "processed_at": "2026-11-12T05:13:50.810Z",
+      "processed_at": "2026-11-16T22:34:19.954Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3218,7 +3218,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1374,
+  "total_dossiers_evaluated": 1377,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1072
+  "total_staged_for_review": 1075
 }

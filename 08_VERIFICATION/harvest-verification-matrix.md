@@ -10355,3 +10355,4 @@
 | `CYCLE-20261116-SWV8` | `2026-11-16T22:19:20.036Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8799` | Yes (`b50a90a2...`) |
 | `CYCLE-20261116-T0MC` | `2026-11-16T22:19:24.900Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8800` | Yes (`805246a8...`) |
 | `CYCLE-20261116-T54Z` | `2026-11-16T22:19:30.755Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8801` | Yes (`a8f7fdff...`) |
+| `CYCLE-20261116-C2NO` | `2026-11-16T22:34:14.004Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8802` | Yes (`beca9c50...`) |

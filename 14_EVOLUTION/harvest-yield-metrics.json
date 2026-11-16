@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T22:19:30.765Z",
-  "total_cycles_completed": 9942,
-  "total_learnings_persisted": 9942,
-  "total_rules_promoted": 9538,
+  "last_updated": "2026-11-16T22:34:14.015Z",
+  "total_cycles_completed": 9943,
+  "total_learnings_persisted": 9943,
+  "total_rules_promoted": 9539,
   "history": [
-    {
-      "timestamp": "2026-11-15T17:40:21.547Z",
-      "repository": "SeekStorm/SeekStorm",
-      "learningId": "learn-github-seekstorm-seekstorm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T17:52:40.640Z",
       "repository": "embassy-rs/embassy",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T22:19:30.765Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:34:14.015Z",
+      "repository": "nodejs/undici",
+      "learningId": "learn-github-nodejs-undici",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

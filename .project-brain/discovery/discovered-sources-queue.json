@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T21:55:43.271Z",
+  "updated_at": "2026-11-16T22:34:20.269Z",
   "stats": {
-    "total_discovered": 4466,
-    "approved_pending_harvest": 4202,
+    "total_discovered": 4472,
+    "approved_pending_harvest": 4207,
     "harvested_count": 0,
-    "rejected_count": 264,
+    "rejected_count": 265,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4203,
+      "COMMUNITY_AND_EXPERT": 4209,
       "OFFICIAL_DOCUMENTATION": 140,
       "STANDARDS_AND_SPECIFICATIONS": 96,
       "ENGINEERING_BLOGS": 3,
@@ -96425,6 +96425,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
         "fileName": "infiniflow-infinity-learnings.md"
+      }
+    },
+    "SRC-0C375D74FE13": {
+      "id": "SRC-0C375D74FE13",
+      "url": "https://github.com/nodejs/node/pull/67292",
+      "title": "https://github.com/nodejs/node/pull/67292",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T22:34:20.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-8D4CB9BCC8AD": {
+      "id": "SRC-8D4CB9BCC8AD",
+      "url": "https://claude.ai/code/session_01Sfj4nEWQ4ovycNDjbvXcRs",
+      "title": "https://claude.ai/code/session_01Sfj4nEWQ4ovycNDjbvXcRs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T22:34:20.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-8D2C6F3A1D73": {
+      "id": "SRC-8D2C6F3A1D73",
+      "url": "http://localhost:${server.address(",
+      "title": "http://localhost:${server.address(",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T22:34:20.134Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-97D8F2E4C4CD": {
+      "id": "SRC-97D8F2E4C4CD",
+      "url": "https://github.com/nodejs/undici/issues/5999",
+      "title": "https://github.com/nodejs/undici/issues/5999",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T22:34:20.171Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-EC251A8C600D": {
+      "id": "SRC-EC251A8C600D",
+      "url": "https://github.com/nodejs/node/blob/HEAD/SECURITY.md",
+      "title": "https://github.com/nodejs/node/blob/HEAD/SECURITY.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T22:34:20.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-569169ABBC40": {
+      "id": "SRC-569169ABBC40",
+      "url": "https://cwe.mitre.org/data/definitions/405.html",
+      "title": "https://cwe.mitre.org/data/definitions/405.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T22:34:20.269Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
       }
     }
   }

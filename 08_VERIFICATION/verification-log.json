@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-VXHA",
-    "timestamp": "2026-11-14T03:10:36.094Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "956b2c00e671b988aea8550f12c96a049a4efa3eabca82cd48070d0a67b149d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-W02U",
     "timestamp": "2026-11-14T03:10:39.462Z",
     "repository": "matrixorigin/matrixone",
@@ -7490,6 +7475,21 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "a8f7fdff6627b84b88323e7709e495bdd1955ea34bcb5cd225e9ba6621ecb7ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-C2NO",
+    "timestamp": "2026-11-16T22:34:14.004Z",
+    "repository": "nodejs/undici",
+    "learningId": "learn-github-nodejs-undici",
+    "contentHash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

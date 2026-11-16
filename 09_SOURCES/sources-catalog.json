@@ -9573,10 +9573,10 @@
     "repository": "nodejs/undici",
     "platform": "github",
     "sourceUrl": "https://github.com/nodejs/undici",
-    "sourceVersion": "09ed1694",
+    "sourceVersion": "02c4f8c6",
     "license": "MIT",
-    "contentHash": "4678d5af2d3b162a06a5577229ea2eabeef43a2bc5616ff8b2c007c4fc1f8a93",
-    "lastHarvestedAt": "2026-11-12T05:13:21.207Z",
+    "contentHash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
+    "lastHarvestedAt": "2026-11-16T22:34:14.008Z",
     "learningId": "learn-github-nodejs-undici"
   },
   "jordansinger-swiftui-kit": {

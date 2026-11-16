@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source**: github ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
-> **Source Version**: `09ed1694`  
+> **Source Version**: `02c4f8c6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T05:13:10.938Z  
+> **Timestamp**: 2026-11-16T22:34:12.919Z  
 > **Learning ID**: `learn-github-nodejs-undici`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T05:13:10.934Z  
+> **Harvest Timestamp**: 2026-11-16T22:34:12.640Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An HTTP/1.1 client, written from scratch for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7736 stars
+- **Stars / Engagement**: 7740 stars
 
 ---
 
@@ -703,120 +703,353 @@ await run()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d095670` (2026-11-10)
-**Commit Message**: build(deps-dev): bump node-forge from 1.4.2 to 1.4.3 (#6190)
+### Incident Patch 1: `02c4f8c6` (2026-11-13)
+**Commit Message**: fix(h1): do not reuse idle sockets whose keep-alive timeout expired (#6171)
 
-Bumps [node-forge](https://github.com/digitalbazaar/forge) from 1.4.2 to 1.4.3.
-- [Changelog](https://github.com/digitalbazaar/forge/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/digitalbazaar/forge/compare/v1.4.2...v1.4.3)
+The keep-alive timer of an idle socket cannot fire while the event loop
+is blocked. When the next request is dispatched from the poll phase (an
+I/O callback, a server request handler, or a continuation after awaiting
+I/O), the idle socket validation added for GHSA-35p6-xmwp-9g52 completes
+in the check phase of the same loop iteration, before that timer fires
+and before a FIN received during the block is read. The request is then
+written to a socket that the server may already have closed, and fails
+with ECONNRESET.
 
----
-updated-dependencies:
-- dependency-name: node-forge
-  dependency-version: 1.4.3
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-...
+Record when the keep-alive timer is armed, and destroy the socket with
+an InformationalError instead of reusing it once its keep-alive timeout
+has passed. Nothing is running on the socket, so the pending requests
+are sent on a new connection.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+The check does not depend on kSocketUsed, so it also covers the
+experimental Milo parser, which never sets that symbol.
 
-**File**: `package-lock.json` (modified, +3/-3)
+Refs: https://github.com/nodejs/node/pull/67292
+
+
+Claude-Session: https://claude.ai/code/session_01Sfj4nEWQ4ovycNDjbvXcRs
+
+Signed-off-by: Matteo Collina <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `lib/dispatcher/client-h1.js` (modified, +24/-0)
 ```diff
-@@ -7195,9 +7195,9 @@
-       "license": "MIT"
-     },
-     "node_modules/node-forge": {
--      "version": "1.4.2",
--      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.2.tgz",
--      "integrity": "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ==",
-+      "version": "1.4.3",
-+      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.3.tgz",
-+      "integrity": "sha512-P6wzfh6t70avmV8FrVEAd/36sOPJQ+hkaJVX1Laap9J/77m7M0eyozDvc8SwnDf4P7MP94gwbAAo0rg3YVXT+g==",
-       "dev": true,
-       "license": "(BSD-3-Clause OR GPL-2.0)",
-       "engines": {
-```
-
----
-
-### Incident Patch 2: `691eb164` (2026-11-08)
-**Commit Message**: test(wpt): fix startup checks and failure logging (#6152)
-
-**File**: `test/web-platform-tests/wpt-runner.mjs` (modified, +6/-5)
-```diff
-@@ -56,11 +56,12 @@ function serverUrl (protocol, subdomain) {
+@@ -67,6 +67,7 @@ const removeAllListeners = util.removeAllListeners
+ const kIdleSocketValidation = Symbol('kIdleSocketValidation')
+ const kIdleSocketValidationTimeout = Symbol('kIdleSocketValidationTimeout')
+ const kSocketUsed = Symbol('kSocketUsed')
++const kIdleSince = Symbol('kIdleSince')
+ const kTypeOfService = Symbol('kTypeOfService')
  
- let pythonInfoPromise
+ let extractBody
+@@ -1107,6 +1108,19 @@ function scheduleIdleSocketValidation (client, socket) {
+   })
+ }
  
-+// WPT logs HTTP listeners supporting CONNECT as HTTPS in newer versions.
- const SERVER_READY_CHECKS = [
--  ['http-default', (line) => line.includes('http on port 8000') && line.includes('Starting http server')],
--  ['http-alt', (line) => /\bhttp on port (?!8000\b)\d+\].*Starting http server/.test(line)],
--  ['http-local', (line) => line.includes('http-local on port') && line.includes('Starting http server')],
--  ['http-public', (line) => line.includes('http-public on port') && line.includes('Starting http server')],
-+  ['http-default', (line) => line.includes('http on port 8000') && /\bStarting https? server\b/.test(line)],
-+  ['http-alt', (line) => /\bhttp on port (?!8000\b)\d+\].*Starting https? server\b/.test(line)],
-+  ['http-local', (line) => line.includes('http-local on port') && /\bStarting https? server\b/.test(line)],
-+  ['http-public', (line) => line.includes('http-public on port') && /\bStarting https? server\b/.test(line)],
-   ['https-8443', (line) => line.includes('https on port 8443') && line.includes('Starting https server')],
-   ['https-8444', (line) => line.includes('https on port 8444') && line.includes('Starting https server')],
-   ['https-local', (line) => line.includes('https-local on port') && line.includes('Starting https server')],
-@@ -775,7 +776,7 @@ async function run (filters = []) {
-         console.log(`\t${c.index + 1}. "${escapeControlCharacters(c.name)}": ${c.status === 0 ? '✅ PASS' : '❌ FAIL'}`)
- 
-         if (c.status !== 0 && (c.message || c.stack)) {
--          log(`${escapeControlCharacters(String(c.message))}:\n${c.stack.split('\n').slice(1).join('\n')}`)
-+          log(`${escapeControlCharacters(String(c.message))}:\n${(c.stack ?? '').split('\n').slice(1).join('\n')}`)
-         }
-       }
++/**
++ * kIdleSince is recorded when the keep-alive timer is armed, so this never
++ * expires a socket before that timer is due.
++ * @param {import('net').Socket} socket
++ * @returns {boolean}
++ */
++function isIdleSocketExpired (socket) {
++  const parser = socket[kParser]
++  return parser.timeoutType === TIMEOUT_KEEP_ALIVE &&
++    parser.timeoutValue > 0 &&
++    performance.now() - socket[kIdleSince] >= parser.timeoutValue
++}
++
+ /**
+  * @param {import('./client.js')} client
+  */
+@@ -1124,6 +1138,15 @@ function resumeH1 (client) {
+       socket[kNoRef] = false
      }
+ 
++    // The keep-alive timer cannot fire while the event loop is blocked, and a
++    // request dispatched from the poll phase passes the idle socket validation
++    // below before that timer or a FIN received during the block is processed.
++    // Check the clock so that an expired socket is not reused.
++    if (client[kRunning] === 0 && client[kPending] > 0 && isIdleSocketExpired(socket)) {
++      util.destroy(socket, new InformationalError('socket idle timeout'))
++      return
++    }
++
+     if (client[kRunning] === 0 && client[kPending] > 0 && socket[kSocketUsed]) {
+       if (socket[kIdleSocketValidation] === 0) {
+         scheduleIdleSocketValidation(client, socket)
+@@ -1152,6 +1175,7 @@ function resumeH1 (client) {
+ 
+     if (client[kSize] === 0) {
+       if (socket[kParser].timeoutType !== TIMEOUT_KEEP_ALIVE) {
++        socket[kIdleSince] = performance.now()
+         socket[kParser].setTimeout(client[kKeepAliveTimeoutValue], TIMEOUT_KEEP_ALIVE)
+       }
+     } else if (client[kRunning] > 0 && socket[kParser].statusCode < 200) {
+```
+
+**File**: `test/client-keep-alive-blocked-loop.js` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++'use strict'
++
++const { test } = require('node:test')
++const assert = require('node:assert')
++const { once } = require('node:events')
++const { stat } = require('node:fs')
++const { createServer } = require('node:http')
++const { setImmediate: waitImmediate } = require('node:timers/promises')
++const { Client } = require('..')
++
++// The keep-alive timer cannot fire while the event loop is blocked. When the
++// next request is dispatched from the poll phase, the idle socket validation
++// completes in the check phase of the same iteration, before that timer or a
++// FIN that arrived during the block is processed. The client must check the
++// clock instead, or it reuses a socket that the server may already have
++// closed (ECONNRESET).
++
++function sleepSync (ms) {
++  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
++}
++
++async function setup (t, keepAliveTimeout) {
++  const state = { connections: 0, disconnects: [] }
++
++  const server = createServer((req, res) => {
++    res.end('ok')
++  })
++  // No Keep-Alive hint from the server, so the client's keepAliveTimeout
++  // alone sets the idle timeout. The server never closes the connection
++  // itself, so the test only passes if the client opens a new one.
++  server.keepAliveTimeout = 0
++  server.on('connection', () => {
++    state.connections++
++  })
++  server.listen(0)
++  await once(server, 'listening')
++
++  const client = new Client(`http://localhost:${server.address().port}`, {
++    keepAliveTimeout
++  })
++  client.on('disconnect', (origin, targets, err) => {
++    state.disconnects.push(err)
++  })
++
++  t.after(async () => {
++    await client.close()
++    server.close()
++  })
++
++  const res = await client.request({ path: '/', method: 'GET' })
++  assert.strictEqual(await res.body.text(), 'ok')
++  // Let the socket settle into the idle state.
++  await waitImmediate()
++  assert.strictEqual(state.connections, 1)
++
++  return { client, state }
++}
++
++// Blocks for `blockMs`, then dispatches a request, from an fs callback, i.e.
++// from the poll phase.
++function requestAfterBlockInPollPhase (client, blockMs) {
++  return new Promise((resolve, reject) => {
++    stat(__filename, () => {
++      sleepSync(blockMs)
++      client.request({ path: '/', method: 'GET' }).then(resolve, reject)
++    })
++  })
++}
++
++test('does not reuse an idle socket whose keep-alive timeout passed while the event loop was blocked', async (t) => {
++  const { client, state } = await setup(t, 200)
++
++  const res = await requestAfterBlockInPollPhase(client, 600)
++  assert.strictEqual(await res.body.text(), 'ok')
++
++  assert.strictEqual(state.connections, 2)
++  assert.strictEqual(state.disconnects.length, 1)
++  assert.strictEqual(state.disconnects[0].code, 'UND_ERR_INFO')
++  assert.strictEqual(state.disconnects[0].message, 'socket idle timeout')
++})
++
++test('reuses an idle socket whose keep-alive timeout did not pass while the event loop was blocked', async (t) => {
++  const { client, state } = await setup(t, 60e3)
++
++  const res = await requestAfterBlockInPollPhase(client, 600)
++  assert.strictEqual(await res.body.text(), 'ok')
++
++  assert.strictEqual(state.connections, 1)
++  assert.strictEqual(state.disconnects.length, 0)
++})
 ```
 
 ---
 
-### Incident Patch 3: `09ed1694` (2026-11-10)
-**Commit Message**: build(deps-dev): bump ws from 8.22.0 to 8.22.1 (#6189)
+### Incident Patch 2: `2ded4054` (2026-11-12)
+**Commit Message**: test: avoid setTimeout in broken gzip body regression test (#6002)
 
-Bumps [ws](https://github.com/websockets/ws) from 8.22.0 to 8.22.1.
-- [Release notes](https://github.com/websockets/ws/releases)
-- [Commits](https://github.com/websockets/ws/compare/8.22.0...8.22.1)
+The regression test for #5999 used a wall-clock setTimeout to make the
+invalid gzip body arrive in a later packet than the response headers.
+Wall-clock timers are flaky and add a fixed delay to every run.
+
+Instead, defer the body to a later event-loop tick with setImmediate.
+This deterministically splits the headers and body into separate packets
+without any wall-clock dependency, and the test still hangs on the
+pre-fix code while rejecting fast on the current one.
+
+Refs: https://github.com/nodejs/undici/issues/5999
+
+**File**: `test/fetch/encoding.js` (modified, +33/-0)
+```diff
+@@ -249,3 +249,36 @@ describe('default accept-encoding request header', () => {
+     await response.arrayBuffer()
+   })
+ })
++
++// https://github.com/nodejs/undici/issues/5999
++test('invalid compressed body received after the headers rejects instead of hanging', async (t) => {
++  const server = createServer((req, res) => {
++    res.writeHead(200, {
++      'Content-Encoding': 'gzip',
++      'Content-Length': '16'
++    })
++    res.flushHeaders()
++
++    // The body must arrive in a later packet than the headers for the
++    // regression to manifest. Defer it to a later tick rather than using
++    // a wall-clock setTimeout, which is flaky and adds a fixed delay.
++    setImmediate(() => setImmediate(() => {
++      res.end(Buffer.alloc(16))
++    }))
++  }).listen(0, '127.0.0.1')
++
++  t.after(() => {
++    server.closeAllConnections()
++    server.close()
++  })
++
++  await once(server, 'listening')
++
++  const response = await fetch(`http://127.0.0.1:${server.address().port}`, { keepalive: false })
++
++  await t.assert.rejects(response.text(), (err) => {
++    t.assert.strictEqual(err.name, 'TypeError')
++    t.assert.strictEqual(err.cause?.code, 'Z_DATA_ERROR')
++    return true
++  })
++})
+```
 
 ---
-updated-dependencies:
-- dependency-name: ws
-  dependency-version: 8.22.1
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 3: `af829065` (2026-11-12)
+**Commit Message**: docs: align security policy with Node.js (#5987)
 
-**File**: `package-lock.json` (modified, +3/-3)
+**File**: `SECURITY.md` (modified, +76/-32)
 ```diff
-@@ -9032,9 +9032,9 @@
-       }
-     },
-     "node_modules/ws": {
--      "version": "8.22.0",
--      "resolved": "https://registry.npmjs.org/ws/-/ws-8.22.0.tgz",
--      "integrity": "sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==",
-+      "version": "8.22.1",
-+      "resolved": "https://registry.npmjs.org/ws/-/ws-8.22.1.tgz",
-+      "integrity": "sha512-oyL6OPYme/CmiFvNuGzeoxCJ4nOrZE2O1FwM9MWM1AsGri6nLXB2pg+lNA8aLeXMSav0J6eIVS1j6vUPzUtK9g==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
+@@ -36,6 +36,29 @@ issue.
+ 
+ Undici is an HTTP client library for Node.js. Its threat model is derived from
+ and aligned with the [Node.js threat model](https://github.com/nodejs/node/blob/HEAD/SECURITY.md#the-nodejs-threat-model).
++The Node.js policy is authoritative for the copy of undici bundled with
++Node.js. This section applies the same boundaries to the standalone undici
++package.
++
++### Security triage dispositions
++
++Security reports are classified using the same dispositions as Node.js:
++
++* **Vulnerability**: An undici defect that is exploitable across an
++  undici-owned security boundary and meets the criteria under
++  [What constitutes a vulnerability](#what-constitutes-a-vulnerability),
++  including any applicable DoS criteria.
++* **Security-interest bug**: A real undici defect, or an API behavior likely to
++  cause security bugs in applications, that is not itself a vulnerability
++  under this threat model. These are fixed as regular bugs and do not
++  automatically receive a CVE, but should still be reported privately first
++  when they affect a common security control such as protocol interpretation,
++  certificate validation, or TLS decisions.
++* **Common bug**: A correctness, robustness, or crash issue without an
++  undici-owned security boundary or a realistic cross-boundary attacker
++  benefit.
++* **Invalid / out of scope**: A report that cannot be reproduced, is not an
++  undici defect, or concerns behavior excluded by this policy.
+ 
+ ### What constitutes a vulnerability
+ 
+@@ -53,35 +76,49 @@ For a behavior to be considered a DoS vulnerability, the proof of concept must
+ meet the following criteria:
+ 
+ * The API is being correctly used.
+-* The API is public and documented.
+-* The behavior is significant enough to cause a denial of service quickly
+-  or in a context not controlled by the application developer (for example,
+-  HTTP parsing).
++* The API does not have a warning against its use in production.
++* The API is public and documented. For standards-based APIs, the behavior
++  must be well-defined by the applicable specification.
++* The API is stable. For APIs bundled in Node.js, it must have stable (2.0)
++  status.
++* The behavior is significant enough to cause a denial of service quickly or
++  in a context not controlled by the application developer, such as protocol
++  parsing.
+ * The behavior is directly exploitable by an untrusted source without requiring
+   application mistakes.
+ * The behavior cannot be reasonably mitigated through standard operational
+-  practices (like process recycling).
++  practices, such as process recycling.
++* The behavior occurs deterministically under normal usage patterns rather than
++  only in edge cases.
++* The behavior occurs at a rate that would cause practical resource exhaustion
++  within a practical timeframe under typical workloads.
+ * The attack demonstrates
+   [asymmetric resource consumption](https://cwe.mitre.org/data/definitions/405.html),
+-  where the attacker expends significantly fewer resources than what is required
+-  by the client to process the attack.
++  where the attacker expends significantly fewer resources than the client
++  must expend to process the attack. Attacks requiring comparable resources on
++  the attacker's side, which can be mitigated through practices such as rate
++  limiting, may not qualify.
+ 
+ **Undici does NOT trust**:
+ 
+-* Data received from the remote end of HTTP connections (both inbound responses
+-  and server-sent data) that is parsed or transformed by undici before being
+-  passed to the application. This includes:
++* Data received from the remote end of outbound network connections created
++  through undici APIs and transformed or validated by undici before being
++  passed to the application, **except with respect to payload length**. Undici
++  trusts applications to make connections and requests that avoid payload
++  sizes that would result in a denial of service. Subject to that exception,
++  untrusted data includes:
+   * HTTP response headers and status lines.
+-  * HTTP response bodies when processed by undici (e.g., chunked transfer
+-    decoding, content-encoding).
++  * HTTP response bodies processed by undici, such as chunked transfer decoding
++    and content-encoding.
+   * WebSocket frames received from a server.
+   * Server-Sent Events (EventSource) data received from a server.
+ * TLS certificate validation performed by undici on behalf of the application.
+ 
+ **Undici trusts**:
+ 
+ * The application code that uses its APIs, including all configuration,
+-  options, callbacks, and decisions about which body-consuming APIs to call.
++  options, callbacks, connection and request decisions, and decisions about
++  which body-consuming APIs to call.
+ * The operating system and its network stack.
+ * The Node.js runtime undici is running on.
+ * Dependencies installed by the application.
+@@ -99,19 +136,19 @@ meet the following criteria:
+   bypass organizational, regulatory, or legal controls. Untrusted
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6199** (2026-11-12): docs: note that SqliteCacheStore stores data unencrypted (@bardrop)
+- **PR #6198** (closed): fix: settle fetch() promise when mainFetch throws internally (@mcollina)
 - **PR #6190** (2026-11-10): build(deps-dev): bump node-forge from 1.4.2 to 1.4.3 (@dependabot[bot])
 - **PR #6189** (2026-11-10): build(deps-dev): bump ws from 8.22.0 to 8.22.1 (@dependabot[bot])
 - **PR #6188** (2026-11-09): build(deps-dev): bump @fastify/busboy from 3.2.4 to 3.2.5 (@dependabot[bot])
 - **PR #6176** (2026-11-07): fix(h2): preserve transport errors and mismatch causes (@styfle)
-- **PR #6170** (2026-11-06): fix(pool): release saturated h2 protocol probes after SETTINGS (@EpicHigh)
-- **PR #6168** (2026-11-07): test: make test:typescript cross-platform on Windows (@mcollina)
 
 ---
 
@@ -836,32 +1069,51 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump node-forge from 1.4.2 to 1.4.3 (#6190)
+## X. h1): do not reuse idle sockets whose keep-alive timeout expired
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/dispatcher/client-h1.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d095670`: build(deps-dev): bump node-forge from 1.4.2 to 1.4.3 (#6190). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02c4f8c6`: h1): do not reuse idle sockets whose keep-alive timeout expired. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/dispatcher/client-h1.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      "version": "1.4.3",
-      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.3.tgz",
-      "integrity": "sha512-P6wzfh6t70avmV8FrVEAd/36sOPJQ+hkaJVX1Laap9J/77m7M0eyozDvc8SwnDf4P7MP94gwbAAo0rg3YVXT+g==",
+const kIdleSince = Symbol('kIdleSince')
+/**
+ * kIdleSince is recorded when the keep-alive timer is armed, so this never
+ * expires a socket before that timer is due.
+ * @param {import('net').Socket} socket
+ * @returns {boolean}
+ */
+function isIdleSocketExpired (socket) {
+  const parser = socket[kParser]
+  return parser.timeoutType === TIMEOUT_KEEP_ALIVE &&
+    parser.timeoutValue > 0 &&
+    performance.now() - socket[kIdleSince] >= parser.timeoutValue
+}
+
+    // The keep-alive timer cannot fire while the event loop is blocked, and a
+    // request dispatched from the poll phase passes the idle socket validation
+    // below before that timer or a FIN received during the block is processed.
+    // Check the clock so that an expired socket is not reused.
+    if (client[kRunning] === 0 && client[kPending] > 0 && isIdleSocketExpired(socket)) {
+      util.destroy(socket, new InformationalError('socket idle timeout'))
+      return
+    }
+
+        socket[kIdleSince] = performance.now()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-      "version": "1.4.2",
-      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.2.tgz",
-      "integrity": "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ==",
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d095670` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02c4f8c6` are properly handled with clean fallback behavior.

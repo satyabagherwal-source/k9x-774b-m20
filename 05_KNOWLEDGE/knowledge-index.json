@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T22:19:35.711Z",
-  "total_verified_learnings": 8806,
+  "last_updated": "2026-11-16T22:34:22.318Z",
+  "total_verified_learnings": 8807,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19394,
+  "total_items": 19402,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ddc1a3551d6c49036b956064dd0a2731422de6a6d4868d785e5e3ee805c40165",
+      "content_hash": "cde9b9d0af8e65b1d5f0f1614149be3585a5e78382504ce35304875c20f490b4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T20:32:46.804Z"
+      "persisted_at": "2026-11-16T22:34:22.179Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e3b9e1556b28b312a29731099db232738eb7f495274b11e6876e51920caa0b5",
+      "content_hash": "062333274e9f7d0de922e0a239c143b2847724c6272e85a3a0de0fb76a57afe6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:32:46.899Z"
+      "persisted_at": "2026-11-16T22:34:22.318Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f1dbb45496250ee24a0c566b55901357cc584f299a0947d17d5c06ea221b087",
+      "content_hash": "8853693076fefe1a6b6d91ec52ffdb120412f5f221176df1dd8c0453a189a771",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:40:05.782Z"
+      "persisted_at": "2026-11-16T22:34:21.329Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ea47a0a2ce5e9f37716b196086b8eeb3b4a7e6e0eecca59b51b83d82adba831d",
+      "content_hash": "5fea7918d13cdb5e0d37f1c8463cb7487b2265329018c509019c0b3373d9c4c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:40:05.904Z"
+      "persisted_at": "2026-11-16T22:34:21.479Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214871,13 +214871,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EG80-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-C871-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ba11bb76e685ec8957a61242811f86f9e854090d1fcd8e105fafa28e586d1b7",
+      "content_hash": "7b03152734339017c036b2fcf29576ce6ab2d65fee41c7d4c0f37f61a441419c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:40:05.666Z"
+      "persisted_at": "2026-11-16T22:34:21.186Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -250723,13 +250723,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZVNI-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-C8QI-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e5cb78511c922bee2c537bc1849095a1ef29113fddeea54a78ac04171051358",
+      "content_hash": "4faadc5a5b291b464764f645c972146a432e20d806276cee562f141a101fa633",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T20:32:46.590Z"
+      "persisted_at": "2026-11-16T22:34:21.883Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -250739,9 +250739,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a4d7ede199ead693633d7431a686251c1ac4041a5a0501a824d327d1d16eee4",
+      "content_hash": "bbee63ee766432f4b7ddd8fc432e48ece007e1a40d04c2b0e5f0a6929c257af5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T20:32:46.699Z"
+      "persisted_at": "2026-11-16T22:34:22.028Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -258368,6 +258368,125 @@
       "content_hash": "aff5368eeccba21be440155072a90a0a13fab40877f47472f2b1b2ae4ebb5861",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T22:19:35.711Z"
+    },
+    "learn-github-nodejs-undici": {
+      "learning_id": "learn-github-nodejs-undici",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nodejs/undici",
+      "repository": "nodejs/undici",
+      "slug": "nodejs-undici",
+      "platform": "github",
+      "source_url": "https://github.com/nodejs/undici",
+      "source_version": "02c4f8c6",
+      "content_hash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
+      "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8802,
+          "title": "do not reuse idle sockets whose keep-alive timeout expired",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T22:34:13.809Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8802": {
+      "learning_id": "rule-8802",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8802,
+      "title": "do not reuse idle sockets whose keep-alive timeout expired",
+      "source_url": "https://github.com/nodejs/undici",
+      "source_version": "02c4f8c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T22:34:13.809Z"
+    },
+    "candidate_directive-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired": {
+      "item_id": "candidate_directive-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C2U2-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired.md",
+      "title": "do not reuse idle sockets whose keep-alive timeout expired",
+      "repository": "nodejs/undici",
+      "source_version": "02c4f8c6",
+      "content_hash": "5ceec78c6e999a559092de1ba0baf9efaeffec6209cc748cbb5f7d43072acaf1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:34:14.236Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-technical-construction-intelligence-nodejs-undici-core-invariants.md",
+      "title": "Technical Construction Intelligence: nodejs/undici Core Invariants",
+      "repository": "nodejs/undici",
+      "source_version": "02c4f8c6",
+      "content_hash": "1069864e785ebb390dbc32a371b8d569f0adfa903adbe90446fad0b30fdf5991",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:34:14.392Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nodejs-undici-verification-protocol-empirical-defect-shield-for-nodejs-undici.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nodejs/undici",
+      "repository": "nodejs/undici",
+      "source_version": "02c4f8c6",
+      "content_hash": "4d31090c1a55e91bfbdfd146838e563fdb419eb1c69a61860c42eb6c7d89d462",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:34:14.559Z"
+    },
+    "candidate_directive-h1-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired": {
+      "item_id": "candidate_directive-h1-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C7O2-h1-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired.md",
+      "title": "h1): do not reuse idle sockets whose keep-alive timeout expired",
+      "repository": "nodejs-undici-learnings",
+      "source_version": "HEAD",
+      "content_hash": "19a4b2a4627a68301a7973016c1cf9fa0da658aca3bcd95399256f1b66d58562",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:34:20.499Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-learnings-technical-construction-intelligence-nodejs-undici-learni.md",
+      "title": "Technical Construction Intelligence: nodejs-undici-learnings Core Invariants",
+      "repository": "nodejs-undici-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b93f7d152cba25850eb21aa0a3337217054dc54640906fd54afa004587237b65",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:34:20.640Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nodejs-undici-learnings-verification-protocol-empirical-defect-shield-for-nodejs.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nodejs-undici-learnings",
+      "repository": "nodejs-undici-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a561118d2ad48f410d2fc0672285547927cd50172aa91a9a681658452297e583",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:34:20.793Z"
     }
   },
   "ai-builder-brain": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T22:19:35.563Z",
-  "total_records": 1341,
+  "last_updated": "2026-11-16T22:34:22.028Z",
+  "total_records": 1343,
   "domains": {
     "A": {
       "total": 9,
@@ -939,7 +939,7 @@
       ]
     },
     "H": {
-      "total": 294,
+      "total": 296,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1234,7 +1234,9 @@
         "DOM-H-2A843A13",
         "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-learnings-core-inva",
         "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-cachix-devenv-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-cachix-devenv-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7156,8 +7158,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "6f1dbb45496250ee24a0c566b55901357cc584f299a0947d17d5c06ea221b087",
-      "created_at": "2026-11-16T21:40:05.782Z"
+      "content_hash": "8853693076fefe1a6b6d91ec52ffdb120412f5f221176df1dd8c0453a189a771",
+      "created_at": "2026-11-16T22:34:21.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -22512,8 +22514,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "5a4d7ede199ead693633d7431a686251c1ac4041a5a0501a824d327d1d16eee4",
-      "created_at": "2026-11-16T20:32:46.699Z"
+      "content_hash": "bbee63ee766432f4b7ddd8fc432e48ece007e1a40d04c2b0e5f0a6929c257af5",
+      "created_at": "2026-11-16T22:34:22.028Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -24030,6 +24032,24 @@
       "repository": "iplug2-iplug2-learnings",
       "content_hash": "aec68484d0a0963e6287d231d4b4c39a773b7d8fad1a29e89dcddf0f43d2df8e",
       "created_at": "2026-11-16T22:19:35.563Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nodejs/undici Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-technical-construction-intelligence-nodejs-undici-core-invariants.md",
+      "repository": "nodejs/undici",
+      "content_hash": "1069864e785ebb390dbc32a371b8d569f0adfa903adbe90446fad0b30fdf5991",
+      "created_at": "2026-11-16T22:34:14.392Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nodejs-undici-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-learnings-technical-construction-intelligence-nodejs-undici-learni.md",
+      "repository": "nodejs-undici-learnings",
+      "content_hash": "b93f7d152cba25850eb21aa0a3337217054dc54640906fd54afa004587237b65",
+      "created_at": "2026-11-16T22:34:20.640Z"
     }
   }
 }
