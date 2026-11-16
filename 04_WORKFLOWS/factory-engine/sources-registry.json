@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T23:14:59.267Z",
-    "lastVerified": "2026-11-16T23:14:59.267Z",
+    "lastChecked": "2026-11-16T23:22:37.487Z",
+    "lastVerified": "2026-11-16T23:22:37.487Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -366,8 +366,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T22:47:39.193Z",
-    "lastVerified": "2026-11-16T22:47:39.193Z",
+    "lastChecked": "2026-11-16T23:22:32.445Z",
+    "lastVerified": "2026-11-16T23:22:32.445Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -2040,14 +2040,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-16T15:51:12.029Z",
-    "lastVerified": "2026-11-16T15:51:12.029Z",
+    "lastChecked": "2026-11-16T23:22:33.673Z",
+    "lastVerified": "2026-11-16T23:22:33.673Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "807e9e43dbf8cee760a1f8a9045ca01f60da9053e145bf289d7f1d383eebd4f5",
+    "contentHash": "bd2c8928cff24ae7f81b68894ed8f57a18e0eeeebf9d9bb1341709bec35e633a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2401,22 +2401,21 @@
     "lastVerified": "2026-11-13T22:17:33.375Z"
   },
   "chaos-mesh-chaos-mesh": {
-    "name": "chaos-mesh",
+    "name": "chaos-mesh/chaos-mesh",
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T16:50:24.226Z",
-    "lastVerified": "2026-11-15T16:50:24.226Z",
+    "lastChecked": "2026-11-16T23:22:30.212Z",
+    "lastVerified": "2026-11-16T23:22:30.212Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "f402f5f7cea915d8a26e28aac3c53aaa289eb3bed4ac5ad4d5505d6f278c2904",
+    "contentHash": "9b46787c070c1565c08d548790b380aafbc7360e4f62b306e4c24200f2aa0826",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "386a1e0e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
@@ -2459,14 +2458,14 @@
     "officialUrl": "https://github.com/flox/flox",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T03:34:23.026Z",
-    "lastVerified": "2026-11-15T03:34:23.026Z",
+    "lastChecked": "2026-11-16T23:22:22.659Z",
+    "lastVerified": "2026-11-16T23:22:22.659Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flox-flox",
-    "contentHash": "6359b612c310615b55bf97116eb146ba4ccaf6fa3d0ab602b8cc78752b70e2b3",
+    "contentHash": "a82641ff8a6bb5107bad9bd2368df5ea21c9d7cf0b29668ac9e4f0503e36b323",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3344,9 +3343,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-15T14:36:34.514Z",
+    "lastChecked": "2026-11-16T23:22:29.915Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-15T14:36:34.514Z"
+    "lastVerified": "2026-11-16T23:22:29.915Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -11982,11 +11981,21 @@
     "lastVerified": "2026-11-16T20:20:54.811Z"
   },
   "encode-httpx": {
-    "name": "httpx",
+    "name": "encode/httpx",
     "officialUrl": "https://github.com/encode/httpx",
-    "lastChecked": "2026-11-12T06:19:29.819Z",
-    "revisionIdentifier": "b5addb64",
-    "lastVerified": "2026-11-12T06:19:29.819Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-16T23:22:24.504Z",
+    "lastVerified": "2026-11-16T23:22:24.504Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-encode-httpx",
+    "contentHash": "aec9bac2d1aafe35f41854225907f6b93058cdbd9d11c3ddb01ad356f6bd1f39",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",
@@ -12287,9 +12296,9 @@
   "alexdrone-render": {
     "name": "Render",
     "officialUrl": "https://github.com/alexdrone/Render",
-    "lastChecked": "2026-11-13T09:31:13.007Z",
+    "lastChecked": "2026-11-16T23:22:22.307Z",
     "revisionIdentifier": "0955baef",
-    "lastVerified": "2026-11-13T09:31:13.007Z"
+    "lastVerified": "2026-11-16T23:22:22.307Z"
   },
   "scrapinghub-dateparser": {
     "name": "dateparser",

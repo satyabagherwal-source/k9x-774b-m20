@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-VCU6",
-    "timestamp": "2026-11-14T04:06:08.574Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-    "contentHash": "2c9409f01a99303c43698bf63706b6dc7e05c3411ced5e3bfbe28350c1f9e801",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-64PU",
-    "timestamp": "2026-11-14T04:14:31.266Z",
-    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-    "contentHash": "9c27d54ebf4f4a2a2b8d742f71f409c06914f247d6cea5a939ab3564a2ce83e0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-65W3",
-    "timestamp": "2026-11-14T04:14:32.787Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "a522f2c1223dbc77c798903369b3db9a6fe4bbf295b27c71f947deccae7b9acb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-69N3",
-    "timestamp": "2026-11-14T04:14:37.647Z",
-    "repository": "aws-amplify/amplify-js",
-    "learningId": "learn-github-aws-amplify-amplify-js",
-    "contentHash": "06630e46362c4e8c45d5d3fd2358c945277380674206480f853f2afab3c18fbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-T0DE",
     "timestamp": "2026-11-14T04:32:18.722Z",
     "repository": "berty/berty",
@@ -7492,6 +7432,66 @@
     "contentHash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-20EP",
+    "timestamp": "2026-11-16T23:22:23.761Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "a82641ff8a6bb5107bad9bd2368df5ea21c9d7cf0b29668ac9e4f0503e36b323",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-21AC",
+    "timestamp": "2026-11-16T23:22:24.900Z",
+    "repository": "encode/httpx",
+    "learningId": "learn-github-encode-httpx",
+    "contentHash": "aec9bac2d1aafe35f41854225907f6b93058cdbd9d11c3ddb01ad356f6bd1f39",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-261D",
+    "timestamp": "2026-11-16T23:22:31.057Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "9b46787c070c1565c08d548790b380aafbc7360e4f62b306e4c24200f2aa0826",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-28P2",
+    "timestamp": "2026-11-16T23:22:34.502Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "bd2c8928cff24ae7f81b68894ed8f57a18e0eeeebf9d9bb1341709bec35e633a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:15:01.842Z",
+  "last_updated": "2026-11-16T23:22:40.183Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T22:34:20.943Z",
@@ -468,7 +468,7 @@
       "staged_for_review": 1
     },
     "flox-flox-learnings.md": {
-      "processed_at": "2026-11-15T03:34:44.394Z",
+      "processed_at": "2026-11-16T23:22:37.603Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -538,7 +538,7 @@
       "staged_for_review": 1
     },
     "chaos-mesh-chaos-mesh-learnings.md": {
-      "processed_at": "2026-11-13T04:31:52.322Z",
+      "processed_at": "2026-11-16T23:22:39.255Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3221,9 +3221,14 @@
       "processed_at": "2026-11-16T23:03:51.876Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "encode-httpx-learnings.md": {
+      "processed_at": "2026-11-16T23:22:38.189Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1389,
+  "total_dossiers_evaluated": 1392,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1086
+  "total_staged_for_review": 1089
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T23:15:01.731Z",
-  "total_verified_learnings": 8812,
+  "last_updated": "2026-11-16T23:22:40.083Z",
+  "total_verified_learnings": 8814,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19447,
+  "total_items": 19466,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111973,10 +111973,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "f7254f67",
-      "content_hash": "abef2f7b2be93bd7a6ea3048ffea0fc11f8daf88f1f32a5ad90474592c35da17",
+      "source_version": "5ec5829e",
+      "content_hash": "03cc23d03aa177211911425489bb66649852a1427f0f2d22001b849c0ca4bd3a",
       "domain_letter": "B",
-      "persisted_at": "2026-11-16T15:51:12.898Z"
+      "persisted_at": "2026-11-16T23:22:34.765Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -111985,10 +111985,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "f7254f67",
-      "content_hash": "f0175ed555e29bf2cdb3c9b11d0e0ecf362b4386ba5cc1f62ccd7475d2540f03",
+      "source_version": "5ec5829e",
+      "content_hash": "29d5a403c806d411ac160783a3ba15d3caa9f55816246457f1e4c14180c70f2c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:51:13.010Z"
+      "persisted_at": "2026-11-16T23:22:34.865Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -213945,8 +213945,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "f7254f67",
-      "content_hash": "807e9e43dbf8cee760a1f8a9045ca01f60da9053e145bf289d7f1d383eebd4f5",
+      "source_version": "5ec5829e",
+      "content_hash": "bd2c8928cff24ae7f81b68894ed8f57a18e0eeeebf9d9bb1341709bec35e633a",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -213974,6 +213974,11 @@
           "number": 8703,
           "title": "Progressive Degradation Execution Harness for Container Triage",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8813,
+          "title": "Add doc for proto argument of send_trace_notify",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213981,7 +213986,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T15:51:12.460Z",
+      "verified_at": "2026-11-16T23:22:34.360Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239325,14 +239330,19 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "d1b1f5f7",
-      "content_hash": "6359b612c310615b55bf97116eb146ba4ccaf6fa3d0ab602b8cc78752b70e2b3",
+      "source_version": "3f4570ec",
+      "content_hash": "a82641ff8a6bb5107bad9bd2368df5ea21c9d7cf0b29668ac9e4f0503e36b323",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
         {
           "number": 8571,
           "title": "add `--override-input` to `flox build` and `flox develop`",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8811,
+          "title": "configure the catalog nixpkgs fetcher",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -239341,7 +239351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T03:34:23.750Z",
+      "verified_at": "2026-11-16T23:22:23.607Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239383,10 +239393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "repository": "flox/flox",
-      "source_version": "d1b1f5f7",
-      "content_hash": "569acb00adccb1729ff9f0d5d798a42e7b25b2667dae661244c63dee098eceef",
+      "source_version": "3f4570ec",
+      "content_hash": "9aad80b8c9c94dae9ef5535b147147cedfc92bd5d793fa7b7ecc7fc71c31bc56",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T03:34:24.182Z"
+      "persisted_at": "2026-11-16T23:22:24.047Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox",
@@ -239395,10 +239405,10 @@
       "relative_path": "08_VERIFICATION/flox-flox-verification-protocol-empirical-defect-shield-for-flox-flox.md",
       "title": "Verification Protocol: Empirical Defect Shield for flox/flox",
       "repository": "flox/flox",
-      "source_version": "d1b1f5f7",
-      "content_hash": "ac172d54be1dcdc9cd5f1560050a8b63db7c9dab3025755762d099876092e2a6",
+      "source_version": "3f4570ec",
+      "content_hash": "71d9c7bfdc50bb516fc5de24482caea274cf20257264d8bddfbcb7c6a2bf9046",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T03:34:24.288Z"
+      "persisted_at": "2026-11-16T23:22:24.165Z"
     },
     "rule-8572": {
       "learning_id": "rule-8572",
@@ -239446,9 +239456,9 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b3bad621ee7a4ef324e9333fa85404ccdbfb5fe19159f8a2d75af863af7008a",
+      "content_hash": "1717b980a460c9310985ceaba4395085f1051db8fd379fd68a04f2a11059151b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T03:34:44.776Z"
+      "persisted_at": "2026-11-16T23:22:37.962Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings",
@@ -239458,9 +239468,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for flox-flox-learnings",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "777642f7141216a9e4aaf2b460118047bf2e223eb03de3c654204c3f2b42ec37",
+      "content_hash": "69d48c640497d50cf861fdfb2f0051343fe561f33e354ac564f2ed8454711b9e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T03:34:44.886Z"
+      "persisted_at": "2026-11-16T23:22:38.076Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear",
@@ -259162,6 +259172,276 @@
       "content_hash": "2230fd9e271baf853b63a798672613e11db35f2229aca9d470feee42cc39cc7d",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T23:15:00.586Z"
+    },
+    "rule-8811": {
+      "learning_id": "rule-8811",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8811,
+      "title": "configure the catalog nixpkgs fetcher",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "3f4570ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:22:23.607Z"
+    },
+    "candidate_directive-configure-the-catalog-nixpkgs-fetcher": {
+      "item_id": "candidate_directive-configure-the-catalog-nixpkgs-fetcher",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-20JE-configure-the-catalog-nixpkgs-fetcher.md",
+      "title": "configure the catalog nixpkgs fetcher",
+      "repository": "flox/flox",
+      "source_version": "3f4570ec",
+      "content_hash": "581d4c9b383e8970d9d7f56e4a3cf161483ee49e3bb2b3d6a4f28c52cfd91286",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:22:23.933Z"
+    },
+    "learn-github-encode-httpx": {
+      "learning_id": "learn-github-encode-httpx",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "encode/httpx",
+      "repository": "encode/httpx",
+      "slug": "encode-httpx",
+      "platform": "github",
+      "source_url": "https://github.com/encode/httpx",
+      "source_version": "7cff5f79",
+      "content_hash": "aec9bac2d1aafe35f41854225907f6b93058cdbd9d11c3ddb01ad356f6bd1f39",
+      "dossier_path": "07_PROJECT_LEARNING/encode-httpx-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/encode-httpx-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:22:24.760Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-revise-contributing-guidelines-for-httpx": {
+      "item_id": "candidate_directive-revise-contributing-guidelines-for-httpx",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2C3R-revise-contributing-guidelines-for-httpx.md",
+      "title": "Revise contributing guidelines for HTTPX",
+      "repository": "encode-httpx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b0f06ad396602201d442b387efecfd978655ac82e8b506fc83746f4532dfbeb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:22:38.923Z"
+    },
+    "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-encode-httpx-content-information-intelligence-encode-httpx-core-invariants.md",
+      "title": "Content & Information Intelligence: encode/httpx Core Invariants",
+      "repository": "encode/httpx",
+      "source_version": "7cff5f79",
+      "content_hash": "9977512caac3d3015ef719ebfee17e6b69406443d57ea5227c148d66329e1f6f",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:22:25.210Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-encode-httpx": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-encode-httpx",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/encode-httpx-verification-protocol-empirical-defect-shield-for-encode-httpx.md",
+      "title": "Verification Protocol: Empirical Defect Shield for encode/httpx",
+      "repository": "encode/httpx",
+      "source_version": "7cff5f79",
+      "content_hash": "a36dae1b718b422516631fd0f8af04655e89069cd172c2785d8cae3793a9a28b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:22:25.319Z"
+    },
+    "learn-github-chaos-mesh-chaos-mesh": {
+      "learning_id": "learn-github-chaos-mesh-chaos-mesh",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "chaos-mesh/chaos-mesh",
+      "repository": "chaos-mesh/chaos-mesh",
+      "slug": "chaos-mesh-chaos-mesh",
+      "platform": "github",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "a19f8762",
+      "content_hash": "9b46787c070c1565c08d548790b380aafbc7360e4f62b306e4c24200f2aa0826",
+      "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8812,
+          "title": "upgrade chaos-tproxy to 0.6.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:22:30.916Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8812": {
+      "learning_id": "rule-8812",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8812,
+      "title": "upgrade chaos-tproxy to 0.6.0",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "a19f8762",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:22:30.916Z"
+    },
+    "candidate_directive-upgrade-chaos-tproxy-to-0-6-0": {
+      "item_id": "candidate_directive-upgrade-chaos-tproxy-to-0-6-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-265Y-upgrade-chaos-tproxy-to-0-6-0.md",
+      "title": "upgrade chaos-tproxy to 0.6.0",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "a19f8762",
+      "content_hash": "b195e81ae834a204dfda1c3caf34d8f12883c50ea39620932f732b5d40cdc6d7",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:22:31.223Z"
+    },
+    "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-content-information-intelligence-chaos-mesh-chaos-mesh-cor.md",
+      "title": "Content & Information Intelligence: chaos-mesh/chaos-mesh Core Invariants",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "a19f8762",
+      "content_hash": "285d8880af8e73ab0218109fadde955a1d19fbd2d40b5ed576e068e3ed11f22e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:22:31.328Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/chaos-mesh-chaos-mesh-verification-protocol-empirical-defect-shield-for-chaos-me.md",
+      "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh/chaos-mesh",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "a19f8762",
+      "content_hash": "de1f15225d2903827d104b0c6f289568fa21e37a61c8b64e7d0652114919a4b6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:22:31.440Z"
+    },
+    "rule-8813": {
+      "learning_id": "rule-8813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8813,
+      "title": "Add doc for proto argument of send_trace_notify",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "5ec5829e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:22:34.360Z"
+    },
+    "candidate_directive-add-doc-for-proto-argument-of-send_trace_notify": {
+      "item_id": "candidate_directive-add-doc-for-proto-argument-of-send_trace_notify",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-28TG-add-doc-for-proto-argument-of-send_trace_notify.md",
+      "title": "Add doc for proto argument of send_trace_notify",
+      "repository": "cilium/cilium",
+      "source_version": "5ec5829e",
+      "content_hash": "87a50f4046e4b0d6475fc6629927d40b4fbfb93f2a2cf12277d3a83ce1532a1f",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T23:22:34.661Z"
+    },
+    "candidate_directive-build-configure-the-catalog-nixpkgs-fetcher": {
+      "item_id": "candidate_directive-build-configure-the-catalog-nixpkgs-fetcher",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2B9Z-build-configure-the-catalog-nixpkgs-fetcher.md",
+      "title": "build): configure the catalog nixpkgs fetcher",
+      "repository": "flox-flox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a8483761525263cffef1527e5292275aa6fb8392bf49c31c5c82f582e4795358",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:22:37.850Z"
+    },
+    "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-encode-httpx-learnings-content-information-intelligence-encode-httpx-learnings-c.md",
+      "title": "Content & Information Intelligence: encode-httpx-learnings Core Invariants",
+      "repository": "encode-httpx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e20786bd50cece0d19d581dad42bdfb31906d7b69e87a9665740280ad98bdef4",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:22:39.033Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-encode-httpx-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-encode-httpx-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/encode-httpx-learnings-verification-protocol-empirical-defect-shield-for-encode-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for encode-httpx-learnings",
+      "repository": "encode-httpx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0b6210598932b02f2efc48e749a8e999fe1ff53d912b67b60d335875369a3ea1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:22:39.145Z"
+    },
+    "candidate_directive-httpchaos-upgrade-chaos-tproxy-to-0-6-0": {
+      "item_id": "candidate_directive-httpchaos-upgrade-chaos-tproxy-to-0-6-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2CTV-httpchaos-upgrade-chaos-tproxy-to-0-6-0.md",
+      "title": "httpchaos): upgrade chaos-tproxy to 0.6.0",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ebb5e021aac53fabdce67c90c8ff29ec48ff673d1f6afacacd638538fb9e0aac",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:22:39.859Z"
+    },
+    "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-learnings-content-information-intelligence-chaos-mesh-chao.md",
+      "title": "Content & Information Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76a6b98fc36be09c3a8eaa2cadae16fc82c41f642e759449d260f70c1c8e7c6e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:22:39.971Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/chaos-mesh-chaos-mesh-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh-chaos-mesh-learnings",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "source_version": "HEAD",
+      "content_hash": "87054c30bfa22a171facfafb1427bf193732ac7325e7da80db7e7a641656f41a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:22:40.083Z"
     }
   },
   "ai-builder-brain": {

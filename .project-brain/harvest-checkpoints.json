@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T23:14:56.212Z",
+  "last_updated": "2026-11-16T23:22:34.513Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "f402f5f7cea915d8a26e28aac3c53aaa289eb3bed4ac5ad4d5505d6f278c2904",
-      "verified_at": "2026-11-13T04:31:26.804Z",
+      "content_hash": "9b46787c070c1565c08d548790b380aafbc7360e4f62b306e4c24200f2aa0826",
+      "verified_at": "2026-11-16T23:22:31.067Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:31:26.804Z"
+      "last_updated": "2026-11-16T23:22:31.067Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "6359b612c310615b55bf97116eb146ba4ccaf6fa3d0ab602b8cc78752b70e2b3",
-      "verified_at": "2026-11-15T03:34:23.909Z",
+      "content_hash": "a82641ff8a6bb5107bad9bd2368df5ea21c9d7cf0b29668ac9e4f0503e36b323",
+      "verified_at": "2026-11-16T23:22:23.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T03:34:23.909Z"
+      "last_updated": "2026-11-16T23:22:23.773Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "807e9e43dbf8cee760a1f8a9045ca01f60da9053e145bf289d7f1d383eebd4f5",
-      "verified_at": "2026-11-16T15:51:12.622Z",
+      "content_hash": "bd2c8928cff24ae7f81b68894ed8f57a18e0eeeebf9d9bb1341709bec35e633a",
+      "verified_at": "2026-11-16T23:22:34.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:51:12.622Z"
+      "last_updated": "2026-11-16T23:22:34.512Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -14526,14 +14526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encode-httpx",
-      "content_hash": "7695394385885c4cd9f22d59d063edd450de4ef199322a1c6eb21c4df12a3c31",
-      "verified_at": "2026-10-20T00:25:25.588Z",
+      "content_hash": "aec9bac2d1aafe35f41854225907f6b93058cdbd9d11c3ddb01ad356f6bd1f39",
+      "verified_at": "2026-11-16T23:22:24.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:25:25.588Z"
+      "last_updated": "2026-11-16T23:22:24.921Z"
     },
     "elai950/AlertToast": {
       "repository": "elai950/AlertToast",

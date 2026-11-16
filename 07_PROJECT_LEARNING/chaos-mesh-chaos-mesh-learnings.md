@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `386a1e0e`  
+> **Source Version**: `a19f8762`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T04:31:11.863Z  
+> **Timestamp**: 2026-11-16T23:22:30.217Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T04:31:11.857Z  
+> **Harvest Timestamp**: 2026-11-16T23:22:30.212Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7983 stars
+- **Stars / Engagement**: 7991 stars
 
 ---
 
@@ -917,13 +917,15 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5232** (2026-11-12): **fix(ciliumchaos): skip recovery when the target node no longer exists**
-  *Symptoms*: Opened against the wrong repository by mistake.
-
-- **Issue #5231** (2026-11-12): **test(statuscheck): stabilize reconciliation tests**
-  *Symptoms*: ## What problem does this PR solve?  The continuous StatusCheck test can miss the final status update when its assertion polls once per second and waits only as long as the check itself. A failed assertion skips cleanup, so the next test can fail when it creates a StatusCheck with the same name.  ## What's changed and how does it work?  Allow the completion assertion extra time to observe the status update. Give each spec its own StatusCheck name and register cleanup immediately after creation so it runs even when an assertion fails.  The StatusCheck suite passed against a Kubernetes 1.32 envtest control plane.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.7 - [ ] release-2.6  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [x] Unit test - [ ] E2E test - [ ] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits are signed off. 
+- **Issue #5242** (2026-11-16): **fix(httpchaos): upgrade chaos-tproxy to 0.6.0**
+  *Symptoms*: ## What problem does this PR solve?  External HTTP requests to the target Pod can keep timing out after HTTPChaos reports recovery.  ## What's changed and how does it work?  Upgrade the Chaos Daemon to [chaos-tproxy v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0). The new version announces the restored MAC address so clients can reach the Pod again. Verified in the ARM64 Playground that requests through the Pod IP and Service recover after manual stop and experiment expiration.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits are signed off.
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5231?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 25.72%. Comparing base ([`96c3d39`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/96c3d390a20bf5e42ae15db5ee24993c890c5fb8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`d9a7834`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/d9a7834288f508d9ae268229733c59bc625fd86d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff               @@ ##           release-2.8    #5231   
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5242?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 34.47%. Comparing base ([`d60be9d`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/d60be9d4a14ec1ca47efdd1b74d2315ae09f8ba3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`2133238`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/213323836aacf3b3a401fd62d05adcbf34c9500d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff    
+
+- **Issue #5240** (2026-11-14): **chore: pull images from cr.chaos-mesh.dev on release-2.7**
+  *Symptoms*: ## Why  Backport #5227 so Helm installs on 2.7 pull images through the same registry proxy as 2.8.  ## What changed  - Default Helm and build environment image pulls to `cr.chaos-mesh.dev`. Helm users can set `images.registry=ghcr.io` to pull directly from GitHub Container Registry. - Pin E2E and integration installs to the registry used by their locally built images. - Preserve the registry and version placeholders in the 2.7 installation script generator.  ## Scope  The registry backport applies to `release-2.7` and retains its existing image versions.  ## Verification  Helm lint and rendering passed. The generated installer matches the regenerated 2.7 baseline.
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5240?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 40.40%. Comparing base ([`5be7485`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/5be7485c66cc32d4bdfb4dcac08c4bd3af87685d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`a2a510c`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/a2a510c80a518a4dcad3345436741612f3b14b2f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 2 commits behind head on release-2.7.  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -940,740 +942,43 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d60be9d4` (2026-11-12)
-**Commit Message**: fix(dashboard): split event pagination into a dedicated endpoint (#5229)
+### Incident Patch 1: `a19f8762` (2026-11-16)
+**Commit Message**: fix(httpchaos): upgrade chaos-tproxy to 0.6.0 (#5242)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -28,7 +28,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- ### Changed
+@@ -74,6 +74,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
  
- - Pull Helm chart images from `cr.chaos-mesh.dev` by default; set `images.registry=ghcr.io` to keep pulling from GitHub Container Registry [#5226](https://github.com/chaos-mesh/chaos-mesh/pull/5226)
--- Add multi-value event filters, time sorting, and optional API pagination, and fetch Dashboard Events table pages from the server [#5222](https://github.com/chaos-mesh/chaos-mesh/pull/5222)
-+- Add multi-value event filters, time sorting, and a `GET /events/page` endpoint for Dashboard Events pagination [#5222](https://github.com/chaos-mesh/chaos-mesh/pull/5222), [#5229](https://github.com/chaos-mesh/chaos-mesh/pull/5229)
- - Omit the redundant `SYS_PTRACE` declaration from the privileged Chaos Daemon security context in Helm manifests [#5215](https://github.com/chaos-mesh/chaos-mesh/pull/5215)
- - Upgrade tproxy to [v0.5.7](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.5.7) to fix HTTPChaos lifecycle cleanup and preserve repeated HTTP values.
- - Upgrade the containerd Go client to v2.3.7. [#5167](https://github.com/chaos-mesh/chaos-mesh/pull/5167)
+ ### Fixed
+ 
++- Upgrade chaos-tproxy to [v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0) to fix delayed recovery of external HTTP requests after HTTPChaos stops. [#5242](https://github.com/chaos-mesh/chaos-mesh/pull/5242)
+ - Fix PhysicalMachineChaos disk-fill requests to honor `fill-by-fallocate`. Setting it to `true` uses `fallocate`. Setting it to `false` or omitting it now uses `dd` [#5205](https://github.com/chaos-mesh/chaos-mesh/pull/5205)
+ - Fix PhysicalMachineChaos Redis Sentinel `redisPath` to accept executable directories. Remove existing boolean values before upgrading [#5204](https://github.com/chaos-mesh/chaos-mesh/pull/5204)
+ - Fix missing Kafka authentication, fill configuration, and IO broker settings in PhysicalMachineChaos, and keep Kafka credentials out of controller logs [#5203](https://github.com/chaos-mesh/chaos-mesh/pull/5203)
 ```
 
-**File**: `pkg/dashboard/apiserver/event/event.go` (modified, +61/-34)
+**File**: `images/chaos-daemon/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -65,16 +65,16 @@ func Register(r *gin.RouterGroup, s *Service) {
- 	endpoint := r.Group("/events")
- 	auth := func(c *gin.Context) { u.AuthMiddleware(c, s.conf) }
- 	endpoint.GET("", s.list)
-+	endpoint.GET("/page", s.listPage)
- 	endpoint.GET("/:id", auth, s.get)
- 	endpoint.GET("/workflow/:uid", auth, s.cascadeFetchEventsForWorkflow)
- }
+@@ -28,7 +28,7 @@ RUN case "$TARGET_PLATFORM" in \
+     *) echo >&2 "error: unsupported architecture '$TARGET_PLATFORM'"; exit 1 ;; \
+     esac; \
+     curl -L https://github.com/chaos-mesh/nsexec/releases/download/v0.1.7-r1/nsexec-$NSEXEC_ARCH-unknown-linux-gnu.tar.gz | tar xz -C /tmp/bin; \
+-    curl -L https://github.com/chaos-mesh/chaos-tproxy/releases/download/v0.5.7/tproxy-$NSEXEC_ARCH.tar.gz | tar xz -C /tmp/bin; \
++    curl -L https://github.com/chaos-mesh/chaos-tproxy/releases/download/v0.6.0/tproxy-$NSEXEC_ARCH.tar.gz | tar xz -C /tmp/bin; \
+     curl -L https://github.com/chaos-mesh/memStress/releases/download/v0.3.1/memStress_v0.3.1-$NSEXEC_ARCH-linux-gnu.tar.gz | tar xz -C /tmp/bin
  
- const layout = "2006-01-02 15:04:05"
- 
- // @Summary list events.
--// @Description Without page, returns the legacy event array ordered by ID descending unless sort/order is supplied. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.
--// @Description With page, returns {events: Event[], page: integer, limit: integer, next_page: integer|null}. include_total=true additionally returns total and total_pages, with total_pages=0 for no matches. Count and page can change under concurrent writes; separate requests are not a fixed snapshot.
--// @Description Page is one-based and defaults to 12 rows, up to 1000. Sort ties use ID in the same direction. Requests without page and without sort/order or repeated filters retain legacy time parsing and second precision; enhanced requests use full RFC3339 precision.
-+// @Description Returns an event array ordered by ID descending unless sort/order is supplied. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.
-+// @Description Requests without sort/order or repeated filters retain legacy time parsing and second precision. Enhanced requests accept RFC3339 time bounds. Comparison precision depends on the database. Sort ties use ID in the same direction. Pagination parameters are only supported by /events/page.
- // @Tags events
- // @Produce json
- // @Param created_at query string false "Deprecated, ignored; use start and end"
-@@ -84,45 +84,45 @@ const layout = "2006-01-02 15:04:05"
- // @Param kind query []string false "Object kinds" collectionFormat(multi)
- // @Param start query string false "Inclusive creation time lower bound (RFC3339)"
- // @Param end query string false "Inclusive creation time upper bound (RFC3339)"
--// @Param page query integer false "Opt into a paged object response; one-based" minimum(1)
--// @Param limit query integer false "Maximum rows; page mode defaults to 12 and accepts 1..1000; legacy mode is unbounded when omitted"
--// @Param include_total query boolean false "Include total and total_pages; requires page"
-+// @Param limit query integer false "Maximum rows; unbounded when omitted"
- // @Param sort query string false "Sort field, default id" Enums(id, object_id, namespace, name, kind, created_at, message)
- // @Param order query string false "Sort direction, default desc" Enums(asc, desc)
--// @Success 200 {array} core.Event "Legacy array; when page is present, the PageResponse envelope described above is returned instead"
-+// @Success 200 {array} core.Event
- // @Failure 400 {object} u.APIError
- // @Failure 500 {object} u.APIError
- // @Router /events [get]
- func (s *Service) list(c *gin.Context) {
--	values, err := url.ParseQuery(c.Request.URL.RawQuery)
--	if err != nil {
--		u.SetAPIError(c, u.ErrBadRequest.WrapWithNoMessage(err))
--		return
--	}
--	request, err := parseListRequest(values, s.conf)
--	if err != nil {
--		u.SetAPIError(c, u.ErrBadRequest.WrapWithNoMessage(err))
--		return
--	}
--	if !u.AuthorizeNamespaces(c, request.Query.Namespaces) {
-+	request, result := s.queryList(c, false)
-+	if request == nil {
- 		return
- 	}
--	if request.Legacy != nil {
--		events, err := s.eventStore.ListByFilter(c.Request.Context(), *request.Legacy)
--		if err != nil {
--			u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
--			return
--		}
--		c.JSON(http.StatusOK, events)
--		return
--	}
--	result, err := s.eventStore.Query(c.Request.Context(), request.Query)
--	if err != nil {
--		u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
--		return
--	}
--	if request.Page == 0 {
--		c.JSON(http.StatusOK, result.Events)
-+	c.JSON(http.StatusOK, result.Events)
-+}
-+
-+// @Summary list a page of events.
-+// @Description Returns a paginated event object. Page is one-based and required, with 12 rows by default and a maximum of 1000. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.
-+// @Description Time bounds accept RFC3339 timestamps. Comparison precision depends on the database. Sort ties use ID in the same direction. next_page is null when there are no more events. include_total=true additionally returns total and total_pages, with total_pages=0 for no matches. Count and page can change under concurrent writes; separate requests are not a fixed snapshot.
-+// @Tags events
-+// @Produce json
-+// @Param created_at query string false "Deprecated, ignored; use start and end"
-+// @Param name query []string false "Object names" collectionFormat(multi)
-+// @Param namespace query []string false "Object namespaces; every namespace must be authorized" coll
-```
-
-**File**: `pkg/dashboard/apiserver/event/list_request.go` (modified, +8/-9)
-```diff
-@@ -34,15 +34,15 @@ type listRequest struct {
- }
- 
- type PageResponse struct {
--	Events     []*core.Event `json:"events"`
--	Page       int           `json:"page"`
--	Limit      int           `json:"limit"`
--	NextPage   *int          `json:"next_page"`
-+	Events     []*core.Event `json:"events" validate:"required"`
-+	Page       int           `json:"page" validate:"required"`
-+	Limit      int           `json:"limit" validate:"required"`
-+	NextPage   *int          `json:"next_page" validate:"required" extensions:"x-nullable"`
- 	Total      *int64        `json:"total,omitempty"`
- 	TotalPages *int64        `json:"total_pages,omitempty"`
--}
-+} // @name EventPageResponse
- 
--func parseListRequest(values url.Values, conf *config.ChaosDashboardConfig) (listRequest, error) {
-+func parseListRequest(values url.Values, conf *config.ChaosDashboardConfig, paged bool) (listRequest, error) {
- 	request := listRequest{Query: core.EventQuery{
- 		Namespaces: u.EffectiveNamespaces(values["namespace"], conf),
- 		Names:      u.NormalizeQueryValues(values["name"]),
-@@ -56,9 +56,8 @@ func parseListRequest(values url.Values, conf *config.ChaosDashboardConfig) (lis
- 			return listRequest{}, fmt.Errorf("parameter %s must occur once", key)
- 		}
- 	}
--	paged := values.Has("page")
--	if values.Has("include_total") && !paged {
--		return listRequest{}, fmt.Errorf("parameter include_total requires page")
-+	if !paged && (values.Has("page") || values.Has("include_total")) {
-+		return listRequest{}, fmt.Errorf("pagination parameters require /events/page")
- 	}
- 	enhanced := paged || values.Has("sort") || values.Has("order")
- 	for _, key := range []string{"namespace", "name", "kind", "object_id"} {
-```
-
-**File**: `pkg/dashboard/apiserver/event/list_request_test.go` (modified, +31/-11)
-```diff
-@@ -122,7 +122,7 @@ var _ = Describe("Event list requests", func() {
- 			total := int64(13)
- 			return core.EventResult{Events: []*core.Event{{ID: 1}}, HasMore: true, Total: &total}, nil
- 		}
--		response := request("?page=1&include_total=true&namespace=&namespace=a&namespace=a&namespace=b&name=x&name=y&kind=PodChaos&kind=NetworkChaos&object_id=one&object_id=two")
-+		response := request("/page?page=1&include_total=true&namespace=&namespace=a&namespace=a&namespace=b&name=x&name=y&kind=PodChaos&kind=NetworkChaos&object_id=one&object_id=two")
- 		Expect(response.Code).To(Equal(http.StatusOK))
- 		Expect(calls).To(Equal(1))
- 		var page PageResponse
-@@ -135,11 +135,14 @@ var _ = Describe("Event list requests", func() {
- 		Expect(page.Events).To(HaveLen(1))
- 	})
- 
--	It("denies any unauthorized namespace before accessing the store", func() {
--		response := request("?page=1&namespace=allowed&namespace=denied")
--		Expect(response.Code).To(Equal(http.StatusUnauthorized))
--		Expect(reviews).To(Equal([]string{"allowed", "denied"}))
--		Expect(calls).To(BeZero())
-+	It("denies any unauthorized namespace on both list routes before accessing the store", func() {
-+		for _, path := range []string{"?", "/page?page=1&"} {
-+			reviews = nil
-+			response := request(path + "namespace=allowed&namespace=denied")
-+			Expect(response.Code).To(Equal(http.StatusUnauthorized))
-+			Expect(reviews).To(Equal([]string{"allowed", "denied"}))
-+			Expect(calls).To(BeZero())
-+		}
- 	})
- 
- 	It("retains authorization for ID and workflow routes", func() {
-@@ -167,7 +170,7 @@ var _ = Describe("Event list requests", func() {
- 				Expect(query.Namespaces).To(Equal(expected))
- 				return core.EventResult{Events: []*core.Event{}}, nil
- 			}
--			response := request("?page=2&namespace=&namespace=")
-+			response := request("/page?page=2&namespace=&namespace=")
- 			Expect(response.Code).To(Equal(http.StatusOK))
- 			Expect(reviews).To(Equal([]string{scope}))
- 			Expect(response.Body.String()).To(MatchJSON(`{"events":[],"page":2,"limit":12,"next_page":null}`))
-@@ -180,7 +183,7 @@ var _ = Describe("Event list requests", func() {
- 				Expect(query.Window).To(HaveValue(Equal(core.EventWindow{Offset: 24, Limit: 12})))
- 				return core.EventResult{Events: []*core.Event{}, Total: &total}, nil
- 			}
--			response := request("?page=3&include_total=true")
-+			response := request("/page?page=3&include_total=true")
- 			Expect(response.Code).To(Equal(http.StatusOK))
- 			var page PageResponse
- 			Expect(json.Unmarshal(response.Body.Bytes(), &page)).To(Succeed())
-@@ -195,7 +198,7 @@ var _ = Describe("Event list requests", func() {
- 
- 	It("rejects invalid or duplicate controls before authorization or querying", func() {
- 		for _, query := range []string{
--			"?page=", "?page=0", "?page=-1", "?page=one", "?page=9223372036854775808",
-+			"", "?limit=12", "?page=", "?page=0", "?page=-1", "?page=one", "?page=9223372036854775808",
- 			fmt.Sprintf("?page=%d&limit=2", math.MaxInt),
- 			"?page=1&limit=0", "?page=1&limit=-1", "?page=1&limit=1001", "?page=1&limit=",
- 			"?page=1&limit=one", "?include_total=false", "?page=1&include_total=maybe",
-@@ -205,13 +208,30 @@ var _ = Describe("Event list requests", func() {
- 			"?order=asc&order=desc", "?start=bad&start=bad", "?end=bad&end=bad",
- 			"?page=1&include_total=true&include_total=false",
- 		} {
--			response := request(query)
-+			response := request("/page" + query)
- 			Expect(response.Code).To(Equal(http.StatusBadRequest), "%s: %s", query, response.Body)
- 		}
- 		Expect(reviews).To(BeEmpty())
- 		Expect(calls).To(BeZero())
- 	})
- 
-+	It("rejects pagination controls on the array route without querying", func() {
-+		for _, query := range []string{"?page=1", "?include_total=false", "?page=1&include_total=true"} {
-+			response := request(query)
-+			Expect(response.Code).To(Equal(http.StatusBadRequest))
-+		}
-+		Expect(reviews).To(BeEmpty())
-+		Expect(calls).To(BeZero())
-+	})
-+
-+	It("returns an empty array when the array route has no matches", func() {
-+		for _, query := range []string{"", "?namespace=a&namespace=b&sort=id"} {
-+			response := request(query)
-+			Expect(response.Code).To(Equal(http.StatusOK))
-+			Expect(response.Body.String()).To(MatchJSON(`[]`))
-+		}
-+	})
-+
- 	It("preserves the legacy array path and its old time and limit values", func() {
- 		store.legacy = func(filter core.Filter) ([]*core.Event, error) {
- 			calls++
-@@ -229,7 +249,7 @@ var _ = Describe("Event list requests", func() {
- 		Expect(calls).To(Equal(1))
- 		for _, limit := range []string{"", "-1", "0", "invalid"} {
- 			values := url.Values{"limit": []string{limit}}
--			parsed, err := parseListRequest(values, conf)
-+			parsed, err := parseListRequest(values, conf, false)
- 			Expect(err).NotTo(HaveOccurred())
- 			Expect(parsed.Legacy.Limit).To(Equal(limit))
- 		}
-```
-
-**File**: `pkg/dashboard/swaggerdocs/docs.go` (modified, +169/-10)
-```diff
-@@ -853,14 +853,140 @@ const docTemplate = `{
-         },
-         "/events": {
-             "get": {
--                "description": "Without page, returns the legacy event array ordered by ID descending unless sort/order is supplied. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.\nWith page, returns {events: Event[], page: integer, limit: integer, next_page: integer|null}. include_total=true additionally returns total and total_pages, with total_pages=0 for no matches. Count and page can change under concurrent writes; separate requests are not a fixed snapshot.\nPage is one-based and defaults to 12 rows, up to 1000. Sort ties use ID in the same direction. Requests without page and without sort/order or repeated filters retain legacy time parsing and second precision; enhanced requests use full RFC3339 precision.",
-+                "description": "Returns an event array ordered by ID descending unless sort/order is supplied. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.\nRequests without sort/order or repeated filters retain legacy time parsing and second precision. Enhanced requests accept RFC3339 time bounds. Comparison precision depends on the database. Sort ties use ID in the same direction. Pagination parameters are only supported by /events/page.",
-                 "produces": [
-                     "application/json"
-                 ],
-                 "tags": [
-                     "events"
-                 ],
-                 "summary": "list events.",
-+                "parameters": [
-+                    {
-+                        "type": "string",
-+                        "description": "Deprecated, ignored; use start and end",
-+                        "name": "created_at",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "array",
-+                        "items": {
-+                            "type": "string"
-+                        },
-+                        "collectionFormat": "multi",
-+                        "description": "Object names",
-+                        "name": "name",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "array",
-+                        "items": {
-+                            "type": "string"
-+                        },
-+                        "collectionFormat": "multi",
-+                        "description": "Object namespaces; every namespace must be authorized",
-+                        "name": "namespace",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "array",
-+                        "items": {
-+                            "type": "string"
-+                        },
-+                        "collectionFormat": "multi",
-+                        "description": "Object UIDs",
-+                        "name": "object_id",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "array",
-+                        "items": {
-+                            "type": "string"
-+                        },
-+                        "collectionFormat": "multi",
-+                        "description": "Object kinds",
-+                        "name": "kind",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "string",
-+                        "description": "Inclusive creation time lower bound (RFC3339)",
-+                        "name": "start",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "string",
-+                        "description": "Inclusive creation time upper bound (RFC3339)",
-+                        "name": "end",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "integer",
-+                        "description": "Maximum rows; unbounded when omitted",
-+                        "name": "limit",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "enum": [
-+                            "id",
-+                            "object_id",
-+                            "namespace",
-+                            "name",
-+                            "kind",
-+                            "created_at",
-+                            "message"
-+                        ],
-+                        "type": "string",
-+                        "description": "Sort field, default id",
-+                        "name": "sort",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "enum": [
-+                            "asc",
-+                            "des
-```
-
-**File**: `pkg/dashboard/swaggerdocs/swagger.json` (modified, +169/-10)
-```diff
-@@ -846,14 +846,140 @@
-         },
-         "/events": {
-             "get": {
--                "description": "Without page, returns the legacy event array ordered by ID descending unless sort/order is supplied. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.\nWith page, returns {events: Event[], page: integer, limit: integer, next_page: integer|null}. include_total=true additionally returns total and total_pages, with total_pages=0 for no matches. Count and page can change under concurrent writes; separate requests are not a fixed snapshot.\nPage is one-based and defaults to 12 rows, up to 1000. Sort ties use ID in the same direction. Requests without page and without sort/order or repeated filters retain legacy time parsing and second precision; enhanced requests use full RFC3339 precision.",
-+                "description": "Returns an event array ordered by ID descending unless sort/order is supplied. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.\nRequests without sort/order or repeated filters retain legacy time parsing and second precision. Enhanced requests accept RFC3339 time bounds. Comparison precision depends on the database. Sort ties use ID in the same direction. Pagination parameters are only supported by /events/page.",
-                 "produces": [
-                     "application/json"
-                 ],
-                 "tags": [
-                     "events"
-                 ],
-                 "summary": "list events.",
-+                "parameters": [
-+                    {
-+                        "type": "string",
-+                        "description": "Deprecated, ignored; use start and end",
-+                        "name": "created_at",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "array",
-+                        "items": {
-+                            "type": "string"
-+                        },
-+                        "collectionFormat": "multi",
-+                        "description": "Object names",
-+                        "name": "name",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "array",
-+                        "items": {
-+                            "type": "string"
-+                        },
-+                        "collectionFormat": "multi",
-+                        "description": "Object namespaces; every namespace must be authorized",
-+                        "name": "namespace",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "array",
-+                        "items": {
-+                            "type": "string"
-+                        },
-+                        "collectionFormat": "multi",
-+                        "description": "Object UIDs",
-+                        "name": "object_id",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "array",
-+                        "items": {
-+                            "type": "string"
-+                        },
-+                        "collectionFormat": "multi",
-+                        "description": "Object kinds",
-+                        "name": "kind",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "string",
-+                        "description": "Inclusive creation time lower bound (RFC3339)",
-+                        "name": "start",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "string",
-+                        "description": "Inclusive creation time upper bound (RFC3339)",
-+                        "name": "end",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "type": "integer",
-+                        "description": "Maximum rows; unbounded when omitted",
-+                        "name": "limit",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "enum": [
-+                            "id",
-+                            "object_id",
-+                            "namespace",
-+                            "name",
-+                            "kind",
-+                            "created_at",
-+                            "message"
-+                        ],
-+                        "type": "string",
-+                        "description": "Sort field, default id",
-+                        "name": "sort",
-+                        "in": "query"
-+                    },
-+                    {
-+                        "enum": [
-+                            "asc",
-+                            "desc"
-+                   
-```
-
-**File**: `pkg/dashboard/swaggerdocs/swagger.yaml` (modified, +126/-16)
-```diff
-@@ -1,5 +1,28 @@
- basePath: /api
- definitions:
-+  EventPageResponse:
-+    properties:
-+      events:
-+        items:
-+          $ref: '#/definitions/github_com_chaos-mesh_chaos-mesh_pkg_dashboard_core.Event'
-+        type: array
-+      limit:
-+        type: integer
-+      next_page:
-+        type: integer
-+        x-nullable: true
-+      page:
-+        type: integer
-+      total:
-+        type: integer
-+      total_pages:
-+        type: integer
-+    required:
-+    - events
-+    - limit
-+    - next_page
-+    - page
-+    type: object
-   github_com_chaos-mesh_chaos-mesh_api_v1alpha1.AWSChaosAction:
-     enum:
-     - ec2-stop
-@@ -8652,9 +8675,8 @@ paths:
-   /events:
-     get:
-       description: |-
--        Without page, returns the legacy event array ordered by ID descending unless sort/order is supplied. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.
--        With page, returns {events: Event[], page: integer, limit: integer, next_page: integer|null}. include_total=true additionally returns total and total_pages, with total_pages=0 for no matches. Count and page can change under concurrent writes; separate requests are not a fixed snapshot.
--        Page is one-based and defaults to 12 rows, up to 1000. Sort ties use ID in the same direction. Requests without page and without sort/order or repeated filters retain legacy time parsing and second precision; enhanced requests use full RFC3339 precision.
-+        Returns an event array ordered by ID descending unless sort/order is supplied. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.
-+        Requests without sort/order or repeated filters retain legacy time parsing and second precision. Enhanced requests accept RFC3339 time bounds. Comparison precision depends on the database. Sort ties use ID in the same direction. Pagination parameters are only supported by /events/page.
-       parameters:
-       - description: Deprecated, ignored; use start and end
-         in: query
-@@ -8696,20 +8718,10 @@ paths:
-         in: query
-         name: end
-         type: string
--      - description: Opt into a paged object response; one-based
--        in: query
--        minimum: 1
--        name: page
--        type: integer
--      - description: Maximum rows; page mode defaults to 12 and accepts 1..1000; legacy
--          mode is unbounded when omitted
-+      - description: Maximum rows; unbounded when omitted
-         in: query
-         name: limit
-         type: integer
--      - description: Include total and total_pages; requires page
--        in: query
--        name: include_total
--        type: boolean
-       - description: Sort field, default id
-         enum:
-         - id
-@@ -8733,8 +8745,7 @@ paths:
-       - application/json
-       responses:
-         "200":
--          description: Legacy array; when page is present, the PageResponse envelope
--            described above is returned instead
-+          description: OK
-           schema:
-             items:
-               $ref: '#/definitions/github_com_chaos-mesh_chaos-mesh_pkg_dashboard_core.Event'
-@@ -8781,6 +8792,105 @@ paths:
-       summary: Get an event.
-       tags:
-       - events
-+  /events/page:
-+    get:
-+      description: |-
-+        Returns a paginated event object. Page is one-based and required, with 12 rows by default and a maximum of 1000. Repeated namespace/name/kind/object_id values are ORed within each field; fields and inclusive time bounds are ANDed.
-+        Time bounds accept RFC3339 timestamps. Comparison precision depends on the database. Sort ties use ID in the same direction. next_page is null when there are no more events. include_total=true additionally returns total and total_pages, with total_pages=0 for no matches. Count and page can change under concurrent writes; separate requests are not a fixed snapshot.
-+      parameters:
-+      - description: Deprecated, ignored; use start and end
-+        in: query
-+        name: created_at
-+        type: string
-+      - collectionFormat: multi
-+        description: Object names
-+        in: query
-+        items:
-+          type: string
-+        name: name
-+        type: array
-+      - collectionFormat: multi
-+        description: Object namespaces; every namespace must be authorized
-+        in: query
-+        items:
-+          type: string
-+        name: namespace
-+        type: array
-+      - collectionFormat: multi
-+        description: Object UIDs
-+        in: query
-+        items:
-+          type: string
-+        name: object_id
-+        type: array
-+      - collectionFormat: multi
-+        description: Object kinds
-+        in: query
-+        items:
-+          type: string
-+        name: kind
-+        type: array
-+      - description: Inclusive creation time lower bound (RFC3339)
-+        in: query
-+        name: start
-+        type: string
-+      - description: Inclusive creation time upper bound (RFC3
-```
-
-**File**: `ui/app/src/api/events.ts` (modified, +38/-30)
-```diff
-@@ -14,43 +14,51 @@
-  * limitations under the License.
-  *
-  */
--import type { CoreEvent } from '@/openapi/index.schemas'
-+import { useGetEvents, useGetEventsPage } from '@/openapi'
-+import type { EventPageResponse, GetEventsPageParams, GetEventsPageSort } from '@/openapi/index.schemas'
- import { useAuthStore } from '@/zustand/auth'
--import { useQuery } from '@tanstack/react-query'
- 
--import { customInstance } from './http'
--
--export type EventSort = 'object_id' | 'namespace' | 'name' | 'kind' | 'created_at' | 'message'
-+interface EventListParams {
-+  object_id?: string
-+  limit?: number
-+}
- 
--export interface EventPageParams {
--  page: number
--  limit: number
--  sort: EventSort
--  order: 'asc' | 'desc'
-+function useEventNamespace() {
-+  const namespace = useAuthStore((state) => state.namespace)
-+  return namespace === 'All' ? undefined : [namespace]
- }
- 
--export interface EventPage {
--  events: CoreEvent[]
--  page: number
--  limit: number
--  next_page: number | null
--  total: number
--  total_pages: number
-+export function useEventList(params?: EventListParams, enabled = true) {
-+  const namespace = useEventNamespace()
-+  const objectID = params?.object_id
-+
-+  return useGetEvents(
-+    { limit: params?.limit, object_id: objectID ? [objectID] : undefined, namespace },
-+    { query: { enabled } },
-+  )
- }
- 
-+export type EventSort = Exclude<GetEventsPageSort, 'id'>
-+
-+export type EventPageParams = Required<Pick<GetEventsPageParams, 'page' | 'limit' | 'order'>> & { sort: EventSort }
-+
-+export type EventPage = EventPageResponse & Required<Pick<EventPageResponse, 'total' | 'total_pages'>>
-+
- export function useEventPage(params: EventPageParams) {
--  const namespace = useAuthStore((state) => state.namespace)
-+  const namespace = useEventNamespace()
- 
--  return useQuery({
--    queryKey: ['/events', 'page', namespace, params],
--    queryFn: ({ signal }) =>
--      customInstance<EventPage>({
--        url: '/events',
--        method: 'GET',
--        params: { ...params, namespace: namespace === 'All' ? undefined : namespace, include_total: true },
--        signal,
--      }),
--    retry: 1,
--    retryDelay: 3000,
--  })
-+  return useGetEventsPage(
-+    { ...params, namespace, include_total: true },
-+    {
-+      query: {
-+        select: (page): EventPage => {
-+          const { total, total_pages } = page
-+          if (total === undefined || total_pages === undefined) {
-+            throw new Error('Event page response is missing totals')
-+          }
-+          return { ...page, total, total_pages }
-+        },
-+      },
-+    },
-+  )
- }
-```
-
----
-
-### Incident Patch 2: `36c9946a` (2026-11-12)
-**Commit Message**: fix: follow-ups to the cr.chaos-mesh.dev default (#5226) (#5228)
-
-* ci: install the chart from ghcr.io in e2e and integration tests
-
-These jobs load the images they just built as ghcr.io/chaos-mesh/*:latest.
-Since the chart defaults to cr.chaos-mesh.dev (#5226), the chart pulled the
-published latest images instead, so the tests no longer ran the PR's code.
-
-Signed-off-by: bdclaw2026 <[REDACTED_EMAIL]>
-
-* chore(examples): pull web-show from cr.chaos-mesh.dev
-
-Same proxy of ghcr.io that the Helm chart uses by default since #5226.
-
-Signed-off-by: bdclaw2026 <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: bdclaw2026 <[REDACTED_EMAIL]>
-Co-authored-by: bdclaw2026 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/e2e_test.yml` (modified, +1/-0)
-```diff
-@@ -186,6 +186,7 @@ jobs:
-       - name: Install Chaos Mesh
-         run: |
-           helm install --wait --create-namespace chaos-mesh helm/chaos-mesh --namespace=chaos-mesh \
-+            --set images.registry=ghcr.io \
-             --set images.tag=latest \
-             --set chaosDaemon.runtime=containerd \
-             --set chaosDaemon.socketPath=/run/containerd/containerd.sock
-```
-
-**File**: `.github/workflows/integration_test.yml` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ jobs:
-         if: needs.changes.outputs.run_main == 'true'
-         run: |
-           helm install --wait --create-namespace chaos-mesh helm/chaos-mesh \
--            -n=chaos-mesh --set images.tag=latest \
-+            -n=chaos-mesh --set images.registry=ghcr.io --set images.tag=latest \
-             --set chaosDaemon.runtime=containerd \
-             --set chaosDaemon.socketPath=/run/containerd/containerd.sock \
-             --set controllerManager.chaosdSecurityMode=false
-```
-
-**File**: `examples/remote-cluster/deployment.yaml` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ spec:
-     spec:
-       containers:
-         - name: web-show
--          image: ghcr.io/chaos-mesh/web-show
-+          image: cr.chaos-mesh.dev/chaos-mesh/web-show
-           imagePullPolicy: Always
-           command:
-             - /usr/local/bin/web-show
-```
-
-**File**: `examples/web-show/deploy.sh` (modified, +1/-1)
-```diff
-@@ -101,7 +101,7 @@ spec:
-     spec:
-       containers:
-         - name: web-show
--          image: ghcr.io/chaos-mesh/web-show
-+          image: cr.chaos-mesh.dev/chaos-mesh/web-show
-           imagePullPolicy: Always
-           command:
-             - /usr/local/bin/web-show
+ # ---
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5232** (closed): fix(ciliumchaos): skip recovery when the target node no longer exists (@bartoszbehring-form3)
-- **PR #5231** (2026-11-12): test(statuscheck): stabilize reconciliation tests (@g1eny0ung)
-- **PR #5230** (2026-11-12): ci: wait for ingress admission in the OIDC integration test (@g1eny0ung)
-- **PR #5229** (2026-11-12): fix(dashboard): split event pagination into a dedicated endpoint (@g1eny0ung)
-- **PR #5228** (2026-11-12): fix: follow-ups to the cr.chaos-mesh.dev default (#5226) (@STRRL)
-- **PR #5227** (2026-11-12): chore: pull images from cr.chaos-mesh.dev by default on release-2.8 (@STRRL)
+- **PR #5242** (2026-11-16): fix(httpchaos): upgrade chaos-tproxy to 0.6.0 (@g1eny0ung)
+- **PR #5240** (2026-11-14): chore: pull images from cr.chaos-mesh.dev on release-2.7 (@g1eny0ung)
+- **PR #5239** (2026-11-14): fix(ui): backport dashboard dependency security updates to 2.7 (@g1eny0ung)
+- **PR #5238** (2026-11-14): fix(physicalmachinechaos): backport validation and UID fixes to 2.7 (@g1eny0ung)
+- **PR #5236** (2026-11-14): fix(chaos): backport experiment runtime fixes to 2.7 (@g1eny0ung)
+- **PR #5235** (2026-11-13): fix(workflow): backport workflow and dashboard fixes to 2.7 (@g1eny0ung)
 
 ---
 
@@ -1693,13 +998,13 @@ Co-authored-by: bdclaw2026 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dashboard): split event pagination into a dedicated endpoint (#5229)
+## X. httpchaos): upgrade chaos-tproxy to 0.6.0
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d60be9d4`: dashboard): split event pagination into a dedicated endpoint (#5229). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a19f8762`: httpchaos): upgrade chaos-tproxy to 0.6.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1707,14 +1012,14 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Add multi-value event filters, time sorting, and a `GET /events/page` endpoint for Dashboard Events pagination [#5222](https://github.com/chaos-mesh/chaos-mesh/pull/5222), [#5229](https://github.com/chaos-mesh/chaos-mesh/pull/5229)
+- Upgrade chaos-tproxy to [v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0) to fix delayed recovery of external HTTP requests after HTTPChaos stops. [#5242](https://github.com/chaos-mesh/chaos-mesh/pull/5242)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-- Add multi-value event filters, time sorting, and optional API pagination, and fetch Dashboard Events table pages from the server [#5222](https://github.com/chaos-mesh/chaos-mesh/pull/5222)
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d60be9d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a19f8762` are properly handled with clean fallback behavior.

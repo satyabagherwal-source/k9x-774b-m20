@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T23:15:01.611Z",
-  "total_records": 1354,
+  "last_updated": "2026-11-16T23:22:39.971Z",
+  "total_records": 1358,
   "domains": {
     "A": {
       "total": 9,
@@ -1245,7 +1245,7 @@
       ]
     },
     "I": {
-      "total": 64,
+      "total": 68,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1310,7 +1310,11 @@
         "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants",
         "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-sigstore-cosign-core-invariants",
-        "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
+        "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-core-invariants",
+        "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants"
       ]
     },
     "J": {
@@ -7097,8 +7101,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "abef2f7b2be93bd7a6ea3048ffea0fc11f8daf88f1f32a5ad90474592c35da17",
-      "created_at": "2026-11-16T15:51:12.898Z"
+      "content_hash": "03cc23d03aa177211911425489bb66649852a1427f0f2d22001b849c0ca4bd3a",
+      "created_at": "2026-11-16T23:22:34.765Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -18622,8 +18626,8 @@
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "repository": "flox/flox",
-      "content_hash": "569acb00adccb1729ff9f0d5d798a42e7b25b2667dae661244c63dee098eceef",
-      "created_at": "2026-11-15T03:34:24.182Z"
+      "content_hash": "9aad80b8c9c94dae9ef5535b147147cedfc92bd5d793fa7b7ecc7fc71c31bc56",
+      "created_at": "2026-11-16T23:22:24.047Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
@@ -18631,8 +18635,8 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-learnings-architecture-intelligence-flox-flox-learnings-core-invariant.md",
       "repository": "flox-flox-learnings",
-      "content_hash": "0b3bad621ee7a4ef324e9333fa85404ccdbfb5fe19159f8a2d75af863af7008a",
-      "created_at": "2026-11-15T03:34:44.776Z"
+      "content_hash": "1717b980a460c9310985ceaba4395085f1051db8fd379fd68a04f2a11059151b",
+      "created_at": "2026-11-16T23:22:37.962Z"
     },
     "DOM-D-8240E8AC": {
       "record_id": "DOM-D-8240E8AC",
@@ -24160,6 +24164,42 @@
       "repository": "sigstore-cosign-learnings",
       "content_hash": "0cf57eaa94081f663e1d5c328a867bc26d57c1a8d0bf2a3bc042db66d4e3bc5a",
       "created_at": "2026-11-16T23:15:00.461Z"
+    },
+    "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: encode/httpx Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-encode-httpx-content-information-intelligence-encode-httpx-core-invariants.md",
+      "repository": "encode/httpx",
+      "content_hash": "9977512caac3d3015ef719ebfee17e6b69406443d57ea5227c148d66329e1f6f",
+      "created_at": "2026-11-16T23:22:25.210Z"
+    },
+    "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: chaos-mesh/chaos-mesh Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-content-information-intelligence-chaos-mesh-chaos-mesh-cor.md",
+      "repository": "chaos-mesh/chaos-mesh",
+      "content_hash": "285d8880af8e73ab0218109fadde955a1d19fbd2d40b5ed576e068e3ed11f22e",
+      "created_at": "2026-11-16T23:22:31.328Z"
+    },
+    "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: encode-httpx-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-encode-httpx-learnings-content-information-intelligence-encode-httpx-learnings-c.md",
+      "repository": "encode-httpx-learnings",
+      "content_hash": "e20786bd50cece0d19d581dad42bdfb31906d7b69e87a9665740280ad98bdef4",
+      "created_at": "2026-11-16T23:22:39.033Z"
+    },
+    "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-learnings-content-information-intelligence-chaos-mesh-chao.md",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "content_hash": "76a6b98fc36be09c3a8eaa2cadae16fc82c41f642e759449d260f70c1c8e7c6e",
+      "created_at": "2026-11-16T23:22:39.971Z"
     }
   }
 }

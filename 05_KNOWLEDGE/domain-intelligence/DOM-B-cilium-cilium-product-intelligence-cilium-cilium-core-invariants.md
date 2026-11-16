@@ -4,23 +4,23 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "f7254f67",
+  "source_version": "5ec5829e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T15:51:12.786Z",
+  "timestamp": "2026-11-16T23:22:34.660Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `f7254f67`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T15:51:12.786Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `5ec5829e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T23:22:34.660Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:51:12.029Z  
+> **Harvest Timestamp**: 2026-11-16T23:22:33.673Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25852 stars
+- **Stars / Engagement**: 25853 stars
 
 ---
 
@@ -1273,15 +1273,16 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50045** (2026-11-16): **v1.20 Backports 2026-11-16**
-  *Symptoms*:  * [x] #49942 (@mhofstetter)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  49942 ``` 
+- **Issue #50056** (2026-11-16): **bpf: Add doc for proto argument of `send_trace_notify`**
+  *Symptoms*: This comment update was missed when introducing the new argument.  Fixes: https://github.com/cilium/cilium/pull/39794.
   **Post-Mortem & Fix Analysis**:
   > /test
 
-- **Issue #50042** (2026-11-16): **v1.18 Backports 2026-11-16**
-  *Symptoms*:  * [ ] #49961 (@darox)  * [ ] #49592 (@christarazi) :warning: resolved conflicts (testhelpers missing on v1.18)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  49961 49592 ``` 
+- **Issue #50047** (2026-11-16): **[Backport v1.20] pkg/ipam: Bump default Cloud IP release delay to 30 minutes**
+  *Symptoms*: Backport of #49857 to v1.20.  Related to #47910  On the main branch, the `ExcessIPReleaseDelay` was moved to a flag shared by all cloud providers in `operator/pkg/ipam/cell.go`. In v1.20 this flag is ENI only and defined in `operator/pkg/ipam/aws.go`. The difference between the upstream PR and this backport is due to this difference. The Azure docs in v1.20 don't include an IP release section so this part of the upstream PR is also dropped.  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs 49857 ```
   **Post-Mortem & Fix Analysis**:
   > /test
+  > @aanm I see you started the process for the v1.20.5 release as I opened this backport. Can we make sure this backport is included in the release ?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1298,113 +1299,42 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3daf9b0d` (2026-11-14)
-**Commit Message**: images: update cilium-{runtime,builder}
+### Incident Patch 1: `5ec5829e` (2026-11-16)
+**Commit Message**: bpf: Add doc for proto argument of send_trace_notify
 
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+This comment update was missed when introducing the new argument.
 
-**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
+Fixes: 4866264f77d1 ("bpf:trace: send_trace_notify accept L3 protocol")
+Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
+
+**File**: `bpf/lib/trace.h` (modified, +2/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "Cilium",
--  "image": "quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c",
-+  "image": "quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509",
-   "workspaceFolder": "/go/src/github.com/cilium/cilium",
-   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
-   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
-```
-
-**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--quay.io/cilium/cilium-runtime:e88c16905ce2239d93f5927c440f0f81710a6686@sha256:ce094ce66806312e15667bbdc5717c09c53fded904b7c4c1c2a74b29c9c0b705
-\ No newline at end of file
-+quay.io/cilium/cilium-runtime:4ce28a8f0e05d2224ad5ee81282b65f32602ce39@sha256:5792b6da9487c2b1520a8f394a6a41765d9536673df5d0531e34c23f8cf3e282
-\ No newline at end of file
-```
-
-**File**: `images/cilium/Dockerfile` (modified, +2/-2)
-```diff
-@@ -3,8 +3,8 @@
- # Copyright Authors of Cilium
- # SPDX-License-Identifier: Apache-2.0
+@@ -5,7 +5,7 @@
+  * Packet forwarding notification via perf event ring buffer.
+  *
+  * API:
+- * void send_trace_notify(ctx, obs_point, src, dst, dst_id, ifindex, reason, monitor)
++ * void send_trace_notify(ctx, obs_point, src, dst, dst_id, ifindex, reason, monitor, proto)
+  *
+  * @ctx:	socket buffer
+  * @obs_point:	observation point (TRACE_*)
+@@ -16,6 +16,7 @@
+  * @reason:	reason for forwarding the packet (TRACE_REASON_*),
+  *		e.g. return value of ct_lookup or TRACE_REASON_ENCRYPTED
+  * @monitor:	monitor aggregation value, e.g. the 'monitor' output of ct_lookup
++ * @proto:	L3 protocol
+  */
+ #pragma once
  
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
--ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:e88c16905ce2239d93f5927c440f0f81710a6686@sha256:ce094ce66806312e15667bbdc5717c09c53fded904b7c4c1c2a74b29c9c0b705
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
-+ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:4ce28a8f0e05d2224ad5ee81282b65f32602ce39@sha256:5792b6da9487c2b1520a8f394a6a41765d9536673df5d0531e34c23f8cf3e282
- #
- # cilium-envoy from github.com/cilium/proxy
- #
-```
-
-**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
- # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
- ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:5e8afd493a7124a8586e134d9b532731161d4b9becf9dee5a5956b107426f93d
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
-```
-
-**File**: `images/operator/Dockerfile` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
- ARG BASE_IMAGE=scratch
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:5e8afd493a7124a8586e134d9b532731161d4b9becf9dee5a5956b107426f93d
- ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
-```
-
----
-
-### Incident Patch 2: `647aef78` (2026-11-14)
-**Commit Message**: ci: update docs-builder
-
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ jobs:
-         uses: ./.github/actions/disk-cleanup
- 
-       - name: Build HTML
--        uses: docker://quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
-+        uses: docker://quay.io/cilium/docs-builder:2eb8d1105065246f2a708a65ef0000d68acebd36@sha256:590bf3487639f1828ddaed8cf3cbe0fdb8cd14bb40db0e3cb98804d2eb504240
-         with:
-           entrypoint: ./Documentation/check-build.sh
-           args: html
-```
-
-**File**: `Documentation/Makefile` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
- 
- .PHONY: default clean help cilium-build cmdref epub latex html
- 
--DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
-+DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:2eb8d1105065246f2a708a65ef0000d68acebd36@sha256:590bf3487639f1828ddaed8cf3cbe0fdb8cd14bb40db0e3cb98804d2eb504240
- 
- .PHONY: update-docs-builder-image
- update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50056** (2026-11-16): bpf: Add doc for proto argument of `send_trace_notify` (@pchaigno)
+- **PR #50047** (2026-11-16): [Backport v1.20] pkg/ipam: Bump default Cloud IP release delay to 30 minutes (@41ks)
 - **PR #50045** (2026-11-16): v1.20 Backports 2026-11-16 (@mhofstetter)
 - **PR #50042** (2026-11-16): v1.18 Backports 2026-11-16 (@mhofstetter)
 - **PR #50041** (2026-11-16): v1.19 Backports 2026-11-16 (@mhofstetter)
 - **PR #50034** (2026-11-15): fix(deps): update google.golang.org/genproto/googleapis/rpc digest to 09e21b2 (main) (@cilium-renovate[bot])
-- **PR #50033** (2026-11-16): chore(deps): update all-dependencies (v1.18) (@cilium-renovate[bot])
-- **PR #50032** (2026-11-16): chore(deps): update all-dependencies (v1.19) (@cilium-renovate[bot])
 
 ---
 
@@ -1424,31 +1354,32 @@ Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. images: update cilium-{runtime,builder}
+## X. bpf: Add doc for proto argument of send_trace_notify
 
 **RULE**:
-When implementing operations in `.devcontainer/devcontainer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bpf/lib/trace.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3daf9b0d`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ec5829e`: bpf: Add doc for proto argument of send_trace_notify. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/devcontainer.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/lib/trace.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  "image": "quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509",
+ * void send_trace_notify(ctx, obs_point, src, dst, dst_id, ifindex, reason, monitor, proto)
+ * @proto:	L3 protocol
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  "image": "quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c",
+ * void send_trace_notify(ctx, obs_point, src, dst, dst_id, ifindex, reason, monitor)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3daf9b0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ec5829e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

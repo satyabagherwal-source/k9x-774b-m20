@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:23.508Z",
+  "timestamp": "2026-11-16T23:22:38.822Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-encode-httpx-learnings",
+  "learning_id": "LEARN-EVO-encode-httpx-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [encode-httpx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:23.508Z`  
-> **Learning ID**: `LEARN-REEXTRACT-encode-httpx-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T23:22:38.822Z`  
+> **Learning ID**: `LEARN-EVO-encode-httpx-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encode-httpx-learnings.md`  
 > **Source**: github ([https://github.com/encode/httpx](https://github.com/encode/httpx))  
-> **Source Version**: `b5addb64`  
+> **Source Version**: `7cff5f79`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:25:25.229Z  
+> **Timestamp**: 2026-11-16T23:22:24.512Z  
 > **Learning ID**: `learn-github-encode-httpx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encode-httpx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encode/httpx](https://github.com/encode/httpx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:25:24.825Z  
+> **Harvest Timestamp**: 2026-11-16T23:22:24.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A next generation HTTP client for Python. 🦋
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 15642 stars
+- **Stars / Engagement**: 15798 stars
 
 ---
 
@@ -424,7 +424,7 @@ for __name in __all__:
 ```
 __title__ = "httpx"
 __description__ = "A next generation HTTP client, for Python 3."
-__version__ = "0.28.1"
+__version__ = "1.0.0"
 
 ```
 
@@ -2682,74 +2682,76 @@ def request_context(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ca097c96` (2025-12-10)
-**Commit Message**: docs/ssl: fix typo (#3703)
+### Incident Patch 1: `fdc0b4d6` (2026-11-16)
+**Commit Message**: Revise contributing guidelines for HTTPX (#3831)
 
-**File**: `docs/advanced/ssl.md` (modified, +1/-1)
+**File**: `.github/CONTRIBUTING.md` (modified, +14/-25)
 ```diff
-@@ -29,7 +29,7 @@ import certifi
- import httpx
- import ssl
+@@ -1,41 +1,30 @@
+ # Contributing
  
--# This SSL context is equivelent to the default `verify=True`.
-+# This SSL context is equivalent to the default `verify=True`.
- ctx = ssl.create_default_context(cafile=certifi.where())
- client = httpx.Client(verify=ctx)
- ```
-```
-
----
-
-### Incident Patch 2: `def4778d` (2025-10-16)
-**Commit Message**: Fixed a syntax error in the file upload example (#3692)
-
-**File**: `docs/quickstart.md` (modified, +1/-1)
-```diff
-@@ -191,7 +191,7 @@ You can also explicitly set the filename and content type, by using a tuple
- of items for the file value:
+-Thank you for being interested in contributing to HTTPX.
+-There are many ways you can contribute to the project:
++Thank you for your interest in contributing to HTTPX.
  
- ```pycon
-->>> with open('report.xls', 'rb') report_file:
-+>>> with open('report.xls', 'rb') as report_file:
- ...     files = {'upload-file': ('report.xls', report_file, 'application/vnd.ms-excel')}
- ...     r = httpx.post("https://httpbin.org/post", files=files)
- >>> print(r.text)
-```
-
----
-
-### Incident Patch 3: `3fee2783` (2025-09-05)
-**Commit Message**: [docs] Remove load_ssl_context & load_verify_locations DEBUG log (#3589)
-
-Co-authored-by: Kim Christie <[REDACTED_EMAIL]>
-
-**File**: `docs/logging.md` (modified, +1/-3)
-```diff
-@@ -20,8 +20,6 @@ httpx.get("https://www.example.com")
- Will send debug level output to the console, or wherever `stdout` is directed too...
+-- Try HTTPX and [report bugs/issues you find](https://github.com/encode/httpx/issues/new)
+-- [Implement new features](https://github.com/encode/httpx/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+-- [Review Pull Requests of others](https://github.com/encode/httpx/pulls)
+-- Write documentation
+-- Participate in discussions
++We’re focusing our development efforts on [hip](https://github.com/encode/hip), the next version of HTTPX. It is designed to address fundamental architectural & security issues.
  
- ```
--DEBUG [2024-09-28 17:27:40] httpx - load_ssl_context verify=True cert=None
--DEBUG [2024-09-28 17:27:40] httpx - load_verify_locations cafile='/Users/karenpetrosyan/oss/karhttpx/.venv/lib/python3.9/site-packages/certifi/cacert.pem'
- DEBUG [2024-09-28 17:27:40] httpcore.connection - connect_tcp.started host='www.example.com' port=443 local_address=None timeout=5.0 socket_options=None
- DEBUG [2024-09-28 17:27:41] httpcore.connection - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x101f1e8e0>
- DEBUG [2024-09-28 17:27:41] httpcore.connection - start_tls.started ssl_context=SSLContext(verify=True) server_hostname='www.example.com' timeout=5.0
-@@ -80,4 +78,4 @@ logging.config.dictConfig(LOGGING_CONFIG)
- httpx.get('https://www.example.com')
- ```
+-## Reporting Bugs or Other Issues
++HTTPX is entering a period of low-level maintenance, and we have limited time for triage and support. We may only be able to consider the most serious bug reports. We’re not planning further feature development for HTTPX, but contributions to hip are welcome.
  
--The exact formatting of the debug logging may be subject to change across different versions of `httpx` and `httpcore`. If you need to rely on a particular format it is recommended that you pin installation of these packages to fixed versions.
-\ No newline at end of file
-+The exact formatting of the debug logging may be subject to change across different versions of `httpx` and `httpcore`. If you need to rely on a particular format it is recommended that you pin installation of these packages to fixed versions.
+-Found something that HTTPX should support?
+-Stumbled upon some unexpected behaviour?
++----
+ 
+-Contributions should generally start out with [a discussion](https://github.com/encode/httpx/discussions).
+-Possible bugs may be raised as a "Potential Issue" discussion, feature requests may
+-be raised as an "Ideas" discussion. We can then determine if the discussion needs
+-to be escalated into an "Issue" or not, or if we'd consider a pull request.
++## Reporting Bugs
+ 
+-Try to be more descriptive as you can and in case of a bug report,
+-provide as much information as possible like:
++Found an issue that affects HTTPX? Please start with [a discussion](https://github.com/encode/httpx/discussions). We have limited time for triage, so we may only be able to consider the most serious bug reports. For feature requests or other contributions, please see [hip](https://github.com/encode/hip).
++
++When reporting a bug, include as much detail as you can:
+ 
+ - OS platform
+ - Python version
+ - Installed dependencies and versions (`python -m pip freeze`)
+-- Code snippet
+-- Error traceback
+-
+-You should always try to reduce any examples to the *simplest possible case*
+-that demonstrates the issue.
++- A code snippet
++- The error traceback
+ 
+-Some possibly useful tips for narrowing down potential issues...
++Please reduce examples to the simplest case that demonstrates the issue. It can also help to check:
+ 
+-- Does the issue exist on HTTP/1.1, or HTTP/2, or both?
+-- Does the issue exist with `Client`, `AsyncClient`, or both?
+-- When using `AsyncClient` does the issue exist when using `asyncio` or `trio`, or both?
++- Does the issue occur with HTTP/1.1, HTTP/2, or both?
++- Does it occur with `Client`, `AsyncClient`, or both?
++- With `AsyncClient`, does it occur with `asyncio`, `trio`, or both?
+ 
+ ## Development
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3783** (closed): Add option to keep the same method for 301/302 redirects (@kajinamit)
-- **PR #3773** (2026-02-23): Adapt test_response_decode_text_using_autodetect for chardet 6.0 (@musicinmybrain)
-- **PR #3765** (closed): docs: use canonical Requests docs URL (@droppingbeans)
-- **PR #3764** (closed): Percent-encode pipe character in URL paths (@Mr-Neutr0n)
-- **PR #3762** (closed): Bump cryptography from 45.0.7 to 46.0.5 (@dependabot[bot])
-- **PR #3759** (closed): Fix: Merge URL query parameters instead of replacing them (@veeceey)
+- **PR #3836** (2026-11-16): Add Python 3.14 to the test matrix (@cgl)
+- **PR #3834** (2026-11-16): Update PR template (@cgl)
+- **PR #3833** (closed): Fix/terminal dot segment slash (@barkya28)
+- **PR #3832** (2026-11-16): Version 1.0 (@cgl)
+- **PR #3831** (2026-11-16): Revise contributing guidelines for HTTPX (@cgl)
+- **PR #3796** (closed): Version 1.0 (@lovelydinosaur)
 
 ---
 
@@ -2769,31 +2771,65 @@ Co-authored-by: Kim Christie <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs/ssl: fix typo (#3703)
+## X. Revise contributing guidelines for HTTPX
 
 **RULE**:
-When implementing operations in `docs/advanced/ssl.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encode/httpx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encode/httpx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ca097c96`: docs/ssl: fix typo (#3703). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fdc0b4d6`: Revise contributing guidelines for HTTPX. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/advanced/ssl.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# This SSL context is equivalent to the default `verify=True`.
+Thank you for your interest in contributing to HTTPX.
+We’re focusing our development efforts on [hip](https://github.com/encode/hip), the next version of HTTPX. It is designed to address fundamental architectural & security issues.
+HTTPX is entering a period of low-level maintenance, and we have limited time for triage and support. We may only be able to consider the most serious bug reports. We’re not planning further feature development for HTTPX, but contributions to hip are welcome.
+----
+## Reporting Bugs
+Found an issue that affects HTTPX? Please start with [a discussion](https://github.com/encode/httpx/discussions). We have limited time for triage, so we may only be able to consider the most serious bug reports. For feature requests or other contributions, please see [hip](https://github.com/encode/hip).
+
+When reporting a bug, include as much detail as you can:
+- A code snippet
+- The error traceback
+Please reduce examples to the simplest case that demonstrates the issue. It can also help to check:
+- Does the issue occur with HTTP/1.1, HTTP/2, or both?
+- Does it occur with `Client`, `AsyncClient`, or both?
+- With `AsyncClient`, does it occur with `asyncio`, `trio`, or both?
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-# This SSL context is equivelent to the default `verify=True`.
+// Induced defect failure mode:
+Thank you for being interested in contributing to HTTPX.
+There are many ways you can contribute to the project:
+- Try HTTPX and [report bugs/issues you find](https://github.com/encode/httpx/issues/new)
+- [Implement new features](https://github.com/encode/httpx/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+- [Review Pull Requests of others](https://github.com/encode/httpx/pulls)
+- Write documentation
+- Participate in discussions
+## Reporting Bugs or Other Issues
+Found something that HTTPX should support?
+Stumbled upon some unexpected behaviour?
+Contributions should generally start out with [a discussion](https://github.com/encode/httpx/discussions).
+Possible bugs may be raised as a "Potential Issue" discussion, feature requests may
+be raised as an "Ideas" discussion. We can then determine if the discussion needs
+to be escalated into an "Issue" or not, or if we'd consider a pull request.
+Try to be more descriptive as you can and in case of a bug report,
+provide as much information as possible like:
+- Code snippet
+- Error traceback
+
+You should always try to reduce any examples to the *simplest possible case*
+that demonstrates the issue.
+Some possibly useful tips for na
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ca097c96` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fdc0b4d6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

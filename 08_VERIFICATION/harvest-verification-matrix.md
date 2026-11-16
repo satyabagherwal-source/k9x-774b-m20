@@ -10367,3 +10367,7 @@
 | `CYCLE-20261116-S6HZ` | `2026-11-16T23:14:45.095Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8809` | Yes (`d2e8fee0...`) |
 | `CYCLE-20261116-SBMY` | `2026-11-16T23:14:51.754Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8810` | Yes (`b48d6dd2...`) |
 | `CYCLE-20261116-SF24` | `2026-11-16T23:14:56.188Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`6e580b3c...`) |
+| `CYCLE-20261116-20EP` | `2026-11-16T23:22:23.761Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8811` | Yes (`a82641ff...`) |
+| `CYCLE-20261116-21AC` | `2026-11-16T23:22:24.900Z` | `encode/httpx` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/encode-httpx-learnings.md` | Yes (`aec9bac2...`) |
+| `CYCLE-20261116-261D` | `2026-11-16T23:22:31.057Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8812` | Yes (`9b46787c...`) |
+| `CYCLE-20261116-28P2` | `2026-11-16T23:22:34.502Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8813` | Yes (`bd2c8928...`) |

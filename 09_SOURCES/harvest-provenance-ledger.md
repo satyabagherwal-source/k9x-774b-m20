@@ -10400,3 +10400,7 @@ Every entry in this ledger must capture:
 | `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `d9f9b0ad` | Multi-dimensional audit evidence | 2026-11-16T23:14:45.099Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `330b0bab` | Multi-dimensional audit evidence | 2026-11-16T23:14:51.758Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `171fb44a` | Multi-dimensional audit evidence | 2026-11-16T23:14:56.192Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `3f4570ec` | Multi-dimensional audit evidence | 2026-11-16T23:22:23.765Z |
+| `learn-github-encode-httpx` | `https://github.com/encode/httpx` | `7cff5f79` | Multi-dimensional audit evidence | 2026-11-16T23:22:24.903Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `a19f8762` | Multi-dimensional audit evidence | 2026-11-16T23:22:31.060Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `5ec5829e` | Multi-dimensional audit evidence | 2026-11-16T23:22:34.505Z |
