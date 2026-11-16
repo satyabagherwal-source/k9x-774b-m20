@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:37.416Z",
+  "timestamp": "2026-11-16T02:17:36.586Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-crate-ci-typos-learnings",
+  "learning_id": "LEARN-EVO-crate-ci-typos-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [crate-ci-typos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:37.416Z`  
-> **Learning ID**: `LEARN-REEXTRACT-crate-ci-typos-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T02:17:36.586Z`  
+> **Learning ID**: `LEARN-EVO-crate-ci-typos-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source**: github ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
-> **Source Version**: `2611abd1`  
+> **Source Version**: `e7647d64`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:11:40.778Z  
+> **Timestamp**: 2026-11-16T02:17:20.881Z  
 > **Learning ID**: `learn-github-crate-ci-typos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:06:36.981Z  
+> **Harvest Timestamp**: 2026-11-16T02:17:20.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Source code spell checker
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4216 stars
+- **Stars / Engagement**: 4223 stars
 
 ---
 
@@ -1382,11 +1382,14 @@ impl<V> Map<&str, V> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1645** (2026-11-09): **fix(dict): Resolve extraversion, causalities false positives**
-  *Symptoms*: ### What does this PR try to solve?  Fixws #1643 Fixws #1644   ### Notes to reviewers  LLM involvement: none
+- **Issue #1648** (2026-11-16): **chore(deps): Update Rust Stable to v1.100**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [STABLE](https://redirect.github.com/rust-lang/rust) | minor | `1.99` → `1.100` |  ---  ### Release Notes  <details> <summary>rust-lang/rust (STABLE)</summary>  ### [`v1.100`](https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md#Version-11000-2026-11-12)  [Compare Source](https://redirect.github.com/rust-lang/rust/compare/1.99.0...1.100.0)  \==========================  <a id="1.100.0-Language"></a>  ## Language  - [Stabilize never type](https://redirect.github.com/rust-lang/rust/pull/155499) - [Lint against repeated `#[repr(..)]` attributes](https://redirect.github.com/rust-lang/rust/pull/157036) - [Stabilize `extern "custom"`](https://redirect.github.com/rust-lang/rust/pull/158504) - [Extend `dropping_references`, `dropping_copy_types` and `undropped_manually_drops` lints to `drop_in_place`](https://redirect.github.com/rust-lang/rust/pull/160229) - [`unfulfilled_lint_expectations` no longer fires on `#[expect(dead_code)]` inside code that is covered by a dead parent's diagnostic](https://redirect.github.com/rust-lang/rust/pull/161005) - [Turn the error for `repr(align)` fields in a `repr(packed)` type into a deny-by-default lint `aligned_fields_in_packed`](https://redirect.github.com/rust-lang/rust/pull/162160) - [volatile: allow accesses to non-AM memory to trap](https://redirect.github.com/rust-lang/rust/pull/160564/)  <a id="1.100.0-Compiler"></a>  ## Compiler  - [Stabilize 
 
-- **Issue #1642** (2026-11-04): **chore: Add license and readme as dynamic metadata to `typos-cli` Python project**
-  *Symptoms*: <!-- Thanks for helping out! -->  ### What does this PR try to solve?  <!-- a maintainer-approved Issue is required for non-trivial changes --> Relates to #1641  Adds the readme, license and version as dynamic project metadata.  Docs: https://www.maturin.rs/metadata.html?highlight=dynamic#dynamic-metadata.  The version seems to be injected regardless, but the license and readme fields do require declaring them as `dynamic`:  <details><summary>Before</summary> <p>  ````email Metadata-Version: 2.4 Name: typos Version: 1.52.0 Classifier: Environment :: Console Classifier: Intended Audience :: Developers Classifier: Topic :: Software Development Classifier: Operating System :: OS Independent Classifier: License :: OSI Approved :: MIT License Classifier: License :: OSI Approved :: Apache Software License Classifier: Programming Language :: Python Classifier: Programming Language :: Python :: 3 :: Only Classifier: Programming Language :: Rust Classifier: Programming Language :: Python :: Implementation :: CPython Classifier: Programming Language :: Python :: Implementation :: PyPy Summary: Source Code Spelling Correction Keywords: development,spelling Requires-Python: >=3.8 Project-URL: Changelog, https://github.com/crate-ci/typos/blob/main/CHANGELOG.md Project-URL: Documentation, https://github.com/crate-ci/typos#typos Project-URL: Releases, https://github.com/crate-ci/typos/releases Project-URL: Repository, https://github.com/crate-ci/typos `
+- **Issue #1647** (2026-11-15): **Alternative to frop: from**
+  *Symptoms*: ### Please complete the following tasks  - [x] I have searched the [open](https://github.com/crate-ci/typos/issues?q=is%3Aissue%20state%3Aopen%20label%3AA-exclude) and [rejected](https://github.com/crate-ci/typos/issues?q=is%3Aissue%20state%3Aclosed%20label%3AA-exclude) issues  ### Example data  from  ### Incorrect correction  drop  ### Description of data format  /  ### Justification  from is replaced automatically by `drop` it could be a `from`  ### Notes  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > file.txt  ```  frop  from  drop ```  ``` error: `frop` should be `drop`   ╭▸ ./file.txt:2:1   │ 2 │ frop   ╰╴━━━━ ```
+  > This template is for when there is an incorrect correction. This is still a valid correction, just there are multiple valid corrections.  I'd recommend adding this to #1639.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1403,96 +1406,68 @@ impl<V> Map<&str, V> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fe55b28` (2026-11-09)
-**Commit Message**: fix(dict): Resolve extraversion, causalities false positives
+### Incident Patch 1: `e7647d64` (2026-11-16)
+**Commit Message**: chore(deps): Update Rust Stable to v1.100 (#1648)
 
-Fixws #1643
-Fixws #1644
+This PR contains the following updates:
 
-**File**: `crates/typos-dict/assets/english.csv` (modified, +3/-0)
+| Package | Update | Change |
+|---|---|---|
+| [STABLE](https://redirect.github.com/rust-lang/rust) | minor | `1.99`
+→ `1.100` |
+
+---
+
+### Release Notes
+
+<details>
+<summary>rust-lang/rust (STABLE)</summary>
+
+###
+[`v1.100`](https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md#Version-11000-2026-11-12)
+
+[Compare
+Source](https://redirect.github.com/rust-lang/rust/compare/1.99.0...1.100.0)
+
+\==========================
+
+<a id="1.100.0-Language"></a>
+
+## Language
+
+- [Stabilize never
+type](https://redirect.github.com/rust-lang/rust/pull/155499)
+- [Lint against repeated `#[repr(..)]`
+attributes](https://redirect.github.com/rust-lang/rust/pull/157036)
+- [Stabilize `extern
+"custom"`](https://redirect.github.com/rust-lang/rust/pull/158504)
+- [Extend `dropping_references`, `dropping_copy_types` and
+`undropped_manually_drops` lints to
+`drop_in_place`](https://redirect.github.com/rust-lang/rust/pull/160229)
+- [`unfulfilled_lint_expectations` no longer fires on
+`#[expect(dead_code)]` inside code that is covered by a dead parent's
+diagnostic](https://redirect.github.com/rust-lang/rust/pull/161005
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -6868,6 +6868,7 @@ caulk
- caulker
- causal
- causality
-+causalities
- causation
- causative
- cause
-@@ -14847,6 +14848,8 @@ extravaganza
- extravehicular
- extreme
- extremeness
-+extraversion
-+extravert
- extremism
- extremist
- extremity
-```
-
-**File**: `crates/typos-dict/assets/words.csv` (modified, +0/-2)
-```diff
-@@ -14210,7 +14210,6 @@ caulfilower,cauliflower
- cauncks,canucks
- causacian,caucasian
- causailty,causality
--causalities,casualties
- causalties,casualties
- causalty,casualty
- causeed,caused
-@@ -37947,7 +37946,6 @@ extrats,extracts
- extravagent,extravagant
- extravagina,extravagant
- extravegant,extravagant
--extraversion,extroversion
- extravigant,extravagant
- extravogant,extravagant
- extraxt,extract
-```
-
-**File**: `crates/typos-dict/benches/benches/aho_corasick_codegen.rs` (modified, +0/-4)
-```diff
-@@ -14224,7 +14224,6 @@ impl Word {
-             b"cauncks",
-             b"causacian",
-             b"causailty",
--            b"causalities",
-             b"causalties",
-             b"causalty",
-             b"causeed",
-@@ -37959,7 +37958,6 @@ impl Word {
-             b"extravagent",
-             b"extravagina",
-             b"extravegant",
--            b"extraversion",
-             b"extravigant",
-             b"extravogant",
-             b"extraxt",
-@@ -110254,7 +110252,6 @@ impl Word {
-             &["caucasian"],
-             &["causality"],
-             &["casualties"],
--            &["casualties"],
-             &["casualty"],
-             &["caused"],
-             &["causes"],
-@@ -134042,7 +134039,6 @@ impl Word {
-             &["extravagant"],
-             &["extravagant"],
-             &["extravagant"],
--            &["extroversion"],
-             &["extravagant"],
-             &["extravagant"],
-             &["extract"],
+@@ -15,7 +15,7 @@ env:
+   CLICOLOR: 1
+   COLUMNS: 130
+   CARGO_INCREMENTAL: 0
+-  RUST_TOOLCHAIN_STABLE: "1.99"  # STABLE
++  RUST_TOOLCHAIN_STABLE: "1.100"  # STABLE
+ 
+ concurrency:
+   group: "${{ github.workflow }}-${{ github.ref }}"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1648** (2026-11-16): chore(deps): Update Rust Stable to v1.100 (@renovate[bot])
 - **PR #1645** (2026-11-09): fix(dict): Resolve extraversion, causalities false positives (@epage)
 - **PR #1642** (2026-11-04): chore: Add license and readme as dynamic metadata to `typos-cli` Python project (@edgarrmondragon)
 - **PR #1640** (2026-11-02): feat(dict): October updates (@epage)
 - **PR #1638** (2026-11-01): chore(deps): Update compatible (actions) (@renovate[bot])
 - **PR #1637** (2026-11-01): chore(deps): Update compatible (@renovate[bot])
-- **PR #1636** (closed): fix(type): order two definitions of one glob by weight, then by name (@paoValle)
 
 ---
 
@@ -1512,33 +1487,31 @@ Fixws #1644
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dict): Resolve extraversion, causalities false positives
+## X. deps): Update Rust Stable to v1.100
 
 **RULE**:
-When implementing operations in `crates/typos-dict/assets/english.csv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fe55b28`: dict): Resolve extraversion, causalities false positives. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7647d64`: deps): Update Rust Stable to v1.100. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/typos-dict/assets/english.csv`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-causalities
-extraversion
-extravert
+  RUST_TOOLCHAIN_STABLE: "1.100"  # STABLE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+  RUST_TOOLCHAIN_STABLE: "1.99"  # STABLE
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fe55b28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7647d64` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source**: github ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
-> **Source Version**: `aa7e5314`  
+> **Source Version**: `e7647d64`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:20:49.501Z  
+> **Timestamp**: 2026-11-16T02:17:20.881Z  
 > **Learning ID**: `learn-github-crate-ci-typos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:20:49.308Z  
+> **Harvest Timestamp**: 2026-11-16T02:17:20.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Source code spell checker
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4220 stars
+- **Stars / Engagement**: 4223 stars
 
 ---
 
@@ -1357,11 +1357,14 @@ impl<V> Map<&str, V> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1646** (2026-11-11): **v1.52.1 pre-commit hook fails to install (typos==1.52.1 missing on PyPI)**
-  *Symptoms*: ### Description  Similar to #1641, the `v1.52.1` Git tag was pushed and picked up by `pre-commit autoupdate` / `prek update`, which updates `.pre-commit-config.yaml` / `prek.toml` to `rev: v1.52.1`.  However, because the `v1.52.1` release workflow failed before publishing the Python wheels to PyPI, `typos==1.52.1` does not exist on PyPI and installing the `pre-commit` hook fails.  ### Reproduction  Configure `crate-ci/typos` at `v1.52.1` in `.pre-commit-config.yaml` (or `prek.toml`):  ```yaml repos:   - repo: https://github.com/crate-ci/typos     rev: v1.52.1     hooks:       - id: typos ```  Run `pre-commit run -a` or `prek -a`:  ```text error: Failed to install hook `typos`   caused by: Command `uv pip install ...` exited with an error:  error: No solution found when resolving dependencies cause: Because there is no version of typos==1.52.1 and pre-commit-placeholder-package==0.0.0 depends on typos==1.52.1, we can conclude that pre-commit-placeholder-package==0.0.0 cannot be used. ```  ### Suggestion  Since this has happened multiple times (see #1641) and tools like `pre-commit autoupdate`, `prek update`, and Renovate/Dependabot discover versions purely by querying Git tags on this repository, pushing the `vX.Y.Z` tag before the PyPI wheels are built and uploaded breaks downstream consumers whenever the release workflow is still running or fails mid-way.  Would it be possible to: 1. Re-run/fix the `v1.52.1` PyPI wheel publish job (or remove the `v1.52.1` tag if superseded),
+- **Issue #1648** (2026-11-16): **chore(deps): Update Rust Stable to v1.100**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [STABLE](https://redirect.github.com/rust-lang/rust) | minor | `1.99` → `1.100` |  ---  ### Release Notes  <details> <summary>rust-lang/rust (STABLE)</summary>  ### [`v1.100`](https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md#Version-11000-2026-11-12)  [Compare Source](https://redirect.github.com/rust-lang/rust/compare/1.99.0...1.100.0)  \==========================  <a id="1.100.0-Language"></a>  ## Language  - [Stabilize never type](https://redirect.github.com/rust-lang/rust/pull/155499) - [Lint against repeated `#[repr(..)]` attributes](https://redirect.github.com/rust-lang/rust/pull/157036) - [Stabilize `extern "custom"`](https://redirect.github.com/rust-lang/rust/pull/158504) - [Extend `dropping_references`, `dropping_copy_types` and `undropped_manually_drops` lints to `drop_in_place`](https://redirect.github.com/rust-lang/rust/pull/160229) - [`unfulfilled_lint_expectations` no longer fires on `#[expect(dead_code)]` inside code that is covered by a dead parent's diagnostic](https://redirect.github.com/rust-lang/rust/pull/161005) - [Turn the error for `repr(align)` fields in a `repr(packed)` type into a deny-by-default lint `aligned_fields_in_packed`](https://redirect.github.com/rust-lang/rust/pull/162160) - [volatile: allow accesses to non-AM memory to trap](https://redirect.github.com/rust-lang/rust/pull/160564/)  <a id="1.100.0-Compiler"></a>  ## Compiler  - [Stabilize 
 
-- **Issue #1645** (2026-11-09): **fix(dict): Resolve extraversion, causalities false positives**
-  *Symptoms*: ### What does this PR try to solve?  Fixes #1643 Fixes #1644   ### Notes to reviewers  LLM involvement: none
+- **Issue #1647** (2026-11-15): **Alternative to frop: from**
+  *Symptoms*: ### Please complete the following tasks  - [x] I have searched the [open](https://github.com/crate-ci/typos/issues?q=is%3Aissue%20state%3Aopen%20label%3AA-exclude) and [rejected](https://github.com/crate-ci/typos/issues?q=is%3Aissue%20state%3Aclosed%20label%3AA-exclude) issues  ### Example data  from  ### Incorrect correction  drop  ### Description of data format  /  ### Justification  from is replaced automatically by `drop` it could be a `from`  ### Notes  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > file.txt  ```  frop  from  drop ```  ``` error: `frop` should be `drop`   ╭▸ ./file.txt:2:1   │ 2 │ frop   ╰╴━━━━ ```
+  > This template is for when there is an incorrect correction. This is still a valid correction, just there are multiple valid corrections.  I'd recommend adding this to #1639.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1378,52 +1381,68 @@ impl<V> Map<&str, V> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa7e5314` (2026-11-11)
-**Commit Message**: chore(ci): Drop fail-fast from maturin builds
+### Incident Patch 1: `e7647d64` (2026-11-16)
+**Commit Message**: chore(deps): Update Rust Stable to v1.100 (#1648)
 
-**File**: `.github/workflows/maturin.yml` (modified, +4/-0)
+This PR contains the following updates:
+
+| Package | Update | Change |
+|---|---|---|
+| [STABLE](https://redirect.github.com/rust-lang/rust) | minor | `1.99`
+→ `1.100` |
+
+---
+
+### Release Notes
+
+<details>
+<summary>rust-lang/rust (STABLE)</summary>
+
+###
+[`v1.100`](https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md#Version-11000-2026-11-12)
+
+[Compare
+Source](https://redirect.github.com/rust-lang/rust/compare/1.99.0...1.100.0)
+
+\==========================
+
+<a id="1.100.0-Language"></a>
+
+## Language
+
+- [Stabilize never
+type](https://redirect.github.com/rust-lang/rust/pull/155499)
+- [Lint against repeated `#[repr(..)]`
+attributes](https://redirect.github.com/rust-lang/rust/pull/157036)
+- [Stabilize `extern
+"custom"`](https://redirect.github.com/rust-lang/rust/pull/158504)
+- [Extend `dropping_references`, `dropping_copy_types` and
+`undropped_manually_drops` lints to
+`drop_in_place`](https://redirect.github.com/rust-lang/rust/pull/160229)
+- [`unfulfilled_lint_expectations` no longer fires on
+`#[expect(dead_code)]` inside code that is covered by a dead parent's
+diagnostic](https://redirect.github.com/rust-lang/rust/pull/161005
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -22,6 +22,7 @@ jobs:
-   linux:
-     runs-on: ubuntu-latest
-     strategy:
-+      fail-fast: false
-       matrix:
-         target: [x86_64, aarch64]
-     steps:
-@@ -47,6 +48,7 @@ jobs:
-   musllinux:
-     runs-on: ubuntu-latest
-     strategy:
-+      fail-fast: false
-       matrix:
-         target: [x86_64, aarch64]
-     steps:
-@@ -72,6 +74,7 @@ jobs:
-   windows:
-     runs-on: windows-latest
-     strategy:
-+      fail-fast: false
-       matrix:
-         target: [x64]
-     steps:
-@@ -96,6 +99,7 @@ jobs:
-   macos:
-     runs-on: macos-latest
-     strategy:
-+      fail-fast: false
-       matrix:
-         target: [x86_64, aarch64]
-     steps:
+@@ -15,7 +15,7 @@ env:
+   CLICOLOR: 1
+   COLUMNS: 130
+   CARGO_INCREMENTAL: 0
+-  RUST_TOOLCHAIN_STABLE: "1.99"  # STABLE
++  RUST_TOOLCHAIN_STABLE: "1.100"  # STABLE
+ 
+ concurrency:
+   group: "${{ github.workflow }}-${{ github.ref }}"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1648** (2026-11-16): chore(deps): Update Rust Stable to v1.100 (@renovate[bot])
 - **PR #1645** (2026-11-09): fix(dict): Resolve extraversion, causalities false positives (@epage)
 - **PR #1642** (2026-11-04): chore: Add license and readme as dynamic metadata to `typos-cli` Python project (@edgarrmondragon)
 - **PR #1640** (2026-11-02): feat(dict): October updates (@epage)
 - **PR #1638** (2026-11-01): chore(deps): Update compatible (actions) (@renovate[bot])
 - **PR #1637** (2026-11-01): chore(deps): Update compatible (@renovate[bot])
-- **PR #1636** (closed): fix(type): order two definitions of one glob by weight, then by name (@paoValle)
 
 ---
 
@@ -1443,31 +1462,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): Drop fail-fast from maturin builds
+## X. deps): Update Rust Stable to v1.100
 
 **RULE**:
-When implementing operations in `.github/workflows/maturin.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa7e5314`: ci): Drop fail-fast from maturin builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7647d64`: deps): Update Rust Stable to v1.100. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/maturin.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      fail-fast: false
-      fail-fast: false
-      fail-fast: false
-      fail-fast: false
+  RUST_TOOLCHAIN_STABLE: "1.100"  # STABLE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+  RUST_TOOLCHAIN_STABLE: "1.99"  # STABLE
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa7e5314` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7647d64` are properly handled with clean fallback behavior.

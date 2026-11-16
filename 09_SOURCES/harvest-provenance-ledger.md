@@ -10246,3 +10246,8 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `9dd4c570` | Multi-dimensional audit evidence | 2026-11-16T02:06:19.734Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `0a3328bd` | Multi-dimensional audit evidence | 2026-11-16T02:06:24.599Z |
 | `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `a05c6bc3` | Multi-dimensional audit evidence | 2026-11-16T02:06:33.227Z |
+| `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `e7647d64` | Multi-dimensional audit evidence | 2026-11-16T02:17:21.598Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `3c2e3539` | Multi-dimensional audit evidence | 2026-11-16T02:17:27.118Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `d32a4535` | Multi-dimensional audit evidence | 2026-11-16T02:17:27.824Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `7e177b06` | Multi-dimensional audit evidence | 2026-11-16T02:17:33.181Z |
+| `learn-dom-d-e52861de` | `project://saltstack-salt` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md` | 2026-11-16T02:18:03.141Z |

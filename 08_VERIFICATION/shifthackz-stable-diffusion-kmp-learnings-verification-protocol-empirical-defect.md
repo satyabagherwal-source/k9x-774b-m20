@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:40.066Z",
+  "timestamp": "2026-11-16T02:17:37.102Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-shifthackz-stable-diffusion-kmp-learnings",
+  "learning_id": "LEARN-EVO-shifthackz-stable-diffusion-kmp-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [shifthackz-stable-diffusion-kmp-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:40.066Z`  
-> **Learning ID**: `LEARN-REEXTRACT-shifthackz-stable-diffusion-kmp-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T02:17:37.102Z`  
+> **Learning ID**: `LEARN-EVO-shifthackz-stable-diffusion-kmp-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md`  
 > **Source**: github ([https://github.com/ShiftHackZ/Stable-Diffusion-KMP](https://github.com/ShiftHackZ/Stable-Diffusion-KMP))  
-> **Source Version**: `7431c4b6`  
+> **Source Version**: `3c2e3539`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:28:18.145Z  
+> **Timestamp**: 2026-11-16T02:17:26.412Z  
 > **Learning ID**: `learn-github-shifthackz-sdai-kmp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ShiftHackZ/Stable-Diffusion-KMP](https://github.com/ShiftHackZ/Stable-Diffusion-KMP))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:28:18.141Z  
+> **Harvest Timestamp**: 2026-11-16T02:17:26.407Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Stable Diffusion AI client app for Android and iOS
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1286 stars
+- **Stars / Engagement**: 1293 stars
 
 ---
 
@@ -828,14 +828,30 @@ internal actual fun platformCurrentTimeMillis(): Long = System.currentTimeMillis
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #713** (2026-11-15): **Title: ONNX sampling steps and CFG scale reset after app restart
+
+Device: Samsung Galaxy A55 5G, model SM-A556E
+RAM: approximately 11.4 GB
+SDAI provider: Microsoft ONNX
+Model: Absolute Reality
+Installed version: 1.1.2
+
+The ONNX benchmark recommends 512 x 512, 16 sampling steps, and CFG scale 6.0. Generation works successfully with those settings.
+
+However, after closing and reopening SDAI:
+- Absolute Reality remains selected
+- Width 512 remains selected
+- Height 512 remains selected
+- Sampling steps reset from 16 to 20
+- CFG scale resets from 6.0 to 7.0
+
+The numeric ONNX generation settings do not persist between app launches, while the model and resolution do persist.
+
+Please make the ONNX sampling steps and CFG scale values persistent.**
+  *Symptoms*: **Describe the bug** A clear and concise description of what the bug is.  **To Reproduce** Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error  **Expected behavior** A clear and concise description of what you expected to happen.  **Screenshots** If applicable, add screenshots to help explain your problem.  **Desktop (please complete the following information):**  - OS: [e.g. iOS]  - Browser [e.g. chrome, safari]  - Version [e.g. 22]  **Smartphone (please complete the following information):**  - Device: [e.g. iPhone6]  - OS: [e.g. iOS8.1]  - Browser [e.g. stock browser, safari]  - Version [e.g. 22]  **Additional context** Add any other context about the problem here. 
+
 - **Issue #230** (2024-08-09): **Local diffusion downloads**
   *Symptoms*: When I try to download 2 models at same time after taping the second model the first one stops downloading and after the second one finished the 1st one won't continue. 
-
-- **Issue #48** (2023-07-20): **Gallery not always visible**
-  *Symptoms*: Thanks for the great work. I hope in the future the API will support more features. I can successfully generate images, but even with "always save images" activated, they are only visible in the app gallery and I have to manually save them in the phone gallery. Is it possible to automatically save them there? My problem is, that after a while, the app gallery is not visible anymore and then I have no access to the generated images at all. Screenshot of the app gallery showing the problem ![Screenshot_2023-05-28-16-11-14-441_com.shifthackz.aisdv1.app.jpg](https://github.com/ShiftHackZ/Stable-Diffusion-Android/assets/15450754/79cc212a-90b9-4b60-bab9-766364e87eea)   
-  **Post-Mortem & Fix Analysis**:
-  > Hi @lead0r, thanks for telling about the issue.  The images are stored in local SQL-based DB as base64 string (not as actual file), so it is likely that some base64 reached the max limit, and there is an exception occurring while gallery loading and trying to convert that broken base64 to bitmap.  I think it can be fixed in converter not to process bad base64.  By the way, do you remember what image sizes you had in your gallery? Are there any images that are significantly large (like 2048x2048) ? 
-  > I don't remember, but that is very much likely, yes 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -852,141 +868,619 @@ internal actual fun platformCurrentTimeMillis(): Long = System.currentTimeMillis
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abb338f1` (2026-11-07)
-**Commit Message**: Fix release signing metadata and align the F-Droid SDK path (#728)
+### Incident Patch 1: `91d55b97` (2026-11-14)
+**Commit Message**: Fix large LoRA connections, setup timeouts, and traffic accounting (#740)
 
-* Fix Android release package metadata parsing
-
-* Align Android SDK installation path with F-Droid
-
-**File**: `.github/workflows/release_android.yml` (modified, +5/-1)
+**File**: `core/localization/src/androidMain/res/values-de/strings.xml` (modified, +2/-2)
 ```diff
-@@ -127,7 +127,11 @@ jobs:
-           persist-credentials: false
- 
-       - name: Install pinned native Linux toolchain
--        run: bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools"
-+        run: |
-+          # Keep NDK header paths consistent with the F-Droid build environment.
-+          test ! -e /opt/android-sdk
-+          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/android-sdk
-+          bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools" /opt/android-sdk
- 
-       - name: Build unsigned artifact
-         env:
+@@ -648,8 +648,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s Min.</string>
+     <string name="settings_generation_timeout_unlimited">Unbegrenzt</string>
+     <string name="settings_connection_timeout">Verbindungszeitlimit</string>
+-    <string name="settings_connection_timeout_description">Zeit zum Verbindungsaufbau mit einem KI-Anbieter. Gilt für neue Anfragen.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS verwaltet die Verbindungsdauer automatisch. Dieser Wert wird gespeichert, kann unter iOS aber nicht erzwungen werden.</string>
++    <string name="settings_connection_timeout_description">Zeitlimit für die Einrichtung einer Anbieterverbindung und Metadatenanfragen. Gilt für neue Anfragen.</string>
++    <string name="settings_connection_timeout_ios_description">Begrenzt die Verbindungseinrichtung und Metadatenanfragen. iOS verwaltet die Verbindungsdauer auf Netzwerkebene automatisch.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI-kompatibel</string>
+     <string name="open_ai_compatible_help">Verbinde einen Bildserver oder Proxy über die OpenAI-Bild-API. Gib das vollständige API-Präfix ein, z. B. https://host/prefix/v1. Der API-Schlüssel ist optional. Der Server bestimmt die unterstützten Modelle und Größen.</string>
+     <string name="open_ai_compatible_url">API-Basis-URL (einschließlich /v1)</string>
 ```
 
-**File**: `scripts/release/README.md` (modified, +9/-2)
+**File**: `core/localization/src/androidMain/res/values-ru/strings.xml` (modified, +2/-2)
 ```diff
-@@ -104,6 +104,11 @@ installing the pinned SDK. Android archive checksums were calculated from the
- official downloads and cross-checked against Google's repository metadata. JDK,
- Gradle and bundletool checksum sources are recorded in the profile.
- 
-+Build jobs install the SDK at `/opt/android-sdk`, matching the F-Droid build
-+environment. Native debug information can include NDK header paths, which can
-+affect linker build IDs even after debug sections are stripped from the APK.
-+Signing and verification jobs use their own temporary SDK directory.
+@@ -611,8 +611,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s мин</string>
+     <string name="settings_generation_timeout_unlimited">Без ограничения</string>
+     <string name="settings_connection_timeout">Тайм-аут подключения</string>
+-    <string name="settings_connection_timeout_description">Время на подключение к ИИ-провайдеру. Применяется к новым запросам.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS автоматически управляет временем подключения. Значение сохраняется, но не может применяться в iOS.</string>
++    <string name="settings_connection_timeout_description">Время на настройку подключения к провайдеру и запросы метаданных. Применяется к новым запросам.</string>
++    <string name="settings_connection_timeout_ios_description">Ограничивает настройку подключения и запросы метаданных. iOS автоматически управляет временем низкоуровневого подключения.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI-совместимый</string>
+     <string name="open_ai_compatible_help">Подключите сервер изображений или прокси через OpenAI Image API. Введите полный префикс API, например https://host/prefix/v1. Ключ API необязателен. Доступные модели и размеры определяет сервер.</string>
+     <string name="open_ai_compatible_url">Базовый URL API (включая /v1)</string>
+```
+
+**File**: `core/localization/src/androidMain/res/values-tr/strings.xml` (modified, +2/-2)
+```diff
+@@ -611,8 +611,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s dk</string>
+     <string name="settings_generation_timeout_unlimited">Sınırsız</string>
+     <string name="settings_connection_timeout">Bağlantı zaman aşımı</string>
+-    <string name="settings_connection_timeout_description">Yapay zekâ sağlayıcısına bağlanmak için izin verilen süre. Yeni istekler için geçerlidir.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS bağlantı süresini otomatik olarak yönetir. Bu değer kaydedilir ancak iOS üzerinde uygulanamaz.</string>
++    <string name="settings_connection_timeout_description">Sağlayıcı bağlantı kurulumu ve meta veri istekleri için izin verilen süre. Yeni istekler için geçerlidir.</string>
++    <string name="settings_connection_timeout_ios_description">Sağlayıcı bağlantı kurulumunu ve meta veri isteklerini sınırlar. iOS düşük seviyeli bağlantı süresini otomatik yönetir.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI uyumlu</string>
+     <string name="open_ai_compatible_help">OpenAI görüntü API’sini kullanan bir görüntü sunucusuna veya proxy’ye bağlanın. Tam API önekini girin, örneğin https://host/prefix/v1. API anahtarı isteğe bağlıdır. Desteklenen modelleri ve boyutları sunucu belirler.</string>
+     <string name="open_ai_compatible_url">API temel URL’si (/v1 dahil)</string>
+```
+
+**File**: `core/localization/src/androidMain/res/values-uk/strings.xml` (modified, +2/-2)
+```diff
+@@ -611,8 +611,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s хв</string>
+     <string name="settings_generation_timeout_unlimited">Без обмеження</string>
+     <string name="settings_connection_timeout">Тайм-аут підключення</string>
+-    <string name="settings_connection_timeout_description">Час на підключення до ШІ-провайдера. Застосовується до нових запитів.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS автоматично керує часом підключення. Значення зберігається, але не може застосовуватися в iOS.</string>
++    <string name="settings_connection_timeout_description">Час на налаштування підключення до провайдера та запити метаданих. Застосовується до нових запитів.</string>
++    <string name="settings_connection_timeout_ios_description">Обмежує налаштування підключення та запити метаданих. iOS автоматично керує часом низькорівневого підключення.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI-сумісний</string>
+     <string name="open_ai_compatible_help">Підключіть сервер зображень або проксі через OpenAI Image API. Введіть повний префікс API, наприклад https://host/prefix/v1. Ключ API необов’язковий. Доступні моделі та розміри визначає сервер.</string>
+     <string name="open_ai_compatible_url">Базовий URL API (включно з /v1)</string>
+```
+
+**File**: `core/localization/src/androidMain/res/values-zh/strings.xml` (modified, +2/-2)
+```diff
+@@ -663,8 +663,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s 分钟</string>
+     <string name="settings_generation_timeout_unlimited">无限制</string>
+     <string name="settings_connection_timeout">连接超时</string>
+-    <string name="settings_connection_timeout_description">连接到 AI 服务提供商所允许的时间。适用于新请求。</string>
+-    <string name="settings_connection_timeout_ios_description">iOS 自动管理连接时长。此值会被保存，但无法在 iOS 上强制执行。</string>
++    <string name="settings_connection_timeout_description">提供商连接设置和元数据请求的时间限制。适用于新请求。</string>
++    <string name="settings_connection_timeout_ios_description">限制提供商连接设置和元数据请求的时间。iOS 自动管理底层连接时长。</string>
+     <string name="srv_type_open_ai_compatible">OpenAI 兼容服务</string>
+     <string name="open_ai_compatible_help">通过 OpenAI 图像 API 连接图像服务器或代理。请输入完整的 API 前缀，例如 https://host/prefix/v1。API 密钥可选。支持的模型和尺寸由服务器决定。</string>
+     <string name="open_ai_compatible_url">API 基础 URL（包含 /v1）</string>
+```
+
+**File**: `core/localization/src/androidMain/res/values/strings.xml` (modified, +2/-2)
+```diff
+@@ -648,8 +648,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s min</string>
+     <string name="settings_generation_timeout_unlimited">No limit</string>
+     <string name="settings_connection_timeout">Connection timeout</string>
+-    <string name="settings_connection_timeout_description">Time allowed to connect to an AI provider. Applies to new requests.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS manages connection timing automatically. This value is saved but cannot be enforced on iOS.</string>
++    <string name="settings_connection_timeout_description">Time allowed for provider setup and metadata requests. Applies to new requests.</string>
++    <string name="settings_connection_timeout_ios_description">Limits provider setup and metadata requests. iOS manages low-level connection timing automatically.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI-compatible</string>
+     <string name="open_ai_compatible_help">Connect to an image server or proxy using the OpenAI image API. Enter the complete API prefix, for example https://host/prefix/v1. The API key is optional. The server determines which models and sizes are supported.</string>
+     <string name="open_ai_compatible_url">API base URL (including /v1)</string>
+```
+
+**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/di/TrafficRecorderStartupTest.kt` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++package com.shifthackz.aisdv1.data.di
 +
- Gradle runs with a 4 GiB heap, at most two workers, no parallel project execution,
- and the Kotlin compiler inside the Gradle process. Native Ninja compilation is limited
- to two workers, including direct Ninja invocations from AGP. Each selected output
-@@ -121,15 +126,17 @@ For a local native Linux build, use a clean source checkout with initialized
- submodules and a separate checkout containing these workflow tools:
- 
- ```sh
--bash /path/to/ci/scripts/release/setup.sh build /path/to/empty-toolchain-directory
-+bash /path/to/ci/scripts/release/setup.sh build /path/to/empty-toolchain-directory /opt/android-sdk
- source /path/to/empty-toolchain-directory/environment.sh
- bash /path/to/ci/scripts/release/build.sh \
-   /path/to/source foss apk /path/to/output FULL_SOURCE_COMMIT_SHA
- ```
- 
- The build helper rejects local SDK and signing configuration in the source
- checkout. It applies the SDK/NDK/CMake profile through a Gradle init script without
--changing tracked source files.
-+changing tracked source files. The optional third setup argument selects an empty,
-+writable SDK directory; create `/opt/android-sdk` with the build user's ownership
-+before setup. Without it, the SDK is installed inside the toolchain directory.
- 
- ## First signed run and local F-Droid comparison
- 
++import com.shifthackz.aisdv1.network.client.NetworkUsageCounter
++import com.shifthackz.aisdv1.storage.db.persistent.dao.NetworkUsageDao
++import io.mockk.mockk
++import org.junit.Assert.assertNotNull
++import org.junit.Test
++import org.koin.core.context.startKoin
++import org.koin.core.context.stopKoin
++import org.koin.dsl.module
++
++/** Checks recorder installation through application DI startup before any Settings dependency is read.
++ * @author Dmitriy Moroz */
++class TrafficRecorderStartupTest {
++    @Test
++    fun `traffic recorder is ready before the first provider request`() {
++        NetworkUsageCounter.recorder = null
++        try {
++            startKoin {
++                modules(coreDataModule, module {
++                    single<NetworkUsageDao> { mockk(relaxed = true) }
++                })
++            }
++            assertNotNull(NetworkUsageCounter.recorder)
++        } finally {
++            stopKoin()
++            NetworkUsageCounter.recorder = null
++        }
++    }
++}
 ```
 
-**File**: `scripts/release/setup.sh` (modified, +13/-5)
+**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/remote/StableDiffusionLorasRemoteDataSourceTest.kt` (modified, +18/-0)
 ```diff
-@@ -1,10 +1,10 @@
- #!/usr/bin/env bash
- # Install the release toolchain into a new directory without using runner SDK caches.
--# Usage: setup.sh <build|sign> <empty-toolchain-directory>
-+# Usage: setup.sh <build|sign> <empty-toolchain-directory> [empty-android-sdk-directory]
- set -euo pipefail
+@@ -3,6 +3,7 @@ package com.shifthackz.aisdv1.data.remote
+ import com.shifthackz.aisdv1.data.mocks.mockKtorStableDiffusionLoraRaw
+ import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationCredentials
+ import com.shifthackz.aisdv1.network.api.automatic1111.Automatic1111MetadataApi
++import com.shifthackz.aisdv1.network.model.StableDiffusionLoraRaw
+ import io.mockk.coEvery
+ import io.mockk.mockk
+ import kotlinx.coroutines.test.runTest
+@@ -16,6 +17,23 @@ class KtorStableDiffusionLorasRemoteDataSourceTest {
  
- fail() { printf 'Toolchain setup: %s\n' "$*" >&2; exit 1; }
--[[ $# == 2 ]] || fail 'expected build or sign mode and an empty directory'
-+[[ $# == 2 || $# == 3 ]] || fail 'expected mode, empty toolchain directory and optional empty SDK directory'
- [[ $(uname -s) == Linux && $(uname -m) == x86_64 ]] || fail 'Linux x86_64 is required'
- mode=$1
- [[ $mode == build || $mode == sign ]] || fail 'mode must be build or sign'
-@@ -17,16 +17,24 @@ profile="$script_dir/toolchain.json"
- mkdir -p -- "$2"
- toolchain_root=$(cd -- "$2" && pwd)
- [[ -z $(ls -A -- "$toolchain_root") ]] || fail 'toolchain directory must be empty'
-+mkdir -p -- "${3:-$toolchain_root/android-sdk}"
-+android_sdk_root=$(cd -- "${3:-$toolchain_root/android-sdk}" && pwd)
-+[[ -z $(ls -A -- "$android_sdk_root") ]] || fail 'Android SDK directory must be empty'
- work=$(mktemp -d "$toolchain_root/.download.XXXXXX")
- trap 'rm -rf -- "$work"' EXIT
+     private val remoteDataSource = KtorStableDiffusionLorasRemoteDataSource(stubApi)
  
- # Every download is checked before extraction. SHA-256 values for Android archives
- # were calculated after validating Google's repository XML SHA-1 checksums.
- install_artifact() {
--  local name=$1 url digest archive_root destination archive stage expected actual
-+  local name=$1 url digest archive_root destination relative_destination archive stage expected actual
-   url=$(jq -er --arg name "$name" '.artifacts[$name].url' "$profile")
-   digest=$(jq -er --arg name "$name" '.artifacts[$name].sha256' "$profile")
--  destination="$toolchain_root/$(jq -er --arg name "$name" '.artifacts[$name].destination' "$profile")"
-+  relative_destination=$(jq -er --arg name "$name" '.artifacts[$name].destination' "$profile")
-+  if [[ $relative_destination == android-sdk/* ]]; then
-+    destination="$android_sdk_root/${relative_destination#android-sdk/}"
-+  else
-+    destination="$toolchain_root/$relative_destination"
-+  fi
-   archive="$work/$name.archive"
-   printf 'Installing %s\n' "$name"
-   curl --fail --location --retry 3 --proto '=https' --tlsv1.2 --output "$archive" "$url"
-@@ -67,7 +75,7 @@ if [[ $mode == build ]]; then
- fi
- 
- export JAVA_HOME="$toolchain_root/jdk"
--export ANDROID_HOME="$toolchain_root/android-sdk"
-+export ANDROID_HOME="$android_sdk_root"
- export ANDROID_SDK_ROOT="$ANDROID_HOME"
- export SDAI_TOOLCHAIN_DIR="$toolchain_root"
- export BUNDLETOOL_JAR="$toolchain_root/bundletool.jar"
++    @Test
++    fun `2500 loras retain every name alias and path in domain models`() = runTest {
++        val response = List(2_500) { index ->
++            StableDiffusionLoraRaw("lora_$index", "alias_$index", "models/Lora/$index.safetensors")
++        }
++        coEvery { stubApi.fetchLoras(BASE_URL, null) } returns response
++
++        val actual = remoteDataSource.fetchLoras(BASE_URL, AuthorizationCredentials.None)
++
++        Assert.assertEquals(2_500, actual.size)
++        actual.forEachIndexed { index, lora ->
++            Assert.assertEquals(response[index].name, lora.name)
++            Assert.assertEquals(response[index].alias, lora.alias)
++            Assert.assertEquals(response[index].path, lora.path)
++        }
++    }
++
+     @Test
+     fun `given attempt to fetch loras, api returns success response, expected valid loras list value`() = runTest {
+         coEvery {
 ```
 
-**File**: `scripts/release/sign.sh` (modified, +2/-2)
+---
+
+### Incident Patch 2: `af70c8c5` (2026-11-14)
+**Commit Message**: Make network provider timeouts configurable (#734)
+
+Add independent persisted generation and connection timeout settings with a 120-second default, duration presets, and No limit. Apply generation request/socket limits across all eight network AI providers and connection limits to provider HTTP calls. Hide both rows for local providers and the unsupported connection row on iOS. Include translations for all six supported languages.
+
+Fixes #732
+
+**File**: `core/localization/src/androidMain/res/values-de/strings.xml` (modified, +7/-0)
 ```diff
-@@ -78,8 +78,8 @@ if [[ "$extension" == apk ]]; then
-   "$build_tools/aapt2" dump badging "$unsigned_file" > "$signing_dir/badging.txt" 2> "$signing_dir/aapt2.log" \
-     || fail 'Could not inspect APK metadata.'
-   package_line="$(sed -n '/^package: /{p;q;}' "$signing_dir/badging.txt")"
--  actual_id="$(printf '%s\n' "$package_line" | sed -n "s/.*name='\([^']*\)'.*/\1/p")"
--  actual_version="$(printf '%s\n' "$package_line" | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")"
-+  actual_id="$(printf '%s\n' "$package_line" | sed -n "s/^package: name='\([^']*\)'.*/\1/p")"
-+  actual_version="$(printf '%s\n' "$package_line" | sed -n "s/.* versionName='\([^']*\)'.*/\1/p")"
-   [[ "$actual_id" == "$application_id" && "$actual_version" == "$version_name" ]] \
-     || fail 'APK application ID or version does not match the release request.'
-   if grep -q '^application-debuggable' "$signing_dir/badging.txt"; then
+@@ -642,4 +642,11 @@
+     <string name="benchmark_issue_sdxl_tiny_experimental_only">SDXL funktioniert hier möglicherweise nur als sehr kleiner experimenteller CPU-Lauf und wird daher nicht empfohlen.</string>
+     <string name="benchmark_issue_sdxl_backend_not_validated">Die Vulkan-API wurde gefunden, aber das SDXL-Vulkan-Backend wurde nicht durch einen sicheren Benchmark validiert.</string>
+     <string name="benchmark_issue_accelerator_api_not_available">Die erforderliche Beschleunigungs-API wurde nicht gefunden.</string>
++    <string name="settings_generation_timeout">Zeitlimit für die Bildgenerierung</string>
++    <string name="settings_generation_timeout_description">Maximale Wartezeit pro Anfrage zur KI-Bildgenerierung über das Netzwerk. Gilt für neue Anfragen.</string>
++    <string name="settings_generation_timeout_minutes">%1$s Min.</string>
++    <string name="settings_generation_timeout_unlimited">Unbegrenzt</string>
++    <string name="settings_connection_timeout">Verbindungszeitlimit</string>
++    <string name="settings_connection_timeout_description">Zeit zum Verbindungsaufbau mit einem KI-Anbieter. Gilt für neue Anfragen.</string>
++    <string name="settings_connection_timeout_ios_description">iOS verwaltet die Verbindungsdauer automatisch. Dieser Wert wird gespeichert, kann unter iOS aber nicht erzwungen werden.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-ru/strings.xml` (modified, +7/-0)
+```diff
+@@ -605,4 +605,11 @@
+     <string name="benchmark_issue_sdxl_tiny_experimental_only">SDXL здесь может сработать только как tiny experimental CPU запуск, поэтому не рекомендован.</string>
+     <string name="benchmark_issue_sdxl_backend_not_validated">Vulkan API найден, но SDXL Vulkan backend не валидирован безопасным бенчмарком.</string>
+     <string name="benchmark_issue_accelerator_api_not_available">Нужный API ускорения не найден.</string>
++    <string name="settings_generation_timeout">Тайм-аут генерации</string>
++    <string name="settings_generation_timeout_description">Максимальное время ожидания каждого сетевого запроса на генерацию изображений. Применяется к новым запросам.</string>
++    <string name="settings_generation_timeout_minutes">%1$s мин</string>
++    <string name="settings_generation_timeout_unlimited">Без ограничения</string>
++    <string name="settings_connection_timeout">Тайм-аут подключения</string>
++    <string name="settings_connection_timeout_description">Время на подключение к ИИ-провайдеру. Применяется к новым запросам.</string>
++    <string name="settings_connection_timeout_ios_description">iOS автоматически управляет временем подключения. Значение сохраняется, но не может применяться в iOS.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-tr/strings.xml` (modified, +7/-0)
+```diff
+@@ -605,4 +605,11 @@
+     <string name="benchmark_issue_sdxl_tiny_experimental_only">SDXL burada yalnızca tiny experimental CPU çalıştırması olarak işe yarayabilir, bu yüzden önerilmez.</string>
+     <string name="benchmark_issue_sdxl_backend_not_validated">Vulkan API bulundu, ancak SDXL Vulkan backend güvenli benchmark ile doğrulanmadı.</string>
+     <string name="benchmark_issue_accelerator_api_not_available">Gerekli hızlandırma APIsi bulunamadı.</string>
++    <string name="settings_generation_timeout">Görsel oluşturma zaman aşımı</string>
++    <string name="settings_generation_timeout_description">Ağ üzerinden yapılan her yapay zekâ görsel oluşturma isteği için azami bekleme süresi. Yeni istekler için geçerlidir.</string>
++    <string name="settings_generation_timeout_minutes">%1$s dk</string>
++    <string name="settings_generation_timeout_unlimited">Sınırsız</string>
++    <string name="settings_connection_timeout">Bağlantı zaman aşımı</string>
++    <string name="settings_connection_timeout_description">Yapay zekâ sağlayıcısına bağlanmak için izin verilen süre. Yeni istekler için geçerlidir.</string>
++    <string name="settings_connection_timeout_ios_description">iOS bağlantı süresini otomatik olarak yönetir. Bu değer kaydedilir ancak iOS üzerinde uygulanamaz.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-uk/strings.xml` (modified, +7/-0)
+```diff
+@@ -605,4 +605,11 @@
+     <string name="benchmark_issue_sdxl_tiny_experimental_only">SDXL тут може спрацювати лише як tiny experimental CPU запуск, тому не рекомендований.</string>
+     <string name="benchmark_issue_sdxl_backend_not_validated">Vulkan API знайдено, але SDXL Vulkan backend не валідовано безпечним бенчмарком.</string>
+     <string name="benchmark_issue_accelerator_api_not_available">Потрібний API прискорення не знайдено.</string>
++    <string name="settings_generation_timeout">Тайм-аут генерації</string>
++    <string name="settings_generation_timeout_description">Максимальний час очікування кожного мережевого запиту на генерацію зображень. Застосовується до нових запитів.</string>
++    <string name="settings_generation_timeout_minutes">%1$s хв</string>
++    <string name="settings_generation_timeout_unlimited">Без обмеження</string>
++    <string name="settings_connection_timeout">Тайм-аут підключення</string>
++    <string name="settings_connection_timeout_description">Час на підключення до ШІ-провайдера. Застосовується до нових запитів.</string>
++    <string name="settings_connection_timeout_ios_description">iOS автоматично керує часом підключення. Значення зберігається, але не може застосовуватися в iOS.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-zh/strings.xml` (modified, +7/-0)
+```diff
+@@ -657,4 +657,11 @@
+     <string name="benchmark_issue_sdxl_tiny_experimental_only">SDXL 在此处可能只能作为 tiny experimental CPU 运行，因此不推荐。</string>
+     <string name="benchmark_issue_sdxl_backend_not_validated">检测到 Vulkan API，但安全基准测试未验证 SDXL Vulkan backend。</string>
+     <string name="benchmark_issue_accelerator_api_not_available">未找到所需的加速 API。</string>
++    <string name="settings_generation_timeout">生成超时</string>
++    <string name="settings_generation_timeout_description">每个在线 AI 图像生成请求的最长等待时间。适用于新请求。</string>
++    <string name="settings_generation_timeout_minutes">%1$s 分钟</string>
++    <string name="settings_generation_timeout_unlimited">无限制</string>
++    <string name="settings_connection_timeout">连接超时</string>
++    <string name="settings_connection_timeout_description">连接到 AI 服务提供商所允许的时间。适用于新请求。</string>
++    <string name="settings_connection_timeout_ios_description">iOS 自动管理连接时长。此值会被保存，但无法在 iOS 上强制执行。</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values/strings.xml` (modified, +7/-0)
+```diff
+@@ -642,4 +642,11 @@
+     <string name="benchmark_issue_sdxl_tiny_experimental_only">SDXL may only work here as a tiny experimental CPU run, so it is not recommended.</string>
+     <string name="benchmark_issue_sdxl_backend_not_validated">Vulkan API was found, but the SDXL Vulkan backend was not validated by a safe benchmark.</string>
+     <string name="benchmark_issue_accelerator_api_not_available">The required acceleration API was not found.</string>
++    <string name="settings_generation_timeout">Generation timeout</string>
++    <string name="settings_generation_timeout_description">Maximum wait for each network AI generation request. Applies to new requests.</string>
++    <string name="settings_generation_timeout_minutes">%1$s min</string>
++    <string name="settings_generation_timeout_unlimited">No limit</string>
++    <string name="settings_connection_timeout">Connection timeout</string>
++    <string name="settings_connection_timeout_description">Time allowed to connect to an AI provider. Applies to new requests.</string>
++    <string name="settings_connection_timeout_ios_description">iOS manages connection timing automatically. This value is saved but cannot be enforced on iOS.</string>
+ </resources>
+```
+
+**File**: `data/src/commonMain/kotlin/com/shifthackz/aisdv1/data/di/PreferenceDataModule.kt` (modified, +10/-0)
+```diff
+@@ -9,6 +9,8 @@ import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationStore
+ import com.shifthackz.aisdv1.domain.preference.ConfigurationStore
+ import com.shifthackz.aisdv1.domain.preference.PreferenceManager
+ import com.shifthackz.aisdv1.domain.preference.SessionPreference
++import com.shifthackz.aisdv1.network.client.GenerationTimeoutProvider
++import com.shifthackz.aisdv1.network.client.ConnectionTimeoutProvider
+ import org.koin.dsl.module
+ 
+ /**
+@@ -17,6 +19,14 @@ import org.koin.dsl.module
+  * @author Dmitriy Moroz
+  */
+ val preferenceDataModule = module {
++    single<ConnectionTimeoutProvider> {
++        val preferences = get<PreferenceManager>()
++        ConnectionTimeoutProvider { preferences.connectionTimeout.seconds * 1000L }
++    }
++    single<GenerationTimeoutProvider> {
++        val preferences = get<PreferenceManager>()
++        GenerationTimeoutProvider { preferences.generationRequestTimeout.seconds * 1000L }
++    }
+     single<PreferenceManager> {
+         PreferenceManagerImpl(
+             keyValueStore = createKeyValueStore(KEY_PREFERENCE_MANAGER),
+```
+
+**File**: `data/src/commonMain/kotlin/com/shifthackz/aisdv1/data/preference/PreferenceManagerImpl.kt` (modified, +39/-0)
+```diff
+@@ -6,6 +6,7 @@ import com.shifthackz.aisdv1.core.common.schedulers.SchedulersToken
+ import com.shifthackz.aisdv1.domain.entity.ColorToken
+ import com.shifthackz.aisdv1.domain.entity.DarkThemeToken
+ import com.shifthackz.aisdv1.domain.entity.FeatureTag
++import com.shifthackz.aisdv1.domain.entity.NetworkTimeout
+ import com.shifthackz.aisdv1.domain.entity.Grid
+ import com.shifthackz.aisdv1.domain.entity.HuggingFaceModel
+ import com.shifthackz.aisdv1.domain.entity.ServerSource
+@@ -36,6 +37,28 @@ internal class PreferenceManagerImpl(
+      */
+     private val preferencesChangedState = MutableStateFlow(Any())
+ 
++    /**
++     * Persists a separate connection limit and notifies settings observers.
++     *
++     * @author Dmitriy Moroz
++     */
++    override var connectionTimeout: NetworkTimeout
++        get() = NetworkTimeout.fromSeconds(
++            keyValueStore.getInt(KEY_CONNECTION_TIMEOUT_SECONDS, NetworkTimeout.TWO_MINUTES.seconds),
++        )
++        set(value) = putInt(KEY_CONNECTION_TIMEOUT_SECONDS, value.seconds)
++
++    /**
++     * Persists the generation waiting limit and notifies Settings observers immediately.
++     *
++     * @author Dmitriy Moroz
++     */
++    override var generationRequestTimeout: NetworkTimeout
++        get() = NetworkTimeout.fromSeconds(
++            keyValueStore.getInt(KEY_GENERATION_REQUEST_TIMEOUT_SECONDS, 120),
++        )
++        set(value) = putInt(KEY_GENERATION_REQUEST_TIMEOUT_SECONDS, value.seconds)
++
+     /**
+      * Exposes the `automatic1111ServerUrl` value used by the SDAI data layer.
+      *
+@@ -477,6 +500,8 @@ internal class PreferenceManagerImpl(
+     override fun observe(): Flow<Settings> = preferencesChangedState
+         .map {
+             Settings(
++                connectionTimeout = connectionTimeout,
++                generationRequestTimeout = generationRequestTimeout,
+                 serverUrl = automatic1111ServerUrl,
+                 sdModel = sdModel,
+                 demoMode = demoMode,
+@@ -574,6 +599,20 @@ internal class PreferenceManagerImpl(
+      * @author Dmitriy Moroz
+      */
+     companion object {
++        /**
++         * Independent provider connection timeout in seconds, with zero meaning no limit.
++         *
++         * @author Dmitriy Moroz
++         */
++        const val KEY_CONNECTION_TIMEOUT_SECONDS = "key_connection_timeout_seconds"
++
++        /**
++         * Stores seconds, with zero representing an unlimited generation wait.
++         *
++         * @author Dmitriy Moroz
++         */
++        const val KEY_GENERATION_REQUEST_TIMEOUT_SECONDS = "key_generation_request_timeout_seconds"
++
+         /**
+          * Exposes the `KEY_SERVER_URL` value used by the SDAI data layer.
+          *
+```
+
+---
+
+### Incident Patch 3: `b805a1be` (2026-11-14)
+**Commit Message**: Fix sampler list recovery after app process recreation (#738)
+
+* Fix sampler list recovery after app process recreation
+
+* Add sampler recovery regression tests and clarify boolean names
+
+**File**: `core/localization/src/androidMain/res/values-de/strings.xml` (modified, +1/-0)
+```diff
+@@ -681,4 +681,5 @@
+     <string name="open_ai_oauth_storage_error">Geschützter Kontospeicher ist nicht verfügbar. Entsperre das Gerät und versuche es erneut.</string>
+     <string name="open_ai_oauth_error">Die ChatGPT-Anfrage ist fehlgeschlagen. Prüfe Verbindung, Kontozugriff und Bildgröße und versuche es erneut.</string>
+     <string name="open_ai_oauth_reset">Lokale Sitzung zurücksetzen</string>
++    <string name="error_samplers_unavailable">Die Sampling-Methoden konnten nicht geladen werden. Prüfe die Serververbindung und versuche es erneut.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-ru/strings.xml` (modified, +1/-0)
+```diff
+@@ -644,4 +644,5 @@
+     <string name="open_ai_oauth_storage_error">Защищённое хранилище аккаунта недоступно. Разблокируйте устройство и повторите попытку.</string>
+     <string name="open_ai_oauth_error">Запрос к ChatGPT завершился ошибкой. Проверьте подключение, доступ аккаунта и размер изображения, затем повторите попытку.</string>
+     <string name="open_ai_oauth_reset">Сбросить локальную сессию</string>
++    <string name="error_samplers_unavailable">Не удалось загрузить методы сэмплирования. Проверьте соединение с сервером и повторите попытку.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-tr/strings.xml` (modified, +1/-0)
+```diff
+@@ -644,4 +644,5 @@
+     <string name="open_ai_oauth_storage_error">Korumalı hesap depolaması kullanılamıyor. Cihazın kilidini açıp yeniden deneyin.</string>
+     <string name="open_ai_oauth_error">ChatGPT isteği başarısız oldu. Bağlantınızı, hesap erişimini ve görsel boyutlarını kontrol edip yeniden deneyin.</string>
+     <string name="open_ai_oauth_reset">Yerel oturumu sıfırla</string>
++    <string name="error_samplers_unavailable">Örnekleme yöntemleri yüklenemedi. Sunucu bağlantısını kontrol edip yeniden deneyin.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-uk/strings.xml` (modified, +1/-0)
+```diff
+@@ -644,4 +644,5 @@
+     <string name="open_ai_oauth_storage_error">Захищене сховище облікового запису недоступне. Розблокуйте пристрій і повторіть спробу.</string>
+     <string name="open_ai_oauth_error">Запит до ChatGPT завершився помилкою. Перевірте з’єднання, доступ облікового запису й розмір зображення, потім повторіть спробу.</string>
+     <string name="open_ai_oauth_reset">Скинути локальну сесію</string>
++    <string name="error_samplers_unavailable">Не вдалося завантажити методи семплювання. Перевірте з’єднання із сервером і повторіть спробу.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-zh/strings.xml` (modified, +1/-0)
+```diff
+@@ -696,4 +696,5 @@
+     <string name="open_ai_oauth_storage_error">受保护的账户存储不可用。请解锁设备后重试。</string>
+     <string name="open_ai_oauth_error">ChatGPT 请求失败。请检查网络、账户访问权限和图像尺寸，然后重试。</string>
+     <string name="open_ai_oauth_reset">重置本地会话</string>
++    <string name="error_samplers_unavailable">无法加载采样方法。请检查服务器连接后重试。</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values/strings.xml` (modified, +1/-0)
+```diff
+@@ -681,4 +681,5 @@
+     <string name="open_ai_oauth_storage_error">Protected account storage is unavailable. Unlock the device and try again.</string>
+     <string name="open_ai_oauth_error">The ChatGPT request failed. Check your connection, account access and selected dimensions, then try again.</string>
+     <string name="open_ai_oauth_reset">Reset local session</string>
++    <string name="error_samplers_unavailable">Could not load sampling methods. Check the server connection and retry.</string>
+ </resources>
+```
+
+**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/repository/StableDiffusionSamplersRecoveryTest.kt` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++package com.shifthackz.aisdv1.data.repository
++
++import com.shifthackz.aisdv1.data.mocks.mockStableDiffusionSamplers
++import com.shifthackz.aisdv1.domain.datasource.StableDiffusionSamplersDataSource
++import com.shifthackz.aisdv1.domain.entity.StableDiffusionSampler
++import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationCredentials
++import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationStore
++import com.shifthackz.aisdv1.domain.preference.PreferenceManager
++import io.mockk.coEvery
++import io.mockk.coVerify
++import io.mockk.every
++import io.mockk.mockk
++import kotlinx.coroutines.CompletableDeferred
++import kotlinx.coroutines.CoroutineStart
++import kotlinx.coroutines.ExperimentalCoroutinesApi
++import kotlinx.coroutines.async
++import kotlinx.coroutines.cancelAndJoin
++import kotlinx.coroutines.test.runCurrent
++import kotlinx.coroutines.test.runTest
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertTrue
++import org.junit.Before
++import org.junit.Test
++
++/**
++ * Verifies sampler cache ownership and complete snapshots during concurrent refresh and recovery.
++ *
++ * @author Dmitriy Moroz
++ */
++@OptIn(ExperimentalCoroutinesApi::class)
++class StableDiffusionSamplersRecoveryTest {
++
++    private val remote = mockk<StableDiffusionSamplersDataSource.Remote>()
++    private val local = mockk<StableDiffusionSamplersDataSource.Local>()
++    private val preferences = mockk<PreferenceManager>()
++    private val authorization = mockk<AuthorizationStore>()
++    private var serverUrl = "http://server-a:7860"
++    private var credentials: AuthorizationCredentials = AuthorizationCredentials.None
++    private var cachedSamplers = emptyList<StableDiffusionSampler>()
++    private val repository = createRepository()
++
++    @Before
++    fun initialize() {
++        every { preferences.automatic1111ServerUrl } answers { serverUrl }
++        every { authorization.getAuthorizationCredentials() } answers { credentials }
++        coEvery { remote.fetchSamplers(any(), any()) } returns mockStableDiffusionSamplers
++        coEvery { local.getSamplers() } answers { cachedSamplers }
++        coEvery { local.insertSamplers(any()) } coAnswers { cachedSamplers = firstArg() }
++    }
++
++    @Test
++    fun `an unowned cache is not accepted by a recreated repository`() = runTest {
++        repository.fetchSamplers()
++        assertEquals(mockStableDiffusionSamplers, repository.getSamplers())
++
++        assertTrue(createRepository().getSamplers().isEmpty())
++    }
++
++    @Test
++    fun `failed refresh retains cache only for the same server`() = runTest {
++        repository.fetchSamplers()
++        coEvery { remote.fetchSamplers(any(), any()) } throws IllegalStateException("HTTP 503")
++
++        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
++        assertEquals(mockStableDiffusionSamplers, repository.getSamplers())
++
++        serverUrl = "http://server-b:7860"
++        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
++        assertTrue(repository.getSamplers().isEmpty())
++    }
++
++    @Test
++    fun `changed credentials cannot reuse the previous account cache`() = runTest {
++        repository.fetchSamplers()
++        credentials = AuthorizationCredentials.HttpBasic("another-account", "fixture-only")
++        coEvery { remote.fetchSamplers(any(), any()) } throws IllegalStateException("HTTP 401")
++
++        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
++        assertTrue(repository.getSamplers().isEmpty())
++    }
++
++    @Test
++    fun `a response from a replaced server is discarded`() = runTest {
++        val response = CompletableDeferred<List<StableDiffusionSampler>>()
++        coEvery { remote.fetchSamplers(any(), any()) } coAnswers { response.await() }
++        val request = async { repository.fetchSamplers() }
++        runCurrent()
++        coVerify(exactly = 1) { remote.fetchSamplers("http://server-a:7860", AuthorizationCredentials.None) }
++
++        serverUrl = "http://server-b:7860"
++        response.complete(mockStableDiffusionSamplers)
++        request.await()
++
++        assertTrue(repository.getSamplers().isEmpty())
++        coVerify(exactly = 0) { local.insertSamplers(any()) }
++    }
++
++    @Test
++    fun `a response from replaced credentials is discarded`() = runTest {
++        val response = CompletableDeferred<List<StableDiffusionSampler>>()
++        coEvery { remote.fetchSamplers(any(), any()) } coAnswers { response.await() }
++        val request = async { repository.fetchSamplers() }
++        runCurrent()
++
++        credentials = AuthorizationCredentials.HttpBasic("another-account", "fixture-only")
++        response.complete(mockStableDiffusionSamplers)
++        request.await()
++
++        assertTrue(repository.getSamplers().isEmpty())
++        coVerify(exactly = 0) { local.insertSamplers(any()) }
++    }
++
++    @Test
++    fun `readers wait until cache replacement is complete`() = runTest {
++    
+```
+
+**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/repository/StableDiffusionSamplersRepositoryImplTest.kt` (modified, +18/-0)
+```diff
+@@ -80,6 +80,7 @@ class StableDiffusionSamplersRepositoryImplTest {
+ 
+     @Test
+     fun `given attempt to get samplers, local data source returns list, expected valid domain models list value`() = runTest {
++        populateCache()
+         coEvery {
+             stubLocalDataSource.getSamplers()
+         } returns mockStableDiffusionSamplers
+@@ -89,6 +90,7 @@ class StableDiffusionSamplersRepositoryImplTest {
+ 
+     @Test
+     fun `given attempt to get samplers, local data source returns empty list, expected empty domain models list value`() = runTest {
++        populateCache()
+         coEvery {
+             stubLocalDataSource.getSamplers()
+         } returns emptyList()
+@@ -98,6 +100,7 @@ class StableDiffusionSamplersRepositoryImplTest {
+ 
+     @Test
+     fun `given attempt to get samplers, local data source throws exception, expected error value`() = runTest {
++        populateCache()
+         coEvery {
+             stubLocalDataSource.getSamplers()
+         } throws stubException
+@@ -106,4 +109,19 @@ class StableDiffusionSamplersRepositoryImplTest {
+ 
+         assertTrue(actual === stubException)
+     }
++
++    /**
++     * Associates the local cache fixture with the configured connection before reading it.
++     *
++     * @author Dmitriy Moroz
++     */
++    private suspend fun populateCache() {
++        coEvery {
++            stubRemoteDataSource.fetchSamplers(stubBaseUrl, stubCredentials)
++        } returns mockStableDiffusionSamplers
++        coEvery {
++            stubLocalDataSource.insertSamplers(mockStableDiffusionSamplers)
++        } returns Unit
++        repository.fetchSamplers()
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #731** (2026-11-07): Prepare SDAI 1.2.0 (220) release (@ShiftHackZ)
-- **PR #730** (2026-11-07): Rebranding (@ShiftHackZ)
-- **PR #729** (2026-11-07): Document Python 3.12 for APK verification (@ShiftHackZ)
-- **PR #728** (2026-11-07): Fix release signing metadata and align the F-Droid SDK path (@ShiftHackZ)
-- **PR #727** (2026-11-07): Add reproducible Android release workflow (@ShiftHackZ)
-- **PR #725** (2026-11-07): Add German localization (@mijnders)
+- **PR #743** (2026-11-15): Preserve image formats and metadata in Android exports (@ShiftHackZ)
+- **PR #742** (2026-11-15): Fix connections to servers without hypernetworks (@ShiftHackZ)
+- **PR #741** (2026-11-15): Improve Android stability, memory handling and UI responsiveness (@ShiftHackZ)
+- **PR #740** (2026-11-14): Fix large LoRA connections, setup timeouts, and traffic accounting (@ShiftHackZ)
+- **PR #739** (2026-11-14): Fix web UI compatibility of generation seeds (@ShiftHackZ)
+- **PR #738** (2026-11-14): Fix sampler list recovery after app process recreation (@ShiftHackZ)
 
 ---
 
@@ -1006,35 +1500,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release signing metadata and align the F-Droid SDK path (#728)
+## X. large LoRA connections, setup timeouts, and traffic accounting
 
 **RULE**:
-When implementing operations in `.github/workflows/release_android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/localization/src/androidMain/res/values-de/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abb338f1`: release signing metadata and align the F-Droid SDK path (#728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91d55b97`: large LoRA connections, setup timeouts, and traffic accounting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release_android.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/localization/src/androidMain/res/values-de/strings.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        run: |
-          # Keep NDK header paths consistent with the F-Droid build environment.
-          test ! -e /opt/android-sdk
-          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/android-sdk
-          bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools" /opt/android-sdk
+    <string name="settings_connection_timeout_description">Zeitlimit für die Einrichtung einer Anbieterverbindung und Metadatenanfragen. Gilt für neue Anfragen.</string>
+    <string name="settings_connection_timeout_ios_description">Begrenzt die Verbindungseinrichtung und Metadatenanfragen. iOS verwaltet die Verbindungsdauer auf Netzwerkebene automatisch.</string>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-        run: bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools"
+// Induced defect failure mode:
+    <string name="settings_connection_timeout_description">Zeit zum Verbindungsaufbau mit einem KI-Anbieter. Gilt für neue Anfragen.</string>
+    <string name="settings_connection_timeout_ios_description">iOS verwaltet die Verbindungsdauer automatisch. Dieser Wert wird gespeichert, kann unter iOS aber nicht erzwungen werden.</string>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abb338f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91d55b97` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

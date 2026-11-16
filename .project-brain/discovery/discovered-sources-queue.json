@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T02:06:37.822Z",
+  "updated_at": "2026-11-16T02:18:03.236Z",
   "stats": {
-    "total_discovered": 4042,
-    "approved_pending_harvest": 3798,
+    "total_discovered": 4063,
+    "approved_pending_harvest": 3817,
     "harvested_count": 0,
-    "rejected_count": 244,
+    "rejected_count": 246,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3794,
-      "OFFICIAL_DOCUMENTATION": 133,
+      "COMMUNITY_AND_EXPERT": 3814,
+      "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 15,
@@ -87237,6 +87237,454 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
         "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-956F027CAF6E": {
+      "id": "SRC-956F027CAF6E",
+      "url": "https://redirect.github.com/rust-lang/rust",
+      "title": "https://redirect.github.com/rust-lang/rust",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-543BEE7E4388": {
+      "id": "SRC-543BEE7E4388",
+      "url": "https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md",
+      "title": "https://redirect.github.com/rust-lang/rust/blob/HEAD/RELEASES.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.286Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-BCD09B181225": {
+      "id": "SRC-BCD09B181225",
+      "url": "https://redirect.github.com/rust-lang/rust/compare/1.99.0...1.100.0",
+      "title": "https://redirect.github.com/rust-lang/rust/compare/1.99.0...1.100.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.318Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-E038EDEC4AFF": {
+      "id": "SRC-E038EDEC4AFF",
+      "url": "https://redirect.github.com/rust-lang/rust/pull/155499",
+      "title": "https://redirect.github.com/rust-lang/rust/pull/155499",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-66B308475E82": {
+      "id": "SRC-66B308475E82",
+      "url": "https://redirect.github.com/rust-lang/rust/pull/157036",
+      "title": "https://redirect.github.com/rust-lang/rust/pull/157036",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.362Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-FCEE2E81D4C0": {
+      "id": "SRC-FCEE2E81D4C0",
+      "url": "https://redirect.github.com/rust-lang/rust/pull/158504",
+      "title": "https://redirect.github.com/rust-lang/rust/pull/158504",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-137151E50095": {
+      "id": "SRC-137151E50095",
+      "url": "https://redirect.github.com/rust-lang/rust/pull/160229",
+      "title": "https://redirect.github.com/rust-lang/rust/pull/160229",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.404Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-0EB2B5AD8A8F": {
+      "id": "SRC-0EB2B5AD8A8F",
+      "url": "https://redirect.github.com/rust-lang/rust/pull/161005",
+      "title": "https://redirect.github.com/rust-lang/rust/pull/161005",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.427Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-3BEADAA109E6": {
+      "id": "SRC-3BEADAA109E6",
+      "url": "https://redirect.github.com/rust-lang/rust/pull/162160",
+      "title": "https://redirect.github.com/rust-lang/rust/pull/162160",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-EB077CE6D1B2": {
+      "id": "SRC-EB077CE6D1B2",
+      "url": "https://redirect.github.com/rust-lang/rust/pull/160564",
+      "title": "https://redirect.github.com/rust-lang/rust/pull/160564",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-04DFF32619F6": {
+      "id": "SRC-04DFF32619F6",
+      "url": "https://github.com/crate-ci/typos/issues?q=is%3Aissue+state%3Aopen+label%3AA-exclude",
+      "title": "https://github.com/crate-ci/typos/issues?q=is%3Aissue+state%3Aopen+label%3AA-exclude",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-148D55F407C9": {
+      "id": "SRC-148D55F407C9",
+      "url": "https://github.com/crate-ci/typos/issues?q=is%3Aissue+state%3Aclosed+label%3AA-exclude",
+      "title": "https://github.com/crate-ci/typos/issues?q=is%3Aissue+state%3Aclosed+label%3AA-exclude",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.514Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+        "fileName": "crate-ci-typos-learnings.md"
+      }
+    },
+    "SRC-34743C01A732": {
+      "id": "SRC-34743C01A732",
+      "url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "title": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-D7578A6EAEE4": {
+      "id": "SRC-D7578A6EAEE4",
+      "url": "https://host/prefix/v1",
+      "title": "https://host/prefix/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.971Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-96EECE8CA085": {
+      "id": "SRC-96EECE8CA085",
+      "url": "https://host/prefix/v1%E3%80%82API",
+      "title": "https://host/prefix/v1%E3%80%82API",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:17:36.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-931A7DA6069C": {
+      "id": "SRC-931A7DA6069C",
+      "url": "http://server-a:7860/",
+      "title": "http://server-a:7860/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T02:17:37.009Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-757098B64B25": {
+      "id": "SRC-757098B64B25",
+      "url": "http://server-b:7860/",
+      "title": "http://server-b:7860/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T02:17:37.038Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-47BCB416F661": {
+      "id": "SRC-47BCB416F661",
+      "url": "https://github.com/saltstack/salt",
+      "title": "https://github.com/saltstack/salt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:18:03.154Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-CED1836AFAB7": {
+      "id": "SRC-CED1836AFAB7",
+      "url": "https://github.com/saltstack/salt/blob/master/DEPENDENCIES.md",
+      "title": "https://github.com/saltstack/salt/blob/master/DEPENDENCIES.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:18:03.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-BE41D611DAEA": {
+      "id": "SRC-BE41D611DAEA",
+      "url": "https://discord.com/invite/J7b7EscrAs",
+      "title": "https://discord.com/invite/J7b7EscrAs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:18:03.211Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-C721A66300DD": {
+      "id": "SRC-C721A66300DD",
+      "url": "https://techdocs.broadcom.com/us/en/vmware-cis/other/vmware-salt/8-18.html",
+      "title": "https://techdocs.broadcom.com/us/en/vmware-cis/other/vmware-salt/8-18.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:18:03.236Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
       }
     }
   }

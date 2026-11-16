@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-YGD7",
-    "timestamp": "2026-11-13T17:24:41.947Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "eb3b2de305b0a70f1b393984ce6763435d16805f502404d0597881bc3e25549f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-YKEK",
-    "timestamp": "2026-11-13T17:24:47.180Z",
-    "repository": "kirillzyusko/react-native-keyboard-controller",
-    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "776cf5dd132dbf4558d65c393030412c344a4b05b3d54684dfa74eab2b1675bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-EUZM",
-    "timestamp": "2026-11-13T17:37:27.394Z",
-    "repository": "mixelpixx/KiCAD-MCP-Server",
-    "learningId": "learn-github-mixelpixx-kicad-mcp-server",
-    "contentHash": "a83032b88467d1e522e9bc5c00b1c6251686679c7926f1b175fe2a187cc0af1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-EXCW",
-    "timestamp": "2026-11-13T17:37:30.464Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "a4ce1a5c66e66c947520f1022d2ce3a5e7bec4a5f8d38a401b444a841e6cd0d5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-F4CV",
     "timestamp": "2026-11-13T17:37:39.535Z",
     "repository": "react/react-native",
@@ -7490,6 +7430,66 @@
     "repository": "CrawlCove/hreflang-checker",
     "learningId": "learn-github-crawlcove-hreflang-checker",
     "contentHash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-V5X6",
+    "timestamp": "2026-11-16T02:17:21.594Z",
+    "repository": "crate-ci/typos",
+    "learningId": "learn-github-crate-ci-typos",
+    "contentHash": "24cf7c3cd133bb761e74e71940faf1c1b3f8732a9d1b43976a11f3ce68136cb3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-VA6I",
+    "timestamp": "2026-11-16T02:17:27.114Z",
+    "repository": "ShiftHackZ/SDAI-KMP",
+    "learningId": "learn-github-shifthackz-sdai-kmp",
+    "contentHash": "b35defe8f3c3da47ee56d03a8355376cb8a3b81dfca7608dca0b25cb0b4175f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-VAQ5",
+    "timestamp": "2026-11-16T02:17:27.821Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "8e96f5600ace27092e6b652265aea23e8131aa6f5fac35fe6427dbf737ba43fd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-VEUY",
+    "timestamp": "2026-11-16T02:17:33.178Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "cb807d47505ea6f6012ef44c56a41da56362ec8bd90211388d0ad16074b22cce",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

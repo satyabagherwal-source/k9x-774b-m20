@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T02:06:38.338Z",
+  "last_updated": "2026-11-16T02:18:03.524Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T01:52:53.818Z",
@@ -1288,7 +1288,7 @@
       "staged_for_review": 1
     },
     "crate-ci-typos-learnings.md": {
-      "processed_at": "2026-11-12T22:21:34.635Z",
+      "processed_at": "2026-11-16T02:17:36.241Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3126,9 +3126,19 @@
       "processed_at": "2026-11-16T02:06:36.345Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "shifthackz-stable-diffusion-kmp-learnings.md": {
+      "processed_at": "2026-11-16T02:17:36.937Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "saltstack-salt-learnings.md": {
+      "processed_at": "2026-11-16T02:18:03.141Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1209,
-  "total_canonical_promoted": 281,
-  "total_staged_for_review": 925
+  "total_dossiers_evaluated": 1212,
+  "total_canonical_promoted": 282,
+  "total_staged_for_review": 927
 }

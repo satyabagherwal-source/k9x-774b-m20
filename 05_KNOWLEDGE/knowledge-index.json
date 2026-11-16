@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T02:06:38.236Z",
-  "total_verified_learnings": 8752,
+  "last_updated": "2026-11-16T02:18:03.418Z",
+  "total_verified_learnings": 8754,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18836,
+  "total_items": 18854,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -232181,14 +232181,19 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "176bc07b",
-      "content_hash": "09ff498897a97b54ad9eaaebded4bfe929cc0c0a92e763b394ef332f772b99ea",
+      "source_version": "7e177b06",
+      "content_hash": "cb807d47505ea6f6012ef44c56a41da56362ec8bd90211388d0ad16074b22cce",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
         {
           "number": 8515,
           "title": "docs(skills): focus release notes on user impact",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8693,
+          "title": "avoid spurious log directory error on first start",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -232197,7 +232202,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:51:23.286Z",
+      "verified_at": "2026-11-16T02:17:33.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232239,10 +232244,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "176bc07b",
-      "content_hash": "f451bd38feaf6d7c21d5a7b04a11eaae0a2a30366ce443c62f235041e0cb47a7",
+      "source_version": "7e177b06",
+      "content_hash": "aea31ca69162125cfcf229a448af9a6953c17e9d959c9a87c1e32d81913301a3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T17:51:23.698Z"
+      "persisted_at": "2026-11-16T02:17:33.422Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb",
@@ -232251,10 +232256,10 @@
       "relative_path": "08_VERIFICATION/greptimeteam-greptimedb-verification-protocol-empirical-defect-shield-for-grepti.md",
       "title": "Verification Protocol: Empirical Defect Shield for GreptimeTeam/greptimedb",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "176bc07b",
-      "content_hash": "70ee72bd520b84c3ff70f08aae3c3a2539411e934ae637cf6e7302c2b231957b",
+      "source_version": "7e177b06",
+      "content_hash": "a1678bc6a14b74a4af517b0ba9c2e6ecc146d8c1e8b772864b0c773f5dfd5b5e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:51:23.798Z"
+      "persisted_at": "2026-11-16T02:17:33.516Z"
     },
     "candidate_directive-gh-51043-python-reject-null-required-arrow-objects": {
       "item_id": "candidate_directive-gh-51043-python-reject-null-required-arrow-objects",
@@ -236756,17 +236761,22 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-sdai-kmp",
+      "slug": "shifthackz-stable-diffusion-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
-      "source_version": "3d9670a7",
-      "content_hash": "774f930094bc136730a943c8c946ec3c2571129280f94c93c16b0ec29dc43372",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "3c2e3539",
+      "content_hash": "b35defe8f3c3da47ee56d03a8355376cb8a3b81dfca7608dca0b25cb0b4175f4",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": 8552,
           "title": "Sign nightly APKs with the release keystore",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8692,
+          "title": "large LoRA connections, setup timeouts, and traffic accounting",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -236775,7 +236785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T00:37:26.981Z",
+      "verified_at": "2026-11-16T02:17:26.990Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236826,13 +236836,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shifthackz-sdai-kmp-verification-protocol-empirical-defect-shield-for-shifthackz.md",
+      "relative_path": "08_VERIFICATION/shifthackz-stable-diffusion-kmp-verification-protocol-empirical-defect-shield-fo.md",
       "title": "Verification Protocol: Empirical Defect Shield for ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "source_version": "3d9670a7",
-      "content_hash": "d5f0143d190537454eb304f5769c8f559a227accb62fbcd8e872f61a9c1249f8",
+      "source_version": "3c2e3539",
+      "content_hash": "8f2f700c66dda22ff3aaa9a4b4de9940772f824dea5088e90dd9aa1ca40bf0b5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T00:37:27.662Z"
+      "persisted_at": "2026-11-16T02:17:27.473Z"
     },
     "learn-github-nolabs-ai-nono": {
       "learning_id": "learn-github-nolabs-ai-nono",
@@ -250023,6 +250033,264 @@
       "content_hash": "7e3103a15641fcecf7d9988489d707d0916b14e500c7bcd083776a27cda22a05",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T02:06:36.835Z"
+    },
+    "learn-github-crate-ci-typos": {
+      "learning_id": "learn-github-crate-ci-typos",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "crate-ci/typos",
+      "repository": "crate-ci/typos",
+      "slug": "crate-ci-typos",
+      "platform": "github",
+      "source_url": "https://github.com/crate-ci/typos",
+      "source_version": "e7647d64",
+      "content_hash": "24cf7c3cd133bb761e74e71940faf1c1b3f8732a9d1b43976a11f3ce68136cb3",
+      "dossier_path": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8691,
+          "title": "Update Rust Stable to v1.100",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T02:17:21.471Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8691": {
+      "learning_id": "rule-8691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8691,
+      "title": "Update Rust Stable to v1.100",
+      "source_url": "https://github.com/crate-ci/typos",
+      "source_version": "e7647d64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T02:17:21.471Z"
+    },
+    "candidate_directive-update-rust-stable-to-v1-100": {
+      "item_id": "candidate_directive-update-rust-stable-to-v1-100",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V616-update-rust-stable-to-v1-100.md",
+      "title": "Update Rust Stable to v1.100",
+      "repository": "crate-ci/typos",
+      "source_version": "e7647d64",
+      "content_hash": "228bdf4b2c038b69e244beadfa1acbf71795b76f1c82d2c47ed2e94f428461a1",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T02:17:21.739Z"
+    },
+    "domain_intelligence-product-intelligence-crate-ci-typos-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-crate-ci-typos-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-crate-ci-typos-product-intelligence-crate-ci-typos-core-invariants.md",
+      "title": "Product Intelligence: crate-ci/typos Core Invariants",
+      "repository": "crate-ci/typos",
+      "source_version": "e7647d64",
+      "content_hash": "2c086260b9efca5e63934c89a638a2323225aa324a4d93fe0ed737562efec50f",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T02:17:21.837Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crate-ci-typos": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crate-ci-typos",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crate-ci-typos-verification-protocol-empirical-defect-shield-for-crate-ci-typos.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crate-ci/typos",
+      "repository": "crate-ci/typos",
+      "source_version": "e7647d64",
+      "content_hash": "aba120b19b072303515227cf732196a65cb7832b447d21cc19b5f306f3498d9e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T02:17:21.932Z"
+    },
+    "rule-8692": {
+      "learning_id": "rule-8692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8692,
+      "title": "large LoRA connections, setup timeouts, and traffic accounting",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "3c2e3539",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T02:17:26.990Z"
+    },
+    "candidate_directive-large-lora-connections-setup-timeouts-and-traffic-accounting": {
+      "item_id": "candidate_directive-large-lora-connections-setup-timeouts-and-traffic-accounting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VHXX-large-lora-connections-setup-timeouts-and-traffic-accounting.md",
+      "title": "large LoRA connections, setup timeouts, and traffic accounting",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4fff714e825903a2fb0dde7a1656a52b02708aa4481614d9e39e22c916d69d80",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T02:17:37.178Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-stable-diffusion-kmp-quality-verification-intelligence-shifthackz-sda.md",
+      "title": "Quality & Verification Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "source_version": "3c2e3539",
+      "content_hash": "9c7643ddce76e242a28a06c8cc082b36c807251d76873d3c7125306de8aaa01c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T02:17:27.376Z"
+    },
+    "learn-github-saltstack-salt": {
+      "learning_id": "learn-github-saltstack-salt",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "saltstack/salt",
+      "repository": "saltstack/salt",
+      "slug": "saltstack-salt",
+      "platform": "github",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "d32a4535",
+      "content_hash": "8e96f5600ace27092e6b652265aea23e8131aa6f5fac35fe6427dbf737ba43fd",
+      "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T02:17:27.679Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
+      "title": "Architecture Intelligence: saltstack/salt Core Invariants",
+      "repository": "saltstack/salt",
+      "source_version": "d32a4535",
+      "content_hash": "597f4ebd4202b2a6c9d5af7cc4d229f06d41dffa1e266e3ef23c6acbb7cf68c5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T02:17:27.976Z"
+    },
+    "rule-8693": {
+      "learning_id": "rule-8693",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8693,
+      "title": "avoid spurious log directory error on first start",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "7e177b06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T02:17:33.055Z"
+    },
+    "candidate_directive-avoid-spurious-log-directory-error-on-first-start": {
+      "item_id": "candidate_directive-avoid-spurious-log-directory-error-on-first-start",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VEZ5-avoid-spurious-log-directory-error-on-first-start.md",
+      "title": "avoid spurious log directory error on first start",
+      "repository": "GreptimeTeam/greptimedb",
+      "source_version": "7e177b06",
+      "content_hash": "cebadd469b1a2a071d90dcfca098be4824e3855ff8a0989cd8bb3c124ff8853c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T02:17:33.334Z"
+    },
+    "candidate_directive-deps-update-rust-stable-to-v1-100": {
+      "item_id": "candidate_directive-deps-update-rust-stable-to-v1-100",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VHJM-deps-update-rust-stable-to-v1-100.md",
+      "title": "deps): Update Rust Stable to v1.100",
+      "repository": "crate-ci-typos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e545c5f42cbf6244ea45ee904bd6f2fd71772b83e0658694a5d47733eca7c38b",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T02:17:36.659Z"
+    },
+    "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-crate-ci-typos-learnings-product-intelligence-crate-ci-typos-learnings-core-inva.md",
+      "title": "Product Intelligence: crate-ci-typos-learnings Core Invariants",
+      "repository": "crate-ci-typos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5e5d249ed1508ff9fe1571a9a4473c9524fe4037d3e1d73edc36d4ac0d113b18",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T02:17:36.748Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crate-ci-typos-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crate-ci-typos-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crate-ci-typos-learnings-verification-protocol-empirical-defect-shield-for-crate.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crate-ci-typos-learnings",
+      "repository": "crate-ci-typos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "807b73687991f62c12e130ae3879d7294f552a19d044ee383d973077bbe09af3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T02:17:36.843Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-shifthackz-stable-diffusion-kmp-learnings-core": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-shifthackz-stable-diffusion-kmp-learnings-core",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-stable-diffusion-kmp-learnings-quality-verification-intelligence-shif.md",
+      "title": "Quality & Verification Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "84fdd4fcb8f74aeaa4471a37cdad8d03b6ed1ecf97986af838b65ecea9f6f6cf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T02:17:37.293Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-stable-diffusion-km": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-stable-diffusion-km",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/shifthackz-stable-diffusion-kmp-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for shifthackz-stable-diffusion-kmp-learnings",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eb2d07e0780687c26b972b11c27ea80a3861c11783eb441d4cf86000b7018510",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T02:17:37.387Z"
+    },
+    "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-learnings-architecture-intelligence-saltstack-salt-learnings-core.md",
+      "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
+      "repository": "saltstack-salt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3e125bc2c6e9ceea5175d77fb6fef67518999e81b5cb14ee05e608dc225acb03",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T02:18:03.418Z"
     }
   },
   "ai-builder-brain": {

@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "390d168f",
+    "sourceVersion": "d32a4535",
     "license": "Apache-2.0",
-    "contentHash": "dbf431369fb03ddc394db25b2eb7a0b4ce4d735cec41524b6c004577caa6eb09",
-    "lastHarvestedAt": "2026-11-12T09:55:22.206Z",
+    "contentHash": "8e96f5600ace27092e6b652265aea23e8131aa6f5fac35fe6427dbf737ba43fd",
+    "lastHarvestedAt": "2026-11-16T02:17:27.824Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "176bc07b",
+    "sourceVersion": "7e177b06",
     "license": "Apache-2.0",
-    "contentHash": "09ff498897a97b54ad9eaaebded4bfe929cc0c0a92e763b394ef332f772b99ea",
-    "lastHarvestedAt": "2026-11-14T17:51:23.425Z",
+    "contentHash": "cb807d47505ea6f6012ef44c56a41da56362ec8bd90211388d0ad16074b22cce",
+    "lastHarvestedAt": "2026-11-16T02:17:33.181Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -7073,10 +7073,10 @@
     "repository": "crate-ci/typos",
     "platform": "github",
     "sourceUrl": "https://github.com/crate-ci/typos",
-    "sourceVersion": "aa7e5314",
+    "sourceVersion": "e7647d64",
     "license": "Apache-2.0",
-    "contentHash": "455ab3b6be398b5b0049311dd6ad24827916a8d923724608c739ecb37f9cd4e9",
-    "lastHarvestedAt": "2026-11-12T22:21:06.790Z",
+    "contentHash": "24cf7c3cd133bb761e74e71940faf1c1b3f8732a9d1b43976a11f3ce68136cb3",
+    "lastHarvestedAt": "2026-11-16T02:17:21.598Z",
     "learningId": "learn-github-crate-ci-typos"
   },
   "emberstack-kubernetes-reflector": {
@@ -8593,10 +8593,10 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
-    "sourceVersion": "7431c4b6",
+    "sourceVersion": "3c2e3539",
     "license": "AGPL-3.0",
-    "contentHash": "2468b0562564b2b6df22c66148ebbd5c8ac9f4bf694b242261cba725187f42ff",
-    "lastHarvestedAt": "2026-11-08T15:28:19.352Z",
+    "contentHash": "b35defe8f3c3da47ee56d03a8355376cb8a3b81dfca7608dca0b25cb0b4175f4",
+    "lastHarvestedAt": "2026-11-16T02:17:27.118Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
   },
   "android-kotlin-multiplatform-samples": {

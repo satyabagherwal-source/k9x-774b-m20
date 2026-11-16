@@ -4,22 +4,22 @@
 {
   "source_repository": "GreptimeTeam/greptimedb",
   "source_url": "https://github.com/GreptimeTeam/greptimedb",
-  "source_version": "176bc07b",
+  "source_version": "7e177b06",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T17:51:23.600Z",
+  "timestamp": "2026-11-16T02:17:33.333Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-greptimeteam-greptimedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `176bc07b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T17:51:23.600Z`  
+> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `7e177b06`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T02:17:33.333Z`  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `GreptimeTeam/greptimedb` (Commit: `176bc07b`)
+- **Target Repository**: `GreptimeTeam/greptimedb` (Commit: `7e177b06`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T17:51:22.567Z  
+> **Harvest Timestamp**: 2026-11-16T02:17:32.466Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6812 stars
+- **Stars / Engagement**: 6813 stars
 
 ---
 
@@ -1726,11 +1726,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10442** (2026-11-14): **docs(skills): focus release notes on user impact**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  ### Problem  The release-note skill classifies internal changes as breaking changes, overprescribes editorial choices, and uses a moving branch tip for patch releases.  ### Change  Use the release tag as the range endpoint across release types, and align the release runbook to create tags from the verified SHA and check them before publishing the docs copy. Replace writing examples with concise selection criteria: highlight consequential changes, including evidence-backed performance and architectural improvements, and reserve upgrade notes for user-visible compatibility changes and required actions. Apply the same impact review to generated breaking-change bullets.  ### Non-goals  Changing release automation or the backport and contributor collection procedures.  ### Constraints  Preserve genuine external incompatibilities, PR links, and contributor attribution.  ### Verification  - Both release-note and release skill validators passed. - `git diff --check` passed. - Manually reviewed the guidance against the v1.3.1 editorial revision. - Rust checks were not run; only skill instructions changed.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the neces
+- **Issue #10454** (2026-11-16): **fix(mito2): do not prune row groups on float min/max statistics**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Fixes #10452. Upstream cause: apache/datafusion#15812.  ## What's changed and what's your intention?  After a flush, filters on float columns could drop rows whose value is NaN (`v > 2`, `v = 'NaN'::DOUBLE`, and `v != 1.0` when the other values in the row group are equal), while the same queries against the memtable returned them.  The rows were dropped by row group pruning. Parquet writers leave NaN out of float min/max statistics, so a row group holding `1.0, NaN, -1.0` reports `max = 1.0`. DataFusion orders NaN above every other float, so `v > 2` should match the NaN row. But the pruning predicate sees `max = 1.0` and skips the row group.  `column_values_by_type` in `sst/parquet/format.rs` now returns `None` for `Statistics::Float` / `Statistics::Double`, so the pruning predicate treats float min/max as unknown and keeps those row groups. Null counts and statistics for other types are unchanged. Both the primary-key and flat formats go through this helper.  Limitation: row groups can no longer be skipped by range predicates on float/double fields. Parquet statistics here don't record whether a row group contains NaN, so min/max alone can't make that pruning safe. If maintainers would rather keep float pruning, for example by tracking NaN presence at write time, I'm happy to change this.  ## PR Checklist Please co
 
-- **Issue #10439** (2026-11-14): **chore(ci): update compatibility versions**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Automated after a stable release or the daily fallback.  ## What's changed and what's your intention?  Updates `tests/compatibility/ci.toml` from checked-out `main` tags that have published release assets. The PR window keeps the latest patch of the two most recent stable minor lines; exact `=vX.Y.Z` case anchors are validated nightly instead of being added to the PR window.  ## PR Checklist  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API changes are backward compatible. - [x] Schema or data changes are backward compatible.
+- **Issue #10446** (2026-11-16): **fix(telemetry): avoid spurious log directory error on first start**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Works around tokio-rs/tracing#3612. The upstream fixes (tokio-rs/tracing#3618, tokio-rs/tracing#3628) are not merged yet. The behavior came with the `tracing-appender` 0.2.3 → 0.2.5 upgrade in #8997, so v1.3.0 and later are affected.  ## What's changed and what's your intention?  When the log directory does not exist yet, for example on the first start of a new deployment, GreptimeDB prints this line to stderr:  ``` Error reading the log directory/files: No such file or directory (os error 2) ```  On Windows it ends with `(os error 3)`. Startup continues and the log files are created, so the message is harmless, but it looks like a failure on a fresh install.  Since 0.2.4, building a `RollingFileAppender` with `max_log_files` set first prunes old log files. The pruning lists the log directory before the appender creates it, and reports the failed listing with `eprintln!`. GreptimeDB passes `max_log_files` (720 by default) to `tracing-appender` unless `max_log_dir_size` is non-zero, and it defaults to 0. So with the default configuration the first appender (`greptimedb.*`) prints the line; the error and slow-query appenders are built after the directory exists.  This PR calls `fs::create_dir_all` on the log directory in `build_file_appender`, right before the appender is built. It does nothing when the directory alre
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1747,171 +1747,502 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `176bc07b` (2026-11-14)
-**Commit Message**: docs(skills): focus release notes on user impact (#10442)
+### Incident Patch 1: `7e177b06` (2026-11-16)
+**Commit Message**: fix(telemetry): avoid spurious log directory error on first start (#10446)
 
-* docs(skills): focus release notes on user impact
+* fix(telemetry): avoid spurious log directory error on first start
 
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+Since 0.2.4, tracing-appender prunes old log files when an appender
+with max_log_files is built, and it lists the log directory before
+creating it. When the directory does not exist yet, it prints "Error
+reading the log directory/files" to stderr. GreptimeDB sets
+max_log_files by default, so every start with a missing log directory
+printed this line.
 
-* docs(skills): simplify compatibility guidance
+Create the log directory in build_file_appender before building the
+appender. Creation errors are left to the appender build, which
+reports them as before. Add a test that checks the stderr of a child
+process.
 
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+Works around https://github.com/tokio-rs/tracing/issues/3612.
 
-* docs(skills): clarify release scope and highlight criteria
+Signed-off-by: shuxiachai <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+* test(telemetry): drop the first-start log directory test
 
-* docs(skills): align release targets and generated change groups
+Review feedback: the test is not needed for such a minor change.
+Restore the unix-only test imports that it had merged.
 
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+Signed-off-by: shuxiachai <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+Signed-off-by: shuxiachai <[REDACTED_EMAI
 
-**File**: `.agents/skills/greptimedb-release-note/SKILL.md` (modified, +40/-71)
+**File**: `src/common/telemetry/src/logging/file_retention.rs` (modified, +4/-0)
 ```diff
-@@ -39,6 +39,12 @@ Double-check with the user.
+@@ -436,6 +436,10 @@ pub(crate) fn build_file_appender(
+         builder = builder.latest_symlink(kind.current_link_name());
+     }
  
- ## 3. Pick the range and generate
- 
-+For every release type, use the release tag's commit as `<tip>` when the tag exists.
-+Resolve the exact tag from the remote (use the peeled `^{}` commit for annotated tags)
-+and exclude commits added to the release branch afterward. Before tagging, pin the
-+intended release commit and record its SHA. Pass that SHA as `--target` when creating
-+the release, then verify the resulting tag before publishing the docs copy.
-+
- Key topology fact: **patch tags** (`v1.0.1`, `v1.0.2`) live on `release/vX.Y` and are **NOT**
- ancestors of `main` (they are cherry-picks with different SHAs). Up to v1.1 the `.0` tag was
- the point where `release/vX.Y` left `main`; from v1.2 the branch is cut before the `.0`, and
-@@ -51,8 +57,8 @@ left `main`, minus what any published `vX.(Y-1).*` release (pre-releases, `.0`,
- already shipped. The line's own pre-releases (`vX.Y.0-beta.*`) are not subtracted; the `.0`
- note covers the whole minor.
- 
--Base = the **previous minor tag** (e.g. `v1.1.0`); tip = the tagged `vX.Y.0` commit, resolved as
--in "Pre-release" below. Split the range at the point where `release/vX.Y` left `main`:
-+Base = the **previous minor tag** (e.g. `v1.1.0`); tip = the release commit resolved above.
-+Split the range at the point where `release/vX.Y` left `main`:
- ```
- bp=$(git merge-base <remote>/release/vX.Y <remote>/main)
- ```
-@@ -80,14 +86,14 @@ small Python script is the reliable way — match `pull/<n>)` on lines starting
- The previous patch tag is an ancestor of the release branch, so a plain range works **when the
- cherry-picks land as individual commits**:
- ```
--GITHUB_TOKEN=$(gh auth token) git cliff <prev-patch-tag>..<release-branch-tip> --tag vX.Y.Z -o ...
-+GITHUB_TOKEN=$(gh auth token) git cliff <prev-patch-tag>..<tip> --tag vX.Y.Z -o ...
- ```
- No extra subtraction (the branch only contains the new cherry-picks).
- 
- **Common case — squashed pick commit.** Patch branches are often a single squashed commit like
- `chore: pick fixes and bump version to vX.Y.Z (#NNNN)`, so the plain range above yields just
- that one bullet. First **find the picked PRs**: read the squash commit message
--(`git log -1 --format=%B <release-branch-tip>`) — each `* fix: ... (#NN)` line is a picked PR.
-+(`git log -1 --format=%B <tip>`) — each `* fix: ... (#NN)` line is a picked PR.
- Then pick one of two ways to build the changelog (a patch is usually only a few PRs — **ask the
- user which they prefer**):
- 
-@@ -131,16 +137,6 @@ Either source alone misses PRs: a release body can omit a backport that its tag
- backport commit can name only the backport PR.
- 
- ### Pre-release (`X.Y.Z-{alpha,beta,rc}.N` after an earlier pre-release)
--**The tip is the tagged commit, not the release branch tip.** Resolve it from the remote and
--write this SHA in the docs PR body (§8) as what the note was checked against:
--```
--git ls-remote --tags <remote> 'vX.Y.Z-beta.N*'
--```
--Use the `refs/tags/vX.Y.Z-beta.N` line (its `^{}` line if the tag is annotated), not the
--build-suffixed tags it also lists. PRs that land on `release/vX.Y` after the tag
--(`git log --oneline <tag>..<remote>/release/vX.Y`) belong to the next release, even if they are
--already merged when you write the note.
--
- The range `<prev-pre-release>..<tag>` usually mixes two kinds of commits: individual backports
- (`... [Backport release/vX.Y] (#NNNN)`) and squashed pick commits (`chore: backport selected
- changes for ... (#NNNN)`). In both, the original PRs are the `(#NN)` at the end of body lines;
-@@ -156,8 +152,8 @@ done | tr -dc '0-9\n' | sort -un
- List the bullets under the **original** PRs (title and author of the PR merged to `main`), not
- the backport PRs. Build them with patch (a) or (b) above; for (b), fetch
- `gh api repos/GreptimeTeam/greptimedb/pulls/<n> --jq '{number,title,author:.user.login,merged_at}'`,
--group by the `cliff.toml` parsers (first match wins), order by `merged_at`, and put `!` titles
--under Breaking changes (§6).
-+group by the `cliff.toml` parsers (first match wins), order by `merged_at`, and review `!` titles
-+for user-visible compatibility impact (§6) before assigning a category.
- 
- A squashed pick PR can also contain release-only commits that have no PR. List them:
- ```
-@@ -179,6 +175,10 @@ them and add the user-facing ones by hand:
- ```
- git log --format=%s <range> | grep -E '\(#[0-9]+\)$' | grep -vE '^[a-z]+(\([^)]*\))?!?: '
- ```
-+Review generated breaking-change bullets using the same user-impact criteria as §6. Move
-+internal-only entries to ordinary groups, preserving genuine incompatibilities, PR links,
-+and authors.
-+
- Use only the groups in `cliff.toml`. `git cliff` prints a `### Build` section for `build:` commits
- because no parser matches them; move a user-facing `build(deps)` fix to Bug Fixes and the rest to
- Miscellaneous Tasks. Keep each bullet list free of blank lines; a blank line turns it into a
-@@ -217,45 +217,18 @@ line (ask the user; some prefer to keep it).
- 
-```
-
-**File**: `.agents/skills/greptimedb-release/SKILL.md` (modified, +4/-2)
-```diff
-@@ -62,11 +62,12 @@ publishing.
- 
- **Do NOT pre-create the tag.** Creating the release creates the tag and fires the
- tag-push CI (`.github/workflows/release.yml`) that builds all binaries (**~hours**).
-+Use the exact commit SHA verified for the changelog as `<verified-release-sha>`.
- Confirm with the user, then:
- ```
- gh release create vX.Y.Z \
-   --repo GreptimeTeam/greptimedb \
--  --target release/vX.Y \
-+  --target <verified-release-sha> \
-   --title "Release vX.Y.Z" \
-   --notes-file CHANGELOG-vX.Y.Z.md \
-   --prerelease
-@@ -78,7 +79,8 @@ gh release create vX.Y.Z \
- 
- ## 4. Open the docs release-note PR (do not wait for CI)
- 
--Right after triggering the release, open the docs draft PR (see the docs section of the
-+Verify that the remote tag resolves to the verified release SHA (peel annotated tags);
-+stop if it differs. Then open the docs draft PR (see the docs section of the
- `greptimedb-release-note` skill). It only needs the finalized changelog.
- 
- Then **delete the local `CHANGELOG-vX.Y.Z.md`** (its content now lives in the release body
++    // FIXME(tokio-rs/tracing#3612): tracing-appender lists the directory to prune old logs
++    // before creating it, so a missing directory prints a misleading error. If this fails,
++    // `build` reports it.
++    let _ = fs::create_dir_all(&opts.dir);
+     let appender = builder.build(&opts.dir).unwrap_or_else(|error| {
+         panic!(
+             "initializing rolling file appender at {} failed: {}",
 ```
 
 ---
 
-### Incident Patch 2: `7f7c003f` (2026-11-14)
-**Commit Message**: chore(ci): update compatibility versions (#10439)
+### Incident Patch 2: `1e39eab0` (2026-11-14)
+**Commit Message**: fix(ci): bound nightly kind deployment and restore inotify limits (#10423)
 
-Signed-off-by: greptimedb-ci <[REDACTED_EMAIL]>
-Co-authored-by: greptimedb-ci <[REDACTED_EMAIL]>
+* fix(ci): bound nightly kind deployment and restore inotify limits
 
-**File**: `tests/compatibility/ci.toml` (modified, +1/-1)
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+* fix(ci): use shell timeouts in composite actions
+
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+**File**: `.github/actions/deploy-greptimedb/action.yml` (modified, +8/-1)
 ```diff
-@@ -6,7 +6,7 @@
- # exercised by nightly runs (--nightly-window); they are not retained in the PR
- # window. Run .github/scripts/update-compat-versions.py --update --published-only
- # after release tags land.
--from_versions = ["v1.2.1", "v1.3.0"]
-+from_versions = ["v1.2.1", "v1.3.1"]
+@@ -19,6 +19,12 @@ inputs:
+ runs:
+   using: composite
+   steps:
++    # Ubuntu 26.04 does not apply the runner's /etc/sysctl.conf at boot.
++    # https://github.com/actions/runner-images/issues/15108
++    - name: Configure inotify limits for kind
++      shell: bash
++      run: sudo sysctl -w fs.inotify.max_user_instances=1280 fs.inotify.max_user_watches=655360
++
+     - name: Deploy GreptimeDB by Helm
+       shell: bash
+       env:
+@@ -28,4 +34,5 @@ runs:
+         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
+       run: |
+-        ./.github/scripts/deploy-greptimedb.sh
++        # Composite steps do not support timeout-minutes.
++        timeout --kill-after=30s 30m ./.github/scripts/deploy-greptimedb.sh
+```
+
+**File**: `.github/actions/sqlness-test/action.yml` (modified, +11/-3)
+```diff
+@@ -58,11 +58,19 @@ runs:
+       run: |
+         aws s3 rm s3://${{ inputs.aws-ci-test-bucket }}/${{ inputs.data-root }} --recursive
+     - name: Export kind logs
+-      if: failure()
++      if: failure() || cancelled()
+       shell: bash
+-      run: kind export logs /tmp/kind
++      run: |
++        # Bound the entire collection while leaving the upload step available.
++        timeout --kill-after=30s 5m bash -e -o pipefail <<'EOF'
++        mkdir -p /tmp/kind
++        kubectl --request-timeout=30s get pods -A -o wide > /tmp/kind/pods.txt 2>&1 || true
++        kubectl --request-timeout=30s get events -A --sort-by=.metadata.creationTimestamp > /tmp/kind/events.txt 2>&1 || true
++        kubectl --request-timeout=30s describe pods -A > /tmp/kind/pod-descriptions.txt 2>&1 || true
++        kind export logs /tmp/kind
++        EOF
+     - name: Upload logs
+-      if: failure()
++      if: failure() || cancelled()
+       uses: actions/upload-artifact@v4
+       with:
+         name: kind-logs
+```
+
+**File**: `.github/scripts/deploy-greptimedb.sh` (modified, +7/-23)
+```diff
+@@ -50,7 +50,7 @@ function deploy_etcd_cluster() {
+     -n "$namespace"
  
- # Recent releases that must be able to reopen tables written by the PR build.
- downgrade_to_versions = ["v1.1.4"]
+   # Wait for etcd cluster to be ready.
+-  kubectl rollout status statefulset/etcd -n "$namespace"
++  kubectl rollout status statefulset/etcd -n "$namespace" --timeout=5m
+ }
+ 
+ # Deploy greptimedb-operator.
+@@ -81,16 +81,8 @@ function deploy_greptimedb_cluster() {
+     -n "$install_namespace"
+ 
+   # Wait for greptimedb cluster to be ready.
+-  while true; do
+-    PHASE=$(kubectl -n "$install_namespace" get gtc "$cluster_name" -o jsonpath='{.status.clusterPhase}')
+-    if [ "$PHASE" == "Running" ]; then
+-      echo "Cluster is ready"
+-      break
+-    else
+-      echo "Cluster is not ready yet: Current phase: $PHASE"
+-      sleep 5 # wait for 5 seconds before check again.
+-    fi
+-  done
++  kubectl -n "$install_namespace" wait "gtc/$cluster_name" \
++    --for=jsonpath='{.status.clusterPhase}'=Running --timeout=5m
+ 
+   # Expose greptimedb cluster to local access and check if port-forward is available.
+   kubectl -n "$install_namespace" port-forward svc/"$cluster_name"-frontend \
+@@ -141,16 +133,8 @@ function deploy_greptimedb_cluster_with_s3_storage() {
+     --set objectStorage.credentials.secretAccessKey="$AWS_SECRET_ACCESS_KEY"
+ 
+   # Wait for greptimedb cluster to be ready.
+-  while true; do
+-    PHASE=$(kubectl -n "$install_namespace" get gtc "$cluster_name" -o jsonpath='{.status.clusterPhase}')
+-    if [ "$PHASE" == "Running" ]; then
+-      echo "Cluster is ready"
+-      break
+-    else
+-      echo "Cluster is not ready yet: Current phase: $PHASE"
+-      sleep 5 # wait for 5 seconds before check again.
+-    fi
+-  done
++  kubectl -n "$install_namespace" wait "gtc/$cluster_name" \
++    --for=jsonpath='{.status.clusterPhase}'=Running --timeout=5m
+ 
+   # Expose greptimedb cluster to local access.
+   kubectl -n "$install_namespace" port-forward svc/"$cluster_name"-frontend \
+@@ -168,8 +152,8 @@ function deploy_standalone_greptimedb() {
+     --set image.tag="$GREPTIMEDB_IMAGE_TAG" \
+     -n "$DEFAULT_INSTALL_NAMESPACE"
+ 
+-  # Wait for etcd cluster to be ready.
+-  kubectl rollout status statefulset/greptimedb-standalone -n "$DEFAULT_INSTALL_NAMESPACE"
++  # Wait for standalone GreptimeDB to be ready.
++  kubectl rollout status statefulset/greptimedb-standalone -n "$DEFAULT_INSTALL_NAMESPACE" --timeout=5m
+ 
+   # Expose greptimedb to local access.
+   kubectl -n "$DEFAULT_INSTALL_NAMESPACE" port-forward svc/greptimedb-standalone \
+```
+
+**File**: `.github/workflows/nightly-ci.yml` (modified, +2/-1)
+```diff
+@@ -14,6 +14,7 @@ jobs:
+     name: Run sqlness test
+     if: ${{ github.repository == 'GreptimeTeam/greptimedb' }}
+     runs-on: ubuntu-latest
++    timeout-minutes: 45
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+@@ -33,7 +34,7 @@ jobs:
+           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+       - name: Upload sqlness logs
+-        if: failure()
++        if: failure() || cancelled()
+         uses: actions/upload-artifact@v4
+         with:
+           name: sqlness-logs-kind
+```
+
+---
+
+### Incident Patch 3: `dbd080b8` (2026-11-16)
+**Commit Message**: fix(recordbatch): treat -0.0 and +0.0 as equal in SimpleFilterEvaluator (#10443)
+
+* test(recordbatch): compare float zero predicates with DataFusion
+
+`SimpleFilterEvaluator` filters SST rows exactly, so it has to agree
+with the SQL predicate that DataFusion evaluates above the scan.
+DataFusion compares -0.0 and +0.0 as equal. Evaluate comparisons
+against both zeros, NaN and NULL in Float64 and Float32 columns, and
+check the selected rows against DataFusion's filter.
+
+On main this fails: `v = Float64(0)` selects only the +0.0 row, while
+DataFusion selects both zeros.
+
+Signed-off-by: dayan02dev <[REDACTED_EMAIL]>
+
+* fix(recordbatch): compare -0.0 and +0.0 as equal in simple filters
+
+DataFusion 55 normalizes -0.0 to +0.0 before Arrow's comparison
+kernels, so SQL compares the two zeros as equal. SimpleFilterEvaluator
+called the kernels directly, and for floats they compare bit patterns:
+-0.0 != +0.0 and -0.0 < +0.0. Mito applies the evaluator to SST rows as
+an exact filter, so after a flush `v = 0.0`, `v >= 0` and `v IN (0.0)`
+dropped the rows holding -0.0, and `v = -0.0` dropped the rows holding
++0.0. Rows still in a memtable matched.
+
+Normalize the literal when the predicate is built
+
+**File**: `src/common/recordbatch/src/filter.rs` (modified, +10/-3)
+```diff
+@@ -25,7 +25,7 @@ use std::sync::Arc;
+ use datafusion::error::Result as DfResult;
+ use datafusion::logical_expr::{Expr, Literal, Operator, utils};
+ use datafusion::physical_plan::PhysicalExpr;
+-use datafusion_common::arrow::array::{ArrayRef, Datum};
++use datafusion_common::arrow::array::{ArrayRef, Datum, Scalar};
+ use datafusion_common::arrow::buffer::BooleanBuffer;
+ use datafusion_common::cast::{as_boolean_array, as_null_array};
+ use datafusion_common::{DataFusionError, ScalarValue, internal_err};
+@@ -79,6 +79,7 @@ impl MetadataFilter {
+ 
+ /// Evaluates supported single-column predicates with precompiled regular expressions.
+ /// Compound predicates preserve SQL null semantics until conversion to a scan mask.
++/// Float comparisons treat `-0.0` and `+0.0` as equal, as DataFusion does.
+ #[derive(Debug, Clone)]
+ pub struct SimpleFilterEvaluator {
+     column_name: String,
+@@ -104,7 +105,9 @@ impl SimpleFilterEvaluator {
+         Some(Self {
+             column_name,
+             predicate: SimplePredicate::Comparison {
+-                literal: value.to_scalar().ok()?,
++                literal: datafusion_common::utils::normalize_float_zero_scalar(value)
++                    .to_scalar()
++                    .ok()?,
+                 op,
+                 regex: None,
+                 regex_negative: false,
+@@ -224,11 +227,15 @@ impl SimpleFilterEvaluator {
+         let input = input
+             .to_scalar()
+             .with_context(|_| ToArrowScalarSnafu { v: input.clone() })?;
++        let input = Scalar::new(datafusion_common::utils::normalize_float_zero(
++            &input.into_inner(),
++        ));
+         Ok(self.evaluate_datum(&input, 1)?.value(0))
+     }
+ 
+     pub fn evaluate_array(&self, input: &ArrayRef) -> Result<BooleanBuffer> {
+-        self.evaluate_datum(input, input.len())
++        let input = datafusion_common::utils::normalize_float_zero(input);
++        self.evaluate_datum(&input, input.len())
+     }
+ 
+     pub fn evaluate_vector(&self, input: &VectorRef) -> Result<BooleanBuffer> {
+```
+
+**File**: `src/common/recordbatch/src/filter/predicate.rs` (modified, +100/-1)
+```diff
+@@ -98,7 +98,9 @@ impl SimplePredicate {
+                 };
+                 let (regex, regex_negative) = Self::maybe_build_regex(op, literal).ok()?;
+                 Some(Self::Comparison {
+-                    literal: literal.to_scalar().ok()?,
++                    literal: datafusion_common::utils::normalize_float_zero_scalar(literal.clone())
++                        .to_scalar()
++                        .ok()?,
+                     op,
+                     regex,
+                     regex_negative,
+@@ -626,6 +628,103 @@ mod tests {
+         }
+     }
+ 
++    #[tokio::test]
++    async fn float_zero_predicates_match_datafusion() {
++        use datafusion::prelude::SessionContext;
++        use datatypes::arrow::array::{Float32Array, Float64Array, Int32Array};
++
++        let float64: ArrayRef = Arc::new(Float64Array::from(vec![
++            Some(-0.0),
++            Some(0.0),
++            Some(1.0),
++            Some(f64::NAN),
++            None,
++        ]));
++        let float32: ArrayRef = Arc::new(Float32Array::from(vec![
++            Some(-0.0),
++            Some(0.0),
++            Some(1.0),
++            Some(f32::NAN),
++            None,
++        ]));
++        for input in [float64, float32] {
++            let literal = |v: f64| {
++                if input.data_type() == &DataType::Float32 {
++                    lit(v as f32)
++                } else {
++                    lit(v)
++                }
++            };
++            let ctx = SessionContext::new();
++            let schema = Arc::new(Schema::new(vec![
++                Field::new("v", input.data_type().clone(), true),
++                Field::new("id", DataType::Int32, false),
++            ]));
++            ctx.register_batch(
++                "floats",
++                RecordBatch::try_new(
++                    schema,
++                    vec![
++                        input.clone(),
++                        Arc::new(Int32Array::from_iter_values(0..input.len() as i32)),
++                    ],
++                )
++                .unwrap(),
++            )
++            .unwrap();
++            for expr in [
++                col("v").eq(literal(0.0)),
++                col("v").eq(literal(-0.0)),
++                col("v").not_eq(literal(-0.0)),
++                col("v").lt(literal(0.0)),
++                col("v").lt_eq(literal(-0.0)),
++                col("v").gt(literal(-0.0)),
++                col("v").gt_eq(literal(0.0)),
++                literal(0.0).lt_eq(col("v")),
++                col("v").eq(literal(0.0)).or(col("v").eq(literal(1.0))),
++                col("v").eq(literal(f64::NAN)),
++            ] {
++                let expected = ctx
++                    .table("floats")
++                    .await
++                    .unwrap()
++                    .filter(expr.clone())
++                    .unwrap()
++                    .collect()
++                    .await
++                    .unwrap()
++                    .iter()
++                    .flat_map(|batch| {
++                        batch
++                            .column_by_name("id")
++                            .unwrap()
++                            .as_any()
++                            .downcast_ref::<Int32Array>()
++                            .unwrap()
++                            .values()
++                            .to_vec()
++                    })
++                    .collect::<Vec<_>>();
++                let evaluator = SimpleFilterEvaluator::try_new(&expr).unwrap();
++                let mask = evaluator.evaluate_array(&input).unwrap();
++                let selected = mask
++                    .iter()
++                    .enumerate()
++                    .filter_map(|(i, matched)| matched.then_some(i as i32))
++                    .collect::<Vec<_>>();
++                assert_eq!(selected, expected, "{expr}");
++                for (i, matched) in mask.iter().enumerate() {
++                    let scalar = ScalarValue::try_from_array(&input, i).unwrap();
++                    assert_eq!(
++                        evaluator.evaluate_scalar(&scalar).unwrap(),
++                        matched,
++                        "{expr}, row={i}"
++                    );
++                }
++            }
++        }
++    }
++
+     #[test]
+     fn supported_filter_op() {
+         // equal
+```
+
+**File**: `tests/cases/standalone/common/select/prune_field.result` (modified, +58/-0)
+```diff
+@@ -67,3 +67,61 @@ drop table prune_field;
+ 
+ Affected Rows: 0
+ 
++-- -0.0 equals 0.0, so flushed rows holding either zero must keep matching.
++CREATE TABLE prune_float_zero (ts TIMESTAMP TIME INDEX, v DOUBLE);
++
++Affected Rows: 0
++
++insert into prune_float_zero values (1, -0.0), (2, 0.0), (3, 1.0);
++
++Affected Rows: 3
++
++admin flush_table('prune_float_zero');
++
+++---------------------------------------+
++| ADMIN flush_table('prune_float_zero') |
+++---------------------------------------+
++| 0                                     |
+++---------------------------------------+
++
++select ts from prune_float_zero where v = 0.0 order by ts;
++
+++-------------------------+
++| ts                      |
+++-------------------------+
++| 1970-01-01T00:00:00.001 |
++| 1970-01-01T00:00:00.002 |
+++-------------------------+
++
++select ts from prune_float_zero where v >= 0 order by ts;
++
+++-------------------------+
++| ts                      |
+++-------------------------+
++| 1970-01-01T00:00:00.001 |
++| 1970-01-01T00:00:00.002 |
++| 1970-01-01T00:00:00.003 |
+++-------------------------+
++
++select ts from prune_float_zero where v = -0.0 order by ts;
++
+++-------------------------+
++| ts                      |
+++-------------------------+
++| 1970-01-01T00:00:00.001 |
++| 1970-01-01T00:00:00.002 |
+++-------------------------+
++
++select ts from prune_float_zero where v in (0.0) order by ts;
++
+++-------------------------+
++| ts                      |
+++-------------------------+
++| 1970-01-01T00:00:00.001 |
++| 1970-01-01T00:00:00.002 |
+++-------------------------+
++
++drop table prune_float_zero;
++
++Affected Rows: 0
++
+```
+
+**File**: `tests/cases/standalone/common/select/prune_field.sql` (modified, +17/-0)
+```diff
+@@ -22,3 +22,20 @@ select * from prune_field;
+ select * from prune_field where a = 1 and b = 1;
+ 
+ drop table prune_field;
++
++-- -0.0 equals 0.0, so flushed rows holding either zero must keep matching.
++CREATE TABLE prune_float_zero (ts TIMESTAMP TIME INDEX, v DOUBLE);
++
++insert into prune_float_zero values (1, -0.0), (2, 0.0), (3, 1.0);
++
++admin flush_table('prune_float_zero');
++
++select ts from prune_float_zero where v = 0.0 order by ts;
++
++select ts from prune_float_zero where v >= 0 order by ts;
++
++select ts from prune_float_zero where v = -0.0 order by ts;
++
++select ts from prune_float_zero where v in (0.0) order by ts;
++
++drop table prune_float_zero;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10454** (closed): fix(mito2): do not prune row groups on float min/max statistics (@ump45nose)
+- **PR #10446** (2026-11-16): fix(telemetry): avoid spurious log directory error on first start (@shuxiachai)
+- **PR #10443** (2026-11-16): fix(recordbatch): treat -0.0 and +0.0 as equal in SimpleFilterEvaluator (@dayan02dev)
 - **PR #10442** (2026-11-14): docs(skills): focus release notes on user impact (@killme2008)
+- **PR #10441** (closed): fix(datatypes): allow casting UInt64 to Int64 (@amalsaidov)
 - **PR #10439** (2026-11-14): chore(ci): update compatibility versions (@MichaelScofield)
-- **PR #10434** (2026-11-13): fix(auth): backport physical metric permission targets to v1.3 (@WenyXu)
-- **PR #10419** (2026-11-13): perf(mito-codec): index sparse label columns by id once at bind time (@discord9)
-- **PR #10417** (2026-11-13): feat(common-meta): make RDS metadata backends closable (@WenyXu)
-- **PR #10415** (2026-11-13): fix(frontend): classify physical entity graph sources [Backport release/v1.3] (@MichaelScofield)
 
 ---
 
@@ -1931,61 +2262,34 @@ Co-authored-by: greptimedb-ci <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(skills): focus release notes on user impact
+## X. telemetry): avoid spurious log directory error on first start
 
 **RULE**:
-When implementing operations in `.agents/skills/greptimedb-release-note/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/common/telemetry/src/logging/file_retention.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `176bc07b`: docs(skills): focus release notes on user impact. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e177b06`: telemetry): avoid spurious log directory error on first start. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/greptimedb-release-note/SKILL.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/telemetry/src/logging/file_retention.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-For every release type, use the release tag's commit as `<tip>` when the tag exists.
-Resolve the exact tag from the remote (use the peeled `^{}` commit for annotated tags)
-and exclude commits added to the release branch afterward. Before tagging, pin the
-intended release commit and record its SHA. Pass that SHA as `--target` when creating
-the release, then verify the resulting tag before publishing the docs copy.
-
-Base = the **previous minor tag** (e.g. `v1.1.0`); tip = the release commit resolved above.
-Split the range at the point where `release/vX.Y` left `main`:
-GITHUB_TOKEN=$(gh auth token) git cliff <prev-patch-tag>..<tip> --tag vX.Y.Z -o ...
-(`git log -1 --format=%B <tip>`) — each `* fix: ... (#NN)` line is a picked PR.
-group by the `cliff.toml` parsers (first match wins), order by `merged_at`, and review `!` titles
-for user-visible compatibility impact (§6) before assigning a category.
-Review generated breaking-change bullets using the same user-impact criteria as §6. Move
-internal-only entries to ordinary groups, preserving genuine incompatibilities, PR links,
-and authors.
-
+    // FIXME(tokio-rs/tracing#3612): tracing-appender lists the directory to prune old logs
+    // before creating it, so a missing directory prints a misleading error. If this fails,
+    // `build` reports it.
+    let _ = fs::create_dir_all(&opts.dir);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-Base = the **previous minor tag** (e.g. `v1.1.0`); tip = the tagged `vX.Y.0` commit, resolved as
-in "Pre-release" below. Split the range at the point where `release/vX.Y` left `main`:
-GITHUB_TOKEN=$(gh auth token) git cliff <prev-patch-tag>..<release-branch-tip> --tag vX.Y.Z -o ...
-(`git log -1 --format=%B <release-branch-tip>`) — each `* fix: ... (#NN)` line is a picked PR.
-**The tip is the tagged commit, not the release branch tip.** Resolve it from the remote and
-write this SHA in the docs PR body (§8) as what the note was checked against:
-```
-git ls-remote --tags <remote> 'vX.Y.Z-beta.N*'
-```
-Use the `refs/tags/vX.Y.Z-beta.N` line (its `^{}` line if the tag is annotated), not the
-build-suffixed tags it also lists. PRs that land on `release/vX.Y` after the tag
-(`git log --oneline <tag>..<remote>/release/vX.Y`) belong to the next release, even if they are
-already merged when you write the note.
-
-group by the `cliff.toml` parsers (first match wins), order by `merged_at`, and put `!` titles
-under Breaking changes (§6).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `176bc07b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e177b06` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
