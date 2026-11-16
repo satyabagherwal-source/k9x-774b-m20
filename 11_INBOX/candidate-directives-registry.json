@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T14:07:06.911Z",
+  "last_updated": "2026-11-16T14:35:31.962Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19024,6 +19024,46 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-842B16-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-8G1W",
+      "directive_title": "the client searches pages and documents, extracts JSON from a PDF, and returns a",
+      "source_repo": "vectifyai-pageindex-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8G1W-the-client-searches-pages-and-documents-extracts-json-from-a-pdf-and-returns-a.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-8GKV",
+      "directive_title": "Draft NUC 108 List and Population Partitions",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8GKV-draft-nuc-108-list-and-population-partitions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-2F927C",
+      "directive_title": "the client searches pages and documents, extracts JSON from a PDF, and returns a",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vectifyai-pageindex",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2F927C-the-client-searches-pages-and-documents-.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-B76ABE",
+      "directive_title": "Draft NUC 108 List and Population Partitions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B76ABE-draft-nuc-108-list-and-population-partit.md",
       "staged_date": "2026-11-16"
     }
   ]

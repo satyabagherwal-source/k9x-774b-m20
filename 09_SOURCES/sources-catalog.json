@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "2e5f2516",
+    "sourceVersion": "11001bac",
     "license": "Apache-2.0",
-    "contentHash": "c5b0b2bbfe924a1e49169ea3def219016b7b1c1d247efbe754286185c114ef2f",
-    "lastHarvestedAt": "2026-11-16T12:48:21.917Z",
+    "contentHash": "6b2161ea2c06f0be829bedb522e5c7c3512c4ea2fc60df40e6a3b0f7337de4ba",
+    "lastHarvestedAt": "2026-11-16T14:35:01.404Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "cc035e8d",
+    "sourceVersion": "c9f1a879",
     "license": "MIT",
-    "contentHash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
-    "lastHarvestedAt": "2026-11-15T03:13:41.705Z",
+    "contentHash": "1b41c5586786a0798db6391e609849129596f004728a7084b07e88fe0eb1e904",
+    "lastHarvestedAt": "2026-11-16T14:34:58.471Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -12688,5 +12688,15 @@
     "contentHash": "120330440dcabef98f5238b386e4581ce12823fe3ec42635b89117e1f8d639d9",
     "lastHarvestedAt": "2026-11-16T04:30:14.611Z",
     "learningId": "learn-github-folkbench-folkbench"
+  },
+  "hf-ifm-pan2": {
+    "repository": "IFM/PAN2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/IFM/PAN2",
+    "sourceVersion": "hf-ifm-pan2",
+    "license": "Open-Source",
+    "contentHash": "46281bc9b876236b9be7cb1d3d133f5ce3f422f0a218b6523b8413f4a01adef2",
+    "lastHarvestedAt": "2026-11-16T14:34:41.069Z",
+    "learningId": "learn-huggingface-ifm-pan2"
   }
 }

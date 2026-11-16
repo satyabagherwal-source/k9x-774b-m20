@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T14:28:36.096Z",
+  "timestamp": "2026-11-16T14:35:31.847Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T14:28:36.096Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T14:35:31.847Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `4cba3006`  
+> **Source Version**: `11001bac`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T14:27:57.519Z  
+> **Timestamp**: 2026-11-16T14:35:00.583Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T14:22:56.884Z  
+> **Harvest Timestamp**: 2026-11-16T14:35:00.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1175,6 +1175,7 @@ import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
 import * as milestone from "./lib/milestone.ts";
 import * as Matrix from "./lib/Matrix.ts";
+import object from "./object.ts";
 
 export async function declarations({
   puzzle_id,
@@ -1192,7 +1193,11 @@ export async function declarations({
         role: "user",
         content: `
           query:
-          ${JSON.stringify(train_dataset)}
+          ${JSON.stringify({
+            ...train_dataset,
+            declarations: "<DECLARATIONS>",
+            output_canvas: "<OUTPUT_CANVAS>",
+          })}
           json_format:
           { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
         `,
@@ -1212,7 +1217,7 @@ export async function instances({
 }) {
   milestone.segmenting_training_objects();
 
-  const { dataset } = await llm.generate({
+  const { instances } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
     messages: [
@@ -1220,14 +1225,23 @@ export async function instances({
         role: "user",
         content: `
           query:
-          ${JSON.stringify(train_dataset)}
+          ${JSON.stringify({
+            ...train_dataset,
+            dataset: train_dataset.dataset.map((dataset) => ({
+              ...dataset,
+              instances: [
+                {
+                  input_instance_matrix: "<INPUT_INSTANCE_MATRIX>",
+                  output_instance_matrix: "<OUTPUT_INSTANCE_MATRIX>",
+                },
+              ],
+            })),
+          })}
           json_format:
           {
-            "dataset": [{
-              "instances": [{
-                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-              }]
+            "instances": [{
+              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
             }]
           }
         `,
@@ -1235,9 +1249,9 @@ export async function instances({
     ],
   });
 
-  milestone.training_objects_segmented({ instances: dataset[0].instances });
+  milestone.training_objects_segmented({ instances });
 
-  return { instances: dataset[0].instances };
+  return { instances };
 }
 
 // Each synthesis turns the extracted instances of a training pair clockwise by
@@ -1294,6 +1308,15 @@ function frame(drawing, drawings) {
   return Matrix.merge(drawing, ...blanks).matrix;
 }
 
+// The bounding box an instance turns about: its input object's, or its output
+// object's when the input is empty.
+function pivot_box(instance) {
+  const input = Matrix.locate(instance.input_instance_matrix);
+  return input.width > 0
+    ? input
+    : Matrix.locate(instance.output_instance_matrix);
+}
+
 // The training pair that one synthesis makes of a training pair's extracted
 // instances: each instance's input and output objects turn together about its
 // input object's bounding box, or its output object's when the input is empty,
@@ -1305,9 +1328,7 @@ function frame(drawing, drawings) {
 // where turned objects overlap.
 function synthesized_pair(instances, { rotation, offset }, output_canvas) {
   const drawings = instances.map((instance) => {
-    const input = Matrix.locate(instance.input_instance_matrix);
-    const pivot =
-      input.width > 0 ? input : Matrix.locate(instance.output_instance_matrix);
+    const pivot = pivot_box(instance);
 
     return {
       source: instance.instance_name,
@@ -1337,13 +1358,18 @@ function synthesized_pair(instances, { rotation, offset }, output_canvas) {
 }
 
 // Synthesizes three training pairs from a training pair's extracted instances,
-// one per synthesis, each holding every instance turned and moved by it. A
-// pair without instances synthesizes none.
+// one per synthesis, each holding every instance turned and moved by it. An
+// instance whose object is a single pixel is not synthesized, and a pair
+// without other instances synthesizes none.
 export function synthesize({ instances, output_canvas }) {
+  const sources = instances.filter((instance) => {
+    const { width, height } = pivot_box(instance);
+    return width !== 1 || height !== 1;
+  });
   const dataset =
-    instances.length > 0
+    sources.length > 0
       ? SYNTHESES.map((synthesis) =>
-          synthesized_pair(instances, synthesis, output_canvas)
+          synthesized_pair(sources, synthesis, output_canvas)
         )
       : [];
 
@@ -1367,132 +1393,89 @@ async function evaluate(train_dataset, input_matrix, implementation: string) {
   );
 }
 
-export async function value({
-  puzzle_id,
-  only_puzzle_dataset,
-  train_dataset,
-  input_matrix,
-  instance,
-}) {
+export async function value({ train_dataset, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name: instance.instance_name });
 
   const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
 
-  const { orientation } = await llm.generate({
-    puzzle_id,
-    only_puzzle_dataset,
-    few_shot: (train_dataset) =>
-      train_dataset.dataset
-        .flat()
-        .flatMap(({ instances }) => instances)
-        .map(({ input_instance_matrix, input_value }) => ({
-          matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
-          orientation: input_value.orientation,
-        })),
-    messages: [
-      {
-        role: "assistant",
-        content: `
-          current:
-          ${JSON.stringify(
-            train_dataset.dataset
-              .flat()
-              .filter(({ instances }) => instances)
-              .flatMap(({ instances }) => instances)
-              .filter(({ input_value }) => input_value)
-              .map(({ input_instance_matrix, input_value }) => ({
-                matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
-                orientation: input_value.orientation,
-              }))
-          )}
-        `,
-      },
-      {
-        role: "user",
-        content: `
-          query:
-          ${JSON.stringify({
-            matrix: Matrix.silhouette(
-              Matrix.crop(instance.input_instance_matrix)
-            ),
-          })}
-          json_format:
-          {
-            "orientation": <ORIENTATION>,
-          }
-        `,
-      },
-    ],
+  const orientation = await object.orientation({ train_dataset, instance });
+
+  const implementation = await object.implementation({
+    train_dataset,
+    instance,
+    x,
+    y,
+    width,
+    height,
+    orientation,
   });
 
-  const { dataset } = await llm.generate({
-    puzzle_id,
-    only_puzzle_dataset,
-    few_shot: (train_dataset) => ({
-      ...train_dataset,
-      declarations: train_dataset.declarations[0],
-      dataset: train_dataset.dataset.map(({ instances }) => ({
-        instances: instances.map((instance) => ({
-          ...instance,
-          input_instance_matrix: Matrix.crop(instance.input_instance_matrix),
-          output_instance_matrix: Matrix.crop(instance.output_instance_matrix),
-        })),
-      })),
-    }),
-    messages: [
-      {
-        role: "assistant",
-        content: `
-          current:
-          ${JSON.stringify({
-            ...train_dataset,
-            declarations: train_dataset.declarations[0],
-            dataset: train_dataset.dataset
-              .filter(({ instances }) => instances)
-              .map(({ instances }) => ({
-                instances: instances
-                  .filter(({ implementation }) => implementation)
-                  .map((instance) => ({
-                    ...instance,
-                    input_matrix: Matrix.crop(instance.input_instance_matrix),
-                    output_matrix: Matrix.crop(instance.output_instance_matrix),
-                  })),
-              })),
-          })}
-        `,
-      },
-      {
-        role: "user",
-        content: `
-          query:
-          ${JSON.stringify({
-            dataset: [
-              {
-                instances: [instance],
-              },
-            ],
-          })}
-          input_x: ${x}
-          input_y: ${y}
-          input_width: ${width}
-          input_height: ${height}
-          orientation: ${orientation}
-          json_format:
-          {
-            "dataset": [{
-              "instances": [{
-                "implementation": <IMPLEMENTATION>
-              }]
-            }]
-          }  
-        `,
-      },
-    ],
+  milestone.evaluating_rules({ instance_name: instance.instance_name });
+
+  const input_value = await evaluate(
+    train_dataset,
+    input_matrix,
+    implementation
+  );
+
+  milestone.instance_constructed({
+    instance_name: instance.instance_name,
+    input_instance_matrix: instance.input_instance_matrix,
+    output_instance_matrix: instance.output_instance_matrix,
+    implementation,
+    input_value,
   });
 
-  const implementation = dataset[0].instances[0].implementation;
+  return { implementation, input_value };
+}
 
-  milestone.evaluating_rules({ instance_name: instance.instance_name }
+// The orientation of a shape turned clockwise by the rotation, as the datasets
+// label orientation by shape: a shape that the turn leaves unchanged, such as a
+// square, keeps its orientation, a shape that a half turn leaves
+// unchanged, such as a bar, counts it modulo 180 degrees, and any other shape
+// counts it modulo 360 degrees.
+function turned_orientation(matrix, orientation: number, rotation: number) {
+  const shape = Matrix.crop(matrix);
+  const unchanged = (degrees: number): boolean =>
+    JSON.stringify(Matrix.rotate(shape, degrees)) === JSON.stringify(shape);
+  if (unchanged(rotation)) {
+    return orientation;
+  }
+
+  const period: number = unchanged(180) ? 180 : 360;
+  return (((orientation + rotation) % period) + period) % period;
+}
+
+// Sets the constructor argument that an implementation gives once as an
+// integer, such as x=5, to the value computed from its old one.
+function set_argument(
+  implementation: string,
+  name: string,
+  value: (old: number) => number,
+  instance_name: string
+): string {
+  const argument = new RegExp(`\\b${name}\\s*=\\s*(-?\\d+)`, "g");
+  const count: number = [...implementation.matchAll(argument)].length;
+  if (count !== 1) {
+    throw new Error(
+      `Implementation of ${instance_name} gives ${name} ${count} times, not once`
+    );
+  }
+
+  return implementation.replace(
+    argument,
+    (_, old: string) => `${name}=${value(Number(old))}`
+  );
+}
+
+// A synthesized instance's implementation, written from its source's without
+// an LLM call: the source's implementation under the instance's name, with the
+// position and size of the instance's input object and the source's
+// orientation turned with it. Every other argument, such as a color, carries
+// over unchanged.
+function synthesized_implementation(source, instance): string {
+  if (!source.implementation.includes(source.instance_name)) {
+   
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1507,7 +1490,7 @@ import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(
-  puzzle_id: string = "3aa6fb7a",
+  puzzle_id: string = "d631b094",
   only_puzzle_dataset: boolean = false
 ) {
   const { arc_train, test_input_matrix, test_output_matrix } =
@@ -1767,210 +1750,352 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4cba3006` (2026-11-14)
-**Commit Message**: Resume NUC 106 Intersect and Except Reasoning Selections
+### Incident Patch 1: `11001bac` (2026-11-16)
+**Commit Message**: Draft NUC 108 List and Population Partitions
 
-Claims the stale Draft allocated in cc21315a (Draft NUC 106 Intersect and
-Except Reasoning Selections, 2026-11-11T22:31:30-05:00). It waited 2 days,
-10 hours and 34 minutes without an allocation or claim commit. This
-continuous cycle completes it with a fresh baseline, candidate worktree,
-proposer and evaluator, under its Reasoning enhancement category.
+Category: Utility enhancement, drawn uniformly at random (index 2 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle, so the token non-regression gate applies
+to this category.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8gLvp2aQjMS8yXtmh6
+Requested change: add the read-only list query `partition` to ordinary
+lists and class populations, the receivers of `filter`.
+`xs.partition(predicate)` returns a list of two lists: the items that
+`xs.filter(predicate)` keeps and the items it drops, each in receiver
+order, so `[3, 8, 1, 9].partition(x -> x > 4)` is `[[8, 9], [3, 1]]`. The
+predicate runs once for every item in receiver order, the items are
+returned unchanged, an empty receiver gives `[[], []]`, and a standing
+declaration follows later instances and writes as a standing `filter`
+does. Only calls of `partition` on lists and class populations change;
+they raised TypeError("<receiver>.partition is not a function"). Reading
+`xs.partition` without a call, object properties and instance methods
+named `partition`, and every other receiver keep their accepted behavior.
 
+This allocation changes only the Draft and its two index rows.
 
+Co-Authored-By
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -124,6 +124,7 @@ Created: 31-Jul-2026
+ | [100](nuc-0100.md) | Reactive Cotangent | Accepted |
+ | [103](nuc-0103.md) | Reactive List Flattening | Accepted |
+ | [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
++| [108](nuc-0108.md) | List and Population Partitions | Draft |
+ 
+ ### Reasoning enhancement
+ 
+@@ -269,6 +270,7 @@ Created: 31-Jul-2026
+ | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
+ | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Accepted |
++| [108](nuc-0108.md) | List and Population Partitions | Standards Track | Utility enhancement | Draft |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0108.md` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++# NUC 108 -- List and Population Partitions
++
++```
++NUC: 108
++Title: List and Population Partitions
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Utility enhancement
++Created: 16-Nov-2026
++Requires: 61, 73
++```
++
++## Abstract
++
++- Adds the read-only list query `partition` to ordinary lists and class
++  populations, the receivers of `filter`:
++  - `xs.partition(predicate)` returns a list of two lists. The first holds
++    the items that `xs.filter(predicate)` keeps, and the second the items
++    it drops, each in receiver order. So
++    `[3, 8, 1, 9].partition(x -> x > 4)` is `[[8, 9], [3, 1]]`.
++  - The predicate runs once for every item, in receiver order, and the items
++    are returned unchanged, so an instance stays the same instance. An empty
++    receiver gives `[[], []]`.
++- `partition` never writes its receiver.
++  `groups = Order.partition(o -> o.shipped)` is a standing split that
++  follows later instances and later writes of the properties its predicate
++  reads, as a standing `filter` does.
++- For a predicate without side effects, `xs.partition(p)` evaluates to
++  exactly the list that `[xs.filter(p), xs.filter(x -> not p(x))]`
++  evaluates to at the accepted revision, which runs the predicate twice for
++  every item.
++- Only calls of `partition` on lists and class populations change. They
++  raised `TypeError("<receiver>.partition is not a function")` at the
++  accepted revision. Reading `xs.partition` without a call, object
++  properties named `partition`, instance methods named `partition` called
++  on an instance, and every other receiver keep their accepted behavior.
++- No token, keyword, syntax, error type or message format, option or public
++  item is added.
++
++## Motivation
++
++- World models sort their objects into two kinds by one rule: shapes
++  inside or outside a region, cells of the background color or of an
++  object, orders shipped or pending, readings over or under a threshold.
++  Accepted Nucleoid states each side with its own `filter`, so the rule is
++  written twice, the second time negated:
++
++  ```
++  class Order:
++      def init(total, shipped):
++          this.total = total
++          this.shipped = shipped
++  Order(40, true)
++  Order(15, false)
++  Order(90, true)
++  [Order.filter(o -> o.shipped).map(o -> o.total), Order.filter(o -> not o.shipped).map(o -> o.total)]
++  ```
++
++  It returns `[[40, 90], [15]]`. The two predicates must be kept in step by
++  hand: a rule changed on one side only drops or duplicates items without
++  any error, and every item is tested twice.
++- `Order.partition(o -> o.shipped)` states the rule once, returns both
++  sides in receiver order, and tests every item once.
++- The accepted list queries already derive new lists without writing their
++  receiver: `filter`, `map`, `flatMap`, `distinct` and
++  [NUC 105](nuc-0105.md)'s `sortBy`, while [NUC 73](nuc-0073.md)'s `count`
++  counts the items a predicate keeps. A partition is the two-sided
++  `filter`.
++- Prior art: Kotlin's `partition`, which returns a pair of lists; Scala's
++  and Haskell's `partition`; Rust's `Iterator::partition`; Ruby's
++  `Enumerable#partition`; Elixir's `Enum.split_with`; and Lodash's
++  `_.partition`.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
 
 ---
 
-### Incident Patch 2: `9abb3434` (2026-11-14)
-**Commit Message**: NUC 105 List and Population Sorting by Key
+### Incident Patch 2: `70828650` (2026-11-16)
+**Commit Message**: NUC 107 Python-Style Self Parameters
 
 Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Utility enhancement): the frozen candidate meets every
-hard criterion and passes every policy check. The cycle picked NUC 105 up
-as a stale Draft, allocated in e2ade2a2, under the claim 120db05d, with a
-fresh baseline, candidate, proposer, Rust improvement pass and evaluator.
+/nuc-proposal cycle (Language compatibility): the frozen candidate meets
+every hard criterion and passes every policy check, with the token check
+skipped categorically for Language compatibility. The cycle picked
+NUC 107 up as a stale Draft, allocated in c10b67e8, under the claim
+ee8a2239, with a fresh baseline, candidate, proposer, Rust improvement
+pass and evaluator.
 
-Adds the read-only list and population query `sortBy`: `xs.sortBy(f)`
-returns a new list of the receiver's items in stable ascending order of
-`f(item)`, comparing keys as `<` does, and a key that cannot be compared
-with itself makes it undefined, as it makes `maxBy` and `minBy`. It never
-writes its receiver, unlike `sort`, so `ranked = scores.sortBy(s -> s)` is
-a standing ordering. When every key compares with itself it equals the
-accepted spelling
-`xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`.
-Only `sortBy` calls on lists and class populations change; they raised
-TypeError("<receiver>.sortBy is not a function").
+Lets a method written with def directly in a class's indented body
+declare its receiver as a leading self or this parameter, followed by
+"," or ")", as Python methods do: def deposit(self, amount): declares
+exactly what def deposit(amount): declares, and calls pass no receiver.
+def __init__(self, ...) declares the class's init constructor, while a
+def __init__ without the receiver stays an ordinary method. A program is
+parsed exactly as at the accepted revision first, through its whole pass
+sequence; only when that fails, and its tokens hold a receiver window or
+a template that may hold one, does the same sequence run again reading
+receivers, and a program that still fails reports its accepted error.
+Each form parses 
 
-Hard criteria, checked by the independent evaluator and again by the caller
-on the integrated tree: build, warning-denied Clippy on 1.97.1 and
-
-**File**: `README.md` (modified, +26/-0)
+**File**: `README.md` (modified, +25/-0)
 ```diff
-@@ -2167,6 +2167,32 @@ assert([a.color, b.color], [null, "red"])
-   before. See the
-   [root contract](nucleoid.spec.md#any-and-all-class-references).
+@@ -2223,6 +2223,31 @@ assert(own.map(step -> step.node), ["heat", "current", "voltage"])
+   moves from the heat's own causes to the shared ones. See the
+   [root contract](nucleoid.spec.md#intersect-and-except-reasoning-selections).
  
-+## List and population sorting by key
++## Python-style self parameters
 +
-+**Sorting by key keeps a live agenda while the list keeps its order**
++**Methods may declare self as Python methods do**
 +
 +```nuc
-+tasks = [{name: "ship", due: 3}, {name: "plan", due: 1}, {name: "build", due: 2}]
-+agenda = tasks.sortBy(task -> task.due)
-+assert(agenda.map(task -> task.name), ["plan", "build", "ship"])
-+tasks.push({name: "test", due: 2})
-+assert(agenda.map(task -> task.name), ["plan", "build", "test", "ship"])
-+tasks[2].due = 4
-+assert(agenda.map(task -> task.name), ["plan", "test", "ship", "build"])
-+assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
++class Account:
++    def __init__(self, balance):
++        self.balance = balance
++    def deposit(self, amount):
++        self.balance = self.balance + amount
++        return self.balance
++account = Account(100)
++assert(account.deposit(5), 105)
++assert(account.balance, 105)
 +```
 +
-+- [NUC 105](docs/nuc-0105.md) adds `sortBy(selector)` to lists and class
-+  populations. `tasks.sortBy(task -> task.due)` is a new list of the tasks
-+  themselves in ascending order of their due days, and tasks due the same day
-+  keep their list order, so `test` follows `build` until `build` moves to
-+  day 4.
-+- `agenda` is a live declaration that follows new tasks and changed days,
-+  while `tasks` keeps its own order, where `sort` would reorder `tasks`
-+  itself. Keys compare as `<` compares them, so numbers compare as numbers
-+  and strings as text. See the
-+  [root contract](nucleoid.spec.md#list-and-population-sorting-by-key).
++- [NUC 107](docs/nuc-0107.md) lets a method in a class's indented body
++  declare its receiver as a leading `self` parameter, as Python does.
++  `def deposit(self, amount):` declares exactly `def deposit(amount):`, and
++  the call `account.deposit(5)` passes no receiver.
++- `def __init__(self, balance):` declares the class's `init` constructor,
++  exactly `def init(balance):`, so `Account(100)` runs it. The bodies read
++  the receiver through `self`, as every method does. See the
++  [root contract](nucleoid.spec.md#python-style-self-parameters).
 +
  ## Reactive list flattening
  
  **Flat turns nested lists into one live list**
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +22/-16)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +21/-16)
 ```diff
-@@ -731,19 +731,25 @@
- {"id":"spec-0731","description":"Nucleoid writes class level rules and conditionals with all and any","code":"class Order(total):\n    this.total = total\nsmall = Order(5)\nall Order.big = all Order.total > 10\nif any Order.total > 100:\n    all Order.vip = true\nlarge = Order(200)\nassert([small.big, large.big], [false, true])\nassert([small.vip, large.vip], [null, true])\nsmall.total = 150\nassert([small.big, small.vip], [true, true])\nlarge.total = 8\nassert(large.big, false)\nall Order.big = all Order.total > 100\n[small.big, large.big]","return":"[true,false]"}
- {"id":"spec-0732","description":"Nucleoid states class predicates with all and any","code":"class Human(name: str):\n    this.name = name\nplato = Human(\"Plato\")\nall Human is mortal\nany Human is wise\nsocrates = Human(\"Socrates\")\nassert([plato.mortal, socrates.mortal], [true, true])\nassert([plato.wise, socrates.wise], [true, true])\nassert((why socrates.mortal)[0].rule, \"$Human.mortal = true\")\nplato.wise = false\nassert([plato.wise, socrates.wise], [false, true])\nsocrates.mortal","return":"true"}
- {"id":"spec-0733","description":"Nucleoid keeps all and any as names and quantifiers beside class references","code":"class Item(x):\n    this.x = x\nall = [1, 2, 3]\nany = 2\nall Item.big = all Item.x > any\nfirst = Item(1)\nthird = Item(3)\nassert([first.big, third.big], [false, true])\nassert(all n in all: n > any, false)\nassert(any n in all: n > any, true)\nassert(all.length + any, 5)\nany = 0\nassert([first.big, third.big], [true, true])\nassert(all i in Item: i.big, true)\nfirst.big","return":"true"}
--{"id":"spec-0734","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0735","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0736","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0737","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0738","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0739","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0740","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\nassert(\"ell\" in \"hello\", true)\nassert(1 in \"a1\", true)\nassert(\"\" in \"abc\", tr
+@@ -743,19 +743,24 @@
+ {"id":"spec-0743","description":"Nucleoid composes intersect and except with state filters","code":"price = 10\nquantity = 3\nfee = 2\nsubtotal = price * quantity\ntotal = subtotal + 5\ncredit = fee * 2\nrefund = credit + 1\nshared = why total |> stated |> intersect(why refund |> stated)\nsteps = why total |> derived |> except(why refund)\nassert(shared, [])\nassert(steps.map(s -> s.node), [\"total\", \"subtotal\"])\nsubtotal = price * quantity + fee\nassert(shared.map(s -> s.node), [\"fee\"])\ncredit = price - fee\nassert(shared.map(s -> s.node), [\"price\", \"fee\"])\nrefund = subtotal - credit\nassert(steps.map(s -> s.node), [\"total\"])\nassert(shared.map(s -> s.node), [\"price\", \"quantity\", \"fee\"])","return":null}
+ {"id":"spec-0744","description":"Nucleoid fills an empty intersection when two explanations meet","code":"a = 2\nb = 3\nleft = a * 10\nright = b * 10\nboth = why left |> intersect(why right)\napart = why left |> except(why right)\nassert(both, [])\nassert(apart.map(s -> s.node), [\"left\", \"a\"])\nright = a + b\nassert(both.map(s -> s.node), [\"a\"])\nassert(apart.map(s -> s.node), [\"left\"])\nleft = b - a\nassert(both.map(s -> s.node), [\"b\", \"a\"])\na = 5\nassert(both.map(s -> s.holds), [3, 5])","return":null}
+ {"id":"spec-0745","description":"Nucleoid restores intersections after failed changes","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\ncommon = why subtotal |> intersect(why shipping)\nfailure = \"\"\ntry:\n    common = why subtotal |> intersect(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(common.map(s -> s.node), [\"quantity\"])\ntry:\n    shipping = price + 1\n    assert(common.map(s -> s.node), [\"price\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(common.map(s -> s.node), [\"quantity\"])\nquantity = 6\nassert(common[0].holds, 6)","return":null}
+-{"id":"spec-0746","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0747","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0748","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0749","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0750","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0751","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0752","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags
 ```
 
-**File**: `dataset/nucleoid.synth.69.jsonl` (added, +8/-0)
+**File**: `dataset/nucleoid.synth.71.jsonl` (added, +10/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+{"id":"synth-69-0001","description":"SortBy orders records by a numeric key and keeps ties in list order","code":"tasks = [{name: \"ship\", due: 3}, {name: \"plan\", due: 1}, {name: \"test\", due: 3}, {name: \"build\", due: 2}]\nagenda = tasks.sortBy(task -> task.due)\nagenda.map(task -> task.name)","return":"[\"plan\",\"build\",\"ship\",\"test\"]"}
-+{"id":"synth-69-0002","description":"SortBy compares string keys as text, by code point","code":"codes = [{code: \"B12\"}, {code: \"A7\"}, {code: \"B3\"}]\ncodes.sortBy(item -> item.code).map(item -> item.code)","return":"[\"A7\",\"B12\",\"B3\"]"}
-+{"id":"synth-69-0003","description":"A negated key sorts numbers in descending order","code":"scores = [{name: \"ana\", points: 9}, {name: \"bo\", points: 3}, {name: \"cy\", points: 7}]\nscores.sortBy(score -> -score.points).map(score -> score.name)","return":"[\"ana\",\"cy\",\"bo\"]"}
-+{"id":"synth-69-0004","description":"A sorted declaration follows its list while the list keeps its own order","code":"queue = [{id: 1, eta: 30}, {id: 2, eta: 10}]\nroute = queue.sortBy(stop -> stop.eta).map(stop -> stop.id)\nqueue.push({id: 3, eta: 20})\nassert(route, [2, 3, 1])\nqueue.map(stop -> stop.id)","return":"[1,2,3]"}
-+{"id":"synth-69-0005","description":"SortBy orders a class population and follows new instances and changed keys","code":"class Runner(name, time):\n    this.name = name\n    this.time = time\nboard = Runner.sortBy(runner -> runner.time)\nana = Runner(\"ana\", 31)\nRunner(\"bo\", 28)\nana.time = 25\nboard.map(runner -> runner.name)","return":"[\"ana\",\"bo\"]"}
-+{"id":"synth-69-0006","description":"A class-level rule ranks every instance by its place in a sorted population","code":"class Bid(who, amount):\n    this.who = who\n    this.amount = amount\n$Bid.place = Bid.sortBy(bid -> -bid.amount).indexOf($Bid) + 1\nada = Bid(\"ada\", 40)\nbo = Bid(\"bo\", 65)\ncy = Bid(\"cy\", 50)\n[ada.place, bo.place, cy.place]","return":"[3,1,2]"}
-+{"id":"synth-69-0007","description":"A key that is not set yet leaves the sorted list null until it is set","code":"class Job(name):\n    this.name = name\nqueue = Job.sortBy(job -> job.due)\npress = Job(\"press\")\npress.due = 5\ncoat = Job(\"coat\")\nassert(queue, null)\ncoat.due = 2\nqueue.map(job -> job.name)","return":"[\"coat\",\"press\"]"}
-+{"id":"synth-69-0008","description":"A selector error rolls back the change that triggered it","code":"labels = [\"b\", \"a\"]\nsorted = labels.sortBy(label -> label.toUpperCase())\nfailure = \"\"\ntry:\n    labels.push(7)\ncatch error:\n    failure = error\n[failure, labels.length, sorted]","return":"[\"TypeError: number.toUpperCase is not a function\",2,[\"a\",\"b\"]]"}
+@@ -0,0 +1,10 @@
++{"id":"synth-71-0001","description":"A method in a class body may declare its receiver as a leading self parameter, and its calls pass no receiver","code":"class Counter:\n    def init(start):\n        this.count = start\n    def add(self, step):\n        self.count = self.count + step\n        return self.count\ncounter = Counter(2)\ncounter.add(3)","return":"5"}
++{"id":"synth-71-0002","description":"def __init__ with a leading self declares the init constructor that the class runs","code":"class Account:\n    def __init__(self, owner, balance):\n        self.owner = owner\n        self.balance = balance\naccount = Account(\"ada\", 40)\n[account.owner, account.balance]","return":"[\"ada\",40]"}
++{"id":"synth-71-0003","description":"An arrow method with a self receiver returns its expression","code":"class Rect:\n    def __init__(self, w, h):\n        self.w = w\n        self.h = h\n    def area(self) => self.w * self.h\nRect(3, 4).area()","return":"12"}
++{"id":"synth-71-0004","description":"this is an equal spelling of the receiver parameter","code":"class Lamp:\n    def __init__(this, on):\n        this.on = on\n    def toggle(this):\n        this.on = !this.on\n        return this.on\nlamp = Lamp(false)\nlamp.toggle()","return":"true"}
++{"id":"synth-71-0005","description":"Literal defaults and a final rest parameter follow the receiver","code":"class Order:\n    def __init__(self, item, qty = 1, ...notes):\n        self.item = item\n        self.qty = qty\n        self.notes = notes\norder = Order(\"pen\")\nbulk = Order(\"ink\", 5, \"fragile\", \"gift\")\n[order.qty, order.notes, bulk.qty, bulk.notes]","return":"[1,[],5,[\"fragile\",\"gift\"]]"}
++{"id":"synth-71-0006","description":"Initializing parameters may follow the receiver of __init__","code":"class Point:\n    def __init__(self, this.x, this.y):\n        pass\np = Point(3, 4)\n[p.x, p.y]","return":"[3,4]"}
++{"id":"synth-71-0007","description":"Named constructor arguments bind to the parameters after the receiver","code":"class Tank:\n    def __init__(self, capacity, level = 0):\n        self.capacity = capacity\n        self.level = level\ntank = Tank(level=20, capacity=50)\n[tank.capacity, tank.level]","return":"[50,20]"}
++{"id":"synth-71-0008","description":"A subclass written with extends passes its arguments to the parent constructor through super","code":"class Animal:\n    def __init__(self, name):\n        self.name = name\nclass Dog extends Animal:\n    def __init__(self, name, breed):\n        super(name)\n        self.breed = breed\n    def describe(self) => self.name + \" the \" + self.breed\nDog(\"Rex\", \"lab\").describe()","return":"\"Rex the lab\""}
++{"id":"synth-71-0009","description":"Class-level rules follow properties that a self parameter method changes","code":"class Tank:\n    def __init__(self, level):\n        self.level = level\n    def drain(self, amount):\n        self.level = self.level - amount\n$Tank.low = $Tank.level < 10\ntank = Tank(25)\ntank.drain(20)\ntank.low","return":"true"}
++{"id":"synth-71-0010","description":"def __init__ without a receiver stays an ordinary method that construction does not run","code":"class Box:\n    def __init__(size):\n        this.size = size\nbox = Box(3)\nbox.__init__(4)\n[Box(5).size, box.size]","return":"[null,4]"}
 ```
 
-**File**: `docs/README.md` (modified, +55/-1)
+**File**: `docs/README.md` (modified, +52/-0)
 ```diff
-@@ -2458,7 +2458,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), and `median` ([NUC 84](nuc-0084.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), and `sortBy` ([NUC 105](nuc-0105.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
- 
- ```
-@@ -3510,6 +3510,58 @@ top.who
-   [list and population extreme items](../nucleoid.spec.md#list-and-population-extreme-items)
+@@ -1210,10 +1210,59 @@ b.area
+   [initializing constructor parameters](../nucleoid.spec.md#initializing-constructor-parameters)
    section.
  
-+### List and population sorting by key
++### Python-style self parameters
++
++- A method written with `def` directly in a class's indented body may
++  declare its receiver as a leading `self` parameter, as Python methods do
++  ([NUC 107](nuc-0107.md)). `def deposit(self, amount):` declares exactly
++  what `def deposit(amount):` declares, and a call passes no receiver:
++  `account.deposit(5)`.
++- `def __init__(self, ...)` declares the class's `init` constructor:
++  `def __init__(self, balance):` is exactly `def init(balance):`, so
++  `Account(100)` runs it. The parameters after the receiver keep their
++  prefixes, literal defaults, annotations and a final rest parameter. A
++  `def __init__` without the receiver stays an ordinary method of that name.
++- The receiver is `self` or `this`, first in the list and followed by `,` or
++  `)`, in a block, same-line or arrow method. It adds no binding: the body
++  reads the receiver through `self` or `this` as every method does, and
++  canonical source writes the method without it.
++- Only methods directly in a class's indented body take the receiver.
++  Functions, function literals, arrows, lambdas, `function` declarations,
++  same-line class bodies, class headers and bare signatures keep the
++  accepted `Expected a parameter but found keyword 'this'` error, and so do
++  a receiver with an annotation, a default or a prefix, a second receiver
++  and a receiver that is not first.
++- `super().__init__(...)` keeps its accepted behavior and passes no
++  arguments to the parent's constructor, so a subclass forwards them with
++  `super(...)`. `class Dog(Animal):` still declares a constructor parameter;
++  `class Dog extends Animal:` names the parent.
++- This is the exact
++  `Nucleoid accepts self parameters in methods and constructors` example
++  in `tests/reference.md`.
 +
 +```
-+scores = [{name: "ben", points: 3}, {name: "ana", points: 9}, {name: "dan", points: 5}, {name: "cy", points: 9}]
-+ranked = scores.sortBy(score -> -score.points)
-+class Bid(who, amount):
-+    this.who = who
-+    this.amount = amount
-+Bid("ada", 40)
-+Bid("bo", 65)
-+book = Bid.sortBy(bid -> bid.amount)
-+assert(ranked.map(score -> score.name), ["ana", "cy", "dan", "ben"])
-+assert(book.map(bid -> bid.who), ["ada", "bo"])
-+scores.push({name: "eve", points: 7})
-+Bid("col", 50)
-+assert(ranked.map(score -> score.name), ["ana", "cy", "eve", "dan", "ben"])
-+assert(book.map(bid -> bid.who), ["ada", "col", "bo"])
-+assert(scores[0].name, "ben")
-+book[1].who
++class Counter:
++    def __init__(self, start):
++        self.count = start
++    def add(self, step):
++        self.count = self.count + step
++        return self.count
++    def doubled(self) => self.count * 2
++counter = Counter(3)
++assert(counter.add(4), 7)
++assert([counter.count, counter.doubled()], [7, 14])
++counter.doubled()
 +```
 +
-+- This is the complete
-+  `Nucleoid sorts lists and populations by key with sortBy` program in
-+  `tests/reference.md`, without its title and expected-return metadata; it
-+  returns `"col"`.
-+- [NUC 105](nuc-0105.md) adds `sortBy(selector)` to lists and class instance
-+  lists. The result is a new list of the items themselves in ascending order
-+  of their selected keys, and items with equal keys keep their receiver
-+  order, so `ana` stays before `cy`. A negated key, such as
-+  `score -> -score.points`, sorts in descending order. An empty list or class
-+  gives `[]`.
-+- The receiver is never written: `scores` keeps its own order, where `sort`
-+  reorders a writable list in place.
-+- Keys compare as `<` compares them: two strings as text and every other pair
-+  as numbers, so dates compare by time. When every key can be compared with
-+  itself, `xs.sortBy(f)` is exactly
-+  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`.
-+  A key that cannot be compared with itself, such as undefined, NaN or an
-+  object, makes the result undefined, which a declaration stores as `null`.
-+- The selector is required and is called once per item, in order, with only
-+  the item. A missing selector, or one that is not a function, including
-+  `null`, raises `TypeError("sortBy expects a function")`, even on an empty
-+  receiver.
-+- Sorted lists are read-only and live: a declaration follows the list or
-+  population, the arguments and what the selector reads, in class-level rules
-+  too. On a class name, `Name.sortBy(...)` is the population query even when
-+  the class declares an instance method `sortBy`; instances keep calling the
-+  method.
-+- The authoritative contract is the
-+  [list and population sorting by key](../nucleoid.spec.md#l
++- Exact rules are in the authoritative
++  [Python-style self parameters](../nucleoid.spec.md#python-style-self-parameters)
++  section.
++
+ ### Instance keywords
+ 
+ - `this` and `self` are interchangeable keywords for the current instance in constructors, methods, and class-level rules.
+ - Either spelling reads and writes the same properties; both may be mixed in one body without declaring a receiver parameter.
++- A method may still declare its receiver as a leading `self` parameter, which adds no binding; see [Python-style self parameters](#python-style-self-parameters).
+ - Neither keyword may be rebound. Using either without a current instance raises `ReferenceError("this is not defined")`; rebinding either raises `TypeError("Cannot assign to 'this'")`.
+ 
+ ### Instances
+@@ -4244,6 +4293,9 @@ class Name(this.param: type)           the same constructor, assigned by the pre
+ class Name(self.a, b = 1, ...this.c)   either receiver; defaults and a final rest kept
+ class Name:
+     def init(this.param):              the same prefix in an init of the class body
++class Name:
++    def __init__(self, param):         Python's constructor: exactly def init(param): (NUC 107)
++    def method(self, a) => a           a leading self or this receiver: exactly def method(a) => a
+ 
+ instance = Name(param=expression)      label binding without caller assignment
+ instance = Name((param=expression))    explicit positional assignment argument
 ```
 
-**File**: `docs/examples.md` (modified, +28/-0)
+**File**: `docs/examples.md` (modified, +30/-0)
 ```diff
-@@ -3672,6 +3672,34 @@ all Shelf is tracked
-   `$Shelf.tracked = true` for every shelf. See [NUC 104](nuc-0104.md) and the
-   [root contract](../nucleoid.spec.md#any-and-all-class-references).
+@@ -3732,6 +3732,36 @@ steel = 9
+   dates. See [NUC 106](nuc-0106.md) and the
+   [root contract](../nucleoid.spec.md#intersect-and-except-reasoning-selections).
  
-+## List and population sorting by key
++## Python-style self parameters
 +
-+**Sorting by key keeps every courier's route in order of distance**
++**Python-style methods keep a tank farm's rules live**
 +
 +```nuc
-+class Courier(name, stops):
-+    this.name = name
-+    this.stops = stops
-+$Courier.route = $Courier.stops.sortBy(stop -> stop.km).map(stop -> stop.name)
-+ana = Courier("ana", [{name: "mill", km: 12}, {name: "dock", km: 3}, {name: "farm", km: 7}])
-+bo = Courier("bo", [{name: "pier", km: 5}])
-+assert([ana.route, bo.route], [["dock", "farm", "mill"], ["pier"]])
-+ana.stops.push({name: "yard", km: 1})
-+ana.stops[0].km = 2
-+bo.stops = [{name: "gate", km: 9}, {name: "lane", km: 2}]
-+assert(ana.stops[0].name, "mill")
-+[ana.route, bo.route]
-+# return: [["yard","mill","dock","farm"],["lane","gate"]]
++class Tank:
++    def __init__(self, name, level, capacity):
++        self.name = name
++        self.level = level
++        self.capacity = capacity
++    def pump(self, amount):
++        self.level = self.level + amount
++$Tank.full = $Tank.level >= $Tank.capacity
++east = Tank("east", 70, 80)
++west = Tank("west", 20, 80)
++east.pump(10)
++assert([east.full, west.full], [true, false])
++west.pump(60)
++assert(west.full, true)
++[east.level, west.level]
++# return: [80,80]
 +```
 +
-+- A class-level rule keeps the route of each courier: the names of its stops
-+  in order of distance. `$Courier.stops.sortBy(stop -> stop.km)` sorts the
-+  courier's own list, so every courier has its own route.
-+- A new stop, a changed distance and a new list of stops re-sort the routes,
-+  while each courier's `stops` keep the order they were listed in. See
-+  [NUC 105](nuc-0105.md) and the
-+  [root contract](../nucleoid.spec.md#list-and-population-sorting-by-key).
++- Each tank is written as a Python class: `def __init__(self, ...)` is its
++  constructor and `def pump(self, amount)` a method whose leading `self` is
++  the receiver, so `east.pump(10)` passes only the amount.
++- The class-level rule `$Tank.full` follows every pump, as it would for the
++  same methods written without `self`. See [NUC 107](nuc-0107.md) and the
++  [root contract](../nucleoid.spec.md#python-style-self-parameters).
 +
  ## Reactive list flattening
  
@@ -1979,193 +2104,212 @@ on the integrated tree: build, warning-denied Clippy on 1.97.1 and
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -123,7 +123,7 @@ Created: 31-Jul-2026
- | [84](nuc-0084.md) | List and Population Medians | Accepted |
- | [100](nuc-0100.md) | Reactive Cotangent | Accepted |
- | [103](nuc-0103.md) | Reactive List Flattening | Accepted |
--| [105](nuc-0105.md) | List and Population Sorting by Key | Draft |
-+| [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
+@@ -150,7 +150,7 @@ Created: 31-Jul-2026
+ | [89](nuc-0089.md) | Named Function Declarations | Accepted |
+ | [92](nuc-0092.md) | List Comprehensions | Accepted |
+ | [99](nuc-0099.md) | SQL-Style Inequality | Rejected: full suite fails 14 corpus-count assertions |
+-| [107](nuc-0107.md) | Python-Style Self Parameters | Draft |
++| [107](nuc-0107.md) | Python-Style Self Parameters | Accepted |
  
- ### Reasoning enhancement
+ ### Documentation
  
-@@ -265,7 +265,7 @@ Created: 31-Jul-2026
- | [102](nuc-0102.md) | Implicit Receiver Properties | Standards Track | Syntax enhancement | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
- | [103](nuc-0103.md) | Reactive List Flattening | Standards Track | Utility enhancement | Accepted |
+@@ -268,7 +268,7 @@ Created: 31-Jul-2026
  | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
--| [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Draft |
-+| [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
+ | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+-| [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Draft |
++| [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Accepted |
  
  ## Copyright
+ 
 ```
 
-**File**: `docs/nuc-0105.md` (modified, +1127/-11)
+**File**: `docs/nuc-0107.md` (modified, +901/-17)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 105
- Title: List and Population Sorting by Key
+@@ -4,11 +4,11 @@
+ NUC: 107
+ Title: Python-Style Self Parameters
  Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Utility enhancement
- Created: 10-Nov-2026
-@@ -23,20 +23,26 @@ Requires: 58, 77
-   - Keys compare as `<` compares them, the rule of `maxBy` and `minBy`: two
-     strings as text, and every other pair as numbers.
-   - The selector runs once for every item, in receiver order, and the items
--    are returned unchanged, so an instance stays the same instance.
-+    are returned unchanged, so an instance stays the same instance. An empty
-+    receiver gives `[]`.
- - Unlike `sort`, which [NUC 58](nuc-0058.md) makes reorder a writable
-   receiver in place, `sortBy` never writes its receiver.
-   `ranked = scores.sortBy(s -> s)` is a standing ordering that follows later
-   writes of `scores`, while `scores` keeps its own order.
--- When every key can be compared with itself, `xs.sortBy(f)` is exactly the
--  list that `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
--  returns. A key that cannot be compared with itself makes the result
-+- When every key can be compared with itself, the list `xs.sortBy(f)`
-+  evaluates to is exactly the list that
-+  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
-+  evaluates to at the accepted revision, including where strings and other
-+  keys mix. A key that cannot be compared with itself makes the result
-   undefined, as it makes `maxBy` and `minBy` undefined.
- - Only calls of `sortBy` on lists and class populations change. They raised
-   `TypeError("<receiver>.sortBy is not a function")` at the accepted
-   revision. Reading `xs.sortBy` without a call, object properties named
-   `sortBy`, instance methods named `sortBy` called on an instance, and every
-   other receiver keep their accepted behavior.
-+- No token, keyword, syntax, error type or message format, option or public
-+  item is added. The authoritative contract is
-+  [List and population sorting by key](../nucleoid.spec.md#list-and-population-sorting-by-key).
+ Category: Language compatibility
+ Created: 14-Nov-2026
+-Requires: 8, 47, 87
++Requires: 8, 47, 86, 87, 92, 93, 102
+ ```
+ 
+ ## Abstract
+@@ -26,23 +26,34 @@ Requires: 8, 47, 87
+   Python's `__init__` does: `def __init__(self, balance):` declares exactly
+   what `def init(balance):` declares, so `Account(100)` runs it.
+ - The receiver parameter is the keyword `self`, or its accepted alias
+-  `this`, followed by `,` or `)`. It adds no binding: the body reads the
+-  receiver through `self` or `this`, as every accepted method does.
++  `this`, written first and followed by `,` or `)`. It adds no binding: the
++  body reads the receiver through `self` or `this`, as every accepted method
++  does.
+ - Every accepted program keeps its parse and behavior:
++  - a program is parsed exactly as at the accepted revision first, and only
++    when that whole parse fails are receivers read, in a second run of the
++    same parse passes;
+   - `def __init__(...)` without a leading `self` stays an ordinary method
+     named `__init__`;
+   - `super().__init__(...)` keeps its accepted behavior;
+   - `class Dog(Animal):` still declares a constructor parameter named
+     `Animal`, not a parent class.
+-- Only inputs that were parse errors at the accepted revision change. A
+-  leading `self` raised
+-  `SyntaxError("Expected a parameter but found keyword 'this'")`, so the
+-  whole program did not run. `self` and `this` parameters keep that error
+-  everywhere else: in top-level functions, function literals, arrows and
+-  lambdas, class headers such as `class P(self)`, bare signatures, and
+-  methods outside a class's indented body.
+-- No token, keyword, syntax-tree node or runtime path is added: each form
+-  parses to the tree its accepted spelling parses to.
++- Only inputs that were errors at the accepted revision change. Most raised
++  `SyntaxError("Expected a parameter but found keyword 'this'")`. Some
++  raised another error first, from a statement that the parser reads
++  tentatively: a destructuring declaration whose value holds a class with a
++  receiver method raised `Unexpected '='`, `Unexpected ':'` or
++  `Unexpected ','`. Those programs failed as a whole, so their other
++  statements now run too.
++- `self` and `this` parameters keep their accepted errors everywhere else:
++  in top-level and nested functions, function literals, arrows and lambdas,
++  `function` declarations, methods outside a class's indented body,
++  same-line class bodies, class headers such as `class P(self)` and bare
++  signatures. A program that still fails reports exactly its accepted error.
++- No token, keyword, syntax-tree node, error message, runtime path or public
++  item is added: each form parses to the tree that its accepted spelling
++  parses to. The authoritative contract is
++  [Python-style self parameters](../nucleoid.spec.md#python-style-self-parameters).
  
  ## Motivation
  
-@@ -59,24 +65,1134 @@ Requires: 58, 77
-   Python's `sorted(xs, key=f)`, yet `[3, 1, 2].sortBy(x -> x)` raises
-   `TypeError("[3,1,2].sortBy is not a function")`.
- - `Shape.sortBy(s -> s.size)` is ten lexer tokens against eighteen for
--  `Shape.sort((a, b) -> a.size - b.size)`, and it names the key once
--  instead of spelling a comparator.
-+  `Shape.sort((a, b) -> a.size - b.size)` and seventeen for
-+  `Shape.sort(lambda a, b: a.size - b.size)`, and it names the key once
-+  instead of spelling a comparator. A list adds a copy to the comparator
-+  spelling: `ranked = scores.sortBy(s -> s.points)` is twelve tokens against
-+  twenty-two for `ranked = scores[:].sort(lambda a, b: a.points - b.points)`.
+@@ -81,19 +92,892 @@ Requires: 8, 47, 87
  
  ## Rationale
  
 -- Pending: the proposer completes this section.
-+- **Category and mode.** The cycle that allocated this Draft made one
-+  tool-backed uniform draw over the five categories that NUC 1's registry
-+  marks eligible for automatic selection and selected Utility enhancement,
-+  index 2, with probability 1/5 and no redraw. A later continuous cycle
-+  found the Draft stale and claimed it with the pushed empty commit
-+  `Resume NUC 105 List and Population Sorting by Key`, `120db05d`, keeping
-+  its number, title, category and requested change without a new draw.
-+  Token comparison is required; runtime applicability does not apply to this
-+  category.
++- **Confirmed category and mode.** The allocating cycle drew Language
++  compatibility with one tool-backed uniform draw over the five categories
++  that NUC 1's registry marks eligible for automatic selection, index 4 with
++  probability 1/5 and no redraw, and recorded the requested change in the
++  allocation commit `c10b67e8`. This continuous cycle picked the Draft up
++  under the stale-Draft rule after it had waited 1 day and 15 hours, claimed
++  it in `ee8a2239`, and kept its number, category and requested change.
++  Token comparison is therefore skipped as `language_compatibility`. That
++  skip is categorical; it is neither a measured comparison nor a passing
++  token gate. Runtime applicability does not apply to this category.
++- **No counterparts.** Because comparison is skipped, the new cases have no
++  accepted-syntax counterparts. They execute their assertions and explicit
++  returns with full coverage, and every pre-existing case is unchanged.
 +- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored, not zero. Strategy learning is `not_configured`, so this
-+  revision is unattributed, with no policy, selection receipt, trial or
-+  reward.
-+- **One more shared query.** `sortBy` joins `Runtime::list_query` beside
-+  `maxBy` and `minBy`, so lists however they are reached, through variables,
-+  members, slices, call results, `.value` snapshots and selected state
-+  versions, and class populations named by the class, by a variable that
-+  holds the class or by `$Name`, gain it at once, with the receiver snapshot,
-+  argument evaluation, receiver text and null-receiver routing of every other
-+  query. Rejected: a list-only method, which would leave `Name.sortBy(f)`
-+  raising where `Name.maxBy(f)` runs.
-+- **Read-only, unlike `sort`.** [NUC 58](nuc-0058.md)'s `sort` writes a
-+  writable receiver, so a declaration holding it is a standing sort of that
-+  list, and two standing sorts of one list conflict. `sortBy` never writes:
-+  `call_method` routes only `sort` through its writable-receiver path, so a
-+  declaration holding `sortBy` is a derived ordering, and several orderings
-+  of one list coexist. Rejected: an in-place `sortBy`; lodash's `_.sortBy`,
-+  Ruby's `sort_by`, Kotlin's `sortedBy`, Scala's `sortBy` and Python's
-+  `sorted` all return a new list.
-+- **The items themselves.** The query orders the objects of a model, so it
-+  returns those objects, unchanged and in order, as every pr
++  unscored (`missing_rubric`), not zero. Strategy learning is
++  `not_configured`, so this revision is unattributed, with no policy,
++  selection receipt, trial or reward.
++- **Only a former error.** At the accepted revision a `self` or `this`
++  where a parameter name belongs raises
++  `SyntaxError("Expected a parameter but found keyword 'this'")`, placed at
++  the token after the keyword, as [NUC 87](nuc-0087.md) records; `self`
++  lexes as the keyword `this`. No test pins that error for a `def` with a
++  leading receiver in a class's indented body.
++- **Accepted first, then receivers.** Accepted inputs can already hold a
++  class-body `def m(self)` in a part that a tentative parse gives up on.
++  `parse_expression` ignores the tokens after the expression it reads, so
++  `1 if functio
 ```
 
-**File**: `nucleoid.spec.md` (modified, +186/-0)
+**File**: `docs/nucleoid.g4` (modified, +44/-0)
 ```diff
-@@ -5327,6 +5327,83 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid rolls back failed median updates` specify the executable
-   behavior.
+@@ -385,10 +385,40 @@ classMember
  
-+## List and population sorting by key
+ methodDecl
+     : DEF INIT constructorParameters defBody
++    | DEF (INIT | PYTHON_INIT) receiverConstructorParameters defBody
++    | DEF name receiverParameters defBody
+     | FUNCTION INIT constructorParameters block
+     | functionDecl
+     ;
+ 
++/*
++ * Receiver-parameter contract (NUC 107):
++ * - The receiverParameters and receiverConstructorParameters alternatives
++ *   of methodDecl apply only in the receiver parse of the parse-pass
++ *   contract, and only to a DEF written directly in a class's indented
++ *   body. Every other parameter list, including those of a same-line class
++ *   body, keeps its accepted reading and error.
++ * - The receiver is THIS ('this' or 'self') directly after LPAREN and
++ *   directly followed by COMMA or RPAREN. It is dropped: the method has
++ *   exactly the parameters after it and binds no receiver name.
++ * - DEF INIT or DEF '__init__' with a receiver declares the method 'init',
++ *   whose list keeps constructorParameter prefixes. DEF '__init__' without
++ *   one stays an ordinary method named '__init__'.
++ * - The tree is that of the spelling without the receiver, with 'init' for
++ *   '__init__'; no syntax-tree node records the receiver.
++ */
++receiverParameters
++    : LPAREN receiver (COMMA (parameter (COMMA parameter)* COMMA?)?)? RPAREN
++    ;
 +
-+- [NUC 105](docs/nuc-0105.md) adds the read-only list query `sortBy` to lists
-+  and class instance lists, the receivers of `maxBy` and `minBy`, through the
-+  same shared list-query route. No syntax, keyword or error type is added.
-+- `RECEIVER.sortBy(selector)` returns a new list of the receiver's items in
-+  ascending order of `selector(item)`. The items are the items themselves,
-+  unchanged: an object or instance stays the same object, and the keys are
-+  not returned. Items with equal keys keep their receiver order, and an empty
-+  receiver gives `[]`.
-+- **Read-only.** The receiver is never written, whatever its kind. After
-+  `ranked = scores.sortBy(score -> score)`, `scores` keeps its own order and
-+  `ranked` follows it, while the `sort` of [NUC 58](docs/nuc-0058.md)
-+  reorders a writable receiver in place.
-+- **Keys.** Keys compare as `<` compares them: two strings as text, by code
-+  point, and every other pair as numbers with the numeric conversion of the
-+  comparisons, so dates compare by time and `true`, `false`, `null`, empty
-+  lists and one-item lists count as numbers. `["10", "9", "2"].sortBy(code -> code)`
-+  is `["10", "2", "9"]`, while `[10, 9, 2].sortBy(count -> count)` is
-+  `[2, 9, 10]`, and `0` and `-0` keys tie.
-+- **Unordered keys.** A key that cannot be compared with itself, one for
-+  which `key >= key` is `false`, makes the result undefined, which a
-+  declaration stores as `null`: undefined, NaN, objects, instances, classes,
-+  functions, regular expressions and lists that convert to NaN. Every item is
-+  still visited, so a declaration waits for every key to be comparable.
-+- **Accepted spelling.** When every key can be compared with itself,
-+  `xs.sortBy(f)` evaluates to exactly the list that
-+  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
-+  evaluates to, with `f` called once per item: each item, in receiver order,
-+  is placed before the first already placed item whose key it compares
-+  below. Where strings that are not numeric mix with other keys, which they
-+  are neither smaller nor greater than, that placement decides the order, so
-+  `["b", 5, "a", 3].sortBy(key -> key)` is `["a", "b", 3, 5]`. A declaration
-+  of either spelling settles by what that spelling reads.
-+- **Selectors.** The selector is required. It is called once for every item,
-+  in receiver order, with only the item; further parameters are `null`. A
-+  missing first argument, or one that is not a function, including `null`,
-+  raises `TypeError("sortBy expects a function")`, even on an empty receiver.
-+- **Reads.** A `null` key compares as `0`. Reads inside a selector follow the
-+  existing rules, so a selector that reads a `null` binding or property
-+  settles a declaration to `null`, while an item the selector does not read
-+  stays an item: after `xs = [1, null]`, `r = xs.sortBy(x -> 1)` stores
-+  `[1, null]`.
-+- **Receivers.** The receiver is a list, however it is reached, or a class's
-+  instance list in population order, named by the class, by a variable that
-+  holds the class or by `$Name`. On a class name, `sortBy` is the population
-+  query even when the class declares an instance method `sortBy`; its
-+  instances keep calling that method.
-+- **Live.** `sortBy` follows the shared rules of the list queries: it reads
-+  the receiver before its arguments and evaluates every supplied argument
-+  once, left to right, including unused extras. A declaration that uses it
-+  depends on the list or population, on its argument expressions and on
-+  whatever the selector reads for every item, so list mutations, new and
-+  deleted instances and property changes re-evaluate it, in class-level
-+  rules too. Selector errors roll back through the existing transaction. A
-+  null or undefined receiver yields undefined without evaluating the
-+  arguments.
-+- **Cost.** A call selects each key once. Keys that are all strings, or among
-+  which none is a string, are ordered by a stable sort in O(n log n)
-+  comparisons; only a mix of strings and other keys is ordered by the
-+  placement rule above, in up to O(n²) comparisons.
-+- **Rendering.** The call keeps its ordinary rendering, so
-+  `ranked = scores.sortBy(score -> score.points)` explains as
-+  `ranked = scores.sortBy(function())`, and a `sortBy` call and its accepted
-+  spelling are different statements and graph keys.
-+- **Unchanged.** Only calls of `sortBy` on lists and class populations
-+  change; they raised `TypeError("<receiver>.sortBy is not a function")`.
-+  `sortBy of xs` stays `SyntaxError("Unexpected keyword 'of'")`. Property
-+  reads such as `xs.sortBy`, bindings and object properties named `sortBy`,
-+  `sortBy(...)` without a definition, `Math.sortBy` and the other built-in
-+  namespaces, i
++receiverConstructorParameters
++    : LPAREN receiver (COMMA (constructorParameter (COMMA constructorParameter)* COMMA?)?)? RPAREN
++    ;
++
++receiver
++    : THIS
++    ;
++
+ /*
+  * Expression-context contract:
+  * - Clauses are headers, suppose premises, index/slice starts, the
+@@ -805,6 +835,7 @@ enumName
+     | LAST
+     | PREVIOUS
+     | INIT
++    | PYTHON_INIT
+     ;
+ 
+ // Reserved words may follow '.' as properties, but are not declared names
+@@ -889,6 +920,7 @@ FIRST            : 'first';
+ LAST             : 'last';
+ PREVIOUS         : 'previous';
+ INIT             : 'init';
++PYTHON_INIT      : '__init__';
+ 
+ STRICT_EQUAL     : '===';
+ STRICT_NOT_EQUAL : '!==';
+@@ -1015,6 +1047,12 @@ fragment REGEX_CHAR
+  * inside an ifStmt, the parse fails with that rule's error at the first
+  * such EVERY instead. When every pass fails, the error chosen above is
+  * reported, as before.
++ * Only when this whole sequence fails, and the tokens hold DEF, a name,
++ * LPAREN, THIS and then COMMA or RPAREN, or a template whose text holds
++ * 'def' and 'self' or 'this', the same sequence runs once more reading the
++ * receiverParameters of the receiver-parameter contract. Every pass, probe,
++ * tentative statement and interpolation of that run reads them. When it
++ * fails too, the error of the first sequence is reported unchanged.
+  *
+  * Limits:
+  * MAX_NESTING = 64, shared by statement/expression nesting:
+@@ -1034,6 +1072,8 @@ fragment REGEX_CHAR
+  * assert: a, b             -> assert(a, b).
+  * def f(x) => e            -> a function body returning e.
+  * class C(this.x)          -> C(x) with this.x = x at constructor start.
++ * def m(self, a): s        -> def m(a): s, in a class body's receiver parse.
++ * def __init__(self, a): s -> def init(a): s, also with 'this'.
+  * lambda a, b: e           -> (a, b) => e.
+  * f(.a.b)                  -> f(v => v.a.b).
+  * [e for x in s]           -> s.map(x => e).
+@@ -1093,4 +1133,8 @@ fragment REGEX_CHAR
+  * Membership tests: relationalOperator in parser\precedence.rs, the
+  * expressionInput context in parser.rs and their evaluation in
+  * src\lang\ast\operator.rs.
++ * Self parameters: parser\self_parameter.rs, with the receiver parse in
++ * src\lang\ast\parser.rs, the method in parser\class.rs, the shared list
++ * loop in parser\function.rs, and the mode carried into the accepted probe
++ * in parser\statement.rs and into interpolations in parser\template.rs.
+  */
 ```
 
 #### Recent Merged Pull Requests:
@@ -2194,45 +2338,22 @@ on the integrated tree: build, warning-denied Clippy on 1.97.1 and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 105 List and Population Sorting by Key
+## X. Draft NUC 108 List and Population Partitions
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9abb3434`: NUC 105 List and Population Sorting by Key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `11001bac`: Draft NUC 108 List and Population Partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## List and population sorting by key
-
-**Sorting by key keeps a live agenda while the list keeps its order**
-
-```nuc
-tasks = [{name: "ship", due: 3}, {name: "plan", due: 1}, {name: "build", due: 2}]
-agenda = tasks.sortBy(task -> task.due)
-assert(agenda.map(task -> task.name), ["plan", "build", "ship"])
-tasks.push({name: "test", due: 2})
-assert(agenda.map(task -> task.name), ["plan", "build", "test", "ship"])
-tasks[2].due = 4
-assert(agenda.map(task -> task.name), ["plan", "test", "ship", "build"])
-assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
-```
-
-- [NUC 105](docs/nuc-0105.md) adds `sortBy(selector)` to lists and class
-  populations. `tasks.sortBy(task -> task.due)` is a new list of the tasks
-  themselves in ascending order of their due days, and tasks due the same day
-  keep their list order, so `test` follows `build` until `build` moves to
-  day 4.
-- `agenda` is a live declaration that follows new tasks and changed days,
-  while `tasks` keeps its own order, where `sort` would reorder `tasks`
-  itself. Keys compare as `<` compares them, so numbers compare as numbers
-  and strings as text. See the
-  [root contract](nucleoid.spec.md#list-and-population-sorti
+| [108](nuc-0108.md) | List and Population Partitions | Draft |
+| [108](nuc-0108.md) | List and Population Partitions | Standards Track | Utility enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2242,7 +2363,7 @@ assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9abb3434` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `11001bac` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

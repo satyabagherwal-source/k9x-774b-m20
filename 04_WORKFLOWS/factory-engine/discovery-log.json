@@ -21289,5 +21289,17 @@
     "qualityScore": 2195,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-16T04:27:33.512Z"
+  },
+  {
+    "name": "IFM/PAN2",
+    "fullName": "IFM/PAN2",
+    "url": "https://huggingface.co/IFM/PAN2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: IFM/PAN2 (171 likes, 374 downloads)",
+    "likes": 171,
+    "downloads": 374,
+    "qualityScore": 2084,
+    "discoveredAt": "2026-11-16T14:32:25.970Z"
   }
 ]

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-16T05:42:06.330Z",
+  "updated_at": "2026-11-16T14:35:30.657Z",
   "statistics": {
-    "total_nodes": 283,
-    "total_edges": 147,
+    "total_nodes": 284,
+    "total_edges": 148,
     "domain_distribution": {
-      "D": 217,
+      "D": 218,
       "M": 1,
       "H": 27,
       "J": 11,
@@ -20,7 +20,7 @@
       "I": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 146,
+      "CONSTRAINED_BY_ARCHITECTURE": 147,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -6352,6 +6352,29 @@
       ],
       "created_at": "2026-11-16T05:42:06.330Z",
       "updated_at": "2026-11-16T05:42:06.330Z"
+    },
+    "DOM-D-3870AF12": {
+      "id": "DOM-D-3870AF12",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): IFM/PAN2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/IFM/P -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/IFM/P",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-ifm-pan2/hf-ifm-pan2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T14:35:04.519Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ifm-pan2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-16T14:35:30.657Z",
+      "updated_at": "2026-11-16T14:35:30.657Z"
     }
   },
   "edges": [
@@ -7824,6 +7847,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-F-925AEC0F [F] with Domain G",
       "created_at": "2026-11-16T05:42:06.330Z"
+    },
+    {
+      "id": "EDGE-7AFF0206B2A6",
+      "sourceId": "DOM-D-3870AF12",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-3870AF12 [D] with Domain M",
+      "created_at": "2026-11-16T14:35:30.657Z"
     }
   ]
 }

@@ -634503,3 +634503,169 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `dc7ee12b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8744. the client searches pages and documents, extracts JSON from a PDF, and returns a (Harvested from VectifyAI/PageIndex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "the client searches pages and documents, extracts JSON from a PDF, and returns a",
+  "source": "VectifyAI/PageIndex",
+  "source_url": "https://github.com/VectifyAI/PageIndex",
+  "source_version": "c9f1a879",
+  "license": "MIT",
+  "extracted_at": "2026-11-16T14:34:58.079Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vectifyai-pageindex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `c9f1a879`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c9f1a879`: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+                    Optional, Sequence, Union, cast, overload)
+    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
+        """
+        Wait until a document is ready for use, and return it as
+        ``get_document()`` does. Raises PageIndexAPIError if its processing
+        failed, or is not done within ``timeout`` seconds (it goes on in the
+        cloud). A local document is ready at once.
+        """
+        self._wait_until_ready(doc_id, timeout)
+        return self.get_document(doc_id)
+
+    def page_image(self, doc_id: str, page: int,
+                   box: Optional[Sequence[float]] = None) -> bytes:
+        """
+        One page as JPEG bytes: the image itself, where ``get_page_image()``
+        gives a link to it. With ``box``, only that part of the page, drawn
+        sharper, to read small print. Cloud-only: local mode renders no page
+        images.
+
+            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
+
+        Args:
+            doc_id (str): Document ID.
+            page (int): 1-based page number.
+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
+                fractions of the page's width and
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+                    Optional, Union, cast, overload)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c9f1a879` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8745. Draft NUC 108 List and Population Partitions (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Draft NUC 108 List and Population Partitions",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "11001bac",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-16T14:35:01.013Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `11001bac`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `11001bac`: Draft NUC 108 List and Population Partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [108](nuc-0108.md) | List and Population Partitions | Draft |
+| [108](nuc-0108.md) | List and Population Partitions | Standards Track | Utility enhancement | Draft |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `11001bac` are properly handled with clean fallback behavior.

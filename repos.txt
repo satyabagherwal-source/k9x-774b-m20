@@ -5122,3 +5122,7 @@ https://github.com/GanymedeNil/document.ai
 # --- Automatically Discovered by AI Scout Engine [2026-11-16T04:30:03.187Z] ---
 # [HIGH-PERF-SYSTEMS] Folkbench/folkbench (2195 score) - AI API 中转站评测排行与切换工具：实测可用率、延迟与价格 · Open-source AI API relay benchmark, rankings &
 https://github.com/Folkbench/folkbench
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-16T14:34:34.562Z] ---
+# [HUGGINGFACE-AI-MODELS] IFM/PAN2 (2084 score) - Verified Hugging Face Model: IFM/PAN2 (171 likes, 374 downloads)
+https://huggingface.co/IFM/PAN2

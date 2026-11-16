@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T14:07:05.313Z",
-    "lastVerified": "2026-11-16T14:07:05.313Z",
+    "lastChecked": "2026-11-16T14:35:04.413Z",
+    "lastVerified": "2026-11-16T14:35:04.413Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -474,12 +474,12 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T12:48:21.089Z",
-    "lastVerified": "2026-11-16T12:48:21.089Z",
+    "lastChecked": "2026-11-16T14:35:00.577Z",
+    "lastVerified": "2026-11-16T14:35:00.577Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "c5b0b2bbfe924a1e49169ea3def219016b7b1c1d247efbe754286185c114ef2f",
+    "contentHash": "6b2161ea2c06f0be829bedb522e5c7c3512c4ea2fc60df40e6a3b0f7337de4ba",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -672,14 +672,14 @@
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T03:13:40.668Z",
-    "lastVerified": "2026-11-15T03:13:40.668Z",
+    "lastChecked": "2026-11-16T14:34:57.642Z",
+    "lastVerified": "2026-11-16T14:34:57.642Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
+    "contentHash": "1b41c5586786a0798db6391e609849129596f004728a7084b07e88fe0eb1e904",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1677,9 +1677,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-16T02:44:31.649Z",
+    "lastChecked": "2026-11-16T14:34:50.274Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-16T02:44:31.649Z"
+    "lastVerified": "2026-11-16T14:34:50.274Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -7551,8 +7551,8 @@
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T04:53:17.852Z",
-    "lastVerified": "2026-11-15T04:53:17.852Z",
+    "lastChecked": "2026-11-16T14:34:47.794Z",
+    "lastVerified": "2026-11-16T14:34:47.794Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
@@ -11378,9 +11378,9 @@
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-selenium",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-selenium",
-    "lastChecked": "2026-11-11T20:18:18.091Z",
+    "lastChecked": "2026-11-16T14:34:42.856Z",
     "revisionIdentifier": "0eef52b5",
-    "lastVerified": "2026-11-11T20:18:18.091Z"
+    "lastVerified": "2026-11-16T14:34:42.856Z"
   },
   "lessica-trollfools": {
     "name": "TrollFools",
@@ -11563,9 +11563,9 @@
   "yannickl-dynamiccolor": {
     "name": "DynamicColor",
     "officialUrl": "https://github.com/yannickl/DynamicColor",
-    "lastChecked": "2026-11-13T02:57:39.046Z",
+    "lastChecked": "2026-11-16T14:34:45.222Z",
     "revisionIdentifier": "cf7c6eed",
-    "lastVerified": "2026-11-13T02:57:39.046Z"
+    "lastVerified": "2026-11-16T14:34:45.222Z"
   },
   "lxml-lxml": {
     "name": "lxml/lxml",
@@ -15683,6 +15683,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ifm-pan2": {
+    "name": "IFM/PAN2",
+    "officialUrl": "https://huggingface.co/IFM/PAN2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-16T14:34:40.484Z",
+    "lastVerified": "2026-11-16T14:34:40.484Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ifm-pan2",
+    "contentHash": "46281bc9b876236b9be7cb1d3d133f5ce3f422f0a218b6523b8413f4a01adef2",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

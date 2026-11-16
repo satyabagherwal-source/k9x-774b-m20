@@ -10311,3 +10311,7 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `9f1054c2` | Multi-dimensional audit evidence | 2026-11-16T13:38:33.062Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `faa20a23` | Multi-dimensional audit evidence | 2026-11-16T13:38:34.096Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `ffcdfcfa` | Multi-dimensional audit evidence | 2026-11-16T14:06:57.894Z |
+| `learn-huggingface-ifm-pan2` | `https://huggingface.co/IFM/PAN2` | `hf-ifm-pan` | Multi-dimensional audit evidence | 2026-11-16T14:34:41.069Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `c9f1a879` | Multi-dimensional audit evidence | 2026-11-16T14:34:58.471Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `11001bac` | Multi-dimensional audit evidence | 2026-11-16T14:35:01.404Z |
+| `learn-dom-d-3870af12` | `project://hf-ifm-pan2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md` | 2026-11-16T14:35:30.659Z |

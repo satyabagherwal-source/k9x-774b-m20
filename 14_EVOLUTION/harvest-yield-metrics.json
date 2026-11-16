@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T14:06:57.899Z",
-  "total_cycles_completed": 9869,
-  "total_learnings_persisted": 9869,
-  "total_rules_promoted": 9475,
+  "last_updated": "2026-11-16T14:35:01.409Z",
+  "total_cycles_completed": 9872,
+  "total_learnings_persisted": 9872,
+  "total_rules_promoted": 9477,
   "history": [
-    {
-      "timestamp": "2026-11-15T06:00:00.574Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T06:00:10.234Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T06:00:12.037Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T06:00:14.655Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-16T14:06:57.899Z",
       "repository": "apache/arrow",
       "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T14:34:41.075Z",
+      "repository": "IFM/PAN2",
+      "learningId": "learn-huggingface-ifm-pan2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T14:34:58.476Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T14:35:01.409Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

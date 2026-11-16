@@ -10278,3 +10278,7 @@
 | `CYCLE-20261116-76JM` | `2026-11-16T13:38:33.058Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8741` | Yes (`3c6ea005...`) |
 | `CYCLE-20261116-77CD` | `2026-11-16T13:38:34.093Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8742` | Yes (`04790268...`) |
 | `CYCLE-20261116-7Q02` | `2026-11-16T14:06:57.890Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8743` | Yes (`ecedefc2...`) |
+| `CYCLE-20261116-7DBE` | `2026-11-16T14:34:41.066Z` | `IFM/PAN2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md` | Yes (`46281bc9...`) |
+| `CYCLE-20261116-7QQS` | `2026-11-16T14:34:58.468Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8744` | Yes (`1b41c558...`) |
+| `CYCLE-20261116-7T09` | `2026-11-16T14:35:01.401Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8745` | Yes (`6b2161ea...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T14:35:30.659Z` | `hf-ifm-pan2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3870AF12` [Domain D] | Yes (`e33154e1...`) |

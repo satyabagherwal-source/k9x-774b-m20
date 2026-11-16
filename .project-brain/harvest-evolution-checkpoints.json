@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T14:07:07.243Z",
+  "last_updated": "2026-11-16T14:35:32.308Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T14:07:06.724Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-15T14:37:12.745Z",
+      "processed_at": "2026-11-16T14:35:31.636Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3161,9 +3161,19 @@
       "processed_at": "2026-11-16T06:59:44.062Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-ifm-pan2-learnings.md": {
+      "processed_at": "2026-11-16T14:35:30.659Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "vectifyai-pageindex-learnings.md": {
+      "processed_at": "2026-11-16T14:35:30.987Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1296,
-  "total_canonical_promoted": 287,
-  "total_staged_for_review": 1002
+  "total_dossiers_evaluated": 1299,
+  "total_canonical_promoted": 288,
+  "total_staged_for_review": 1004
 }

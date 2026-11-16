@@ -4,22 +4,22 @@
 {
   "source_repository": "VectifyAI/PageIndex",
   "source_url": "https://github.com/VectifyAI/PageIndex",
-  "source_version": "cc035e8d",
+  "source_version": "c9f1a879",
   "license": "MIT",
-  "timestamp": "2026-11-15T03:13:41.919Z",
+  "timestamp": "2026-11-16T14:34:58.639Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vectifyai-pageindex",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `cc035e8d`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T03:13:41.919Z`  
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `c9f1a879`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T14:34:58.639Z`  
 > **Learning ID**: `learn-github-vectifyai-pageindex`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `VectifyAI/PageIndex` (Commit: `cc035e8d`)
+- **Target Repository**: `VectifyAI/PageIndex` (Commit: `c9f1a879`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T03:13:40.668Z  
+> **Harvest Timestamp**: 2026-11-16T14:34:57.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40437 stars
+- **Stars / Engagement**: 40452 stars
 
 ---
 
@@ -837,7 +837,7 @@ import threading
 import time
 import warnings
 from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
-                    Optional, Union, cast, overload)
+                    Optional, Sequence, Union, cast, overload)
 
 from .chat_stream import ChatStream, MessagesStream, ChatObject
 from .errors import PageIndexAPIError
@@ -1076,7 +1076,6 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
         if index.strip():
             return None, {"index_model": index}
         raise PageIndexAPIError(
-         
 ```
 
 ### Core Architecture Module: `pageindex/cloud_api.py`
@@ -1085,7 +1084,7 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
 import os
 import requests
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Union, Iterator
+from typing import Optional, Dict, Any, List, Sequence, Union, Iterator
 import json
 import urllib.parse
 
@@ -1269,6 +1268,34 @@ class CloudAPI:
                 return img["url"]
         raise PageIndexAPIError(f"No image URL returned for page {page}.")
 
+    def page_image(self, doc_id: str, page: int, box: Optional[Sequence[float]] = None) -> bytes:
+        """A rendered page as JPEG bytes.
+
+        Args:
+            doc_id (str): Document ID.
+            page (int): 1-based page number.
+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as fractions
+                of the page from its top left: only that part, drawn sharper.
+
+        Returns:
+            bytes: The JPEG.
+        """
+        if box is None:
+            # a presigned URL: the API key stays off it
+            response = self._http.get(self.get_page_image(doc_id, page), timeout=60)
+        else:
+            response = self._http.get(
+                f"{self.BASE_URL}/doc/s3/{_enc(doc_id)}/images/region",
+                headers=self._headers(),
+                params={"page": page, "box": ",".join(str(v) for v in box)},
+                timeout=60
+            )
+        if response.status_code != 200:
+            raise PageIndexAPIError(
+                f"Failed to get page image: {response.text}",
+                status_code=response.status_code)
+        return response.content
+
     def get_document_image(self, doc_id: str, img_id: str) -> str:
         """Presigned URL for an embedded image extracted during OCR.
 
@@ -1317,41 +1344,7 @@ class CloudAPI:
         if response.status_code != 200:
             raise PageIndexAPIError(
                 f"Failed to get tree result: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    # ---------- RETRIEVAL ----------
-
-    def submit_query(self, doc_id: str, query: str, thinking: bool = False) -> Dict[str, Any]:
-        """
-        Submit a retrieval query for a specific PageIndex document.
-
-        Args:
-            doc_id (str): Document ID.
-            query (str): User question or information need.
-            thinking (bool, optional): If true, enables deeper retrieval. Default is False.
-
-        Returns:
-            dict: {'retrieval_id': ...}
-        """
-        payload = {
-            "doc_id": doc_id,
-            "query": query,
-            "thinking": thinking
-        }
-        response = self._http.post(
-            f"{self.BASE_URL}/retrieval/",
-            headers=self._headers(),
-            json=payload,
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to submit retrieval: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    def get_retrieval(self, retrieval_id: str) -> Dict[str, Any]:
+                sta
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1403,13 +1396,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #674** (2026-11-14): **release: collections, chat(collection_id=) with box citations, and get_citations for library paths**
-  *Symptoms*: Cloud users get collections, own-model chat kept to one collection with citations that carry a box on the page, and `get_citations` that resolves the library paths the MCP server now cites. This brings `develop` into `main` for the next release.  ## Changes  - Collections: create, list and delete them, upload a document into one, list its documents, and declare their metadata fields. A collection without declared fields learns them from its documents' metadata. `delete_collection` waits up to 600 s for the server to delete every document. (The commits of #666.) - `chat(collection_id=)` keeps own-model cloud chat in one collection, and `citations=` takes a format name such as `cite_with_boxes`. (#668) - `get_citations` resolves the library paths the MCP server now cites. (#632) - Own-model chat drops a citation box on a page whose picture the call never saw. (#673, fixes #669) - Live tests:   - The envelope check passes on the cloud's text outline and on a picture page's extra blocks. (#670)   - The three exact-copy checks skip while the cloud addresses documents by path and local mode does not. (#671)  ## Merge  Merge with **Create a merge commit**. `develop`'s commits then land on `main` unchanged, and the next `develop` → `main` PR carries only new commits.  Fixes #669. 
-
-- **Issue #673** (2026-11-13): **fix(chat): own-model chat drops a citation box on a page whose picture the call never saw**
-  *Symptoms*: Own-model `chat()` now drops a citation box on a page whose picture the call's tools never attached, leaving the page citation. A box is read off a page's picture, so a box on a page the model only read as text is a guess, and a reader that outlines it marks the wrong part of the page. PageIndex chat already drops such boxes when it shows a reply; the SDK passed them on, and so did everything built on `chat()`, the Dash playground included (compute's `/api/v1` runs it, and the playground draws each `box=`). Closes #669.  ## Changes  - Each own-model call records the pages its cloud tools pictured, as PageIndex chat counts them: `view_pages`' `returned_pages`, `get_page_content`'s `picture_pages`, `zoom_page`'s `page`, and only when the result carries an image. A citation matches by the result's library path, its `doc_name`, or either one's file name, with its `doc` matched as written or unescaped (`Release&notes.pdf` and `Q&amp;A.pdf` both match). A `box` on any other page is removed from the `<cite>` tag. - The answer lane, `chat_completions` and `responses` drop it in the model's reply before openai-agents reads it, so the answer, the stream, the events, the envelope and the returned `messages` all agree. A streamed `<cite` tag still open at a delta's end waits for the delta that closes it; text held at the end of the reply goes out before the part's done event. - `messages` drops it in each turn's message (so the returned `messages` agree) and in the stream's `text_delta`,
+- **Issue #678** (2026-11-15): **feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata**
+  *Symptoms*: Six more things the Page Search and Page Extract SDKs offer and the client lacked, though the cloud already serves them: a page, or a part of it, as an image; changing a document's metadata; listing documents by metadata; and waiting for a document or an extract job.  Stacked on #677 (search and Extract methods): the base is its branch so that only this change shows. It goes to `main` once #677 is merged.  ## Changes  - `page_image(doc_id, page, box=None)` returns the page as JPEG bytes, where `get_page_image()` returns a link. With `box`, (x0, y0, x1, y1) as fractions of the page from its top left, it returns only that part, drawn sharper, to read small print. The whole page is downloaded from the presigned link without the API key. - `update_document(doc_id, metadata=...)` sets metadata keys: a key set to `None` is removed and the keys not named stay. The cloud replaces a document's metadata whole, so the client reads it, merges and writes it back; of two writers at once the later one wins. - `list_documents(filter=...)` lists only the documents whose metadata meets a filter such as `{"year": {"$gte": 2023}}`. - `wait_document(doc_id, timeout=1800)` waits until a document is ready and returns it. In local mode it returns at once. - `wait_extract(job_id, timeout=3600)` waits for an extract job started with `extract(..., wait=False)`; `extract()` now shares its loop. - `get_collection(collection_id)` returns one collection, read from the list. - All but `wait_document` are cl
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","mergeGateEnabled":false,"pullRequestNumber":673,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-13T08:40:31.110567Z">2026-11-13T08:40:31.110567Z</relative-time> | `e55aaf3` | New commits | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","mergeGateEnabled":false,"pullRequestNumber":678,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T18:06:43.570517Z">2026-11-15T18:06:43.570517Z</relative-time> | `469bd91` | PR opened | | 🔒
+
+- **Issue #677** (2026-11-15): **feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image**
+  *Symptoms*: The cloud already offers page search, document search, Extract and page images cut to a box, but the client had no methods for them: they were reachable only through the cloud's MCP tools. This adds what the Page Search and Page Extract SDKs offer and the client lacked. All of it is cloud-only, except `wait_document`; local mode raises `PageIndexAPIError`.  `client.search(questions, document=doc_id)` returns, for each question, the pages that help answer it. Without `document` it searches across documents: the most relevant documents for each question are found first, and only their pages are searched. Both return one shape: results, then documents, then pages.  `client.extract(document, schema)` turns a PDF, or an uploaded document, into JSON that fits a JSON Schema or a Pydantic model, and waits for the result by default.  ## Changes  Search  - `search(questions, *, document, documents, collection, folder, recursive, filter, max_documents, document_top_k, top_k, include_text, start_page, end_page)`: the parameter names follow the Page Search SDK; `folder` and `recursive` are new, for PageIndex's folders. Across documents each question opens at most `max_documents` (default 3) or exactly `document_top_k`, up to 10, and a document several questions chose is searched once. A document whose pages cannot be searched goes to `failed_documents`; running out of credits, or every opened document failing, raises. - `search_documents(questions, *, document_ids, collection, folder, rec
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"71b3674d3fa681b1b0084b9757c2256068f92afc","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"71b3674d3fa681b1b0084b9757c2256068f92afc","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"71b3674d3fa681b1b0084b9757c2256068f92afc","mergeGateEnabled":false,"pullRequestNumber":677,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T18:38:00.775560Z">2026-11-15T18:38:00.775560Z</relative-time> | `71b3674` | New commits | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1426,645 +1421,357 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb582bee` (2026-11-13)
-**Commit Message**: fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (#673)
+### Incident Patch 1: `c9f1a879` (2026-11-15)
+**Commit Message**: feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (#677)
 
-- Each own-model call records the pages its cloud tools pictured, as PageIndex chat counts them: view_pages' returned_pages, get_page_content's picture_pages, zoom_page's page, and only when the result carries an image. A box on any other page is removed from its <cite> tag, leaving the page citation. A citation's doc matches the result's path, doc_name or either one's file name, as written or unescaped.
-- Every lane drops it before the reply reaches the caller: the answer, chat_completions and responses lanes in the model's reply before openai-agents reads it, messages in each turn and its stream events, claude-code/ in its deltas and final answer. A streamed <cite tag still open at a delta's end waits for the delta that closes it.
-- A picture seen in an earlier call does not count, as in PageIndex chat. Local mode drops every box. The as_* adapters, get_citations() and resolve_citations() are unchanged.
+- search(questions, document=...) returns, for each question, the pages that help answer it. Without document it finds the most relevant documents for each question first and searches only their pages, joining the cloud's two calls; both return one shape: results, then documents, then pages. search_documents() returns the documents likely to hold each answer. Parameter names follow the Page Search SDK; folder and recursive are new, for PageIndex's folders.
+- extract(document, schema) turns a PDF's path, or an uploaded document's id, into JSON that fits a JSON Schema or a Pydantic model. It waits for the result by default, and for a document still processing first. get_extract, list_extracts, cancel_extract, delete_extract and wait_extract manage jobs; a status read that fails during a wait names the job, which goes on running.
+- page_image(doc_id, page, box=None) returns a page as JPEG bytes, or with box only that part of it, drawn sharper. update_document(doc_id, metadata=...) sets the keys named, removes those set to None and keeps the rest. list_documen
 
-**File**: `pageindex/agent_tools.py` (modified, +84/-2)
+**File**: `pageindex/client.py` (modified, +513/-1)
 ```diff
-@@ -23,6 +23,7 @@
+@@ -7,7 +7,7 @@
+ import time
+ import warnings
+ from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
+-                    Optional, Union, cast, overload)
++                    Optional, Sequence, Union, cast, overload)
  
- import copy
- import difflib
-+import html
- import inspect
- import json
- import re
-@@ -1381,8 +1382,84 @@ def _raise_account_limit(blocks: list) -> None:
-     raise PageIndexAPIError(message, status_code=status)
+ from .chat_stream import ChatStream, MessagesStream, ChatObject
+ from .errors import PageIndexAPIError
+@@ -917,6 +917,16 @@ def submit_document(
+             self._wait_until_ready(result["doc_id"])
+         return result
  
++    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
++        """
++        Wait until a document is ready for use, and return it as
++        ``get_document()`` does. Raises PageIndexAPIError if its processing
++        failed, or is not done within ``timeout`` seconds (it goes on in the
++        cloud). A local document is ready at once.
++        """
++        self._wait_until_ready(doc_id, timeout)
++        return self.get_document(doc_id)
++
+     def _wait_until_ready(self, doc_id: str, timeout: float = 1800.0) -> None:
+         import requests
+         interval = 2.0
+@@ -1040,6 +1050,32 @@ def get_page_image(self, doc_id: str, page: int) -> str:
+             "rendering. Create the client with an api_key to get page images."
+         ).get_page_image(doc_id=doc_id, page=page)
  
-+# The tools whose results attach page pictures, by the field naming those pages.
-+_PICTURE_PAGES = {"view_pages": "returned_pages",
-+                  "get_page_content": "picture_pages", "zoom_page": "page"}
-+_CITE_OPEN_RE = re.compile(r"<cite\s[^<>]*>")
-+_TAG_ATTR_RE = re.compile(r"""\b(\w+)\s*=\s*(["'])(.*?)\2""", re.S)
-+_BOX_ATTR_RE = re.compile(r"""\s+box\s*=\s*("[^"]*"|'[^']*')""")
++    def page_image(self, doc_id: str, page: int,
++                   box: Optional[Sequence[float]] = None) -> bytes:
++        """
++        One page as JPEG bytes: the image itself, where ``get_page_image()``
++        gives a link to it. With ``box``, only that part of the page, drawn
++        sharper, to read small print. Cloud-only: local mode renders no page
++        images.
 +
++            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
 +
-+class _SeenPages:
-+    """The pages one chat call's tools pictured; strip() drops boxes elsewhere."""
++        Args:
++            doc_id (str): Document ID.
++            page (int): 1-based page number.
++            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
++                fractions of the page's width and height from its top left,
++                each from 0 to 1, with x0 < x1 and y0 < y1. A box the cloud
++                cannot read raises PageIndexAPIError (HTTP 422).
 +
-+    def __init__(self):
-+        self.pages: set = set()
++        Returns:
++            bytes: The JPEG.
++        """
++        return self._require_cloud(
++            "page_image is cloud-only — local mode has no page-image "
++            "rendering. Create the client with an api_key to get page images."
++        ).page_image(doc_id=doc_id, page=page, box=box)
 +
-+    def record(self, name: str, blocks: list) -> None:
-+        field = _PICTURE_PAGES.get(name)
-+        if field is None or not any(isinstance(block, dict)
-+                                    and block.get("type") == "image"
-+                                    for block in blocks):
-+            return
-+        try:
-+            result = json.loads(blocks[0]["text"])
-+            pictured = result[field]
-+            pages = ([pictured] if isinstance(pictured, int)
-+                     else _expand_pages(pictured))
-+        except (LookupError, TypeError, ValueError):
-+            return
-+        for ref in (result.get("path"), result.get("doc_name")):
-+            if isinstance(ref, str) and ref:
-+                for doc in (ref, ref.rsplit("/", 1)[-1]):
-+                    self.pages.update((doc, page) for page in pages)
-+
-+    def strip(self, text: str) -> str:
-+        return _CITE_OPEN_RE.sub(self._tag, text) if "box" in text else text
-+
-+    def _tag(self, match: re.Match) -> str:
-+        tag = match.group(0)
-+        attrs = {name: value for name, _, value in _TAG_ATTR_RE.findall(tag)}
-+        try:
-+            page = int(attrs.get("page", "").split("-")[0])
-+        except ValueError:
-+            return tag
-+        doc = attrs.get("doc", "").strip()
-+        if "box" not in attrs or (doc, page) in self.pages \
-+                or (html.unescape(doc), page) in self.pages:
-+            return tag
-+        return _BOX_ATTR_RE.sub("", tag, count=1)
-+
-+    def stream(self) -> "_HeldTags":
-+        return _HeldTags(self)
-+
-+
-+class _HeldTags:
-+    """strip() over a text's pieces: a tag open at a piece's end waits."""
-+
-+    def __init__(self, seen: _SeenPages):
-+        self.seen, self.held = seen, ""
-+
-+    def feed(self, piece: str) -> str:
-+        text = self.held + piece
-+        start = text.rfind("<")
-+        tail = text[start:] if start >= 0 else ""
-+        opening = ">" not in tail and (
-+            "<cite".startswith(tail) if len(tail) <= 5
-+            else tail.startswith("<cite") and tail[5].isspace())
-+        cut = start if start >= 0 and opening else len(text)
-+        self.held = text[cut:]
-+        return self.seen.strip(text[:cut])
-+
-+    def flush(self) -> str:
-+        """The text's end: a tag never closed goes out as written."""
-+        rest, self.held = self.held, ""
-+        return rest
-+
-+
- def _bridge_invoker(bridge, name: str, schema: dict,
-                     collection: Optional[str] = None,
-+                    seen: Optional[_SeenPages] = None,
-                     ) -> "Callable[[dict], tuple[list, bool]]":
-     """One cloud tool call proxied over MCP: string booleans are coerced
-     (same as call_tool), None-valued arguments are dropped (None ≡ omitted,
-@@ -1420,6 +1497,8 @@ def _invoke(arguments: dict[str, Any]) -> tuple[list, bool]:
-             return [{"type": "text", "text": _dumps(payload)}], True
-         if is_error:
-             _raise_account_limit(blocks)
-+        elif seen is not None:
-+            seen.record(name, blocks)
-         return blocks, is_error
-     return _invoke
- 
-@@ -1529,6 +1608,7 @@ def _require_doc_selection(doc_ids) -> None:
- def _tool_specs(client, include_management: bool = False, doc_ids=None,
-                 annotations: Optional[dict] = None,
-                 collection: Optional[str] = None,
-+                seen: Optional[_SeenPages] = None,
-                 ) -> "list[tuple[str, str, dict, Callable[[dict], tuple[list, bool]]]]":
-     """(name, description, schema, invoke) per tool, for adapters that take
-     the wire schema verbatim. ``invoke`` returns (content blocks, is_error):
-@@ -1539,7 +1619,8 @@ def _tool_specs(client, include_management: bool = False, doc_ids=None,
-     receives each annotated tool's MCP annotations by name: the server's
-     on cloud, the contract's locally. ``collection`` is the cloud chat's
-     collection, by name: every tool that takes one is held to it, and the
--    folder-tree tools are left out."""
-+    folder-tree tools are left out. ``seen`` records the pages the cloud
-+    tools picture."""
-     if getattr(client, "api_key", None):
-         bridge = _cloud_bridge(client, gated=not include_management)
- 
-```
-
-**File**: `pageindex/client.py` (modified, +3/-1)
-```diff
-@@ -1469,7 +1469,9 @@ def chat(
-                 cloud document has blocks; ``"cite_with_boxes"`` adds
-                 ``box="x0,y0,x1,y1"`` to a tag with no block, the part of
-                 the page as fractions of its width and height from the top
--                left, and has the model look at each page it cites;
-+                left, and has the model look at each page it cites (a box
-+                on a page whose picture the call's tools never attached is
-+                dropped, leaving the page citation);
-                 ``"markdown"`` writes ``[doc, p. N]``. A format the server
-                 does not serve raises. The guidance joins the system prompt
-                 after the managed prompt and before ``instructions``; local
-```
-
-**File**: `pageindex/integrations/anthropic_sdk.py` (modified, +4/-2)
-```diff
-@@ -27,7 +27,8 @@
- def build_anthropic_tools(client, include_management: bool = False,
-                           asynchronous: bool = False, doc_ids=None,
-                           failures: Optional[list] = None,
--                          collection: Optional[str] = None) -> list:
-+                          collection: Optional[str] = None,
-+                          seen=None) -> list:
-     """``failures`` records the invoker's re-raised failures for
-     chat(protocol="messages") to fail fast on."""
-     try:
-@@ -82,4 +83,5 @@ def _fn(**kwargs: Any) -> list:
- 
-     return [wrap(*spec)
-             for spec in _tool_specs(client, include_management,
--                                    doc_ids=doc_ids, collection=collection)]
-+                                    doc_ids=doc_ids, collection=collection,
-+                                    seen=seen)]
-```
-
-**File**: `pageindex/integrations/claude_agent_sdk.py` (modified, +2/-2)
-```diff
-@@ -54,7 +54,7 @@ def build_claude_mcp(client, include_management: bool = False, *,
- def tool_server(client, include_management: bool = False, *,
-                 server_name: str = "pageindex", doc_ids=None,
-                 failures: Optional[list] = None,
--                collection: Optional[str] = None):
-+                collection: Optional[str] = None, seen=None):
-     """The agent tools as an in-process server in either mode, on cloud
-     through the bridge: local as_claude_mcp()'s, and the claude-code/ chat
-     engine's, whose system prompt carries the guidance. ``failures``
-@@ -89,7 +89,7 @@ async def handler(arguments: dict[str, Any]) -> dict[str, Any]:
- 
-     hints: dict = {}  # readOnlyHint lets the CLI run the read tools in parallel
-     specs = _tool_specs(client, include_management, doc_ids, annotations=hints,
--                        collection=collection)
-+                        collection=collection, seen=seen)
-     tools = [
-         tool(name, description, schema, annotations=ToolAnnotations(
-             **(hints.get(name) or {}), maxResultSizeChars=MAX_RESULT_CHARS),
-```
-
-**File**: `pageindex/integrations/openai_agents.py` (modified, +5/-4)
-```diff
-@@ -32,14 +32,14 @@ def _tool_failure(ctx, error):
- 
- 
- def build_mcp_server(client, include_management: bool = False, doc_ids=None,
--                     collection=None):
-+                     collection=None, seen=None):
-     """The tool set as an in-process MCP server for the Agents SDK."""
-     from agents.mcp import MCPServer
-     from mcp import types as mcp_types
-     from ..agent_tools import _tool_specs
- 
-     specs = _tool_specs(client, include_management, doc_ids,
--                        collection=collection)
-+                        collection=collection, seen=seen)
- 
-     class _ToolServer(MCPServer):
-         def __init__(self):
-@@ -79,7 +79,7 @@ async def get_prompt(self, name: str, arguments=None):
- 
- def build_openai_tools(client, include_management: bool = False,
-                        hosted: bool = False, doc_ids=None,
--                       collection=None) -> list:
-+                       collection=None, seen=None) -> list:
-     from agents import HostedMCPTool
-     from agents.mcp import MCPUtil
-     if getattr(client, "api_key", None) and hosted:
-@@ -95,6 +95,7 @@ def build_openai_tools(client, include_management: bool = False,
-             "require_approval": "never",
-         })]
- 
--    server = build_mcp_server(client, include_management, doc_ids, collection)
-+    server = build_mcp_server(client, include_management, doc_ids, collection,
-+                              seen)
-     return [MCPUtil.to_function_tool(tool, server, False)
-             for tool in server.tools]
-```
-
-**File**: `pageindex/local_chat.py` (modified, +138/-12)
-```diff
-@@ -20,7 +20,7 @@
- from typing import Any, Generator, Iterator, Mapping, Optional, Union
- from urllib.parse import urlparse
- 
--from .agent_tools import _base_instructions, targeting_block
-+from .agent_tools import _base_instructions, _SeenPages, targeting_block
- from .chat_stream import (ChatStream, MessagesStream, ChatObject,
-                           _yaml_as_dict)
- from .errors import PageIndexAPIError, _pageindex_cause
-@@ -884,7 +884,7 @@ def _openai_agent(client, protocol: str, model_name: str, instructions: str,
-                   temperature, top_p, doc_ids=None, cache_key=None,
-                   reasoning=None, reasoning_effort=None, extra_body=None,
-                   max_tokens=None, backend=None, extra_headers=None,
--                  collection=None):
-+                  collection=None, seen=None):
-     _refuse_skeleton(extra_body)
-     from agents import Agent, ModelSettings
-     from openai.types.shared import Reasoning
-@@ -965,16 +965,83 @@ def _openai_agent(client, protocol: str, model_name: str, instructions: str,
-         if swap:
-             # the request hook (_register_fill) takes the "none" off beside it
-             settings = dataclasses.replace(settings, extra_args={**args, **swap})
-+    model = _openai_model(protocol, model_name, conn or None)
-+    if seen is not None:
-+        _drop_unseen_boxes(model, seen)
-     return Agent(
-         name="PageIndex",
-         instructions=instructions,
-         tools=build_openai_tools(client, doc_ids=doc_ids,
--                                 collection=collection),
--        model=_openai_model(protocol, model_name, conn or None),
-+                                 collection=collection, seen=seen),
-+        model=model,
-         model_settings=settings,
-     )
- 
- 
-+def _strip_output(items, seen: _SeenPages) -> None:
-+    for item in items or ():
-+        if getattr(item, "type", None) == "message":
-+            for part in item.content or ():
-+                if getattr(part, "type", None) == "output_text":
-+                    part.text = seen.strip(part.text)
-+
-+
-+def _drop_unseen_boxes(model, seen: _SeenPages) -> None:
-+    """Strips each reply, streamed or not, before openai-agents reads it."""
-+    get_response = model.get_response
-+    stream_response = model.stream_response
-+
-+    async def getting(*args, **kwargs):
-+        response = await get_response(*args, **kwargs)
-+        _strip_output(response.output, seen)
-+        return response
-+
-+    async def streaming(*args, **kwargs):
-+        from contextlib import aclosing
-+        texts: dict = {}
-+
-+        def close(ended):
-+            for key in [key for key in texts if ended(key)]:
-+                held, last = texts.pop(key)
-+                rest = held.flush()
-+                if rest:
-+                    yield last.model_copy(update={"delta": rest})
-+
-+        async with aclosing(stream_response(*args, **kwargs)) as events:  # type: ignore[arg-type]
-+            async for event in events:
-+                kind = getattr(event, "type", None)
-+                if kind == "response.output_text.delta":
-+                    key = (event.item_id, event.content_index)
-+                    held = texts[key][0] if key in texts else seen.stream()
-+                    texts[key] = (held, event)
-+                    piece = event.delta
-+                    event.delta = held.feed(piece)
-+                    if piece and not event.delta:
-+                        continue
-+                elif kind in ("response.output_text.done",
-+                              "response.content_part.done"):
-+                    key = (event.item_id, event.content_index)
-+                    for rest in close(lambda k: k == key):
-+                        yield rest
-+                    if kind == "response.output_text.done":
-+                        event.text = seen.strip(event.text)
-+                    elif getattr(event.part, "type", None) == "output_text":
-+                        event.part.text = seen.strip(event.part.text)
-+                elif kind == "response.output_item.done":
-+                    for rest in close(lambda k: k[0] == event.item.id):
-+                        yield rest
-+                    _strip_output([event.item], seen)
-+                elif kind in ("response.completed", "response.incomplete",
-+                              "response.failed"):
-+                    for rest in close(lambda k: True):
-+                        yield rest
-+                    _strip_output(event.response.output, seen)
-+                yield event
-+
-+    model.get_response = getting
-+    model.stream_response = streaming
-+
-+
- def _validate_max_turns(max_turns) -> None:
-     if max_turns is not None and (not isinstance(max_turns, int)
-                                   or max_turns < 1):
-@@ -1329,7 +1396,8 @@ def _chat_agent(client, messages, doc_id, model, temperature=None,
-                           reasoning_effort=reasoning_effort,
-                           extra_body=extra_body, max_tokens=
-```
-
-**File**: `tests/test_agent_tools.py` (modified, +56/-0)
-```diff
-@@ -3780,3 +3780,59 @@ def test_render_prompt_text_flattens_messages():
-         {"role": "user"},
-     ]) == "a\nb\n[image/png content omitted: ~1 KB]"
-     assert render_prompt_text([]) == ""
-+
-+
-+def _pictured(payload, image=True):
-+    return [{"type": "text", "text": json.dumps(payload)},
-+            *([{"type": "image", "mimeType": "image/jpeg", "data": "AAAA"}]
-+              if image else [])]
-+
-+
-+def test_seen_pages_keep_only_boxes_on_pictured_pages():
-+    from pageindex.agent_tools import _bridge_invoker, _SeenPages
-+
-+    class Bridge:
-+        def call_tool(self, name, arguments):
-+            if name == "zoom_page":
-+                return _pictured({"error": "nope"}), True
-+            return {
-+                "view_pages": _pictured({"doc_name": "Reports/a.pdf",
-+                                         "path": "Reports/a.pdf",
-+                                         "returned_pages": "1-2"}),
-+                "get_page_content": _pictured({"doc_name": "b.pdf",
-+                                               "picture_pages": "5"}),
-+                "get_document_image": _pictured({"doc_name": "c.pdf",
-+                                                 "page": 9}),
-+            }[name], False
-+
-+    seen = _SeenPages()
-+    for name in ("view_pages", "get_page_content", "get_document_image",
-+                 "zoom_page"):
-+        _bridge_invoker(Bridge(), name, {}, seen=seen)({})
-+    seen.record("zoom_page", _pictured({"doc_name": "d.pdf", "page": 4}))
-+    seen.record("zoom_page", _pictured({"doc_name": "Q&A's.pdf", "page": 7}))
-+    seen.record("zoom_page", _pictured({"doc_name": "Release&notes.pdf",
-+                                        "page": 8}))
-+    seen.record("view_pages", _pictured({"doc_name": "e.pdf",
-+                                         "returned_pages": "3"}, image=False))
-+
-+    def cite(doc, page):
-+        return f'<cite doc="{doc}" page="{page}" box="0.1,0.2,0.3,0.4"/>'
-+
-+    kept = [cite("Reports/a.pdf", 2), cite("a.pdf", 1), cite("b.pdf", 5),
-+            cite("d.pdf", 4), cite("Q&amp;A&apos;s.pdf", 7),
-+            cite("Release&notes.pdf", 8), '<cite doc="x.pdf" page="1"/>']
-+    for tag in kept:
-+        assert seen.strip(tag) == tag
-+    for doc, page in (("a.pdf", 3), ("Other/a.pdf", 1), ("c.pdf", 9),
-+                      ("e.pdf", 3), ("b.pdf", 6)):
-+        assert seen.strip(cite(doc, page)) == f'<cite doc="{doc}" page="{page}"/>'
-+    text = ("x < y " + cite("a.pdf", 1) + " then " + cite("a.pdf", 3)
-+            + "<cite doc='f.pdf' page='2' box = '0,0,1,1'>z</cite> <ci")
-+    whole = seen.strip(text)
-+    assert "box" not in whole.split("then")[1]
-+    for size in range(1, 12):
-+        held = seen.stream()
-+        out = "".join(held.feed(text[i:i + size])
-+                      for i in range(0, len(text), size)) + held.flush()
-+        assert out == whole
-```
-
-**File**: `tests/test_claude_code.py` (modified, +45/-0)
-```diff
-@@ -1160,6 +1160,51 @@ async def the_model_calls_the_tool():
-                                               "maxResultSizeChars": 200_000}
- 
- 
-+@needs_claude
-+def test_chat_drops_boxes_on_pages_never_seen(monkeypatch):
-+    import claude_agent_sdk
-+    import pageindex.mcp_bridge as mcp_bridge
-+    from pageindex import PageIndexCloudClient
-+
-+    class Bridge:
-+        def __init__(self, url, headers):
-+            pass
-+
-+        def list_tools(self):
-+            return [{"name": "view_pages", "description": "v",
-+                     "inputSchema": {"type": "object", "properties": {}}}]
-+
-+        def instructions(self):
-+            return "GUIDANCE"
-+
-+        def call_tool(self, name, arguments):
-+            return [{"type": "text", "text": json.dumps({
-+                "doc_name": "r.pdf", "returned_pages": "2"})},
-+                {"type": "image", "mimeType": "image/jpeg", "data": "AAAA"}], False
-+    monkeypatch.setattr(mcp_bridge, "McpBridge", Bridge)
-+    tools = {}
-+
-+    def server(**kwargs):
-+        tools.update({tool.name: tool for tool in kwargs["tools"]})
-+        return {"type": "sdk", "name": kwargs["name"], "instance": None}
-+    monkeypatch.setattr(claude_agent_sdk, "create_sdk_mcp_server", server)
-+
-+    async def the_model_views_page_2():
-+        await tools["view_pages"].handler({})
-+    text = ('A <cite doc="r.pdf" page="2" box="0.1,0.2,0.3,0.4"/> '
-+            'B <cite doc="r.pdf" page="3" box="0.5,0.6,0.7,0.8"/> <cite doc')
-+    expected = text.replace(' box="0.5,0.6,0.7,0.8"', "")
-+    said = AssistantMessage(content=[TextBlock(text)], model="haiku")
-+    pieces = [delta(text[i:i + 5]) for i in range(0, len(text), 5)]
-+    cloud = PageIndexCloudClient(api_key="pi-test-key",
-+                                 chat_model="claude-code/haiku")
-+    fake_cli(monkeypatch, said, result(text), during=the_model_views_page_2)
-+    assert cloud.chat("Q") == expected
-+    fake_cli(monkeypatch, *pieces[:-3], said, result(text),
-+             during=the_model_views_page_2)
-+    assert "".join(cloud.chat("Q", stream=True)) == expected
-+
-+
- @needs_claude
- def test_chat_max_turns(monkeypatch, chat_client):
-     fake_cli(monkeypatch, result(None, is_error=True, subtype="error_max_turns",
-```
-
----
-
-### Incident Patch 2: `9b036acc` (2026-11-11)
-**Commit Message**: fix(cloud): delete_collection waits up to 600 s for the server to delete every document, and list_documents names a collection among the places path is None
-
-The server deletes a collection's documents one by one before it answers.
-With the 30 s timeout, a collection of many documents timed out, and the
-retrying session sent the DELETE twice more while the first cascade was
-still running; the caller got a connection error while the server kept
-deleting. 600 s is the wait chat() already uses without streaming. A
-gateway that cuts the request first answers 5xx, which is still retried.
-
-A document in a collection has no folder chain, so its path is None too.
-
-**File**: `pageindex/client.py` (modified, +2/-2)
-```diff
-@@ -2175,8 +2175,8 @@ def list_documents(
- 
-         Each document carries ``path``, its folder chain rendered
-         ``"Parent/Child"`` — what a flat listing otherwise loses. None
--        at the library root, for a folder reached only through a share
--        of something below it, and for every local document.
-+        at the library root, in a collection, for a folder reached only
-+        through a share of something below it, and for every local document.
+     def get_document_image(self, doc_id: str, img_id: str) -> str:
          """
-         return self._api.list_documents(limit=limit, offset=offset,
-                                         folder_id=folder_id, recursive=recursive,
-```
-
-**File**: `pageindex/cloud_api.py` (modified, +1/-1)
-```diff
-@@ -625,7 +625,7 @@ def delete_collection(self, collection_id: str) -> Dict[str, Any]:
-         response = self._http.delete(
-             f"{self.BASE_URL}/collection/{_enc(collection_id)}/",
-             headers=self._headers(),
--            timeout=30
-+            timeout=600
-         )
-         if response.status_code != 200:
-             raise PageIndexAPIError(
-```
-
----
-
-### Incident Patch 3: `c4191018` (2026-11-12)
-**Commit Message**: fix: get_citations resolves the library paths the MCP server now cites (#632)
-
-* fix: get_citations resolves the library paths the MCP server now cites
-
-* docs: get_citations says how doc_id= matches a cited path
-
-* refactor: get_citations keeps each path beside the names
-
-* docs: list_documents says a document's path ends with its file name
-
-The cloud listing's path is the folder chain plus the file name, and a root document's path is its name. get_citations relies on that meaning; the docstring still said folder chain only, None at the root.
-
----------
-
-Co-authored-by: Ray <[REDACTED_EMAIL]>
-
-**File**: `pageindex/client.py` (modified, +20/-9)
-```diff
-@@ -2249,10 +2249,11 @@ def list_documents(
+         A short-lived URL to an image OCR extracted from the document.
+@@ -2233,6 +2269,7 @@ def list_documents(
+         folder_id: Optional[str] = None,
+         recursive: bool = False,
+         collection_id: Optional[str] = None,
++        filter: Optional[dict[str, Any]] = None,
+     ) -> dict[str, Any]:
+         """
+         List documents with pagination, newest first.
+@@ -2247,6 +2284,10 @@ def list_documents(
+             collection_id (str, optional): Cloud-only: list one collection's
+                 documents. Passing ``folder_id`` or ``recursive`` too raises
+                 PageIndexAPIError (HTTP 400).
++            filter (dict, optional): Cloud-only: list only the documents
++                whose metadata meets it, e.g. ``{"year": {"$gte": 2023}}``.
++                A key alone is equality; the operators are $eq, $ne, $in,
++                $gt, $gte, $lt, $lte, and $and / $or over a list of filters.
+ 
          Returns:
              dict: {'documents': [...], 'total', 'limit', 'offset'}.
- 
--        Each document carries ``path``, its folder chain rendered
--        ``"Parent/Child"`` — what a flat listing otherwise loses. None
--        at the library root, in a collection, for a folder reached only
--        through a share of something below it, and for every local document.
-+        Each document carries ``path``, its folder chain plus its file
-+        name, ``"Parent/Child/Q3.pdf"`` — what a flat listing otherwise
-+        loses. Just the file name at the library root; None in a
-+        collection, for a folder reached only through a share of
-+        something below it, and for every local document.
+@@ -2257,10 +2298,43 @@ def list_documents(
+         collection, for a folder reached only through a share of
+         something below it, and for every local document.
          """
++        if filter is not None:
++            return self._require_cloud(
++                "list_documents(filter=) is cloud-only — metadata filters "
++                "are not supported in local mode. Create the client with an "
++                "api_key to use them."
++            ).list_documents(limit=limit, offset=offset, folder_id=folder_id,
++                             recursive=recursive, collection_id=collection_id,
++                             metadata_filter=filter)
          return self._api.list_documents(limit=limit, offset=offset,
                                          folder_id=folder_id, recursive=recursive,
-@@ -2763,10 +2764,12 @@ def get_citations(
-             answer (str): The answer text, tags included.
-             doc_id (str | list[str], optional): The documents the answer
-                 was about — what ``chat(doc_id=...)`` took. Citations name
--                documents, and the ids come from here; without it your own
--                library is listed. Two documents sharing a cited name
--                raise PageIndexAPIError naming both ids: pass ``doc_id``
--                to pick.
-+                documents by name or by library path
-+                (``Research/2024/Q3.pdf``), and the ids come from here;
-+                without it your own library is listed. With it, a cited
-+                path matches by its file name. Two documents sharing a
-+                cited name raise PageIndexAPIError naming both ids: pass
-+                ``doc_id`` to pick.
+                                         collection_id=collection_id)
  
-         Returns:
-             list: One dict per distinct citation: ``{'document', 'doc_id',
-@@ -2804,9 +2807,17 @@ def get_citations(
-             for doc in _all_documents(self):
-                 if doc.get("name") and doc.get("id"):
-                     names.setdefault(doc["name"], []).append(doc["id"])
-+                if doc.get("path") and doc.get("id"):
-+                    names.setdefault(doc["path"], []).append(doc["id"])
-         resolved: list[dict[str, Any]] = []
-         for citation in citations:
--            ids = list(dict.fromkeys(names.get(citation["document"], [])))
-+            cited = citation["document"]
-+            ids = names.get(cited)
-+            if not ids and doc_id is not None:
-+                # Document metadata carries no path: a cited path matches
-+                # by its file name within the scoped documents.
-+                ids = names.get(cited.rsplit("/", 1)[-1])
-+            ids = list(dict.fromkeys(ids or []))
-             if len(ids) > 1:
-                 raise PageIndexAPIError(
-                     f"{citation['document']!r} names {len(ids)} documents "
++    def update_document(self, doc_id: str, *,
++                        metadata: dict[str, Any]) -> dict[str, Any]:
++        """
++        Set metadata keys on a document: a key set to None is removed, and
++        the keys not named stay. The metadata rules of ``submit_document()``
++        apply: a breach raises PageIndexAPIError (HTTP 400). Cloud-only:
++        local mode raises PageIndexAPIError.
++
++            client.update_document(doc_id, metadata={"year": 2025, "draft": None})
++
++        The client reads the document's metadata, then writes t
 ```
 
-**File**: `tests/test_client.py` (modified, +32/-3)
+**File**: `pageindex/cloud_api.py` (modified, +242/-2)
 ```diff
-@@ -2252,12 +2252,13 @@ def test_parse_citations_scans_in_linear_time():
+@@ -2,7 +2,7 @@
+ import os
+ import requests
+ from pathlib import Path
+-from typing import Optional, Dict, Any, List, Union, Iterator
++from typing import Optional, Dict, Any, List, Sequence, Union, Iterator
+ import json
+ import urllib.parse
  
- def _library(docs):
-     """A cloud handler serving /docs/ (100 per page) and /doc/<id>/block/
--    lookups from {doc_id: (name, {block_id: block})}."""
-+    lookups from {doc_id: (name, {block_id: block}[, path])}."""
-     def handler(method, url, kw):
-         if url.endswith("/docs/"):
-             offset = kw["params"]["offset"]
--            entries = [{"id": doc_id, "name": name}
--                       for doc_id, (name, _) in docs.items()]
-+            entries = [{"id": doc_id, "name": doc[0],
-+                        **({"path": doc[2]} if len(doc) > 2 else {})}
-+                       for doc_id, doc in docs.items()]
-             return FakeResponse({"documents": entries[offset:offset + 100],
-                                  "total": len(entries), "limit": 100,
-                                  "offset": offset})
-@@ -2381,6 +2382,34 @@ def test_get_citations_refuses_a_shared_name(cloud, monkeypatch):
-         {"document": "a.pdf", "doc_id": "pi-2", "page": 1}]
+@@ -186,6 +186,34 @@ def get_page_image(self, doc_id: str, page: int) -> str:
+                 return img["url"]
+         raise PageIndexAPIError(f"No image URL returned for page {page}.")
+ 
++    def page_image(self, doc_id: str, page: int, box: Optional[Sequence[float]] = None) -> bytes:
++        """A rendered page as JPEG bytes.
++
++        Args:
++            doc_id (str): Document ID.
++            page (int): 1-based page number.
++            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as fractions
++                of the page from its top left: only that part, drawn sharper.
++
++        Returns:
++            bytes: The JPEG.
++        """
++        if box is None:
++            # a presigned URL: the API key stays off it
++            response = self._http.get(self.get_page_image(doc_id, page), timeout=60)
++        else:
++            response = self._http.get(
++                f"{self.BASE_URL}/doc/s3/{_enc(doc_id)}/images/region",
++                headers=self._headers(),
++                params={"page": page, "box": ",".join(str(v) for v in box)},
++                timeout=60
++            )
++        if response.status_code != 200:
++            raise PageIndexAPIError(
++                f"Failed to get page image: {response.text}",
++                status_code=response.status_code)
++        return response.content
++
+     def get_document_image(self, doc_id: str, img_id: str) -> str:
+         """Presigned URL for an embedded image extracted during OCR.
+ 
+@@ -422,6 +450,29 @@ def get_document(self, doc_id: str) -> Dict[str, Any]:
+                 status_code=response.status_code)
+         return response.json()
+ 
++    def set_document_metadata(self, doc_id: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
++        """
++        Replace a document's metadata (your own tags) with `metadata`.
++
++        Args:
++            doc_id (str): Document ID.
++            metadata (dict): The whole of the new metadata; {} clears it.
++
++        Returns:
++            dict: {"doc_id": ..., "metadata": ...}
++        """
++        response = self._http.put(
++            f"{self.BASE_URL}/doc/{_enc(doc_id)}/metadata/",
++            headers=self._headers(),
++            json=metadata,
++            timeout=30
++        )
++        if response.status_code != 200:
++            raise PageIndexAPIError(
++                f"Failed to update document metadata: {response.text}",
++                status_code=response.status_code)
++        return response.json()
++
+     def delete_document(self, doc_id: str) -> Dict[str, Any]:
+         """
+         Delete a PageIndex document and all its associated data.
+@@ -443,7 +494,7 @@ def delete_document(self, doc_id: str) -> Dict[str, Any]:
+                 status_code=response.status_code)
+         return response.json() if response.content else {}
+ 
+-    def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[str] = None, name: Optional[str] = None, recursive: bool = False, collection_id: Optional[str] = None) -> Dict[str, Any]:
++    def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[str] = None, name: Optional[str] = None, recursive: bool = False, collection_id: Optional[str] = None, metadata_filter: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+         """
+         List all documents for the authenticated user with pagination.
+ 
+@@ -455,6 +506,7 @@ def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[s
+             recursive (bool, optional): Also return documents in descendant folders of folder_id.
+                 Defaults to False (direct contents only).
+             collection_id (str, optional): Return one collection's documents. Defaults to None.
++            metadata_filter (dict, optional): Return only the documents whose metadata meets it. Defaults to None.
+ 
+         Returns:
+             dict: API response containing:
+@@ -477,6 +529,8 @@ def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[s
+             params["recursive"] = recursive
+         if collection_id is not None:
+             params["collection_id"] = collection_id
++        if metadata_filter is not None:
++            params["metadata_filter"] = json.dumps(metadata_filter)
+ 
+         response = self._http.get(
+             f"{self.BASE_URL}/docs/",
+@@ -744,3 +798,189 @@ def delete_metadata_schema(
+                 f"Failed to delete metadata schema: {response.text}",
+                 status_code=response.status_code)
+         return response.json()
++
++    # ---------- SEARCH ----------
++
++    def search_pages(
++        self,
++        doc_id: str,
++        questions: List[str],
++        top_k: Optional[int] = None,
++        include_text: bool = False,
++        start_page: Opti
+```
+
+**File**: `tests/test_client.py` (modified, +439/-0)
+```diff
+@@ -2037,6 +2037,445 @@ def test_cloud_collection_wiring(cloud, sample_pdf):
+     assert calls[-1]["params"] == {"limit": 50, "offset": 0, "collection_id": "c/1"}
  
  
-+def test_get_citations_resolves_library_paths(cloud, monkeypatch):
-+    """The MCP server cites by library path: a nested path picks its own
-+    document over a same-name one at the root, a bare name keeps the
-+    shared-name refusal, and a path outside the listing (a shared mount)
-+    stays unresolved rather than borrowing a same-name own document."""
-+    client, calls, fake = cloud
-+    block = {"doc_id": "pi-n", "page": 4, "block_id": "p4_text_1",
-+             "bbox": [1, 2, 3, 4], "block_type": "text", "text": "Revenue."}
-+    _patch_requests(monkeypatch, _library({
-+        "pi-r": ("Q3 Report.pdf", {}, "Q3 Report.pdf"),
-+        "pi-n": ("Q3 Report.pdf", {"p4_text_1": block},
-+                 "Research/2024/Q3 Report.pdf"),
-+    }))
-+    nested = 'See <cite doc="Research/2024/Q3 Report.pdf" page="4" block="p4_text_1"/>.'
-+    assert client.get_citations(nested) == [
-+        {"document": "Research/2024/Q3 Report.pdf", **block}]
-+    with pytest.raises(PageIndexAPIError, match=r"pi-r, pi-n.*doc_id="):
-+        client.get_citations('<cite doc="Q3 Report.pdf" page="1"/>')
-+    assert client.get_citations(
-+        '<cite doc="Shared with me/Deals/Q3 Report.pdf" page="2"/>') == [
-+        {"document": "Shared with me/Deals/Q3 Report.pdf", "doc_id": None,
-+         "page": 2}]
-+    # doc_id= reads metadata, which carries no path: the file name decides.
-+    assert client.get_citations('<cite doc="Research/2024/Q3 Report.pdf" page="4"/>',
-+                                doc_id="pi-n") == [
-+        {"document": "Research/2024/Q3 Report.pdf", "doc_id": "pi-n", "page": 4}]
++def test_search_and_extract_are_cloud_only(local_client):
++    for call in (lambda: local_client.search("q", document="d"),
++                 lambda: local_client.search_documents("q"),
++                 lambda: local_client.extract("d", {"type": "object"}),
++                 lambda: local_client.get_extract("ext_1"),
++                 local_client.list_extracts,
++                 lambda: local_client.cancel_extract("ext_1"),
++                 lambda: local_client.delete_extract("ext_1")):
++        with pytest.raises(PageIndexAPIError, match="cloud-only"):
++            call()
 +
 +
- def test_get_citations_keeps_blocks_it_cannot_read(cloud, monkeypatch):
-     """A denied block (403) keeps its bbox-less entry like a missing one;
-     a transport failure still propagates with its status."""
++@pytest.fixture
++def served(monkeypatch):
++    """A cloud client whose requests answers.to(method, path, kw) answers,
++    with a payload, a (status, payload) pair or a FakeResponse."""
++    client = PageIndexClient(api_key="secret")
++    calls = []
++    class Answers:
++        to = staticmethod(lambda method, path, kw: {})
++    def handler(method, url, kw):
++        path = url.replace("https://api.pageindex.ai", "", 1)
++        calls.append({"method": method, "path": path, **kw})
++        answer = Answers.to(method, path, kw)
++        if isinstance(answer, FakeResponse):
++            return answer
++        status, payload = answer if isinstance(answer, tuple) else (200, answer)
++        return FakeResponse(payload, status_code=status, text=json.dumps(payload))
++    _patch_requests(monkeypatch, handler)
++    return client, calls, Answers
++
++
++def test_search_one_document(served):
++    client, calls, answers = served
++    info = {"id": "pi/1", "name": "q1.pdf", "pageNum": 20, "folderId": "f-1",
++            "collectionId": None, "metadata": {"year": 2025}, "status": "completed"}
++    pages = [{"page": 4, "relevance": 0.9, "read": "text"}]
++    more = [{"page": 7, "relevance": 0.2, "read": "image"}]
++    usage = {"pages": 20, "questions": 1, "billable_pages": 19, "credits": 0.19,
++             "balance": 99.81}
++    answers.to = lambda method, path, kw: info if method == "GET" else {
++        "id": "srch_1", "doc_id": "pi/1",
++        "results": [{"question": "revenue?", "pages": pages, "more_pages": more}],
++        "failed_pages": [9], "usage": usage, "seconds": 1.2}
++
++    found = client.search("revenue?", document="pi/1", start_page=2, end_page=21)
++
++    assert (calls[-1]["method"], calls[-1]["path"]) == ("POST", "/doc/pi%2F1/page-search/")
++    assert calls[-1]["json"] == {"questions": ["revenue?"], "include_text": False,
++                                 "start_page": 2, "end_page": 21}
++    assert found == {
++        "id": "srch_1",
++        "results": [{"question": "revenue?", "documents": [{
++            "id": "pi/1", "name": "q1.pdf", "pageNum": 20, "folderId": "f-1",
++            "collectionId": None, "metadata": {"year": 2025}, "relevance": None,
++            "pages": pages, "more_pages": more, "failed_pages": [9]}]}],
++        "failed_documents": [],
++        "processing_documents": [],
++        "usage": {"documents": 0, "billable_documents": 0, **usage},
++        "seconds": 1.2,
++    }
++
++
++def _found_document(doc_id, relevance):
++    return {"id": doc_id, "name": f"{doc_id}.pdf", "pageNum": 10, "folderId": None,
++            "collectionId": "c-1", "metadata": None, "relevance": relevance}
++
++
++def _documents_found(first, second):
++    return {"id": "srch_d",
++            "results": [{"question": "q1", "documents": first, "more_documents": []},
++                        {"question": "q2", "documents": second, "more_documents": []}],
++            "failed_documents": ["x"], "processing_documents": ["y"],
++            "usage": {"documents": 4, "questions": 2, "billable_documents": 3,
++                      "credits": 0.12, "balance": 50.0},
++            "seconds": 0.5}
++
++
++def _pages_found(path, kw):
++    doc_id = path.split("/")[2]
++    return {"id": f"srch_{doc_id}", "doc_id": doc_id,
++            "results": [{"question": q, "pages": [{"page": int(q[1]), "relevance": 0.9,
++                                                   "read": "text"}]}
++                        for q in kw["json"]["questions"]],
++            "failed_pages": [], "seconds": 1.0,
++            "usage": {"pages": 10, "questions": len(kw["json"]["questions"]),
++                      "billable_pages": 10, "credits": 0.11, "balance": 49.89}}
++
++
++def test_search_across_documents(served):
++    client, calls, answers = served
++    a, b, c = (_found_document(doc_id, r) for doc_id, r in (("a", 0.9), ("b", 0.8), ("c", 0.7)))
++    judged = _documents_found([a, b, c], [b])
++    def to(method, path, kw):
++        if path == "/docs/search/":
++            return judged
++        if path.startswith("/doc/a/"):
++            return 409, {"detail": "The document's pages are not ready."}
++        return _pages_found(path, kw)
++    answers.to = to
++
++    found = client.search(["q1", "q2"], collection="c-1", 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #678** (2026-11-15): feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata (@rejojer)
+- **PR #677** (2026-11-15): feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (@rejojer)
 - **PR #674** (2026-11-14): release: collections, chat(collection_id=) with box citations, and get_citations for library paths (@rejojer)
 - **PR #673** (2026-11-13): fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (@rejojer)
 - **PR #671** (2026-11-13): test: the live copy checks skip while the cloud addresses documents by path and local mode does not (@rejojer)
 - **PR #670** (2026-11-13): test: the live envelope check passes on the cloud's text outline and on a picture page's extra blocks (@rejojer)
-- **PR #668** (2026-11-12): feat(chat): chat(collection_id=) keeps own-model cloud chat in one collection, and citations= takes a format name such as cite_with_boxes (@rejojer)
-- **PR #666** (2026-11-14): feat(cloud): collections: create, list and delete them, upload a document into one, list its documents, and declare its metadata fields (@rejojer)
 
 ---
 
@@ -2084,59 +1791,56 @@ Co-authored-by: Ray <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chat): own-model chat drops a citation box on a page whose picture the call neve
+## X. the client searches pages and documents, extracts JSON from a PDF, and returns a
 
 **RULE**:
-When implementing operations in `pageindex/agent_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb582bee`: chat): own-model chat drops a citation box on a page whose picture the call never saw. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9f1a879`: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/agent_tools.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import html
-# The tools whose results attach page pictures, by the field naming those pages.
-_PICTURE_PAGES = {"view_pages": "returned_pages",
-                  "get_page_content": "picture_pages", "zoom_page": "page"}
-_CITE_OPEN_RE = re.compile(r"<cite\s[^<>]*>")
-_TAG_ATTR_RE = re.compile(r"""\b(\w+)\s*=\s*(["'])(.*?)\2""", re.S)
-_BOX_ATTR_RE = re.compile(r"""\s+box\s*=\s*("[^"]*"|'[^']*')""")
+                    Optional, Sequence, Union, cast, overload)
+    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
+        """
+        Wait until a document is ready for use, and return it as
+        ``get_document()`` does. Raises PageIndexAPIError if its processing
+        failed, or is not done within ``timeout`` seconds (it goes on in the
+        cloud). A local document is ready at once.
+        """
+        self._wait_until_ready(doc_id, timeout)
+        return self.get_document(doc_id)
 
+    def page_image(self, doc_id: str, page: int,
+                   box: Optional[Sequence[float]] = None) -> bytes:
+        """
+        One page as JPEG bytes: the image itself, where ``get_page_image()``
+        gives a link to it. With ``box``, only that part of the page, drawn
+        sharper, to read small print. Cloud-only: local mode renders no page
+        images.
 
-class _SeenPages:
-    """The pages one chat call's tools pictured; strip() drops boxes elsewhere."""
+            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
 
-    def __init__(self):
-        self.pages: set = set()
-
-    def record(self, name: str, blocks: list) -> None:
-        field = _PICTURE_PAGES.get(name)
-        if field is None or not any(isinstance(block, dict)
-                                    and block.get("type") == "image"
-                                    for block in blocks):
-            return
-        try:
-            result = json.loads(blocks[0]["text"])
-            pictured = result[field]
-            pages = ([pictured] if isinstance(pictured, int)
-                     else _expand_pages(pictured))
-        except (LookupError, TypeError, ValueError):
-            return
-        for ref in (result.get("path"), result.get("do
+        Args:
+            doc_id (str): Document ID.
+            page (int): 1-based page number.
+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
+                fractions of the page's width and
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    folder-tree tools are left out."""
+                    Optional, Union, cast, overload)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb582bee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9f1a879` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

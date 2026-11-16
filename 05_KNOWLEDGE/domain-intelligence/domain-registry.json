@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T14:07:07.021Z",
-  "total_records": 1255,
+  "last_updated": "2026-11-16T14:35:32.073Z",
+  "total_records": 1260,
   "domains": {
     "A": {
       "total": 7,
@@ -40,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 580,
+      "total": 583,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -621,7 +621,10 @@
         "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
         "domain_intelligence-research-knowledge-intelligence-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnin",
         "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-ifm-pan2-core-invariants",
+        "DOM-D-3870AF12",
+        "domain_intelligence-research-knowledge-intelligence-hf-ifm-pan2-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1166,7 +1169,7 @@
       ]
     },
     "I": {
-      "total": 55,
+      "total": 57,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1222,7 +1225,9 @@
         "domain_intelligence-content-information-intelligence-mikepenz-multiplatform-markdown-renderer-learni",
         "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants",
         "domain_intelligence-content-information-intelligence-redisearch-redisearch-core-invariants",
-        "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-vectifyai-pageindex-core-invariants",
+        "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants"
       ]
     },
     "J": {
@@ -15018,8 +15023,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "0deb643867e8ab276d7992e267958e329bd9be1df4bd83844d66f41892e1cb20",
-      "created_at": "2026-11-14T19:03:27.186Z"
+      "content_hash": "cf947ab9157bee1ffe35fd5896c45b07787408a651fdf73c97d099c920b531ef",
+      "created_at": "2026-11-16T14:35:01.682Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -15078,8 +15083,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "a51da87066b934f888e48f481f7f2e8543f4bd7fe959e2a5897bb47b619b189b",
-      "created_at": "2026-11-14T14:28:36.344Z"
+      "content_hash": "a2b675772e0b99cbd77cb001b3a95efc27a39c50da1212956f55dc5cef377c30",
+      "created_at": "2026-11-16T14:35:32.073Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -23046,6 +23051,84 @@
       "repository": "duongductrong-snapzy-learnings",
       "content_hash": "6617b6e2df89e389d6c17fe48ef626c0cfeb12ee9b183be2c0a7592f09a2bad8",
       "created_at": "2026-11-16T13:38:38.172Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ifm-pan2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ifm-pan2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: IFM/PAN2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ifm-pan2-research-knowledge-intelligence-ifm-pan2-core-invariants.md",
+      "repository": "IFM/PAN2",
+      "content_hash": "20f61726883e024e14407ab31249e2463658f109495904f7d77793bc5bb7d66c",
+      "created_at": "2026-11-16T14:34:41.224Z"
+    },
+    "domain_intelligence-content-information-intelligence-vectifyai-pageindex-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-vectifyai-pageindex-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: VectifyAI/PageIndex Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-content-information-intelligence-vectifyai-pageindex-core-in.md",
+      "repository": "VectifyAI/PageIndex",
+      "content_hash": "15a841fdcc30f0a350d922687ecd37730d4f2fe8eea63a901a9b3fd1ee6ea3dd",
+      "created_at": "2026-11-16T14:34:58.743Z"
+    },
+    "DOM-D-3870AF12": {
+      "record_id": "DOM-D-3870AF12",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): IFM/PAN2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/IFM/PAN2](https://huggingface.co/IFM/PAN2))  \n> **Source Version**: `hf-ifm-pan2`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-structural-synthesi",
+      "content_hash": "e33154e187b2efa53848d145e5a9aa4546d2d6629054b6f19abe8119130ff451",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/IFM/P -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/IFM/P",
+      "provenance": {
+        "source_uri": "project://hf-ifm-pan2/hf-ifm-pan2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T14:35:04.519Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ifm-pan2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ifm-pan2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T14:35:30.641Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ifm-pan2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ifm-pan2-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ifm-pan2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ifm-pan2-learnings-research-knowledge-intelligence-hf-ifm-pan2-learnings-core.md",
+      "repository": "hf-ifm-pan2-learnings",
+      "content_hash": "9f6af11699805a76fa410eaa7b31908b8e13cb678c38131204a80f38ed5d17cf",
+      "created_at": "2026-11-16T14:35:30.855Z"
+    },
+    "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: vectifyai-pageindex-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-learnings-content-information-intelligence-vectifyai-pageind.md",
+      "repository": "vectifyai-pageindex-learnings",
+      "content_hash": "667b0d855a0d9cad889827c141629268c0b9253281a75b01ad6318790e3da2a1",
+      "created_at": "2026-11-16T14:35:31.391Z"
     }
   }
 }

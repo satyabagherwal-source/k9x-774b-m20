@@ -2,20 +2,20 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T14:07:05.533Z",
+  "updated_at": "2026-11-16T14:35:31.076Z",
   "stats": {
-    "total_discovered": 4205,
-    "approved_pending_harvest": 3952,
+    "total_discovered": 4210,
+    "approved_pending_harvest": 3957,
     "harvested_count": 0,
     "rejected_count": 253,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3953,
+      "COMMUNITY_AND_EXPERT": 3957,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 15,
       "LEGAL_AND_REGULATORY": 1,
-      "RESEARCH_AND_ACADEMIA": 4
+      "RESEARCH_AND_ACADEMIA": 5
     }
   },
   "sources": {
@@ -90760,6 +90760,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
         "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-9676145EFFB9": {
+      "id": "SRC-9676145EFFB9",
+      "url": "https://huggingface.co/IFM/PAN2",
+      "title": "https://huggingface.co/IFM/PAN2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T14:35:30.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md",
+        "fileName": "hf-ifm-pan2-learnings.md"
+      }
+    },
+    "SRC-55C5E35B9BBD": {
+      "id": "SRC-55C5E35B9BBD",
+      "url": "https://github.com/VectifyAI/PageIndex",
+      "title": "https://github.com/VectifyAI/PageIndex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T14:35:31.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-02D2BA4F02B4": {
+      "id": "SRC-02D2BA4F02B4",
+      "url": "https://raw.githubusercontent.com/BerriAI/litellm/main",
+      "title": "https://raw.githubusercontent.com/BerriAI/litellm/main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T14:35:31.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-2D6DCC8DBDEE": {
+      "id": "SRC-2D6DCC8DBDEE",
+      "url": "https://arxiv.org/pdf/2610.14224v1",
+      "title": "https://arxiv.org/pdf/2610.14224v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "RESEARCH_AND_ACADEMIA",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.95,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T14:35:31.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-41D01350E69A": {
+      "id": "SRC-41D01350E69A",
+      "url": "https://api.pageindex.ai/",
+      "title": "https://api.pageindex.ai/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T14:35:31.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
       }
     }
   }

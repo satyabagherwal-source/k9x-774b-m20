@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:19.918Z",
+  "timestamp": "2026-11-16T14:35:31.161Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-vectifyai-pageindex-learnings",
+  "learning_id": "LEARN-EVO-vectifyai-pageindex-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vectifyai-pageindex-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:19.918Z`  
-> **Learning ID**: `LEARN-REEXTRACT-vectifyai-pageindex-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T14:35:31.161Z`  
+> **Learning ID**: `LEARN-EVO-vectifyai-pageindex-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `2ac8694b`  
+> **Source Version**: `c9f1a879`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T20:52:20.152Z  
+> **Timestamp**: 2026-11-16T14:34:57.648Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T20:52:19.222Z  
+> **Harvest Timestamp**: 2026-11-16T14:34:57.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40139 stars
+- **Stars / Engagement**: 40452 stars
 
 ---
 
@@ -456,6 +456,7 @@ from __future__ import annotations
 
 import copy
 import difflib
+import html
 import inspect
 import json
 import re
@@ -651,7 +652,7 @@ TOOL_CONTRACT: dict[str, dict[str, Any]] = {
                     "description": (
                         "Part number for pagination (1-based, default 1). For "
                         "large outlines, increment until the response's "
-                  
+      
 ```
 
 ### Core Architecture Module: `pageindex/chat_stream.py`
@@ -850,7 +851,7 @@ import threading
 import time
 import warnings
 from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
-                    Optional, Union, cast, overload)
+                    Optional, Sequence, Union, cast, overload)
 
 from .chat_stream import ChatStream, MessagesStream, ChatObject
 from .errors import PageIndexAPIError
@@ -900,9 +901,26 @@ _CITE_TAG_RE = re.compile(r"<cite\s([^<>]*)>(?:(?P<inner>[^<>]*)</cite>)?")
 _CITE_ATTR_RE = re.compile(r"""\b(\w+)=(["'])(.*?)\2""", re.S)
 
 
-def _citation_key(m: re.Match) -> Optional[tuple[str, int, Optional[str]]]:
-    """(document, page, block_id) of one matched tag, or None when it names
-    no document or no positive page."""
+_CitationKey = tuple[str, int, Optional[str], Optional[tuple[float, ...]]]
+
+
+def _citation_box(raw: Optional[str]) -> Optional[tuple[float, ...]]:
+    """A box="x0,y0,x1,y1" value as PageIndex chat's renderer takes it:
+    four fractions from 0 to 1, each start before its end; else None."""
+    try:
+        box = tuple(float(part) for part in (raw or "").split(","))
+    except ValueError:
+        return None
+    if (len(box) != 4 or not all(0 <= value <= 1 for value in box)
+            or box[0] >= box[2] or box[1] >= box[3]):
+        return None
+    return box
+
+
+def _citation_key(m: re.Match) -> Optional[_CitationKey]:
+    """(document, page, block_id, box) of one matched tag, or None when it
+    names no document or no positive page."""
+    box_str = None
     if m.re is _OLD_CITATION_RE:
         doc, page_str, block_id = m.group(1), m.group(2), m.group(3)
     else:
@@ -910,21 +928,23 @@ def _citation_key(m: re.Match) -> Optional[tuple[str, int, Optional[str]]]:
                  _CITE_ATTR_RE.findall(m.group(1))}
         doc, page_str, block_id = (attrs.get("doc", ""), attrs.get("page", ""),
                                    attrs.get("block"))
+        box_str = attrs.get("box")
     doc = doc.strip()
     block_id = (block_id or "").strip() or None
     try:
         page = int(page_str.split("-")[0])
     except ValueError:
         return None
-    return (doc, page, block_id) if doc and page > 0 else None
+    return ((doc, page, block_id, _citation_box(box_str))
+            if doc and page > 0 else None)
 
 
 def _parse_citations(text: str) -> list[dict[str, Any]]:
     """``<doc=…;page=…;block=…>`` tags (the managed chat's format), then
-    ``<cite doc= page= block=/>`` tags; deduplicated, ``block_id`` only
-    when the tag carries one."""
+    ``<cite doc= page= block= box=/>`` tags; deduplicated, ``block_id`` and
+    ``box`` only when the tag carries one."""
     found: list[dict[str, Any]] = []
-    seen: set[tuple[str, int, Optional[str]]] = set()
+    seen: set[_CitationKey] = set()
     for m in [*_OLD_CITATION_RE.finditer(text), *_CITE_TAG_RE.finditer(text)]:
         key = _citation_key(m)
         if key and key not in seen:
@@ -932,6 +952,8 @@ def _parse_citations(text: str) -> list[dict[str, Any]]:
             entry: dict[str, Any] = {"document": key[0], "page": key[1]}
             if key[2]:
                 entry["block_id"] = key[2]
+            if key[3]:
+                entry["box"] = list(key[3])
             found.append(entry)
     return found
 
@@ -1068,21 +1090,6 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
         if index.strip():
             return None, {"index_model": index}
         raise PageIndexAPIError(
-            "index is an empty string — pass a local index model name, "
-            'or "cloud".')
-    if isinstance(index, Mapping):
-        # None-valued keys mean "absent", exactly like the flat arguments.
-        conf: dict[str, Any] = {name: value for name, value in index.items()
-                                if value is not None}
-        declared = _declared_mode(conf.pop("mode", None), "index")
-        if not conf:
-            if declared == "cloud":
-                return lambda: _env_cloud_key('index={"mode": "cloud"}',
-                                              'index={"api_key": ...}'), {}
-            if declared == "local":
-                return None, {}
-            raise PageIndexAPIError(
-     
 ```
 
 ### Core Architecture Module: `pageindex/cloud_api.py`
@@ -1091,7 +1098,7 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
 import os
 import requests
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Union, Iterator
+from typing import Optional, Dict, Any, List, Sequence, Union, Iterator
 import json
 import urllib.parse
 
@@ -1142,6 +1149,7 @@ class CloudAPI:
         beta_headers: Optional[List[str]] = None,
         folder_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        collection_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Upload a PDF document for processing; the tree is built in the background.
@@ -1155,6 +1163,7 @@ class CloudAPI:
             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
             metadata (dict, optional): Your own JSON-serializable tags for the document;
                 returned in get_tree/get_ocr responses and list_documents entries. Defaults to None.
+            collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
 
         Returns:
             dict: {'doc_id': ...} — plus 'name', the stored document name
@@ -1177,6 +1186,8 @@ class CloudAPI:
             data['folder_id'] = folder_id
         if metadata is not None:
             data['metadata'] = json.dumps(metadata)
+        if collection_id is not None:
+            data['collection_id'] = collection_id
 
         with open(file_path, "rb") as f:
             response = self._http.post(
@@ -1271,6 +1282,34 @@ class CloudAPI:
                 return img["url"]
         raise PageIndexAPIError(f"No image URL returned for page {page}.")
 
+    def page_image(self, doc_id: str, page: int, box: Optional[Sequence[float]] = None) -> bytes:
+        """A rendered page as JPEG bytes.
+
+        Args:
+            doc_id (str): Document ID.
+            page (int): 1-based page number.
+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as fractions
+                of the page from its top left: only that part, drawn sharper.
+
+        Returns:
+            bytes: The JPEG.
+        """
+        if box is None:
+            # a presigned URL: the API key stays off it
+            response = self._http.get(self.get_page_image(doc_id, page), timeout=60)
+        else:
+            response = self._http.get(
+                f"{self.BASE_URL}/doc/s3/{_enc(doc_id)}/images/region",
+                headers=self._headers(),
+                params={"page": page, "box": ",".join(str(v) for v in box)},
+                timeout=60
+            )
+        if response.status_code != 200:
+            raise PageIndexAPIError(
+                f"Failed to get page image: {response.text}",
+                status_code=response.status_code)
+        return response.content
+
     def get_document_image(self, doc_id: str, img_id: str) -> str:
         """Presigned URL for an embedded image extracted during OCR.
 
@@ -1319,52 +1358,7 @@ class CloudAPI:
         if response.status_code != 200:
             raise PageIndexAPIError(
                 f"Failed to get tree result: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    # ---------- RETRIEVAL ----------
-
-    def submit_query(self, doc_id: str, query: str, thinking: bool = False) -> Dict[str, Any]:
-        """
-        Submit a retrieval query for a specific PageIndex document.
-
-        Args:
-            doc_id (str): Document ID.
-            query (str): User question or information need.
-            thinking (bool, optional): If true, enables deeper retrieval. Default is False.
-
-        Returns:
-            dict: {'retrieval_id': ...}
-        """
-        payload = {
-            "doc_id": doc_id,
-            "query": query,
-            "thinking": thinking
-        }
-        response = self._http.post(
-            f"{self.BASE_URL}/retrieval/",
-            headers=self._headers(),
-            json=payload,
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to submit retrieval: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    def get_retrieval(self, retrieval_id: str) -> Dict[str, Any]:
-        """
-        Get retrieval status and results.
-
-        Args:
-            retrieval_id (str): Retrieval ID.
-
-        Returns:
-            dict: Retrieval status and results.
-        """
-        response = self._http.get(
-            f"{self.BASE_UR
+                sta
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1416,13 +1410,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #659** (2026-11-05): **perf: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen**
-  *Symptoms*: Flash summaries now run with the least thinking each model accepts, and indexing stops paying the GPT-5.6+ premium on prompt-cache writes it never reads back. On the 22-page cookbook PDF, gpt-5-nano's summaries go from 63,424 reasoning tokens, $0.028 and 64 s to 0, $0.0028 and 9 s, and o3's from $0.238 to $0.104. Indexing with gpt-6-luna drops from $0.184 to $0.164 per 1,000 pages.  A reasoning effort you choose, in `summary_reasoning_effort` or in `index_backend`, now arrives as chosen, or raises before any model call where LiteLLM's model map says the model doesn't take it, as chat already does, or where LiteLLM would drop it even when let through. Indexing's `drop_params=True` used to drop it unseen: gpt-5-nano given `"none"` ran at its default thinking, 7 times slower than leaving it unset. Where the map says it, the error names the least level the model takes. Every other param still goes as LiteLLM takes it.  `"none"` now turns a Claude model's thinking off on every lane and route. The Messages lane gives a Claude id the table lacks its first off switch (thinking `disabled`) instead of an effort Anthropic refuses, and chat on Databricks gets the switch alone.  ## Changes  - Summaries at the default effort climb a ladder from the least thinking up: `"none"`, `"minimal"`, `"low"`, then no effort. A Claude model takes its own switches instead: thinking `disabled`, then `between_tools`, then `"low"`, starting at its known row, past `disabled` where LiteLLM's map says it alw
-
-- **Issue #658** (2026-11-04): **fix(cloud): CloudAPI.submit_document docstring drops the OCR claim; a rejected mode is proven to send nothing**
-  *Symptoms*: Two follow-ups to #657. The `CloudAPI.submit_document` docstring no longer says every upload runs OCR (false for `mode="flash"`), and the bad-mode test now proves a rejected mode sends no request.  ## Changes  - `pageindex/cloud_api.py`: summary line reads "Upload a PDF document for processing; the tree is built in the background." It used to say the system processes both tree generation and OCR. - `tests/test_client.py`: `test_cloud_request_wiring` asserts the request count is unchanged after the four rejected modes (`"Flash"`, `" flash"`, `"standard"`, `"mcp"`). Before this, moving the mode check below the upload would still pass while every bad call uploaded the document.  ## Verification  - `pytest` (without `tests/test_local_chat.py`, whose local anthropic is too old): 805 passed, 7 skipped. - Mutation check: with the mode check moved below the POST, `test_cloud_request_wiring` fails on the new assert. 
+- **Issue #678** (2026-11-15): **feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata**
+  *Symptoms*: Six more things the Page Search and Page Extract SDKs offer and the client lacked, though the cloud already serves them: a page, or a part of it, as an image; changing a document's metadata; listing documents by metadata; and waiting for a document or an extract job.  Stacked on #677 (search and Extract methods): the base is its branch so that only this change shows. It goes to `main` once #677 is merged.  ## Changes  - `page_image(doc_id, page, box=None)` returns the page as JPEG bytes, where `get_page_image()` returns a link. With `box`, (x0, y0, x1, y1) as fractions of the page from its top left, it returns only that part, drawn sharper, to read small print. The whole page is downloaded from the presigned link without the API key. - `update_document(doc_id, metadata=...)` sets metadata keys: a key set to `None` is removed and the keys not named stay. The cloud replaces a document's metadata whole, so the client reads it, merges and writes it back; of two writers at once the later one wins. - `list_documents(filter=...)` lists only the documents whose metadata meets a filter such as `{"year": {"$gte": 2023}}`. - `wait_document(doc_id, timeout=1800)` waits until a document is ready and returns it. In local mode it returns at once. - `wait_extract(job_id, timeout=3600)` waits for an extract job started with `extract(..., wait=False)`; `extract()` now shares its loop. - `get_collection(collection_id)` returns one collection, read from the list. - All but `wait_document` are cl
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"19a61bba6043e924ededa7e0168afec2236a5f4e","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"19a61bba6043e924ededa7e0168afec2236a5f4e","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"19a61bba6043e924ededa7e0168afec2236a5f4e","mergeGateEnabled":false,"pullRequestNumber":658,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T10:43:34.424118Z">2026-11-04T10:43:34.424118Z</relative-time> | `19a61bb` | PR opened | | 🔒 **Security Review** | ✅ **Completed** <relative-time da
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","mergeGateEnabled":false,"pullRequestNumber":678,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T18:06:43.570517Z">2026-11-15T18:06:43.570517Z</relative-time> | `469bd91` | PR opened | | 🔒
+
+- **Issue #677** (2026-11-15): **feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image**
+  *Symptoms*: The cloud already offers page search, document search, Extract and page images cut to a box, but the client had no methods for them: they were reachable only through the cloud's MCP tools. This adds what the Page Search and Page Extract SDKs offer and the client lacked. All of it is cloud-only, except `wait_document`; local mode raises `PageIndexAPIError`.  `client.search(questions, document=doc_id)` returns, for each question, the pages that help answer it. Without `document` it searches across documents: the most relevant documents for each question are found first, and only their pages are searched. Both return one shape: results, then documents, then pages.  `client.extract(document, schema)` turns a PDF, or an uploaded document, into JSON that fits a JSON Schema or a Pydantic model, and waits for the result by default.  ## Changes  Search  - `search(questions, *, document, documents, collection, folder, recursive, filter, max_documents, document_top_k, top_k, include_text, start_page, end_page)`: the parameter names follow the Page Search SDK; `folder` and `recursive` are new, for PageIndex's folders. Across documents each question opens at most `max_documents` (default 3) or exactly `document_top_k`, up to 10, and a document several questions chose is searched once. A document whose pages cannot be searched goes to `failed_documents`; running out of credits, or every opened document failing, raises. - `search_documents(questions, *, document_ids, collection, folder, rec
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"71b3674d3fa681b1b0084b9757c2256068f92afc","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"71b3674d3fa681b1b0084b9757c2256068f92afc","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"71b3674d3fa681b1b0084b9757c2256068f92afc","mergeGateEnabled":false,"pullRequestNumber":677,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T18:38:00.775560Z">2026-11-15T18:38:00.775560Z</relative-time> | `71b3674` | New commits | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1439,534 +1435,357 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2ac8694b` (2026-11-05)
-**Commit Message**: perf: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen (#659)
+### Incident Patch 1: `c9f1a879` (2026-11-15)
+**Commit Message**: feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (#677)
 
-* perf: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen
+- search(questions, document=...) returns, for each question, the pages that help answer it. Without document it finds the most relevant documents for each question first and searches only their pages, joining the cloud's two calls; both return one shape: results, then documents, then pages. search_documents() returns the documents likely to hold each answer. Parameter names follow the Page Search SDK; folder and recursive are new, for PageIndex's folders.
+- extract(document, schema) turns a PDF's path, or an uploaded document's id, into JSON that fits a JSON Schema or a Pydantic model. It waits for the result by default, and for a document still processing first. get_extract, list_extracts, cancel_extract, delete_extract and wait_extract manage jobs; a status read that fails during a wait names the job, which goes on running.
+- page_image(doc_id, page, box=None) returns a page as JPEG bytes, or with box only that part of it, drawn sharper. update_document(doc_id, metadata=...) sets the keys named, removes those set to None and keeps the rest. list_documen
 
-Flash summaries now run with the least thinking each model accepts, and
-indexing stops paying the GPT-5.6+ premium on prompt-cache writes it
-never reads back. On the 22-page cookbook PDF, gpt-5-nano's summaries
-go from 63,424 reasoning tokens, $0.028 and 64 s to 0, $0.0028 and 9 s,
-and o3's from $0.238 to $0.104. Indexing with gpt-6-luna drops from
-$0.184 to $0.164 per 1,000 pages.
-
-Summaries at the default effort:
-- A ladder from the least thinking up: "none", "minimal", "low", then
-  no effort. A Claude model takes its own switches instead: thinking
-  disabled, then between_tools, then "low", starting at its known row,
-  past disabled where LiteLLM's map says it always thinks.
-- A rung goes out only where LiteLLM would put it on the wire, as
-  get_optional_params builds it, and never one LiteLLM sends as
-  thinking turned on: an effort on a model that thinks only when 
-
-**File**: `pageindex/client.py` (modified, +58/-17)
+**File**: `pageindex/client.py` (modified, +513/-1)
 ```diff
-@@ -442,16 +442,33 @@ class PageIndexClient:
-             cap + min(32, cap) calls run at once. Defaults to 128.
-         summary_reasoning_effort (str, optional): Local flash mode only —
-             the reasoning effort sent with each node-summary call, over any
--            in ``index_backend`` (``"none"``, ``"low"``, ``"high"``, ...; a
--            model without the setting drops it). Defaults to ``"none"``
--            unless LiteLLM lists the model as refusing it, and stops
--            sending it once a prompt the server refused with it (HTTP
--            400) goes through without it (never on ``claude-code/``,
--            whose effort is checked up front). ``"none"`` raises on a model
--            whose thinking can't be turned off (Claude Opus 5.5 and Fable
--            under ``anthropic/``, ``bedrock/``, ``vertex_ai/`` or
--            ``azure_ai/``) and on any ``claude-code/`` model; the default
--            runs them at ``"low"``.
-+            in ``index_backend`` (``"none"``, ``"low"``, ``"high"``, ...):
-+            a level LiteLLM's model map says the model doesn't take raises
-+            before any model call, as chat does (``"none"`` on gpt-5-nano
-+            names ``"minimal"``), a model LiteLLM doesn't know on an
-+            OpenAI-format API (``azure/``, or a provider LiteLLM lists as
-+            OpenAI-compatible, such as ``groq/``) gets it as is (a level
-+            LiteLLM drops even then raises too), and one it doesn't know
-+            elsewhere, ``openai/`` included, goes as LiteLLM takes it,
-+            which may drop the effort unless LiteLLM's published map knows
-+            the model. A global ``litellm.drop_params = True`` turns these
-+            checks off: LiteLLM then drops a level the model doesn't take,
-+            unseen. Defaults to the least
-+            thinking the model takes, trying ``"none"``, ``"minimal"``,
-+            ``"low"`` in turn (a Claude model under ``anthropic/``,
-+            ``bedrock/``, ``vertex_ai/``, ``azure_ai/`` or ``databricks/``:
-+            ``thinking`` ``disabled``, then ``between_tools``, then
-+            ``"low"``): a level LiteLLM would not send is skipped,
-+            ``"minimal"`` is tried only where LiteLLM's model map lists
-+            it, a model LiteLLM doesn't know on an OpenAI-format API gets
-+            the effort as is, and a level the server refuses (HTTP 400 or
-+            422) gives way to the next, then to none sent, once a prompt goes
-+            through a step down; the process then skips it (never on
-+            ``claude-code/``, whose effort is checked up front).
-+            ``"none"`` also raises on a model whose thinking can't be
-+            turned off (Claude Opus 5.5 and Fable under those routes) and
-+            on any ``claude-code/`` model; the default runs them at
-+            ``"low"``.
-             Expand keeps the model's own default. A
-             ``mode="standard"`` submit refuses any of the summary knobs.
-         use_embedded_toc (bool, optional): Local mode only — whether flash
-@@ -468,7 +485,31 @@ class PageIndexClient:
-         index_backend (dict, optional): Local mode only — connection
-             overrides for the indexing lane's LLM calls. Keys are
-             LiteLLM's own connection params — ``api_key``, ``api_base``,
--            ``api_version``, ``aws_*``, … — passed through verbatim.
-+            ``api_version``, ``aws_*``, … — passed through verbatim. A
-+            ``reasoning_effort`` here reaches every indexing call as
-+            chosen: a level LiteLLM's model map says the indexing model
-+            doesn't take raises before any model call, as chat does, a
-+            model LiteLLM doesn't know on an OpenAI-format API (``azure/``,
-+            or a provider LiteLLM lists as OpenAI-compatible) gets it as
-+            is (a level LiteLLM drops even then raises too), and one it
-+            doesn't know elsewhere, ``openai/`` included, goes as LiteLLM
-+            takes it, which may drop the effort unless its map knows the
-+            model. A global ``litellm.drop_params = True`` turns these
-+            checks off: LiteLLM then drops a level the model doesn't take,
-+            unseen. Where
-+            LiteLLM's own rule says a model takes
-+            ``prompt_cache_options`` (its model map's flag, else its
-+            GPT-5.6-on name rule) and the route's map entry, where it has
-+            one, prices a cache write above input, indexing sends
-+            ``prompt_cache_options={"mode": "explicit"}``, which writes
-+            nothing (OpenAI's GPT-5.6 on, direct or through gateways such
-+            as OpenRouter; with a ``base_model`` here, as LiteLLM prices
-+            that), and stops on a server that refuses it (HTTP 400 or
-+            422). A cache choice here wins: ``prompt_cache_options``
-+            (``{"mode": "implicit"}`` keeps the model's default caching,
-+            which pays for the writes and lets a document indexed again
-+          
+@@ -7,7 +7,7 @@
+ import time
+ import warnings
+ from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
+-                    Optional, Union, cast, overload)
++                    Optional, Sequence, Union, cast, overload)
+ 
+ from .chat_stream import ChatStream, MessagesStream, ChatObject
+ from .errors import PageIndexAPIError
+@@ -917,6 +917,16 @@ def submit_document(
+             self._wait_until_ready(result["doc_id"])
+         return result
+ 
++    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
++        """
++        Wait until a document is ready for use, and return it as
++        ``get_document()`` does. Raises PageIndexAPIError if its processing
++        failed, or is not done within ``timeout`` seconds (it goes on in the
++        cloud). A local document is ready at once.
++        """
++        self._wait_until_ready(doc_id, timeout)
++        return self.get_document(doc_id)
++
+     def _wait_until_ready(self, doc_id: str, timeout: float = 1800.0) -> None:
+         import requests
+         interval = 2.0
+@@ -1040,6 +1050,32 @@ def get_page_image(self, doc_id: str, page: int) -> str:
+             "rendering. Create the client with an api_key to get page images."
+         ).get_page_image(doc_id=doc_id, page=page)
+ 
++    def page_image(self, doc_id: str, page: int,
++                   box: Optional[Sequence[float]] = None) -> bytes:
++        """
++        One page as JPEG bytes: the image itself, where ``get_page_image()``
++        gives a link to it. With ``box``, only that part of the page, drawn
++        sharper, to read small print. Cloud-only: local mode renders no page
++        images.
++
++            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
++
++        Args:
++            doc_id (str): Document ID.
++            page (int): 1-based page number.
++            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
++                fractions of the page's width and height from its top left,
++                each from 0 to 1, with x0 < x1 and y0 < y1. A box the cloud
++                cannot read raises PageIndexAPIError (HTTP 422).
++
++        Returns:
++            bytes: The JPEG.
++        """
++        return self._require_cloud(
++            "page_image is cloud-only — local mode has no page-image "
++            "rendering. Create the client with an api_key to get page images."
++        ).page_image(doc_id=doc_id, page=page, box=box)
++
+     def get_document_image(self, doc_id: str, img_id: str) -> str:
+         """
+         A short-lived URL to an image OCR extracted from the document.
+@@ -2233,6 +2269,7 @@ def list_documents(
+         folder_id: Optional[str] = None,
+         recursive: bool = False,
+         collection_id: Optional[str] = None,
++        filter: Optional[dict[str, Any]] = None,
+     ) -> dict[str, Any]:
+         """
+         List documents with pagination, newest first.
+@@ -2247,6 +2284,10 @@ def list_documents(
+             collection_id (str, optional): Cloud-only: list one collection's
+                 documents. Passing ``folder_id`` or ``recursive`` too raises
+                 PageIndexAPIError (HTTP 400).
++            filter (dict, optional): Cloud-only: list only the documents
++                whose metadata meets it, e.g. ``{"year": {"$gte": 2023}}``.
++                A key alone is equality; the operators are $eq, $ne, $in,
++                $gt, $gte, $lt, $lte, and $and / $or over a list of filters.
+ 
+         Returns:
+             dict: {'documents': [...], 'total', 'limit', 'offset'}.
+@@ -2257,10 +2298,43 @@ def list_documents(
+         collection, for a folder reached only through a share of
+         something below it, and for every local document.
+         """
++        if filter is not None:
++            return self._require_cloud(
++                "list_documents(filter=) is cloud-only — metadata filters "
++                "are not supported in local mode. Create the client with an "
++                "api_key to use them."
++            ).list_documents(limit=limit, offset=offset, folder_id=folder_id,
++                             recursive=recursive, collection_id=collection_id,
++                             metadata_filter=filter)
+         return self._api.list_documents(limit=limit, offset=offset,
+                                         folder_id=folder_id, recursive=recursive,
+                                         collection_id=collection_id)
+ 
++    def update_document(self, doc_id: str, *,
++                        metadata: dict[str, Any]) -> dict[str, Any]:
++        """
++        Set metadata keys on a document: a key set to None is removed, and
++        the keys not named stay. The metadata rules of ``submit_document()``
++        apply: a breach raises PageIndexAPIError (HTTP 400). Cloud-only:
++        local mode raises PageIndexAPIError.
++
++            client.update_document(doc_id, metadata={"year": 2025, "draft": None})
++
++        The client reads the document's metadata, then writes t
 ```
 
-**File**: `pageindex/flash/api.py` (modified, +21/-18)
+**File**: `pageindex/cloud_api.py` (modified, +242/-2)
 ```diff
-@@ -190,7 +190,7 @@ def page_index_flash(pdf, summary=True, summary_model=None,
-                      optimize_model=None, summary_concurrency=None,
-                      use_embedded_toc=True, summary_max_words=None,
-                      summary_reasoning_effort=None) -> dict:
--    """Build a PageIndex tree structure from a PDF using layout statistics. The tree extraction itself uses no LLM; by default an LLM writes node summaries and expands the tree (``summary=False, optimize=False`` runs fully LLM-free). Args: pdf: path to a PDF file (``str`` or ``pathlib.Path``) or an in-memory binary stream (``io.BytesIO``). summary: if True, generate LLM summaries for each node (requires ``summary_model``). summary_model: the LLM model identifier to use for summary generation. optimize: ``"full"`` for merge + LLM expand (a model unreachable after the retry ladder — a missing credential included — fails the run loudly from expand itself; a per-prompt rejection leaves just that node collapsed), ``"merge"`` for deterministic merge only, ``False`` to disable. ``True`` is accepted as ``"full"`` for backward compatibility; defaults to ``"full"``. Expand needs readable page text, so a bookmark-only or scanned PDF runs the merge half only (``expands`` reports 0). optimize_expand: deprecated — use ``optimize``. Honored only when ``optimize`` is not passed (or is the legacy ``True``): ``False`` maps to ``"merge"``, ``True`` to ``"full"``. optimize_model: the LLM model for expand (defaults to the summary model). summary_concurrency: cap on simultaneous indexing model calls per lane: the summaries, and expand up to its own ceiling of 32 (the lanes overlap, so up to cap + min(32, cap) calls run at once); None uses the library defaults (128 and 32). use_embedded_toc: if True, consume the PDF's embedded bookmarks when trustworthy: deep bookmarks become the frame and the detected sections they lack are grafted back in after noise filtering, coarse ones become the chapter frame with detected nodes re-hung under them (deeper sparse entries are filled in when the page text confirms them, and garbled extracted titles are repaired from the bookmark strings), garbage ones are ignored. On by default; pass False for the pure detected structure. summary_max_words: word cap each model-written node summary is asked to stay within (a leaf shorter than that keeps its raw text); None uses the library default (150). summary_reasoning_effort: the reasoning effort sent with each summary call (``"none"``, ``"low"``, ``"high"``, ...; a model without the setting drops it); None sends the library default (``"none"``) unless LiteLLM lists the model as refusing it, and stops sending it once a prompt the server refused with it (HTTP 400) goes through without it (never on ``claude-code/``, whose effort is checked up front). ``"none"`` raises on a model whose thinking can't be turned off (Claude Opus 5.5 and Fable under ``anthropic/``, ``bedrock/``, ``vertex_ai/`` or ``azure_ai/``) and on any ``claude-code/`` model; the default runs them at ``"low"``. Expand keeps the model's own default. Returns: dict with keys ``doc_name``, ``doc_title``, ``structure`` (a list of ``{"title", "node_id", "start_index", "end_index"}`` dicts; ``"nodes"`` holds the children where there are any and ``"summary"`` appears when summaries ran; page indexes are 1-based; a hierarchy that starts after page 1 is preceded by a ``Preface`` node covering the pages before it, as in standard mode, and the first section's page too unless that heading opens it; a parent whose first child starts on a later page opens with a child titled ``"<parent title> (intro)"`` holding the pages before it; a parent's range and summary cover its whole subtree) and ``has_abstract_or_references_section`` (True when a top-level entry is an abstract or references heading). ``toc_source`` says where the structure came from: ``"detected"`` (layout), ``"bookmarks"`` (the embedded outline), ``"hybrid"`` (bookmarks framing the detected sections), ``"pages"`` (no hierarchy found, so one node per page titled ``Page N``; left unsummarized and unoptimized when there are more than ``FLAT_TREE_MAX_NODES`` pages, a size the local client and CLI refuse) or ``"unreadable"`` (no page carries text; ``structure`` is empty). With ``optimize`` an ``optimize`` key reports merge/expand counts and before/after search-cost metrics; a refused flat tree carries neither it nor node summaries. """
-+    """Build a PageIndex tree structure from a PDF using layout statistics. The tree extraction itself uses no LLM; by default an LLM writes node summaries and expands the tree (``summary=False, optimize=False`` runs fully LLM-free). Args: pdf: path to a PDF file (``str`` or ``pathlib.Path``) or an in-memory binary stream (``io.BytesIO``). summary: if True, generate LLM summaries for each node (requires ``summary_model``). summary_model: the LLM model identifier to use for summary generation. optimize: ``"full"`` for merge + LLM expand (a mode
+@@ -2,7 +2,7 @@
+ import os
+ import requests
+ from pathlib import Path
+-from typing import Optional, Dict, Any, List, Union, Iterator
++from typing import Optional, Dict, Any, List, Sequence, Union, Iterator
+ import json
+ import urllib.parse
+ 
+@@ -186,6 +186,34 @@ def get_page_image(self, doc_id: str, page: int) -> str:
+                 return img["url"]
+         raise PageIndexAPIError(f"No image URL returned for page {page}.")
+ 
++    def page_image(self, doc_id: str, page: int, box: Optional[Sequence[float]] = None) -> bytes:
++        """A rendered page as JPEG bytes.
++
++        Args:
++            doc_id (str): Document ID.
++            page (int): 1-based page number.
++            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as fractions
++                of the page from its top left: only that part, drawn sharper.
++
++        Returns:
++            bytes: The JPEG.
++        """
++        if box is None:
++            # a presigned URL: the API key stays off it
++            response = self._http.get(self.get_page_image(doc_id, page), timeout=60)
++        else:
++            response = self._http.get(
++                f"{self.BASE_URL}/doc/s3/{_enc(doc_id)}/images/region",
++                headers=self._headers(),
++                params={"page": page, "box": ",".join(str(v) for v in box)},
++                timeout=60
++            )
++        if response.status_code != 200:
++            raise PageIndexAPIError(
++                f"Failed to get page image: {response.text}",
++                status_code=response.status_code)
++        return response.content
++
+     def get_document_image(self, doc_id: str, img_id: str) -> str:
+         """Presigned URL for an embedded image extracted during OCR.
+ 
+@@ -422,6 +450,29 @@ def get_document(self, doc_id: str) -> Dict[str, Any]:
+                 status_code=response.status_code)
+         return response.json()
+ 
++    def set_document_metadata(self, doc_id: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
++        """
++        Replace a document's metadata (your own tags) with `metadata`.
++
++        Args:
++            doc_id (str): Document ID.
++            metadata (dict): The whole of the new metadata; {} clears it.
++
++        Returns:
++            dict: {"doc_id": ..., "metadata": ...}
++        """
++        response = self._http.put(
++            f"{self.BASE_URL}/doc/{_enc(doc_id)}/metadata/",
++            headers=self._headers(),
++            json=metadata,
++            timeout=30
++        )
++        if response.status_code != 200:
++            raise PageIndexAPIError(
++                f"Failed to update document metadata: {response.text}",
++                status_code=response.status_code)
++        return response.json()
++
+     def delete_document(self, doc_id: str) -> Dict[str, Any]:
+         """
+         Delete a PageIndex document and all its associated data.
+@@ -443,7 +494,7 @@ def delete_document(self, doc_id: str) -> Dict[str, Any]:
+                 status_code=response.status_code)
+         return response.json() if response.content else {}
+ 
+-    def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[str] = None, name: Optional[str] = None, recursive: bool = False, collection_id: Optional[str] = None) -> Dict[str, Any]:
++    def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[str] = None, name: Optional[str] = None, recursive: bool = False, collection_id: Optional[str] = None, metadata_filter: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+         """
+         List all documents for the authenticated user with pagination.
+ 
+@@ -455,6 +506,7 @@ def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[s
+             recursive (bool, optional): Also return documents in descendant folders of folder_id.
+                 Defaults to False (direct contents only).
+             collection_id (str, optional): Return one collection's documents. Defaults to None.
++            metadata_filter (dict, optional): Return only the documents whose metadata meets it. Defaults to None.
+ 
+         Returns:
+             dict: API response containing:
+@@ -477,6 +529,8 @@ def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[s
+             params["recursive"] = recursive
+         if collection_id is not None:
+             params["collection_id"] = collection_id
++        if metadata_filter is not None:
++            params["metadata_filter"] = json.dumps(metadata_filter)
+ 
+         response = self._http.get(
+             f"{self.BASE_URL}/docs/",
+@@ -744,3 +798,189 @@ def delete_metadata_schema(
+                 f"Failed to delete metadata schema: {response.text}",
+                 status_code=response.status_code)
+         return response.json()
++
++    # ---------- SEARCH ----------
++
++    def search_pages(
++        self,
++        doc_id: str,
++        questions: List[str],
++        top_k: Optional[int] = None,
++        include_text: bool = False,
++        start_page: Opti
 ```
 
-**File**: `pageindex/local_api.py` (modified, +20/-7)
+**File**: `tests/test_client.py` (modified, +439/-0)
 ```diff
-@@ -56,16 +56,28 @@ def __init__(self, storage_path: str, model: str, summary_model: str,
-         from .utils import ConfigLoader
-         self._config_loader = ConfigLoader()
- 
--    def _with_backend(self, usage, func, *args):
-+    def _with_backend(self, usage, models, func, *args):
-         """Scope the indexing lane's connection overrides and the `usage`
-         tally around one operation — runs inside whatever thread
--        run_off_loop picked."""
--        from .utils import _llm_backend, _llm_usage
--        token = _llm_backend.set(self._index_backend)
-+        run_off_loop picked. A reasoning effort among the overrides goes to
-+        each of `models`, the ones the operation calls, as chosen_effort
-+        carries it to that one, or fails first."""
-+        from .integrations.claude_agent_sdk import is_claude_code
-+        from .utils import _llm_backend, _llm_effort, _llm_usage, chosen_effort
-+        backend = self._index_backend
-+        effort = (backend or {}).get("reasoning_effort")
-+        token = _llm_backend.set(backend)  # chosen_effort reads it
-         usage_token = _llm_usage.set(usage)
-+        effort_token = None
-         try:
-+            effort_token = _llm_effort.set({
-+                model: chosen_effort(model, effort, name='index_backend["reasoning_effort"]')
-+                for model in dict.fromkeys(models)
-+                if effort and model and not is_claude_code(model)})
-             return func(*args)
-         finally:
-+            if effort_token is not None:
-+                _llm_effort.reset(effort_token)
-             _llm_usage.reset(usage_token)
-             _llm_backend.reset(token)
- 
-@@ -148,12 +160,13 @@ def submit_document(
-         try:
-             if mode == "flash":
-                 structure, description = run_off_loop(
--                    self._with_backend, usage, self._index_flash, file_path
-+                    self._with_backend, usage, (self._summary_model,),
-+                    self._index_flash, file_path
-                 )
-             else:
-                 structure, description = run_off_loop(
--                    self._with_backend, usage, self._index_standard, file_path,
--                    page_texts
-+                    self._with_backend, usage, (self._model, self._summary_model),
-+                    self._index_standard, file_path, page_texts
-                 )
-         except PageIndexAPIError:
-             raise
-```
-
-**File**: `pageindex/local_chat.py` (modified, +88/-30)
-```diff
-@@ -313,7 +313,9 @@ def __init__(self, model: str, nested: bool = False):
-         self.missed = False  # a request went out without the fill
-         self.unanswered: Optional[bool] = None  # the latest stream, so far
-         self.sent: set = set()  # latest request's fields a 400 may refuse
--        self.refused: set = set()  # fields a 400 refused in this call
-+        self.refused: set = set()  # fields a 400 refused in this call, or before (_keep_reply_fields)
-+        self.inherited: set = set()  # of those, the ones refused before
-+        self.forced: set = set()  # params LiteLLM refused that go as they are
- 
-     def _call_id(self, call: dict) -> str:
-         # LiteLLM folds a Gemini signature into the id; the SDK strips it
-@@ -439,13 +441,15 @@ def converting(thinking_blocks, *args, **kwargs):
+@@ -2037,6 +2037,445 @@ def test_cloud_collection_wiring(cloud, sample_pdf):
+     assert calls[-1]["params"] == {"limit": 50, "offset": 0, "collection_id": "c/1"}
  
  
- def _register_fill() -> None:
--    """The LiteLLM pre-request hook that fills a run's requests, in
--    litellm.callbacks: added before each request, again if a caller
-+    """The LiteLLM pre-request hook that fills a run's requests, and takes
-+    a "none" effort off where a Claude thinking switch stands in for it,
-+    in litellm.callbacks: added before each request, again if a caller
-     replaced the list. The first call also wraps LiteLLM's Converse
-     thinking converter (_keep_redacted)."""
-     global _fill_hook
-     import litellm
-     from litellm.integrations.custom_logger import CustomLogger
-+    from .utils import _claude_routed
-     with _FILL_LOCK:
-         if _fill_hook is None:
-             name = "translate_thinking_blocks_to_reasoning_content_blocks"
-@@ -466,6 +470,12 @@ async def async_pre_call_deployment_hook(self, kwargs,
-                             or not isinstance(kwargs.get("messages"), list)):
-                         return None
-                     messages = replies.fill(kwargs["messages"])
-+                    if (kwargs.get("reasoning_effort") == "none" and "thinking" in kwargs
-+                            and _claude_routed(str(kwargs.get("model") or ""))):
-+                        # the switch stands in for "none" (_openai_agent): beside
-+                        # it, LiteLLM's Databricks route drops both
-+                        kwargs = {key: value for key, value in kwargs.items()
-+                                  if key != "reasoning_effort"}
-                     if (kwargs.get("cache_control_injection_points")
-                             and _gateway(str(kwargs.get("model") or ""),
-                                          kwargs.get("base_url"))):
-@@ -539,31 +549,64 @@ async def _again_with_published_models():
-     return False
- 
- 
--def _chat_retry(replies: _Replies):
--    """Once again after LiteLLM refused the request itself, with the
--    entries its packaged model map lacks taken from the published one (a
--    model newer than the package). Again at once without the fields a 400
--    names, of those the request had that may be refused, for the rest of
--    the call: each retry refuses what its 400 named. A reply with no
--    choices goes again, as on the index lane. Anything else by the SDK's
--    one retry rule, within retry.CHAT_RETRIES."""
-+def _litellm_allows(text) -> set:
-+    """The params a LiteLLM refusal says to send as allowed_openai_params."""
-+    import ast
-+    found = re.search(r"allowed_openai_params=(\[[^\]]*\])", text)
-+    try:
-+        return set(ast.literal_eval(found.group(1))) if found else set()
-+    except (ValueError, SyntaxError):
-+        return set()
-+
-+
-+def _chat_retry(replies: _Replies, remembered: set):
-+    """Once again after LiteLLM refused the request itself for a model its
-+    map lacks: on an OpenAI-format API with the params it named as they are,
-+    that API's own fields (as summaries send an effort), where it named
-+    none (its GPT-5 rules refusing "xhigh") and elsewhere with the entries
-+    its packaged model map lacks taken from the published one (a model
-+    newer than the package). A model the map holds gains nothing from
-+    either. Again at once without the fields a 400 names, of those the
-+    request had that may be refused, for the rest of the call, and of the
-+    process at that model and base URL once a request goes through without
-+    it (_keep_reply_fields); with one a 400 names that the call withheld
-+    only as the process remembered it refused, forgotten. Each retry acts
-+    on what its 400 named. A reply with no choices goes again, as on the
-+    index lane. Anything else by the SDK's one retry rule, within
-+    retry.CHAT_RETRIES."""
-     from agents import ModelRetrySettings, RetryDecision
-     from litellm.exceptions import UnsupportedParamsError
-     from .retry import CHAT_RETRIES, SDK_MAX_DELAY, agent_policy, delay
--    learned = False
-+    from .utils import _in_model_map, _openai_format
-+    lifted = False
- 
-     def policy(context):
--        nonlocal learned
-+        nonlocal lifted
-         if context.normalized.status_code in (400, 422):
--            if (isinstance(context.e
-```
-
-**File**: `pageindex/utils.py` (modified, +467/-69)
-```diff
-@@ -37,6 +37,11 @@
- _llm_backend: contextvars.ContextVar = contextvars.ContextVar(
-     "pageindex_llm_backend", default=None)
- 
-+# Same scope: per model the operation calls, the kwargs chosen_effort
-+# carries the backend's reasoning_effort to that model with.
-+_llm_effort: contextvars.ContextVar = contextvars.ContextVar(
-+    "pageindex_llm_effort", default=None)
-+
- # Same scope: the dict the token usage of every indexing model call is
- # summed into, which LocalAPI returns from submit_document.
- _llm_usage: contextvars.ContextVar = contextvars.ContextVar(
-@@ -130,28 +135,33 @@ def _quiet_litellm() -> None:
- _published = None
- _published_lock = threading.Lock()
- _filled = False
-+_MAP_RETRY = 300  # seconds a failed download stands before the next may start
-+_retry_published_at = float("inf")
- 
- 
- def _published_map():
-     """LiteLLM's published model map as downloaded, a Future of its bytes:
-     one download per process, on a daemon thread, that runs on any thread
--    wait for together."""
--    global _published
-+    wait for together; a failed one, _MAP_RETRY on, gives way to another."""
-+    global _published, _retry_published_at
-     with _published_lock:
--        if _published is not None:
-+        if _published is not None and time.monotonic() < _retry_published_at:
-             return _published
-         from concurrent.futures import Future
-         future = _published = Future()
-+        _retry_published_at = float("inf")
-         # running: a cancelled waiter can't cancel it for the others
-         future.set_running_or_notify_cancel()
- 
-     def fetch():
-+        global _retry_published_at
-         try:
-             import httpx
-             response = httpx.get(_PUBLISHED_MAP_URL, timeout=5)
-             response.raise_for_status()
-             future.set_result(response.content)
-         except Exception as exc:
-+            _retry_published_at = time.monotonic() + _MAP_RETRY
-             future.set_exception(exc)
-     threading.Thread(target=fetch, daemon=True).start()
-     return future
-@@ -197,21 +207,163 @@ async def learn_published_models() -> bool:
-     return _filled
- 
- 
--def learn_model_if_effort_dropped(model) -> None:
--    """learn_published_models when LiteLLM's packaged map lacks `model` and
--    LiteLLM so drops a reasoning_effort sent with it: drop_params drops it
--    unseen, leaving no refusal to learn on."""
-+_MAP_WAIT = 3  # seconds summaries wait on the download, which goes on past it
-+
-+
-+def _in_model_map(model):
-+    """Whether LiteLLM's map holds `model` itself, or the indexing backend's
-+    base_model LiteLLM reads it as, as LiteLLM's own lookup finds it
-+    (provider included); its fallback rules answer ids the map lacks with a
-+    key the map doesn't hold."""
-+    import litellm
-+    for name in filter(None, ((_llm_backend.get() or {}).get("base_model"), model)):
-+        try:
-+            if litellm.get_model_info(name).get("key") in litellm.model_cost:
-+                return True
-+        except Exception:
-+            pass
-+    return False
-+
-+
-+def _openai_format(model):
-+    """Whether `model`'s API takes OpenAI's own request fields: a provider on
-+    LiteLLM's list of OpenAI-compatible ones, less a Claude model there,
-+    which LiteLLM sends in Anthropic's (azure_ai/claude-...), and Azure
-+    OpenAI, OpenAI's own API under deployment names."""
-+    import litellm
-+    provider = model.split("/", 1)[0]
-+    return provider == "azure" or (provider in litellm.openai_compatible_providers
-+                                   and not _claude_routed(model))
-+
-+
-+def _effort_dropped_unmapped(model, effort=None):
-+    """LiteLLM's packaged map lacks `model` and LiteLLM so drops a
-+    reasoning_effort sent with it, or the level the caller chose (`effort`,
-+    else the indexing backend's: "xhigh" on openai/gpt-6.1-terra):
-+    drop_params drops it unseen, leaving no refusal to learn on. On an
-+    OpenAI-format API, where the effort is the API's own field and goes as
-+    is (summary_effort_ladder), only a chosen level LiteLLM drops even
-+    then ("xhigh" on azure/gpt-6.1-terra)."""
-     import litellm
-     model = _litellm_model(model)
--    try:
--        litellm.get_model_info(model)
--        return  # in the packaged map: the published one adds nothing for it
--    except Exception:
--        pass
-+    if _in_model_map(model):
-+        return False
-+    effort = effort or (_llm_backend.get() or {}).get("reasoning_effort")
-+    if _openai_format(model):
-+        return bool(effort) and "reasoning_effort" not in _sends(model, {
-+            "reasoning_effort": effort, "allowed_openai_params": ["reasoning_effort"]})
-     provider, name = model.split("/", 1)
-     if "reasoning_effort" not in (litellm.get_supported_openai_params(
-             model=name, custom_llm_provider=provider) or []):
--        run_off_loop(asyncio.run, learn_published_models())
-+        return True
-+    return bool(effort) and _litellm_refuses(model, {"reasoning_effort": effort}) is not None
-
-```
-
-**File**: `run_pageindex.py` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
- from pageindex import *
- from pageindex.page_index_md import md_to_tree
- from pageindex.utils import (ConfigLoader, SUMMARY_CONCURRENCY, SUMMARY_MAX_WORDS,
--                             SUMMARY_REASONING_EFFORT)
-+                             SUMMARY_EFFORT_LADDER)
- from pageindex.tree_optimize import EXPAND_CONCURRENCY
- 
- if __name__ == "__main__":
-@@ -36,7 +36,7 @@
-     parser.add_argument('--summary-concurrency', type=int, default=None,
-                       help=f'Cap on simultaneous indexing model calls per lane (flash mode; default {SUMMARY_CONCURRENCY}, expand tops out at {EXPAND_CONCURRENCY})')
-     parser.add_argument('--summary-reasoning-effort', type=str, default=None,
--                      help=f'Reasoning effort sent with each node-summary call; a model without the setting drops it (flash mode; default {SUMMARY_REASONING_EFFORT} unless LiteLLM lists the model as refusing it, no longer sent once a prompt the server refused with it (HTTP 400) goes through without it)')
-+                      help=f'Reasoning effort sent with each node-summary call; a level LiteLLM\'s model map says the model doesn\'t take raises before any model call (flash mode; default the least thinking the model takes, trying {", ".join(SUMMARY_EFFORT_LADDER)} in turn, past a level the server refuses)')
- 
-     parser.add_argument('--toc-check-pages', type=int, default=None,
-                       help='Number of pages to check for table of contents (PDF only)')
-```
-
-**File**: `tests/conftest.py` (modified, +7/-0)
-```diff
-@@ -18,6 +18,13 @@ def _no_published_model_map(monkeypatch):
-     monkeypatch.setattr(utils, "_MAP_SET_BY_USER", True)
- 
- 
-+@pytest.fixture(autouse=True)
-+def _no_refusals_remembered(monkeypatch):
-+    """Each test starts with no server refusal remembered for the process."""
-+    from pageindex import utils
-+    monkeypatch.setattr(utils, "_refusals", {})
-+
-+
- def exit_code_in_forked_child(check, timeout=5):
-     """``check()`` run in a forked child of this process: exit code 0 when it
-     returns true, 1 when false or raising, minus SIGALRM when it hangs."""
-```
-
-**File**: `tests/test_client.py` (modified, +599/-29)
-```diff
-@@ -2657,8 +2657,8 @@ def test_backend_scopes_the_index_lane(tmp_path, monkeypatch):
-     api = LocalAPI(storage_path=str(tmp_path / "s"), model="m",
-                    summary_model="s",
-                    index_backend={"api_key": "ik", "api_base": "http://b"})
--    assert api._with_backend(None, _llm_backend.get) == {"api_key": "ik",
--                                                         "api_base": "http://b"}
-+    assert api._with_backend(None, ("m", "s"), _llm_backend.get) == {
-+        "api_key": "ik", "api_base": "http://b"}
-     assert _llm_backend.get() is None
- 
-     reply = SimpleNamespace(choices=[SimpleNamespace(
-@@ -2672,7 +2672,7 @@ def test_backend_scopes_the_index_lane(tmp_path, monkeypatch):
-                         ("gpt-4o", "openai/gpt-4o"),
-                         ("my-finetune-v2", "openai/my-finetune-v2")):
-         captured.clear()
--        api._with_backend(None, lambda: llm_completion(model, "p"))
-+        api._with_backend(None, (model,), lambda: llm_completion(model, "p"))
-         assert captured["model"] == wire
-         assert captured["api_key"] == "ik"
-         assert captured["api_base"] == "http://b"
-@@ -2905,6 +2905,184 @@ async def _nosleep(s):
-     assert calls["n"] == 1
- 
- 
-+_BILLED = {"litellm_provider": "openai", "mode": "chat",
-+           "supports_prompt_cache_breakpoint": True,
-+           "input_cost_per_token": 1e-7, "cache_creation_input_token_cost": 1.25e-7}
-+_CACHE_OFF = {"mode": "explicit"}
++def test_search_and_extract_are_cloud_only(local_client):
++    for call in (lambda: local_client.search("q", document="d"),
++                 lambda: local_client.search_documents("q"),
++                 lambda: local_client.extract("d", {"type": "object"}),
++                 lambda: local_client.get_extract("ext_1"),
++                 local_client.list_extracts,
++                 lambda: local_client.cancel_extract("ext_1"),
++                 lambda: local_client.delete_extract("ext_1")):
++        with pytest.raises(PageIndexAPIError, match="cloud-only"):
++            call()
 +
 +
 +@pytest.fixture
-+def cache_map(monkeypatch):
-+    """LiteLLM's map with test entries, and no cache-write decision yet."""
-+    litellm = pytest.importorskip("litellm")
-+    monkeypatch.setattr(litellm, "model_cost", {**litellm.model_cost,
-+        "gpt-test-billed": _BILLED,
-+        "gpt-test-no-write-price": {**_BILLED, "cache_creation_input_token_cost": None},
-+        "gpt-test-unflagged": {**_BILLED, "supports_prompt_cache_breakpoint": None},
-+        "azure/gpt-test-billed": {**_BILLED, "litellm_provider": "azure",
-+                                  "supports_prompt_cache_breakpoint": None},
-+        "azure_ai/gpt-test-billed": {**_BILLED, "litellm_provider": "azure_ai",
-+                                     "supports_prompt_cache_breakpoint": False}})
-+    return litellm
++def served(monkeypatch):
++    """A cloud client whose requests answers.to(method, path, kw) answers,
++    with a payload, a (status, payload) pair or a FakeResponse."""
++    client = PageIndexClient(api_key="secret")
++    calls = []
++    class Answers:
++        to = staticmethod(lambda method, path, kw: {})
++    def handler(method, url, kw):
++        path = url.replace("https://api.pageindex.ai", "", 1)
++        calls.append({"method": method, "path": path, **kw})
++        answer = Answers.to(method, path, kw)
++        if isinstance(answer, FakeResponse):
++            return answer
++        status, payload = answer if isinstance(answer, tuple) else (200, answer)
++        return FakeResponse(payload, status_code=status, text=json.dumps(payload))
++    _patch_requests(monkeypatch, handler)
++    return client, calls, Answers
 +
 +
-+def _ok(**kw):
-+    return types.SimpleNamespace(choices=[types.SimpleNamespace(
-+        message=types.SimpleNamespace(content="ok"), finish_reason="stop")])
++def test_search_one_document(served):
++    client, calls, answers = served
++    info = {"id": "pi/1", "name": "q1.pdf", "pageNum": 20, "folderId": "f-1",
++            "collectionId": None, "metadata": {"year": 2025}, "status": "completed"}
++    pages = [{"page": 4, "relevance": 0.9, "read": "text"}]
++    more = [{"page": 7, "relevance": 0.2, "read": "image"}]
++    usage = {"pages": 20, "questions": 1, "billable_pages": 19, "credits": 0.19,
++             "balance": 99.81}
++    answers.to = lambda method, path, kw: info if method == "GET" else {
++        "id": "srch_1", "doc_id": "pi/1",
++        "results": [{"question": "revenue?", "pages": pages, "more_pages": more}],
++        "failed_pages": [9], "usage": usage, "seconds": 1.2}
++
++    found = client.search("revenue?", document="pi/1", start_page=2, end_page=21)
++
++    assert (calls[-1]["method"], calls[-1]["path"]) == ("POST", "/doc/pi%2F1/page-search/")
++    assert calls[-1]["json"] == {"questions": ["revenue?"], "include_text": False,
++                                 "start_page": 2, "end_page": 21}
++    assert found == {
++        "id": "srch_1",
++        "results": [{"question": "revenue?", "documents": [{
++            "id": "pi/1", "name": "q1.pdf", "pageNum": 20, "folderId": "f-1",
++            "collectionId": None, "metadata": {"year": 2025}, "relevance": None,
++            "pages": pages, "more_pages": more, "failed_pages": [9]}]}],
++        "failed_documents": [],
++        "processing_documents": [],
++        "usage": {"documents": 0, "billable_documents": 0, **usage},
++        "seconds": 1.2,
++    }
 +
 +
-+def test_indexing_writes_no_cache_a_model_bills_above_input(cache_map, monkeypatch):
-+    """A model LiteLLM's map flags for prompt_cache_options and prices a cache
-+    write above input indexes with no cache writes, on any route: the id's
-+    own flag answers first, then its bare name's. A backend's own option
-+    wins."""
-+    sent = []
-+
-+    def reply(**kw):
-+        sent.append(kw.get("prompt_cache_options"))
-+        return _ok()
-+
-+    async def areply(**kw):
-+        return reply(**kw)
-+    monkeypatch.setattr(cache_map, "completion", reply)
-+    monkeypatch.setattr(cache_map, "acompletion", areply)
-+    for model, expected in (("gpt-test-billed", _CACHE_OFF),
-+                            ("openai/gpt-test-billed", _CACHE_OFF),
-+                            ("openrouter/openai/gpt-test-billed:nitro", _CACHE_OFF),
-+                            ("azure/gpt-test-billed", _CACHE_OFF),
-+                            ("azure_ai/gpt-test-billed", None),
-+                            ("gpt-test-no-write-price", None),
-+                            ("gpt-test-unflagged", None),
-+                            ("anthropic/claude-test-unmapped", None)):
-+        sent.clear()
-+        asyncio.run(pageindex.utils.llm_acompletion(model, "p"))
-+        pageindex.utils.llm_completion(model, "p")
-+        assert sent == [expected, expected], model
-+
-+    implicit = {"mode": "implicit"}
-+    for backend, expected in (({"prompt_cache_options": implicit}, implicit),
-+                              ({"extra_body": {"prompt_cache_options": implicit}}, None)):
-+        sent.clear()
-+        token = pageindex.utils._llm_backend.set(backend)
-+        try:
-+            asyncio.run(pageindex.utils.llm_acompletion("gpt-test-billed", "p"))
-+            pageindex.utils.llm_completion("gpt-test-billed", "p")
-+        finally:
-+            pageindex.utils._llm_backend.reset(token)
-+        assert sent == [expected, expected], backend
++def _found_document(doc_id, relevance):
++    return {"id": doc_id, "name": f"{doc_id}.pdf", "pageNum": 10, "folderId": None,
++            "collectionId": "c-1", "metadata": None, "relevance": relevance}
 +
 +
-+def test_a_model_newer_than_the_map_is_tried_without_a_download(
-+        cache_map, monkeypatch):
-+    """A saving never waits on the published map. A model the loaded map
-+    lacks is tried where LiteLLM's name rule calls it GPT-5.6 on, on any
-+    route; any other keeps its caching until an entry learned elsewhere
-+    (chat, flash) lists its premium."""
-+    fetched = []
-+    monkeypatch.setattr(httpx, "get", lambda url, timeout: fetched.append(url))
-+    monkeypatch.setattr(pageindex.utils, "_published", None)
-+    monkeypatch.setattr(pageindex.utils, "_MAP_SET_BY_USER", False)
-+    off = {"prompt_cache_optio
++def _documents_found(first, second):
++    return {"id": "srch_d",
++            "results": [{"question": "q1", "documents": first, "more_documents": []},
++                        {"question": "q2", "documents": second, "more_documents": []}],
++            "failed_documents": ["x"], "processing_documents": ["y"],
++            "usage": {"documents": 4, "questions": 2, "billable_documents": 3,
++                      "credits": 0.12, "balance": 50.0},
++            "seconds": 0.5}
++
++
++def _pages_found(path, kw):
++    doc_id = path.split("/")[2]
++    return {"id": f"srch_{doc_id}", "doc_id": doc_id,
++            "results": [{"question": q, "pages": [{"page": int(q[1]), "relevance": 0.9,
++                                                   "read": "text"}]}
++                        for q in kw["json"]["questions"]],
++            "failed_pages": [], "seconds": 1.0,
++            "usage": {"pages": 10, "questions": len(kw["json"]["questions"]),
++                      "billable_pages": 10, "credits": 0.11, "balance": 49.89}}
++
++
++def test_search_across_documents(served):
++    client, calls, answers = served
++    a, b, c = (_found_document(doc_id, r) for doc_id, r in (("a", 0.9), ("b", 0.8), ("c", 0.7)))
++    judged = _documents_found([a, b, c], [b])
++    def to(method, path, kw):
++        if path == "/docs/search/":
++            return judged
++        if path.startswith("/doc/a/"):
++            return 409, {"detail": "The document's pages are not ready."}
++        return _pages_found(path, kw)
++    answers.to = to
++
++    found = client.search(["q1", "q2"], collection="c-1", 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #659** (2026-11-05): perf: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen (@rejojer)
-- **PR #658** (2026-11-04): fix(cloud): CloudAPI.submit_document docstring drops the OCR claim; a rejected mode is proven to send nothing (@rejojer)
-- **PR #657** (2026-11-04): feat(cloud): submit_document(mode="flash") builds the tree with Flash on the cloud (@BukeLy)
-- **PR #645** (2026-11-03): perf(flash): sequential parse holds one page at a time instead of the whole document (@BukeLy)
-- **PR #644** (2026-10-29): fix: follow-ups to #622 (indexing learns newer models, forked processes drop LiteLLM's connections, and five more) (@rejojer)
-- **PR #643** (closed): fix: claude-code/ chat runs at the reasoning_effort it is given, not an inherited CLAUDE_CODE_EFFORT_LEVEL (@rejojer)
+- **PR #678** (2026-11-15): feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata (@rejojer)
+- **PR #677** (2026-11-15): feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (@rejojer)
+- **PR #674** (2026-11-14): release: collections, chat(collection_id=) with box citations, and get_citations for library paths (@rejojer)
+- **PR #673** (2026-11-13): fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (@rejojer)
+- **PR #671** (2026-11-13): test: the live copy checks skip while the cloud addresses documents by path and local mode does not (@rejojer)
+- **PR #670** (2026-11-13): test: the live envelope check passes on the cloud's text outline and on a picture page's extra blocks (@rejojer)
 
 ---
 
@@ -1986,13 +1805,13 @@ Summaries at the default effort:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. summaries think the least each model takes, indexing stops paying for cache writ
+## X. the client searches pages and documents, extracts JSON from a PDF, and returns a
 
 **RULE**:
 When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2ac8694b`: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen (#659). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9f1a879`: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
@@ -2000,43 +1819,42 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            in ``index_backend`` (``"none"``, ``"low"``, ``"high"``, ...):
-            a level LiteLLM's model map says the model doesn't take raises
-            before any model call, as chat does (``"none"`` on gpt-5-nano
-            names ``"minimal"``), a model LiteLLM doesn't know on an
-            OpenAI-format API (``azure/``, or a provider LiteLLM lists as
-            OpenAI-compatible, such as ``groq/``) gets it as is (a level
-            LiteLLM drops even then raises too), and one it doesn't know
-            elsewhere, ``openai/`` included, goes as LiteLLM takes it,
-            which may drop the effort unless LiteLLM's published map knows
-            the model. A global ``litellm.drop_params = True`` turns these
-            checks off: LiteLLM then drops a level the model doesn't take,
-            unseen. Defaults to the least
-            thinking the model takes, trying ``"none"``, ``"minimal"``,
-            ``"low"`` in turn (a Claude model under ``anthropic/``,
-            ``bedrock/``, ``vertex_ai/``, ``azure_ai/`` or ``databricks/``:
-            ``thinking`` ``disabled``, then ``between_tools``, then
-            ``"low"``): a level LiteLLM would not send is skipped
+                    Optional, Sequence, Union, cast, overload)
+    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
+        """
+        Wait until a document is ready for use, and return it as
+        ``get_document()`` does. Raises PageIndexAPIError if its processing
+        failed, or is not done within ``timeout`` seconds (it goes on in the
+        cloud). A local document is ready at once.
+        """
+        self._wait_until_ready(doc_id, timeout)
+        return self.get_document(doc_id)
+
+    def page_image(self, doc_id: str, page: int,
+                   box: Optional[Sequence[float]] = None) -> bytes:
+        """
+        One page as JPEG bytes: the image itself, where ``get_page_image()``
+        gives a link to it. With ``box``, only that part of the page, drawn
+        sharper, to read small print. Cloud-only: local mode renders no page
+        images.
+
+            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
+
+        Args:
+            doc_id (str): Document ID.
+            page (int): 1-based page number.
+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
+                fractions of the page's width and
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-            in ``index_backend`` (``"none"``, ``"low"``, ``"high"``, ...; a
-            model without the setting drops it). Defaults to ``"none"``
-            unless LiteLLM lists the model as refusing it, and stops
-            sending it once a prompt the server refused with it (HTTP
-            400) goes through without it (never on ``claude-code/``,
-            whose effort is checked up front). ``"none"`` raises on a model
-            whose thinking can't be turned off (Claude Opus 5.5 and Fable
-            under ``anthropic/``, ``bedrock/``, ``vertex_ai/`` or
-            ``azure_ai/``) and on any ``claude-code/`` model; the default
-            runs them at ``"low"``.
-            ``api_version``, ``aws_*``, … — passed through verbatim.
+// Induced defect failure mode:
+                    Optional, Union, cast, overload)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2ac8694b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9f1a879` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

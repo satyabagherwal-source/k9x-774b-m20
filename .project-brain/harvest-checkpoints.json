@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T14:06:57.903Z",
+  "last_updated": "2026-11-16T14:35:01.412Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "c5b0b2bbfe924a1e49169ea3def219016b7b1c1d247efbe754286185c114ef2f",
-      "verified_at": "2026-11-16T12:48:21.924Z",
+      "content_hash": "6b2161ea2c06f0be829bedb522e5c7c3512c4ea2fc60df40e6a3b0f7337de4ba",
+      "verified_at": "2026-11-16T14:35:01.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T12:48:21.924Z"
+      "last_updated": "2026-11-16T14:35:01.412Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
-      "verified_at": "2026-11-15T03:13:41.715Z",
+      "content_hash": "1b41c5586786a0798db6391e609849129596f004728a7084b07e88fe0eb1e904",
+      "verified_at": "2026-11-16T14:34:58.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T03:13:41.715Z"
+      "last_updated": "2026-11-16T14:34:58.478Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -19124,6 +19124,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-16T04:30:14.619Z"
+    },
+    "IFM/PAN2": {
+      "repository": "IFM/PAN2",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ifm-pan2",
+      "content_hash": "46281bc9b876236b9be7cb1d3d133f5ce3f422f0a218b6523b8413f4a01adef2",
+      "verified_at": "2026-11-16T14:34:41.077Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-16T14:34:41.077Z"
     }
   },
   "repos": {
