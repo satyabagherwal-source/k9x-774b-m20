@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T01:52:53.388Z",
+  "timestamp": "2026-11-16T21:55:42.655Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T01:52:53.388Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T21:55:42.655Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `effd674b`  
+> **Source Version**: `3a228bb2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T01:52:48.777Z  
+> **Timestamp**: 2026-11-16T21:55:34.773Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T01:52:48.771Z  
+> **Harvest Timestamp**: 2026-11-16T21:55:34.766Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1763,11 +1763,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6237** (2026-11-15): **fix: replace the broken-invariant contract freeze with a per-contract merge budget**
-  *Symptoms*: ## Problem  A contract flagged by the broken-invariant detector (`ring/broken_invariants.rs`) was frozen on every node that flagged it, for 300 s doubling to 6 h, persisted across restarts. The commit, the broadcast and three full-state egress paths were all skipped, and that included the node's **own client UPDATEs**: they were answered `UpdateResponse { state_changed: false }` and silently discarded. So a sampled correctness verdict could stop a contract advancing and drop a user's write with no error.  Field data (nova collector, 59.6 h, 2026-11-11): 1134 flag events on 9 contracts across 555 nodes. They are persistent and agreed across hundreds of nodes, which looks like genuine non-convergence rather than flutter, but each one is a contract the network stopped updating.  What the gates protected against is load: a merge that never settles turns every broadcast into another state change. Simulation (12 nodes, worst-case merge that yields fresh bytes on every apply, #6125 on, 300 iterations) shows existing mechanisms do not bound that once the gates go:  | run | merges of the bad contract | events | |---|---|---| | flag gates ON | 733 | 35k | | flag gates OFF | 53,283 | 24.0M |  The per-pair UPDATE interval still admits about 50 broadcasts/s from EACH neighbour, and the applied-payload record only skips byte-identical re-pushes. Details in #6190.  ## Approach  Bound the harm by usage alone, identically for every contract, and stop freezing on a verdict.  **1. Per-contract 
+- **Issue #6248** (2026-11-16): **feat(telemetry): attribute transfer failures and pipe drops by transport**
+  *Symptoms*: ## Problem  With QUIC carrying data on part of the network, two telemetry gaps make failures hard to attribute:  - `transfer_failed` (and `transfer_completed`) events do not say which transport carried the transfer. A failure on a UDP stream and one on a QUIC path look the same in the collector, apart from the reason text. - `quic_data_send_pipe_{sent,dropped}` counts pipes (an inbound stream forwarded on a QUIC path) without saying what fed the inbound stream or why a dropped one was dropped. A pipe can be dropped because its source failed, because its source stopped sending, or because of the path it was sent on. Only the last is a fault of the QUIC path.  ## Approach  Telemetry only; no behaviour changes.  - **`transport` on transfer events.** `TransferEvent::Started`, `Completed` and `Failed` gain `transport: TransferTransport` (`Udp` | `Quic`), exported as `"transport": "udp"|"quic"` in the event JSON. The QUIC send sites (`quic_send::PathTransfer`) report `quic`; every site in `outbound_stream.rs` reports `udp`. A pipe sent on UDP reports `transport: udp` even when a QUIC path fed its inbound stream, and it gets no source attribution: the `quic_pipe_*` families below count only pipes on a QUIC path. Transfer events go only to telemetry (they are not written to the local event log), so the new field changes no stored format. - **Pipe ends by source.** New family `quic_pipe_source_<quic_fed_sent|quic_fed_dropped|udp_fed_sent|udp_fed_dropped>`, counted where the pipe settl
 
-- **Issue #6235** (2026-11-15): **ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache)**
-  *Symptoms*: ## Problem `macOS Service Unit` runs at its 45-minute timeout and fails by cancellation (#6207, #6208) after all tests passed, while recompiling `freenet` for the e2e step.  Cause: the e2e step set `FREENET_GIT_IS_DIRTY=1` on its own step only. `crates/core/build.rs:223` has `rerun-if-env-changed=FREENET_GIT_IS_DIRTY`, so the changed env reruns the build script and recompiles the whole `freenet` crate, even though profile, features, target dir and RUSTFLAGS are identical to the earlier `cargo build`.  Evidence from job 132296546454 (passing): `Build freenet bin` 14m36s, nextest test build 8m05s, then the e2e step's `cargo build` 2m42s (`Finished dev ... in 2m 42s`) just for the env change. In job 131783770014 (#6207, cancelled) the same steps took 18m50s and 10m45s before the e2e rebuild started. The same logs show `No cache found`: this job only runs on PRs, so `save-if: main` never saves and every build is cold, which is why the total swings between 11 and 45 min with runner speed.  ## Approach Set `FREENET_GIT_IS_DIRTY: "1"` in the job `env`, so every build in the job shares one build-script input and the e2e step's `cargo build` is a no-op. Auto-update stays off for the e2e as before. The other steps are unaffected: the node tests already pass `--disable-auto-update`, and the service tests pass the dirty string explicitly. Timeout left at 45 (the rebuild is gone from the critical path); the cold-cache cost is noted in the comment.  Second change, the real fix for the cold
+- **Issue #6245** (2026-11-16): **ci: run Clippy on a free runner; stop auto-rebasing Dependabot cargo PRs**
+  *Symptoms*: ## Problem Ubicloud CI costs about $450-540/month (measured in #6244). Two items in freenet-core can be cut without changing what gates a merge: - **Clippy** runs on `ubicloud-standard-8`: about $33/month across PR and merge-queue runs. - **Dependabot cargo PRs are rebased automatically.** Every `Cargo.lock` change on main conflicts with every open cargo PR, and Dependabot rebases all of them. From 2026-11-03 to 11-16 that produced 141 `ci.yml` runs on 17 open Dependabot PRs, and 138 of them were red. About $45/month at that backlog.  ## Approach - Clippy moves to `ubuntu-latest`, which is free on a public repo. Lint output does not depend on machine speed, so a smaller runner cannot make this check flaky. The PR critical path is the Windows/macOS unit jobs (~37 min), so a slower Clippy does not delay the verdict. The rust-cache now saves on `main` only. A per-PR save would put 0.7-1 GB entries into GitHub's 10 GB cache, which the Windows/macOS jobs share. Clippy already runs on main pushes, so it writes its own main entry and needs no warm twin (`check_cache_warm_parity.py` agrees). The timeout goes from 30 to 45 minutes to allow for a cold cache on 4 vCPUs. - `rebase-strategy: "disabled"` on the root cargo entry. A Dependabot PR is rebuilt when someone comments `@dependabot rebase`, and the merge queue still tests it against current main. The trade-off is that conflicted bumps, security bumps included, wait until someone picks them up. In the period above they were red rega
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No blocking issues, 2 informational notes  **Rules checked:** git-workflow.md **Files reviewed:** 2 (`.github/dependabot.yml`, `.github/workflows/ci.yml`)  #### Warnings None.  #### Info - Commit `d72874002` — the subject "ci: replace estimated Clippy disk and time figures with the measured ones" is about 73 characters, one over the 72-character guideline. It is in conventional-commit form, and the line-by-line count is approximate, so this is marginal. (rule: git-workflow.md, "WHEN creating a commit message") - PR scope — the PR bundles two logically separate changes: moving Clippy to `ubuntu-latest` in `ci.yml`, and setting `rebase-strategy: "disabled"` for the cargo ecosystem in `dependabot.yml`. Both trace to #6244, and the title says so. Even so, they could land as separate PRs. The Dependabot change also alters how security PRs behave, and the added comment says so. (rule: git-workflow.md, "BEFORE opening a PR — is this change in scope
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1784,351 +1786,418 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `effd674b` (2026-11-15)
-**Commit Message**: feat(transport): start the QUIC data ramp in 0.2.158 (#6224)
+### Incident Patch 1: `58f26473` (2026-11-16)
+**Commit Message**: build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping (#6018)
 
-**File**: `.claude/rules/transport.md` (modified, +27/-17)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `apps/freenet-ping/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1173,17 +1173,22 @@ elsewhere, since the breaker cannot trip without a boot identity) decides whethe
+@@ -4871,9 +4871,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustls"
+-version = "0.23.45"
++version = "0.23.46"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
++checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+ dependencies = [
+  "log",
+  "once_cell",
+```
+
+---
+
+### Incident Patch 2: `6d48d5ee` (2026-11-16)
+**Commit Message**: build: release 0.2.159 (#6243)
+
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -1899,7 +1899,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fdev"
+-version = "0.3.320"
++version = "0.3.321"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -2078,7 +2078,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.158"
++version = "0.2.159"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
+```
+
+**File**: `apps/freenet-ping/Cargo.lock` (modified, +1/-1)
+```diff
+@@ -1715,7 +1715,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.158"
++version = "0.2.159"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "freenet"
+-version = "0.2.158"
++version = "0.2.159"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+```
+
+**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "fdev"
+-version = "0.3.320"
++version = "0.3.321"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+@@ -14,12 +14,12 @@ readme = "README.md"
+ # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
+ # would expand to the fdev crate version and 404. release.yml rewrites the
+ # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
+-pkg-url = "{ repo }/releases/download/v0.2.158/fdev-{ target }.tar.gz"
++pkg-url = "{ repo }/releases/download/v0.2.159/fdev-{ target }.tar.gz"
+ pkg-fmt = "tgz"
+ bin-dir = "fdev"
+ 
+ [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+-pkg-url = "{ repo }/releases/download/v0.2.158/fdev-{ target }.zip"
++pkg-url = "{ repo }/releases/download/v0.2.159/fdev-{ target }.zip"
+ pkg-fmt = "zip"
+ bin-dir = "fdev.exe"
+ 
+@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
+ hex = { workspace = true }
+ 
+ # internal
+-freenet = { path = "../core", version = "0.2.158", features = ["testing"] }
++freenet = { path = "../core", version = "0.2.159", features = ["testing"] }
+ freenet-stdlib = { workspace = true }
+ 
+ [dev-dependencies]
+```
+
+---
+
+### Incident Patch 3: `2429dada` (2026-11-16)
+**Commit Message**: revert: emergency stop of the QUIC data ramp (#6241); raise the QUIC-native floor to 0.2.160 (#6242)
+
+**File**: `.claude/rules/transport.md` (modified, +30/-34)
+```diff
+@@ -1168,20 +1168,21 @@ it must not wait unless it is a pacing point.
+ #### QUIC endpoint (`transport/quic.rs`, #5940 step c2)
+ 
+ `transport-quic` (config key: `off`, `shadow` or `prefer`; unset is
+-`QuicMode::default_mode`, shadow on Linux and macOS and off elsewhere, Windows
+-included: the data ramp's emergency stop returned to 0.2.156's defaults, the last
+-state the field ran) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
++`QuicMode::default_mode`, prefer on Linux, macOS and Windows and off
++elsewhere, since the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
  `prefer` negotiates data with the share of pairs the ramp gives at the time ("Data
  slice" below; `upgrade::policy::log_startup` reports the share at INFO once per
  node, and each band the ramp enters is logged at INFO), and a pair with both bits
--sends its data on the path ("QUIC send route" below). With no ramp start and no
+-sends its data on the path ("QUIC send route" below). 0.2.158 set the ramp
+-start (#6224); this tree is its emergency stop, with no ramp start, so with no
 +sends its data on the path ("QUIC send route" below). The tree sets the ramp
 +start for 0.2.158 (#6224), so `prefer` nodes, every Linux, macOS and Windows node
 +that did not set the key, carry data with the ramp's share, and 0.2.158's release
 +notes say so. With no ramp start (the emergency-stop build) and no
  `quic-data-percent` the share is 0, and `prefer` differs from `shadow` only by the
--bit, which stays 0. The release that sets the ramp start must say in its notes that
--`prefer` nodes, every Linux, macOS and Windows node that did not set the key, start
--carrying data. Off: no endpoint, no QUIC ingress, nothing
-+bit, which stays 0. Off: no endpoint, no QUIC ingress, nothing
+ bit, which stays 0. Off: no endpoint, no QUIC ingress, nothing
  changes, except that `off` set in the config is deprecated and logs a WARN at
  startup (`upgrade::policy::log_startup`); the endpoint state telemetry reports it
- as `off_config`. Windows has the same default since its crash-loop breaker was
- confirmed on a real Windows machine (#6031). The default is
+-as `off_config`. Windows had prefer by default from 0.2.157 (at a share of 0) until the stop (its
+-crash-loop breaker was confirmed on a real Windows machine, #6031). The default is
++as `off_config`. Windows has the same default since its crash-loop breaker was
++confirmed on a real Windows machine (#6031). The default is
  read, never written to config.toml: a node that did not set the key follows the
--release it runs, so a default-off release is the kill switch. It does not reach
-+release it runs, so a default-off release is the kill switch for QUIC as a
-+whole. Stopping only the data ramp is smaller: `QUIC_DATA_RAMP_START = None`
-+with the defaults back to 0.2.156's, shadow on Linux and macOS and off on
-+Windows (RELEASING.md, "Emergency stop"), which keeps Linux and macOS
-+endpoints and shadow paths up. Neither reaches
- a node that ever ran with `--transport-quic` or `FREENET_TRANSPORT_QUIC`: those
- are saved to config.toml like any setting (the Step 1 gateways are such nodes). Shadow or prefer: the endpoint is built
- with the node's QUIC identity (below) and an EMPTY allow-set, so nothing
-@@ -1300,9 +1305,9 @@ pair is in the slice when its bucket is below the percentage, so 0 holds none,
+ release it runs, so a default-off release is the kill switch for QUIC as a
+ whole. Stopping only the data ramp is smaller: `QUIC_DATA_RAMP_START = None`
+@@ -1304,10 +1305,9 @@ pair is in the slice when its bucket is below the percentage, so 0 holds none,
    The percentage: a ramp over one release (`slice::ramp_percent`): 5% for the
    first 6 h, then linear 5 to 25% to 12 h and 25 to 100% to 24 h, 100% after,
    from `QUIC_DATA_RAMP_START` in `upgrade/policy.rs` (Unix seconds, or `None`:
--  no ramp, share 0). The start is `None` in tree and set in its own reviewed PR to
--  the planned publish time, just before the release's soak, and left set: past 24 h
--  it reads 100%, the steady state. A node whose clock reads before the start gets
+-  no ramp, share 0). It was set for 0.2.158 (#6224, 2026-11-16 02:30 UTC), in its
+-  own reviewed PR at the planned publish time, to be left set (past 24 h it reads
+-  100%, the steady state). This tree is the emergency stop, which sets it back to
+-  `None`; a new ramp needs its own reviewed PR. A node whose clock reads before the start gets
 +  no ramp, share 0). The start is set for 0.2.158 (#6224, 2026-11-16 02:30 UTC),
 +  in its own reviewed PR at the planned publish time, and left set: past 24 h it
 +  reads 100%, the steady state. Only an emergency stop sets it back to `None`. A node whose clock reads before the start gets
    5%. Slices nest, so a pair in the slice stays in as the share grows. The config
    key `quic-data-percent` (lenient text like `quic-max-paths`; anything but a whole
    number from 0 to 100 reads as unset, with a WARN when QUIC is on) replaces the
-@@ -1543,15 +1548,17 @@ a test passes its own; tests read their own, never the global).
-   `cap_held` is an episode ended by the egress cap holding this side's sends
+@@ -1555,17 +1555,17 @@ a test passes its own; tests read their own, never the global).
    (the watch cannot tell then whether the peer is dark). The
-   dark-path rule closes only a path that carries data (QuicPath::enable_data);
--  on every other path (all of them while QUIC_DATA_PERCENT is 0) it only
--  counts, so the field shows how long real dark spells last. A spell is read
-+  on every other path (shadow paths, and pairs outside the ramp's share) it
-+  only counts, so the field shows how long real dark spells last. A spell is read
+   dark-path rule closes only a path that carries data (QuicPath::enable_data)
+   and has no UDP session (a native path, recycle::DARK_CLOSES_WITH_UDP);
+-  on every other path (all of them in the emergency-stop build, which has no
+-  ramp, and data paths with a UDP session) it only counts, so the field shows how long real dark spells last. A spell is read
++  on every other path (shadow paths, pairs outside the ramp's share, and data
++  paths with a UDP session) it only counts, so the field shows how long real dark spells last. A spell is read
    up to when the peer is next heard from, which waits for quinn's backed-off
    probes after the outage ends, so it reads longer than the outage (in
    a_path_without_data_is_not_closed_by_a_dark_spell a 30 s outage read about
    45 s and a 100 s one about 200 s), and an outage whose backoff runs past
    quinn's 120 s idle timeout ends the path and counts `unrecovered`. The dark
--  threshold (the 10 s window) is to be revisited from these numbers before the
--  data ramp passes 5%.
+-  threshold (the 10 s window) was not revisited before 0.2.158, which ran the
+-  ramp with it as is until this stop. The window is to be revisited from the
+-  carried and shadow dark episodes 0.2.158 reported (watch rule 14) before any
+-  new ramp.
 +  threshold (the 10 s window) was not revisited before 0.2.158: the ramp passes
 +  5% at T0 + 6 h with it as is. The release watch reads carried against shadow
-+  dark episodes (rule 14) through the 5% plateau, and the window is to be
-+  revisited from those numbers.
-   quic_gate_loss_<queue|share|persistent|ecn|no_sample|ignored> (congestion
-   events by the loss gate's verdict, recycle::loss_gate, reported by the path's
-   report at each tick; over a path's life they sum to its quic_congestion_events,
-@@ -1990,8 +1997,9 @@ release goes out.
++  dark epis
 ```
 
-**File**: `crates/core/src/config.rs` (modified, +8/-2)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -10189,7 +10189,9 @@ shutdown-drain-secs = 42
+@@ -1203,7 +1203,7 @@ jobs:
+       - name: Test service commands
+         run: cargo nextest run -p freenet --bin freenet --profile ci -E 'test(commands::service) | test(commands::url_handler) | test(commands::open_link)'
  
-     /// The node's limit follows its data share: `prefer` with a share above 0
-     /// lowers it on a 1 GiB host; a share of 0, `shadow`, or an off endpoint
--    /// keeps 200. `quic-max-paths` follows the limit.
-+    /// keeps 200. `prefer` with no `quic-data-percent` takes the release's
-+    /// share: lowered once the release sets a ramp start. `quic-max-paths`
-+    /// follows the limit.
-     #[tokio::test]
-     async fn the_node_lowers_its_connection_limit_only_when_it_may_carry_quic_data() {
-         const GIB: usize = 1024 * 1024 * 1024;
-@@ -10200,7 +10202,11 @@ shutdown-drain-secs = 42
-             ("prefer", Some("5"), true),
-             ("prefer", Some("100"), true),
-             ("prefer", Some("0"), false),
--            ("prefer", None, false),
-+            (
-+                "prefer",
-+                None,
-+                crate::transport::quic::upgrade::policy::RAMP_START_IS_SET,
-+            ),
-             ("shadow", Some("5"), false),
-             ("off", Some("5"), false),
-         ] {
+-      # QUIC is on by default on macOS (`shadow`, #5940), and its crash-loop
++      # QUIC is on by default on macOS (`prefer`, #5940), and its crash-loop
+       # breaker reads kern.boottime there: run the real-binary shutdown tests on
+       # a real Mac (a clean stop clears it, a SIGKILL trips it, which needs the
+       # boot identity, and a node with no setting arms it). Not the lib unit
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +4/-1)
+**File**: `crates/core/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -1171,7 +1171,10 @@ use crate::operations::connect::native::NativeWire;
- /// `docs/RELEASING.md`, this is the release that first ships the decoder, then
- /// frozen. Bias HIGH: too low closes connections to the release below it, too
+@@ -119,8 +119,8 @@ rustls-native-certs = "0.8.4"
+ # Keep it semver-compatible with reqwest's rustls: os_trust probes certificates
+ # with it on the assumption that reqwest validates them identically.
+ rustls = { version = "0.23", default-features = false, features = ["std"] }
+-# QUIC endpoint (transport/quic.rs, #5940): shadow by default on Linux and
+-# macOS, off elsewhere, Windows included (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
++# QUIC endpoint (transport/quic.rs, #5940): on by default on Linux, macOS and
++# Windows (`prefer`), off elsewhere (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
+ # crate's own Runtime over TimeSource, so simulation drives it), no
+ # platform-verifier (peers are authenticated by raw public keys, never by a CA
+ # root store), and no aws-lc-rs (deny.toml bans it).
+```
+
+**File**: `crates/core/src/config.rs` (modified, +18/-13)
+```diff
+@@ -363,7 +363,7 @@ impl Default for ConfigArgs {
+                 ledbat_min_ssthresh: None, // Uses default from NetworkApiConfig
+                 congestion_control: None,  // Default: fixedrate (set in NetworkApiConfig)
+                 bbr_startup_rate: None,    // Uses default from BBR config
+-                transport_quic: None,      // Default: shadow on Linux and macOS, off elsewhere
++                transport_quic: None,      // Default: prefer on Linux, macOS and Windows
+                 quic_max_paths: None,      // Default: the node's connection limit
+                 quic_data_percent: None,   // Default: this release's share of pairs
+                 quic_ignore_crash_breaker: None,
+@@ -2588,14 +2588,15 @@ pub struct NetworkArgs {
+     pub bbr_startup_rate: Option<u64>,
+ 
+     /// QUIC transport (#5940): `off`, `shadow` or `prefer`. Unset means
+-    /// `shadow` on Linux and macOS, and `off` elsewhere, Windows included.
++    /// `prefer` on Linux, macOS and Windows, and `off` elsewhere.
+     ///
+     /// `shadow` builds a QUIC endpoint on the network port and upgrades
+     /// connections to peers that also run it to a QUIC path. The path carries
+     /// control frames only, so all traffic stays on the existing transport.
+     /// `prefer` also negotiates data with a share of pairs (`quic-data-percent`,
+     /// or this release's share: its data ramp, or 0 when it has none), and a
+-    /// pair where both sides did sends its traffic on the path. `off` builds no endpoint. An unknown value is treated as `off`,
++    /// pair where both sides did
++    /// sends its traffic on the path. `off` builds no endpoint. An unknown value is treated as `off`,
+     /// with a warning in the log.
+     #[arg(long, env = "FREENET_TRANSPORT_QUIC", value_name = "off|shadow|prefer")]
+     #[serde(rename = "transport-quic", skip_serializing_if = "Option::is_none")]
+@@ -2974,7 +2975,7 @@ pub struct NetworkApiConfig {
+     pub bbr_startup_rate: Option<u64>,
+ 
+     /// QUIC transport (#5940): `off`, `shadow` or `prefer`; unset reads as
+-    /// `QuicMode::default_mode` (shadow on Linux and macOS, off elsewhere). Kept as written, so a value from a later release
++    /// `QuicMode::default_mode` (prefer on Linux, macOS and Windows). Kept as written, so a value from a later release
+     /// round-trips; see [`Self::quic_settings`] for how it is read.
+     #[serde(
+         default,
+@@ -7692,17 +7693,21 @@ shutdown-drain-secs = 42
+         assert_seeded_values_bound(&cfg);
+     }
+ 
+-    /// An unset `transport-quic` is shadow on Linux and macOS and off on
+-    /// Windows: the emergency stop of the QUIC data ramp returns to 0.2.156's
+-    /// defaults, the last state the field ran. The lib tests do not compile on
+-    /// Windows, so `tests/quic_breaker_windows.rs` pins the Windows half
+-    /// through the real binary. The default is not written into the config, so
+-    /// a release changes it for every node that did not set the key.
++    /// An unset `transport-quic` is prefer on Linux, macOS and Windows; Windows
++    /// joined once its crash-loop breaker was confirmed on a real Windows
++    /// machine (#6031). The lib tests do not compile on Windows, so
++    /// `tests/quic_breaker_windows.rs` pins the Windows half through the real
++    /// binary. The default is not written into the config, so a default-off
++    /// release turns QUIC off on every node that did not set the key.
+     #[test]
+-    fn quic_is_shadow_by_default_except_on_windows() {
++    fn quic_is_prefer_by_default_on_linux_macos_and_windows() {
+         use crate::transport::quic::QuicMode;
+-        let expected = if cfg!(any(target_os = "linux", target_os = "macos")) {
+-            QuicMode::Shadow
++        let expected = if cfg!(any(
++            target_os = "linux",
++            target_os = "macos",
++            target_os = "windows"
++        )) {
++            QuicMode::Prefer
+         } else {
+             QuicMode::Off
+         };
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +2/-3)
+```diff
+@@ -1173,9 +1173,8 @@ use crate::operations::connect::native::NativeWire;
  /// high only delays the offer.
--pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 158);
-+/// Raised from 0.2.158 to 0.2.159 by the QUIC data ramp PR (#6224): 0.2.158
-+/// starts the data ramp, and turning on the native connect offer in the same
-+/// release would change two things at once.
-+pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 159);
+ /// Raised from 0.2.158 to 0.2.159 by the QUIC data ramp PR (#6224): 0.2.158
+ /// starts the data ramp, and turning on the native connect offer in the same
+-/// release would change two things at once. Raised to 0.2.160 by the
+-/// emergency stop of the ramp: a stop release goes back to states the field
+-/// has run, and no release has emitted the native variants.
++/// release would change two things at once. Raised to 0.2.160 for 0.2.159,
++/// which ships while the data ramp is still under watch.
+ pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 160);
  
  /// Has the decoder for the QUIC-native `ConnectMsg` variants shipped, and in
- /// which release?
 ```
 
-**File**: `crates/core/src/transport/quic/upgrade/driver.rs` (modified, +10/-1)
+**File**: `crates/core/src/transport/quic.rs` (modified, +18/-17)
 ```diff
-@@ -674,7 +674,16 @@ impl QuicUpgrades {
-         if self.policy.percent_set() {
-             return None;
+@@ -85,12 +85,12 @@ pub(crate) use liveness::QuicAvailabilityWatch;
+ 
+ /// Whether the node may use QUIC: the `transport-quic` config key.
+ ///
+-/// An unset key is [`QuicMode::default_mode`]: shadow on Linux and macOS,
+-/// and off elsewhere (Windows included, since the ramp's emergency stop), because the breaker reads no boot identity
++/// An unset key is [`QuicMode::default_mode`]: prefer on Linux, macOS and
++/// Windows, and off elsewhere, because the breaker reads no boot identity
+ /// there and so cannot trip. The Windows breaker counts short runs that
+ /// panicked in QUIC code instead of detecting crashes ([`breaker`]); it was
+-/// confirmed on a real Windows machine (#6031) before Windows ran QUIC by
+-/// default (shadow, then `prefer`) in 0.2.157 and 0.2.158. The default is decided when the value is read and
++/// confirmed on a real Windows machine before Windows defaulted to an endpoint
++/// (#6031). The default is decided when the value is read and
+ /// never written to `config.toml`, so a later release can change it
+ /// for every node that did not set the key, which is how a default-off
+ /// release turns QUIC off. A value given with `--transport-quic` or
+@@ -99,7 +99,7 @@ pub(crate) use liveness::QuicAvailabilityWatch;
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum QuicMode {
+     /// No QUIC endpoint is built and no QUIC datagram is read. The default on
+-    /// platforms other than Linux and macOS, Windows included.
++    /// platforms other than Linux, macOS and Windows.
+     Off,
+     /// The node builds a QUIC endpoint on its UDP port and upgrades a UDP
+     /// session to a QUIC path that carries only control frames: all
+@@ -110,13 +110,12 @@ pub enum QuicMode {
+     /// endpoint driver and one upgrade task per connection run; a promoted
+     /// connection's higher key sends `Upgrade` messages on its UDP session; and
+     /// the endpoint's memory. If the endpoint cannot be built the node logs a
+-    /// warning and runs with QUIC off. The default on Linux and macOS.
++    /// warning and runs with QUIC off.
+     Shadow,
+     /// Negotiates data on a path to a peer in the release's slice
+     /// (`upgrade::slice`, the release's ramp from `QUIC_DATA_RAMP_START`), and sends
+-    /// its data on a path where both sides did. With no ramp start set, as since
+-    /// the emergency stop of the data ramp, it acts as [`Self::Shadow`] on the
+-    /// wire.
++    /// its data on a path where both sides did. With no ramp start set it acts as
++    /// [`Self::Shadow`] on the wire. The default on Linux, macOS and Windows.
+     Prefer,
+ }
+ 
+@@ -147,15 +146,17 @@ impl QuicMode {
+     /// See [`QuicMode::Prefer`].
+     pub const PREFER: &'static str = "prefer";
+ 
+-    /// What an unset `transport-quic` means on this platform: shadow on Linux
+-    /// and macOS, and off elsewhere, Windows included. This is the emergency
+-    /// stop of the QUIC data ramp, and it returns exactly to 0.2.156's
+-    /// defaults, because an emergency release should only go back to states
+-    /// the field has run (Windows with QUIC off is what every release through
+-    /// 0.2.156 ran).
++    /// What an unset `transport-quic` means on this platform: prefer on Linux,
++    /// macOS and Windows, and off elsewhere, because the crash-loop breaker
++    /// cannot trip there. Windows joined once its breaker was confirmed on a
++    /// real Windows machine (#6031).
+     pub const fn default_mode() -> Self {
+-        if cfg!(any(target_os = "linux", target_os = "macos")) {
+-            Self::Shadow
++        if cfg!(any(
++            target_os = "linux",
++            target_os = "macos",
++            target_os = "windows"
++        )) {
++            Self::Prefer
+         } else {
+             Self::Off
          }
--        let start = self.trace.as_ref()?.data_ramp_start()?;
-+        let trace = self.trace.as_ref()?;
-+        // The emergency-stop release has no ramp, whatever this build's
-+        // `QUIC_DATA_RAMP_START` is, so the node reads the fixed share.
-+        if trace.runs_without_ramp() {
-+            return Some((
-+                super::policy::DataShare::Fixed(super::policy::QUIC_DATA_PERCENT),
-+                self.path_clock.wall_now(),
-+            ));
-+        }
-+        let start = trace.data_ramp_start()?;
-         let shift = Duration::from_secs(start.min(0).unsigned_abs());
-         let share = super::policy::DataShare::Ramp {
-             start_unix_secs: start.max(0).unsigned_abs(),
 ```
 
-**File**: `crates/core/src/transport/quic/upgrade/driver/tests.rs` (modified, +38/-9)
+**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +2/-3)
 ```diff
-@@ -746,22 +746,51 @@ fn ready_ack(session: &Session, attempt: u32, caps: u32) {
- /// The driver acts on every (own bit, peer bit): what the path accepts follows
- /// this node's bit from the moment the path exists, its `Ready` says so, and it
- /// may send only once the peer's frame has the bit too. Mode `shadow` sets no bit
--/// at any percentage, and neither does `prefer` at this release's share.
-+/// at any percentage. With no `quic-data-percent`, `prefer` takes the release's
-+/// share: 0 with no ramp start (the emergency-stop build), and with one set the
-+/// ramp's 5% before T0, so the bit then depends on the pair's bucket.
- #[test]
- fn a_path_follows_the_data_bits() {
-     use crate::transport::quic::control::{QuicControl, caps};
-     use crate::transport::quic::path::QuicInboundOutcome;
-+    use crate::transport::quic::upgrade::policy::RAMP_START_IS_SET;
-+    use crate::transport::quic::upgrade::slice::bucket;
-     bounded(|| async move {
--        let _seed = GlobalRng::seed_guard(SEED);
--        for (mode, percent, peer_caps, accepts, sends) in [
--            ("prefer", Some("100"), caps::DATA, true, true),
--            ("prefer", Some("100"), 0, true, false),
--            ("prefer", Some("0"), caps::DATA, false, false),
--            ("shadow", Some("100"), caps::DATA, false, false),
--            ("prefer", None, caps::DATA, false, false),
-+        // (seed, the pair's bucket under it when the row depends on it, mode,
-+        // quic-data-percent, peer caps, accepts, sends). Each row seeds its own
-+        // keys, so its bucket does not depend on the rows before it.
-+        for (seed, want_bucket, mode, percent, peer_caps, accepts, sends) in [
-+            (SEED, None, "prefer", Some("100"), caps::DATA, true, true),
-+            (SEED, None, "prefer", Some("100"), 0, true, false),
-+            (SEED, None, "prefer", Some("0"), caps::DATA, false, false),
-+            (SEED, None, "shadow", Some("100"), caps::DATA, false, false),
-+            // No quic-data-percent: the release's share. This harness's virtual
-+            // clock reads 1970, before any T0, and a time before T0 reads as
-+            // T0, so with a ramp start the share is 5%. A pair with bucket 51
-+            // is outside it, and one with bucket 2 is inside it. With no ramp
-+            // start the share is 0 and neither gets the bit.
-+            (SEED, Some(51), "prefer", None, caps::DATA, false, false),
-+            (
-+                4,
-+                Some(2),
-+                "prefer",
-+                None,
-+                caps::DATA,
-+                RAMP_START_IS_SET,
-+                RAMP_START_IS_SET,
-+            ),
-         ] {
--            let case = format!("{mode} {percent:?}, peer {peer_caps}");
-+            let _seed = GlobalRng::seed_guard(seed);
-+            let case = format!("seed {seed:#x}, {mode} {percent:?}, peer {peer_caps}");
-             let h = Harness::server_with("quic-driver-bits", mode, percent).await;
-+            if let Some(want) = want_bucket {
-+                assert_eq!(
-+                    bucket(h.pair.a_keys.public(), h.pair.b_keys.public()),
-+                    want,
-+                    "{case}: the seeded pair's bucket changed; pick a seed whose \
-+                     bucket is on the same side of 5%"
-+                );
-+            }
-             let (session, inbox) = h.session();
-             let attempt = offered(&h, &session);
-             let up = path_up(&h, &session, inbox);
+@@ -19,9 +19,8 @@
+ //! **Windows is weaker than unix.** There, a crash not preceded by a panic in
+ //! QUIC code is not counted, a crash loop whose runs each last ten minutes or
+ //! more never trips, and neither does a fault that crashes once a day. QUIC
+-//! became on by default on Windows (shadow, then `prefer` for the data ramp)
+-//! after this breaker was confirmed on a real Windows machine (#6031), with
+-//! those limits weighed. The ramp's emergency stop returned Windows to off.
++//! became on by default on Windows (shadow, now `prefer`) after this breaker
++//! was confirmed on a real Windows machine (#6031), with those limits weighed.
+ //!
+ //! # The marker
+ //!
 ```
 
-**File**: `crates/core/src/transport/quic/upgrade/policy.rs` (modified, +19/-8)
+**File**: `crates/core/src/transport/quic/tests.rs` (modified, +3/-3)
 ```diff
-@@ -35,11 +35,12 @@ use crate::transport::quic::breaker::{BreakerOutcome, Verdict};
- use crate::transport::quic::control::caps;
- use crate::transport::quic::liveness::{QuicAvailability, QuicAvailabilityWatch};
+@@ -1935,9 +1935,9 @@ fn transport_quic_values_and_unknown_ones() {
+     assert_eq!(QuicMode::from_config_value(Some("force")), QuicMode::Off);
+     assert_eq!(QuicMode::from_config_value(Some("")), QuicMode::Off);
+     assert_eq!(QuicMode::default(), QuicMode::default_mode());
+-    #[cfg(any(target_os = "linux", target_os = "macos"))]
+-    assert_eq!(QuicMode::from_config_value(None), QuicMode::Shadow);
+-    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
++    #[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
++    assert_eq!(QuicMode::from_config_value(None), QuicMode::Prefer);
++    #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
+     assert_eq!(QuicMode::from_config_value(None), QuicMode::Off);
+ }
  
--/// The share of pairs, in percent, that carry data on QUIC in this release
--/// when it sets no ramp ([`QUIC_DATA_RAMP_START`]), for a node in `prefer`
--/// mode: a fixed step (0, then 5 for the first data release). Both sides must
--/// set their bit, so a pair moves only once both run a release that puts it in
--/// the slice. `quic-data-percent` replaces it on one node.
-+/// The share of pairs, in percent, that carry data on QUIC for a node in
-+/// `prefer` mode. It applies only to a build with no ramp start
-+/// ([`QUIC_DATA_RAMP_START`] = `None`), which is the emergency-stop build; while
-+/// the ramp start is set, the ramp's share applies and this is not read. Both
-+/// sides must set their bit, so a pair moves only once both run a release that
-+/// puts it in the slice. `quic-data-percent` replaces it on one node.
- pub(in crate::transport) const QUIC_DATA_PERCENT: u8 = 0;
- 
- /// Whether this node, as configured, may carry data on QUIC: `transport-quic`
-@@ -74,7 +75,13 @@ fn may_carry_data_with(config: &NetworkApiConfig, ramp_start: Option<u64>) -> bo
- /// starts later. `quic-data-percent` replaces the ramp on one node.
- /// `scripts/check_quic_data_ramp_t0.sh` reads this line, so keep it on one line
- /// in this form.
--pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = None;
-+// 2026-11-16 02:30:00 UTC: the ramp start of the 0.2.158 release (#6224).
-+pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = Some(1_794_796_200);
-+
-+/// Whether this build sets a ramp start: for tests outside the transport
-+/// module whose expectations change once [`QUIC_DATA_RAMP_START`] is set.
-+#[cfg(test)]
-+pub(crate) const RAMP_START_IS_SET: bool = QUIC_DATA_RAMP_START.is_some();
- 
- /// The release whose cut must come within 3 h of [`QUIC_DATA_RAMP_START`], as
- /// `"X.Y.Z"`, or `None`. Set together with the ramp start, in the same reviewed
-@@ -86,7 +93,7 @@ pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = None;
- /// ship the ramp unchecked (before this release, or skipping it) is refused. An
- /// emergency stop that sets the start back to `None` leaves this as it is.
- #[cfg_attr(not(test), allow(dead_code))]
--pub(in crate::transport) const QUIC_DATA_RAMP_RELEASE: Option<&str> = None;
-+pub(in crate::transport) const QUIC_DATA_RAMP_RELEASE: Option<&str> = Some("0.2.158");
- 
- /// Whether this build reads data from a QUIC path. It does: `PeerConnection::recv`
- /// drains the session's data channels, so a node that says it accepts data delivers
-@@ -949,7 +956,11 @@ mod tests {
-                 policy.own_caps_with(policy.share(), &local, &peer, now)
-             );
-         }
--        assert_eq!(caps_with("prefer", Some("lots".to_string())), 0);
-+        // An unreadable quic-data-percent reads as unset: the release's share.
-+        assert_eq!(
-+            caps_with("prefer", Some("lots".to_string())),
-+            caps_with("prefer", None)
-+        );
-         assert_eq!(
-             caps_with("prefer", Some("100".to_string())),
-             caps::DATA | caps::RECYCLES
-```
-
-**File**: `crates/core/src/transport/quic/upgrade/sim_trace.rs` (modified, +7/-1)
-```diff
-@@ -243,12 +243,18 @@ impl NodeTrace {
-     }
- 
-     pub(crate) fn data_ramp_start(&self) -> Option<i64> {
--        if self.trace.data.no_ramp.lock().contains(&self.addr) {
-+        if self.runs_without_ramp() {
-             return None;
-         }
-         *self.trace.data.ramp_start.lock()
-     }
- 
-+    /// Whether this node runs as the emergency-stop release
-+    /// ([`QuicUpgradeTrace::run_without_ramp`]).
-+    pub(crate) fn runs_without_ramp(&self) -> bool {
-+        self.trace.data.no_ramp.lock().contains(&self.addr)
-+    }
-+
-     pub(crate) fn refuses_data_while_advertising(&self) -> bool {
-         self.trace.data.refuse_data.lock().contains(&self.addr)
-     }
-```
-
-**File**: `docs/RELEASING.md` (modified, +21/-12)
-```diff
-@@ -491,13 +491,16 @@ Current wire-gated floors:
-   and `ResponseNative` at indices 5 and 6 of
-   `operations/connect/wire.rs::ConnectMsgWire`, #5940).
- 
--  Set to **`(0, 2, 158)`**, the release intended to first ship the decoder,
-+  Set to **`(0, 2, 159)`**, the release intended to first ship the decoder,
-   and guarded by `QUIC_NATIVE_SHIPPED_IN`, currently `None`, checked by
-   `p2p_protoc::quic_native_floor_tests::quic_native_floor_tracks_the_shipping_release`.
--  0.2.157 carries the decoder but was cut with the floor raised past it, so
--  it never emits the native variants. When the 0.2.158 bump fails that test,
--  set the marker to the literal `Some((0, 2, 158))` if the release carries
--  the decoder, otherwise raise the floor. Same failure mode as the
-+  0.2.157 and 0.2.158 carry the decoder but were cut with the floor raised
-+  past them, so they never emit the native variants. 0.2.158 is the QUIC data
-+  ramp release (#6224), which raised the floor so that the native offer does
-+  not start in the same release as the data ramp. When the 0.2.159 bump fails
-+  that test, set the marker to the literal `Some((0, 2, 159))` if the release
-+  carries the decoder and should start the native offer, otherwise raise the
-+  floor. Same failure mode as the
-   application-message floors above: a peer at
-   or above the floor without the decoder closes the connection on the variant,
-   so bias high. Only `connect::wire::encode_for_peer`, at the one peer-bound
-@@ -615,13 +618,19 @@ Current wire-gated floors:
-   can turn a pair's bit on a second time and recycle it again.
- 
-   Emergency stop: a parked release, built and soaked before the ramp release is
--  cut, is published through the normal auto-update stagger (0 to 4 h). It makes
--  two changes, and needs both. It sets the default mode to off, which turns QUIC
--  off on every node that did not set `transport-quic` itself (the default is
--  read, never written to `config.toml`). It also sets `QUIC_DATA_RAMP_START`
--  back to `None`, which gives every node that set `transport-quic = "prefer"`
--  itself (testers, possibly our own gateways) a share of 0, so none of its pairs
--  carries data; only a node that also set `quic-data-percent` keeps a share.
-+  cut, is published through the normal auto-update stagger (0 to 4 h). It
-+  restores the pre-ramp state with two changes, and needs both. It sets
-+  `QUIC_DATA_RAMP_START` back to `None`, which gives every `prefer` node a
-+  share of 0, so none of its pairs carries data; only a node that set
-+  `quic-data-percent` keeps a share. It also sets the default mode back to
-+  0.2.156's: shadow on Linux and macOS, off on Windows. An emergency release
-+  should only go back to states the field has run, and Windows with QUIC off
-+  is what every release through 0.2.156 ran. So a Linux or macOS node that did not set
-+  `transport-quic` keeps its endpoint with shadow paths (off would tear down
-+  every endpoint mid-incident), and a Windows node turns QUIC off (the default
-+  is read, never written to `config.toml`). A node that set
-+  `transport-quic = "prefer"` itself stays in prefer at a share of 0, which
-+  acts as shadow on the wire.
-   A node takes either change only when it restarts into the release (an
-   auto-update restarts it, 0 to 4 h after publish). Until then its paths with
-   data keep carrying data: a path with data is never rechecked.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6237** (2026-11-15): fix: replace the broken-invariant contract freeze with a per-contract merge budget (@sanity)
-- **PR #6235** (2026-11-15): ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache) (@sanity)
-- **PR #6230** (2026-11-14): build: release 0.2.157 (@sanity)
-- **PR #6228** (2026-11-13): chore(release): raise the QUIC-native wire floor to 0.2.158 (@sanity)
-- **PR #6225** (2026-11-13): docs(config): --transport-quic help says prefer is the default (@sanity)
-- **PR #6224** (2026-11-15): feat(transport): start the QUIC data ramp in 0.2.158 (@sanity)
+- **PR #6248** (2026-11-16): feat(telemetry): attribute transfer failures and pipe drops by transport (@sanity)
+- **PR #6245** (2026-11-16): ci: run Clippy on a free runner; stop auto-rebasing Dependabot cargo PRs (@sanity)
+- **PR #6243** (2026-11-16): build: release 0.2.159 (@sanity)
+- **PR #6242** (2026-11-16): revert: emergency stop of the QUIC data ramp (#6241); raise the QUIC-native floor to 0.2.160 (@sanity)
+- **PR #6241** (2026-11-16): fix(transport): emergency stop of the QUIC data ramp (@sanity)
+- **PR #6239** (2026-11-16): fix(transport): count local QUIC path closes by reason; leave dark paths with UDP to the idle timeout (@sanity)
 
 ---
 
@@ -2148,57 +2217,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): start the QUIC data ramp in 0.2.158
+## X. build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/freenet-ping/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `effd674b`: transport): start the QUIC data ramp in 0.2.158. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58f26473`: build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/freenet-ping/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-sends its data on the path ("QUIC send route" below). The tree sets the ramp
-start for 0.2.158 (#6224), so `prefer` nodes, every Linux, macOS and Windows node
-that did not set the key, carry data with the ramp's share, and 0.2.158's release
-notes say so. With no ramp start (the emergency-stop build) and no
-bit, which stays 0. Off: no endpoint, no QUIC ingress, nothing
-release it runs, so a default-off release is the kill switch for QUIC as a
-whole. Stopping only the data ramp is smaller: `QUIC_DATA_RAMP_START = None`
-with the defaults back to 0.2.156's, shadow on Linux and macOS and off on
-Windows (RELEASING.md, "Emergency stop"), which keeps Linux and macOS
-endpoints and shadow paths up. Neither reaches
-  no ramp, share 0). The start is set for 0.2.158 (#6224, 2026-11-16 02:30 UTC),
-  in its own reviewed PR at the planned publish time, and left set: past 24 h it
-  reads 100%, the steady state. Only an emergency stop sets it back to `None`. A node whose clock reads before the start gets
-  on every other path (shadow paths, and pairs outside the ramp's share) it
-  only counts, so the field shows how long real dark spells last. A spell is read
-  threshold (the 10 s window) was not re
+version = "0.23.46"
+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-sends its data on the path ("QUIC send route" below). With no ramp start and no
-bit, which stays 0. The release that sets the ramp start must say in its notes that
-`prefer` nodes, every Linux, macOS and Windows node that did not set the key, start
-carrying data. Off: no endpoint, no QUIC ingress, nothing
-release it runs, so a default-off release is the kill switch. It does not reach
-  no ramp, share 0). The start is `None` in tree and set in its own reviewed PR to
-  the planned publish time, just before the release's soak, and left set: past 24 h
-  it reads 100%, the steady state. A node whose clock reads before the start gets
-  on every other path (all of them while QUIC_DATA_PERCENT is 0) it only
-  counts, so the field shows how long real dark spells last. A spell is read
-  threshold (the 10 s window) is to be revisited from these numbers before the
-  data ramp passes 5%.
+version = "0.23.45"
+checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `effd674b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58f26473` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

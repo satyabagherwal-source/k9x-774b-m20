@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T21:28:29.892Z",
+  "updated_at": "2026-11-16T21:55:43.271Z",
   "stats": {
-    "total_discovered": 4459,
-    "approved_pending_harvest": 4195,
+    "total_discovered": 4466,
+    "approved_pending_harvest": 4202,
     "harvested_count": 0,
     "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4196,
+      "COMMUNITY_AND_EXPERT": 4203,
       "OFFICIAL_DOCUMENTATION": 140,
       "STANDARDS_AND_SPECIFICATIONS": 96,
       "ENGINEERING_BLOGS": 3,
@@ -96271,6 +96271,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
         "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-3C7F247C2E24": {
+      "id": "SRC-3C7F247C2E24",
+      "url": "https://github.com/withastro/astro/tree/HEAD/packages/astro",
+      "title": "https://github.com/withastro/astro/tree/HEAD/packages/astro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:55:41.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-95B3B5600648": {
+      "id": "SRC-95B3B5600648",
+      "url": "https://github.com/withastro/astro/releases",
+      "title": "https://github.com/withastro/astro/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:55:41.613Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-D4B5DDC2E733": {
+      "id": "SRC-D4B5DDC2E733",
+      "url": "https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md",
+      "title": "https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:55:41.653Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-03F75BFE73A2": {
+      "id": "SRC-03F75BFE73A2",
+      "url": "https://github.com/withastro/astro/commits/astro@7.4.12/packages/astro",
+      "title": "https://github.com/withastro/astro/commits/astro@7.4.12/packages/astro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:55:41.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-4063FA14EF36": {
+      "id": "SRC-4063FA14EF36",
+      "url": "https://codeload.github.com/cachix/site-kit/tar.gz/f61f46c72b4e78d0a7d1e5858a4b973c896beb88",
+      "title": "https://codeload.github.com/cachix/site-kit/tar.gz/f61f46c72b4e78d0a7d1e5858a4b973c896beb88",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:55:41.727Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-88023057C1B4": {
+      "id": "SRC-88023057C1B4",
+      "url": "https://codeload.github.com/cachix/site-kit/tar.gz/1e9bb1e181430d4a8d632bc8c1487e16de946091",
+      "title": "https://codeload.github.com/cachix/site-kit/tar.gz/1e9bb1e181430d4a8d632bc8c1487e16de946091",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:55:41.766Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-87AF466C9F4D": {
+      "id": "SRC-87AF466C9F4D",
+      "url": "https://github.com/infiniflow/infinity/issues/3418",
+      "title": "https://github.com/infiniflow/infinity/issues/3418",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:55:43.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
+        "fileName": "infiniflow-infinity-learnings.md"
       }
     }
   }

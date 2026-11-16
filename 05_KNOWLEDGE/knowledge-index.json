@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T21:40:05.904Z",
+  "last_updated": "2026-11-16T21:55:43.763Z",
   "total_verified_learnings": 8804,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19362,
+  "total_items": 19371,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114637,10 +114637,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "bce01abd",
-      "content_hash": "7d08a15f7964810f8d178d4299994ab06b7db562caf9947bc64a1e52ac89173e",
+      "source_version": "3a228bb2",
+      "content_hash": "ed5778c4b08eaffb93acfc9caa676212c711f00f311e9b1cb2b72ab96d90d868",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T12:48:17.379Z"
+      "persisted_at": "2026-11-16T21:55:36.230Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114649,10 +114649,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "bce01abd",
-      "content_hash": "6cbc2bdd5f25c3e2890613542616e0d53dca9c5a5afdd4f2cf9d26d37b024384",
+      "source_version": "3a228bb2",
+      "content_hash": "07ba6d078f0bfd3f3847afe45dd8d3ea1bf516fde28c260e1a65fee715d5974d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T12:48:17.484Z"
+      "persisted_at": "2026-11-16T21:55:36.379Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114734,9 +114734,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "bd2a8245cd5399f0164d36e13b354e641223eb0311587281c94659e559319986",
+      "content_hash": "a67219cb4fe1f3a548817a05e2b7e352091aa82ef2ad0308cbf1730b3e2e0eb3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T01:52:53.596Z"
+      "persisted_at": "2026-11-16T21:55:42.905Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114746,9 +114746,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b7d3d4f5d681e3b3c95ad83d5e4064ea17a90d543f3cdd0623937f65d635535",
+      "content_hash": "7c8e590bec66a1c394f60f35f047a6400f8952225ddbc27cab0bc644445f2956",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:52:53.706Z"
+      "persisted_at": "2026-11-16T21:55:43.054Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -217627,8 +217627,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "79ce0cb3",
-      "content_hash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
+      "source_version": "46dbc57a",
+      "content_hash": "8f9f812ad22e81d3e4844ae053f12f2a11487ee262d9bf8e39529682d1a1f914",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -217641,6 +217641,11 @@
           "number": 8612,
           "title": "Run Rust engine requests as statement trees, not rendered SQL text",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8796,
+          "title": "invalidate fulltext index reader cache on compact and import commit",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217648,7 +217653,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T12:13:15.554Z",
+      "verified_at": "2026-11-16T21:55:37.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217690,10 +217695,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "repository": "infiniflow/infinity",
-      "source_version": "79ce0cb3",
-      "content_hash": "56e6e0778cc1cecf96d726536815b7ca96e50646cc9c84ebb81b28280b8c0fb8",
+      "source_version": "46dbc57a",
+      "content_hash": "0b4dde8aefe2b6ff95e73c4158f80d5814d4141ce22451b3788a8b482f588443",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T12:13:16.116Z"
+      "persisted_at": "2026-11-16T21:55:38.399Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity",
@@ -217702,10 +217707,10 @@
       "relative_path": "08_VERIFICATION/infiniflow-infinity-verification-protocol-empirical-defect-shield-for-infiniflow.md",
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow/infinity",
       "repository": "infiniflow/infinity",
-      "source_version": "79ce0cb3",
-      "content_hash": "e77ed524c7b0448c87372bb8363118b40c30b0be8652af490c607f695574ef2e",
+      "source_version": "46dbc57a",
+      "content_hash": "b9d797df0491cf70ba3a3e067d1f073259f3b52686c787af0a739e7a64cd64be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:13:16.254Z"
+      "persisted_at": "2026-11-16T21:55:38.548Z"
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -217813,9 +217818,9 @@
       "title": "Architecture Intelligence: infiniflow-infinity-learnings Core Invariants",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffc85b832553fa31dfca6e0cda8700b585cbe6a2cb227bea7e06bec8434ec57c",
+      "content_hash": "c1992c1708d5d2ee8b74545f209da475f9fb9adb8a622dd978a4f1e3c307a894",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T12:13:19.553Z"
+      "persisted_at": "2026-11-16T21:55:43.613Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity-learnings",
@@ -217825,9 +217830,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow-infinity-learnings",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "2646446ba46a31bb8310a50dfa5c7ec959688c62e42ce10839e1db226dfa6cd9",
+      "content_hash": "2523637ad59f9eac2dbea8d3b8447ebf31c69cfbc7a82411f18fca906c372303",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:13:19.694Z"
+      "persisted_at": "2026-11-16T21:55:43.763Z"
     },
     "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase": {
       "item_id": "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase",
@@ -219307,8 +219312,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "bce01abd",
-      "content_hash": "b0f7eaca0fe91ebf402b239e60de5172bcdbb1209923eb557250944526aba0c7",
+      "source_version": "3a228bb2",
+      "content_hash": "e148775acc6e33f1ba7b0035bd5a47ef11857fc6d2d153e14863ec14aded5d39",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -219336,6 +219341,11 @@
           "number": 8733,
           "title": "count local QUIC path closes by reason; leave dark paths with UDP to",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8795,
+          "title": "build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219343,7 +219353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T12:48:16.942Z",
+      "verified_at": "2026-11-16T21:55:35.655Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237329,14 +237339,19 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "6c954cc1",
-      "content_hash": "933ecc1df7e405bc441ce9c063729039acabe9e20f9fe05eaa649047781a1db1",
+      "source_version": "fa46b707",
+      "content_hash": "741a4829d66bc4ba0fab4a2357650985d6c17b38b0e6c545ef82ea365aaee1c2",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
         {
           "number": 8554,
           "title": "write opencode.jsonc to .opencode/",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8794,
+          "title": "bump astro from 7.1.6 to 7.4.12 in /docs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -237345,7 +237360,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T00:50:36.327Z",
+      "verified_at": "2026-11-16T21:55:24.256Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237399,10 +237414,10 @@
       "relative_path": "08_VERIFICATION/cachix-devenv-verification-protocol-empirical-defect-shield-for-cachix-devenv.md",
       "title": "Verification Protocol: Empirical Defect Shield for cachix/devenv",
       "repository": "cachix/devenv",
-      "source_version": "6c954cc1",
-      "content_hash": "113116a69ec47877d8173e17eac96fc610fa201293ade60e5117b35f56aa73c2",
+      "source_version": "fa46b707",
+      "content_hash": "ebdfab3fc66cb8cd98f3298c1cde815b6ba0beee1817e79829886ef8edce2445",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T00:50:36.988Z"
+      "persisted_at": "2026-11-16T21:55:24.982Z"
     },
     "learn-github-necolas-react-native-web": {
       "learning_id": "learn-github-necolas-react-native-web",
@@ -237590,9 +237605,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cachix-devenv-learnings",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a64e762cf7b3224d95566da60a9fe67730e12461827a462fdc7f1c198ad0cd6",
+      "content_hash": "027d0f43551a25491b7dfd6c82681a9f3393e106876e302ed360d1267a5074b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T00:50:57.456Z"
+      "persisted_at": "2026-11-16T21:55:42.392Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
@@ -257897,6 +257912,120 @@
       "content_hash": "994aba1f907a02c04d6fac16b27c550adc1a0f465998bcfc8832233231f7e560",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T21:28:30.403Z"
+    },
+    "rule-8794": {
+      "learning_id": "rule-8794",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8794,
+      "title": "bump astro from 7.1.6 to 7.4.12 in /docs",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "fa46b707",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T21:55:24.256Z"
+    },
+    "candidate_directive-bump-astro-from-7-1-6-to-7-4-12-in-docs": {
+      "item_id": "candidate_directive-bump-astro-from-7-1-6-to-7-4-12-in-docs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y5CD-bump-astro-from-7-1-6-to-7-4-12-in-docs.md",
+      "title": "bump astro from 7.1.6 to 7.4.12 in /docs",
+      "repository": "cachix/devenv",
+      "source_version": "fa46b707",
+      "content_hash": "91998b296911c6a8b2e88c21269a92b44c8ce80235b644ea326dbbbb54ec3133",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T21:55:24.692Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cachix-devenv-technical-construction-intelligence-cachix-devenv-core-invariants.md",
+      "title": "Technical Construction Intelligence: cachix/devenv Core Invariants",
+      "repository": "cachix/devenv",
+      "source_version": "fa46b707",
+      "content_hash": "0fbe14437320453d65c4d9aef5917479edac28eedfe89c8ec26119470acc3689",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T21:55:24.832Z"
+    },
+    "rule-8795": {
+      "learning_id": "rule-8795",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8795,
+      "title": "build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "3a228bb2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T21:55:35.655Z"
+    },
+    "candidate_directive-build-deps-bump-rustls-from-0-23-45-to-0-23-46-in-apps-freenet-ping": {
+      "item_id": "candidate_directive-build-deps-bump-rustls-from-0-23-45-to-0-23-46-in-apps-freenet-ping",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YJAF-build-deps-bump-rustls-from-0-23-45-to-0-23-46-in-apps-freenet-ping.md",
+      "title": "build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7bb9b52777d8631fe0256ec837d1dc6546ecefe2a96d911503b921c76b303ceb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T21:55:42.764Z"
+    },
+    "rule-8796": {
+      "learning_id": "rule-8796",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8796,
+      "title": "invalidate fulltext index reader cache on compact and import commit",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "46dbc57a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T21:55:37.839Z"
+    },
+    "candidate_directive-invalidate-fulltext-index-reader-cache-on-compact-and-import-commit": {
+      "item_id": "candidate_directive-invalidate-fulltext-index-reader-cache-on-compact-and-import-commit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YJU4-invalidate-fulltext-index-reader-cache-on-compact-and-import-commit.md",
+      "title": "invalidate fulltext index reader cache on compact and import commit",
+      "repository": "infiniflow-infinity-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5a810d018983b976b8624387428c9e5bb6632a8c9977e701255d5448f46de6e1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:55:43.473Z"
+    },
+    "candidate_directive-deps-bump-astro-from-7-1-6-to-7-4-12-in-docs": {
+      "item_id": "candidate_directive-deps-bump-astro-from-7-1-6-to-7-4-12-in-docs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YIS1-deps-bump-astro-from-7-1-6-to-7-4-12-in-docs.md",
+      "title": "deps): bump astro from 7.1.6 to 7.4.12 in /docs",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7818d8c41244b87b4b79f3f31d01eabacf9da3469f8d94b822656357c87dd9fb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T21:55:42.103Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cachix-devenv-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-cachix-devenv-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cachix-devenv-learnings-technical-construction-intelligence-cachix-devenv-learni.md",
+      "title": "Technical Construction Intelligence: cachix-devenv-learnings Core Invariants",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f50e7e79dd231f29e40fa69f1be3ae27624d6957b9f859eb5673c38332ceee07",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T21:55:42.244Z"
     }
   },
   "ai-builder-brain": {

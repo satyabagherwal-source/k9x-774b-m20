@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T21:40:01.032Z",
+  "last_updated": "2026-11-16T21:55:38.045Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "933ecc1df7e405bc441ce9c063729039acabe9e20f9fe05eaa649047781a1db1",
-      "verified_at": "2026-11-15T00:50:36.518Z",
+      "content_hash": "741a4829d66bc4ba0fab4a2357650985d6c17b38b0e6c545ef82ea365aaee1c2",
+      "verified_at": "2026-11-16T21:55:24.464Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T00:50:36.518Z"
+      "last_updated": "2026-11-16T21:55:24.464Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "b0f7eaca0fe91ebf402b239e60de5172bcdbb1209923eb557250944526aba0c7",
-      "verified_at": "2026-11-16T12:48:17.101Z",
+      "content_hash": "e148775acc6e33f1ba7b0035bd5a47ef11857fc6d2d153e14863ec14aded5d39",
+      "verified_at": "2026-11-16T21:55:35.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T12:48:17.101Z"
+      "last_updated": "2026-11-16T21:55:35.862Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
-      "verified_at": "2026-11-15T12:13:15.760Z",
+      "content_hash": "8f9f812ad22e81d3e4844ae053f12f2a11487ee262d9bf8e39529682d1a1f914",
+      "verified_at": "2026-11-16T21:55:38.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T12:13:15.760Z"
+      "last_updated": "2026-11-16T21:55:38.044Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",

@@ -10379,3 +10379,6 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `1d25918c` | Multi-dimensional audit evidence | 2026-11-16T21:23:29.761Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `3628771a` | Multi-dimensional audit evidence | 2026-11-16T21:28:25.354Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9419be28` | Multi-dimensional audit evidence | 2026-11-16T21:40:01.022Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `fa46b707` | Multi-dimensional audit evidence | 2026-11-16T21:55:24.454Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3a228bb2` | Multi-dimensional audit evidence | 2026-11-16T21:55:35.852Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `46dbc57a` | Multi-dimensional audit evidence | 2026-11-16T21:55:38.034Z |

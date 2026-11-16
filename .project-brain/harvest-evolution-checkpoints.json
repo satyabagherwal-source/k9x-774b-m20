@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T21:40:06.016Z",
+  "last_updated": "2026-11-16T21:55:43.900Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T21:40:05.477Z",
@@ -378,7 +378,7 @@
       "staged_for_review": 1
     },
     "cachix-devenv-learnings.md": {
-      "processed_at": "2026-11-15T00:50:56.878Z",
+      "processed_at": "2026-11-16T21:55:41.382Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-16T01:52:53.332Z",
+      "processed_at": "2026-11-16T21:55:42.541Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2228,7 +2228,7 @@
       "staged_for_review": 0
     },
     "infiniflow-infinity-learnings.md": {
-      "processed_at": "2026-11-15T12:13:19.087Z",
+      "processed_at": "2026-11-16T21:55:43.200Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3218,7 +3218,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1365,
+  "total_dossiers_evaluated": 1368,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1064
+  "total_staged_for_review": 1067
 }

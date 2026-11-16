@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T21:40:05.666Z",
+  "last_updated": "2026-11-16T21:55:43.473Z",
   "directives": [
     {
       "id": "CD-001",
@@ -20256,6 +20256,68 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-338A6B-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-Y5CD",
+      "directive_title": "bump astro from 7.1.6 to 7.4.12 in /docs",
+      "source_repo": "cachix/devenv",
+      "source_commit": "fa46b707",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y5CD-bump-astro-from-7-1-6-to-7-4-12-in-docs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-YJAF",
+      "directive_title": "build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YJAF-build-deps-bump-rustls-from-0-23-45-to-0-23-46-in-apps-freenet-ping.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-YJU4",
+      "directive_title": "invalidate fulltext index reader cache on compact and import commit",
+      "source_repo": "infiniflow-infinity-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YJU4-invalidate-fulltext-index-reader-cache-on-compact-and-import-commit.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YIS1",
+      "directive_title": "deps): bump astro from 7.1.6 to 7.4.12 in /docs",
+      "source_repo": "cachix-devenv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YIS1-deps-bump-astro-from-7-1-6-to-7-4-12-in-docs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-4038C6",
+      "directive_title": "build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4038C6-build-deps-bump-rustls-from-0-23-45-to-0.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-540902",
+      "directive_title": "invalidate fulltext index reader cache on compact and import commit",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "infiniflow-infinity",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-540902-invalidate-fulltext-index-reader-cache-o.md",
       "staged_date": "2026-11-16"
     }
   ]

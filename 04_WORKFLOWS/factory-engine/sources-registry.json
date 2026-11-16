@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T21:40:04.081Z",
-    "lastVerified": "2026-11-16T21:40:04.081Z",
+    "lastChecked": "2026-11-16T21:55:41.239Z",
+    "lastVerified": "2026-11-16T21:55:41.239Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,8 +367,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T20:32:45.128Z",
-    "lastVerified": "2026-11-16T20:32:45.128Z",
+    "lastChecked": "2026-11-16T21:55:34.089Z",
+    "lastVerified": "2026-11-16T21:55:34.089Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1302,12 +1302,12 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T12:48:16.251Z",
-    "lastVerified": "2026-11-16T12:48:16.251Z",
+    "lastChecked": "2026-11-16T21:55:34.766Z",
+    "lastVerified": "2026-11-16T21:55:34.766Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "b0f7eaca0fe91ebf402b239e60de5172bcdbb1209923eb557250944526aba0c7",
+    "contentHash": "e148775acc6e33f1ba7b0035bd5a47ef11857fc6d2d153e14863ec14aded5d39",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
@@ -1658,9 +1658,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-11-15T14:06:55.599Z",
+    "lastChecked": "2026-11-16T21:55:26.748Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-11-15T14:06:55.599Z"
+    "lastVerified": "2026-11-16T21:55:26.748Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -1692,14 +1692,14 @@
     "officialUrl": "https://github.com/cachix/devenv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T00:50:35.462Z",
-    "lastVerified": "2026-11-15T00:50:35.462Z",
+    "lastChecked": "2026-11-16T21:55:23.144Z",
+    "lastVerified": "2026-11-16T21:55:23.144Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cachix-devenv",
-    "contentHash": "933ecc1df7e405bc441ce9c063729039acabe9e20f9fe05eaa649047781a1db1",
+    "contentHash": "741a4829d66bc4ba0fab4a2357650985d6c17b38b0e6c545ef82ea365aaee1c2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2769,14 +2769,14 @@
     "officialUrl": "https://github.com/infiniflow/infinity",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-15T12:13:14.511Z",
-    "lastVerified": "2026-11-15T12:13:14.511Z",
+    "lastChecked": "2026-11-16T21:55:36.961Z",
+    "lastVerified": "2026-11-16T21:55:36.961Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
+    "contentHash": "8f9f812ad22e81d3e4844ae053f12f2a11487ee262d9bf8e39529682d1a1f914",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 27,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11833,9 +11833,9 @@
   "wooorm-parse-entities": {
     "name": "parse-entities",
     "officialUrl": "https://github.com/wooorm/parse-entities",
-    "lastChecked": "2026-11-12T04:31:55.352Z",
+    "lastChecked": "2026-11-16T21:55:21.612Z",
     "revisionIdentifier": "07f0abed",
-    "lastVerified": "2026-11-12T04:31:55.352Z"
+    "lastVerified": "2026-11-16T21:55:21.612Z"
   },
   "sparrowcode-alertkit": {
     "name": "AlertKit",
@@ -12101,9 +12101,9 @@
   "williewangwei-swiftui-tutorials": {
     "name": "SwiftUI-Tutorials",
     "officialUrl": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
-    "lastChecked": "2026-11-13T07:39:23.123Z",
+    "lastChecked": "2026-11-16T21:55:24.084Z",
     "revisionIdentifier": "0ced68b2",
-    "lastVerified": "2026-11-13T07:39:23.123Z"
+    "lastVerified": "2026-11-16T21:55:24.084Z"
   },
   "rdflib-pyshacl": {
     "name": "pySHACL",

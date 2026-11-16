@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T00:50:57.090Z",
+  "timestamp": "2026-11-16T21:55:41.981Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cachix-devenv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cachix-devenv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T00:50:57.090Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T21:55:41.981Z`  
 > **Learning ID**: `LEARN-EVO-cachix-devenv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `6c954cc1`  
+> **Source Version**: `fa46b707`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T00:50:35.469Z  
+> **Timestamp**: 2026-11-16T21:55:23.365Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T00:50:35.462Z  
+> **Harvest Timestamp**: 2026-11-16T21:55:23.144Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7834 stars
+- **Stars / Engagement**: 7839 stars
 
 ---
 
@@ -1725,104 +1725,237 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e080f001` (2026-11-13)
-**Commit Message**: fix(opencode): write opencode.jsonc to .opencode/ (#3366)
+### Incident Patch 1: `fa46b707` (2026-11-16)
+**Commit Message**: chore(deps): bump astro from 7.1.6 to 7.4.12 in /docs (#3370)
 
-**File**: `src/modules/integrations/opencode.nix` (modified, +4/-4)
+Bumps [astro](https://github.com/withastro/astro/tree/HEAD/packages/astro) from 7.1.6 to 7.4.12.
+- [Release notes](https://github.com/withastro/astro/releases)
+- [Changelog](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md)
+- [Commits](https://github.com/withastro/astro/commits/astro@7.4.12/packages/astro)
+
+---
+updated-dependencies:
+- dependency-name: astro
+  dependency-version: 7.4.12
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `docs/package.json` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@ in
-     settings = lib.mkOption {
-       type = lib.types.attrsOf lib.types.anything;
-       default = { };
--      description = "Attributes written to opencode.jsonc.";
-+      description = "Attributes written to .opencode/opencode.jsonc.";
-       example = lib.literalExpression ''
-         {
-           editor = "nvim";
-@@ -41,7 +41,7 @@ in
-       type = lib.types.attrsOf lib.types.anything;
-       default = { };
-       description = ''
--        MCP servers written to `opencode.jsonc` under `mcp`.
-+        MCP servers written to `.opencode/opencode.jsonc` under `mcp`.
- 
-         This option mirrors OpenCode's MCP configuration shape directly
-         (`local`/`remote`, `command`, `environment`, `url`, `headers`,
-@@ -240,7 +240,7 @@ in
- 
-     files = lib.mkMerge [
-       {
--        "opencode.jsonc".json = {
-+        ".opencode/opencode.jsonc".json = {
-           "$schema" = "https://opencode.ai/config.json";
-         }
-         // settingsWithMcp;
-@@ -352,7 +352,7 @@ in
-     };
- 
-     infoSections."OpenCode" = [
--      "Settings: opencode.jsonc"
-+      "Settings: .opencode/opencode.jsonc"
-     ]
-     ++ lib.optional (cfg.commands != { }) (
-       if builtins.isAttrs cfg.commands then
+@@ -27,7 +27,7 @@
+     "@astrojs/starlight-tailwind": "^5.0.0",
+     "@cachix/site-kit": "https://codeload.github.com/cachix/site-kit/tar.gz/f61f46c72b4e78d0a7d1e5858a4b973c896beb88",
+     "@tailwindcss/vite": "^4.3.3",
+-    "astro": "^7.1.6",
++    "astro": "^7.4.12",
+     "hast-util-select": "^6.0.4",
+     "marked": "^18.0.7",
+     "rehype-parse": "^9.0.1",
 ```
 
-**File**: `tests/opencode/devenv.nix` (modified, +15/-15)
+---
+
+### Incident Patch 2: `1b047fcb` (2026-11-16)
+**Commit Message**: docs: stop the home page from blinking on load (#3374)
+
+* docs: adopt site-kit client router and hero reveal fix
+
+* docs: batch landing remove-button layout reads
+
+* docs: pin site-kit to its merged main
+
+**File**: `docs/astro.config.mjs` (modified, +0/-7)
 ```diff
-@@ -78,19 +78,19 @@
-   enterTest = ''
-     echo "=== Testing OpenCode Configuration ==="
+@@ -62,12 +62,6 @@ export default defineConfig({
+       '/blog/2026/09/07/devenv-23-portless-and-tui-configuration/',
+   },
+   vite: {
+-    build: {
+-      // vtbot inserts the sidebar before Astro's script deduplication, so returning
+-      // from the homepage can rerun its inline script and register starlight-menu-button twice.
+-      // External JS modules execute once per URL; keep other assets' default inlining.
+-      assetsInlineLimit: (filePath) => filePath.endsWith('.js') ? false : undefined,
+-    },
+     plugins: [tailwindcss(), catalogSearchApi()],
+     server: {
+       watch: {
+@@ -111,7 +105,6 @@ export default defineConfig({
+         themes: codeThemes,
+       },
+       components: {
+-        Head: './src/overrides/Head.astro',
+         Search: './src/overrides/Search.astro',
+         SocialIcons: './src/overrides/SocialIcons.astro',
+       },
+```
+
+**File**: `docs/package-lock.json` (modified, +6/-10)
+```diff
+@@ -12,7 +12,7 @@
+         "@astrojs/sitemap": "^3.7.3",
+         "@astrojs/starlight": "^0.41.5",
+         "@astrojs/starlight-tailwind": "^5.0.0",
+-        "@cachix/site-kit": "https://codeload.github.com/cachix/site-kit/tar.gz/1e9bb1e181430d4a8d632bc8c1487e16de946091",
++        "@cachix/site-kit": "https://codeload.github.com/cachix/site-kit/tar.gz/f61f46c72b4e78d0a7d1e5858a4b973c896beb88",
+         "@tailwindcss/vite": "^4.3.3",
+         "astro": "^7.1.6",
+         "hast-util-select": "^6.0.4",
+@@ -29,7 +29,6 @@
+       },
+       "devDependencies": {
+         "@astrojs/check": "^0.9.10",
+-        "astro-vtbot": "3.1.0",
+         "simple-icons": "^16.28.0",
+         "typescript": "6.0.3"
+       },
+@@ -726,9 +725,12 @@
+     },
+     "node_modules/@cachix/site-kit": {
+       "version": "0.1.0",
+-      "resolved": "https://codeload.github.com/cachix/site-kit/tar.gz/1e9bb1e181430d4a8d632bc8c1487e16de946091",
+-      "integrity": "sha512-zVlgCQEZTKzk/VKZ6ZnkioMmSh6NGBxgN0JYwEK8UQr5McWz+3NYYxfodCG5bPtK7XElPTKpkUZ03UaelC6kIg==",
++      "resolved": "https://codeload.github.com/cachix/site-kit/tar.gz/f61f46c72b4e78d0a7d1e5858a4b973c896beb88",
++      "integrity": "sha512-4KajcP3NFzt+Wpx4ypdhL3BdHv0O7h2tJrgCvZQGvpLvPjyETPhCsEAJHuKKyZsrnAUTVDC/xjiWnicDT70btQ==",
+       "license": "Apache-2.0",
++      "dependencies": {
++        "astro-vtbot": "^3.1.0"
++      },
+       "bin": {
+         "cachix-site-check-links": "src/checks/links-cli.js"
+       },
+@@ -3042,7 +3044,6 @@
+       "version": "1.0.6",
+       "resolved": "https://registry.npmjs.org/@vtbag/cam-shaft/-/cam-shaft-1.0.6.tgz",
+       "integrity": "sha512-Xy1bmJJLXuCqxmY2agwPfhGNv1XZViqh54H0VGK4mouGsItFsh8Mz/wWAP6mZwAOEuu9bEOJ1mJ+oNoaczZ1zw==",
+-      "dev": true,
+       "license": "ISC",
+       "funding": {
+         "type": "github",
+@@ -3053,7 +3054,6 @@
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/@vtbag/element-crossing/-/element-crossing-1.1.0.tgz",
+       "integrity": "sha512-1YL609KPwhHUKRrVNfoogQCVJPfFrE5DubOLcCJZLHVCjWZ2ZAPcaq1wR2OP6nXD0Ok9JLX41YsEtYBYzw6CxQ==",
+-      "dev": true,
+       "license": "ISC",
+       "funding": {
+         "type": "github",
+@@ -3064,7 +3064,6 @@
+       "version": "1.0.24",
+       "resolved": "https://registry.npmjs.org/@vtbag/inspection-chamber/-/inspection-chamber-1.0.24.tgz",
+       "integrity": "sha512-L6CrMbzJ0gdG/P5WnGyVgRxHVeLhlQgXh3mp+OI4JdJjFiwIhh9+sG/FXM2DneBs5HQvaWUq4qf6NiSlgVbyvQ==",
+-      "dev": true,
+       "license": "ISC",
+       "funding": {
+         "type": "github",
+@@ -3075,7 +3074,6 @@
+       "version": "1.3.1",
+       "resolved": "https://registry.npmjs.org/@vtbag/turn-signal/-/turn-signal-1.3.1.tgz",
+       "integrity": "sha512-6rWkG+ik3U+KQGI94yNOrOh5QedB9zmP/8H51X5WQwrJz8m2MAU5YwGRRcweO/dJ6wW/Bn7OsgC1vRURnwrvCg==",
+-      "dev": true,
+       "license": "ISC",
+       "funding": {
+         "type": "github",
+@@ -3086,7 +3084,6 @@
+       "version": "1.2.18",
+       "resolved": "https://registry.npmjs.org/@vtbag/utensil-drawer/-/utensil-drawer-1.2.18.tgz",
+       "integrity": "sha512-Veg1J8lviA2g878otiEHoyiGR2f4PZ5Rc40UyIR4YS95QnD+1+oAZsprhUPR+YudgZPrqWx5chyPNwjkHyA0uw==",
+-      "dev": true,
+       "license": "ISC",
+       "funding": {
+         "type": "github",
+@@ -3372,7 +3369,6 @@
+       "version": "3.1.0",
+       "resolved": "https://registry.npmjs.org/astro-vtbot/-/astro-vtbot-3.1.0.tgz",
+       "integrity": "sha512-YZX+Sv3EHRaAryyEJ28N9ausnAG4JxM9ivY+BeRJEa/neWBHmZaQ3onMcdxBFg/u7e+8+YOepuQC8Bt2lx8fKg==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "@vtbag/cam-shaft": "^1.0.6",
+```
+
+**File**: `docs/package.json` (modified, +1/-2)
+```diff
+@@ -25,7 +25,7 @@
+     "@astrojs/sitemap": "^3.7.3",
+     "@astrojs/starlight": "^0.41.5",
+     "@astrojs/starlight-tailwind": "^5.0.0",
+-    "@cachix/site-kit": "https://codeload.github.com/cachix/site-kit/tar.gz/1e9bb1e181430d4a8d632bc8c1487e16de946091",
++    "@cachix/site-kit": "https://codeload.github.com/cachix/site-kit/tar.gz/f61f46c72b4e78d0a7d1e5858a4b973c896beb88",
+     "@tailwindcss/vite": "^4.3.3",
+     "astro": "^7.1.6",
+     "hast-util-select": "^6.0.4",
+@@ -42,7 +42,6 @@
+   },
+   "devDependencies": {
+     "@astrojs/check": "^0.9.10",
+-    "astro-vtbot": "3.1.0",
+     "simple-icons": "^16.28.0",
+     "typescript": "6.0.3"
+   }
+```
+
+**File**: `docs/src/overrides/Head.astro` (removed, +0/-16)
+```diff
+@@ -1,16 +0,0 @@
+----
+-import DefaultHead from '@astrojs/starlight/components/Head.astro';
+-import VtbotStarlight from 'astro-vtbot/components/starlight/Base.astro';
+----
+-
+-<VtbotStarlight viewTransitionsFallback="swap">
+-  <DefaultHead {...Astro.props} />
+-</VtbotStarlight>
+-
+-<style is:global>
+-  ::view-transition-group(*),
+-  ::view-transition-old(*),
+-  ::view-transition-new(*) {
+-    animation: none !important;
+-  }
+-</style>
+```
+
+**File**: `docs/src/pages/index.astro` (modified, +8/-2)
+```diff
+@@ -1031,6 +1031,7 @@ in 12.4s`} />
+       });
  
--    # Test 1: opencode.jsonc exists and has correct content
--    echo "Testing opencode.jsonc..."
--    test -f opencode.jsonc || { echo "❌ opencode.jsonc not found"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '."$schema" == "https://opencode.ai/config.json"' opencode.jsonc > /dev/null || { echo "❌ Schema incorrect"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.editor == "nvim"' opencode.jsonc > /dev/null || { echo "❌ Custom settings not applied"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.theme == "dark"' opencode.jsonc > /dev/null || { echo "❌ Theme setting not applied"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.features.autocomplete == true' opencode.jsonc > /dev/null || { echo "❌ Feature settings not applied"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".enabled == true' opencode.jsonc > /dev/null || { echo "❌ MCP enabled flag missing"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".type == "local"' opencode.jsonc > /dev/null || { echo "❌ MCP local type wrong"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".command[0] == "devenv"' opencode.jsonc > /dev/null || { echo "❌ MCP local command wrong"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".environment.DEVENV_ROOT == "test-root"' opencode.jsonc > /dev/null || { echo "❌ MCP local environment wrong"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp.docs.url == "https://override.example.com"' opencode.jsonc > /dev/null || { echo "❌ settings.mcp did not override opencode.mcp"; exit 1; }
--    echo "✅ opencode.jsonc OK"
-+    # Test 1: .opencode/opencode.jsonc exists and has correct content
-+    echo "Testing .opencode/opencode.jsonc..."
-+    test -f .opencode/opencode.jsonc || { echo "❌ .opencode/opencode.jsonc not found"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '."$schema" == "https://opencode.ai/config.json"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Schema incorrect"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.editor == "nvim"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Custom settings not applied"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.theme == "dark"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Theme setting not applied"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.features.autocomplete == true' .opencode/opencode.jsonc > /dev/null || { echo "❌ Feature settings not applied"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".enabled == true' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP enabled flag missing"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".type == "local"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local type wrong"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".command[0] == "devenv"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local command wrong"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".environment.DEVENV_ROOT == "test-root"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local environment wrong"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp.docs.url == "https://override.example.com"' .opencode/opencode.jsonc > /dev/null || { echo "❌ settings.mcp did not override opencode.mcp"; exit 1; }
-+    echo "✅ .opencode/opencode.jsonc OK"
+       var lines = output.querySelectorAll<HTMLElement>('.landing-code-line');
++      var removeControlBlocks: { control: HTMLButtonElement; iconLine: HTMLElement; finalLine: HTMLElement }[] = [];
+       entries.forEach(function (entry) {
+         var node = currentNodes.get(entry.id);
+         var removeControl = currentRemoveControls.get(entry.id);
+@@ -1066,11 +1067,16 @@ in 12.4s`} />
+         if (iconLine) iconLine.appendChild(node);
+         if (iconLine && finalLine) {
+           iconLine.appendChild(removeControl);
+-          var blockHeight = finalLine.offsetTop - iconLine.offsetTop + finalLine.offsetHeight;
+-          removeControl.style.top = blockHeight / 2 + 'px';
++          removeControlBlocks.push({ control: removeControl, iconLine: iconLine, finalLine: finalLine });
+         }
+       });
  
-     # Test 2: AGENTS.md exists and has content
-     echo "Testing AGENTS.md..."
-@@ -138,8 +138,8 @@
- 
-     # Test 9: Verify minimal config works (edge case)
-     echo "Testing minimal configuration support..."
--    # At minimum, opencode.jsonc should always be created when enabled
--    test -f opencode.jsonc || { echo "❌ Minimal config didn't create opencode.jsonc"; exit 1; }
-+    # At minimum, .opencode/opencode.jsonc should always be created when enabled
-+    test -f .opencode/opencode.jsonc || { echo "❌ Minimal config didn't create .opencode/opencode.jsonc"; exit 1; }
-     echo "✅ Minimal config OK"
- 
-     echo ""
++      removeControlBlocks.map(function (block) {
++        return block.finalLine.offsetTop - block.iconLine.offsetTop + block.finalLine.offsetHeight;
++      }).forEach(function (blockHeight, index) {
++        removeControlBlocks[index].control.style.top = blockHeight / 2 + 'px';
++      });
++
+       syncPantry(entries);
+       if (highlightedEntryIds.length) highlightEntries(highlightedEntryIds, true);
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3374** (2026-11-16): docs: stop the home page from blinking on load (@vimjoyer)
+- **PR #3372** (2026-11-15): feat(languages): Added the Groovy language, LSP, and docs. (@givikuna)
+- **PR #3370** (2026-11-16): chore(deps): bump astro from 7.1.6 to 7.4.12 in /docs (@dependabot[bot])
 - **PR #3366** (2026-11-13): fix(opencode): write opencode.jsonc to .opencode/ (@sand4rt)
 - **PR #3365** (2026-11-13): feat(dotnet): add languages.dotnet.version option (@SVendittelli)
 - **PR #3362** (2026-11-11): chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (@dependabot[bot])
-- **PR #3361** (2026-11-11): chore(deps): bump nokogiri from 1.18.10 to 1.19.5 in /src/modules/lib/ruby-lsp (@dependabot[bot])
-- **PR #3354** (2026-11-10): feat(elixir): per-project MIX_HOME, mix deps task and versionFile (@nelsonmestevao)
-- **PR #3353** (2026-11-10): feat(elixir): add version option (@nelsonmestevao)
 
 ---
 
@@ -1842,37 +1975,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. opencode): write opencode.jsonc to .opencode/
+## X. deps): bump astro from 7.1.6 to 7.4.12 in /docs
 
 **RULE**:
-When implementing operations in `src/modules/integrations/opencode.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e080f001`: opencode): write opencode.jsonc to .opencode/. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fa46b707`: deps): bump astro from 7.1.6 to 7.4.12 in /docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/modules/integrations/opencode.nix`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      description = "Attributes written to .opencode/opencode.jsonc.";
-        MCP servers written to `.opencode/opencode.jsonc` under `mcp`.
-        ".opencode/opencode.jsonc".json = {
-      "Settings: .opencode/opencode.jsonc"
+    "astro": "^7.4.12",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      description = "Attributes written to opencode.jsonc.";
-        MCP servers written to `opencode.jsonc` under `mcp`.
-        "opencode.jsonc".json = {
-      "Settings: opencode.jsonc"
+    "astro": "^7.1.6",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e080f001` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fa46b707` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

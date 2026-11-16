@@ -10346,3 +10346,6 @@
 | `CYCLE-20261116-T3RX` | `2026-11-16T21:23:29.757Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8792` | Yes (`cbbb2d2f...`) |
 | `CYCLE-20261116-ZFUU` | `2026-11-16T21:28:25.350Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8793` | Yes (`1317570e...`) |
 | `CYCLE-20261116-ECMX` | `2026-11-16T21:40:01.017Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8765` | Yes (`167c2502...`) |
+| `CYCLE-20261116-Y55U` | `2026-11-16T21:55:24.450Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8794` | Yes (`741a4829...`) |
+| `CYCLE-20261116-YDYG` | `2026-11-16T21:55:35.848Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8795` | Yes (`e148775a...`) |
+| `CYCLE-20261116-YFN2` | `2026-11-16T21:55:38.030Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8796` | Yes (`8f9f812a...`) |
