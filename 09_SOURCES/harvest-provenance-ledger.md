@@ -10234,3 +10234,4 @@ Every entry in this ledger must capture:
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `f9797f7f` | Multi-dimensional audit evidence | 2026-11-16T00:45:15.251Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `9fe067c6` | Multi-dimensional audit evidence | 2026-11-16T00:56:42.284Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `60204b0c` | Multi-dimensional audit evidence | 2026-11-16T00:56:51.806Z |
+| `learn-github-adobe-structured-data-validator` | `https://github.com/adobe/structured-data-validator` | `6918b526` | Multi-dimensional audit evidence | 2026-11-16T01:21:20.730Z |

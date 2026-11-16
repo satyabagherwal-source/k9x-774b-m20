@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for adobe/structured/data/validator
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for adobe/structured-data-validator
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "adobe/structured/data/validator",
-  "source_url": "https://github.com/adobe/structured/data/validator",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "adobe/structured-data-validator",
+  "source_url": "https://github.com/adobe/structured-data-validator",
+  "source_version": "6918b526",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-16T01:21:20.912Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-adobe-structured-data-validator",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [adobe/structured/data/validator](https://github.com/adobe/structured/data/validator) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [adobe/structured-data-validator](https://github.com/adobe/structured-data-validator) (Revision: `6918b526`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T01:21:20.912Z`  
+> **Learning ID**: `learn-github-adobe-structured-data-validator`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `adobe/structured/data/validator` (Commit: `historical`)
+- **Target Repository**: `adobe/structured-data-validator` (Commit: `6918b526`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md`  
-> **Source**: github ([https://github.com/adobe/structured-data-validator](https://github.com/adobe/structured-data-validator))  
-> **Source Version**: `66e7610a`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:35:50.081Z  
-> **Learning ID**: `learn-github-adobe-structured-data-validator`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): adobe/structured-data-validator
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/adobe/structured-data-validator](https://github.com/adobe/structured-data-validator))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:35:50.076Z  
+> **Harvest Timestamp**: 2026-11-16T01:21:14.920Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: JavaScript library to validate structured data according to schema.org and Google Rich Results
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17 stars
+- **Stars / Engagement**: 18 stars
 
 ---
 
@@ -505,98 +491,172 @@ export default class CertificationValidator extends BaseValidator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77af6d57` (2025-08-13)
-**Commit Message**: fix: Handling array of contentUrls (#39)
+### Incident Patch 1: `7e86b4da` (2026-11-12)
+**Commit Message**: fix: accept minPrice and maxPrice as a price range in PriceSpecification (#80)
 
-* fix: handling array of urls
+PriceSpecification unconditionally required a single "price", so offers that express a price range with priceSpecification.minPrice and maxPrice were reported as "Required attribute \"price\" is missing". schema.org defines minPrice/maxPrice as the lowest/highest price when the price is a range.
 
-* cover update with test
+A range is now accepted when both minPrice and maxPrice are present and numeric and no price is given. An incomplete range (only one bound) still reports the original missing-price error, so existing error messages are unchanged. Offers directly under a Product keep requiring a single price.
 
-* Revert "cover update with test"
-
-This reverts commit 34a9b4451f47ecc08b60b43e7ecfe3fd0bf3c464.
-
-* add test with contentUrl array
-
----------
-
-Co-authored-by: noelruiz34 <[REDACTED_EMAIL]>
-
-**File**: `gallery/ImageObject/content-url-array.json` (added, +16/-0)
+**File**: `gallery/PriceSpecification/invalid3.json` (added, +6/-0)
 ```diff
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,6 @@
 +{
-+  "@context": "https://schema.org/",
-+  "@type": "ImageObject",
-+  "contentUrl": [
-+    "https://example.com/photos/1x1/black-labrador-puppy.jpg",
-+    "https://example.com/photos/1x1/black-labrador-puppy-2.jpg"
-+  ],
-+  "license": "https://example.com/license",
-+  "acquireLicensePage": "https://example.com/how-to-use-my-images",
-+  "creditText": "Labrador PhotoLab",
-+  "creator": {
-+    "@type": "Person",
-+    "name": "Brixton Brownstone"
-+  },
-+  "copyrightNotice": "Clara Kent"
++  "@context": "https://schema.org",
++  "@type": "PriceSpecification",
++  "minPrice": "4.00",
++  "priceCurrency": "USD"
 +}
 ```
 
-**File**: `src/types/__tests__/ImageObject.test.js` (modified, +9/-0)
+**File**: `gallery/PriceSpecification/invalid4.json` (added, +7/-0)
 ```diff
-@@ -67,5 +67,14 @@ describe('ImageObjectValidator', () => {
-         ],
+@@ -0,0 +1,7 @@
++{
++  "@context": "https://schema.org",
++  "@type": "PriceSpecification",
++  "minPrice": "4.00",
++  "maxPrice": "five",
++  "priceCurrency": "USD"
++}
+```
+
+**File**: `gallery/PriceSpecification/valid3.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "@context": "https://schema.org",
++  "@type": "PriceSpecification",
++  "minPrice": "4.00",
++  "maxPrice": "5.00",
++  "priceCurrency": "USD"
++}
+```
+
+**File**: `gallery/PriceSpecification/valid4.json` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++{
++  "@context": "https://schema.org",
++  "@type": "Offer",
++  "name": "Happy Hour Deals",
++  "url": "https://www.example.com/happy-hour",
++  "availability": "https://schema.org/InStock",
++  "priceSpecification": {
++    "@type": "PriceSpecification",
++    "minPrice": "4.00",
++    "maxPrice": "5.00",
++    "priceCurrency": "USD"
++  }
++}
+```
+
+**File**: `src/types/PriceSpecification.js` (modified, +25/-1)
+```diff
+@@ -11,10 +11,34 @@
+  */
+ import BaseValidator from './base.js';
+ 
++const isPresent = (value) =>
++  value !== undefined && value !== null && value !== '';
++
+ export default class PriceSpecificationValidator extends BaseValidator {
++  /**
++   * A PriceSpecification needs a single `price`, or a price range expressed
++   * with both `minPrice` and `maxPrice` (schema.org: "The lowest price if the
++   * price is a range"). A range is only accepted when no `price` is given; an
++   * incomplete range still reports the usual missing "price" error.
++   */
++  priceOrRange() {
++    return (data) => {
++      if (!isPresent(data?.price) && isPresent(data?.minPrice)) {
++        if (isPresent(data?.maxPrice)) {
++          const issues = [
++            this.required('minPrice', 'number')(data),
++            this.required('maxPrice', 'number')(data),
++          ].filter(Boolean);
++          return issues.length > 0 ? issues : null;
++        }
++      }
++      return this.required('price', 'number')(data);
++    };
++  }
++
+   getConditions() {
+     return [
+-      this.required('price', 'number'),
++      this.priceOrRange(),
+       this.recommended('priceCurrency', 'currency'),
+     ].map((c) => c.bind(this));
+   }
+```
+
+**File**: `src/types/__tests__/PriceSpecification.test.js` (modified, +48/-0)
+```diff
+@@ -56,6 +56,54 @@ describe('PriceSpecificationValidator', () => {
        });
      });
-+
-+    it('should allow contentUrl as an array', async () => {
+ 
++    it('should accept a price range (minPrice and maxPrice) in valid3.json', async () => {
 +      const data = await loadTestData(
-+        'ImageObject/content-url-array.json',
++        'PriceSpecification/valid3.json',
 +        'jsonld',
 +      );
 +      const issues = await validator.validate(data);
 +      expect(issues).to.have.lengthOf(0);
 +    });
-   });
- });
-```
-
-**File**: `src/types/base.js` (modified, +10/-7)
-```diff
-@@ -145,13 +145,16 @@ export default class BaseValidator {
-       return !isNaN(date.getTime());
-     } else if (type === 'url') {
-       // Absolute or relative URL, but no data: URLs
--      if (data.startsWith('data:')) {
--        return false;
--      }
--      try {
--        new URL(data, 'https://example.com');
--      } catch (e) {
--        return false;
-+      let urlValues = Array.isArray(data) ? data : [data];
-+      for (const url of urlValues) {
-+        if (url.startsWith('data:')) {
-+          return false;
-+        }
-+        try {
-+          new URL(url, 'https://example.com');
-+        } catch (e) {
-+          return false;
-+        }
-       }
-     } else if (type === 'currency') {
-       return typeof data === 'string' && /^[A-Z]{3}$/.test(data);
++
++    it('should accept an Offer whose priceSpecification is a price range in valid4.json', async () => {
++      const data = await loadTestData(
++        'PriceSpecification/valid4.json',
++        'jsonld',
++      );
++      const issues = await validator.validate(data);
++      expect(issues).to.have.lengthOf(0);
++    });
++
++    it('should still require price when only minPrice is given in invalid3.json', async () => {
++      const data = await loadTestData(
++        'PriceSpecification/invalid3.json',
++        'jsonld',
++      );
++      const issues = await validator.validate(data);
++
++      expect(issues).to.have.lengthOf(1);
++      expect(issues[0]).to.deep.include({
++        rootType: 'PriceSpecification',
++        issueMessage: 'Required attribute "price" is missing',
++        severity: 'ERROR',
++      });
++    });
++
++    it('should detect a non-numeric maxPrice in a price range in invalid4.json', async () => {
++      const data = await loadTestData(
++        'PriceSpecification/invalid4.json',
++        'jsonld',
++      );
++      const issues = await validator.validate(data);
++
++      expect(issues).to.have.lengthOf(1);
++      expect(issues[0]).to.deep.include({
++        rootType: 'PriceSpecification',
++        issueMessage: 'Invalid type for attribute "maxPrice"',
++        severity: 'ERROR',
++      });
++    });
++
+     it('should detect invalid currency in invalid3.json', async () => {
+       const data = await loadTestData(
+         'PriceSpecification/invalid2.json',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #80** (2026-11-12): fix: accept minPrice and maxPrice as a price range in PriceSpecification (@cuzuco2)
 - **PR #69** (closed): chore(deps): update dependency c8 to v11 - autoclosed (@renovate[bot])
 - **PR #68** (2026-02-25): chore(deps): update eslint monorepo to v9.39.3 (@renovate[bot])
 - **PR #67** (2026-02-25): chore(deps): update dependency eslint-plugin-headers to v1.3.4 - autoclosed (@renovate[bot])
 - **PR #65** (2026-02-25): chore(deps): update semantic-release monorepo (@renovate[bot])
 - **PR #64** (2026-02-25): chore(deps): update dependency globals to v17 (@renovate[bot])
-- **PR #63** (2026-01-28): chore(deps): update actions/checkout action to v6 (@renovate[bot])
 
 ---
 
@@ -616,46 +676,36 @@ Co-authored-by: noelruiz34 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Handling array of contentUrls (#39)
+## X. accept minPrice and maxPrice as a price range in PriceSpecification
 
 **RULE**:
-When implementing operations in `gallery/ImageObject/content-url-array.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in adobe/structured-data-validator. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gallery/PriceSpecification/invalid3.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in adobe/structured-data-validator. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77af6d57`: Handling array of contentUrls (#39). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e86b4da`: accept minPrice and maxPrice as a price range in PriceSpecification. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `gallery/ImageObject/content-url-array.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `gallery/PriceSpecification/invalid3.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
 {
-  "@context": "https://schema.org/",
-  "@type": "ImageObject",
-  "contentUrl": [
-    "https://example.com/photos/1x1/black-labrador-puppy.jpg",
-    "https://example.com/photos/1x1/black-labrador-puppy-2.jpg"
-  ],
-  "license": "https://example.com/license",
-  "acquireLicensePage": "https://example.com/how-to-use-my-images",
-  "creditText": "Labrador PhotoLab",
-  "creator": {
-    "@type": "Person",
-    "name": "Brixton Brownstone"
-  },
-  "copyrightNotice": "Clara Kent"
+  "@context": "https://schema.org",
+  "@type": "PriceSpecification",
+  "minPrice": "4.00",
+  "priceCurrency": "USD"
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77af6d57` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e86b4da` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

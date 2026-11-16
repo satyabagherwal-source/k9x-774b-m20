@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T00:56:55.033Z",
+  "updated_at": "2026-11-16T01:21:24.706Z",
   "stats": {
-    "total_discovered": 4021,
-    "approved_pending_harvest": 3777,
+    "total_discovered": 4027,
+    "approved_pending_harvest": 3783,
     "harvested_count": 0,
     "rejected_count": 244,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3774,
+      "COMMUNITY_AND_EXPERT": 3780,
       "OFFICIAL_DOCUMENTATION": 132,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
@@ -86775,6 +86775,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
         "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-DF437AC53729": {
+      "id": "SRC-DF437AC53729",
+      "url": "https://github.com/adobe/structured-data-validator",
+      "title": "https://github.com/adobe/structured-data-validator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:21:24.515Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md",
+        "fileName": "adobe-structured-data-validator-learnings.md"
+      }
+    },
+    "SRC-D1F33B262BE9": {
+      "id": "SRC-D1F33B262BE9",
+      "url": "https://schema.org/position",
+      "title": "https://schema.org/position",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:21:24.559Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md",
+        "fileName": "adobe-structured-data-validator-learnings.md"
+      }
+    },
+    "SRC-88D7A563DCAB": {
+      "id": "SRC-88D7A563DCAB",
+      "url": "https://opensour/",
+      "title": "https://opensour/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:21:24.590Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md",
+        "fileName": "adobe-structured-data-validator-learnings.md"
+      }
+    },
+    "SRC-0A796394C149": {
+      "id": "SRC-0A796394C149",
+      "url": "https://opensource.adobe.com/cla.html",
+      "title": "https://opensource.adobe.com/cla.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:21:24.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md",
+        "fileName": "adobe-structured-data-validator-learnings.md"
+      }
+    },
+    "SRC-A587423712E5": {
+      "id": "SRC-A587423712E5",
+      "url": "https://www.example.com/happy-hour",
+      "title": "https://www.example.com/happy-hour",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:21:24.661Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md",
+        "fileName": "adobe-structured-data-validator-learnings.md"
+      }
+    },
+    "SRC-73954B12DB7E": {
+      "id": "SRC-73954B12DB7E",
+      "url": "https://schema.org/InStock",
+      "title": "https://schema.org/InStock",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:21:24.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md",
+        "fileName": "adobe-structured-data-validator-learnings.md"
       }
     }
   }

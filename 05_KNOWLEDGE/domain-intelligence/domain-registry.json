@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T01:04:49.795Z",
-  "total_records": 1180,
+  "last_updated": "2026-11-16T01:21:26.296Z",
+  "total_records": 1182,
   "domains": {
     "A": {
       "total": 7,
@@ -1106,7 +1106,7 @@
       ]
     },
     "I": {
-      "total": 47,
+      "total": 49,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1154,7 +1154,9 @@
         "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-core-inva",
         "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings",
         "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants",
-        "domain_intelligence-content-information-intelligence-etcd-io-etcd-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-etcd-io-etcd-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
+        "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-learnings-core-"
       ]
     },
     "J": {
@@ -6995,8 +6997,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "672b58bda8186e87e6fd7d85910f0c3bab9cfbf41ff11237ff2df7f830ab0362",
-      "created_at": "2026-11-16T01:04:49.317Z"
+      "content_hash": "fa0fd22b54e877cb66a86993b8eb80083918ce0298bc87cbade96f21d24679ba",
+      "created_at": "2026-11-16T01:21:26.296Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7913,8 +7915,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a15bdd03418ed989c6dd0b03b9ef78100a8b437ce1835ec8654c9c0c1696d6d0",
-      "created_at": "2026-11-16T01:04:48.843Z"
+      "content_hash": "94a276dcd630f229b58a3cb7d7738ca7e4fd32184235052d3f1483348cdcb3da",
+      "created_at": "2026-11-16T01:21:25.724Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -22122,6 +22124,24 @@
       "repository": "trinodb-trino-learnings",
       "content_hash": "7781ab38622b6d4ae432e12614f2b6f1fd5a77af8e4b724375620e25f1625d3f",
       "created_at": "2026-11-16T00:56:55.956Z"
+    },
+    "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: adobe/structured-data-validator Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-adobe-structured-data-validator-content-information-intelligence-adobe-structure.md",
+      "repository": "adobe/structured-data-validator",
+      "content_hash": "c56aaea0c3f6343c9bfbf673372a60f1ea6328cc5355219fe4ce74eb787c3330",
+      "created_at": "2026-11-16T01:21:21.030Z"
+    },
+    "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-learnings-core-": {
+      "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-learnings-core-",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: adobe-structured-data-validator-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-adobe-structured-data-validator-learnings-content-information-intelligence-adobe.md",
+      "repository": "adobe-structured-data-validator-learnings",
+      "content_hash": "c85182907a634728aa81936aa88579605d6268184e50a7a62a32ba9fe5fe87eb",
+      "created_at": "2026-11-16T01:21:25.029Z"
     }
   }
 }

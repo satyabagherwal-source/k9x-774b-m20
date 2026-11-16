@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T01:04:48.350Z",
-    "lastVerified": "2026-11-16T01:04:48.350Z",
+    "lastChecked": "2026-11-16T01:21:24.374Z",
+    "lastVerified": "2026-11-16T01:21:24.374Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,12 +255,12 @@
     "revisionIdentifier": "1b782653"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T00:36:54.027Z",
-    "lastVerified": "2026-11-16T00:36:54.027Z",
+    "lastChecked": "2026-11-16T01:21:24.362Z",
+    "lastVerified": "2026-11-16T01:21:24.362Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -269,7 +269,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "64e35701"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1029,8 +1030,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T20:08:51.583Z",
-    "lastVerified": "2026-11-15T20:08:51.583Z",
+    "lastChecked": "2026-11-16T01:21:19.339Z",
+    "lastVerified": "2026-11-16T01:21:19.339Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -5184,9 +5185,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-14T18:14:40.904Z",
+    "lastChecked": "2026-11-16T01:21:16.825Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-14T18:14:40.904Z"
+    "lastVerified": "2026-11-16T01:21:16.825Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -6539,8 +6540,8 @@
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-14T16:22:56.174Z",
-    "lastVerified": "2026-11-14T16:22:56.174Z",
+    "lastChecked": "2026-11-16T01:21:21.961Z",
+    "lastVerified": "2026-11-16T01:21:21.961Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -7496,12 +7497,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "domcyrus-rustnet": {
-    "name": "domcyrus/rustnet",
+    "name": "rustnet",
     "officialUrl": "https://github.com/domcyrus/rustnet",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T04:14:31.773Z",
-    "lastVerified": "2026-11-14T04:14:31.773Z",
+    "lastChecked": "2026-11-16T01:21:09.353Z",
+    "lastVerified": "2026-11-16T01:21:09.353Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-domcyrus-rustnet",
@@ -7510,7 +7511,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "09d7fbf1"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
     "name": "lilylilith/QI_2.1_AnyAngle",
@@ -10696,11 +10698,21 @@
     "lastVerified": "2026-11-16T00:36:40.133Z"
   },
   "adobe-structured-data-validator": {
-    "name": "structured-data-validator",
+    "name": "adobe/structured-data-validator",
     "officialUrl": "https://github.com/adobe/structured-data-validator",
-    "lastChecked": "2026-11-11T10:52:00.407Z",
-    "revisionIdentifier": "66e7610a",
-    "lastVerified": "2026-11-11T10:52:00.407Z"
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-16T01:21:14.920Z",
+    "lastVerified": "2026-11-16T01:21:14.920Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-adobe-structured-data-validator",
+    "contentHash": "2db818dc649c038528e0f218722bd995a1e4ec1a8a40210aab48169235e7ed4f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "rainbow-me-rainbow": {
     "name": "rainbow-me/rainbow",
@@ -10757,9 +10769,9 @@
   "kdchang-reactjs101": {
     "name": "reactjs101",
     "officialUrl": "https://github.com/kdchang/reactjs101",
-    "lastChecked": "2026-11-12T14:59:26.153Z",
+    "lastChecked": "2026-11-16T01:21:14.347Z",
     "revisionIdentifier": "9a6f238b",
-    "lastVerified": "2026-11-12T14:59:26.153Z"
+    "lastVerified": "2026-11-16T01:21:14.347Z"
   },
   "mitrovicsinisaa-schemaorg-rs": {
     "name": "schemaorg-rs",

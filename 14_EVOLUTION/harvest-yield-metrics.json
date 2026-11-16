@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:56:51.812Z",
-  "total_cycles_completed": 9798,
-  "total_learnings_persisted": 9798,
-  "total_rules_promoted": 9408,
+  "last_updated": "2026-11-16T01:21:20.736Z",
+  "total_cycles_completed": 9799,
+  "total_learnings_persisted": 9799,
+  "total_rules_promoted": 9409,
   "history": [
-    {
-      "timestamp": "2026-11-14T21:21:02.319Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T21:21:05.054Z",
       "repository": "genkit-ai/genkit",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T00:56:51.812Z",
       "repository": "clastix/kamaji",
       "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T01:21:20.736Z",
+      "repository": "adobe/structured-data-validator",
+      "learningId": "learn-github-adobe-structured-data-validator",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -8613,10 +8613,10 @@
     "repository": "adobe/structured-data-validator",
     "platform": "github",
     "sourceUrl": "https://github.com/adobe/structured-data-validator",
-    "sourceVersion": "66e7610a",
+    "sourceVersion": "6918b526",
     "license": "Apache-2.0",
-    "contentHash": "85ba169154815be7c026609bb654ea4791c57e75d146b55bca533a897a1d1d1c",
-    "lastHarvestedAt": "2026-10-19T18:35:50.269Z",
+    "contentHash": "2db818dc649c038528e0f218722bd995a1e4ec1a8a40210aab48169235e7ed4f",
+    "lastHarvestedAt": "2026-11-16T01:21:20.730Z",
     "learningId": "learn-github-adobe-structured-data-validator"
   },
   "hi-manshu-charty": {

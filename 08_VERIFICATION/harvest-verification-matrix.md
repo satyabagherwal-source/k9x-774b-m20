@@ -10201,3 +10201,4 @@
 | `CYCLE-20261116-KPRJ` | `2026-11-16T00:45:15.247Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8677` | Yes (`8cd413f8...`) |
 | `CYCLE-20261116-ZFVT` | `2026-11-16T00:56:42.281Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8678` | Yes (`ef3d6562...`) |
 | `CYCLE-20261116-ZN8B` | `2026-11-16T00:56:51.803Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8679` | Yes (`9d8fa97c...`) |
+| `CYCLE-20261116-V4NQ` | `2026-11-16T01:21:20.726Z` | `adobe/structured-data-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8680` | Yes (`2db818dc...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T00:56:51.816Z",
+  "last_updated": "2026-11-16T01:21:20.740Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12966,14 +12966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-adobe-structured-data-validator",
-      "content_hash": "85ba169154815be7c026609bb654ea4791c57e75d146b55bca533a897a1d1d1c",
-      "verified_at": "2026-10-19T18:35:50.274Z",
+      "content_hash": "2db818dc649c038528e0f218722bd995a1e4ec1a8a40210aab48169235e7ed4f",
+      "verified_at": "2026-11-16T01:21:20.739Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:35:50.274Z"
+      "last_updated": "2026-11-16T01:21:20.739Z"
     },
     "hi-manshu/charty": {
       "repository": "hi-manshu/charty",
