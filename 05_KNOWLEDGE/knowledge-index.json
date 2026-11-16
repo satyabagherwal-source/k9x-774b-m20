@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T18:02:20.140Z",
-  "total_verified_learnings": 8791,
+  "last_updated": "2026-11-16T18:11:01.052Z",
+  "total_verified_learnings": 8792,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19216,
+  "total_items": 19232,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214024,8 +214024,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "0c019880",
-      "content_hash": "e1ffaaa2a2fd7ce1332a7f599de667eaecb79837a2a6c1f785945481407463bf",
+      "source_version": "6406c3f8",
+      "content_hash": "a63beb7624744bbcbf28834049e0bef21336130225ab97eacc5eed6fc68a9a70",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214038,6 +214038,11 @@
           "number": 8584,
           "title": "retry the update cache rename on transient Windows locks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8768,
+          "title": "respect query-block scope in SQL completion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214045,7 +214050,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:36:57.684Z",
+      "verified_at": "2026-11-16T18:10:55.676Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214087,10 +214092,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "0c019880",
-      "content_hash": "09f88eb24300023486a80f324b07f181c0c54bef4cf6a172274699e4ee2ea985",
+      "source_version": "6406c3f8",
+      "content_hash": "ba20cf6e1af50915197124a7d6117ae0a3a876a8f8efa494d3a0bab999a11f67",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T06:36:58.124Z"
+      "persisted_at": "2026-11-16T18:10:56.140Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214099,10 +214104,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "0c019880",
-      "content_hash": "bd1cb283379d5aa6bff995c98d8c899c565d8b2aab2eb75bb17b8ff10d9bb76d",
+      "source_version": "6406c3f8",
+      "content_hash": "7df7063cabadf9ea4240a408d6a540dba99f2831d7e784ce159e8a845393c7a2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:36:58.351Z"
+      "persisted_at": "2026-11-16T18:10:56.365Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -217405,14 +217410,19 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "8c5b0b9d",
-      "content_hash": "d455c12097f66dce150159bccd316a5ef9e63fa2633a01f703ef5f485d0440a4",
+      "source_version": "866ce54b",
+      "content_hash": "fd4f9f984e1b92755b47b0f0460247a8684a2df9f454752553ed025192d347db",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
         {
           "number": 8395,
           "title": "Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, r",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8766,
+          "title": "[ci] 1.5: Add security-scan composite action",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -217421,7 +217431,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T22:17:39.661Z",
+      "verified_at": "2026-11-16T18:10:49.849Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217475,10 +217485,10 @@
       "relative_path": "08_VERIFICATION/nginx-kubernetes-ingress-verification-protocol-empirical-defect-shield-for-nginx.md",
       "title": "Verification Protocol: Empirical Defect Shield for nginx/kubernetes-ingress",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "8c5b0b9d",
-      "content_hash": "34263ac5f73cf0bc566071aec43c292e1aeef39600d8c9fbf369788a4e32de75",
+      "source_version": "866ce54b",
+      "content_hash": "e2200a5a8990bdc67560efd1d94f27c179f04e5621e8458ae1408ea0c889b0eb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T22:17:40.285Z"
+      "persisted_at": "2026-11-16T18:10:50.434Z"
     },
     "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
@@ -217536,9 +217546,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nginx-kubernetes-ingress-learnings",
       "repository": "nginx-kubernetes-ingress-learnings",
       "source_version": "HEAD",
-      "content_hash": "8587d761fcc8c508a3e7e7b5c5d6a6f149f91fae3f30afb6e47bc212b1c18608",
+      "content_hash": "b821bc905e6eeba85c3cb66c6dacd5ee93749f1118cdf3b9dedfb4aa71567536",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T22:18:21.392Z"
+      "persisted_at": "2026-11-16T18:10:59.555Z"
     },
     "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k": {
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
@@ -240992,9 +241002,9 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "f95fd39a31de81768a3acfacc2da39e8dbe79008a1d31110624cc305797a317e",
+      "content_hash": "51ba96265212bd722da14e95d85058130d78815b093317319563940e655a5856",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T06:37:32.520Z"
+      "persisted_at": "2026-11-16T18:11:00.825Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings",
@@ -241004,9 +241014,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for t8y2-dbx-learnings",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "3bd4ea5d15e99b0b47eb8d70163f4d6a7871a0dca7df7efd4f550901200fd1a8",
+      "content_hash": "a5066b862b74bf6b62892ae796b821de927ce32aa5eaacac7ae1f35ce9b73964",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:37:32.646Z"
+      "persisted_at": "2026-11-16T18:11:01.052Z"
     },
     "learn-huggingface-tencent-hy-memory-30b-a3b": {
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
@@ -255734,6 +255744,225 @@
       "content_hash": "14ba855c0afd405bc0deb846a68708f99cfc6cd2fef098799d423abe26ca3bb1",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T18:02:19.529Z"
+    },
+    "rule-8766": {
+      "learning_id": "rule-8766",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8766,
+      "title": "[ci] 1.5: Add security-scan composite action",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "866ce54b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:10:49.849Z"
+    },
+    "candidate_directive-ci-1-5-add-security-scan-composite-action": {
+      "item_id": "candidate_directive-ci-1-5-add-security-scan-composite-action",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XJEA-ci-1-5-add-security-scan-composite-action.md",
+      "title": "[ci] 1.5: Add security-scan composite action",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "09c50599e180bdbe23bbb685deda810dd24c3609099a1aa5a3ce0bf97cac1843",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:10:59.318Z"
+    },
+    "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
+      "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
+      "repository": "nginx/kubernetes-ingress",
+      "source_version": "866ce54b",
+      "content_hash": "5c9a50d28314efcbdf6dd5dcc433cedda01bae1f3aa1d4ce0408748041eac10b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:10:50.313Z"
+    },
+    "learn-github-rustls-rustls": {
+      "learning_id": "learn-github-rustls-rustls",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rustls/rustls",
+      "repository": "rustls/rustls",
+      "slug": "rustls-rustls",
+      "platform": "github",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "53db4d13",
+      "content_hash": "caca7c631290b84ac270db9a13ad0866c75b16899110d54ee34d584d7c20c59b",
+      "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8767,
+          "title": "Update Rust crate nix to 0.32",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T18:10:52.520Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8767": {
+      "learning_id": "rule-8767",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8767,
+      "title": "Update Rust crate nix to 0.32",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "53db4d13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:10:52.520Z"
+    },
+    "candidate_directive-update-rust-crate-nix-to-0-32": {
+      "item_id": "candidate_directive-update-rust-crate-nix-to-0-32",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XK1N-update-rust-crate-nix-to-0-32.md",
+      "title": "Update Rust crate nix to 0.32",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "37682ae7dbec1f6738c26a78cc7351534c19f3caebdd078bd127bff4fbbf320a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:11:00.157Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
+      "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
+      "repository": "rustls/rustls",
+      "source_version": "53db4d13",
+      "content_hash": "f018277042c4a89d02d89aa489249f3f07c631461e86daec33168f32bdf8a125",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:10:52.990Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rustls-rustls-verification-protocol-empirical-defect-shield-for-rustls-rustls.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rustls/rustls",
+      "repository": "rustls/rustls",
+      "source_version": "53db4d13",
+      "content_hash": "d941fc946a09689697813e7ce9aec5a0e6be490f0c5ed89a2c401eea656f3149",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T18:10:53.109Z"
+    },
+    "rule-8768": {
+      "learning_id": "rule-8768",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8768,
+      "title": "respect query-block scope in SQL completion",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "6406c3f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:10:55.676Z"
+    },
+    "candidate_directive-respect-query-block-scope-in-sql-completion": {
+      "item_id": "candidate_directive-respect-query-block-scope-in-sql-completion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XGUW-respect-query-block-scope-in-sql-completion.md",
+      "title": "respect query-block scope in SQL completion",
+      "repository": "t8y2/dbx",
+      "source_version": "6406c3f8",
+      "content_hash": "6796ebbb19ba7042fd604d4442bf2ca5f32572c1226eaeef559ba9e824decab8",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T18:10:56.028Z"
+    },
+    "agent_contract-agent-contract-t8y2-dbx-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-t8y2-dbx-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/t8y2-dbx-agent-contract-t8y2-dbx-autonomous-specialist-persona.md",
+      "title": "Agent Contract: t8y2/dbx Autonomous Specialist Persona",
+      "repository": "t8y2/dbx",
+      "source_version": "6406c3f8",
+      "content_hash": "29297a27a50b07209149942b3f634cac470a9ef9671a512144feae5b7dacf6eb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:10:56.258Z"
+    },
+    "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
+      "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "21f6ca572a7af3ed11ac982cb3a2cca2d21c0c454d1cea7d9734b51b75a1a60a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:10:59.434Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-learnings-technical-construction-intelligence-rustls-rustls-learni.md",
+      "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d171353cf48be459c5661f972e46b9690ff4591381b4e1fe4464ffc0de5f2e26",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:11:00.274Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rustls-rustls-learnings-verification-protocol-empirical-defect-shield-for-rustls.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rustls-rustls-learnings",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "63409af40b400ab271989d521ad52c698788b31f7568f5679c9c6d3e45e03c9b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T18:11:00.393Z"
+    },
+    "candidate_directive-sql-respect-query-block-scope-in-sql-completion": {
+      "item_id": "candidate_directive-sql-respect-query-block-scope-in-sql-completion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XKH1-sql-respect-query-block-scope-in-sql-completion.md",
+      "title": "sql): respect query-block scope in SQL completion",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "af1ae809861af5ab9920eec9da2d372c038adbb4f4ac64f7d4986acce3d73f69",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T18:11:00.710Z"
+    },
+    "agent_contract-agent-contract-t8y2-dbx-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-t8y2-dbx-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/t8y2-dbx-learnings-agent-contract-t8y2-dbx-learnings-autonomous-specialist-perso.md",
+      "title": "Agent Contract: t8y2-dbx-learnings Autonomous Specialist Persona",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef7eb8ac63af51ebded904c9d513ddd1291fff2077679568f140c71a70681956",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T18:11:00.944Z"
     }
   },
   "ai-builder-brain": {

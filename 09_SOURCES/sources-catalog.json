@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "2cd8d27a",
+    "sourceVersion": "53db4d13",
     "license": "NOASSERTION",
-    "contentHash": "3b8c4938b35a155d5d741f6c20d611d633b9022e74608b0908dbe48f15429159",
-    "lastHarvestedAt": "2026-11-12T22:05:29.481Z",
+    "contentHash": "caca7c631290b84ac270db9a13ad0866c75b16899110d54ee34d584d7c20c59b",
+    "lastHarvestedAt": "2026-11-16T18:10:52.686Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "8c5b0b9d",
+    "sourceVersion": "866ce54b",
     "license": "Apache-2.0",
-    "contentHash": "d455c12097f66dce150159bccd316a5ef9e63fa2633a01f703ef5f485d0440a4",
-    "lastHarvestedAt": "2026-11-13T22:17:39.829Z",
+    "contentHash": "fd4f9f984e1b92755b47b0f0460247a8684a2df9f454752553ed025192d347db",
+    "lastHarvestedAt": "2026-11-16T18:10:50.021Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "0c019880",
+    "sourceVersion": "6406c3f8",
     "license": "Apache-2.0",
-    "contentHash": "e1ffaaa2a2fd7ce1332a7f599de667eaecb79837a2a6c1f785945481407463bf",
-    "lastHarvestedAt": "2026-11-15T06:36:57.838Z",
+    "contentHash": "a63beb7624744bbcbf28834049e0bef21336130225ab97eacc5eed6fc68a9a70",
+    "lastHarvestedAt": "2026-11-16T18:10:55.844Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

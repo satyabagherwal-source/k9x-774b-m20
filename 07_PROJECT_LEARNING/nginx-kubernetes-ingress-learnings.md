@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `8c5b0b9d`  
+> **Source Version**: `866ce54b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T22:17:38.811Z  
+> **Timestamp**: 2026-11-16T18:10:49.104Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T22:17:38.803Z  
+> **Harvest Timestamp**: 2026-11-16T18:10:48.881Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5097 stars
+- **Stars / Engagement**: 5096 stars
 
 ---
 
@@ -1425,445 +1425,227 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afb4fa83` (2026-11-13)
-**Commit Message**: Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, run past first failure (#11393)
+### Incident Patch 1: `11830790` (2026-11-16)
+**Commit Message**: [ci] 1.5: Add security-scan composite action (#11419)
 
-* Add flaky E2E tests plan and remove outdated documentation
+* Add security-scan composite action
 
-* Add zone sync ConfigMap fixture to prevent leaks in rate-limit tests
+Closes np-206.
 
-* Add pytest arguments input to smoke tests and enhance pod diagnostics in regression workflow
+Also adds renovate for the action, plus additional inputs
+to azure upload, and more logging to azure upload.
 
-* Refactor leak tracking for nginx-config ConfigMap to improve clarity and maintainability
+* Change pattern input to wildcard in action.yml
 
-* Update pytest maxfail argument to improve test visibility and adjust documentation for retry logic in E2E tests
+Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
+Signed-off-by: Gabor Javorszky <[REDACTED_EMAIL]>
+
+* Remove echoing the CONTAINER_NAME
+
+* Add option to upload to github code scanning
 
 ---------
 
-Signed-off-by: Paul Abel <[REDACTED_EMAIL]>
+Signed-off-by: Gabor Javorszky <[REDACTED_EMAIL]>
+Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
-**File**: `.github/actions/smoke-tests/action.yaml` (modified, +4/-0)
+**File**: `.github/actions/azure-blob/action.yml` (modified, +5/-0)
 ```diff
-@@ -34,6 +34,9 @@ inputs:
-   plus-jwt:
-     description: JWT for NGINX Plus
-     required: false
-+  pytest-args:
-+    description: Extra pytest arguments, e.g. --maxfail=100 to keep running after the first failure
+@@ -44,6 +44,7 @@ runs:
+         SOURCE_DIR: ${{ inputs.source-dir }}
+         DESTINATION_PATH: ${{ inputs.destination-path }}
+         PATTERN: ${{ inputs.pattern }}
++        DRY_RUN: ${{ inputs.dry-run }}
+       run: |
+         # An empty destination would upload to the container root; an empty source usually means the producing step failed.
+         if [ -z "${DESTINATION_PATH%/}" ]; then
+@@ -53,6 +54,7 @@ runs:
+         shopt -s globstar nullglob dotglob
+         src="${SOURCE_DIR%/}"
+         found=0
++        echo "Uploading '$PATTERN' from '$src':"
+         # shellcheck disable=SC2231 # PATTERN is deliberately unquoted so it globs
+         for f in "$src"/**/$PATTERN; do
+           [ -f "$f" ] || continue
+@@ -63,6 +65,9 @@ runs:
+           echo "::error::no files matching '$PATTERN' in '$SOURCE_DIR'"
+           exit 1
+         fi
++        if [ "$DRY_RUN" = "true" ]; then
++          echo "dry-run: skipping upload of $found file(s)"
++        fi
+ 
+     - name: Azure login for upload
+       if: ${{ inputs.dry-run != 'true' }}
+```
+
+**File**: `.github/actions/security-scan/action.yml` (added, +129/-0)
+```diff
+@@ -0,0 +1,129 @@
++name: Security Scan
++description: Scan an image with Docker Scout into a SARIF file, and optionally upload the SARIF to GitHub code scanning or Azure Blob Storage.
++
++# The scan fails this step on error; callers that want a soft fail set `continue-on-error: true`
++# and gate follow-up steps on `steps.<id>.outcome == 'success'`. Uploads only run after a successful scan.
++#
++# Where the SARIF goes: composite actions cannot read `vars`, so callers pass both
++#   github-upload: ${{ vars.IS_PUBLIC == 'true' }}
++#   azure-upload: ${{ vars.IS_PUBLIC == 'false' }}
++# Both compare against an explicit value, so an unset IS_PUBLIC uploads nowhere instead of to the wrong place.
++# The public repository uploads to GitHub code scanning (Security tab), which needs `permissions: security-events: write`.
++# The internal repository is private, so its SARIF goes to Azure instead. That needs
++# `permissions: id-token: write` and a non-empty `prefix`, and stores the file as <prefix>/<blob-name>.
++#
++# Run docker/login-action for Docker Hub before this action; Docker Scout needs it.
++# A sparse checkout must include .github/actions/security-scan, .github/actions/scout-cache and
++# .github/actions/azure-blob, which this action calls.
++
++inputs:
++  image:
++    description: Image reference to scan
++    required: true
++  sarif-file:
++    description: Path to write the SARIF file to, relative to the workspace
++    required: true
++  ignore-base:
++    description: Ignore vulnerabilities from the base image
 +    required: false
- 
- outputs:
-   test-results-name:
-@@ -112,6 +115,7 @@ runs:
-         -rfE \
-         --show-ic-logs=yes \
-         --plus-jwt=${{ inputs.plus-jwt }} \
-+        ${{ inputs.pytest-args }} \
-         -m ${{ inputs.marker != '' && inputs.marker || '""' }}
-       working-directory: ./tests
-       shell: bash
++    default: "false"
++  github-upload:
++    description: Upload the SARIF to GitHub code scanning (pass vars.IS_PUBLIC == 'true')
++    required: false
++    default: "false"
++  azure-upload:
++    description: Upload the SARIF to Azure Blob Storage (pass vars.IS_PUBLIC == 'false')
++    required: false
++    default: "false"
++  prefix:
++    description: Virtual directory in the container to upload into, e.g. nic/2026-10-13-38399827758. Empty skips the upload
++    required: false
++    default: ""
++  blob-name:
++    description: Blob name for the SARIF under prefix, e.g. debian-nap-waf.sarif. Required when uploading
++    required: false
++    default: ""
++  client-id:
++    description: Azure client ID used for the OIDC login
++    required: false
++    default: ""
++  tenant-id:
++    description: Azure tenant ID
++    required: false
++    default: ""
++  subscription-id:
++    description: Azure subscription ID
++    required: false
++    default: ""
++  storage-account:
++    description: Azure storage account name
++    required: false
++    default: ""
++  container-name:
++    description: Blob container name
++    required: false
++    default: ""
++
++runs:
++  using: composite
++  steps:
++    # Keep version/sha in sync with the docker/scout-action pin below (renovate bumps both).
++    - name: Restore Docker Scout binary
++      uses: ./.github/actions/scout-cache
++      with:
++        mode: restore
++        version: v1.29.0
++        sha: e7e2a72bf1485d10a58f30696b6c513b261ce4fa # renovate-digest: datasource=github-tags depName=docker/scout-action
++
++    - name: Prepare SARIF directory
++      shell: bash
++      env:
++        SARIF_FILE: ${{ inputs.sarif-file }}
++      run: mkdir -p "$(dirname "${SARIF_FILE}")"
++
++    - name: Run Docker Scout vulnerability scanner
++      uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
++      with:
++        command: cves
++        image: ${{ inputs.image }}
++        ignore-base: ${{ inputs.ignore-base }}
++        sarif-file: ${{ inputs.sarif-file }}
++        write-comment: false
++        summary: true
++
++    - name: Upload SARIF to GitHub code scanning
++      if: ${{ inputs.github-upload == 'true' }}
++      uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
++      with:
++        sarif_file: ${{ inputs.sarif-file }}
++
++    # azure-blob uploads a directory, so stage the SARIF under its blob name inside the workspace
++    # (the Azure CLI step only mounts GITHUB_WORKSPACE).
++    - name: Stage SARIF for upload
++      if: ${{ inputs.azure-upload == 'true' && inputs.prefix != '' }}
++      shell: bash
++      env:
++        SARIF_FILE: ${{ inputs.sarif-file }}
++        BLOB_NAME: ${{ inputs.blob-name }}
++      run: |
++        set -euo pipefail
++        if [ -z "${BLOB_NAME}" ] || [[ "${BLOB_NAME}" == */* ]]; then
++          echo "::error::blob-name must be a non-empty file name when uploading, got '${BLOB_NAME}'"
++          exit 1
++        fi
++        rm -rf .security-scan-upload
++        mkdir .security-scan-upload
++        cp "${SARIF_FILE}" ".security-scan-upload/${BLOB_NAME}"
++
++    - name: Upload SARIF to Azure
++      if: ${{ inputs.azure-upload == 'true' && inputs.prefix != '' }}
++      uses: ./.github/actions/azure-blob
++      with:
++        client-id: ${{ inputs.client-id }}
++        tenant-id: ${{ inputs.tenant-id }}
++        subscription-id: ${{ inputs.subscription-id }}
++        storage-account: ${{ inputs.storage-
 ```
 
-**File**: `.github/skills/nic-testing/SKILL.md` (modified, +24/-12)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -190,24 +190,36 @@ class TestMyFeaturePolicies:
-         pol_name = create_policy_from_yaml(
-             kube_apis.custom_objects, yaml_src, test_namespace
-         )
--        wait_before_test()
--        # 2. Patch VS to reference policy
--        patch_virtual_server_from_yaml(...)
--        # 3. Assert HTTP responses
--        resp = requests.get(url, headers={"host": vs_host})
--        assert resp.status_code == 200
--        assert "Expected-Header" in resp.headers
--        # 4. Cleanup
--        delete_policy(kube_apis.custom_objects, pol_name, test_namespace)
--        patch_virtual_server_from_yaml(...)  # restore original
-+        try:
-+            # 2. Patch VS to reference policy
-+            patch_virtual_server_from_yaml(...)
-+            # 3. Poll until the reload has taken effect; never sleep, then assert once
-+            resp = retry_get_until_status_code(url, virtual_server_setup.vs_host, 200)
-+            assert resp.status_code == 200  # the helper returns the last response even if it never matched
-+            assert "Expected-Header" in resp.headers
-+        finally:
-+            # 4. Cleanup runs even when an assert fails
-+            delete_policy(kube_apis.custom_objects, pol_name, test_namespace)
-+            patch_virtual_server_from_yaml(...)  # restore original
- ```
- 
- ### Fixtures and Utilities
- 
- - Common fixtures: `kube_apis`, `crd_ingress_controller`, `virtual_server_setup`, `test_namespace`
- - Fixtures: `tests/suite/fixtures/` (setup/teardown lifecycle)
--- Utilities: `tests/suite/utils/` (`create_policy_from_yaml`, `patch_virtual_server_from_yaml`, `delete_policy`, `wait_before_test`)
--- Prefer event/status-based waits over fixed sleeps when possible
-+- Utilities: `tests/suite/utils/` (`create_policy_from_yaml`, `patch_virtual_server_from_yaml`, `delete_policy`, `retry_get_until_status_code`)
-+- Prefer polling over fixed sleeps, see "Waiting for config changes" below
-+
-+### Waiting for config changes
-+
-+A config change reloads NGINX. A request that lands during the reload can be dropped, and a fixed `wait_before_test()` before one assertion only passes if the reload is faster than the sleep. Details and the failure data: `docs/developer/e2e-flaky-tests.md`.
-+
-+- After a change that reloads, poll with `retry_get_until_status_code`, `retry_get_until_body_contains`, or `retry_get` (one request, retried only on `ConnectionError`). They are in `tests/suite/utils/resources_utils.py`. `wait_and_assert_status_code` and `send_malicious_request_with_retry` also tolerate dropped connections. The `retry_get_until_*` helpers return the last response even if it never matched, so still assert on it.
-+- For non-HTTP conditions use the existing waiters: `wait_for_event`, `wait_for_resource_status`, `wait_for_reload`, `wait_until_all_pods_are_ready`, `ensure_response_from_backend`.
-+- Keep `wait_before_test()` only when the wait is the point of the test (rate-limit windows, asserting something does not happen).
-+- Do not add `@pytest.mark.flaky`. It reruns the whole test and hides real regressions.
-+- If a test catches `requests.exceptions.SSLError` (mTLS), put that `except` before `except ConnectionError`, because `SSLError` is a subclass.
-+- The `nginx-config` ConfigMap lives for the whole session. A test that changes it restores it in a fixture or `finally`, not at the end of the test body, or a later unrelated test fails. `tests/conftest.py` prints `Leaked nginx-config` when a class leaves it changed. The IC Deployment is recreated per class, so replica counts do not leak across classes.
- 
- ### File Naming
- 
-```
-
-**File**: `.github/workflows/regression.yml` (modified, +4/-1)
-```diff
-@@ -280,7 +280,8 @@ jobs:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -411,7 +411,7 @@ jobs:
+         continue-on-error: true # soft-fail: scans fall back to an authenticated download
          with:
--          ref: ${{ needs.checks.outputs.branch }}
-+          # LTS entries test a released image, so use the tests, manifests and CRDs from that tag, not main
-+          ref: ${{ matrix.images.lts == true && matrix.images.lts_tag || needs.checks.outputs.branch }}
+           mode: seed
+-          # Keep in sync with the docker/scout-action pin in build-oss.yml and build-plus.yml.
++          # Keep in sync with the docker/scout-action pin in build-oss.yml, build-plus.yml and .github/actions/security-scan.
+           version: v1.29.0
+           sha: e7e2a72bf1485d10a58f30696b6c513b261ce4fa # renovate-digest: datasource=github-tags depName=docker/scout-action
  
-       - name: Set image variables
-         id: image_details
-@@ -367,6 +368,8 @@ jobs:
-           registry-token: ${{ steps.auth.outputs.access_token }}
-           test-image: "ghcr.io/nginx/kubernetes-ingress/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') || 'latest' }}"
-           plus-jwt: ${{ env.PLUS_JWT }}
-+          # pyproject.toml has -x; override it so one failure does not hide the rest of the nightly
-+          pytest-args: --maxfail=100
- 
-       - name: Upload Test Results
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
 ```
 
-**File**: `docs/developer/README.md` (modified, +1/-0)
+**File**: `renovate.json` (modified, +3/-2)
 ```diff
-@@ -6,4 +6,5 @@
- - [Type-Agnostic Kubernetes Secrets](./opaque-secrets-high-level-design.md)
- - [ExternalAuth Response Headers](./external-auth-response-headers-high-level-design.md)
- - [ConnectionLimit Policy](./connection-limit-policy-high-level-design.md)
-+- [Flaky E2E Tests Plan](./e2e-flaky-tests.md)
- - [Offline Helm Schema Validation](./offline-helm-schema-high-level-design.md)
-```
-
-**File**: `docs/developer/e2e-flaky-tests.md` (added, +345/-0)
-```diff
-@@ -0,0 +1,345 @@
-+# Plan: Fixing Flaky Python E2E Tests
-+
-+## Status: Draft
-+
-+## Summary
-+
-+**Goal:** make the Python e2e tests fail only when the product is broken, not when
-+a reload or a pod start takes a little longer than a fixed sleep.
-+
-+**Approach:** data driven. Rank tests by how often they fail in CI, then fix the
-+worst ones. Do not sweep every `wait_before_test()` call.
-+
-+**Why not sweep:** `wait_before_test()` is `time.sleep(3)` by default
-+(`tests/suite/utils/resources_utils.py`, `settings.py`). There are many calls,
-+but most of the tests that actually fail have none in the test body. The cause
-+is usually a fixture that applies config and a test that then asserts on one
-+request with no polling.
-+
-+## Inventory (snapshot, Nov 2026)
-+
-+| Metric | Count |
-+| --- | --- |
-+| Test files | 158 |
-+| `def test_*` functions (before parametrize) | 689 |
-+| `wait_before_test()` calls in test files | 884 (142 files) |
-+| ...inside a loop (delay between retries, fine) | 95 |
-+| ...not in a loop (fixed sleep, then act once) | 789 |
-+| Test functions with at least one fixed sleep | 425 |
-+| Fixed sleeps in fixtures or helpers inside test files | 104 |
-+
-+Delays used: default 3 s (501 calls), 1 s (248), 2 s, 5 s, 10 s, `WAIT_TIME`, 120 s.
-+
-+What follows each fixed sleep (first statement after it, so approximate, about +/-10%):
-+
-+| Next action | Calls | Assessment |
-+| --- | --- | --- |
-+| A polling helper already (`wait_and_assert_status_code`, `ensure_response_from_backend`, `retry_get*`, `wait_until_all_pods_are_ready`) | ~73 | Redundant. Delete to save time. No flake risk |
-+| One `requests.get`, then an assert | ~112 | High risk. Swap for `retry_get_until_*` |
-+| Read generated NGINX config | ~80 | High risk. No "config contains X" poller exists yet |
-+| Read resource status or events | ~60 | Medium. `wait_for_resource_status` and `wait_for_event` exist |
-+| Rate-limit and time-window checks | ~26 | The wait is part of the test. Leave it |
-+| `print`, assignment, end of block | ~220 | Case by case. Many are setup sleeps |
-+
-+Not every fixed sleep is a bug. Tests that assert something does *not* happen,
-+or that a time window passes, need a real wait.
-+
-+## CI failure data
-+
-+**Source:** failed `ci.yml` merge-queue runs and all nightly `regression.yml`
-+runs from 2026-10-17 (after #10850, "e2e test stability fixes") to 2026-11-11:
-+74 failed merge-queue runs and 26 nightly runs. PR runs were left out because
-+real bugs in PRs make them noisy. Only 19 distinct tests failed.
-+
-+The last column links the most recent failing job found for each test (checked
-+2026-11-13). GitHub deletes job logs after its retention period, so these links
-+will stop working. The error text in the table is kept for that reason, and
-+"Reproducing the ranking" below refreshes the data.
-+
-+| # | Test | Failing runs | Error | Likely cause | Example job |
-+| --- | --- | --- | --- | --- | --- |
-+| 1 | `test_ac_polices_vs::test_deny_policy` | every nightly LTS job | Setup error after 600 s, IC pod never Ready | **Version skew.** The job ran main's tests against the LTS image. Fixed, see Phase A | [lts-regression 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222816) |
-+| 2 | `test_rl_policies::test_rl_policy_scaled` | every nightly job, all 8 k8s versions | `rate=10r/s` not in config (config has `rate=40r/s ... sync`) | **State leaked by an earlier test.** `test_rl_ingress.py::TestRateLimitIngressScaledWithZoneSync` left zone sync on in the shared `nginx-config` ConfigMap. Fixed, see below | [regression debian-plus 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222786) |
-+| 3 | `test_custom_http_errors::test_annotation_intercepts_upstream_error` | 16 | One request to `/fail` returns the stock 502 page | Asserts once, no polling | [regression debian 1.32.8](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222925) |
-+| 4 | `test_virtual_server_certmanager::test_responses_after_setup` | 11 (8 merge queue) | Setup error in a fixture | Needs log triage | [regression debian 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222805) |
-+| 5 | `test_empty_host_ingress_reload::..._on_startup` | 11 | Startup event not found | Fixed in `972e0772c`. Watch it | [regression debian 1.33.12](https://github.com/nginx/kubernetes-ingress/actions/runs/43145244434/job/130941545511) |
-+| 6 | `test_rl_policies_vsr` tiered apikey/jwt (3 tests) | 13 | `13 in range(14, 17)` | Request count just outside a narrow range. The 1 s sleeps are part of the test. Fix tolerance or timing window | [policies 3/8 alpine](https://github.com/nginx/kubernetes-ingress/actions/runs/43262340867/job/131345989101) |
-+| 7 | `test_oidc_native_fclo_ingress::test_rp_initiated_logout` | 4 | 502 after login | Sleep, then no readiness check on the backend | [regression debian-plus 1.31.14](https://github.com/nginx/kubernetes-ingress/acti
-```
-
-**File**: `docs/developer/parallel-e2e-plan.md` (modified, +1/-1)
-```diff
-@@ -369,7 +369,7 @@ above. Effects are as estimated in #10492.
- - #10492 — durations tooling, design doc
-   `docs/developer/parallel-e2e-tests-design.md`, and the proof of concept
-   for several kind clusters per runner
--- `tests/suite/FLAKY_RELOAD_REQUESTS.md` — retrying requests that hit a
-+- `docs/developer/e2e-flaky-tests.md` — flaky e2e plan; retrying requests that hit a
-   reload
- - Smoke matrix: `.github/data/matrix-smoke-{oss,plus,nap}.json`
- - Smoke action: `.github/actions/smoke-tests/action.yaml`
-```
-
-**File**: `tests/conftest.py` (modified, +88/-1)
-```diff
-@@ -3,6 +3,7 @@
- import os
- 
- import pytest
-+from kubernetes.client.rest import ApiException
- from kubernetes.config.kube_config import KUBE_CONFIG_DEFAULT_LOCATION
- from settings import (
-     BATCH_RELOAD_NUMBER,
-@@ -20,6 +21,7 @@
-     IC_SELECTOR,
-     are_all_pods_in_ready_state,
-     get_first_pod_name,
-+    get_pod_list,
-     wait_before_test,
- )
- 
-@@ -228,12 +230,45 @@ def pytest_collection_modifyitems(config, items) -> None:
-                 item.add_marker(multi_ns)
- 
- 
-+def _container_state(state) -> str:
-+    """One-line summary of a V1ContainerState."""
-+    for name in ("running", "waiting", "terminated"):
-+        detail = getattr(state, name, None) if state else None
-+        if detail:
-+            fields = {k: getattr(detail, k, None) for k in ("reason", "exit_code", "message")}
-+            return f"{name} " + " ".join(f"{k}={v}" for k, v in fields.items() if v is not None)
-+    return "unknown"
-+
-+
-+def print_ic_pod_diagnostics(v1, namespace) -> None:
-+    """Print state, logs (also of the previous container) and events of every IC pod."""
-+    for pod in get_pod_list(v1, namespace, IC_SELECTOR):
-+        name = pod.metadata.name
-+        print(f"\nPod {name}: phase={pod.status.phase}")
-+        for cs in pod.status.container_statuses or []:
-+            print(
-+                f"  container {cs.name}: ready={cs.ready} restarts={cs.restart_count} "
-+                f"state=[{_container_state(cs.state)}] last_state=[{_container_state(cs.last_state)}]"
-+            )
-+            for previous in (False, True):
-+                try:
-+                    logs = v1.read_namespaced_pod_log(name, namespace, container=cs.name, previous=previous)
-+                except ApiException as e:  # e.g. container waiting to start, or never restarted
-+                    logs = f"<no logs: {e.reason}>"
-+                print(f"  --- {'previous ' if previous else ''}logs of {cs.name} ---\n{logs}")
-+        events = v1.list_namespaced_event(namespace, field_selector=f"involvedObject.name={name}").items
-+        for ev in events:
-+            print(f"  event {ev.type} {ev.reason}: {ev.message}")
-+
-+
- @pytest.hookimpl(tryfirst=True, hookwrapper=True)
- def pytest_runtest_makereport(item) -> None:
-     """
-     Print out IC Pod logs on test failure.
- 
--    Only look at actual failing test calls, not setup/teardown.
-+    Failing test calls print the first IC pod's logs. Failing setups print the state, logs and
-+    events of all IC pods, because a fixture timing out on an IC pod that never became Ready
-+    is otherwise invisible. Teardown is not looked at.
-     Only show the logs if commandline argument `--show-ic-logs` is set to 'yes'
- 
-     :param item:
-@@ -249,6 +284,19 @@ def pytest_runtest_makereport(item) -> None:
-         print(f"\n::error file={file_path},line={line_no + 1},title=Test Failed: {item.nodeid}::{summary}")
- 
-     # we only look at actual failing test calls, not setup/teardown
-+    if rep.when == "setup" and rep.failed and item.config.getoption("--show-ic-logs") == "yes":
-+        try:
-+            prereq, apis = item.funcargs["ingress_controller_prerequisites"], item.funcargs["kube_apis"]
-+        except KeyError:
-+            pass  # setup failed before the IC prerequisites existed, nothing to show
-+        else:
-+            try:
-+                print("\n::group::NGINX Ingress Controller Pod Diagnostics")
-+                print_ic_pod_diagnostics(apis.v1, prereq.namespace)
-+                print("::endgroup::")
-+            except Exception as e:
-+                print(f"\nFailed to retrieve NGINX Ingress Controller pod diagnostics: {e}")
-+
-     if rep.when == "call" and rep.failed and item.config.getoption("--show-ic-logs") == "yes":
-         try:
-             pod_namespace = item.funcargs["ingress_controller_prerequisites"].namespace
-@@ -274,8 +322,47 @@ def pytest_runtest_makereport(item) -> None:
-         print("Make sure to remove resources from this test run manually using kubectl utility\n")
- 
- 
-+# Test classes that left the shared nginx-config ConfigMap non-default, as {class nodeid: changed data}.
-+LEAKED_CONFIGMAP = {}
-+# The most recent leak seen, so a leak that persists across classes is reported once.
-+LEAK_STATE = {"last": None}
-+
-+
-+def leaked_configmap_data(live, default):
-+    """Return the live ConfigMap data if it differs from the default, else None."""
-+    live, default = live or {}, default or {}
-+    return live if live != default else None
-+
-+
-+@pytest.hookimpl(hookwrapper=True)
-+def pytest_runtest_teardown(item, nextitem) -> None:
-+    """
-+    Report test classes that leave the shared nginx-config ConfigMap changed.
-+
-+    The ConfigMap lives for the whole session, so a leak breaks a later, unrelated test.
-+    Checked at class boundaries, after class fixtures are torn down. Each distinct leak is
-+    reported once, against the class that was running when it was first seen.
-+    Only the ConfigMap is checked: every IC fixture recreates the Deployment, so replica
-```
-
-**File**: `tests/suite/FLAKY_RELOAD_REQUESTS.md` (removed, +0/-105)
-```diff
-@@ -1,105 +0,0 @@
--# Fixing flaky e2e tests: connection drops during NGINX reloads
--
--## Symptom
--
--A test intermittently fails with:
--
--    requests.exceptions.ConnectionError:
--      ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
--
--Often accompanied in the IC logs by an access-log line with status `000`, and
--around a config change (Ingress/Policy/namespace-label update) that triggers an
--NGINX reload. With App Protect, the WAF "soft reset" recycles workers and can
--take several seconds, widening the window where in-flight connections are closed.
--
--## Root cause
--
--The test sends an HTTP request that lands exactly while NGINX is reloading and
--recycling worker processes. NGINX closes the connection, `requests` raises an
--uncaught `ConnectionError`, and the test crashes instead of retrying. This is a
--timing race, not a product bug -- a dropped connection during a reload is
--expected and should be retried (the same way `ensure_response_from_backend` and
--`wait_for_reload` already tolerate transients).
--
--## When this pattern applies
--
--Apply the fix to any e2e test that BOTH:
--
--1. Mutates config that causes a reload (apply/patch/delete of Ingress, VS/VSR,
--   TransportServer, Policy, ConfigMap, or namespace label/watch changes), AND
--2. Sends traffic (`requests.get/post/...`) shortly after, while a reload may be
--   in progress -- especially inside a body/status polling loop.
--
--Do NOT apply it to tests that only send traffic against already-stable config
--and never reload mid-traffic (e.g. `test_app_protect_watch_namespace.py`).
--
--## The fix
--
--Do not wrap the whole test in `@pytest.mark.flaky` -- that reruns the entire
--expensive test and can mask real regressions. Instead, make the specific request
--resilient.
--
--Use one of the shared helpers in `suite/utils/resources_utils.py`, all of which
--catch `requests.exceptions.ConnectionError` while retrying:
--
--- `retry_get_until_body_contains(req_url, host, expected_body)` -- poll until a
--  substring appears in the body.
--- `retry_get_until_status_code(req_url, host, expected_status, session=..., **kwargs)`
--  -- poll until a status code matches; supports an SNI/client-cert `session` and
--  extra `requests.get` kwargs (`cert`, `verify`, `allow_redirects`, ...).
--- `retry_get(req_url, host, **kwargs)` -- guard a single request whose assertion
--  cannot be expressed as "body contains X" or "status == Y" (e.g. asserting a
--  substring is absent, or an arbitrary status); retries only on `ConnectionError`.
--
--The shared helpers `wait_and_assert_status_code` (`suite/utils/custom_assertions.py`)
--and `send_malicious_request_with_retry` (`suite/utils/ap_resources_utils.py`) also
--tolerate `ConnectionError`, so their many callers are covered automatically.
--
--    ```python
--    from suite.utils.resources_utils import retry_get_until_body_contains
--
--    resp = retry_get_until_body_contains(req_url, ingress_host, expected_body)
--    assert expected_body in resp.text
--    assert resp.status_code == 200
--    ```
--
--Replace hand-rolled loops like:
--
--    ```python
--    resp = requests.get(url, headers={"host": host}, verify=False)
--    retry = 0
--    while expected not in resp.text and retry <= 60:
--        resp = requests.get(url, headers={"host": host}, verify=False)  # can raise ConnectionError
--        retry += 1
--        wait_before_test(1)
--    ```
--
--with a single `retry_get_until_body_contains(...)` call.
--
--If a test needs a method/headers/body the helper doesn't cover, replicate its
--core guarantee: catch `requests.exceptions.ConnectionError` inside the retry loop
--and continue, rather than letting it propagate.
--
--Note: `requests.exceptions.SSLError` is a *subclass* of `ConnectionError`. When a
--test relies on catching `SSLError` (e.g. mTLS client-cert tests), keep the
--`except SSLError` handler **before** any `except ConnectionError` handler so the
--SSL case is not swallowed.
--
--## Reference implementation
--
--See `test_app_protect_watch_namespace_label.py` and the
--`retry_get_until_body_contains` helper in `suite/utils/resources_utils.py`.
--For status-based and single-request variants, see `retry_get_until_status_code`
--and `retry_get` in the same file, and the mTLS tests (`test_ingress_mtls*.py`)
--for the SSLError-ordering pattern.
--
--## Checklist for the AI applying this
--
--- [ ] Confirm the test reloads config AND sends traffic that could overlap it.
--- [ ] Replace unguarded `requests.*` retry loops with `retry_get_until_body_contains`
--      (or add `except requests.exceptions.ConnectionError: continue` to the loop).
--- [ ] Guard single pre-loop requests that immediately follow a config change too.
--- [ ] Preserve existing assertions and the ~60s retry budget.
--- [ ] Remove the now-unused `import requests` if no other usage remains in the file.
--- [ ] Do NOT add `@pytest.mark.flaky`.
--- [ ] Test-only change: no product code, codegen, or snapshot updates.
+@@ -345,9 +345,10 @@
+   "customManagers": [
+     {
+       "customType": "regex",
+-      "description": "Update version + sha pairs pinned with a `# renovate-digest:` comment in Github Actions workflows (e.g. the scout-cache action inputs in ci.yml)",
++      "description": "Update version + sha pairs pinned with a `# renovate-digest:` comment in Github Actions workflows and composite actions (e.g. the scout-cache action inputs in ci.yml and security-scan)",
+       "managerFilePatterns": [
+-        "/.github/workflows/.+\\.ya?ml$/"
++        "/.github/workflows/.+\\.ya?ml$/",
++        "/.github/actions/.+\\.ya?ml$/"
+       ],
+       "matchStrings": [
+         "version: (?<currentValue>\\S+)\\s+sha: (?<currentDigest>[a-f0-9]{40}) # renovate-digest: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>\\S+)"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11446** (2026-11-16): renovate config for makefile ubi10 (@vepatel)
+- **PR #11445** (2026-11-16): [ci] 1.5-5.8: Add security-scan composite action- #11420 (@javorszky)
+- **PR #11443** (2026-11-16): user gh var for plm helm chart (@vepatel)
+- **PR #11441** (2026-11-16): update lts version (@vepatel)
 - **PR #11427** (2026-11-13): update versions for 5.8.0 release (@vepatel)
 - **PR #11426** (2026-11-13): Update version bump job condition to include both repositories (@pdabelf5)
-- **PR #11425** (2026-11-13): Enhance Renovate configuration for Python dependencies (@pdabelf5)
-- **PR #11424** (2026-11-13): [release-2026-lts] Cherry-pick new github actions  (@sean-breen)
-- **PR #11423** (2026-11-13): auth response headers implementation (@vepatel)
-- **PR #11418** (2026-11-13): Update azure/setup-helm action to v5.1.0 (release-2026-lts) (@renovate[bot])
 
 ---
 
@@ -1883,24 +1665,25 @@ Signed-off-by: Paul Abel <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, r
+## X. [ci] 1.5: Add security-scan composite action
 
 **RULE**:
-When implementing operations in `.github/actions/smoke-tests/action.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/azure-blob/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afb4fa83`: Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, run past first failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `11830790`: [ci] 1.5: Add security-scan composite action. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/smoke-tests/action.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/azure-blob/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  pytest-args:
-    description: Extra pytest arguments, e.g. --maxfail=100 to keep running after the first failure
-    required: false
-        ${{ inputs.pytest-args }} \
+        DRY_RUN: ${{ inputs.dry-run }}
+        echo "Uploading '$PATTERN' from '$src':"
+        if [ "$DRY_RUN" = "true" ]; then
+          echo "dry-run: skipping upload of $found file(s)"
+        fi
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1910,4 +1693,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afb4fa83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `11830790` are properly handled with clean fallback behavior.

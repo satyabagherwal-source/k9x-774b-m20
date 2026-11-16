@@ -10344,3 +10344,6 @@ Every entry in this ledger must capture:
 | `learn-github-yazinsai-openoats` | `https://github.com/yazinsai/OpenOats` | `123ec38d` | Multi-dimensional audit evidence | 2026-11-16T18:01:43.724Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1c341ad3` | Multi-dimensional audit evidence | 2026-11-16T18:01:50.074Z |
 | `learn-dom-d-bcdf73e3` | `project://hf-n4ze3m-tiny-voca` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md` | 2026-11-16T18:02:18.580Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `866ce54b` | Multi-dimensional audit evidence | 2026-11-16T18:10:50.021Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `53db4d13` | Multi-dimensional audit evidence | 2026-11-16T18:10:52.686Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `6406c3f8` | Multi-dimensional audit evidence | 2026-11-16T18:10:55.844Z |

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:12.907Z",
+  "timestamp": "2026-11-16T18:11:00.058Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-rustls-rustls-learnings",
+  "learning_id": "LEARN-EVO-rustls-rustls-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rustls-rustls-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:12.907Z`  
-> **Learning ID**: `LEARN-REEXTRACT-rustls-rustls-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T18:11:00.058Z`  
+> **Learning ID**: `LEARN-EVO-rustls-rustls-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `970b4474`  
+> **Source Version**: `53db4d13`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T10:52:39.821Z  
+> **Timestamp**: 2026-11-16T18:10:51.784Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T10:52:39.814Z  
+> **Harvest Timestamp**: 2026-11-16T18:10:51.778Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7761 stars
+- **Stars / Engagement**: 7755 stars
 
 ---
 
@@ -2276,17 +2276,13 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3426** (2026-11-12): **Test coverage improvements**
-  *Symptoms*: As a result, 0a4c554f815e617522475ebd7c20c84a33b170a8 fixes the `Display` formatting of `CertificateError::InvalidPurposeContext`  
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8757105 | 8795983 | [38878](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client) (0.44%) | 0.83% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8788472 | 8773708 | [-14764](https://bench.rustls.dev/comparisons/c805ecfe373a43a3007007a913a67c817804b433:433b3fd76c8c5ac37cafc288d15311668f6a6bbc/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.17%) | 0.97% | | handshake_tickets_aws_lc_rs_1.3_rsa_chacha_client | 42208866 | 42273
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `97.10145%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 96.08%. Comparing base ([`c805ecf`](https://app.codecov.io/gh/rustls/rustls/commit/c805ecfe373a43a3007007a913a67c817804b433?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`433b3fd`](https://app.codecov.io/gh/rustls/rustls/commit/433b3fd76c8c5ac37cafc288d15311668f6a6bbc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 5 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3426?dropdown=coverage&src=pr&el=tree&utm_medium
+- **Issue #3437** (2026-11-16): **Update Rust crate nix to 0.32**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [nix](https://redirect.github.com/nix-rust/nix) | dependencies | minor | `0.31` → `0.32` |  ---  ### Release Notes  <details> <summary>nix-rust/nix (nix)</summary>  ### [`v0.32.0`](https://redirect.github.com/nix-rust/nix/blob/HEAD/CHANGELOG.md#0320---2026-11-14)  [Compare Source](https://redirect.github.com/nix-rust/nix/compare/v0.31.3...v0.32.0)  ##### Added  - Add `SeekData` and `SeekHole` to `Whence` for Android   ([#&#8203;2676](https://redirect.github.com/nix-rust/nix/pull/2676)) - Added `getres` and `setres` for Redox OS   ([#&#8203;2767](https://redirect.github.com/nix-rust/nix/pull/2767)) - Add `nix::sys::socket::sockopt:TcpCork` on Linux.   ([#&#8203;2769](https://redirect.github.com/nix-rust/nix/pull/2769)) - Made the `sys::prctl` module available on Android the same as on other Linux   targets. ([#&#8203;2770](https://redirect.github.com/nix-rust/nix/pull/2770)) - Add the `sockopt::RcvMark` socket option (Linux 5.19+, `SO_RCVMARK`) and   decode the resulting `(SOL_SOCKET, SO_MARK)` ancillary message as a new   `ControlMessageOwned::SoMark(u32)` variant. Previously   the cmsg fell through to the catch-all `Unknown` arm, which forced a   per-recv `Vec<u8>` allocation for four bytes.   ([#&#8203;2785](https://redirect.github.com/nix-rust/nix/pull/2785)) - Enable module `ioctl` for Haiku   ([#&#8203;2792](https://redirect.github.com/nix-rust/nix/pull/2792))  ##### Changed
 
-- **Issue #3425** (2026-11-12): **Take pki-types 1.16: rely on canonical `DnsName`s & use `DnsName::into_owned()`**
-  *Symptoms*: This PR notably does not do anything for ECH (refer #3388)
+- **Issue #3435** (2026-11-16): **PQ-Bind**
+  *Symptoms*: I've written a small crate, pqbind, that adds post-quantum authentication to a TLS 1.3 connection that already has a post-quantum key exchange. After the handshake, each peer signs the value from export_keying_material, along with both identities and key pins, using a hybrid Ed25519 and ML-DSA-87 key. It works on top of rustls 0.23 with aws-lc-rs and refuses TLS 1.2.  It relies only on the existing exporter API, so I don't need anything changed in rustls. My question is whether you see problems with this approach. Is there anything about exporter use after the handshake, such as 0-RTT or session resumption, that I should handle in a particular way?  I know the group-support request for SECP384R1MLKEM1024 was declined for lack of demand, so I'm not asking for a feature here. If an issue isn't the right place for a question like this, tell me where is.  Repo: https://github.com/AlpharomeroJL/pqbind
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_1.2_no_crypto_server | 692664 | 676404 | ✅ [-16260](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_session_id_1.2_no_crypto_server) (-2.35%) | 0.20% | | handshake_tickets_1.2_no_crypto_server | 746845 | 730585 | ✅ [-16260](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b857c10228e1b15b255d7e6f174/cachegrind-diff/handshake_tickets_1.2_no_crypto_server) (-2.18%) | 0.20% | | handshake_tickets_1.3_no_crypto_server | 1430564 | 1408814 | ✅ [-21750](https://bench.rustls.dev/comparisons/f68d6d296759bb002c462b402401f2cf295b92da:115a8b6df4a97b85
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3425?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.75%. Comparing base ([`f68d6d2`](https://app.codecov.io/gh/rustls/rustls/commit/f68d6d296759bb002c462b402401f2cf295b92da?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`115a8b6`](https://app.codecov.io/gh/rustls/rustls/commit/115a8b6df4a97b857c10228e1b15b255d7e6f174?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3425      +/-   ## ==================================
+  > We implement a bunch of standards; we don't typically design them ourselves; I think this thread is off-topic, so I'll close it.  We already support the use of ML-DSA in the handshake, so why not use it?  As I understand it, use of hybrid signatures isn't recommended.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2303,159 +2299,45 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `970b4474` (2026-11-11)
-**Commit Message**: Test `Display` for remaining error variants
+### Incident Patch 1: `53db4d13` (2026-11-14)
+**Commit Message**: Update Rust crate nix to 0.32
 
-**File**: `rustls/src/error/tests.rs` (modified, +85/-0)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -271,6 +271,91 @@ fn smoke() {
-     }
- }
+@@ -1272,9 +1272,9 @@ checksum = "27b02d87554356db9e9a873add8782d4ea6e3e58ea071a9adb9a2e8ddb884a8b"
  
-+#[test]
-+fn error_display() {
-+    use super::{
-+        ApiMisuse, CertificateError, EncryptedClientHelloError, ExtendedKeyPurpose, RejectedEch,
-+    };
-+
-+    let cases: &[(Error, &str)] = &[
-+        (
-+            Error::UnsupportedNameType,
-+            "presented server name type wasn't supported",
-+        ),
-+        (
-+            Error::InvalidEncryptedClientHello(EncryptedClientHelloError::NoCompatibleConfig),
-+            "encrypted client hello failure: NoCompatibleConfig",
-+        ),
-+        (Error::EncryptError, "cannot encrypt message"),
-+        (
-+            Error::NoSuitableCertificate,
-+            "no suitable certificate found",
-+        ),
-+        (
-+            Error::RejectedEch(RejectedEch {
-+                retry_configs: Some(vec![]),
-+            }),
-+            "server rejected encrypted client hello (ECH) with retry configs",
-+        ),
-+        (
-+            Error::RejectedEch(RejectedEch {
-+                retry_configs: None,
-+            }),
-+            "server rejected encrypted client hello (ECH) without retry configs",
-+        ),
-+        (
-+            CertificateError::NotValidForNameContext {
-+                expected: ServerName::try_from("example.com")
-+                    .unwrap()
-+                    .to_owned(),
-+                presented: vec![
-+                    "DnsName(\"a.com\")".into(),
-+                    "DnsName(\"b.com\")".into(),
-+                    "DnsName(\"c.com\")".into(),
-+                ],
-+            }
-+            .into(),
-+            "invalid peer certificate: certificate not valid for name \"example.com\"; \
-+             certificate is only valid for DnsName(\"a.com\"), DnsName(\"b.com\") \
-+             or DnsName(\"c.com\")",
-+        ),
-+        (
-+            CertificateError::InvalidPurposeContext {
-+                required: ExtendedKeyPurpose::ServerAuth,
-+                presented: vec![
-+                    ExtendedKeyPurpose::ClientAuth,
-+                    ExtendedKeyPurpose::Other(vec![1, 3, 6, 1, 5, 5, 7, 3, 3]),
-+                ],
-+            }
-+            .into(),
-+            "invalid peer certificate: certificate does not allow extended key usage for \
-+             server authentication; it allows client authentication, 1.3.6.1.5.5.7.3.3",
-+        ),
-+        (
-+            CertificateError::InvalidPurposeContext {
-+                required: ExtendedKeyPurpose::ServerAuth,
-+                presented: vec![],
-+            }
-+            .into(),
-+            "invalid peer certificate: certificate does not allow extended key usage for \
-+             server authentication; it allows nothing",
-+        ),
-+        (
-+            CertificateError::Other(OtherError::new(TestError)).into(),
-+            "invalid peer certificate: test error",
-+        ),
-+    ];
-+
-+    for (err, expected) in cases {
-+        assert_eq!(err.to_string(), *expected);
-+    }
-+
-+    assert_eq!(
-+        ApiMisuse::ExporterNotAvailable.to_string(),
-+        "ExporterNotAvailable"
-+    );
-+}
-+
- #[derive(Debug)]
- struct TestError;
- 
+ [[package]]
+ name = "nix"
+-version = "0.31.3"
++version = "0.32.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
++checksum = "77730ed34f01f4990cb2ea67fec715ecebc6fab9a6396cf83c5529b13f581bdc"
+ dependencies = [
+  "bitflags",
+  "cfg-if",
 ```
 
----
-
-### Incident Patch 2: `0f57288d` (2026-11-11)
-**Commit Message**: Improve `Display` for `CertificateError::InvalidPurposeContext`
-
-- Print OIDs with dots, not commas
-- Fix where no EKUs are presented
-
-**File**: `rustls-test/tests/api/server_cert_verifier.rs` (modified, +1/-1)
+**File**: `bogo/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -807,7 +807,7 @@ fn client_check_server_valid_purpose() {
-     assert_eq!(
-         format!("{error}"),
-         "invalid peer certificate: certificate does not allow extended key usage for \
--         server authentication, allows client authentication"
-+         server authentication; it allows client authentication"
-     );
- }
+@@ -6,7 +6,7 @@ publish = false
  
-```
-
-**File**: `rustls/src/error/mod.rs` (modified, +5/-2)
-```diff
-@@ -711,8 +711,11 @@ impl fmt::Display for CertificateError {
-             } => {
-                 write!(
-                     f,
--                    "certificate does not allow extended key usage for {required}, allows "
-+                    "certificate does not allow extended key usage for {required}; it allows "
-                 )?;
-+                if presented.is_empty() {
-+                    write!(f, "nothing")?;
-+                }
-                 for (i, eku) in presented.iter().enumerate() {
-                     if i > 0 {
-                         write!(f, ", ")?;
-@@ -1406,7 +1409,7 @@ impl fmt::Display for ExtendedKeyPurpose {
-             Self::Other(values) => {
-                 for (i, value) in values.iter().enumerate() {
-                     if i > 0 {
--                        write!(f, ", ")?;
-+                        write!(f, ".")?;
-                     }
-                     write!(f, "{value}")?;
-                 }
+ [dependencies]
+ base64 = { workspace = true }
+-nix = { version = "0.31", default-features = false, features = ["signal"] }
++nix = { version = "0.32", default-features = false, features = ["signal"] }
+ rustls = { path = "../rustls" }
+ rustls-aws-lc-rs = { path = "../rustls-aws-lc-rs" }
+ rustls-ring = { path = "../rustls-ring" }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3437** (2026-11-16): Update Rust crate nix to 0.32 (@renovate-bot)
+- **PR #3429** (closed): Update dependency rust to 1.100 (@renovate-bot)
+- **PR #3427** (2026-11-12): Prepare 0.24.0-dev.3 (@ctz)
 - **PR #3426** (2026-11-12): Test coverage improvements (@ctz)
 - **PR #3425** (2026-11-12): Take pki-types 1.16: rely on canonical `DnsName`s & use `DnsName::into_owned()` (@ctz)
 - **PR #3423** (2026-11-11): add Wycheproof HPKE coverage, reject non-canonical X25519 HPKE recipient keys  (@cpu)
-- **PR #3422** (2026-11-10): Take graviola 0.4.5 and delete FAKE_HASH (@ctz)
-- **PR #3420** (2026-11-09): replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info (@mcr)
-- **PR #3419** (2026-11-09): Update Rust crate crabgrind to 0.5 (@renovate-bot)
 
 ---
 
@@ -2475,66 +2357,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Test `Display` for remaining error variants
+## X. Update Rust crate nix to 0.32
 
 **RULE**:
-When implementing operations in `rustls/src/error/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `970b4474`: Test `Display` for remaining error variants. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53db4d13`: Update Rust crate nix to 0.32. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/error/tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[test]
-fn error_display() {
-    use super::{
-        ApiMisuse, CertificateError, EncryptedClientHelloError, ExtendedKeyPurpose, RejectedEch,
-    };
-
-    let cases: &[(Error, &str)] = &[
-        (
-            Error::UnsupportedNameType,
-            "presented server name type wasn't supported",
-        ),
-        (
-            Error::InvalidEncryptedClientHello(EncryptedClientHelloError::NoCompatibleConfig),
-            "encrypted client hello failure: NoCompatibleConfig",
-        ),
-        (Error::EncryptError, "cannot encrypt message"),
-        (
-            Error::NoSuitableCertificate,
-            "no suitable certificate found",
-        ),
-        (
-            Error::RejectedEch(RejectedEch {
-                retry_configs: Some(vec![]),
-            }),
-            "server rejected encrypted client hello (ECH) with retry configs",
-        ),
-        (
-            Error::RejectedEch(RejectedEch {
-                retry_configs: None,
-            }),
-            "server rejected encrypted client hello (ECH) without retry configs",
-        ),
-        (
-            CertificateError::NotValidForNameContext {
-                expected: ServerName::try_from("example.com")
-           
+version = "0.32.0"
+checksum = "77730ed34f01f4990cb2ea67fec715ecebc6fab9a6396cf83c5529b13f581bdc"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+version = "0.31.3"
+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `970b4474` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53db4d13` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

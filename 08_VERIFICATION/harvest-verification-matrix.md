@@ -10311,3 +10311,6 @@
 | `CYCLE-20261116-LMP5` | `2026-11-16T18:01:43.721Z` | `yazinsai/OpenOats` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8764` | Yes (`881024c9...`) |
 | `CYCLE-20261116-LRLJ` | `2026-11-16T18:01:50.071Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8765` | Yes (`63bf7733...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T18:02:18.580Z` | `hf-n4ze3m-tiny-voca` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BCDF73E3` [Domain D] | Yes (`9fb36c40...`) |
+| `CYCLE-20261116-XC81` | `2026-11-16T18:10:50.017Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8766` | Yes (`fd4f9f98...`) |
+| `CYCLE-20261116-XEA2` | `2026-11-16T18:10:52.682Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8767` | Yes (`caca7c63...`) |
+| `CYCLE-20261116-XGPT` | `2026-11-16T18:10:55.841Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8768` | Yes (`a63beb76...`) |

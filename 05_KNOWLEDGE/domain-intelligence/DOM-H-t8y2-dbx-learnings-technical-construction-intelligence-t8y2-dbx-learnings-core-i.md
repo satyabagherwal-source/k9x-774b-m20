@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T06:37:32.297Z",
+  "timestamp": "2026-11-16T18:11:00.606Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-t8y2-dbx-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [t8y2-dbx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T06:37:32.297Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T18:11:00.606Z`  
 > **Learning ID**: `LEARN-EVO-t8y2-dbx-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from t8y2-dbx-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `0c019880`  
+> **Source Version**: `6406c3f8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T06:36:56.964Z  
+> **Timestamp**: 2026-11-16T18:10:54.951Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:36:56.958Z  
+> **Harvest Timestamp**: 2026-11-16T18:10:54.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30359 stars
+- **Stars / Engagement**: 30515 stars
 
 ---
 
@@ -2019,13 +2019,14 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14966** (2026-11-14): **[Bug] 查看表结构与 DDL 弹窗叠加导致层级异常、交互锁定**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  ClickHouse 25.3.14.14  ### 问题描述 / Problem description  1. 复现步骤 ①新建连接，在 SQL 编辑器输入查询语句 ②右键表名 → 选择「查看表结构」，弹出表结构弹窗 ③再次右键同一表名 → 选择「查看 DDL」，弹出 DDL 弹窗 ④观察两弹窗层级、可见性及交互状态；尝试点击表结构弹窗右上角关闭 × 2. 期望结果 ①表结构与 DDL 弹窗应互斥（或打开替换前弹窗）或正确分层（后者在上且独立） ②鼠标焦点应跟随或选择当前活动弹窗，实现正常查看/操作 ③任意弹窗均可独立关闭；无需依赖 先后顺序 3. 实际结果 ①层级遮挡：​ DDL 弹窗显示在下层，表结构弹窗在上层，整体层级混乱，视觉重叠 ②交互锁定：​ 鼠标只能操作 DDL 框，表结构弹窗无法交互 ③关闭链异常：​无法操作表结构弹窗，必须先关闭 DDL 弹窗，操作阻塞 ④截图日志 如图  <img width="589" height="274" alt="d0489b1082942b3e47ac2edaabaca75e" src="https://github.com/user-attachments/assets/980c8012-34d1-4a21-9d7b-90441932f84d" />  <img width="1320" height="774" alt="3a9f1b3c5acf7975cac363e94f9e33d2" src="https://github.com/user-attachments/assets/723dabe2-a898-4f2a-948e-c647254ea655" />  <img width="1257" height="812" alt="92bbf3537be6e8f80c3c29583e1104df" src="https://github.com/user-attachments/assets/1d927423-7b0a-4642-ac4f-325499a5b88b" />  ### 支持信息 / Support information  DBX 版本: v0.6.69 (0.6.69-beta.20261110.1) 运行环境: 桌面端 操作系统: Windows 10 (10.0.19045.3324) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0 数据库类型: clickhouse, postgres, redis  ### 优先级（是否紧急） / Priority (urgency)  🟢 P3 低优 · 有空再修 / Low · Fix when possible  ### 补充信息 / Additional information  _No response_
+- **Issue #15064** (2026-11-16): **[Bug] 粘贴多层嵌套 SQL 导致编辑器卡死**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL  ### 问题描述 / Problem description     #### 摘要     在「新建查询」标签页粘贴一条多层派生表嵌套的 SELECT（约 33 层 SELECT p.* FROM ( … ) p）后，编辑器立即卡死：WebContent 进程单核 100% 持续数十分钟，界面无响应，只能强杀进程。     #### 复现步骤     1. 连接任意 MySQL，打开「新建查询」。    2. 粘贴下方 SQL（或任何同形状的多层 SELECT 别名.* FROM (…) 别名 嵌套）。    3. 编辑器卡死。      完整复现 SQL：      SELECT         t.his_doctor_code, t.doctor_id, t.doctor_name,         COUNT(*) AS record_count,         SUM(t.han_cnt + t.word_cnt) AS total_words,         SUM(t.han_cnt) AS han_cnt,         SUM(t.word_cnt) AS word_cnt,                                                              ROUND(AVG(t.han_cnt + t.word_cnt), 1) AS avg_words     FROM (         SELECT             z.his_doctor_code, z.doctor_id, z.doctor_name,                                                                                                                          CHAR_LENGTH(z.latin) - CHAR_LENGTH(REPLACE(z.latin, '?', '')) AS han_cnt,             CASE WHEN TRIM(z.eng_final) = '' THEN 0                  ELSE CHAR_LENGTH(TRIM(z.eng_final)) - CHAR_LENGTH(REPLACE(TRIM(z.eng_final), ' ', '')) + 1             END AS word_cnt         FROM (             SELECT y.*, CONVERT(y.han9 USING latin1) AS latin             FROM (     SELECT p.*,                 REPLACE(REPLACE(REPLACE(p.eng_s4, ' - ', ' '), ' . ', ' '), ' / ', ' ') AS eng_final             FROM (     SELECT p.*, REPLACE(p.eng_s3, '  ', ' ') AS eng_s4                                                                            
 
-- **Issue #14946** (2026-11-14): **[Bug] 禁用 DBX 【设置-安全】搜索框表单自动补全**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  None  ### 问题描述 / Problem description  默认情况下，浏览器会记录用户网页上提交的<input>框的信息，DBX 【设置-安全】搜索框哪怕清除了输入信息还是会自动填入，其它页面搜索框自动填入后清除了不会自动填入，请检查前端 autocomplete 的属性设置  ### 支持信息 / Support information  运行环境:Docker  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  _No response_
+- **Issue #15057** (2026-11-16): **[Bug] elaticsearch 增加单独的搜索框，但是填入关键字搜索不能生效**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  elasticsearch  ### 问题描述 / Problem description  <img width="645" height="222" alt="image" src="https://github.com/user-attachments/assets/e2e46dfb-b8f7-49de-a749-19c429fb1e61" />  ### 支持信息 / Support information  从加入单独的搜索框那个版本开始 到目前最新版本 v0.6.71版本 bug一直存在   ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
-  > 结论：与 #14952 是同一问题——设置搜索框被浏览器表单历史自动填充。main 已由 e759e60cc（fix(desktop): stop settings search from autofilling browser history，关闭 #14952）修复：该搜索框此前是应用里唯一 `type="text"` 的搜索框（其它搜索框都不是 text 类型，所以只有它会被浏览器记住表单内容），现已改为 `type="search"` 并隐藏 WebKit 自带的清除按钮，升级到包含该提交的版本即可。  两点补充：  - 若指的是「安全」标签页里密码输入框旁的凭据自动填充（浏览器在密码字段旁弹出已保存凭据）：那是浏览器凭据管理器的行为，与表单历史是两条机制；密码字段已在代码里带 `autocomplete="off"` 且隐藏了 WebKit 的自动填充按钮，Chrome 对密码型输入会忽略 `off`，标准解法是把三个密码框改为 `autocomplete="current-password"` / `"new-password"` 让浏览器行为可预期（旧密码提供已保存凭据、新密码不自动填充）。如果升级后仍有这个问题，可以按这个方向单独提增强。 - 建议将本 issue 关闭为 #14952 的重复项。 
+  > /claim  已确认截图中的连接位于文件夹内，而索引过滤只访问顶层连接。会让过滤覆盖文件夹内的 Elasticsearch 和 Easysearch 连接，保留各连接独立的搜索条件。 
+  > ✅ @ThugKd 已认领 #15057，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2042,944 +2043,766 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ce79533` (2026-11-14)
-**Commit Message**: fix(updater): retry the update cache rename on transient Windows locks (#14821)
+### Incident Patch 1: `6406c3f8` (2026-11-16)
+**Commit Message**: fix(sql): respect query-block scope in SQL completion
 
-* fix(updater): retry the cache commit rename on transient Windows locks
-
-Real-time security software opens the freshly written update package for a moment, and Windows rejects the commit directory rename while any file below it is still open. Reuse the plugin installer's transient-lock retry (Windows 5/32, 200..2000 ms) for the updater commit, and run the commit on the blocking pool so the wait cannot stall the async runtime.
-
-Fixes #14574.
-
-* fix(updater): do not publish a download canceled during the cache rename retry
-
-The scanner wait can last several seconds. A committing slot keeps that wait off the state mutex, so cancel discards the package and a second download cannot start.
-
-**File**: `crates/dbx-platform/src/fs_retry.rs` (added, +117/-0)
+**File**: `apps/desktop/src/lib/__tests__/sql/sqlCompletion.context.spec.ts` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,117 @@
-+//! Retries for filesystem operations that security software can briefly block.
-+//!
-+//! Real-time antivirus/EDR scanners open a file right after it is written. On Windows a
-+//! directory rename is rejected with `ERROR_ACCESS_DENIED` (5) while any file below it is
-+//! still open, even when the opening handle allows delete sharing, and file operations can
-+//! fail with `ERROR_SHARING_VIOLATION` (32). The scan normally finishes well inside this
-+//! retry window, so callers can keep a single atomic rename as their commit point instead
-+//! of falling back to a non-atomic write protocol.
-+
-+use std::path::Path;
-+use std::time::Duration;
-+
-+/// Field reports put the scan window at roughly 1-2 seconds for a large installer, so this
-+/// budget gives the scanner several times that window. The plugin installer and the desktop
-+/// updater share it deliberately: both commit by renaming a freshly written package.
-+pub const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
-+    Duration::from_millis(200),
-+    Duration::from_millis(400),
-+    Duration::from_millis(800),
-+    Duration::from_millis(1500),
-+    Duration::from_millis(2000),
-+];
-+
-+/// Rename `src` to `dst`, retrying the transient Windows locks described above.
-+pub fn rename_with_transient_lock_retry(src: &Path, dst: &Path) -> std::io::Result<()> {
-+    retry_transient_lock(&TRANSIENT_LOCK_RETRY_DELAYS, || std::fs::rename(src, dst))
-+}
-+
-+/// Run `operation`, sleeping for each entry in `delays` after a transient Windows lock error.
-+///
-+/// Every other error is returned immediately. After the last delay the operation is tried
-+/// once more, so at most `delays.len() + 1` attempts are made and the final error is the
-+/// original one.
-+pub fn retry_transient_lock<T>(
-+    delays: &[Duration],
-+    mut operation: impl FnMut() -> std::io::Result<T>,
-+) -> std::io::Result<T> {
-+    for delay in delays {
-+        match operation() {
-+            Ok(value) => return Ok(value),
-+            Err(error) if cfg!(windows) && is_windows_lock_error(&error) => std::thread::sleep(*delay),
-+            Err(error) => return Err(error),
-+        }
-+    }
-+    operation()
-+}
-+
-+fn is_windows_lock_error(error: &std::io::Error) -> bool {
-+    matches!(error.raw_os_error(), Some(5 | 32))
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::retry_transient_lock;
-+    use std::time::Duration;
-+
-+    #[test]
-+    #[cfg(windows)]
-+    fn transient_lock_retry_recovers_from_windows_lock_errors() {
-+        use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+        for code in [5, 32] {
-+            let attempts = AtomicUsize::new(0);
-+            let result = retry_transient_lock(&[Duration::ZERO, Duration::ZERO, Duration::ZERO], || {
-+                if attempts.fetch_add(1, Ordering::SeqCst) < 2 {
-+                    Err(std::io::Error::from_raw_os_error(code))
-+                } else {
-+                    Ok(())
-+                }
-+            });
-+            assert!(result.is_ok());
-+            assert_eq!(attempts.load(Ordering::SeqCst), 3);
-+        }
-+    }
-+
-+    #[test]
-+    #[cfg(windows)]
-+    fn transient_lock_retry_returns_last_error_after_exhausting_delays() {
-+        use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+        let attempts = AtomicUsize::new(0);
-+        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO], || {
-+            attempts.fetch_add(1, Ordering::SeqCst);
-+            Err(std::io::Error::from_raw_os_error(5))
-+        });
-+        assert_eq!(attempts.load(Ordering::SeqCst), 2);
-+        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
-+    }
-+
-+    #[test]
-+    fn transient_lock_retry_does_not_retry_other_errors() {
-+        use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+        let attempts = AtomicUsize::new(0);
-+        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
-+            attempts.fetch_add(1, Ordering::SeqCst);
-+            Err(std::io::Error::from_raw_os_error(2))
-+        });
-+        assert_eq!(attempts.load(Ordering::SeqCst), 1);
-+        assert_eq!(result.unwrap_err().raw_os_error(), Some(2));
-+    }
-+
-+    #[test]
-+    #[cfg(unix)]
-+    fn transient_lock_retry_treats_windows_lock_codes_as_final_on_unix() {
-+        use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+        // Raw code 5 on Unix is EIO, not a Windows lock error, so the retry gate must leave it final.
-+        let attempts = AtomicUsize::new(0);
-+        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
-+            attempts.fetch_add(1, Ordering::SeqCst);
-+            Err(std::io::Error::from_raw_os_error(5))
-+        });
-+        assert_eq!(attempts.load(Ordering::SeqCst), 1);
-+        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
-+    }
-+}
-```
-
-**File**: `crates/dbx-platform/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+pub mod fs_retry;
- pub mod path_utils;
- pub mod process;
- pub mod proxy;
-```
-
-**File**: `crates/dbx-plugin-runtime/src/plugins/installer.rs` (modified, +2/-99)
-```diff
-@@ -7,6 +7,7 @@ use std::time::Duration;
+@@ -2802,7 +2802,8 @@ describe("line block statement boundary", () => {
+     const cursor = sql.length;
+     const context = getSqlCompletionContext(sql, cursor, { databaseType: "mysql" });
  
- use base64::Engine;
- use chrono::Utc;
-+use dbx_platform::fs_retry::{rename_with_transient_lock_retry, retry_transient_lock, TRANSIENT_LOCK_RETRY_DELAYS};
- use ed25519_dalek::{Signature, Verifier, VerifyingKey};
- use fs2::FileExt;
- use semver::Version;
-@@ -1155,43 +1156,6 @@ fn open_install_lock(root_dir: &Path) -> Result<File, String> {
-         .map_err(|error| error.to_string())
- }
- 
--// Antivirus scanners briefly hold handles on freshly extracted plugin binaries, which fails
--// directory renames with ERROR_ACCESS_DENIED (5) or ERROR_SHARING_VIOLATION (32); the scan
--// normally finishes well inside this retry window.
--const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
--    Duration::from_millis(200),
--    Duration::from_millis(400),
--    Duration::from_millis(800),
--    Duration::from_millis(1500),
--    Duration::from_millis(2000),
--];
--
--pub(crate) fn rename_with_transient_lock_retry(src: &Path, dst: &Path) -> std::io::Result<()> {
--    retry_transient_lock(&TRANSIENT_LOCK_RETRY_DELAYS, || std::fs::rename(src, dst))
--}
--
--fn retry_transient_lock<T>(
--    delays: &[Duration],
--    mut operation: impl FnMut() -> std::io::Result<T>,
--) -> std::io::Result<T> {
--    for delay in delays {
--        match operation() {
--            Ok(value) => return Ok(value),
--            Err(error) if cfg!(windows) && is_windows_lock_error(&error) => {
--                // If a file in the directory has the read-only attribute set on Windows,
--                // renames and removals fail with ERROR_ACCESS_DENIED (5). Ensure write permissions.
--                std::thread::sleep(*delay);
--            }
--            Err(error) => return Err(error),
--        }
--    }
--    operation()
--}
--
--fn is_windows_lock_error(error: &std::io::Error) -> bool {
--    matches!(error.raw_os_error(), Some(5 | 32))
--}
--
- #[allow(clippy::permissions_set_readonly_false)]
- fn ensure_tree_writable(path: &Path) {
-     if !path.exists() {
-@@ -1344,7 +1308,7 @@ mod tests {
-     use zip::write::SimpleFileOptions;
- 
-     use super::{
--        ensure_tree_writable, is_activation_record_file, read_install_identity, retry_transient_lock, sha256_hex,
-+        ensure_tree_writable, is_activation_record_file, read_install_identity, sha256_hex,
-         validate_package_expectation, write_json_atomically, PluginInstallPolicy, PluginPackageExpectation,
-         PluginPackageInstaller, PluginSignatureStatus, PluginTrustStore, ACTIVATIONS_DIR, INSTALL_LOCK_FILE,
-         PLUGIN_CHECKSUMS_FILE, PLUGIN_SIGNATURE_FILE, PLUGIN_TRASH_DIR, VERSIONS_DIR,
-@@ -2194,67 +2158,6 @@ mod tests {
-         output.into_inner()
-     }
- 
--    #[test]
--    #[cfg(windows)]
--    fn transient_lock_retry_recovers_from_windows_lock_errors() {
--        use std::sync::atomic::{AtomicUsize, Ordering};
--
--        for code in [5, 32] {
--            let attempts = AtomicUsize::new(0);
--            let result = retry_transient_lock(&[Duration::ZERO, Duration::ZERO, Duration::ZERO], || {
--                if attempts.fetch_add(1, Ordering::SeqCst) < 2 {
--                    Err(std::io::Error::from_raw_os_error(code))
--                } else {
--                    Ok(())
--                }
--            });
--            assert!(result.is_ok());
--            assert_eq!(attempts.load(Ordering::SeqCst), 3);
--        }
--    }
--
--    #[test]
--    #[cfg(windows)]
--    fn transient_lock_retry_returns_last_error_after_exhausting_delays() {
--        use std::sync::atomic::{AtomicUsize, Ordering};
--
--        let attempts = AtomicUsize::new(0);
--        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO], || {
--            attempts.fetch_add(1, Ordering::SeqCst);
--            Err(std::io::Error::from_raw_os_error(5))
--        });
--        assert_eq!(attempts.load(Ordering::SeqCst), 2);
--        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
--    }
--
--    #[test]
--    fn transient_lock_retry_does_not_retry_other_errors() {
--        use std::sync::atomic::{AtomicUsize, Ordering};
--
--        let attempts = AtomicUsize::new(0);
--        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
--            attempts.fetch_add(1, Ordering::SeqCst);
--            Err(std::io::Error::from_raw_os_error(2))
--        });
--        assert_eq!(attempts.load(Ordering::SeqCst), 1);
--        assert_eq!(result.unwrap_err().raw_os_error(), Some(2));
--    }
--
--    #[test]
--    #[cfg(unix)]
--    fn transient_lock_retry_treats_windows_lock_codes_as_final_on_unix() {
--        use std::sync::atomic::{AtomicUsize, Ordering};
--
--        // Raw code 5 on Unix is EIO, not a Windows lock error, so the retry gate must leave it final.
--        let attempts = AtomicUsize::new(0);
--        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
--            attempts.fetch_add(1, Ordering::SeqCst);
--            Err(std::io::Error::from_raw_os_error(5))
--        });
--        assert_eq!(attempts.load(Ordering::SeqCst), 1
-```
-
-**File**: `crates/dbx-plugin-runtime/src/plugins/marketplace.rs` (modified, +2/-1)
-```diff
-@@ -4,6 +4,7 @@ use std::io::Write;
- use std::path::{Path, PathBuf};
- use std::time::Duration;
- 
-+use dbx_platform::fs_retry::rename_with_transient_lock_retry;
- use fs2::FileExt;
- use reqwest::redirect::Policy;
- use reqwest::{Client, Url};
-@@ -804,7 +805,7 @@ fn write_json_atomically<T: Serialize>(path: &Path, value: &T) -> Result<(), Str
-     // std::fs::rename atomically replaces an existing destination on POSIX
-     // and Windows alike; remove-then-rename could lose the repository
-     // document to a crash between the two calls.
--    crate::plugins::installer::rename_with_transient_lock_retry(&temporary, path).map_err(|error| error.to_string())?;
-+    rename_with_transient_lock_retry(&temporary, path).map_err(|error| error.to_string())?;
-     Ok(())
- }
- 
-```
-
-**File**: `src-tauri/src/commands/update.rs` (modified, +166/-12)
-```diff
-@@ -85,10 +85,31 @@ impl UpdateDownloadProgressGate {
- 
- enum PendingUpdate {
-     Downloading(Arc<DownloadCancellation>),
-+    /// The package is being renamed into the cache. Cancel is recorded on the token, but the slot
-+    /// stays occupied so another download cannot start and cache cleanup cannot sweep staging.
-+    Committing(Arc<DownloadCancellation>),
-     Installing,
-     Ready(Box<CachedUpdate>),
- }
- 
-+/// Clears a commit slot that `finish_commit` did not finish, including when the commit panics.
-+struct CommitGuard<'a> {
-+    state: &'a PendingUpdateState,
-+    cancellation: &'a Arc<DownloadCancellation>,
-+}
-+
-+impl Drop for CommitGuard<'_> {
-+    fn drop(&mut self) {
-+        let Ok(mut pending) = self.state.pending.lock() else { return };
-+        if matches!(
-+            pending.as_ref(),
-+            Some(PendingUpdate::Committing(current)) if Arc::ptr_eq(current, self.cancellation)
-+        ) {
-+            *pending = None;
-+        }
-+    }
-+}
-+
- struct CachedUpdate {
-     record: CacheRecord,
-     ready: ReadyUpdate,
-@@ -161,6 +182,19 @@ impl PendingUpdateState {
-         update: CachedUpdate,
-         root: &std::path::Path,
-     ) -> Result<(), String> {
-+        let guard = self.begin_commit(cancellation)?;
-+        let bytes = match &update.ready {
-+            ReadyUpdate::Installer { bytes, .. } => bytes,
-+            ReadyUpdate::Portable { archive, .. } => archive,
-+        };
-+        // `commit` retries while security software scans the package. That wait must not run
-+        // under the state lock: cancel and a later download both need the lock, and holding it
-+        // across the scan would publish a package the user had already canceled.
-+        let committed = update_cache::commit(root, &update.record, bytes);
-+        self.finish_commit(guard, update, root, committed)
-+    }
-+
-+    fn begin_commit<'a>(&'a self, cancellation: &'a Arc<DownloadCancellation>) -> Result<CommitGuard<'a>, String> {
-         let mut pending = self.pending.lock().map_err(|_| "Update state is unavailable.".to_string())?;
-         let is_current = matches!(
-             pending.as_ref(),
-@@ -170,13 +204,63 @@ impl PendingUpdateState {
-         if !is_current {
-             return Err(DOWNLOAD_CANCELED_ERROR.to_string());
-         }
--        let bytes = match &update.ready {
--            ReadyUpdate::Installer { bytes, .. } => bytes,
--            ReadyUpdate::Portable { archive, .. } => archive,
-+        *pending = Some(PendingUpdate::Committing(Arc::clone(cancellation)));
-+        drop(pending);
-+        Ok(CommitGuard { state: self, cancellation })
-+    }
-+
-+    fn finish_commit(
-+        &self,
-+        guard: CommitGuard<'_>,
-+        update: CachedUpdate,
-+        root: &std::path::Path,
-+        committed: Result<(), String>,
-+    ) -> Result<(), String> {
-+        let canceled = {
-+            let mut pending = self.pending.lock().map_err(|_| "Update state is unavailable.".to_string())?;
-+            if !Self::is_our_commit(&pending, guard.cancellation) {
-+                drop(pending);
-+                return Err("Update state is unavailable.".into());
-+            }
-+            if guard.cancellation.is_canceled() {
-+                true
-+            } else if let Err(error) = committed {
-+                *pending = None;
-+                drop(pending);
-+                return Err(error);
-+            } else {
-+                *pending = Some(PendingUpdate::Ready(Box::new(update)));
-+                false
-+            }
-         };
--        update_cache::commit(root, &update.record, bytes)?;
--        *pending = Some(PendingUpdate::Ready(Box::new(update)));
--        Ok(())
-+        if !canceled {
-+            return Ok(());
-+        }
-+        // Stay in `Committing` while the package is removed so a new download cannot observe
-+        // or replace the cache directory mid-delete.
-+        self.discard_canceled_cache(root);
-+        self.clear_our_commit(guard.cancellation);
-+        Err(DOWNLOAD_CANCELED_ERROR.to_string())
-+    }
-+
-+    fn discard_canceled_cache(&self, root: &std::path::Path) {
-+        if let Err(error) = update_cache::discard(root) {
-+            eprintln!("[DBX updater] failed to discard a canceled update cache: {error}");
-+        }
-+    }
-+
-+    fn clear_our_commit(&self, cancellation: &Arc<DownloadCancellation>) {
-+        let Ok(mut pending) = self.pending.lock() else { return };
-+        if Self::is_our_commit(&pending, cancellation) {
-+            *pending = None;
-+        }
-+    }
-+
-+    fn is_our_commit(pending: &Option<PendingUpdate>, cancellation: &Arc<DownloadCancellation>) -> bool {
-+        matches!(
-+            pending.as_ref(),
-+            Some(PendingUpdate::Committing(current)) if Arc::ptr_eq(current, cancellation)
-+        )
-     }
- 
-     fn finish_failed_download(&self, cancellation: &Arc<DownloadCancellation>) -> Result<(), String> {
-@@ -192,11 +276,22 @@ impl PendingUpdateState {
-     }
- 
-     pub fn cancel_download(&self) {
--        if let Ok
-```
-
-**File**: `src-tauri/src/commands/update_cache.rs` (modified, +172/-13)
-```diff
-@@ -1,10 +1,16 @@
- //! A single committed update. The directory rename is the commit point; partial writes are never read.
-+//!
-+//! Security software opens a freshly written package to scan it, which makes Windows reject
-+//! directory removal and the commit rename for a moment. `commit` retries that transient lock
-+//! so a scan cannot turn a finished download into a failed one.
-+use dbx_platform::fs_retry::{retry_transient_lock, TRANSIENT_LOCK_RETRY_DELAYS};
- use serde::{Deserialize, Serialize};
- use sha2::{Digest, Sha256};
- use std::{
-     fs,
-     io::{Read, Write},
-     path::{Path, PathBuf},
-+    time::Duration,
- };
- 
- fn default_is_promoted() -> bool {
-@@ -60,6 +66,18 @@ fn write_synced(path: &Path, bytes: &[u8]) -> Result<(), String> {
- }
- 
- pub(super) fn commit(root: &Path, record: &CacheRecord, bytes: &[u8]) -> Result<(), String> {
-+    commit_with(root, record, bytes, &TRANSIENT_LOCK_RETRY_DELAYS, |src, dst| fs::rename(src, dst))
-+}
-+
-+/// `commit` with an injectable rename so tests can prove the transient-lock retry without
-+/// racing a real antivirus scan.
-+fn commit_with(
-+    root: &Path,
-+    record: &CacheRecord,
-+    bytes: &[u8],
-+    retry_delays: &[Duration],
-+    mut rename: impl FnMut(&Path, &Path) -> std::io::Result<()>,
-+) -> Result<(), String> {
-     let metadata = serde_json::to_vec(record).map_err(|e| e.to_string())?;
-     if metadata.len() > 4 * 1024 * 1024 || bytes.len() > 512 * 1024 * 1024 {
-         return Err("Cached update exceeds size limits.".into());
-@@ -75,11 +93,14 @@ pub(super) fn commit(root: &Path, record: &CacheRecord, bytes: &[u8]) -> Result<
-         #[cfg(unix)]
-         fs::File::open(&staging).and_then(|dir| dir.sync_all()).map_err(|e| e.to_string())?;
-         let ready = root.join("ready");
--        // Windows cannot rename onto an existing directory: `fs::rename` fails with
--        // `os error 5` when `ready` is still present from an earlier attempt. Clear
--        // it first so the commit is idempotent and does not need a manual retry.
--        discard(root)?;
--        fs::rename(&staging, &ready)
-+        // Windows cannot rename onto an existing directory, and a scanner can hold that
-+        // previous tree open with the same access-denied error as the commit rename.
-+        discard_with(root, retry_delays, remove_cache_entry)?;
-+        // A real-time antivirus/EDR scanner opens the freshly written package for a moment.
-+        // While that handle exists Windows rejects the directory rename with `os error 5`,
-+        // even though the scan releases it shortly after, so wait out the scan instead of
-+        // failing the download and making the user transfer the package again.
-+        retry_transient_lock(retry_delays, || rename(&staging, &ready))
-             .map_err(|error| context("Failed to finalize the DBX update cache", &ready, error))?;
-         #[cfg(unix)]
-         fs::File::open(root).and_then(|dir| dir.sync_all()).map_err(|e| e.to_string())?;
-@@ -175,16 +196,27 @@ pub(super) fn cleanup_partial(root: &Path) -> Result<(), String> {
- }
- 
- pub(super) fn discard(root: &Path) -> Result<(), String> {
--    let ready = root.join("ready");
--    let result = if fs::symlink_metadata(&ready).is_ok_and(|m| !m.file_type().is_dir()) {
--        fs::remove_file(&ready)
-+    discard_with(root, &TRANSIENT_LOCK_RETRY_DELAYS, remove_cache_entry)
-+}
-+
-+fn remove_cache_entry(path: &Path) -> std::io::Result<()> {
-+    if fs::symlink_metadata(path).is_ok_and(|metadata| !metadata.file_type().is_dir()) {
-+        fs::remove_file(path)
-     } else {
--        fs::remove_dir_all(&ready)
--    };
--    match result {
-+        fs::remove_dir_all(path)
-+    }
-+}
-+
-+fn discard_with(
-+    root: &Path,
-+    retry_delays: &[Duration],
-+    mut remove: impl FnMut(&Path) -> std::io::Result<()>,
-+) -> Result<(), String> {
-+    let ready = root.join("ready");
-+    match retry_transient_lock(retry_delays, || remove(&ready)) {
-         Ok(()) => Ok(()),
--        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
--        Err(e) => Err(context("Failed to clear the previous DBX update cache", &ready, e)),
-+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
-+        Err(error) => Err(context("Failed to clear the previous DBX update cache", &ready, error)),
-     }
- }
- 
-@@ -196,6 +228,31 @@ pub(super) fn root(app: &tauri::AppHandle) -> Result<PathBuf, String> {
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use std::time::Duration;
-+
-+    fn record_for(bytes: &[u8]) -> CacheRecord {
-+        CacheRecord {
-+            schema_version: 1,
-+            package_kind: "test".into(),
-+            package_length: bytes.len() as u64,
-+            package_sha256: digest(bytes),
-+            info: DownloadedUpdate {
-+                cache_id: "test".into(),
-+                version: "99.0.0".into(),
-+                portable_mode: false,
-+                release_url: String::new(),
-+                release_notes: String::new(),
-+                do
-```
-
----
-
-### Incident Patch 2: `64184374` (2026-11-14)
-**Commit Message**: fix(editor): keep structure peek panels below modal dialogs (#14967)
-
-* fix(editor): keep structure peek panels below modal dialogs
-
-Opening "View DDL" while a structure peek panel was up produced a broken
-stack: the peek panel shared the dialog layer band, so it drew over the
-dialog's overlay while the dialog's modal pointer-event guard still blocked
-it -- the panel looked on top but could not be focused or closed, and the
-window order was unpredictable.
-
-Peek panels are modeless, so allocate their z-index from a dedicated band
-(40-49) that always stays below dialog layers (which start at 50). Repeated
-activations can no longer climb into the dialog band.
-
-Refs #14966
-
-* fix(editor): stack peek panels by activation order
-
-Keeping modeless peek panels below modal dialogs by allocating from a
-monotonic counter that saturates at the top of the band breaks the existing
-bring-to-front behaviour: after enough activations two panels share a
-layer, so the panel clicked last can no longer be raised above the other.
-
-Keep panels in activation order instead and derive their z-index from that
-order, so any number of activations keeps a strict order inside the band.
-Expose BASE_DIALOG_Z_INDEX 
-
-**File**: `apps/desktop/src/components/editor/QueryEditor.vue` (modified, +21/-7)
-```diff
-@@ -57,7 +57,7 @@ import type { ColumnInfo } from "@/types/database";
- import { createColumnReferencePayload, tableReferenceInsertText } from "@/lib/editor/queryEditorTableDrop";
- import { clearRememberedFocusedQueryEditorView, focusedQueryEditorView, queryEditorInsertContext, registerQueryEditorInsertContext, rememberFocusedQueryEditorView, unregisterQueryEditorInsertContext } from "@/lib/editor/focusedQueryEditorView";
- import { loadObjectMetadataFacet } from "@/lib/metadata/objectMetadataCache";
--import { structurePeekPanelId } from "@/lib/editor/structurePeekPanel";
-+import { structurePeekPanelId, structurePeekZIndexesByOrder } from "@/lib/editor/structurePeekPanel";
- import { createQueryEditorNativeSelectionGuard, parkEditorNativeSelection, type EditorNativeSelectionPark } from "@/lib/editor/queryEditorNativeSelection";
- import CodeSnapshotDialog from "@/components/codeSnapshot/CodeSnapshotDialog.vue";
- import QueryEditorContextMenu, { type QueryEditorContextMenuState, type QueryEditorContextMenuActions } from "./QueryEditorContextMenu.vue";
-@@ -366,18 +366,32 @@ interface StructurePeekPanelState {
- 
- const structurePeekPanels = ref<StructurePeekPanelState[]>([]);
- let structurePeekRequestSeq = 0;
--let structurePeekZIndexSeq = 50;
- let structurePeekCascadeSeq = 0;
- 
-+/**
-+ * Peek panels are kept in activation order (back to front) and their z-index is
-+ * derived from that order, so any number of activations keeps a strict order and
-+ * the stack never leaves the band below modal dialogs.
-+ */
-+function restackStructurePeekPanels() {
-+  const zIndexes = structurePeekZIndexesByOrder(structurePeekPanels.value.length);
-+  structurePeekPanels.value.forEach((panel, index) => {
-+    panel.zIndex = zIndexes[index] ?? panel.zIndex;
-+  });
-+}
-+
- function bringStructurePeekToFront(panelId: string) {
--  const panel = structurePeekPanels.value.find((item) => item.id === panelId);
-+  const index = structurePeekPanels.value.findIndex((item) => item.id === panelId);
-+  if (index < 0) return;
-+  const [panel] = structurePeekPanels.value.splice(index, 1);
-   if (!panel) return;
--  structurePeekZIndexSeq += 1;
--  panel.zIndex = structurePeekZIndexSeq;
-+  structurePeekPanels.value.push(panel);
-+  restackStructurePeekPanels();
- }
- 
- function closeStructurePeekPanel(panelId: string) {
-   structurePeekPanels.value = structurePeekPanels.value.filter((item) => item.id !== panelId);
-+  restackStructurePeekPanels();
- }
- 
- async function loadStructurePeekColumns(panelId: string, requestId: number, target: SqlObjectNavigationTarget, database: string, schema: string) {
-@@ -427,7 +441,6 @@ async function openTableStructurePeek(target: SqlObjectNavigationTarget) {
-     return;
-   }
- 
--  structurePeekZIndexSeq += 1;
-   const requestId = ++structurePeekRequestSeq;
-   const cascadeIndex = structurePeekCascadeSeq++;
-   const panel: StructurePeekPanelState = {
-@@ -436,11 +449,12 @@ async function openTableStructurePeek(target: SqlObjectNavigationTarget) {
-     columns: [],
-     loading: true,
-     error: "",
--    zIndex: structurePeekZIndexSeq,
-+    zIndex: 0,
-     cascadeIndex,
-     requestId,
-   };
-   structurePeekPanels.value = [...structurePeekPanels.value, panel];
-+  restackStructurePeekPanels();
-   await loadStructurePeekColumns(id, requestId, panel.target, database, schema);
- }
- 
-```
-
-**File**: `apps/desktop/src/components/editor/TableStructurePeekDialog.vue` (modified, +2/-2)
-```diff
-@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
- import { Button } from "@/components/ui/button";
- import { Input } from "@/components/ui/input";
- import { formatMetadataColumnTypeLabel } from "@/lib/dataGrid/dataGridColumnType";
--import { STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, centeredStructurePeekRect, clampStructurePeekRect, defaultStructurePeekSize, resizeStructurePeekRect, type StructurePeekResizeEdge } from "@/lib/editor/structurePeekPanel";
-+import { STRUCTURE_PEEK_MAX_Z_INDEX, STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, centeredStructurePeekRect, clampStructurePeekRect, defaultStructurePeekSize, resizeStructurePeekRect, type StructurePeekResizeEdge } from "@/lib/editor/structurePeekPanel";
- import { shouldPreserveEditorFocusOnPeekPointerDown } from "@/lib/editor/focusedQueryEditorView";
- import { tableColumnDefaultDisplayValue } from "@/lib/table/tableColumnDefaultPresentation";
- import { filterObjectBrowserTableColumns, sortObjectBrowserTableColumns, type ObjectBrowserTableColumnSort, type ObjectBrowserTableColumnSortKey } from "@/lib/table/objectBrowserTableInfo";
-@@ -82,7 +82,7 @@ const panelStyle = computed(() => {
-     top: `${panelTop.value}px`,
-     width: `${panelWidth.value}px`,
-     height: `${panelHeight.value}px`,
--    zIndex: String(props.zIndex ?? 50),
-+    zIndex: String(props.zIndex ?? STRUCTURE_PEEK_MAX_Z_INDEX),
-   };
-   if (interacting.value) style.transition = "none";
-   return style;
-```
-
-**File**: `apps/desktop/src/components/ui/dialog/useDialogLayerOrder.ts` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- import { injectDialogRootContext, useForwardExpose } from "reka-ui";
- import { computed, onBeforeUnmount, onUpdated, ref, watch, watchPostEffect, type Ref } from "vue";
- 
--const BASE_DIALOG_Z_INDEX = 50;
-+export const BASE_DIALOG_Z_INDEX = 50;
- const DIALOG_TOP_Z_INDEX_VAR = "--dbx-dialog-top-z-index";
- const FLOATING_LAYER_Z_INDEX_VAR = "--dbx-floating-layer-z-index";
- 
-```
-
-**File**: `apps/desktop/src/lib/__tests__/editor/structurePeekPanel.spec.ts` (modified, +50/-1)
-```diff
-@@ -1,5 +1,6 @@
- import { describe, expect, it } from "vitest";
--import { STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, clampStructurePeekRect, resizeStructurePeekRect, structurePeekPanelId } from "@/lib/editor/structurePeekPanel";
-+import { BASE_DIALOG_Z_INDEX } from "@/components/ui/dialog/useDialogLayerOrder";
-+import { STRUCTURE_PEEK_BASE_Z_INDEX, STRUCTURE_PEEK_DEPTH, STRUCTURE_PEEK_MAX_Z_INDEX, STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, clampStructurePeekRect, resizeStructurePeekRect, structurePeekPanelId, structurePeekZIndexesByOrder } from "@/lib/editor/structurePeekPanel";
- 
- describe("structurePeekPanel", () => {
-   it("builds a stable case-insensitive identity including catalog", () => {
-@@ -42,4 +43,52 @@ describe("structurePeekPanel", () => {
-     expect(grown.left).toBe(100);
-     expect(grown.top).toBe(60);
+-    expect(context.referencedTables.map((table) => table.name)).toEqual(expect.arrayContaining(["users"]));
++    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["x"]);
++    expect(context.referencedTables[0].columns).toContain("id");
    });
-+
-+  it("keeps peek panels in a layer band strictly below modal dialogs", () => {
-+    expect(STRUCTURE_PEEK_MAX_Z_INDEX).toBeLessThan(BASE_DIALOG_Z_INDEX);
-+    expect(STRUCTURE_PEEK_BASE_Z_INDEX).toBeLessThan(STRUCTURE_PEEK_MAX_Z_INDEX);
-+    expect(STRUCTURE_PEEK_DEPTH).toBe(STRUCTURE_PEEK_MAX_Z_INDEX - STRUCTURE_PEEK_BASE_Z_INDEX + 1);
-+  });
-+
-+  it("stacks open panels by activation order so the last activated one stays on top", () => {
-+    // Mirror the editor: `open` holds panels back to front, z-index comes from order.
-+    let open: string[] = [];
-+    const zIndexOf = (panelId: string) => structurePeekZIndexesByOrder(open.length)[open.indexOf(panelId)]!;
-+    const openPanel = (panelId: string) => {
-+      open = [...open, panelId];
-+    };
-+    const activate = (panelId: string) => {
-+      open = [...open.filter((item) => item !== panelId), panelId];
-+    };
-+
-+    openPanel("a");
-+    openPanel("b");
-+    expect(zIndexOf("b")).toBeGreaterThan(zIndexOf("a"));
-+
-+    // Repeated A/B/A cycles must not saturate: whichever panel is activated last wins.
-+    for (let round = 0; round < 24; round += 1) {
-+      const top = round % 2 === 0 ? "a" : "b";
-+      const other = top === "a" ? "b" : "a";
-+      activate(top);
-+      expect(zIndexOf(top)).toBe(STRUCTURE_PEEK_MAX_Z_INDEX);
-+      expect(zIndexOf(top)).toBeGreaterThan(zIndexOf(other));
-+    }
-+  });
-+
-+  it("keeps the front panels in strict order no matter how many are open", () => {
-+    expect(structurePeekZIndexesByOrder(0)).toEqual([]);
-+
-+    const count = 20;
-+    const zIndexes = structurePeekZIndexesByOrder(count);
-+    expect(zIndexes).toHaveLength(count);
-+    expect(zIndexes[count - 1]).toBe(STRUCTURE_PEEK_MAX_Z_INDEX);
-+    for (const zIndex of zIndexes) {
-+      expect(zIndex).toBeGreaterThanOrEqual(STRUCTURE_PEEK_BASE_Z_INDEX);
-+      expect(zIndex).toBeLessThan(BASE_DIALOG_Z_INDEX);
-+    }
-+    // The `STRUCTURE_PEEK_DEPTH` front panels stay strictly ordered; older ones share the base layer.
-+    for (let index = count - STRUCTURE_PEEK_DEPTH + 1; index < count; index += 1) {
-+      expect(zIndexes[index]!).toBeGreaterThan(zIndexes[index - 1]!);
-+    }
-+  });
- });
+ 
+   it("keeps WITH clause in scope when cursor is in the following top-level main query", () => {
 ```
 
-**File**: `apps/desktop/src/lib/editor/structurePeekPanel.ts` (modified, +34/-0)
+**File**: `apps/desktop/src/lib/__tests__/sql/sqlCompletion.scope.spec.ts` (added, +639/-0)
 ```diff
-@@ -9,6 +9,40 @@ export const STRUCTURE_PEEK_MIN_WIDTH = 360;
- export const STRUCTURE_PEEK_MIN_HEIGHT = 240;
- export const STRUCTURE_PEEK_CASCADE = 24;
- 
-+/**
-+ * Peek panels are modeless windows, so they must stay below modal dialogs.
-+ * Dialog layers start at 50 (BASE_DIALOG_Z_INDEX in useDialogLayerOrder), and
-+ * allocating peek panels from the same band used to tie a panel with an open
-+ * dialog: the dialog's overlay painted behind the panel while its modal
-+ * pointer-event guard still blocked the panel, so the panel looked on top but
-+ * could not be clicked or closed.
-+ */
-+export const STRUCTURE_PEEK_BASE_Z_INDEX = 40;
-+export const STRUCTURE_PEEK_MAX_Z_INDEX = 49;
+@@ -0,0 +1,639 @@
++import { describe, expect, it } from "vitest";
++import { buildSqlCompletionItemsFromContext, getSqlCompletionContext, type SqlCompletionColumn } from "@/lib/sql/sqlCompletion";
++import { sqlCompletionContextFromSemantic } from "@/lib/sql/semantic/completion";
++import { SqlCompletionAnalysisEngine } from "@/lib/sql/sqlCompletionAnalysis";
++import { sqlFixtureCursor } from "@/lib/sql/semantic/fixtures";
++import { buildSqlSemanticModel } from "@/lib/sql/semantic/model";
++import type { SqlSemanticBuildOptions } from "@/lib/sql/semantic/types";
 +
-+/** Number of layers available inside the peek band. */
-+export const STRUCTURE_PEEK_DEPTH = STRUCTURE_PEEK_MAX_Z_INDEX - STRUCTURE_PEEK_BASE_Z_INDEX + 1;
-+
-+/**
-+ * z-indexes for `count` open panels, ordered bottom to top: the last entry is
-+ * the panel the user activated most recently and always lands on
-+ * STRUCTURE_PEEK_MAX_Z_INDEX, so the whole stack stays strictly below dialogs.
-+ *
-+ * Peek panels are re-stacked by their current order instead of being handed a
-+ * monotonic counter. A counter saturates at the top of the band after a handful
-+ * of activations, after which two panels share one layer and the older panel can
-+ * no longer be raised above the newer one even when clicked last. With more open
-+ * panels than band slots the ones furthest back share the base layer while the
-+ * front STRUCTURE_PEEK_DEPTH panels keep a strict order.
-+ */
-+export function structurePeekZIndexesByOrder(count: number): number[] {
-+  const total = Math.max(0, Math.floor(Number.isFinite(count) ? count : 0));
-+  return Array.from({ length: total }, (_unused, index) => {
-+    const offset = Math.max(0, index - (total - STRUCTURE_PEEK_DEPTH));
-+    return STRUCTURE_PEEK_BASE_Z_INDEX + offset;
-+  });
++function complete(markedSql: string, semantic: boolean, editorAnalysis = false, options: SqlSemanticBuildOptions = { databaseType: "postgres", dialect: "postgres" }) {
++  const { sql, cursor } = sqlFixtureCursor(markedSql);
++  const base = getSqlCompletionContext(sql, cursor, options);
++  const model = semantic ? buildSqlSemanticModel(sql, cursor, options) : undefined;
++  const context = editorAnalysis ? new SqlCompletionAnalysisEngine().analyze({ sql, cursor, ...options, semanticCompletionEnabled: semantic }).completionContext : model ? sqlCompletionContextFromSemantic(model, base) : base;
++  const columnsByTable = new Map<string, SqlCompletionColumn[]>(["a", "b", "c"].map((suffix) => [`probe_${suffix}`, ["id", `${suffix}_only`].map((name) => ({ name, table: `probe_${suffix}` }))]));
++  // Match the editor metadata path: local columns come from the resolved context,
++  // not every source in the global semantic model (including hidden query blocks).
++  for (const table of context.referencedTables) {
++    if (table.columns?.length)
++      columnsByTable.set(
++        table.name,
++        table.columns.map((name) => ({ name, table: table.name, schema: table.schema })),
++      );
++  }
++  const items = buildSqlCompletionItemsFromContext(context, { ...options, tables: [], columnsByTable });
++  return { context, columns: items.filter((item) => item.type === "column").map((item) => item.apply ?? item.label) };
 +}
 +
- export function defaultStructurePeekSize(viewportWidth: number, viewportHeight: number): { width: number; height: number } {
-   const maxWidth = Math.max(STRUCTURE_PEEK_MIN_WIDTH, viewportWidth - STRUCTURE_PEEK_MARGIN * 2);
-   const maxHeight = Math.max(STRUCTURE_PEEK_MIN_HEIGHT, viewportHeight - STRUCTURE_PEEK_MARGIN * 2);
++describe.each([false, true])("SQL completion query scopes (semantic=%s)", (semantic) => {
++  it("only offers derived-table output in the outer query (#14475)", () => {
++    const { context, columns } = complete("SELECT id| FROM (SELECT t1.id FROM probe_a t1 JOIN probe_b t2 ON t1.id = t2.id) sq", semantic);
++    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["sq"]);
++    expect(columns.length).toBeGreaterThan(0);
++    expect(columns.every((column) => column === "id" || column === "sq.id")).toBe(true);
++  });
++
++  it("keeps the current level of a multiply nested derived table", () => {
++    const { context, columns } = complete("SELECT * FROM (SELECT id| FROM (SELECT a.id FROM probe_a a) inner_query) outer_query", semantic);
++    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["inner_query"]);
++    expect(columns.length).toBeGreaterThan(0);
++    expect(columns.every((column) => column === "id" || column === "inner_query.id")).toBe(true);
++  });
++
++  it("retains outer joins while hiding the derived table's implementation", () => {
++    const { context, columns } = complete("SELECT id| FROM (SELECT a.id FROM probe_a a) sq JOIN probe_c c ON c.id = sq.id", semantic);
++    expect(context.referencedTables.map((table) => table.alias ?? table.name).sort()).toEqual(["c", "sq"]);
++    expect(columns).toEqual(expect.arrayContaining(["sq.id", "c.id"]));
++    expect(columns).not.toContain("a.id");
++  });
++
++  it("preserves access to the outer table from a correlated subquery", () => {
++    const { columns } = complete("SELECT * FROM probe_a a WHERE EXISTS (SELECT 1 FROM probe_b b WHERE a.|)", semantic);
++    expect(columns).toEqual(expect.arrayContaining(["id", "a_only"]));
++    expect(columns).not.toContain("b_only");
++  });
++
++  it.each(["SELECT 1, (SELECT a.|) FROM probe_a a", "SELECT COALESCE(1, (SELECT a.|)) FROM probe_a a"])("preserves correlation after an expression comma: %s", (sql) => {
++    const { columns } = complete(sql, semantic);
++    expect(columns).toEqual(expect.arrayContaining(["id", "a_only"]));
++  });
++
++  it("does not correlate a non-LATERAL derived table with its outer FROM", () => {
++    const { context } = complete("SELECT * FROM probe_a a, (SELECT b.| FROM probe_b b) sq", semantic);
++    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["b"]);
++  });
++
++  it("retains correlation in a LATERAL derived table", () => {
++    const { columns } = complete("SELECT * FROM probe_a a, LATERAL (SELECT a.|) sq", semantic);
++    expect(columns).toEqual(expect.arrayContaining(["id", "a_only"]));
++  });
++
++  it("keeps completion available for unresolved derived-table star output", () => {
++    const { columns } = complete("SELECT id| FROM (SELECT * FROM probe_a a) sq", semantic);
++    expect(columns.some((column) => column === "id" || column.endsWith(".id"))).toBe(true);
++  });
++
++  it.each(["SELECT a_only| FROM (SELECT a.a_only FROM probe_a a)
+```
+
+**File**: `apps/desktop/src/lib/sql/semantic/completion.ts` (modified, +1/-1)
+```diff
+@@ -381,7 +381,7 @@ export function sqlCompletionContextFromSemantic(model: SqlSemanticModel, base:
+     exclusiveRoutineSuggestions: scope.kind === "routine",
+     prioritizeSelectAliases: base.prioritizeSelectAliases || projectionAliases.length > 0,
+     selectAliases: projectionAliases.length > 0 ? projectionAliases : base.selectAliases,
+-    referencedTables: referencedTables.length > 0 ? referencedTables : base.referencedTables,
++    referencedTables: base.referencedTablesScoped ? base.referencedTables : referencedTables.length > 0 ? referencedTables : base.referencedTables,
+     insertTable: model.cursorIntent.kind === "insert_column" ? mutationTarget?.name : base.insertTable,
+     insertDatabase: model.cursorIntent.kind === "insert_column" ? mutationDatabase : base.insertDatabase,
+     insertSchema: model.cursorIntent.kind === "insert_column" ? mutationSchema : base.insertSchema,
+```
+
+**File**: `apps/desktop/src/lib/sql/sqlCompletion.ts` (modified, +639/-13)
+```diff
+@@ -7,8 +7,9 @@ import { CLOUDFLARE_D1_COMMON_FUNCTION_NAMES } from "@/lib/sql/cloudflareD1";
+ import { searchClickHouseFunctions } from "@/lib/sql/clickhouse/functionRegistry";
+ import type { ClickHouseFunctionDefinition, ClickHouseFunctionKind } from "@/lib/sql/clickhouse/functionTypes";
+ import type { SqlObjectNavigationType } from "@/lib/sql/sqlNavigation";
+-import { resolveSqlDialectId } from "@/lib/sql/semantic/dialect";
+-import { findActiveSqlStatementSpan, matchDollarQuoteTag, tokenizeSqlSemantic } from "@/lib/sql/semantic/tokens";
++import { resolveSqlDialectId, sqlSemanticDialectFor, type SqlSemanticDialectAdapter } from "@/lib/sql/semantic/dialect";
++import { sqlSemanticQueryBlockSources, type SqlSemanticGroupedSourceScope } from "@/lib/sql/semantic/model";
++import { findActiveSqlStatementSpan, matchDollarQuoteTag, tokenizeSqlSemantic, unquoteSqlSemanticIdentifier } from "@/lib/sql/semantic/tokens";
+ import { expandToSqlStatementWindow } from "@/lib/sql/insertValueHints";
+ import type { SqlSemanticBuildOptions, SqlSemanticSpan } from "@/lib/sql/semantic/types";
+ import { isEditorStatePlausibleFor, resolveLexicalLeafFromSyntaxTree, resolveSqlStatementWindow } from "@/lib/sql/sqlSyntaxTreeWindow";
+@@ -1836,6 +1837,8 @@ export interface SqlCompletionContext {
+   prioritizeSelectAliases: boolean;
+   selectAliases: string[];
+   referencedTables: SqlCompletionReferencedTable[];
++  /** References resolved within the cursor query block, including correlated ancestors. */
++  referencedTablesScoped?: boolean;
+   insertTable?: string;
+   insertDatabase?: string;
+   insertSchema?: string;
+@@ -3119,6 +3122,199 @@ function getFollowingKeywordAfterCursor(sql: string, cursor: number, maxPos?: nu
+   return match ? match[1].toUpperCase() : undefined;
+ }
+ 
++function isCompletionGroupedSource(tokens: ReturnType<typeof tokenizeSqlSemantic>, open: number, close: number, scopes: readonly SqlSemanticGroupedSourceScope[]): boolean {
++  // Empty placeholder scopes also describe extra query parentheses, ((SELECT ...)).
++  // Only a matching scope with parsed row sources identifies a table/JOIN group.
++  return open >= 0 && close >= 0 && scopes.some((scope) => scope.sources.length > 0 && scope.span.start === tokens[open].span.end && scope.span.end === tokens[close].span.start);
++}
++
++/**
++ * The legacy reference scan deliberately tolerates unfinished SQL, but scanning the whole
++ * statement also finds declarations in sibling/child queries. For multi-query SELECTs,
++ * use the semantic declaration parser to choose visible sources without replacing the
++ * legacy projection metadata or relying on the cursor intent's confidence.
++ */
++function scopedQueryCompletionReferences(sql: string, cursor: number, references: SqlCompletionReferencedTable[], ctes: readonly ScannedCteDefinition[], options: SqlSemanticBuildOptions): SqlCompletionReferencedTable[] | undefined {
++  if (sql.length > 128 * 1024 || !/\bselect\b[\s\S]*\bselect\b/i.test(sql)) return undefined;
++  const dialect = sqlSemanticDialectFor(options);
++  const tokens = tokenizeSqlSemantic(sql, dialect.id, {
++    mysqlDashCommentRequiresWhitespace: dialect.id === "mysql",
++    mysqlBackslashEscape: dialect.id === "mysql",
++  }).filter((token) => token.kind !== "comment");
++  if (!tokens.length || tokens.length > 20_000 || !["select", "with"].includes(tokens[0].normalized)) return undefined;
++  // WITH can precede DML too; mutation targets use the established completion path.
++  const mainStatement = tokens.find((token) => token.depth === 0 && token.kind === "word" && ["select", "insert", "update", "delete", "merge"].includes(token.normalized));
++  if (mainStatement?.normalized !== "select") return undefined;
++  const blocks: Array<{ start: number; end: number; depth: number }> = [];
++  for (let index = 0; index < tokens.length; index++) {
++    const token = tokens[index];
++    if (token.kind !== "word" || token.normalized !== "select") continue;
++    if (blocks.length >= 128) return undefined;
++    let end = index + 1;
++    while (end < tokens.length) {
++      const next = tokens[end];
++      if (next.depth < token.depth || next.text === ";" || (next.depth === token.depth && next.kind === "word" && ["union", "intersect", "except"].includes(next.normalized))) break;
++      end++;
++    }
++    blocks.push({ start: index, end, depth: token.depth });
++  }
++  if (blocks.length < 2) return undefined;
++  // Keep the established unresolved CTE-star fallback until column lineage is available.
++  // A query containing an inline view still needs its own scope even when CTEs precede it.
++  if (
++    ctes.length > 0 &&
++    blocks.filter((block) => block.depth === 0).length === 1 &&
++    blocks.every((block) => block.depth === 0 || ctes.some((cte) => tokens[block.start].span.start > cte.bodyStart && tokens[block.start].span.start < cte.bodyEnd && block.depth === (tokens.find((token) => token.span.start === cte.bodyStart)?.depth ?? -1) + 1))
++  )
++    return undefined;
++  function queryB
 ```
 
 ---
 
-### Incident Patch 3: `f91cc454` (2026-11-14)
-**Commit Message**: feat(postgres): show row-level security from the sidebar (#14935)
+### Incident Patch 2: `b6575377` (2026-11-15)
+**Commit Message**: fix(export): restore background tasks and their log after a crash
 
-* feat(postgres): show row-level security from the sidebar
+Refs: #14696
 
-* chore(i18n): autofill new translations
-
-* chore: trigger CI for updated translations
-
----------
-
-Co-authored-by: ThugKd <[REDACTED_EMAIL]>
-Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
-
-**File**: `apps/desktop/src/components/sidebar/SidebarTreeRuntimeHost.vue` (modified, +28/-0)
+**File**: `apps/desktop/src/App.vue` (modified, +2/-1)
 ```diff
-@@ -3317,6 +3317,31 @@ async function openDatabaseObjectDependencies() {
-   }
- }
+@@ -62,7 +62,7 @@ import {
+   type PendingComponentUpdatePlan,
+ } from "@/lib/updates/componentUpdateOrchestration";
+ import { isUpdatePreviewMockEnabled } from "@/lib/updates/updatePreviewMock";
+-import { useExportTracker } from "@/composables/useExportTracker";
++import { restoreExportTasksFromStorage, useExportTracker } from "@/composables/useExportTracker";
+ import { useFileDrop } from "@/composables/useFileDrop";
+ import { useSqlFilePicker } from "@/composables/useSqlFilePicker";
+ import { usePanelResize } from "@/composables/usePanelResize";
+@@ -5225,6 +5225,7 @@ async function initApp() {
+     markStartupPhase("connections-ready");
+     console.log(`[STARTUP]   connectionStore.initFromDisk: ${(performance.now() - t0).toFixed(0)}ms`);
+     await queryStore.initOpenTabs({ validConnectionIds: connectionStore.connections.map((connection) => connection.id) });
++    void restoreExportTasksFromStorage();
+     markStartupPhase("tabs-restored");
+     console.log(`[STARTUP]   queryStore.initOpenTabs: ${(performance.now() - t0).toFixed(0)}ms`);
+   };
+```
+
+**File**: `apps/desktop/src/components/export/__tests__/ExportProgressPopover.spec.ts` (modified, +5/-0)
+```diff
+@@ -4,6 +4,11 @@ import { createApp, defineComponent, h, nextTick, type App } from "vue";
+ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+ import i18n from "@/i18n";
  
-+async function openPostgresRowLevelSecurity(node: TreeNode) {
-+  if (!node.connectionId || !hasTreeNodeDatabaseContext(node) || (node.type === "schema" && !node.schema)) return;
-+  // An escape string keeps schema names containing backslashes safe with either
-+  // setting of standard_conforming_strings.
-+  const schemaFilter = node.type === "schema" && node.schema ? `\n  AND n.nspname = E'${node.schema.replaceAll("\\", "\\\\").replaceAll("'", "''")}'` : "";
-+  const sql = `SELECT n.nspname AS schema_name, c.relname AS table_name,
-+       c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced,
-+       p.policyname AS policy_name, p.permissive, p.roles, p.cmd AS command,
-+       p.qual AS using_expression, p.with_check AS check_expression
-+FROM pg_catalog.pg_class AS c
-+JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
-+LEFT JOIN pg_catalog.pg_policies AS p ON p.schemaname = n.nspname AND p.tablename = c.relname
-+WHERE (c.relrowsecurity OR c.relforcerowsecurity OR p.policyname IS NOT NULL)${schemaFilter}
-+ORDER BY n.nspname, c.relname, p.policyname;`;
-+  try {
-+    await connectionStore.ensureConnected(node.connectionId);
-+    connectionStore.activeConnectionId = node.connectionId;
-+    const title = `${t("contextMenu.viewPostgresRowLevelSecurity")} - ${node.label}`;
-+    const tabId = queryStore.createTab(node.connectionId, node.database, title, "query", node.schema, sql, node.catalog, { forceNew: true });
-+    await queryStore.executeTabSql(tabId, sql);
-+  } catch (error) {
-+    toast(t("contextMenu.tableOperationFailed", { message: error instanceof Error ? error.message : String(error) }), 5000);
-+  }
++vi.mock("@/lib/backend/browserAppStateStorage", () => ({
++  loadBrowserAppState: vi.fn(async () => null),
++  saveBrowserAppState: vi.fn(async () => undefined),
++}));
++
+ vi.mock("@/components/ui/popover", async () => {
+   const { defineComponent, h } = await import("vue");
+   const passthrough = defineComponent({
+```
+
+**File**: `apps/desktop/src/composables/__tests__/useExportTracker.queue.spec.ts` (modified, +4/-0)
+```diff
+@@ -3,6 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
+ vi.mock("@/lib/backend/api", () => ({ cancelTableExport: vi.fn() }));
+ vi.mock("@/lib/export/exportPath", () => ({ autoRevealExportedPathIfConfigured: vi.fn() }));
+ vi.mock("@/lib/schema/oracleRoutineDeploy", () => ({}));
++vi.mock("@/lib/backend/browserAppStateStorage", () => ({
++  loadBrowserAppState: vi.fn(async () => null),
++  saveBrowserAppState: vi.fn(async () => undefined),
++}));
+ 
+ function completion() {
+   let finish!: (outcome: "settled" | "unknown") => void;
+```
+
+**File**: `apps/desktop/src/composables/useExportTracker.ts` (modified, +50/-2)
+```diff
+@@ -1,11 +1,12 @@
+-import { reactive, computed } from "vue";
++import { reactive, computed, watch } from "vue";
+ import * as api from "@/lib/backend/api";
+ import { isTerminalTransferProgress } from "@/lib/backend/transferProgress";
+ import { uuid } from "@/lib/common/utils";
+ import { formatQueryDuration } from "@/lib/format/duration";
+ import { autoRevealExportedPathIfConfigured } from "@/lib/export/exportPath";
+ import { releaseManualExport, submitManualExport, type ManualExportMode } from "@/lib/export/manualExportQueue";
+ import { acceptOraclePackageTransferApproval, acceptOraclePackageTransferPreflight, acceptOracleRoutineDeploymentOperation, type OracleRoutineDeployment } from "@/lib/schema/oracleRoutineDeploy";
++import { loadPersistedExportTasks, savePersistedExportTasks } from "@/lib/export/exportTaskPersistence";
+ 
+ export type BackgroundTaskKind = "table-export" | "table-copy" | "database-export" | "data-dictionary" | "sql-file" | "data-transfer" | "data-generation" | "multi-db-execution" | "schema-diff" | "data-compare";
+ export type BackgroundTaskStatus = "Queued" | "Unknown" | "PreparingSnapshot" | "Running" | "Writing" | "Cancelling" | "Done" | "Error" | "Cancelled";
+@@ -117,6 +118,8 @@ export interface ExportTask {
+   canCancel?: boolean;
+   canRemove?: boolean;
+   canRecoverCancellation?: boolean;
++  /** Restored from the previous session's snapshot (#14696); no live handle exists. */
++  restored?: boolean;
+   manualExportRootId?: string;
+   removed?: boolean;
+   copyPhase?: "preparing" | "structure" | "data" | "refreshing" | "cancelling" | "succeeded" | "failed" | "cancelled" | "unknown";
+@@ -235,6 +238,47 @@ const transferFailureStates = new Map<string, TransferFailureState>();
+ const sqlFileFailureStates = new Map<string, SqlFileFailureState>();
+ const textEncoder = new TextEncoder();
+ 
++let exportTaskPersistenceStarted = false;
++let exportTaskPersistQueued = false;
++
++/**
++ * Coalesce the burst of progress updates produced by one IPC tick into a single
++ * write, without owning a timer: the export progress popover asserts on the
++ * number of pending timers, and a long-lived debounce timer would both leak
++ * into those assertions and keep running after the last task finished.
++ */
++function scheduleExportTaskPersist() {
++  if (exportTaskPersistQueued) return;
++  exportTaskPersistQueued = true;
++  queueMicrotask(() => {
++    exportTaskPersistQueued = false;
++    void savePersistedExportTasks([...taskMap.values()]);
++  });
 +}
 +
- async function compileXuguObject() {
-   const node = activeNode.value;
-   if (currentDatabaseType() !== "xugu" || !node.connectionId || !node.database) return;
-@@ -7833,6 +7858,9 @@ function buildDatabaseSidebarMenu(context: SidebarMenuFactoryContext): boolean {
-     if (canOpenObjectBrowser.value) {
-       items.push({ sidebarActionId: "contextMenu.openObjectBrowser", label: t("contextMenu.openObjectBrowser"), action: openObjectBrowser, icon: TableProperties });
-     }
-+    if (currentDatabaseType() === "postgres" && hasTreeNodeDatabaseContext(node)) {
-+      items.push({ sidebarActionId: "contextMenu.viewPostgresRowLevelSecurity", label: t("contextMenu.viewPostgresRowLevelSecurity"), action: () => openPostgresRowLevelSecurity(node), icon: ShieldCheck });
++function ensureExportTaskPersistence() {
++  if (exportTaskPersistenceStarted) return;
++  exportTaskPersistenceStarted = true;
++  watch(taskMap, scheduleExportTaskPersist, { deep: true });
++}
++
++/**
++ * Restore the background tasks left behind by the previous session (#14696).
++ * Tasks that were running when the page went away come back as `Unknown` with
++ * their execution log, because the reload has no handle on the original run.
++ */
++export async function restoreExportTasksFromStorage(): Promise<void> {
++  ensureExportTaskPersistence();
++  const restored = await loadPersistedExportTasks();
++  let changed = false;
++  for (const task of restored) {
++    if (taskMap.has(task.exportId)) continue;
++    taskMap.set(task.exportId, task);
++    changed = true;
++  }
++  if (changed) scheduleExportTaskPersist();
++}
++
+ function utf8ByteLength(value: string): number {
+   return textEncoder.encode(value).length;
+ }
+@@ -476,9 +520,13 @@ function findActiveOverlappingTransfer(request: api.TransferRequest): string[] {
+ }
+ 
+ export function useExportTracker() {
++  ensureExportTaskPersistence();
+   const tasks = computed(() => Array.from(taskMap.values()));
+ 
+-  const activeCount = computed(() => tasks.value.filter((t) => t.status === "Queued" || t.status === "Unknown" || t.status === "PreparingSnapshot" || t.status === "Running" || t.status === "Writing" || t.status === "Cancelling").length);
++  // Restored tasks have no live handle: they must not count as active, or the
++  // "tasks are running, wait before updating" guard would block app updates
++  // forever after a crash (#14696).
++  const activeCount = computed(() => tasks.value.filter((t) => !t.restored && (t.status === "Queued" || t.status === "Unknown" || t.status === "PreparingSnapshot" || t.status === "Running" || t.status === "Writing" || t.status === "Cancelling")).length);
+ 
+   const hasActive = computed(() => activeCount.value > 0);
+ 
+```
+
+**File**: `apps/desktop/src/lib/__tests__/export/exportTaskPersistence.spec.ts` (added, +223/-0)
+```diff
+@@ -0,0 +1,223 @@
++import { beforeEach, describe, expect, it, vi } from "vitest";
++
++vi.mock("@/lib/backend/browserAppStateStorage", () => ({
++  loadBrowserAppState: vi.fn(),
++  saveBrowserAppState: vi.fn(),
++}));
++vi.mock("@/lib/backend/api", () => ({}));
++vi.mock("@/lib/export/exportPath", () => ({ autoRevealExportedPathIfConfigured: vi.fn() }));
++vi.mock("@/lib/schema/oracleRoutineDeploy", () => ({}));
++
++describe("export task persistence", () => {
++  beforeEach(() => {
++    vi.resetModules();
++    vi.clearAllMocks();
++  });
++
++  it("keeps only the fields the task UI renders", async () => {
++    const { serializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
++    const snapshot = serializeExportTasks([
++      {
++        exportId: "task-1",
++        kind: "data-transfer",
++        tableName: "orders",
++        format: "csv",
++        filePath: "/tmp/orders.csv",
++        rowsExported: 12,
++        totalRows: 100,
++        status: "Running",
++        errorMessage: null,
++        logLines: [{ at: 1, key: "transfer.log.started", level: "info" }],
++        dataTransferRequest: { source: "secret-payload" },
++        onRemove: () => undefined,
++        canRecoverCancellation: true,
++      } as never,
++    ]);
++
++    expect(snapshot).toHaveLength(1);
++    expect(snapshot[0]).toMatchObject({
++      exportId: "task-1",
++      kind: "data-transfer",
++      status: "Running",
++      rowsExported: 12,
++      totalRows: 100,
++    });
++    expect(snapshot[0].logLines).toEqual([{ at: 1, key: "transfer.log.started", level: "info" }]);
++    expect(snapshot[0]).not.toHaveProperty("dataTransferRequest");
++    expect(snapshot[0]).not.toHaveProperty("onRemove");
++    expect(snapshot[0]).not.toHaveProperty("canRecoverCancellation");
++  });
++
++  it("skips removed tasks and caps the snapshot length", async () => {
++    const { serializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
++    const base = {
++      kind: "table-export" as const,
++      tableName: "t",
++      format: "csv",
++      filePath: "/tmp/t.csv",
++      rowsExported: 0,
++      totalRows: null,
++      status: "Done" as const,
++      errorMessage: null,
++    };
++    const tasks = Array.from({ length: 30 }, (_, index) => ({
++      ...base,
++      exportId: `task-${index}`,
++    }));
++    tasks.push({ ...base, exportId: "removed", removed: true });
++    tasks.push({ ...base, exportId: "hidden", canRemove: false });
++
++    const snapshot = serializeExportTasks(tasks as never);
++
++    expect(snapshot).toHaveLength(25);
++    expect(snapshot.map((task) => task.exportId)).not.toContain("removed");
++    expect(snapshot.map((task) => task.exportId)).not.toContain("hidden");
++    expect(snapshot[snapshot.length - 1].exportId).toBe("task-29");
++  });
++
++  it("forgets finished tasks once they are a day old", async () => {
++    const { serializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
++    const base = {
++      kind: "table-export" as const,
++      tableName: "t",
++      format: "csv",
++      filePath: "/tmp/t.csv",
++      rowsExported: 0,
++      totalRows: null,
++      status: "Done" as const,
++      errorMessage: null,
++    };
++    const snapshot = serializeExportTasks([
++      { ...base, exportId: "fresh", finishedAt: Date.now() - 60_000 },
++      { ...base, exportId: "stale", finishedAt: Date.now() - 48 * 60 * 60 * 1000 },
++    ] as never);
++
++    expect(snapshot.map((task) => task.exportId)).toEqual(["fresh"]);
++  });
++
++  it("forgets a restored task once its interruption is a day old", async () => {
++    const { serializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
++    const snapshot = serializeExportTasks([
++      {
++        exportId: "restored-recent",
++        kind: "table-export",
++        tableName: "t",
++        format: "csv",
++        filePath: "/tmp/t.csv",
++        rowsExported: 0,
++        totalRows: null,
++        status: "Unknown",
++        errorMessage: null,
++        restored: true,
++        finishedAt: Date.now() - 60_000,
++      },
++      {
++        exportId: "restored-stale",
++        kind: "table-export",
++        tableName: "t",
++        format: "csv",
++        filePath: "/tmp/t.csv",
++        rowsExported: 0,
++        totalRows: null,
++        status: "Unknown",
++        errorMessage: null,
++        restored: true,
++        finishedAt: Date.now() - 48 * 60 * 60 * 1000,
++      },
++    ] as never);
++
++    expect(snapshot.map((task) => task.exportId)).toEqual(["restored-recent"]);
++  });
++
++  it("restores an interrupted task as unknown and keeps its pre-crash log", async () => {
++    const { deserializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
++    const restored = deserializeExportTasks([
++      {
++        exportId: "task-1",
++        kind: "data-transfer",
++        tableName: "orders",
++        format: "csv",
++        filePath: "/tmp/orders.csv",
++        rowsExported: 12,
++        totalRows: 100,
++        status: "Writing",
++        e
+```
+
+**File**: `apps/desktop/src/lib/export/exportTaskPersistence.ts` (added, +184/-0)
+```diff
+@@ -0,0 +1,184 @@
++import { loadBrowserAppState, saveBrowserAppState } from "@/lib/backend/browserAppStateStorage";
++import type { BackgroundTaskKind, BackgroundTaskLogLine, BackgroundTaskStatus, ExportTask } from "@/composables/useExportTracker";
++
++/**
++ * Background task snapshot (#14696).
++ *
++ * The task list lives in memory only, so a browser crash (or a desktop restart)
++ * silently dropped every running export: when the app came back the tasks were
++ * gone and the user had no way to tell whether the export was still running or
++ * where the pre-crash log went. The snapshot keeps the last known state of each
++ * task, including its execution log, in the same app-state store the tab
++ * session uses. Tasks that were still running are restored as `Unknown`, which
++ * the UI already renders as "export status unknown" — the export itself may or
++ * may not have finished, and the user decides what to do with the output file.
++ */
++
++const APP_STATE_KEY = "background_tasks";
++const MAX_PERSISTED_TASKS = 25;
++const MAX_PERSISTED_LOG_LINES = 200;
++const FINISHED_TASK_RETENTION_MS = 24 * 60 * 60 * 1000;
++
++const TERMINAL_STATUSES: readonly BackgroundTaskStatus[] = ["Done", "Error", "Cancelled"];
++
++/** Fields the task UI renders. Anything else (callbacks, request payloads, failure maps) stays in memory. */
++const PERSISTED_FIELDS = [
++  "exportId",
++  "kind",
++  "tableName",
++  "format",
++  "filePath",
++  "rowsExported",
++  "totalRows",
++  "status",
++  "errorMessage",
++  "logLines",
++  "startedAt",
++  "finishedAt",
++  "databaseExportSource",
++  "dataTransferLabel",
++  "currentObject",
++  "objectIndex",
++  "totalObjects",
++  "overallPercent",
++  "statementSummary",
++  "statementIndex",
++  "currentTable",
++  "totalTables",
++  "tableIndex",
++  "successCount",
++  "failureCount",
++  "affectedRows",
++  "elapsedMs",
++  "bytesRead",
++  "totalBytes",
++  "sqlFilePhase",
++  "copyPhase",
++  "comparePhase",
++  "compareCurrent",
++  "compareTotal",
++  "compareCurrentObject",
++  "compareResultCount",
++  "compareSameCount",
++  "compareDifferentCount",
++  "compareFailedCount",
++  "compareAddedCount",
++  "compareRemovedCount",
++  "compareModifiedCount",
++  "dictionaryPhase",
++  "dictionaryCompleted",
++  "dictionaryTotal",
++  "dictionaryCurrent",
++  "dictionaryWarnings",
++  "dictionaryProgressKnown",
++  "multiDbTotal",
++  "multiDbCompleted",
++  "multiDbSuccessCount",
++  "multiDbFailureCount",
++  "multiDbSkippedCount",
++  "multiDbNotExecutedCount",
++  "canRemove",
++] as const;
++
++export type PersistedExportTask = Record<string, unknown> & { exportId: string; status: BackgroundTaskStatus };
++
++const KNOWN_KINDS: readonly BackgroundTaskKind[] = ["table-export", "table-copy", "database-export", "data-dictionary", "sql-file", "data-transfer", "data-generation", "multi-db-execution", "schema-diff", "data-compare"];
++
++const KNOWN_STATUSES: readonly BackgroundTaskStatus[] = ["Queued", "Unknown", "PreparingSnapshot", "Running", "Writing", "Cancelling", "Done", "Error", "Cancelled"];
++
++function isTerminal(status: BackgroundTaskStatus): boolean {
++  return TERMINAL_STATUSES.includes(status);
++}
++
++/**
++ * Snapshot the tasks worth restoring: everything still in flight plus the most
++ * recent finished ones, in list order. Removed tasks and tasks the caller marked
++ * as not removable are skipped — they are deliberately invisible.
++ */
++export function serializeExportTasks(tasks: readonly ExportTask[]): PersistedExportTask[] {
++  const persisted: PersistedExportTask[] = [];
++  const now = Date.now();
++  for (const task of tasks) {
++    if (task.removed || task.canRemove === false) continue;
++    // Finished tasks are only kept long enough to explain what happened after a
++    // crash; older ones must not resurrect on every start.
++    if ((isTerminal(task.status) || task.restored) && typeof task.finishedAt === "number" && now - task.finishedAt > FINISHED_TASK_RETENTION_MS) continue;
++    const snapshot: Record<string, unknown> = {};
++    for (const field of PERSISTED_FIELDS) {
++      const value = (task as unknown as Record<string, unknown>)[field];
++      if (value !== undefined) snapshot[field] = value;
 +    }
-     if (canCreateOracleTriggerAt(node)) items.push({ sidebarActionId: "contextMenu.createTrigger", label: t("contextMenu.createTrigger"), action: createOracleTrigger, icon: Plus });
-     if (supportsConnectionQueryActions(currentDatabaseType())) {
-       items.push({ sidebarActionId: "contextMenu.newQuery", label: t("contextMenu.newQuery"), action: newQuery, icon: TerminalSquare });
++    if (Array.isArray(task.logLines) && task.logLines.length > MAX_PERSISTED_LOG_LINES) {
++      snapshot.logLines = task.logLines.slice(-MAX_PERSISTED_LOG_LINES);
++    }
++    persisted.push(snapshot as PersistedExportTask);
++  }
++  return persisted.slice(-MAX_PERSISTED_TASKS);
++}
++
++function isLogLine(value: unknown): value is BackgroundTaskLogLine {
++  if (!value || typeof value !== "object") return false;
++  const line = value as Partial<BackgroundTaskLogLine>;
++  return typeof line.at === "number" && typeof line.key === "string" && typeof line.level === "string";
++}
++
++/**
++ * Turn a stored snapshot back into tasks. Anything that was not terminal is
++ * downgraded to `Unknown`: the run had no live handle after the reload, so the
++ * app cannot claim it is still running, and it must not offer a cancel that
++ * would silently 
 ```
 
-**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +1/-0)
+**File**: `apps/desktop/src/stores/__tests__/tableCopyTaskStore.spec.ts` (modified, +4/-0)
 ```diff
-@@ -5357,6 +5357,7 @@ export default {
-     editView: "Edit View",
-     viewSource: "View Source",
-     viewDependencies: "View Dependencies",
-+    viewPostgresRowLevelSecurity: "View Row-Level Security",
-     viewObject: "View",
-     changeOpenMode: "Change open mode",
-     copyDdl: "Copy DDL",
+@@ -20,6 +20,10 @@ const mocks = vi.hoisted(() => ({
+   refreshDataTabsForTable: vi.fn(),
+ }));
+ vi.mock("@/lib/backend/api", () => mocks);
++vi.mock("@/lib/backend/browserAppStateStorage", () => ({
++  loadBrowserAppState: vi.fn(async () => null),
++  saveBrowserAppState: vi.fn(async () => undefined),
++}));
+ vi.mock("@/stores/connectionStore", () => ({ useConnectionStore: () => mocks }));
+ vi.mock("@/stores/queryStore", () => ({ useQueryStore: () => mocks }));
+ 
 ```
 
-**File**: `apps/desktop/src/i18n/locales/es.ts` (modified, +1/-0)
+---
+
+### Incident Patch 3: `ac48844f` (2026-11-16)
+**Commit Message**: fix(mysql): refresh databases when server version changes
+
+**File**: `apps/desktop/src/stores/__tests__/connectionStore.databaseInfo.spec.ts` (modified, +50/-0)
 ```diff
-@@ -5335,6 +5335,7 @@ export default withEnglishFallback({
-     foreignKeyChecksEnable: "Habilitar",
-     foreignKeyChecksDisable: "Deshabilitar",
-     foreignKeyChecksHint: "De forma predeterminada, se usa la configuración de la sesión. Al deshabilitarla, se ejecuta con SET FOREIGN_KEY_CHECKS = 0, lo que permite procesar las tablas referenciadas en cualquier orden; después de la ejecución, se restaura el valor original.",
-+    viewPostgresRowLevelSecurity: "Ver políticas de seguridad a nivel de fila",
-   },
-   visibleDatabases: {
-     title: "Bases de datos visibles",
+@@ -477,6 +477,56 @@ describe("connectionStore database info", () => {
+     expect(useLogicalTables).toBe(true);
+   });
+ 
++  it("refreshes the database list after the detected MySQL server version changes", async () => {
++    const config = {
++      ...mysqlConnection(),
++      database_info: { productName: "MySQL", productVersion: "5.7.26" },
++    };
++    let resolveDatabaseInfo!: (value: { productName: string; productVersion: string }) => void;
++    const databaseInfo = new Promise<{ productName: string; productVersion: string }>((resolve) => {
++      resolveDatabaseInfo = resolve;
++    });
++    let useNewServer = false;
++    const listDatabases = vi.fn().mockImplementation(async () => [{ name: useNewServer ? "new_db" : "old_db" }]);
++
++    vi.doMock("@/lib/backend/tauriRuntime", () => ({ isTauriRuntime: () => false }));
++    vi.doMock("@/lib/backend/api", () => ({
++      checkConnectionHealth: vi.fn().mockResolvedValue(undefined),
++      connectDb: vi.fn().mockResolvedValue(config.id),
++      connectionDatabaseInfo: vi.fn(() => databaseInfo),
++      connectionIdentifierQuote: vi.fn().mockResolvedValue(undefined),
++      deleteSchemaCachePrefix: vi.fn().mockResolvedValue(undefined),
++      listDatabases,
++      listObjects: vi.fn().mockResolvedValue([]),
++      listTables: vi.fn().mockResolvedValue([]),
++      loadSchemaCache: vi.fn().mockResolvedValue(null),
++      saveConnectionDatabaseInfo: vi.fn().mockImplementation(async () => {
++        useNewServer = true;
++      }),
++      saveConnections: vi.fn().mockResolvedValue(undefined),
++      saveSchemaCache: vi.fn().mockResolvedValue(undefined),
++      saveSidebarLayout: vi.fn().mockResolvedValue(undefined),
++    }));
++
++    const { useConnectionStore } = await import("@/stores/connectionStore");
++    const { useSettingsStore } = await import("@/stores/settingsStore");
++    const store = useConnectionStore();
++    useSettingsStore().editorSettings.sidebarObjectDisplay = "simple";
++    await store.addConnection(config);
++    await store.connect(config);
++    await store.loadDatabases(config.id, { force: true });
++    const databaseLabels = () => store.treeNodes[0]?.children?.filter((node) => node.type === "database").map((node) => node.label);
++    expect(databaseLabels()).toEqual(["old_db"]);
++
++    resolveDatabaseInfo({ productName: "MySQL", productVersion: "8.0.12" });
++
++    await vi.waitFor(() => {
++      expect(store.getConfig(config.id)?.database_info?.productVersion).toBe("8.0.12");
++      expect(databaseLabels()).toEqual(["new_db"]);
++    });
++    expect(listDatabases).toHaveBeenCalledTimes(2);
++  });
++
+   it("keeps a successful connection when optional metadata refresh fails", async () => {
+     const config = mysqlConnection();
+ 
 ```
 
-**File**: `apps/desktop/src/i18n/locales/it.ts` (modified, +1/-0)
+**File**: `apps/desktop/src/stores/connectionStore.ts` (modified, +18/-4)
 ```diff
-@@ -5156,6 +5156,7 @@ export default withEnglishFallback({
-     foreignKeyChecksEnable: "Abilita",
-     foreignKeyChecksDisable: "Disabilita",
-     foreignKeyChecksHint: "Per impostazione predefinita viene mantenuta l'impostazione della sessione. Se disabilitato, viene eseguito con SET FOREIGN_KEY_CHECKS = 0, così le tabelle referenziate possono essere gestite in qualsiasi ordine; al termine, il valore originale viene ripristinato.",
-+    viewPostgresRowLevelSecurity: "Visualizza criteri di sicurezza a livello di riga",
-   },
-   visibleDatabases: {
-     title: "Database Visibili",
-```
-
-**File**: `apps/desktop/src/i18n/locales/ja.ts` (modified, +1/-0)
-```diff
-@@ -5177,6 +5177,7 @@ export default withEnglishFallback({
-     foreignKeyChecksEnable: "有効",
-     foreignKeyChecksDisable: "無効",
-     foreignKeyChecksHint: "デフォルトではセッション設定を引き継ぎます。無効時は SET FOREIGN_KEY_CHECKS = 0 で実行し、参照されるテーブルを任意の順序で処理できます。実行後は元の値に戻します。",
-+    viewPostgresRowLevelSecurity: "行レベルセキュリティポリシーを表示",
-   },
-   visibleDatabases: {
-     title: "表示するデータベース",
-```
-
-**File**: `apps/desktop/src/i18n/locales/ko.ts` (modified, +1/-0)
-```diff
-@@ -5089,6 +5089,7 @@ export default withEnglishFallback({
-     foreignKeyChecksEnable: "활성화",
-     foreignKeyChecksDisable: "비활성화",
-     foreignKeyChecksHint: "기본적으로 세션 설정을 따릅니다. 비활성화하면 SET FOREIGN_KEY_CHECKS = 0으로 실행하며, 참조되는 테이블을 임의 순서로 처리할 수 있습니다. 실행 후 원래 값으로 복원합니다.",
-+    viewPostgresRowLevelSecurity: "행 수준 보안 정책 보기",
-   },
-   visibleDatabases: {
-     title: "표시할 데이터베이스",
-```
-
-**File**: `apps/desktop/src/i18n/locales/pt-BR.ts` (modified, +1/-0)
-```diff
-@@ -5154,6 +5154,7 @@ export default withEnglishFallback({
-     foreignKeyChecksEnable: "Ativar",
-     foreignKeyChecksDisable: "Desativar",
-     foreignKeyChecksHint: "Por padrão, segue a configuração da sessão. Quando desativado, executa com SET FOREIGN_KEY_CHECKS = 0, permitindo processar as tabelas referenciadas em qualquer ordem; após a execução, o valor original é restaurado.",
-+    viewPostgresRowLevelSecurity: "Ver políticas de segurança em nível de linha",
-   },
-   visibleDatabases: {
-     title: "Bancos de dados visíveis",
-```
-
-**File**: `apps/desktop/src/i18n/locales/ru.ts` (modified, +1/-0)
-```diff
-@@ -5275,6 +5275,7 @@ export default withEnglishFallback({
-     foreignKeyChecksEnable: "Включить",
-     foreignKeyChecksDisable: "Отключить",
-     foreignKeyChecksHint: "По умолчанию используется параметр сеанса. При отключении выполняется с SET FOREIGN_KEY_CHECKS = 0, что позволяет обрабатывать таблицы, на которые есть ссылки, в любом порядке; после выполнения исходное значение восстанавливается.",
-+    viewPostgresRowLevelSecurity: "Просмотреть политики безопасности на уровне строк",
-   },
-   visibleDatabases: {
-     title: "Видимые базы данных",
+@@ -295,6 +295,16 @@ function mysqlTableListSourceChanged(config: ConnectionConfig, databaseInfo: Dat
+   return config.db_type === "mysql" && usesProxyLogicalTables(config.database_info) !== usesProxyLogicalTables(databaseInfo);
+ }
+ 
++// A MySQL server version change means the connection is talking to a different
++// server (e.g. the deployment was swapped from 5.7 to 8.0 between disconnect
++// and reconnect), so the database list cached from the old server is stale
++// even though the table enumeration source did not change.
++function mysqlServerVersionChanged(config: ConnectionConfig, databaseInfo: DatabaseConnectionInfo): boolean {
++  const previousVersion = config.database_info?.productVersion;
++  const nextVersion = databaseInfo.productVersion;
++  return config.db_type === "mysql" && !!previousVersion && !!nextVersion && previousVersion !== nextVersion;
++}
++
+ function normalizeTableNameFilter(filter: Partial<TableNameFilter> | undefined | null): TableNameFilter {
+   const normalizePatterns = (patterns: unknown): string[] => (Array.isArray(patterns) ? patterns.map((pattern) => (typeof pattern === "string" ? pattern.trim() : "")).filter(Boolean) : []);
+   return {
+@@ -5117,6 +5127,7 @@ export const useConnectionStore = defineStore("connection", () => {
+     if (expectedConfigFingerprint && connectionConfigFingerprint(current) !== expectedConfigFingerprint) return;
+     if (JSON.stringify(current.database_info) === JSON.stringify(normalized)) return;
+     const tableListSourceChanged = mysqlTableListSourceChanged(current, normalized);
++    const serverVersionChanged = mysqlServerVersionChanged(current, normalized);
+     const jobEngine = nativeJobAdminEngine(current);
+ 
+     await api.saveConnectionDatabaseInfo(connectionId, normalized);
+@@ -5133,9 +5144,10 @@ export const useConnectionStore = defineStore("connection", () => {
+       const connectionNode = findConnectionNode(connectionId);
+       if (connectionNode) connectionNode.children = withConnectionUtilityNodes(connectionId, connectionNode.children ?? [], connectionNode);
+     }
+-    if (tableListSourceChanged) {
+-      // ShardingSphere switches table enumeration from information_schema to SHOW FULL TABLES.
+-      // Discard physical-table metadata that may have loaded before background version detection completed.
++    if (tableListSourceChanged || serverVersionChanged) {
++      // ShardingSphere switches table enumeration from information_schema to SHOW FULL TABLES,
++      // and a server version change means a different server answers now. Either way,
++      // discard metadata that may have loaded before background version detection completed.
+       bumpTableListSourceRevision(connectionId);
+       treeNodeLoads.cancelPrefix(connectionId);
+       invalidateCompletionCache(connectionId);
+@@ -5151,7 +5163,9 @@ export const useConnectionStore = defineStore("connection", () => {
+     }
+     // Other database info is reactive connection metadata, not tree structure. Keep
+     // navigator node identities stable so an in-flight first expansion can apply
+-    // its loaded children after this background refresh completes.
++    // its loaded children after this background refresh completes. (A MySQL server
++    // version change is the exception: it is handled above, because the database
++    // list itself belongs to the server that reported the old version.)
+   }
+ 
+   async function refreshConnectedDatabaseInfo(connectionId: string, config: ConnectionConfig, expectedConfigFingerprint: string, isCurrent: () => boolean): Promise<void> {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14979** (2026-11-14): fix(oracle): scope metadata queries to requested object types (@Acd-kk)
-- **PR #14975** (2026-11-14): feat(grid): 结果集筛选可视化——列头漏斗标识与单字段关闭 (@dienaso)
-- **PR #14973** (2026-11-14): fix(plugin-sdk): encode nil capabilities as [] and tolerate null on initialize (@sx4im)
-- **PR #14967** (2026-11-14): fix(editor): keep structure peek panels below modal dialogs (@xiaou61)
-- **PR #14965** (2026-11-14): fix(sidebar): show table sizes for Doris and StarRocks tables (@xiaou61)
-- **PR #14959** (2026-11-14): fix(object-browser): prioritize common columns and restore timestamps (@Acd-kk)
+- **PR #15067** (2026-11-16): fix: stop exponential subquery scan in SQL completion (#15064) (@cdredfox)
+- **PR #15063** (2026-11-16): Show parameter hints for custom procedure calls (@ThugKd)
+- **PR #15060** (2026-11-16): fix(sidebar): filter Elasticsearch indexes inside connection folders (@ThugKd)
+- **PR #15056** (2026-11-16): fix(doris): support grid LIKE filters on Doris 2.1 (@ThugKd)
+- **PR #15055** (2026-11-16): feat(grid): preview table rows as JSON with column comments (@ThugKd)
+- **PR #15053** (2026-11-16): feat(sidebar): copy generated SQL and DDL to the clipboard (@ThugKd)
 
 ---
 
@@ -2999,54 +2822,32 @@ Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. updater): retry the update cache rename on transient Windows locks
+## X. sql): respect query-block scope in SQL completion
 
 **RULE**:
-When implementing operations in `crates/dbx-platform/src/fs_retry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/lib/__tests__/sql/sqlCompletion.context.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ce79533`: updater): retry the update cache rename on transient Windows locks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6406c3f8`: sql): respect query-block scope in SQL completion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-platform/src/fs_retry.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/__tests__/sql/sqlCompletion.context.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Retries for filesystem operations that security software can briefly block.
-//!
-//! Real-time antivirus/EDR scanners open a file right after it is written. On Windows a
-//! directory rename is rejected with `ERROR_ACCESS_DENIED` (5) while any file below it is
-//! still open, even when the opening handle allows delete sharing, and file operations can
-//! fail with `ERROR_SHARING_VIOLATION` (32). The scan normally finishes well inside this
-//! retry window, so callers can keep a single atomic rename as their commit point instead
-//! of falling back to a non-atomic write protocol.
-
-use std::path::Path;
-use std::time::Duration;
-
-/// Field reports put the scan window at roughly 1-2 seconds for a large installer, so this
-/// budget gives the scanner several times that window. The plugin installer and the desktop
-/// updater share it deliberately: both commit by renaming a freshly written package.
-pub const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
-    Duration::from_millis(200),
-    Duration::from_millis(400),
-    Duration::from_millis(800),
-    Duration::from_millis(1500),
-    Duration::from_millis(2000),
-];
-
-/// Rename `src` to `dst`, retrying the transient Windows locks descr
+    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["x"]);
+    expect(context.referencedTables[0].columns).toContain("id");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    expect(context.referencedTables.map((table) => table.name)).toEqual(expect.arrayContaining(["users"]));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ce79533` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6406c3f8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T18:02:20.026Z",
-  "total_records": 1295,
+  "last_updated": "2026-11-16T18:11:00.825Z",
+  "total_records": 1299,
   "domains": {
     "A": {
       "total": 7,
@@ -678,7 +678,7 @@
       ]
     },
     "G": {
-      "total": 230,
+      "total": 232,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -909,11 +909,13 @@
         "domain_intelligence-architecture-intelligence-topoteretes-cognee-core-invariants",
         "domain_intelligence-architecture-intelligence-topoteretes-cognee-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants",
-        "domain_intelligence-architecture-intelligence-louis-cfm-coucou-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-louis-cfm-coucou-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-core-invariants",
+        "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 278,
+      "total": 280,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1192,7 +1194,9 @@
         "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
         "domain_intelligence-technical-construction-intelligence-stakater-reloader-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants"
       ]
     },
     "I": {
@@ -9336,8 +9340,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "09f88eb24300023486a80f324b07f181c0c54bef4cf6a172274699e4ee2ea985",
-      "created_at": "2026-11-15T06:36:58.124Z"
+      "content_hash": "ba20cf6e1af50915197124a7d6117ae0a3a876a8f8efa494d3a0bab999a11f67",
+      "created_at": "2026-11-16T18:10:56.140Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -19382,8 +19386,8 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
       "repository": "t8y2-dbx-learnings",
-      "content_hash": "f95fd39a31de81768a3acfacc2da39e8dbe79008a1d31110624cc305797a317e",
-      "created_at": "2026-11-15T06:37:32.520Z"
+      "content_hash": "51ba96265212bd722da14e95d85058130d78815b093317319563940e655a5856",
+      "created_at": "2026-11-16T18:11:00.825Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
@@ -23537,6 +23541,42 @@
       "repository": "yazinsai-openoats-learnings",
       "content_hash": "1388c962162fed4f3a3cf21de4f04754bffe027f1e875895ba9a8e47dc4f6ecd",
       "created_at": "2026-11-16T18:02:19.399Z"
+    },
+    "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
+      "repository": "nginx/kubernetes-ingress",
+      "content_hash": "5c9a50d28314efcbdf6dd5dcc433cedda01bae1f3aa1d4ce0408748041eac10b",
+      "created_at": "2026-11-16T18:10:50.313Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
+      "repository": "rustls/rustls",
+      "content_hash": "f018277042c4a89d02d89aa489249f3f07c631461e86daec33168f32bdf8a125",
+      "created_at": "2026-11-16T18:10:52.990Z"
+    },
+    "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "content_hash": "21f6ca572a7af3ed11ac982cb3a2cca2d21c0c454d1cea7d9734b51b75a1a60a",
+      "created_at": "2026-11-16T18:10:59.434Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-learnings-technical-construction-intelligence-rustls-rustls-learni.md",
+      "repository": "rustls-rustls-learnings",
+      "content_hash": "d171353cf48be459c5661f972e46b9690ff4591381b4e1fe4464ffc0de5f2e26",
+      "created_at": "2026-11-16T18:11:00.274Z"
     }
   }
 }
