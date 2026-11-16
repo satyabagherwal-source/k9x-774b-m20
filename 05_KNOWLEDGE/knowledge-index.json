@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T00:01:04.437Z",
+  "last_updated": "2026-11-16T00:10:14.350Z",
   "total_verified_learnings": 8738,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -217937,13 +217937,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AHC2-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BOJ6-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "21861794d6062932c51a3499d7fe12fd5eb98b17c463261f0d5a7ffe3806ba4d",
+      "content_hash": "6008ab344eace5f7a5d8d8c9adc246c50b6a50420ba723c37afc8da60218ac78",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T23:41:18.531Z"
+      "persisted_at": "2026-11-16T00:10:14.131Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -217953,9 +217953,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c10087565013e6c8a34518bab5fad84156ed6150ac4488c13978725740588466",
+      "content_hash": "dd68767442aa71c220f08f9210e524a1c5f882d35131e8f7dde8b7046291ad5d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T23:41:18.675Z"
+      "persisted_at": "2026-11-16T00:10:14.239Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -217965,9 +217965,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "1affa7071d7c011e7917c97d1e1762b72c4b55fd75edc54a6f2cd5dfe3e5c9ef",
+      "content_hash": "c95efeee3db1ccb8f3183c073a8732845ceba3e22872bf98def2654889947af1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:41:18.840Z"
+      "persisted_at": "2026-11-16T00:10:14.350Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -226632,13 +226632,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-804O-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BO5A-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3bfe67408dd5a72f540e675887e8f3f278c4d4529b544687ee721b1c46e12f8",
+      "content_hash": "fd285744a1ffc24f3108c1e86d5a3676c040e2ce4909b2ef96f4557ea2fc3100",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T22:15:24.073Z"
+      "persisted_at": "2026-11-16T00:10:13.631Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226648,9 +226648,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "81d81a9e1adaeffdde852baa327acefa00e076515143c02f4e710eb7a72ee30b",
+      "content_hash": "83a430c8067e1998fdeef2bf8002104475734755a5a79159a878367ccada416f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T22:15:24.199Z"
+      "persisted_at": "2026-11-16T00:10:13.741Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226660,9 +226660,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "bdd3680336010e5fdcc243cb87d42dd6b6d586b994095bee871d904fa28c5728",
+      "content_hash": "a3bad10e5e3feaacd8a18263cf58fe9d9ef85177ce77ac8b1cb75a214c89add4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:15:24.330Z"
+      "persisted_at": "2026-11-16T00:10:13.855Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -233938,9 +233938,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "65d19d2cc9d634c4784762933367a2b0499822ab2c76a0a482bc1211a96fac22",
+      "content_hash": "2bc003994d326929e66e811f577282f5d25fa990cfae0eb19cb93ca5ae0ba8df",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T23:11:15.043Z"
+      "persisted_at": "2026-11-16T00:10:13.296Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",

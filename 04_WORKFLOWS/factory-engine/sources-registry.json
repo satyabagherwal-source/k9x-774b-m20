@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T00:00:01.535Z",
-    "lastVerified": "2026-11-16T00:00:01.535Z",
+    "lastChecked": "2026-11-16T00:10:12.762Z",
+    "lastVerified": "2026-11-16T00:10:12.762Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -336,8 +336,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T17:52:45.122Z",
-    "lastVerified": "2026-11-15T17:52:45.122Z",
+    "lastChecked": "2026-11-16T00:10:07.777Z",
+    "lastVerified": "2026-11-16T00:10:07.777Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -372,8 +372,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T23:26:08.467Z",
-    "lastVerified": "2026-11-15T23:26:08.467Z",
+    "lastChecked": "2026-11-16T00:10:12.753Z",
+    "lastVerified": "2026-11-16T00:10:12.753Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -4733,9 +4733,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-14T15:59:47.684Z",
+    "lastChecked": "2026-11-16T00:10:05.227Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-14T15:59:47.684Z"
+    "lastVerified": "2026-11-16T00:10:05.227Z"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -6026,9 +6026,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-14T14:22:50.970Z",
+    "lastChecked": "2026-11-16T00:10:10.494Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-14T14:22:50.970Z"
+    "lastVerified": "2026-11-16T00:10:10.494Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7072,9 +7072,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-14T02:21:20.654Z",
+    "lastChecked": "2026-11-16T00:09:57.703Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-14T02:21:20.654Z"
+    "lastVerified": "2026-11-16T00:09:57.703Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -10565,9 +10565,9 @@
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",
     "officialUrl": "https://github.com/ilamaaa/hreflang-checker",
-    "lastChecked": "2026-11-11T09:48:57.312Z",
+    "lastChecked": "2026-11-16T00:10:00.211Z",
     "revisionIdentifier": "f146b56172",
-    "lastVerified": "2026-11-11T09:48:57.312Z"
+    "lastVerified": "2026-11-16T00:10:00.211Z"
   },
   "touchlab-skie": {
     "name": "SKIE",
@@ -10586,9 +10586,9 @@
   "dimillian-redditos": {
     "name": "RedditOS",
     "officialUrl": "https://github.com/Dimillian/RedditOS",
-    "lastChecked": "2026-11-12T13:10:11.001Z",
+    "lastChecked": "2026-11-16T00:10:02.766Z",
     "revisionIdentifier": "525cd241",
-    "lastVerified": "2026-11-12T13:10:11.001Z"
+    "lastVerified": "2026-11-16T00:10:02.766Z"
   },
   "melbahja-seo": {
     "name": "seo",

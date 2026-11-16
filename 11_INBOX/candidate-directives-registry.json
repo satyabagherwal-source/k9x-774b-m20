@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:01:04.175Z",
+  "last_updated": "2026-11-16T00:10:14.131Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4797,14 +4797,14 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-804O",
+      "id": "CD-BO5A",
       "directive_title": "splash screen staying visible after warm start on Android 12+",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-804O-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-BO5A-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-15",
+      "date_staged": "2026-11-16",
       "domain_letter": "H"
     },
     {
@@ -5336,14 +5336,14 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-AHC2",
+      "id": "CD-BOJ6",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AHC2-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-BOJ6-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-15",
+      "date_staged": "2026-11-16",
       "domain_letter": "H"
     },
     {
@@ -17112,6 +17112,33 @@
       "source_repo": "etcd-io-etcd",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-12F89B-update-changelog-to-cover-go-version-and.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-4A4B27",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4A4B27-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-82FB25",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-82FB25-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-14DA1C",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-14DA1C-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-16"
     }
   ]
