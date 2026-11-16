@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T02:44:38.548Z",
+  "last_updated": "2026-11-16T03:06:59.072Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4797,11 +4797,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-U8IF",
+      "id": "CD-MZCV",
       "directive_title": "splash screen staying visible after warm start on Android 12+",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-U8IF-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-MZCV-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -17783,6 +17783,68 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B0B206-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-MYQ2",
+      "directive_title": "Remove the desktop move-dialog Tab traversal test that times out on Windows CI",
+      "source_repo": "prof18-feed-flow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MYQ2-remove-the-desktop-move-dialog-tab-traversal-test-that-times-out-on-windows-ci.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-MXQZ",
+      "directive_title": "Invariant Absence Is Not Vanishing: Positive Proof of Deletion for Ephemeral State",
+      "source_repo": "matthart1983-netwatch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MXQZ-invariant-absence-is-not-vanishing-positive-proof-of-deletion-for-ephemeral-stat.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MXR0",
+      "directive_title": "Zero-Dependency Deterministic Full-Jitter Backoff via Fixed-Point Integer Arithmetic",
+      "source_repo": "matthart1983-netwatch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MXR0-zero-dependency-deterministic-full-jitter-backoff-via-fixed-point-integer-arithm.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MXR1",
+      "directive_title": "Architecture-Aware Drop-Oldest Ingestion Rings with At-Least-Once Delivery Gating",
+      "source_repo": "matthart1983-netwatch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MXR1-architecture-aware-drop-oldest-ingestion-rings-with-at-least-once-delivery-gatin.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-F353F6",
+      "directive_title": "Remove the desktop move-dialog Tab traversal test that times out on Windows CI",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "prof18-feed-flow",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F353F6-remove-the-desktop-move-dialog-tab-trave.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-7BD7A2",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7BD7A2-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-16"
     }
   ]

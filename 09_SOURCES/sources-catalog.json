@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "0e896b49",
+    "sourceVersion": "e1979b97",
     "license": "Apache-2.0",
-    "contentHash": "bb61a02372ee6b5277dd8318320102f25a3e5159564eeb9fa1bbcb18d3e0406e",
-    "lastHarvestedAt": "2026-11-12T21:41:50.439Z",
+    "contentHash": "977e981285926f4c3dd54e78a58cae2252967bc90c91d47ec0733be0f998e6cc",
+    "lastHarvestedAt": "2026-11-16T03:03:07.750Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {
@@ -11913,10 +11913,10 @@
     "repository": "matthart1983/netwatch",
     "platform": "github",
     "sourceUrl": "https://github.com/matthart1983/netwatch",
-    "sourceVersion": "23f3b29a",
+    "sourceVersion": "e11c8c49",
     "license": "MIT",
-    "contentHash": "f0abc3d128ffb1614d01dfeb597cf9805db99adfbc03c76c9bf4e70b9cf397d7",
-    "lastHarvestedAt": "2026-11-14T07:17:53.803Z",
+    "contentHash": "34a95334c1d3fed718ea61b7f3d6611ce8e1d1a9badfaa71b602948f5689dc76",
+    "lastHarvestedAt": "2026-11-16T03:06:16.058Z",
     "learningId": "learn-github-matthart1983-netwatch"
   },
   "hf-prunaai-p-h3-image-comfy": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-16T02:18:03.140Z",
+  "updated_at": "2026-11-16T03:06:56.743Z",
   "statistics": {
-    "total_nodes": 278,
+    "total_nodes": 279,
     "total_edges": 145,
     "domain_distribution": {
       "D": 217,
       "M": 1,
-      "H": 26,
+      "H": 27,
       "J": 10,
       "K": 12,
       "L": 3,
@@ -6239,6 +6239,28 @@
       ],
       "created_at": "2026-11-16T02:18:03.140Z",
       "updated_at": "2026-11-16T02:18:03.140Z"
+    },
+    "DOM-H-78B796D1": {
+      "id": "DOM-H-78B796D1",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Debian GNU/Linux Shared Object Dynamic Link Failure (`libpcap.so.0.8`) (BUG-LINK-02)",
+      "summary": "The binary was linked dynamically against host glibc and libpcap (`-lpcap`). Debian environments lacking development libraries or with diffe -> For network diagnostic tools utilizing C bindings (`libpcap-sys`), produce fully static `x86_64-unknown-linux-musl` binaries with statically",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://matthart1983-netwatch/matthart1983-netwatch-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T03:06:19.821Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (matthart1983-netwatch)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-16T03:06:56.743Z",
+      "updated_at": "2026-11-16T03:06:56.743Z"
     }
   },
   "edges": [

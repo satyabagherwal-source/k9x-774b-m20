@@ -10220,3 +10220,6 @@
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T02:18:03.141Z` | `saltstack-salt` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E52861DE` [Domain D] | Yes (`81b25cc8...`) |
 | `CYCLE-20261116-6A0N` | `2026-11-16T02:26:00.119Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md` | Yes (`fa8d87e0...`) |
 | `CYCLE-20261116-TZ6H` | `2026-11-16T02:44:25.817Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8694` | Yes (`0c7ef5a3...`) |
+| `CYCLE-20261116-I0V5` | `2026-11-16T03:03:07.745Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8695` | Yes (`977e9812...`) |
+| `CYCLE-20261116-M25X` | `2026-11-16T03:06:16.053Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8696, Rule 8697, Rule 8698` | Yes (`34a95334...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T03:06:56.756Z` | `matthart1983-netwatch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-78B796D1` [Domain H] | Yes (`650f6fa2...`) |

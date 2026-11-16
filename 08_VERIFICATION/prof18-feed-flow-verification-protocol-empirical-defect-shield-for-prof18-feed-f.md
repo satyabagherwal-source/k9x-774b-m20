@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for prof18/feed/flow
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for prof18/feed-flow
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "prof18/feed/flow",
-  "source_url": "https://github.com/prof18/feed/flow",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "prof18/feed-flow",
+  "source_url": "https://github.com/prof18/feed-flow",
+  "source_version": "e1979b97",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-16T03:03:07.969Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-prof18-feed-flow",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [prof18/feed/flow](https://github.com/prof18/feed/flow) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [prof18/feed-flow](https://github.com/prof18/feed-flow) (Revision: `e1979b97`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T03:03:07.969Z`  
+> **Learning ID**: `learn-github-prof18-feed-flow`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `prof18/feed/flow` (Commit: `historical`)
+- **Target Repository**: `prof18/feed-flow` (Commit: `e1979b97`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
-> **Source**: github ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
-> **Source Version**: `77a8d8a3`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:49:50.121Z  
-> **Learning ID**: `learn-github-prof18-feed-flow`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): prof18/feed-flow
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:49:50.114Z  
+> **Harvest Timestamp**: 2026-11-16T03:03:06.473Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1326 stars
+- **Stars / Engagement**: 1349 stars
 
 ---
 
@@ -640,230 +626,107 @@ internal fun rememberAndroidFeedFlowStrings(settingsRepository: SettingsReposito
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a717f945` (2026-11-07)
-**Commit Message**: Remove the debug-only add-pixel button from iOS blocked words and stop the add button firing on any row tap
+### Incident Patch 1: `e1979b97` (2026-11-13)
+**Commit Message**: Remove the desktop move-dialog Tab traversal test that times out on Windows CI
 
-**File**: `e2e/maestro/ios/smoke/012-blocked-words.yaml` (modified, +4/-1)
+**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/ui/components/DialogKeyboardTest.kt` (modified, +1/-42)
 ```diff
-@@ -18,7 +18,10 @@ appId: com.prof18.feedflow.dev
- - tapOn:
-     id: settings_blocked_words
- - tapOn:
--    id: blocked_words_add_pixel_e2e
-+    id: blocked_words_input
-+- inputText: "pixel"
-+- tapOn:
-+    id: blocked_words_add_button
- - assertVisible:
-     id: blocked_word_pixel
- - tapOn:
-```
-
-**File**: `iosApp/Source/Settings/FeedsAndAccounts/subpages/BlockedWords/BlockedWordsAccessibilityIdentifiers.swift` (modified, +0/-1)
-```diff
-@@ -1,7 +1,6 @@
- enum BlockedWordsAccessibilityIdentifiers {
-     static let input = "blocked_words_input"
-     static let addButton = "blocked_words_add_button"
--    static let addPixelButton = "blocked_words_add_pixel_e2e"
+@@ -63,48 +63,6 @@ class DialogKeyboardTest {
+         rule.runOnIdle { assertEquals(listOf("dismiss"), actions) }
+     }
  
-     static func row(_ word: String) -> String {
-         "blocked_word_\(word.e2eIdSuffix)"
-```
-
-**File**: `iosApp/Source/Settings/FeedsAndAccounts/subpages/BlockedWords/BlockedWordsScreenContent.swift` (modified, +2/-14)
-```diff
-@@ -46,23 +46,11 @@ struct BlockedWordsScreenContent: View {
-                                 .contentShape(Rectangle())
-                                 .padding(-(Spacing.small + Spacing.xsmall))
-                         }
-+                        // Borderless keeps the Form row from firing this button on any tap in the row
-+                        .buttonStyle(.borderless)
-                         .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addButton)
-                         .hoverEffect()
-                     }
--
--                    #if DEBUG
--                    Button {
--                        onAddWord("pixel")
--                    } label: {
--                        Image(systemName: "plus.circle.fill")
--                            // Grows the hit area to 44 pt without moving the icon or making the row taller
--                            .padding(Spacing.small + Spacing.xsmall)
--                            .contentShape(Rectangle())
--                            .padding(-(Spacing.small + Spacing.xsmall))
+-    @Test
+-    fun `move dialog starts on the current category and keyboard confirms the intended source and category`() {
+-        val library = DesktopLibraryFixture.load()
+-        val source = library.sources.first { it.feedSource.category != null }.feedSource
+-        val current = library.categories.first { it.id == source.category?.id }
+-        val other = library.categories.first { it.id != source.category?.id }
+-        val visible = mutableStateOf(true)
+-        val actions = mutableListOf<String>()
+-        rule.setContent {
+-            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+-                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+-                    if (visible.value) {
+-                        DesktopFeedMoveDialog(
+-                            categories = persistentListOf(current, other),
+-                            feedSources = persistentListOf(source),
+-                            onMove = { sources, destination ->
+-                                actions += "${sources.single().id}:${destination?.id}"
+-                                visible.value = false
+-                            },
+-                            onCreateCategory = { },
+-                            validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
+-                            onDismiss = { actions += "dismiss" },
+-                        )
 -                    }
--                    .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.addPixelButton)
--                    .hoverEffect()
--                    #endif
-                 }
-                 }
- 
+-                }
+-            }
+-        }
+-        rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
+-        rule.onNodeWithText(current.title).assertIsSelected()
+-        val window = dialog(EnFeedFlowStrings.changeCategory)
+-        press(window, KeyEvent.VK_DOWN)
+-        rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)
+-        press(window, KeyEvent.VK_TAB)
+-        awaitFocused(EnFeedFlowStrings.desktopNewCategoryMenu)
+-        press(window, KeyEvent.VK_TAB)
+-        awaitFocused(EnFeedFlowStrings.cancelButton)
+-        press(window, KeyEvent.VK_TAB)
+-        awaitFocused(EnFeedFlowStrings.confirmButton)
+-        press(window, KeyEvent.VK_ENTER)
+-        rule.runOnIdle { assertEquals(listOf("${source.id}:${other.id}"), actions) }
+-    }
+-
+     @Test
+     fun `move dialog Escape dismisses after a keyboard selection without moving`() {
+         val library = DesktopLibraryFixture.load()
+@@ -133,6 +91,7 @@ class DialogKeyboardTest {
+             }
+         }
+         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
++        rule.onNodeWithText(current.title).assertIsSelected()
+         val window = dialog(EnFeedFlowStrings.changeCategory)
+         press(window, KeyEvent.VK_DOWN)
+         rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)
 ```
 
 ---
 
-### Incident Patch 2: `60cca435` (2026-11-07)
-**Commit Message**: Add a UI glossary and align feed, backup, offline and category terms
+### Incident Patch 2: `64a10913` (2026-11-13)
+**Commit Message**: Adapt desktop menu and code highlighter to the Jewel 0.42 API
 
-**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/components/AddCategoryDialog.kt` (modified, +1/-1)
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/reaadermode/ReaderCodeHighlighter.kt` (modified, +2/-0)
 ```diff
-@@ -40,7 +40,7 @@ internal fun AddCategoryDialog(
-             onDismissRequest = onDismiss,
-             title = {
-                 Text(
--                    text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
-+                    text = LocalFeedFlowStrings.current.newCategoryButton,
-                     style = MaterialTheme.typography.headlineSmall,
-                 )
-             },
+@@ -18,6 +18,8 @@ internal fun readerCodeHighlighter(dark: Boolean): CodeHighlighter = PlainTextOn
+ private class PlainTextOnOverflowCodeHighlighter(
+     private val delegate: CodeHighlighter,
+ ) : CodeHighlighter {
++    // Deprecated in Jewel 0.42 but still abstract on CodeHighlighter, so it must stay implemented.
++    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
+     override fun highlight(code: String, mimeType: MimeType?): Flow<AnnotatedString> =
+         delegate.highlight(code, mimeType).plainTextOnOverflow(code)
+ 
 ```
 
-**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/components/EditCategoryContent.kt` (modified, +1/-1)
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/ui/components/SelectionStyles.kt` (modified, +0/-1)
 ```diff
-@@ -128,7 +128,7 @@ fun AddCategoryButton(
-         )
-         Spacer(modifier = Modifier.width(Spacing.small))
-         Text(
--            text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
-+            text = LocalFeedFlowStrings.current.newCategoryButton,
-             fontWeight = FontWeight.Medium,
-         )
-     }
-```
-
-**File**: `docs/GLOSSARY.md` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+# FeedFlow glossary
-+
-+The canonical English words for FeedFlow's user-facing concepts. Use them in `strings.xml`, the website FAQ and store copy, and translate each one the same way everywhere. The same terms are the Weblate glossary of the `feedflow` project.
-+
-+English copy is US English and sentence case.
-+
-+| Term | Use | Avoid | Definition for translators |
-+| --- | --- | --- | --- |
-+| feed | feed, feeds | feed source, source, subscription, channel | A website's RSS, Atom or JSON feed that the user follows. |
-+| Feeds | Feeds (section and screen title) | Feed Sources | The list of all feeds the user follows, grouped by category. |
-+| pinned feeds | Pinned feeds, Pin, Unpin | Pinned Feed Sources, favorites | Feeds and categories the user keeps at the top of the sidebar. |
-+| subscriptions | only for OPML import and export | subscriptions anywhere else | The feed list as stored in an OPML file, the format other feed readers use. |
-+| feed name | feed name | feed source | The title of a feed, shown on each article. |
-+| article | article, articles | item, post, entry, story | One entry of a feed: title, summary and link, which FeedFlow gets when it refreshes feeds. |
-+| full article | full article | article content, web content | The whole text of an article's web page, which FeedFlow gets from the website for reader mode. |
-+| offline copy | offline copy, offline copies | download, save, prefetch, cache | A full article stored on the device so it can be read without a connection. |
-+| image cache | Clear image cache | downloaded images | Images stored on the device so they load faster. Only used for images. |
-+| refresh | Refresh feeds, Background refresh | download, sync (for getting new articles), reload | Check the feeds for new articles. |
-+| sync | sync, syncing | upload, refresh | Keep feeds, read status and bookmarks the same across the user's devices through an account. |
-+| back up | Back up now (verb), backup (noun) | Backup (as a verb), Upload changes | Copy feeds, read status and bookmarks to a backup account (iCloud, Dropbox, Google Drive). |
-+| account | account, sync account | service, provider | A connected iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin or BazQux account. |
-+| bookmark | Bookmarks, bookmark (verb), bookmarked | saved, save for later, favorites | Articles the user keeps; they are never deleted automatically. |
-+| category | category, New category | + Category, folder, group | A user-made group of feeds. |
-+| Uncategorized | Uncategorized | No category | The group of feeds that have no category. |
-+| feed settings | Feed settings | Edit feed | The screen with the options of a single feed. |
-+| open website | Open website | Open feed website | Open the homepage of the feed's website in the browser. |
-+| reader mode | Reader mode | Reader Mode, reader view | FeedFlow's built-in, distraction-free view of a full article. |
-+| mark as read | Mark as read, Mark as unread, Mark all as read | Toggle read | Set an article's read status. |
-+
-+"Background sync" settings are still labelled with sync; they move to "Background refresh" when the notification and refresh settings are merged.
-```
-
-**File**: `e2e/maestro/android/fdroid/regression/133-home-sync-backup-action.yaml` (modified, +2/-2)
-```diff
-@@ -13,7 +13,7 @@ appId: com.prof18.feedflow.debug
-     text: "E2E Newest Unread Article.*"
- - tapOn:
-     id: home_more_menu_button
--- assertNotVisible: "Upload changes"
-+- assertNotVisible: "Back up now"
- - assertVisible: "Mark all as read"
- - back
- - assertVisible:
-@@ -31,7 +31,7 @@ appId: com.prof18.feedflow.debug
- - assertVisible: "Nothing else to read here!"
- - tapOn:
-     id: home_more_menu_button
--- assertNotVisible: "Upload changes"
-+- assertNotVisible: "Back up now"
- - assertVisible: "Mark all as read"
- - back
- - tapOn: "Refresh feeds"
-```
-
-**File**: `e2e/maestro/android/regression/105-category-management.yaml` (modified, +2/-2)
-```diff
-@@ -17,15 +17,15 @@ appId: com.prof18.feedflow.debug
-     id: edit_feed_category_selector
- - assertVisible: "Categories"
- - tapOn:
--    text: "Category"
-+    text: "New category"
- - tapOn:
-     text: "New category name"
- - inputText: "Technology"
- - assertVisible: "A category with this name already exists"
- - tapOn:
-     text: "Close"
- - tapOn:
--    text: "Category"
-+    text: "New category"
- - tapOn:
-     text: "New category name"
- - inputText: "E2E Created Category"
-```
-
-**File**: `e2e/maestro/android/regression/113-sync-storage-settings.yaml` (modified, +1/-1)
-```diff
-@@ -40,5 +40,5 @@ appId: com.prof18.feedflow.debug
-     timeout: 10000
- - tapOn:
-     id: sync_storage_clear_downloaded
--- assertVisible: "Clear downloaded articles?"
-+- assertVisible: "Delete offline copies?"
- - tapOn: "Cancel"
-```
-
-**File**: `e2e/maestro/android/regression/121-reading-behavior-secondary-settings.yaml` (modified, +4/-4)
-```diff
-@@ -12,11 +12,11 @@ appId: com.prof18.feedflow.debug
- - tapOn:
-     id: settings_reading_behavior
- - assertVisible: "Browser"
--- assertVisible: "Save article content on open for offline reading"
--- assertVisible: "Prefetch article content for offline reading"
-+- assertVisible: "Keep offline copies of articles you open"
-+- assertVisible: "Make offline copies when feeds refresh"
- - assertVisible: "Mark as read when scrolling"
--- tapOn: "Save article content on open for offline reading"
-+- tapOn: "Keep offline copies of articles you open"
- - tapOn: "Mark as read when scrolling"
--- tapOn: "Prefetch article content for offline reading"
-+- tapOn: "Make offline copies when feeds refresh"
- - assertVisible: "Enabling this option will increase synchronization time and data usage.*"
- - tapOn: "Confirm"
-```
-
-**File**: `e2e/maestro/android/regression/122-feed-list-settings-detail-controls.yaml` (modified, +2/-2)
-```diff
-@@ -16,8 +16,8 @@ appId: com.prof18.feedflow.debug
- - tapOn: "Hide article date"
- - assertVisible: "Hide unread indicator"
- - tapOn: "Hide unread indicator"
--- assertVisible: "Hide feed source"
--- tapOn: "Hide feed source"
-+- assertVisible: "Hide feed name"
-+- tapOn: "Hide feed name"
- - assertVisible: "Hide title from article description"
- - tapOn: "Hide title from article description"
- - tapOn: "Description lines"
+@@ -39,7 +39,6 @@ private fun MenuStyle.withRoundedSelectionCorners(): MenuStyle = MenuStyle(
+     icons = icons,
+     metrics = MenuMetrics(
+         cornerSize = metrics.cornerSize,
+-        menuMargin = metrics.menuMargin,
+         contentPadding = metrics.contentPadding,
+         offset = metrics.offset,
+         shadowSize = metrics.shadowSize,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1644** (2026-11-08): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1643** (2026-11-07): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1642** (2026-11-07): Add a UI glossary and align feed, backup, offline and category terms (@prof18)
-- **PR #1641** (2026-11-07): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1638** (2026-11-07): Merge localization into main (@github-actions[bot])
-- **PR #1636** (2026-11-07): Merge same-named categories when replaying cloud changes instead of failing sync (@prof18)
+- **PR #1698** (2026-11-15): Show the database error window instead of crashing when the desktop database stops working at runtime (@prof18)
+- **PR #1697** (2026-11-15): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1696** (2026-11-15): Draw the iOS sidebar selection as a rounded highlight on every layout (@prof18)
+- **PR #1695** (2026-11-15): Destroy the Android reader WebView when it leaves the screen so videos stop playing (@prof18)
+- **PR #1694** (2026-11-14): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1692** (2026-11-14): Translations update from Hosted Weblate (@hosted-weblate[bot])
 
 ---
 
@@ -883,34 +746,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove the debug-only add-pixel button from iOS blocked words and stop the add b
+## X. Remove the desktop move-dialog Tab traversal test that times out on Windows CI
 
 **RULE**:
-When implementing operations in `e2e/maestro/ios/smoke/012-blocked-words.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/ui/components/DialogKeyboardTest.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a717f945`: Remove the debug-only add-pixel button from iOS blocked words and stop the add button firing on any row tap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1979b97`: Remove the desktop move-dialog Tab traversal test that times out on Windows CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/maestro/ios/smoke/012-blocked-words.yaml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/ui/components/DialogKeyboardTest.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    id: blocked_words_input
-- inputText: "pixel"
-- tapOn:
-    id: blocked_words_add_button
+        rule.onNodeWithText(current.title).assertIsSelected()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-    id: blocked_words_add_pixel_e2e
+// Induced defect failure mode:
+    @Test
+    fun `move dialog starts on the current category and keyboard confirms the intended source and category`() {
+        val library = DesktopLibraryFixture.load()
+        val source = library.sources.first { it.feedSource.category != null }.feedSource
+        val current = library.categories.first { it.id == source.category?.id }
+        val other = library.categories.first { it.id != source.category?.id }
+        val visible = mutableStateOf(true)
+        val actions = mutableListOf<String>()
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    if (visible.value) {
+                        DesktopFeedMoveDialog(
+                            categories = persistentListOf(current, other),
+                            feedSources = persistentListOf(source),
+                            onMove = { sources, destination ->
+                                actions += "${sources.single().id}:${destination?.id}"
+                                visible.value = false
+                            },
+                            onCreateCa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a717f945` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1979b97` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

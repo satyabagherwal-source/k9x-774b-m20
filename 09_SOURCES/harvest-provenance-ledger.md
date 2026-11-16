@@ -10253,3 +10253,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-e52861de` | `project://saltstack-salt` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md` | 2026-11-16T02:18:03.141Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `a22ac8d6` | Multi-dimensional audit evidence | 2026-11-16T02:26:00.122Z |
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `38cb1af6` | Multi-dimensional audit evidence | 2026-11-16T02:44:25.821Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `e1979b97` | Multi-dimensional audit evidence | 2026-11-16T03:03:07.750Z |
+| `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `e11c8c49` | Multi-dimensional audit evidence | 2026-11-16T03:06:16.058Z |
+| `learn-dom-h-78b796d1` | `project://matthart1983-netwatch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md` | 2026-11-16T03:06:56.756Z |

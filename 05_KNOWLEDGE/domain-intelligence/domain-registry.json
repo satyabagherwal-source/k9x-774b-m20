@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T02:44:38.702Z",
-  "total_records": 1202,
+  "last_updated": "2026-11-16T03:06:59.238Z",
+  "total_records": 1205,
   "domains": {
     "A": {
       "total": 7,
@@ -872,7 +872,7 @@
       ]
     },
     "H": {
-      "total": 247,
+      "total": 250,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1120,7 +1120,10 @@
         "domain_intelligence-technical-construction-intelligence-medialab-xan-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants",
         "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin",
-        "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
+        "DOM-H-78B796D1",
+        "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-learnings-core-invariants"
       ]
     },
     "I": {
@@ -13249,8 +13252,8 @@
       "title": "Architecture Intelligence: matthart1983/netwatch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matthart1983-netwatch-architecture-intelligence-matthart1983-netwatch-core-invar.md",
       "repository": "matthart1983/netwatch",
-      "content_hash": "29ee3e89a3e59ee0b8ab0d72d0efa78fc166f3624c1ca7a6614ff290619d7757",
-      "created_at": "2026-11-14T07:17:54.089Z"
+      "content_hash": "321c2a680fc02032d971318ab57c65e2fe127b75b8b2908c467fd8be60ce384e",
+      "created_at": "2026-11-16T03:06:16.693Z"
     },
     "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-core-invariants",
@@ -13318,8 +13321,8 @@
       "title": "Architecture Intelligence: matthart1983-netwatch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matthart1983-netwatch-learnings-architecture-intelligence-matthart1983-netwatch-.md",
       "repository": "matthart1983-netwatch-learnings",
-      "content_hash": "0a29a20d814dea59951f31745f9787300d8a996ffd0d095783a34e548acc093b",
-      "created_at": "2026-11-14T07:18:40.640Z"
+      "content_hash": "968b7ae31e227be39a7024c79e1fc25e468ff62ef53389774b4af6817c418a0f",
+      "created_at": "2026-11-16T03:06:57.470Z"
     },
     "DOM-D-4E8F92EB": {
       "record_id": "DOM-D-4E8F92EB",
@@ -13993,8 +13996,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "d4f3d9974de2c0ebb0531a50132eb9b95c73a7b112c4f4384317bb8e72de9c8f",
-      "created_at": "2026-11-16T02:44:38.050Z"
+      "content_hash": "6359a2bd11662b2591f5753baf38853708eb891748d30595a4bd6d5ea680ea3c",
+      "created_at": "2026-11-16T03:06:59.238Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -22375,6 +22378,58 @@
       "repository": "zvec-ai-zvec-grep-learnings",
       "content_hash": "ab31d2fe90c4b97f9f7ac9acd92109af4d70ffd3882178c583ca89f82d2a319c",
       "created_at": "2026-11-16T02:44:37.222Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: prof18/feed-flow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prof18-feed-flow-technical-construction-intelligence-prof18-feed-flow-core-invar.md",
+      "repository": "prof18/feed-flow",
+      "content_hash": "a47ec1bcb3ce2fe8fc98850c469c270bc14c13f0760af3712e1bcc844b75925c",
+      "created_at": "2026-11-16T03:03:08.112Z"
+    },
+    "DOM-H-78B796D1": {
+      "record_id": "DOM-H-78B796D1",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Debian GNU/Linux Shared Object Dynamic Link Failure (`libpcap.so.0.8`) (BUG-LINK-02)",
+      "content": "For network diagnostic tools utilizing C bindings (`libpcap-sys`), produce fully static `x86_64-unknown-linux-musl` binaries with statically embedded `libpcap.a` and package-managed `.deb`/`.rpm` dependencies, preventing runtime dynamic linker aborts.",
+      "content_hash": "650f6fa281ace1bcb4b8723d74f92a4d96bf00f787a58723a910121a86e5955e",
+      "summary": "The binary was linked dynamically against host glibc and libpcap (`-lpcap`). Debian environments lacking development libraries or with diffe -> For network diagnostic tools utilizing C bindings (`libpcap-sys`), produce fully static `x86_64-unknown-linux-musl` binaries with statically",
+      "provenance": {
+        "source_uri": "project://matthart1983-netwatch/matthart1983-netwatch-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T03:06:19.821Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (matthart1983-netwatch)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Bug Issue #53; CI release pipeline `.github/workflows/release.yml`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T03:06:56.723Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: prof18-feed-flow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prof18-feed-flow-learnings-technical-construction-intelligence-prof18-feed-flow-.md",
+      "repository": "prof18-feed-flow-learnings",
+      "content_hash": "38d5f139bf6e60f34d43553f80f9cc6b885328480407398c3a191922f6c951b8",
+      "created_at": "2026-11-16T03:06:58.409Z"
     }
   }
 }

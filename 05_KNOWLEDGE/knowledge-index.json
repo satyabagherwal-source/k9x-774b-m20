@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T02:44:38.851Z",
-  "total_verified_learnings": 8754,
+  "last_updated": "2026-11-16T03:06:59.407Z",
+  "total_verified_learnings": 8755,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18862,
+  "total_items": 18875,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224899,14 +224899,29 @@
       "slug": "matthart1983-netwatch",
       "platform": "github",
       "source_url": "https://github.com/matthart1983/netwatch",
-      "source_version": "23f3b29a",
-      "content_hash": "f0abc3d128ffb1614d01dfeb597cf9805db99adfbc03c76c9bf4e70b9cf397d7",
+      "source_version": "e11c8c49",
+      "content_hash": "34a95334c1d3fed718ea61b7f3d6611ce8e1d1a9badfaa71b602948f5689dc76",
       "dossier_path": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "promoted_rules": [
         {
           "number": 8461,
           "title": "fix the unit-test binary crashing at startup on Rust 1.100",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8696,
+          "title": "Invariant Absence Is Not Vanishing: Positive Proof of Deletion for Ephemeral State",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8697,
+          "title": "Zero-Dependency Deterministic Full-Jitter Backoff via Fixed-Point Integer Arithmetic",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8698,
+          "title": "Architecture-Aware Drop-Oldest Ingestion Rings with At-Least-Once Delivery Gating",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -224915,7 +224930,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T07:17:53.656Z",
+      "verified_at": "2026-11-16T03:06:15.860Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224957,10 +224972,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matthart1983-netwatch-architecture-intelligence-matthart1983-netwatch-core-invar.md",
       "title": "Architecture Intelligence: matthart1983/netwatch Core Invariants",
       "repository": "matthart1983/netwatch",
-      "source_version": "23f3b29a",
-      "content_hash": "29ee3e89a3e59ee0b8ab0d72d0efa78fc166f3624c1ca7a6614ff290619d7757",
+      "source_version": "e11c8c49",
+      "content_hash": "321c2a680fc02032d971318ab57c65e2fe127b75b8b2908c467fd8be60ce384e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T07:17:54.089Z"
+      "persisted_at": "2026-11-16T03:06:16.693Z"
     },
     "agent_contract-agent-contract-matthart1983-netwatch-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-matthart1983-netwatch-autonomous-specialist-persona",
@@ -224969,10 +224984,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/matthart1983-netwatch-agent-contract-matthart1983-netwatch-autonomous-specialist.md",
       "title": "Agent Contract: matthart1983/netwatch Autonomous Specialist Persona",
       "repository": "matthart1983/netwatch",
-      "source_version": "23f3b29a",
-      "content_hash": "bae94951cc38ac3b0ac92ca983d7b5d47f8242ff0373509346c4afa5f66b42ac",
+      "source_version": "e11c8c49",
+      "content_hash": "2fc9090a2c396fa28a33564eddaabdb8e1fb7025c661a713252b7c4e8252d3cc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T07:17:54.190Z"
+      "persisted_at": "2026-11-16T03:06:16.837Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch",
@@ -224981,10 +224996,10 @@
       "relative_path": "08_VERIFICATION/matthart1983-netwatch-verification-protocol-empirical-defect-shield-for-matthart.md",
       "title": "Verification Protocol: Empirical Defect Shield for matthart1983/netwatch",
       "repository": "matthart1983/netwatch",
-      "source_version": "23f3b29a",
-      "content_hash": "cccdfc16ea26ac06b6d80690d2d6dbe84eb209d31fb29b5b3f5411e81df270d2",
+      "source_version": "e11c8c49",
+      "content_hash": "7f607143f2d055a276a079be10c23194057075b58954518c3985fa07e8a9ae8d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:17:54.286Z"
+      "persisted_at": "2026-11-16T03:06:16.971Z"
     },
     "learn-github-kgateway-dev-kgateway": {
       "learning_id": "learn-github-kgateway-dev-kgateway",
@@ -225189,9 +225204,9 @@
       "title": "Architecture Intelligence: matthart1983-netwatch-learnings Core Invariants",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a29a20d814dea59951f31745f9787300d8a996ffd0d095783a34e548acc093b",
+      "content_hash": "968b7ae31e227be39a7024c79e1fc25e468ff62ef53389774b4af6817c418a0f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T07:18:40.640Z"
+      "persisted_at": "2026-11-16T03:06:57.470Z"
     },
     "agent_contract-agent-contract-matthart1983-netwatch-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-matthart1983-netwatch-learnings-autonomous-specialist-persona",
@@ -225201,9 +225216,9 @@
       "title": "Agent Contract: matthart1983-netwatch-learnings Autonomous Specialist Persona",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "b50a3504729a266ac88d6fdc3cdc2422be94d71cda87ad581430bd5ac621a803",
+      "content_hash": "29a2a036500b01d3cfc922a0de479cafb425c4506c8a3b819e7b59ef0daada27",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T07:18:40.757Z"
+      "persisted_at": "2026-11-16T03:06:57.637Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch-learning",
@@ -225213,9 +225228,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for matthart1983-netwatch-learnings",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8d2c40ca8b12c3e04adf09c5d6ffff48da6e8e7accab51f15fc8128cd3d01d3",
+      "content_hash": "b47bf081e063ede1263a2a5dae7c84db9a28ae169ced5a1665797ac5bbc13580",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:18:40.870Z"
+      "persisted_at": "2026-11-16T03:06:57.790Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin",
@@ -226657,13 +226672,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U8IF-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MZCV-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd7b91961159da4c0acebcccd2666881154405a735060ecbc7afc3c614441f6a",
+      "content_hash": "c0c7c06ebfb8c7b040ee91d7dfe898d53dfde4c3a31aa11ea4f492153792b858",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T02:44:37.912Z"
+      "persisted_at": "2026-11-16T03:06:59.072Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226673,9 +226688,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4f3d9974de2c0ebb0531a50132eb9b95c73a7b112c4f4384317bb8e72de9c8f",
+      "content_hash": "6359a2bd11662b2591f5753baf38853708eb891748d30595a4bd6d5ea680ea3c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T02:44:38.050Z"
+      "persisted_at": "2026-11-16T03:06:59.238Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226685,9 +226700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "02f688bc550e14387845056f5d8145ee02a4315d6aa9b63a2f5a6b090a97f2bc",
+      "content_hash": "0edf72a7cc8e39e51e4d85d8979d072dc4a7dbcc663d5eafba7ec07882810bff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:44:38.193Z"
+      "persisted_at": "2026-11-16T03:06:59.407Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -250394,6 +250409,191 @@
       "content_hash": "ab31d2fe90c4b97f9f7ac9acd92109af4d70ffd3882178c583ca89f82d2a319c",
       "domain_letter": "D",
       "persisted_at": "2026-11-16T02:44:37.222Z"
+    },
+    "learn-github-prof18-feed-flow": {
+      "learning_id": "learn-github-prof18-feed-flow",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "prof18/feed-flow",
+      "repository": "prof18/feed-flow",
+      "slug": "prof18-feed-flow",
+      "platform": "github",
+      "source_url": "https://github.com/prof18/feed-flow",
+      "source_version": "e1979b97",
+      "content_hash": "977e981285926f4c3dd54e78a58cae2252967bc90c91d47ec0733be0f998e6cc",
+      "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8695,
+          "title": "Remove the desktop move-dialog Tab traversal test that times out on Windows CI",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T03:03:07.555Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8695": {
+      "learning_id": "rule-8695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8695,
+      "title": "Remove the desktop move-dialog Tab traversal test that times out on Windows CI",
+      "source_url": "https://github.com/prof18/feed-flow",
+      "source_version": "e1979b97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:03:07.555Z"
+    },
+    "candidate_directive-remove-the-desktop-move-dialog-tab-traversal-test-that-times-out-on-windows-ci": {
+      "item_id": "candidate_directive-remove-the-desktop-move-dialog-tab-traversal-test-that-times-out-on-windows-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MYQ2-remove-the-desktop-move-dialog-tab-traversal-test-that-times-out-on-windows-ci.md",
+      "title": "Remove the desktop move-dialog Tab traversal test that times out on Windows CI",
+      "repository": "prof18-feed-flow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b8c8f750f6fd8e0a1f206d7e3791ed724467ef3381c2244cc9f4966244667134",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:06:58.250Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prof18-feed-flow-technical-construction-intelligence-prof18-feed-flow-core-invar.md",
+      "title": "Technical Construction Intelligence: prof18/feed-flow Core Invariants",
+      "repository": "prof18/feed-flow",
+      "source_version": "e1979b97",
+      "content_hash": "a47ec1bcb3ce2fe8fc98850c469c270bc14c13f0760af3712e1bcc844b75925c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T03:03:08.112Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-prof18-feed-flow": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prof18-feed-flow",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/prof18-feed-flow-verification-protocol-empirical-defect-shield-for-prof18-feed-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for prof18/feed-flow",
+      "repository": "prof18/feed-flow",
+      "source_version": "e1979b97",
+      "content_hash": "c026568df5d55359ac4718422659adbd1a4a568a27561216203c25a6ca71d15c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:03:08.258Z"
+    },
+    "rule-8696": {
+      "learning_id": "rule-8696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8696,
+      "title": "Invariant Absence Is Not Vanishing: Positive Proof of Deletion for Ephemeral State",
+      "source_url": "https://github.com/matthart1983/netwatch",
+      "source_version": "e11c8c49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:06:15.860Z"
+    },
+    "rule-8697": {
+      "learning_id": "rule-8697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8697,
+      "title": "Zero-Dependency Deterministic Full-Jitter Backoff via Fixed-Point Integer Arithmetic",
+      "source_url": "https://github.com/matthart1983/netwatch",
+      "source_version": "e11c8c49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:06:15.860Z"
+    },
+    "rule-8698": {
+      "learning_id": "rule-8698",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8698,
+      "title": "Architecture-Aware Drop-Oldest Ingestion Rings with At-Least-Once Delivery Gating",
+      "source_url": "https://github.com/matthart1983/netwatch",
+      "source_version": "e11c8c49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:06:15.860Z"
+    },
+    "candidate_directive-invariant-absence-is-not-vanishing-positive-proof-of-deletion-for-ephemeral-stat": {
+      "item_id": "candidate_directive-invariant-absence-is-not-vanishing-positive-proof-of-deletion-for-ephemeral-stat",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MXQZ-invariant-absence-is-not-vanishing-positive-proof-of-deletion-for-ephemeral-stat.md",
+      "title": "Invariant Absence Is Not Vanishing: Positive Proof of Deletion for Ephemeral State",
+      "repository": "matthart1983-netwatch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aec651e34da6d698aded603f6ea757d719a6bb1d1712e8d5e4f244227878a535",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:06:56.990Z"
+    },
+    "candidate_directive-zero-dependency-deterministic-full-jitter-backoff-via-fixed-point-integer-arithm": {
+      "item_id": "candidate_directive-zero-dependency-deterministic-full-jitter-backoff-via-fixed-point-integer-arithm",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MXR0-zero-dependency-deterministic-full-jitter-backoff-via-fixed-point-integer-arithm.md",
+      "title": "Zero-Dependency Deterministic Full-Jitter Backoff via Fixed-Point Integer Arithmetic",
+      "repository": "matthart1983-netwatch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "43120599ef9f4f486810f9d35dfba6e8864e85a6bac5e55770b3f962bbd5c7a7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:06:57.151Z"
+    },
+    "candidate_directive-architecture-aware-drop-oldest-ingestion-rings-with-at-least-once-delivery-gatin": {
+      "item_id": "candidate_directive-architecture-aware-drop-oldest-ingestion-rings-with-at-least-once-delivery-gatin",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MXR1-architecture-aware-drop-oldest-ingestion-rings-with-at-least-once-delivery-gatin.md",
+      "title": "Architecture-Aware Drop-Oldest Ingestion Rings with At-Least-Once Delivery Gating",
+      "repository": "matthart1983-netwatch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1192f47587016fb7b14979f333282812d2cf1148120554d77dae5659d4a9fc21",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:06:57.310Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prof18-feed-flow-learnings-technical-construction-intelligence-prof18-feed-flow-.md",
+      "title": "Technical Construction Intelligence: prof18-feed-flow-learnings Core Invariants",
+      "repository": "prof18-feed-flow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "38d5f139bf6e60f34d43553f80f9cc6b885328480407398c3a191922f6c951b8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T03:06:58.409Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-prof18-feed-flow-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prof18-feed-flow-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/prof18-feed-flow-learnings-verification-protocol-empirical-defect-shield-for-pro.md",
+      "title": "Verification Protocol: Empirical Defect Shield for prof18-feed-flow-learnings",
+      "repository": "prof18-feed-flow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6df63b57016ebe486acd8b17968e814cbf4552e51bcc7e5e76fa8aba94a15abe",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:06:58.575Z"
     }
   },
   "ai-builder-brain": {
