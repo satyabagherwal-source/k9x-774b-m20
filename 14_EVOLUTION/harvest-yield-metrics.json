@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T21:55:38.040Z",
-  "total_cycles_completed": 9936,
-  "total_learnings_persisted": 9936,
-  "total_rules_promoted": 9533,
+  "last_updated": "2026-11-16T22:04:03.247Z",
+  "total_cycles_completed": 9938,
+  "total_learnings_persisted": 9938,
+  "total_rules_promoted": 9535,
   "history": [
-    {
-      "timestamp": "2026-11-15T17:14:23.215Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T17:22:41.024Z",
-      "repository": "mistralai/Mistral-Large-4-1T-A52B",
-      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T17:31:49.523Z",
       "repository": "nats-io/nats.go",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T21:55:38.040Z",
       "repository": "infiniflow/infinity",
       "learningId": "learn-github-infiniflow-infinity",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:03:56.420Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:04:03.247Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

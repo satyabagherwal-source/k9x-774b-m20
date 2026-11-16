@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T21:55:43.473Z",
+  "last_updated": "2026-11-16T22:04:07.995Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-EFSO",
+      "id": "CD-9D4N",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EFSO-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-9D4N-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -20318,6 +20318,55 @@
       "source_repo": "infiniflow-infinity",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-540902-invalidate-fulltext-index-reader-cache-o.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-9C4Z",
+      "directive_title": "[FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions",
+      "source_repo": "nats-io-nats-server-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9C4Z-fixed-sublist-numinterest-undercounting-overlapping-wildcard-subscriptions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-9CMS",
+      "directive_title": "Add LLM-based training synthesis",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9CMS-add-llm-based-training-synthesis.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-7D4DA0",
+      "directive_title": "[FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7D4DA0--fixed-sublist-numinterest-undercounting.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-070A17",
+      "directive_title": "Add LLM-based training synthesis",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-070A17-add-llm-based-training-synthesis.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-038558",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-038558-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-16"
     }
   ]

@@ -10349,3 +10349,5 @@
 | `CYCLE-20261116-Y55U` | `2026-11-16T21:55:24.450Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8794` | Yes (`741a4829...`) |
 | `CYCLE-20261116-YDYG` | `2026-11-16T21:55:35.848Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8795` | Yes (`e148775a...`) |
 | `CYCLE-20261116-YFN2` | `2026-11-16T21:55:38.030Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8796` | Yes (`8f9f812a...`) |
+| `CYCLE-20261116-9470` | `2026-11-16T22:03:56.412Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8797` | Yes (`e0fa56cb...`) |
+| `CYCLE-20261116-99GN` | `2026-11-16T22:04:03.239Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8798` | Yes (`20c333ac...`) |

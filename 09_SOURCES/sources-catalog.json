@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8ee7817e",
+    "sourceVersion": "33fb6d38",
     "license": "Apache-2.0",
-    "contentHash": "68f5826399a02beb3c3040f1d1548d1774e3a9e044c4852964c1723b69b7f18e",
-    "lastHarvestedAt": "2026-11-16T18:27:20.087Z",
+    "contentHash": "20c333ace5439aca5a399e68011d226c335fe72f698f474e79deb0c1363b00eb",
+    "lastHarvestedAt": "2026-11-16T22:04:03.242Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "6993500c",
+    "sourceVersion": "08f7bd21",
     "license": "Apache-2.0",
-    "contentHash": "2987ceee5ba9511baf33add2d3c0d82973294339ed7961776ea8c5dd7b80ac65",
-    "lastHarvestedAt": "2026-11-14T02:37:06.878Z",
+    "contentHash": "e0fa56cb4a4c5e24758a5705270b76f38380c4feeeac055e87e4fc81c495267a",
+    "lastHarvestedAt": "2026-11-16T22:03:56.416Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {

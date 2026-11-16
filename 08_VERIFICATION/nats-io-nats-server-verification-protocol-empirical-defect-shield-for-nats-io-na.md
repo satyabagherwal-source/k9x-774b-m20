@@ -4,22 +4,22 @@
 {
   "source_repository": "nats-io/nats-server",
   "source_url": "https://github.com/nats-io/nats-server",
-  "source_version": "6993500c",
+  "source_version": "08f7bd21",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T02:37:07.075Z",
+  "timestamp": "2026-11-16T22:03:56.588Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nats-io-nats-server",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nats-io/nats-server](https://github.com/nats-io/nats-server) (Revision: `6993500c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T02:37:07.075Z`  
+> **Provenance**: Harvested from [nats-io/nats-server](https://github.com/nats-io/nats-server) (Revision: `08f7bd21`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T22:03:56.588Z`  
 > **Learning ID**: `learn-github-nats-io-nats-server`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nats-io/nats-server` (Commit: `6993500c`)
+- **Target Repository**: `nats-io/nats-server` (Commit: `08f7bd21`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T02:37:05.871Z  
+> **Harvest Timestamp**: 2026-11-16T22:03:55.449Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21040 stars
+- **Stars / Engagement**: 21048 stars
 
 ---
 
@@ -2737,127 +2737,324 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6993500c` (2026-11-13)
-**Commit Message**: De-flake TestPSEmulationCPU (#8892)
+### Incident Patch 1: `79bdf7c0` (2026-11-16)
+**Commit Message**: [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions (#8896)
 
-**File**: `server/pse/pse_test.go` (modified, +9/-22)
+Sublist.NumInterest() can return a lower count than Match() for the same
+subject when that subject isn't cached yet. So that means after the
+subject is cached, the same call returns the right count. The result
+ends up depending on cache state.
+
+### Repro
+
+```go
+s := NewSublist(true)
+s.Insert(newSub("foo.>"))
+s.Insert(newSub("foo.bar"))
+
+np, _ := s.NumInterest("foo.bar") // 1
+s.Match("foo.bar")                // populates the cache
+np, _ = s.NumInterest("foo.bar")  // 2
+```
+
+The correct answer is 2.
+
+### Cause
+
+When the subject isn't cached, NumInterest goes through
+matchLevelForAny. That means the function was written for HasInterest,
+which technically only needs a yes or no answer, so it returns at the
+first match. If several subscriptions match through different branches
+of the tree (which here is the > under foo and the literal bar), only
+the first branch it reaches gets counted. The cached path counts the
+full Match result, which is why the two answers differ and I found this
+issue.
+
+### Impact
+
+Since the walk can only skip matches, the count is always too low and
+never too high.
+
+Account.Inte
+
+**File**: `server/sublist.go` (modified, +24/-13)
 ```diff
-@@ -20,38 +20,25 @@ import (
- 	"runtime"
- 	"runtime/debug"
- 	"testing"
-+	"time"
- )
- 
- func TestPSEmulationCPU(t *testing.T) {
- 	if runtime.GOOS == "windows" {
- 		t.Skipf("Skipping this test on Windows")
- 	}
- 	var rss, vss int64
--	var pcpu, psPcpu float64
--
--	debug.FreeOSMemory()
--
--	// PS version first
--	pidStr := fmt.Sprintf("%d", os.Getpid())
--	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
--	if err != nil {
--		t.Fatalf("Failed to execute ps command: %v\n", err)
--	}
--
--	// Our internal version
--	ProcUsage(&pcpu, &rss, &vss)
--
--	fmt.Sscanf(string(out), "%f", &psPcpu)
-+	var pcpu float64
- 
--	if pcpu != psPcpu {
--		delta := int64(pcpu - psPcpu)
--		if delta < 0 {
--			delta = -delta
--		}
--		if delta > 30 { // 30%?
--			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
-+	// Burn CPU until the background sampler reports usage.
-+	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
-+		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
-+			t.Fatalf("Failed to get process usage: %v", err)
- 		}
- 	}
-+	if pcpu <= 0 {
-+		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
-+	}
+@@ -847,23 +847,31 @@ func matchLevel(l *level, toks []string, results *SublistResult) {
  }
  
- func TestPSEmulationMem(t *testing.T) {
+ func matchLevelForAny(l *level, toks []string, np, nq *int) bool {
++	// When counting, keep going after a match so every matching
++	// subscription is counted, not just those on the first match found.
++	counting := np != nil && nq != nil
++	var matched bool
+ 	var pwc, n *node
+ 	for i, t := range toks {
+ 		if l == nil {
+-			return false
++			return matched
+ 		}
+ 		if l.fwc != nil {
+-			if np != nil && nq != nil {
+-				*np += len(l.fwc.psubs)
+-				for _, qsub := range l.fwc.qsubs {
+-					*nq += len(qsub)
+-				}
++			if !counting {
++				return true
+ 			}
+-			return true
++			*np += len(l.fwc.psubs)
++			for _, qsub := range l.fwc.qsubs {
++				*nq += len(qsub)
++			}
++			matched = true
+ 		}
+ 		if pwc = l.pwc; pwc != nil {
+ 			if match := matchLevelForAny(pwc.next, toks[i+1:], np, nq); match {
+-				return true
++				if !counting {
++					return true
++				}
++				matched = true
+ 			}
+ 		}
+ 		n = l.nodes[t]
+@@ -874,26 +882,29 @@ func matchLevelForAny(l *level, toks []string, np, nq *int) bool {
+ 		}
+ 	}
+ 	if n != nil {
+-		if np != nil && nq != nil {
++		if counting {
+ 			*np += len(n.psubs)
+ 			for _, qsub := range n.qsubs {
+ 				*nq += len(qsub)
+ 			}
+ 		}
+ 		if len(n.plist) > 0 || len(n.psubs) > 0 || len(n.qsubs) > 0 {
+-			return true
++			if !counting {
++				return true
++			}
++			matched = true
+ 		}
+ 	}
+ 	if pwc != nil {
+-		if np != nil && nq != nil {
++		if counting {
+ 			*np += len(pwc.psubs)
+ 			for _, qsub := range pwc.qsubs {
+ 				*nq += len(qsub)
+ 			}
+ 		}
+-		return len(pwc.plist) > 0 || len(pwc.psubs) > 0 || len(pwc.qsubs) > 0
++		matched = matched || len(pwc.plist) > 0 || len(pwc.psubs) > 0 || len(pwc.qsubs) > 0
+ 	}
+-	return false
++	return matched
+ }
+ 
+ // lnt is used to track descent into levels for a removal for pruning.
+```
+
+**File**: `server/sublist_test.go` (modified, +27/-0)
+```diff
+@@ -1913,6 +1913,33 @@ func TestSublistHasInterestOverlapping(t *testing.T) {
+ 	require_True(t, sl.HasInterest("stream.A"))
+ }
+ 
++func TestSublistNumInterestOverlappingSubs(t *testing.T) {
++	ref, nc, wc := NewSublistNoCache(), NewSublistNoCache(), NewSublistWithCache()
++	for _, subj := range []string{">", "foo.>", "*.>", "foo.*", "*.bar", "foo.bar", "foo.bar.baz", "*.*.baz"} {
++		for _, sub := range []*subscription{newSub(subj), newQSub(subj, "q1"), newQSub(subj, "q2")} {
++			for _, sl := range []*Sublist{ref, nc, wc} {
++				sl.Insert(sub)
++			}
++		}
++	}
++	for _, subj := range []string{"foo", "bar", "foo.bar", "foo.baz", "bar.bar", "foo.bar.baz", "foo.bar.baz.qux"} {
++		r := ref.Match(subj)
++		wnq := 0
++		for _, qsub := range r.qsubs {
++			wnq += len(qsub)
++		}
++		// Check both before and after Match caches the result.
++		for _, sl := range []*Sublist{nc, wc} {
++			for range 2 {
++				np, nq := sl.NumInterest(subj)
++				require_Equal(t, np, len(r.psubs))
++				require_Equal(t, nq, wnq)
++				sl.Match(subj)
++			}
++		}
++	}
++}
++
+ func TestSublistNumInterest(t *testing.T) {
+ 	sl := NewSublistWithCache()
+ 	fooSub := newSub("foo")
 ```
 
 ---
 
-### Incident Patch 2: `53f337e1` (2026-11-12)
-**Commit Message**: De-flake TestPSEmulationCPU
+### Incident Patch 2: `09667a2f` (2026-11-16)
+**Commit Message**: [FIXED] memory store SkipMsgs sequence could overflow (#8900)
 
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+Bring the same overflow checks from filestore into memstore.
 
-**File**: `server/pse/pse_test.go` (modified, +9/-22)
+**File**: `server/memstore.go` (modified, +4/-0)
 ```diff
-@@ -20,38 +20,25 @@ import (
- 	"runtime"
- 	"runtime/debug"
- 	"testing"
-+	"time"
- )
- 
- func TestPSEmulationCPU(t *testing.T) {
- 	if runtime.GOOS == "windows" {
- 		t.Skipf("Skipping this test on Windows")
- 	}
- 	var rss, vss int64
--	var pcpu, psPcpu float64
--
--	debug.FreeOSMemory()
--
--	// PS version first
--	pidStr := fmt.Sprintf("%d", os.Getpid())
--	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
--	if err != nil {
--		t.Fatalf("Failed to execute ps command: %v\n", err)
--	}
--
--	// Our internal version
--	ProcUsage(&pcpu, &rss, &vss)
--
--	fmt.Sscanf(string(out), "%f", &psPcpu)
-+	var pcpu float64
- 
--	if pcpu != psPcpu {
--		delta := int64(pcpu - psPcpu)
--		if delta < 0 {
--			delta = -delta
--		}
--		if delta > 30 { // 30%?
--			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
-+	// Burn CPU until the background sampler reports usage.
-+	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
-+		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
-+			t.Fatalf("Failed to get process usage: %v", err)
+@@ -470,6 +470,10 @@ func (ms *memStore) SkipMsgs(seq uint64, num uint64) error {
  		}
+ 		seq = ms.state.LastSeq + 1
  	}
-+	if pcpu <= 0 {
-+		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
++	// Make sure the last sequence leaves room for the next message.
++	if num == 0 || seq == 0 || num > math.MaxUint64-seq {
++		return ErrSequenceMismatch
 +	}
+ 	lseq := seq + num - 1
+ 
+ 	ms.state.LastSeq = lseq
+```
+
+**File**: `server/store_test.go` (modified, +36/-0)
+```diff
+@@ -17,6 +17,7 @@ package server
+ 
+ import (
+ 	"fmt"
++	"math"
+ 	"os"
+ 	"path/filepath"
+ 	"reflect"
+@@ -1171,6 +1172,41 @@ func TestStoreGetSeqFromTimeWithTrailingDeletes(t *testing.T) {
+ 	)
  }
  
- func TestPSEmulationMem(t *testing.T) {
++func TestStoreSkipMsgsSequenceLimits(t *testing.T) {
++	for _, test := range []struct {
++		name    string
++		seq     uint64
++		num     uint64
++		wantErr bool
++	}{
++		{"zero count", 2, 0, true},
++		{"zero count zero sequence", 0, 0, true},
++		{"overflow", 2, math.MaxUint64, true},
++		{"overflow zero sequence", 0, math.MaxUint64, true},
++		{"last sequence exhausted", 2, math.MaxUint64 - 1, true},
++		{"normal skip", 2, 100, false},
++		{"zero sequence", 0, 100, false},
++		{"largest valid skip", 2, math.MaxUint64 - 2, false},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			testAllStoreAllPermutations(t, false, StreamConfig{Name: "T"}, func(t *testing.T, store StreamStore) {
++				require_NoError(t, store.SkipMsgs(1, 1))
++				before := store.State()
++				err := store.SkipMsgs(test.seq, test.num)
++				if test.wantErr {
++					require_Error(t, err, ErrSequenceMismatch)
++					require_True(t, reflect.DeepEqual(store.State(), before))
++				} else {
++					require_NoError(t, err)
++					state := store.State()
++					require_Equal(t, state.LastSeq, before.LastSeq+test.num)
++					require_Equal(t, state.FirstSeq, state.LastSeq+1)
++				}
++			})
++		})
++	}
++}
++
+ func TestStoreSkipMsgsCarryForwardLastTime(t *testing.T) {
+ 	testAllStoreAllPermutations(
+ 		t, false,
+```
+
+---
+
+### Incident Patch 3: `891c9713` (2026-11-16)
+**Commit Message**: [FIXED] memory store SkipMsgs sequence could overflow
+
+Bring the same overflow checks from filestore into memstore.
+
+Signed-off-by: Daniele Sciascia <[REDACTED_EMAIL]>
+
+**File**: `server/memstore.go` (modified, +4/-0)
+```diff
+@@ -470,6 +470,10 @@ func (ms *memStore) SkipMsgs(seq uint64, num uint64) error {
+ 		}
+ 		seq = ms.state.LastSeq + 1
+ 	}
++	// Make sure the last sequence leaves room for the next message.
++	if num == 0 || seq == 0 || num > math.MaxUint64-seq {
++		return ErrSequenceMismatch
++	}
+ 	lseq := seq + num - 1
+ 
+ 	ms.state.LastSeq = lseq
+```
+
+**File**: `server/store_test.go` (modified, +36/-0)
+```diff
+@@ -17,6 +17,7 @@ package server
+ 
+ import (
+ 	"fmt"
++	"math"
+ 	"os"
+ 	"path/filepath"
+ 	"reflect"
+@@ -1171,6 +1172,41 @@ func TestStoreGetSeqFromTimeWithTrailingDeletes(t *testing.T) {
+ 	)
+ }
+ 
++func TestStoreSkipMsgsSequenceLimits(t *testing.T) {
++	for _, test := range []struct {
++		name    string
++		seq     uint64
++		num     uint64
++		wantErr bool
++	}{
++		{"zero count", 2, 0, true},
++		{"zero count zero sequence", 0, 0, true},
++		{"overflow", 2, math.MaxUint64, true},
++		{"overflow zero sequence", 0, math.MaxUint64, true},
++		{"last sequence exhausted", 2, math.MaxUint64 - 1, true},
++		{"normal skip", 2, 100, false},
++		{"zero sequence", 0, 100, false},
++		{"largest valid skip", 2, math.MaxUint64 - 2, false},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			testAllStoreAllPermutations(t, false, StreamConfig{Name: "T"}, func(t *testing.T, store StreamStore) {
++				require_NoError(t, store.SkipMsgs(1, 1))
++				before := store.State()
++				err := store.SkipMsgs(test.seq, test.num)
++				if test.wantErr {
++					require_Error(t, err, ErrSequenceMismatch)
++					require_True(t, reflect.DeepEqual(store.State(), before))
++				} else {
++					require_NoError(t, err)
++					state := store.State()
++					require_Equal(t, state.LastSeq, before.LastSeq+test.num)
++					require_Equal(t, state.FirstSeq, state.LastSeq+1)
++				}
++			})
++		})
++	}
++}
++
+ func TestStoreSkipMsgsCarryForwardLastTime(t *testing.T) {
+ 	testAllStoreAllPermutations(
+ 		t, false,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8892** (2026-11-13): De-flake TestPSEmulationCPU (@MauriceVanVeen)
-- **PR #8891** (2026-11-12): Switch to GitHub Actions lockfile (@neilalexander)
-- **PR #8890** (2026-11-12): [FIXED] Filtered consumer interest & dangling WorkQueue messages (@MauriceVanVeen)
-- **PR #8888** (closed): Rewrite stream meta.sum when missing on recovery (@amalsaidov)
-- **PR #8887** (2026-11-11): [FIXED] Filestore metadata and new directories not crash-safe (@MauriceVanVeen)
-- **PR #8886** (2026-11-11): [FIXED] Account reserved storage ignores replicas for un-tiered limits (@MauriceVanVeen)
+- **PR #8902** (2026-11-16): [FIXED] MQTT: readLoop JetStream requests stuck behind a pending route (@MauriceVanVeen)
+- **PR #8901** (2026-11-16): [FIXED] Data race between filestore ConsumerStore and UpdateConfig (@sciascid)
+- **PR #8900** (2026-11-16): [FIXED] memory store SkipMsgs sequence could overflow (@sciascid)
+- **PR #8899** (2026-11-16): [FIXED] Leafnode/route never reconnects after compression INFO write error (@MauriceVanVeen)
+- **PR #8896** (2026-11-16): [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions (@Ashuuu2606)
+- **PR #8894** (2026-11-16): [FIXED] Consumer info not found for consumer without Raft node yet (@nberlee)
 
 ---
 
@@ -2877,60 +3074,66 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. De-flake TestPSEmulationCPU
+## X. [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions
 
 **RULE**:
-When implementing operations in `server/pse/pse_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/sublist.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6993500c`: De-flake TestPSEmulationCPU. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79bdf7c0`: [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/pse/pse_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/sublist.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"time"
-	var pcpu float64
-	// Burn CPU until the background sampler reports usage.
-	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
-		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
-			t.Fatalf("Failed to get process usage: %v", err)
-	if pcpu <= 0 {
-		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
-	}
+	// When counting, keep going after a match so every matching
+	// subscription is counted, not just those on the first match found.
+	counting := np != nil && nq != nil
+	var matched bool
+			return matched
+			if !counting {
+				return true
+			*np += len(l.fwc.psubs)
+			for _, qsub := range l.fwc.qsubs {
+				*nq += len(qsub)
+			}
+			matched = true
+				if !counting {
+					return true
+				}
+				matched = true
+		if counting {
+			if !counting {
+				return true
+			}
+			matched = true
+		if counting {
+		matched = matched || len(pwc.plist) > 0 || len(pwc.psubs) > 0 || len(pwc.qsubs) > 0
+	return matched
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	var pcpu, psPcpu float64
-
-	debug.FreeOSMemory()
-
-	// PS version first
-	pidStr := fmt.Sprintf("%d", os.Getpid())
-	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
-	if err != nil {
-		t.Fatalf("Failed to execute ps command: %v\n", err)
-	}
-
-	// Our internal version
-	ProcUsage(&pcpu, &rss, &vss)
-
-	fmt.Sscanf(string(out), "%f", &psPcpu)
-	if pcpu != psPcpu {
-		delta := int64(pcpu - psPcpu)
-		if delta < 0 {
-			delta = -delta
-		}
-		if delta > 30 { // 30%?
-			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
+			return false
+			if np != nil && nq != nil {
+				*np += len(l.fwc.psubs)
+				for _, qsub := range l.fwc.qsubs {
+					*nq += len(qsub)
+				}
+			return true
+				return true
+		if np != nil && nq != nil {
+			return true
+		if np != nil && nq != nil {
+		return len(pwc.plist) > 0 || len(pwc.psubs) > 0 || len(pwc.qsubs) > 0
+	return false
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6993500c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79bdf7c0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

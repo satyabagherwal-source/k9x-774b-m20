@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-03OG",
-    "timestamp": "2026-11-14T02:45:51.136Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "70c42df2412388811314227de32f507c2a830900b96d209498cc6a89dd9625ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-KLGA",
-    "timestamp": "2026-11-14T03:01:47.290Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "7bda3b84411b4cdd122bd89a9e0eb4f68b8b76a82fbf9935b87cffa3593fea55",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-KNF5",
     "timestamp": "2026-11-14T03:01:49.841Z",
     "repository": "loft-sh/vcluster",
@@ -7490,6 +7460,36 @@
     "repository": "infiniflow/infinity",
     "learningId": "learn-github-infiniflow-infinity",
     "contentHash": "8f9f812ad22e81d3e4844ae053f12f2a11487ee262d9bf8e39529682d1a1f914",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-9470",
+    "timestamp": "2026-11-16T22:03:56.412Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "e0fa56cb4a4c5e24758a5705270b76f38380c4feeeac055e87e4fc81c495267a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-99GN",
+    "timestamp": "2026-11-16T22:04:03.239Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "20c333ace5439aca5a399e68011d226c335fe72f698f474e79deb0c1363b00eb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
