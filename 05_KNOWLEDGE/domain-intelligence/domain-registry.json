@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T18:55:56.951Z",
-  "total_records": 1316,
+  "last_updated": "2026-11-16T20:02:47.901Z",
+  "total_records": 1318,
   "domains": {
     "A": {
       "total": 7,
@@ -924,7 +924,7 @@
       ]
     },
     "H": {
-      "total": 287,
+      "total": 289,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1212,7 +1212,9 @@
         "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants",
         "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fb55-css-select-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8049,8 +8051,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "7bc391ae5187835a6942867741397009b3e51e476edbc619f0723fc21311816e",
-      "created_at": "2026-11-16T15:10:13.440Z"
+      "content_hash": "82dda611dd2f4ded494aa503a9a3d28625c8a1b630a8b1300cec85797512aec1",
+      "created_at": "2026-11-16T20:02:47.901Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -8067,8 +8069,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "1de350caee55f7080bd2e19398e77ef117d14dc1f8facb8f5e9f142926228923",
-      "created_at": "2026-11-15T00:37:31.464Z"
+      "content_hash": "748ad531c8cff19b578efe079494955688edfa15eabab1933005fd01db0b9ac4",
+      "created_at": "2026-11-16T20:02:42.188Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -8136,8 +8138,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "a19a8b06feffc4d3b5de41ce56140ddc1e15ed0442a1fb6267323e4ef5f5593c",
-      "created_at": "2026-11-15T00:38:25.677Z"
+      "content_hash": "41b8645136f638a75de6479a88c65ab7390875c485388657c60ee447722f1f98",
+      "created_at": "2026-11-16T20:02:46.860Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -23747,6 +23749,24 @@
       "repository": "wquguru-cicada-learnings",
       "content_hash": "25be5099355b063e73c750a2c3dcb36e5d58b9c50d3685d84539d1e4b84d14b5",
       "created_at": "2026-11-16T18:55:56.951Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fb55-css-select-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fb55-css-select-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fb55/css-select Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-technical-construction-intelligence-fb55-css-select-core-invaria.md",
+      "repository": "fb55/css-select",
+      "content_hash": "4a730cda5a277dbacacfa3b47e4e702570aa4c301685d94e94fed2370e0d19cc",
+      "created_at": "2026-11-16T20:02:34.828Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fb55-css-select-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-learnings-technical-construction-intelligence-fb55-css-select-le.md",
+      "repository": "fb55-css-select-learnings",
+      "content_hash": "5df396bbae5d49261a27b5c5e715dcab8e8e958ece2cfd75ad3df8aaff1de4b8",
+      "created_at": "2026-11-16T20:02:46.091Z"
     }
   }
 }

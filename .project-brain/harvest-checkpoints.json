@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T18:55:52.034Z",
+  "last_updated": "2026-11-16T20:02:41.815Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "36cab4906bf4f292b72640f504287c857ee5cf25678fbff86725be3821de1197",
-      "verified_at": "2026-11-15T00:37:31.130Z",
+      "content_hash": "c5a4d9b250dff7d7ddc4de56fefffc09abbfedbd3f6aece5e80351bb55fc8030",
+      "verified_at": "2026-11-16T20:02:41.814Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T00:37:31.130Z"
+      "last_updated": "2026-11-16T20:02:41.814Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -14136,14 +14136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-css-select",
-      "content_hash": "ffa44b0e6ed9a0515589ed18b7c418de5b0561ae2a8bbdf4f52d7cad3fba68a2",
-      "verified_at": "2026-11-12T02:56:31.047Z",
+      "content_hash": "98736740b34d6fce5ff7b783f8c864f83ec611605efaf0587336700d7391f409",
+      "verified_at": "2026-11-16T20:02:34.455Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T02:56:31.047Z"
+      "last_updated": "2026-11-16T20:02:34.455Z"
     },
     "sindresorhus/KeyboardShortcuts": {
       "repository": "sindresorhus/KeyboardShortcuts",

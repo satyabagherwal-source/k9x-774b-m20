@@ -10331,3 +10331,5 @@
 | `CYCLE-20261116-J6J7` | `2026-11-16T18:55:48.691Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8781` | Yes (`05ec2406...`) |
 | `CYCLE-20261116-J87A` | `2026-11-16T18:55:50.854Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8782` | Yes (`06e2e5da...`) |
 | `CYCLE-20261116-J93R` | `2026-11-16T18:55:52.023Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8783` | Yes (`d47689e6...`) |
+| `CYCLE-20261116-X1E0` | `2026-11-16T20:02:34.440Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8776` | Yes (`98736740...`) |
+| `CYCLE-20261116-X72F` | `2026-11-16T20:02:41.799Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8784` | Yes (`c5a4d9b2...`) |

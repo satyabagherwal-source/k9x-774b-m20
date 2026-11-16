@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T18:55:52.031Z",
-  "total_cycles_completed": 9919,
-  "total_learnings_persisted": 9919,
-  "total_rules_promoted": 9517,
+  "last_updated": "2026-11-16T20:02:41.810Z",
+  "total_cycles_completed": 9921,
+  "total_learnings_persisted": 9921,
+  "total_rules_promoted": 9519,
   "history": [
-    {
-      "timestamp": "2026-11-15T14:36:30.721Z",
-      "repository": "momenbasel/PureMac",
-      "learningId": "learn-github-momenbasel-puremac",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T14:36:40.965Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T14:56:01.879Z",
       "repository": "pimalaya/himalaya",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T18:55:52.031Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T20:02:34.451Z",
+      "repository": "fb55/css-select",
+      "learningId": "learn-github-fb55-css-select",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T20:02:41.810Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

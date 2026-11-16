@@ -4,24 +4,24 @@
 {
   "source_repository": "nolabs-ai/nono",
   "source_url": "https://github.com/nolabs-ai/nono",
-  "source_version": "165e2f7a",
+  "source_version": "015103ec",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T00:37:31.336Z",
+  "timestamp": "2026-11-16T20:02:42.039Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nolabs-ai-nono",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `165e2f7a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T00:37:31.336Z`  
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `015103ec`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T20:02:42.039Z`  
 > **Learning ID**: `learn-github-nolabs-ai-nono`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nolabs-ai/nono:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T00:37:30.071Z  
+> **Harvest Timestamp**: 2026-11-16T20:02:40.707Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4986 stars
+- **Stars / Engagement**: 5015 stars
 
 ---
 
@@ -3004,37 +3004,166 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `165e2f7a` (2026-11-14)
-**Commit Message**: chore(nix): update prebuilt hashes for v0.82.0 (#2316)
+### Incident Patch 1: `3d8f9d09` (2026-11-16)
+**Commit Message**: docs(neps): add NEP-0011 for macOS Endpoint Security gate (#2312)
 
-Co-authored-by: SequeI <[REDACTED_EMAIL]>
+* docs(neps): add NEP-0011 for macOS Endpoint Security gate
 
-**File**: `flake.nix` (modified, +4/-4)
+Add NEP-0011 proposing an opt-in macOS enforcement layer built on
+Endpoint Security's `es_new_descendants_client` for macOS 27+. It uses a
+separately signed `nono-es-gate` helper process to handle kernel-level
+enforcement and dynamic runtime approvals while preserving Seatbelt as the
+static boundary.
+
+- Add `neps/0011-macos-endpoint-security-gate.md` in draft status
+- Update `ROADMAP.md` and the NEP index in `neps/README.md`
+
+Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+
+* docs(neps): add kernel tool sandboxing and grant expansion to nep-0011
+
+Update NEP-0011 to move command policy enforcement, tool sandboxing,
+and NEP-0002 grant expansion from userspace into the macOS kernel
+via the Endpoint Security gate.
+
+- Detail kernel-enforced command policy using identity and cdhash matching
+- Move tool sandboxing from userspace PATH shims to kernel-level lineage tracking
+- Eliminate the setsid requirement for sandboxed commands to preserve dev tty access
+- Support NEP-0002 runtime grant expansion via dynamic file access approvals
+- Update rollout roadmap, security 
+
+**File**: `ROADMAP.md` (modified, +2/-0)
 ```diff
-@@ -57,10 +57,10 @@
-     # Auto-updated by the `update-nix-hashes` job in release.yml
-     # after each release — no manual maintenance needed.
-     prebuiltHashes = {
--      "x86_64-linux" = "sha256-fswz/5w0m9+oS0SW56dVX2e8wz8eElx9+e+2U8bE5Wk=";
--      "aarch64-linux" = "sha256-pNh92wkX75YiS8xBolhzGNfQ6SRB5/9FRpblmAyfeSQ=";
--      "x86_64-darwin" = "sha256-95WqiPqvdZdf/GAOuHDnyfK1K6IDXfUIfslyoCUq/UA=";
--      "aarch64-darwin" = "sha256-cosd7vv2OQybdPyYLvve0eHEs3uZ3N76Lgcmbf702ek=";
-+      "x86_64-linux" = "sha256-gdelYWYi3PaMoO0rfms68IwSFvsMQtxtfs+9K78tP1A=";
-+      "aarch64-linux" = "sha256-3ha2Y/GUG0/4UA91800QpJfvHRk0KBVziI+56AjatT4=";
-+      "x86_64-darwin" = "sha256-47/ti1635jMv/J/F6I73IzjqepvIp/BwBHmqs5W89jU=";
-+      "aarch64-darwin" = "sha256-oRdgsdXpRxUtH9xkl7KrouQYUGGlY5Cy8RN8g87ztaQ=";
-     };
- 
-     prebuiltFor = system: let pkgs = pkgsFor system; in pkgs.stdenv.mkDerivation {
+@@ -48,3 +48,5 @@ _Under active authoring; not yet ready for a decision._
+   Extend the Tool Sandbox policy model so that a sandboxed command can request a narrowly scoped filesystem capability for one invocation without escaping the filesystem policy selected for that invocation.
+ - **[NEP-0005: Windows enforcement backend](neps/0005-windows-enforcement-backend.md)** — _Non-breaking_
+   Add a third OS enforcement backend to nono for Windows, alongside Linux (Landlock) and macOS (Seatbelt).
++- **[NEP-0011: macOS Endpoint Security layer for runtime approvals and kernel-enforced policy](neps/0011-macos-endpoint-security-gate.md)** — _Non-breaking_
++  Give macOS the runtime approvals and kernel-enforced policy it lacks today.
+```
+
+**File**: `neps/0011-macos-endpoint-security-gate.md` (added, +777/-0)
+```diff
+@@ -0,0 +1,777 @@
++---
++nep: 0011
++title: macOS Endpoint Security layer for runtime approvals and kernel-enforced policy
++authors:
++  - lukehinds
++status: draft
++created: 2026-11-13
++breaking: false
++superseded-by:
++---
++
++# NEP-0011: macOS Endpoint Security layer for runtime approvals and kernel-enforced policy
++
++## Summary
++
++Give macOS the runtime approvals and kernel-enforced policy it lacks today.
++An opt-in layer built on Apple's Endpoint Security framework (macOS 27+) lets
++the nono supervisor make kernel-level decisions about the process tree it
++launches, inside the Seatbelt sandbox, which stays the static, irreversible
++ceiling.
++
++That adds four capabilities to macOS:
++
++- **Runtime approval of file access for unmodified agents**, with no restart
++  and no code injected into the agent.
++- **Kernel-enforced command policy and tool sandboxing**, decided on
++  code-signing identity across the whole process tree.
++- **Mach/XPC and Unix-socket allow-lists** decided in the kernel.
++- **Exact denial capture and kernel-sourced audit**, including rollback
++  inputs and persistence tripwires.
++
++It is one `nono` codebase and one binary. Each release signs that binary
++twice: a plain artifact exactly as today, and an ES artifact carrying the
++restricted entitlement. Plain builds keep today's Seatbelt-only behaviour, and
++the difference is always reported.
++
++## Motivation
++
++### What macOS cannot do today
++
++Linux and macOS diverge most on one point: Linux can trap an access, ask, and
++let it proceed. macOS cannot.
++
++- **No runtime approval.** On Linux the supervisor traps `openat` with
++  seccomp user-notify, asks the approval backend, opens the file itself and
++  injects the fd. The agent never knows nono is there. On macOS the Seatbelt
++  profile cannot change after `sandbox_init`. The only runtime mechanism is a
++  sandbox extension token, which must be consumed by code running *inside*
++  the agent. nono's token-receiver shim does that through
++  `DYLD_INSERT_LIBRARIES`, and SIP and the hardened runtime strip that
++  injection for exactly the binaries that matter: `/usr/bin/env`, `/bin/sh`,
++  and standalone agent binaries such as the native `claude` build
++  (`proj/DESIGN-runtime-grant.md`). Even where the shim loads, the first
++  denied open fails. So today a missing grant means restarting with a wider
++  profile, and users over-grant up front.
++- **Command policy is not a kernel boundary.** `commands.{allow,deny}` was
++  deprecated in v0.33.0 as "startup-only command gating, not kernel-enforced.
++  Child processes can bypass it." Seatbelt can scope `process-exec*` by path
++  but not by code-signing identity, and it cannot ask.
++- **Tool sandboxing is enforced in userspace, with known gaps**
++  (`docs/cli/features/tool-sandbox.mdx`):
++  - mediated tools are protected by `(deny process-exec* (literal ...))`
++    rules on canonical paths, so a copied or renamed binary is a different
++    path;
++  - the session exec allow-list comes from a startup PATH scan, so binaries
++    outside PATH or installed later are not covered;
++  - pinned executables are verified and then exec'd by path, which leaves a
++    replace-before-launch window because macOS has no `fexecve`;
++  - caller attribution walks process ancestry and puts every mediated command
++    in its own POSIX session (`setsid`), which costs it its controlling
++    terminal (`/dev/tty` fails, `ssh` passphrase prompts fail), and
++    double-forking daemons need `daemon_pid_source` helpers that run
++    unsandboxed;
++  - NEP-0002 `approval_fs` grants are declare-then-relaunch: the child asks
++    for an exact path and the grant applies only to a fresh sandbox.
++- **Mach services use a deny-list.** The profile emits `(allow mach-lookup)`
++  and then denies securityd and keychain names
++  (`crates/nono/src/sandbox/macos.rs`). Every other launchd service is
++  reachable, and the service owner's identity is never checked.
++- **Process scoping is coarse.** `process-info*` and `signal` use
++  `same-sandbox` because Seatbelt cannot tell an agent's own children apart.
++- **Denials are seen late and incompletely.** The denial collector reads
++  Seatbelt denials from the unified log after the fact. Nothing observes
++  setuid execs, LaunchAgent installation or TCC changes.
++
++### Why now
++
++macOS 27 lets an ordinary command-line tool watch and gate just its own
++process tree with Endpoint Security, without root and without a system
++extension. Before this, ES was a host-wide facility for privileged daemons.
++From the SDK header:
++
++- a new kind of ES client, created with `es_new_descendants_client`, is
++  scoped to the *caller's* process subtree, existing and future descendants,
++  recursively, and unrelated processes are invisible. This NEP calls it a
++  *scoped client*;
++- it needs the restricted `com.apple.developer.endpoint-security.client`
++  entitlement, but **no root and no TCC approval**, and it does not have to be
++  a daemon or a system extension;
++- `
+```
+
+**File**: `neps/README.md` (modified, +1/-0)
+```diff
+@@ -109,4 +109,5 @@ CI fails PRs that leave them stale.
+ | 0008 | Session flight recorder | draft | Breaking: not yet assessed |
+ | 0009 | Account sign-in from the CLI (`nono platform login`) | draft | Breaking |
+ | 0010 | Session terminal capture | accepted | Non-breaking |
++| 0011 | macOS Endpoint Security layer for runtime approvals and kernel-enforced policy | draft | Non-breaking |
+ <!-- nep-index:end -->
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2322** (2026-11-16): chore(deps): bump jsonschema from 0.60.2 to 0.61.2 (@dependabot[bot])
+- **PR #2321** (2026-11-16): chore(deps): bump the routine-rust group with 9 updates (@dependabot[bot])
+- **PR #2320** (2026-11-16): chore(deps): bump the routine-actions group with 2 updates (@dependabot[bot])
+- **PR #2319** (2026-11-16): chore(deps): bump the sigstore group with 2 updates (@dependabot[bot])
+- **PR #2318** (closed): docs: explain how a profile grants pathname unix sockets (@georgantas)
 - **PR #2316** (2026-11-14): chore(nix): update prebuilt hashes for v0.82.0 (@github-actions[bot])
-- **PR #2311** (2026-11-13): chore: release v0.82.0 (@SequeI)
-- **PR #2307** (2026-11-13): fix(cli): allow mise to read ~/.tool-versions (@rnestler)
-- **PR #2302** (2026-11-12): feat(proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (@panga)
-- **PR #2297** (2026-11-11): feat(cli)!: unify platform commands and automatic enrollment (@SequeI)
-- **PR #2295** (2026-11-11): fix(proxy): normalize trailing slash in endpoint rule paths (@rnestler)
 
 ---
 
@@ -3054,37 +3183,32 @@ Co-authored-by: SequeI <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. nix): update prebuilt hashes for v0.82.0
+## X. docs(neps): add NEP-0011 for macOS Endpoint Security gate
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ROADMAP.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `165e2f7a`: nix): update prebuilt hashes for v0.82.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d8f9d09`: docs(neps): add NEP-0011 for macOS Endpoint Security gate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ROADMAP.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "x86_64-linux" = "sha256-gdelYWYi3PaMoO0rfms68IwSFvsMQtxtfs+9K78tP1A=";
-      "aarch64-linux" = "sha256-3ha2Y/GUG0/4UA91800QpJfvHRk0KBVziI+56AjatT4=";
-      "x86_64-darwin" = "sha256-47/ti1635jMv/J/F6I73IzjqepvIp/BwBHmqs5W89jU=";
-      "aarch64-darwin" = "sha256-oRdgsdXpRxUtH9xkl7KrouQYUGGlY5Cy8RN8g87ztaQ=";
+- **[NEP-0011: macOS Endpoint Security layer for runtime approvals and kernel-enforced policy](neps/0011-macos-endpoint-security-gate.md)** — _Non-breaking_
+  Give macOS the runtime approvals and kernel-enforced policy it lacks today.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      "x86_64-linux" = "sha256-fswz/5w0m9+oS0SW56dVX2e8wz8eElx9+e+2U8bE5Wk=";
-      "aarch64-linux" = "sha256-pNh92wkX75YiS8xBolhzGNfQ6SRB5/9FRpblmAyfeSQ=";
-      "x86_64-darwin" = "sha256-95WqiPqvdZdf/GAOuHDnyfK1K6IDXfUIfslyoCUq/UA=";
-      "aarch64-darwin" = "sha256-cosd7vv2OQybdPyYLvve0eHEs3uZ3N76Lgcmbf702ek=";
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `165e2f7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d8f9d09` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

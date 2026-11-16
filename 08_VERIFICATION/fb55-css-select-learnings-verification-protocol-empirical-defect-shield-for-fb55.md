@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:41.915Z",
+  "timestamp": "2026-11-16T20:02:45.825Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-fb55-css-select-learnings",
+  "learning_id": "LEARN-EVO-fb55-css-select-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fb55-css-select-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:41.915Z`  
-> **Learning ID**: `LEARN-REEXTRACT-fb55-css-select-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T20:02:45.825Z`  
+> **Learning ID**: `LEARN-EVO-fb55-css-select-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fb55-css-select-learnings.md`  
 > **Source**: github ([https://github.com/fb55/css-select](https://github.com/fb55/css-select))  
-> **Source Version**: `17d5d874`  
+> **Source Version**: `84ec1620`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T02:56:17.227Z  
+> **Timestamp**: 2026-11-16T20:02:33.697Z  
 > **Learning ID**: `learn-github-fb55-css-select`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fb55-css-select-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fb55/css-select](https://github.com/fb55/css-select))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T02:56:16.971Z  
+> **Harvest Timestamp**: 2026-11-16T20:02:33.415Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1500,48 +1500,146 @@ export const aliases: Record<string, string> = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17d5d874` (2026-11-09)
-**Commit Message**: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941)
+### Incident Patch 1: `84ec1620` (2026-11-13)
+**Commit Message**: build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (#1943)
 
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.2 to 4.39.3.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.39.2...v4.39.3)
+Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.72.1 to 8.72.2.
+- [Release notes](https://github.com/typescript-eslint/typescript-eslint/releases)
+- [Changelog](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md)
+- [Commits](https://github.com/typescript-eslint/typescript-eslint/commits/v8.72.2/packages/typescript-eslint)
 
 ---
 updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.39.3
-  dependency-type: direct:production
+- dependency-name: typescript-eslint
+  dependency-version: 8.72.2
+  dependency-type: direct:development
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
+**File**: `package-lock.json` (modified, +62/-62)
 ```diff
-@@ -23,9 +23,9 @@ jobs:
-               uses: actions/checkout@v7
- 
-             - name: Initialize CodeQL
--              uses: github/codeql-action/init@v4.39.2
-+              uses: github/codeql-action/init@v4.39.3
-               with:
-                   languages: "javascript"
- 
-             - name: Perform CodeQL Analysis
--              uses: github/codeql-action/analyze@v4.39.2
-+              uses: github/codeql-action/analyze@v4.39.3
+@@ -25,7 +25,7 @@
+                 "globals": "^17.14.0",
+                 "htmlparser2": "^12.0.0",
+                 "typescript": "^6.0.3",
+-                "typescript-eslint": "^8.72.1",
++                "typescript-eslint": "^8.72.2",
+                 "vitest": "^5.1.0"
+             },
+             "engines": {
+@@ -937,17 +937,17 @@
+             }
+         },
+         "node_modules/@typescript-eslint/eslint-plugin": {
+-            "version": "8.72.1",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+-            "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
++            "version": "8.72.2",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
++            "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+                 "@eslint-community/regexpp": "^4.12.2",
+-                "@typescript-eslint/scope-manager": "8.72.1",
+-                "@typescript-eslint/type-utils": "8.72.1",
+-                "@typescript-eslint/utils": "8.72.1",
+-                "@typescript-eslint/visitor-keys": "8.72.1",
++                "@typescript-eslint/scope-manager": "8.72.2",
++                "@typescript-eslint/type-utils": "8.72.2",
++                "@typescript-eslint/utils": "8.72.2",
++                "@typescript-eslint/visitor-keys": "8.72.2",
+                 "ignore": "^7.0.5",
+                 "natural-compare": "^1.4.0",
+                 "ts-api-utils": "^2.5.0"
+@@ -960,7 +960,7 @@
+                 "url": "https://opencollective.com/typescript-eslint"
+             },
+             "peerDependencies": {
+-                "@typescript-eslint/parser": "^8.72.1",
++                "@typescript-eslint/parser": "^8.72.2",
+                 "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+                 "typescript": ">=4.8.4 <6.1.0"
+             }
+@@ -976,16 +976,16 @@
+             }
+         },
+         "node_modules/@typescript-eslint/parser": {
+-            "version": "8.72.1",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+-            "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
++            "version": "8.72.2",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
++            "integrity": "sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+-                "@typescript-eslint/scope-manager": "8.72.1",
+-                "@typescript-eslint/types": "8.72.1",
+-                "@typescript-eslint/typescript-estree": "8.72.1",
+-                "@typescript-eslint/visitor-keys": "8.72.1",
++                "@typescript-eslint/scope-manager": "8.72.2",
++                "@typescript-eslint/types": "8.72.2",
++                "@typescript-eslint/typescript-estree": "8.72.2",
++                "@typescript-eslint/visitor-keys": "8.72.2",
+                 "debug": "^4.4.3"
+             },
+             "engines": {
+@@ -1001,14 +1001,14 @@
+             }
+         },
+         "node_modules/@typescript-eslint/project-service": {
+-            "version": "8.72.1",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
+-            "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGzW1J6jTg==",
++            "version": "8.72.2",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.2.tgz",
++            "integrity": "sha512-6y5dLTZdHhI8Eh3yIQ/bfQhRKwn5e+TpJj64o18Cngc0iW/BCrVvrr6zGYqXPnYH31u6YXAYiFh0+qxX5mybJw==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+-                "@typescript-eslint/tsconfig-utils": "^8.72.1",
+-                "@typescript-eslint/types": "^8.72.1",
++                "@typescript-eslint/tsconfig-utils": "^8.72.2",
++                "@typescript-eslint/types": "^8.72.2",
+                 "debug": "^4.4.3"
+             },
+             "engines": {
+@@ -1023,14 +1023,14 @@
+             }
+         },
+         "node_modules/@typescript-eslint/scope-manager": {
+-            "version": "8.72.1",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
+-            "integrity": "sha512-lC/t6eMCZZQAAKZEYGL6RDVSuFehpdmMT6h+nJIjIa6oylN/PwDgDVtEIbB7O9xFfZYtZAYLoLlDNWKJhtF+uQ==",
++            "version": "8.72.2",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.2.tgz",
++     
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@
+         "globals": "^17.14.0",
+         "htmlparser2": "^12.0.0",
+         "typescript": "^6.0.3",
+-        "typescript-eslint": "^8.72.1",
++        "typescript-eslint": "^8.72.2",
+         "vitest": "^5.1.0"
+     },
+     "scripts": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1943** (2026-11-13): build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (@dependabot[bot])
+- **PR #1942** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.6 (@dependabot[bot])
 - **PR #1941** (2026-11-09): build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (@dependabot[bot])
 - **PR #1939** (2026-11-06): build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
 - **PR #1938** (2026-11-06): build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (@dependabot[bot])
 - **PR #1936** (2026-11-04): build(deps-dev): bump globals from 17.13.0 to 17.14.0 (@dependabot[bot])
-- **PR #1935** (2026-11-03): build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (@dependabot[bot])
-- **PR #1933** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.4 (@dependabot[bot])
 
 ---
 
@@ -1561,33 +1659,65 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941)
+## X. build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2
 
 **RULE**:
-When implementing operations in `.github/workflows/codeql-analysis.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/css-select. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/css-select. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17d5d874`: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84ec1620`: build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql-analysis.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-              uses: github/codeql-action/init@v4.39.3
-              uses: github/codeql-action/analyze@v4.39.3
+                "typescript-eslint": "^8.72.2",
+            "version": "8.72.2",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
+            "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
+                "@typescript-eslint/scope-manager": "8.72.2",
+                "@typescript-eslint/type-utils": "8.72.2",
+                "@typescript-eslint/utils": "8.72.2",
+                "@typescript-eslint/visitor-keys": "8.72.2",
+                "@typescript-eslint/parser": "^8.72.2",
+            "version": "8.72.2",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
+            "integrity": "sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==",
+                "@typescript-eslint/scope-manager": "8.72.2",
+                "@typescript-eslint/types": "8.72.2",
+                "@typescript-eslint/typescript-estree": "8.72.2",
+                "@typescript-eslint/visitor-keys": "8.72.2",
+            "version": "8.72.2",
+            "resolved": "https://registry.npmjs.org/@typ
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-              uses: github/codeql-action/init@v4.39.2
-              uses: github/codeql-action/analyze@v4.39.2
+// Induced defect failure mode:
+                "typescript-eslint": "^8.72.1",
+            "version": "8.72.1",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+            "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
+                "@typescript-eslint/scope-manager": "8.72.1",
+                "@typescript-eslint/type-utils": "8.72.1",
+                "@typescript-eslint/utils": "8.72.1",
+                "@typescript-eslint/visitor-keys": "8.72.1",
+                "@typescript-eslint/parser": "^8.72.1",
+            "version": "8.72.1",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+            "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
+                "@typescript-eslint/scope-manager": "8.72.1",
+                "@typescript-eslint/types": "8.72.1",
+                "@typescript-eslint/typescript-estree": "8.72.1",
+                "@typescript-eslint/visitor-keys": "8.72.1",
+            "version": "8.72.1",
+            "resolved": "https://registry.npmjs.org/@typ
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17d5d874` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84ec1620` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

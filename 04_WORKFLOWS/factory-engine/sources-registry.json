@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T18:55:55.009Z",
-    "lastVerified": "2026-11-16T18:55:55.009Z",
+    "lastChecked": "2026-11-16T20:02:45.162Z",
+    "lastVerified": "2026-11-16T20:02:45.162Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -464,12 +464,12 @@
     "revisionIdentifier": "99d7433f"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T18:27:19.188Z",
-    "lastVerified": "2026-11-16T18:27:19.188Z",
+    "lastChecked": "2026-11-16T20:02:41.034Z",
+    "lastVerified": "2026-11-16T20:02:41.034Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -478,7 +478,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8ee7817e"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -644,22 +645,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T06:59:31.673Z",
-    "lastVerified": "2026-11-16T06:59:31.673Z",
+    "lastChecked": "2026-11-16T20:02:40.707Z",
+    "lastVerified": "2026-11-16T20:02:40.707Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "36cab4906bf4f292b72640f504287c857ee5cf25678fbff86725be3821de1197",
+    "contentHash": "c5a4d9b250dff7d7ddc4de56fefffc09abbfedbd3f6aece5e80351bb55fc8030",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "165e2f7a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "VectifyAI/PageIndex",
@@ -1012,9 +1012,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-15T11:40:25.545Z",
+    "lastChecked": "2026-11-16T20:02:33.583Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-15T11:40:25.545Z"
+    "lastVerified": "2026-11-16T20:02:33.583Z"
   },
   "bee-san-ciphey": {
     "name": "Ciphey",
@@ -1056,8 +1056,8 @@
     "officialUrl": "https://github.com/ducaale/xh",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T21:38:14.199Z",
-    "lastVerified": "2026-11-14T21:38:14.199Z",
+    "lastChecked": "2026-11-16T20:02:26.047Z",
+    "lastVerified": "2026-11-16T20:02:26.047Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ducaale-xh",
@@ -2167,8 +2167,8 @@
     "officialUrl": "https://github.com/zilliztech/claude-context",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-15T08:48:50.315Z",
-    "lastVerified": "2026-11-15T08:48:50.315Z",
+    "lastChecked": "2026-11-16T20:02:38.613Z",
+    "lastVerified": "2026-11-16T20:02:38.613Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zilliztech-claude-context",
@@ -11666,12 +11666,12 @@
     "officialUrl": "https://github.com/fb55/css-select",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T02:56:16.971Z",
-    "lastVerified": "2026-11-12T02:56:16.971Z",
+    "lastChecked": "2026-11-16T20:02:33.415Z",
+    "lastVerified": "2026-11-16T20:02:33.415Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fb55-css-select",
-    "contentHash": "ffa44b0e6ed9a0515589ed18b7c418de5b0561ae2a8bbdf4f52d7cad3fba68a2",
+    "contentHash": "98736740b34d6fce5ff7b783f8c864f83ec611605efaf0587336700d7391f409",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
@@ -11925,12 +11925,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "stikdebug-stikdebug": {
-    "name": "StikDebug/StikDebug",
+    "name": "StikDebug",
     "officialUrl": "https://github.com/StikDebug/StikDebug",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-13T06:20:31.911Z",
-    "lastVerified": "2026-11-13T06:20:31.911Z",
+    "lastChecked": "2026-11-16T20:02:31.034Z",
+    "lastVerified": "2026-11-16T20:02:31.034Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-stikdebug-stikdebug",
@@ -11939,7 +11939,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7a80dfce"
   },
   "psf-requests": {
     "name": "requests",

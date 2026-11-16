@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T18:55:56.847Z",
+  "last_updated": "2026-11-16T20:02:47.754Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-H2KP",
+      "id": "CD-XBNO",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-H2KP-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-XBNO-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -19935,6 +19935,55 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-XA9I",
+      "directive_title": "build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2",
+      "source_repo": "fb55-css-select-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XA9I-build-deps-dev-bump-typescript-eslint-from-8-72-1-to-8-72-2.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-XAUU",
+      "directive_title": "docs(neps): add NEP-0011 for macOS Endpoint Security gate",
+      "source_repo": "nolabs-ai-nono-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XAUU-docs-neps-add-nep-0011-for-macos-endpoint-security-gate.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-D0DB19",
+      "directive_title": "build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fb55-css-select",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D0DB19-build-deps-dev-bump-typescript-eslint-fr.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-7FB9E2",
+      "directive_title": "docs(neps): add NEP-0011 for macOS Endpoint Security gate",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nolabs-ai-nono",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7FB9E2-docs-neps-add-nep-0011-for-macos-endpoin.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-1BD779",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1BD779-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-16"
     }
   ]
 }

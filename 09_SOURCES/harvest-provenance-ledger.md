@@ -10364,3 +10364,5 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `240592ea` | Multi-dimensional audit evidence | 2026-11-16T18:55:48.695Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `829610e8` | Multi-dimensional audit evidence | 2026-11-16T18:55:50.858Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `886c258b` | Multi-dimensional audit evidence | 2026-11-16T18:55:52.026Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `84ec1620` | Multi-dimensional audit evidence | 2026-11-16T20:02:34.445Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `015103ec` | Multi-dimensional audit evidence | 2026-11-16T20:02:41.803Z |
