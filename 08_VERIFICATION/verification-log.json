@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-ZMG0",
-    "timestamp": "2026-11-13T23:01:31.872Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "07d15f5a5788e508a751f3abfe56ba0f59da2db454104a279e54ac14abf71e92",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-ZNVL",
-    "timestamp": "2026-11-13T23:01:33.729Z",
-    "repository": "u-root/u-root",
-    "learningId": "learn-github-u-root-u-root",
-    "contentHash": "89695c265dd46271dfb982bc75d5222981688d54aa24b18c1d062c33211674ad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-ZSCT",
     "timestamp": "2026-11-13T23:01:39.533Z",
     "repository": "openreplay/openreplay",
@@ -7490,6 +7460,36 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "a63beb7624744bbcbf28834049e0bef21336130225ab97eacc5eed6fc68a9a70",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-7ML7",
+    "timestamp": "2026-11-16T18:18:50.011Z",
+    "repository": "lxml/lxml",
+    "learningId": "learn-github-lxml-lxml",
+    "contentHash": "de49ec6fc0b76239af7d6bc461c60ffd62716947977bc8a34ce3ec031055d4ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-7T2G",
+    "timestamp": "2026-11-16T18:18:58.408Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "22cd038f42c7c8da2eda25e00ff51b97d577192bff3dbc13a6d1291c27192b42",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

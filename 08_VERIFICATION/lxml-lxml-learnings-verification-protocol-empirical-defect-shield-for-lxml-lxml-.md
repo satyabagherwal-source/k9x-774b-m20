@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:03.106Z",
+  "timestamp": "2026-11-16T18:19:02.406Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-lxml-lxml-learnings",
+  "learning_id": "LEARN-EVO-lxml-lxml-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lxml-lxml-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:03.106Z`  
-> **Learning ID**: `LEARN-REEXTRACT-lxml-lxml-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T18:19:02.406Z`  
+> **Learning ID**: `LEARN-EVO-lxml-lxml-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source**: github ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
-> **Source Version**: `ba82d526`  
+> **Source Version**: `74e94856`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T01:51:48.811Z  
+> **Timestamp**: 2026-11-16T18:18:48.920Z  
 > **Learning ID**: `learn-github-lxml-lxml`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T01:51:48.475Z  
+> **Harvest Timestamp**: 2026-11-16T18:18:48.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The lxml XML toolkit for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 3072 stars
+- **Stars / Engagement**: 3075 stars
 
 ---
 
@@ -2137,16 +2137,14 @@ def publish(dirname, lxml_path, release):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #543** (2026-11-07): **Do not share _IndexPathEvaluator state between ElementPath searches**
-  *Symptoms*: `_IndexPathEvaluator` in `elementpath.pxi` defines `_copy()` rather than overriding `copy()`, so `_evaluate_path()` keeps using the cached evaluator and shares its `_counter` between all searches for the same path. `find()` stops after the first match and leaves the counter dirty, so calling `root.find('a/b[2]')` twice on `<r><a><b>1</b><b>2</b></a><a><b>3</b><b>4</b></a></r>` returns `<b>2</b>` and then `<b>4</b>`, the second child of the wrong parent, and interleaved `iterfind()` loops or concurrent threads using the same path get each other's counts. Renaming the method gives each search its own evaluator again, as `[last()]` already does; the new test fails on master and also passes against `xml.etree.ElementTree`. 
+- **Issue #548** (2026-11-13): **Allow bytearray parameters to qnames**
+  *Symptoms*: `etree.Element` allows the `tag` to be a `bytearray`, in which case it's decoded to a str. It also allows setting a `bytearray` as tag later on, in which case it is *not* decoded to a str.  However `etree.QName` would raise a `ValueError` with both a direct `bytearray` parameter or an `Element` with a `bytearray` tag. This is because it performed its own type checking stricter than that of `Element`.  Since `_getNsTag` handles `bytearray` and `QName`, the type guard really only needs to unwrap `Element` and check for `None`.  Closes https://bugs.launchpad.net/lxml/+bug/2172456
   **Post-Mortem & Fix Analysis**:
-  > Thanks. Seems to be a 7.0 problem only, due to the elementpath rewrite.
+  > There's a caveat to this change: because I removed the `unicode` conversion case in the `QName` prologue, types which previously stringified to a valid tag name  now error e.g. ```python >>> class F(Enum): A = 1 # before >>> QName(False) 'False' >>> QName(F.A) 'F.A' # after >>> QName(False) ... TypeError: Argument must be bytes or unicode, got 'bool' >>> QName(F.A) ... TypeError: Argument must be bytes or unicode, got 'F' ``` If this is a problematic regression it can probably be restored by adding a try/except around the `_getNsTag` call, and fall back to `tag_utf = unicode(text_or_uri_or_element)`, which will restore the issue being caught (or not) by `_tagValidOrRaise` as it was previously.
+  > Thanks. I implemented a more complete API update in https://github.com/lxml/lxml/commit/16d61fa80a408d5237b4629b3c7df4f320eb13e4
 
-- **Issue #542** (2026-11-10): **Fix soupparser performance issues**
-  *Symptoms*: This PR fixes two sources of quadratic complexity in soupparser:  - It replaces repeated `len(parent)` calls with direct last-child access, avoiding increasingly expensive child counting as elements accumulate. - It batches adjacent text nodes before appending, avoiding repeated string copying.  This significantly improves parsing performance for large HTML documents without changing the resulting tree structure.
-  **Post-Mortem & Fix Analysis**:
-  > You could also add `lxml.html.soupparser` to the list of `COMPILED_MODULES` in `setupinfo.py` and see if compiling the module with Cython when building lxml makes a big difference. I excluded it because it grows the size of the installed package and we usually have beautifulsoup running before the conversion, which leaves little space for gains on lxml's side. But that would allow pulling a few more tricks in speeding up the code.  That's independent of this PR, though.
-  > > I wonder if it would be worth using itertools.groupby() to group by BS item type, and then handle one set of item types in one go. That way, we'd only need to look up the converter once and could join strings directly, both using tight and simple loops.  I gave this a shot and checked on 10 cached pages + a synthetic test case, and while `convert_tree` was about 8% faster on the synthetic case (which was just a bunch of adjacent text nodes), it was 15.5% slower on the cached examples. The current implementation seems to be the way to go :)  I'll test if Cython compilation does anything for performance.
+- **Issue #547** (2026-11-13): **Build: bump softprops/action-gh-release from 3.0.3 to 3.0.4 in the github-actions group**
+  *Symptoms*: Bumps the github-actions group with 1 update: [softprops/action-gh-release](https://github.com/softprops/action-gh-release).  Updates `softprops/action-gh-release` from 3.0.3 to 3.0.4 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/softprops/action-gh-release/releases">softprops/action-gh-release's releases</a>.</em></p> <blockquote> <h2>v3.0.4</h2> <ul> <li>maintenance release with updated dependencies</li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md">softprops/action-gh-release's changelog</a>.</em></p> <blockquote> <h2>3.0.4</h2> <ul> <li>maintenance release with updated dependencies</li> </ul> <h2>3.0.3</h2> <p><code>3.0.3</code> is a maintenance release with updated dependencies. It also safely classifies malformed GitHub API errors to avoid secondary failures (<a href="https://redirect.github.com/softprops/action-gh-release/issues/822">#822</a>).</p> <h2>What's Changed</h2> <h3>Bug fixes 🐛</h3> <ul> <li>fix: safely classify GitHub API errors by <a href="https://github.com/chenrui333"><code>@​chenrui333</code></a> in <a href="https://redirect.github.com/softprops/action-gh-release/pull/822">softprops/action-gh-release#822</a></li> </ul> <h3>Other Changes 🔄</h3> <ul> <li>dependency updates</li> </ul> <h2>3.0.2</h2> <p><code>3.0.2</code> is a patch release focused on release reliability and compatibility
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2163,174 +2161,84 @@ def publish(dirname, lxml_path, release):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `efaf1983` (2026-11-07)
-**Commit Message**: Build: Use security fixed zlib 1.4.
+### Incident Patch 1: `2bc2b79e` (2026-11-13)
+**Commit Message**: Build: bump softprops/action-gh-release (GH-547)
 
-**File**: `.github/workflows/cache_libs.yml` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@ on:
-   workflow_call:
-     inputs:
-       ZLIB_VERSION:
--        default: "1.3.2"
-+        default: "1.4"
-         required: false
-         type: string
-       LIBICONV_VERSION:
-@@ -20,7 +20,7 @@ on:
-         required: false
-         type: string
-       WIN_ZLIB_VERSION:
--        default: "1.3.2"
-+        default: "1.4"
-         required: false
-         type: string
-       WIN_LIBICONV_VERSION:
-```
+Bumps the github-actions group with 1 update: [softprops/action-gh-release](https://github.com/softprops/action-gh-release).
 
-**File**: `pyproject.toml` (modified, +2/-2)
+
+Updates `softprops/action-gh-release` from 3.0.3 to 3.0.4
+- [Release notes](https://github.com/softprops/action-gh-release/releases)
+- [Changelog](https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/softprops/action-gh-release/compare/efb35369e0ad2afab669f228072c1b0d510eae64...8a0cd651e5b2365bd640854a3fa5dfc70e4875f3)
+
+---
+updated-dependencies:
+- dependency-name: softprops/action-gh-release
+  dependency-version: 3.0.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: github-actions
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/wheels.yml` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ requires = ["Cython>=3.3.0", "setuptools"]
+@@ -328,7 +328,7 @@ jobs:
+           exit ${RESULT_CODE}
  
- [tool.cibuildwheel]
- build-verbosity = 1
--environment = {STATIC_DEPS="true", ZLIB_VERSION = "1.3.2", LIBICONV_VERSION = "1.19", LIBXML2_VERSION = "2.15.4", LIBXSLT_VERSION = "1.1.45", LXML_CSTD = "c11"}
-+environment = {STATIC_DEPS="true", ZLIB_VERSION = "1.4", LIBICONV_VERSION = "1.19", LIBXML2_VERSION = "2.15.4", LIBXSLT_VERSION = "1.1.45", LXML_CSTD = "c11"}
- enable = [
-     "pypy",
-     "pypy-eol",
-@@ -68,7 +68,7 @@ environment.CFLAGS = "-O3 -g1 -pipe -fPIC -flto -march=armv8-a -mtune=cortex-a72
- 
- [tool.cibuildwheel.windows]
- archs = ["AMD64", "x86", "ARM64"]
--environment = {STATIC_DEPS="true", ZLIB_VERSION = "1.3.2", LIBICONV_VERSION = "1.19", LIBXML2_VERSION = "2.11.9", LIBXSLT_VERSION = "1.1.45", LXML_CSTD = "c11"}
-+environment = {STATIC_DEPS="true", ZLIB_VERSION = "1.4", LIBICONV_VERSION = "1.19", LIBXML2_VERSION = "2.11.9", LIBXSLT_VERSION = "1.1.45", LXML_CSTD = "c11"}
- 
- [tool.cibuildwheel.macos]
- # https://cibuildwheel.readthedocs.io/en/stable/faq/#what-to-provide suggests to provide
+       - name: Release
+-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
++        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+         if: github.ref_type == 'tag'
+         with:
+           files: |
 ```
 
 ---
 
-### Incident Patch 2: `ba82d526` (2026-11-10)
-**Commit Message**: Build: Include "lxml.html.soupparser" in compiled modules.
+### Incident Patch 2: `dbd4a7aa` (2026-11-13)
+**Commit Message**: Build: Exclude PyPy 3.9/3.10.
 
-**File**: `setupinfo.py` (modified, +1/-0)
+**File**: `pyproject.toml` (modified, +2/-0)
 ```diff
-@@ -20,6 +20,7 @@
-     "lxml.builder",
-     "lxml.html.diff",
-     "lxml.html._difflib",
-+    "lxml.html.soupparser",
-     "lxml.sax",
- ]
- HEADER_FILES = ['etree.h', 'etree_api.h']
+@@ -12,6 +12,8 @@ enable = [
+ skip = [
+     "cp38-*",
+     "pp38-*",
++    "pp39-*",
++    "pp310-*",
+     "pp*-manylinux_i686",
+     "*-musllinux_i686",
+     "cp315*_i686",
 ```
 
 ---
 
-### Incident Patch 3: `c97c6a1e` (2026-11-10)
-**Commit Message**: Fix quadratic performance issues in soupparser (GH-542)
+### Incident Patch 3: `56f31cec` (2026-11-13)
+**Commit Message**: Tests: Remove left-over debug statement.
 
-* Avoid quadratic child counting in soupparser
-* Avoid quadratic text concatenation in soupparser
-
-**File**: `src/lxml/html/soupparser.py` (modified, +18/-7)
+**File**: `src/lxml/tests/test_etree.py` (modified, +0/-1)
 ```diff
-@@ -236,10 +236,12 @@ def map_attrs(bs_attrs):
-         return attribs
+@@ -235,7 +235,6 @@ def test_qname_bytearray(self):
+         self.assertEqual(etree.QName(name), etree.QName("a"))
  
-     def append_text(parent, text):
--        if len(parent) == 0:
-+        try:
-+            last_child = parent[-1]
-+        except IndexError:
-             parent.text = (parent.text or '') + text
-         else:
--            parent[-1].tail = (parent[-1].tail or '') + text
-+            last_child.tail = (last_child.tail or '') + text
+         el = etree.Element(name)
+-        print(el, repr(el))
+         self.assertEqual(etree.QName(el), etree.QName("a"))
  
-     # converters are tried in order of their definition
- 
-@@ -253,17 +255,26 @@ def convert_tag(bs_node, parent):
-             attribs = map_attrs(attrs) if attrs else {}
-             res = makeelement(bs_node.name, attrib=attribs)
- 
-+        # Join consecutive text nodes once to avoid quadratic string copying.
-+        text_parts = []
-         for child in bs_node:
-             # avoid double recursion by inlining convert_node(), see above
-             try:
-                 handler = converters[type(child)]
-             except KeyError:
--                pass
--            else:
--                if handler is not None:
--                    handler(child, res)
-+                handler = converters[type(child)] = find_best_converter(child)
-+            if handler is None:
-+                continue
-+            # The resolved handler keeps Comment and PI subclasses separate.
-+            if handler is convert_text:
-+                text_parts.append(unescape(child))
-                 continue
--            convert_node(child, res)
-+            if text_parts:
-+                append_text(res, ''.join(text_parts))
-+                text_parts.clear()
-+            handler(child, res)
-+        if text_parts:
-+            append_text(res, ''.join(text_parts))
-         return res
- 
-     @converter(Comment)
-```
-
-**File**: `src/lxml/html/tests/test_elementsoup.py` (modified, +27/-0)
-```diff
-@@ -35,6 +35,33 @@ def test_text(self):
-             res = b'''<html>huhu</html>'''
-             self.assertEqual(tostring(tree), res)
- 
-+        def test_adjacent_text_in_convert_tree(self):
-+            source = (
-+                '<html><body>before</span>after'
-+                '<span>inner</span>tail</b>after'
-+                '<!--comment-->more</em>next<?pi data?>end'
-+                '</body></html>')
-+            beautifulsoup = self.soupparser.BeautifulSoup
-+            bsargs = {}
-+            if hasattr(beautifulsoup, "DEFAULT_BUILDER_FEATURES"):
-+                bsargs["features"] = "html.parser"
-+            soup = beautifulsoup(source, **bsargs)
-+
-+            body = self.soupparser.convert_tree(soup)[0]
-+            span, comment, pi = body
-+
-+            self.assertEqual(body.text, "beforeafter")
-+            self.assertEqual(span.text, "inner")
-+            self.assertEqual(span.tail, "tailafter")
-+            self.assertEqual(comment.text, "comment")
-+            self.assertEqual(comment.tail, "morenext")
-+            self.assertEqual(pi.text, "data")
-+            self.assertEqual(pi.tail, "end")
-+            self.assertEqual(
-+                tostring(body, method="html"),
-+                b"<body>beforeafter<span>inner</span>tailafter"
-+                b"<!--comment-->morenext<?pi data>end</body>")
-+
-         def test_body(self):
-             html = '''<body><p>test</p></body>'''
-             res = b'''<html><body><p>test</p></body></html>'''
+         el.tag = name  # force tag to bytearray
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #548** (closed): Allow bytearray parameters to qnames (@xmo-odoo)
+- **PR #547** (2026-11-13): Build: bump softprops/action-gh-release from 3.0.3 to 3.0.4 in the github-actions group (@dependabot[bot])
+- **PR #546** (2026-11-13): Pypy3.12 fixes (@mattip)
+- **PR #545** (2026-11-13): fix(html): select matching option in fill_form for single-valued select (@pcbeingused333)
 - **PR #543** (2026-11-07): Do not share _IndexPathEvaluator state between ElementPath searches (@Nayana-Naik73)
 - **PR #542** (2026-11-10): Fix soupparser performance issues (@PLPeeters)
-- **PR #540** (2026-11-06): Build: bump the github-actions group across 1 directory with 2 updates (@dependabot[bot])
-- **PR #538** (2026-10-31): Preserve native RWLock test counters when building generated C (@Robolightning)
-- **PR #537** (closed): Build: bump actions/setup-python from 7.0.0 to 7.1.0 in the github-actions group (@dependabot[bot])
-- **PR #536** (2026-10-26): Build: bump pypa/cibuildwheel from 4.3.0 to 4.3.1 in the github-actions group (@dependabot[bot])
 
 ---
 
@@ -2350,33 +2258,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build: Use security fixed zlib 1.4.
+## X. Build: bump softprops/action-gh-release (GH-547)
 
 **RULE**:
-When implementing operations in `.github/workflows/cache_libs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/wheels.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `efaf1983`: Build: Use security fixed zlib 1.4.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2bc2b79e`: Build: bump softprops/action-gh-release (GH-547). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cache_libs.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/wheels.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        default: "1.4"
-        default: "1.4"
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-        default: "1.3.2"
-        default: "1.3.2"
+// Induced defect failure mode:
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `efaf1983` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2bc2b79e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

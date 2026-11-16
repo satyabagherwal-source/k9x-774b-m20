@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T07:42:33.288Z",
+  "timestamp": "2026-11-16T18:19:03.070Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gravitl-netmaker-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gravitl-netmaker-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T07:42:33.288Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T18:19:03.070Z`  
 > **Learning ID**: `LEARN-EVO-gravitl-netmaker-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `ccc98823`  
+> **Source Version**: `5485d954`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T07:41:57.904Z  
+> **Timestamp**: 2026-11-16T18:18:57.687Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T07:41:57.898Z  
+> **Harvest Timestamp**: 2026-11-16T18:18:57.681Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11873 stars
+- **Stars / Engagement**: 11876 stars
 
 ---
 
@@ -1042,678 +1042,295 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ccc98823` (2026-11-14)
-**Commit Message**: NM-356: Enable CE user ACL policies with All Users and per-user sources (#4231)
+### Incident Patch 1: `5485d954` (2026-11-16)
+**Commit Message**: Pre-Release Fixes v1.8.0 (#4232)
 
-* NM-356: add username filter to nodes api
+* fix(go): validate traffic public key;
 
-* NM-356: disconnect user devices and force Desktop logout on disable/delete
+* feat(go): rekey tenant idp sync hook;
 
-When a user is disabled or deleted (including IdP sync), disconnect their
-nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
+* feat(go): check if membership exists before creating;
 
-* NM-356: rm force logout from delete user path
+* feat(go): parse node addr without cidr as well;
 
-* NM-356: keep AllowAll when both default ACL policies are open
+* feat(go): only check for orphans before the cursor;
 
-Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
-Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
-rules. Short-circuit on open defaults only, and document the constraint.
+* feat(go): normalize usernames in idp synced users;
 
-* fix: enrich topology and connections with location, is_gw, and egresses
+* feat(go): allow patch method;
 
-Add location/country and is_gw on topology vertices and connection peers,
-with egresses listing egress vs internet_gateway (exit). Also classify paths
-through a peer's RelayedBy as relayed even when that relay is an exit router.
+* feat(go): allow master user to list all tenants;
 
-* add update fallback ns error
+* feat(go): publish server sync for non-master pods on idp sync hook rekey;
 
-* fix: require network query on network-scoped mutations for network admins
+* feat(go): add before peer can be skipped;
 
-ACL/egress/nameserver/tags/posture create-update-delete ignored ?network=
-after NM-378, so auth fell thr
+* feat(go): ignore vendor dir;
 
-**File**: `controllers/acls.go` (modified, +95/-96)
+* fix(go): use normalized usernames when verifying auth request;
+
+* fix(go): return error on user device host sso callback if user is disabled;
+
+* fix(go): reset auto relayed peers on inet gw creation;
+
+* feat(go): reset host owner_username field;
+
+* feat(go): return user-auth host registration unsupported error;
+
+* feat(go): remove unused file;
+
+* feat(go): move auto relayed peers reset to callers;
+
+* feat(go): allow updating static port;
+
+* feat(go): set net id is passed for flow logs;
+
+* feat(go): validate egress node firewall; optimize db queries on egress validation;
+
+* fix(go): add exclusion filter to list host api
+
+**File**: `go.mod` (modified, +3/-0)
 ```diff
-@@ -19,6 +19,7 @@ import (
- 	"github.com/gravitl/netmaker/mq"
- 	"github.com/gravitl/netmaker/schema"
- 	"github.com/gravitl/netmaker/scope"
-+	"github.com/gravitl/netmaker/servercfg"
- )
- 
- func aclHandlers(r *mux.Router) {
-@@ -46,6 +47,20 @@ func aclHandlers(r *mux.Router) {
- // @Success     200 {object} models.AclPolicyTypes
- // @Failure     500 {object} models.ErrorResponse
- func aclPolicyTypes(w http.ResponseWriter, r *http.Request) {
-+	srcGroupTypes := []models.AclGroupType{
-+		models.UserAclID,
-+		models.NodeTagID,
-+		models.NodeID,
-+	}
-+	// User groups remain Pro-only.
-+	if servercfg.IsPro {
-+		srcGroupTypes = []models.AclGroupType{
-+			models.UserAclID,
-+			models.UserGroupAclID,
-+			models.NodeTagID,
-+			models.NodeID,
-+		}
-+	}
- 	resp := models.AclPolicyTypes{
- 		RuleTypes: []models.AclPolicyType{
- 			models.DevicePolicy,
-@@ -55,119 +70,103 @@ func aclPolicyTypes(w http.ResponseWriter, r *http.Request) {
- 			models.NetworkAccess,
- 			models.ManagedAccess,
- 		},
--		SrcGroupTypes: []models.AclGroupType{
--			models.UserAclID,
--			models.UserGroupAclID,
--			models.NodeTagID,
--			models.NodeID,
--		},
-+		SrcGroupTypes: srcGroupTypes,
- 		DstGroupTypes: []models.AclGroupType{
- 			models.NodeTagID,
- 			models.NodeID,
- 			models.EgressID,
- 			models.NetmakerIPAclID,
- 			// models.NetmakerSubNetRangeAClID,
- 		},
--		ProtocolTypes: []models.ProtocolType{
--			{
--				Name:       models.Any,
--				AccessType: models.NetworkAccess,
--				AllowedProtocols: []models.Protocol{
--					models.ALL,
--				},
--				PortRange:        "All ports",
--				AllowPortSetting: false,
--			},
--			{
--				Name:       models.Http,
--				AccessType: models.NetworkAccess,
--				AllowedProtocols: []models.Protocol{
--					models.TCP,
--				},
--				PortRange: "80",
-+		ProtocolTypes: ceOrProProtocolTypes(),
-+	}
-+	logic.ReturnSuccessResponseWithJson(w, r, resp, "fetched acls types")
-+}
-+
-+// ceOrProProtocolTypes returns Any-only protocol types on CE. Custom
-+// protocol/port policies are Pro-only.
-+func ceOrProProtocolTypes() []models.ProtocolType {
-+	anyType := models.ProtocolType{
-+		Name:       models.Any,
-+		AccessType: models.NetworkAccess,
-+		AllowedProtocols: []models.Protocol{
-+			models.ALL,
-+		},
-+		PortRange:        "All ports",
-+		AllowPortSetting: false,
-+	}
-+	if !servercfg.IsPro {
-+		return []models.ProtocolType{anyType}
-+	}
-+	return []models.ProtocolType{
-+		anyType,
-+		{
-+			Name:       models.Http,
-+			AccessType: models.NetworkAccess,
-+			AllowedProtocols: []models.Protocol{
-+				models.TCP,
- 			},
--			{
--				Name:       models.Https,
--				AccessType: models.NetworkAccess,
--				AllowedProtocols: []models.Protocol{
--					models.TCP,
--				},
--				PortRange: "443",
-+			PortRange: "80",
-+		},
-+		{
-+			Name:       models.Https,
-+			AccessType: models.NetworkAccess,
-+			AllowedProtocols: []models.Protocol{
-+				models.TCP,
- 			},
--			// {
--			// 	Name: "MySQL",
--			// 	AllowedProtocols: []models.Protocol{
--			// 		models.TCP,
--			// 	},
--			// 	PortRange: "3306",
--			// },
--			// {
--			// 	Name: "DNS TCP",
--			// 	AllowedProtocols: []models.Protocol{
--			// 		models.TCP,
--			// 	},
--			// 	PortRange: "53",
--			// },
--			// {
--			// 	Name: "DNS UDP",
--			// 	AllowedProtocols: []models.Protocol{
--			// 		models.UDP,
--			// 	},
--			// 	PortRange: "53",
--			// },
--			{
--				Name:       models.AllTCP,
--				AccessType: models.NetworkAccess,
--				AllowedProtocols: []models.Protocol{
--					models.TCP,
--				},
--				PortRange: "All ports",
-+			PortRange: "443",
-+		},
-+		{
-+			Name:       models.AllTCP,
-+			AccessType: models.NetworkAccess,
-+			AllowedProtocols: []models.Protocol{
-+				models.TCP,
- 			},
--			{
--				Name:       models.AllUDP,
--				AccessType: models.NetworkAccess,
--				AllowedProtocols: []models.Protocol{
--					models.UDP,
--				},
--				PortRange: "All ports",
-+			PortRange: "All ports",
-+		},
-+		{
-+			Name:       models.AllUDP,
-+			AccessType: models.NetworkAccess,
-+			AllowedProtocols: []models.Protocol{
-+				models.UDP,
- 			},
--			{
--				Name:       models.ICMPService,
--				AccessType: models.NetworkAccess,
--				AllowedProtocols: []models.Protocol{
--					models.ICMP,
--				},
--				PortRange: "",
-+			PortRange: "All ports",
-+		},
-+		{
-+			Name:       models.ICMPService,
-+			AccessType: models.NetworkAccess,
-+			AllowedProtocols: []models.Protocol{
-+				models.ICMP,
- 			},
--			{
--				Name:       models.SSH,
--				AccessType: models.NetworkAccess,
--				AllowedProtocols: []models.Protocol{
--					models.TCP,
--				},
--				PortRange: "22",
-+			PortRange: "",
-+		},
-+		{
-+			Name:       models.SSH,
-+			AccessType: models.NetworkAccess,
-+			AllowedProtocols: []models.Protocol{
-+				models.TCP,
- 			},
--			{
--				Name:       models.ManagedSSH,
--				AccessType: models.ManagedAccess,
--				AllowedProtocols: []models.Protocol{
--					models.TCP,
--				},
--				AllowPortSetting: false,
-+			PortRange: "22",
-+		},
-+		{
-+			Name:       models.ManagedSSH,
-+			AccessType: models.ManagedAccess,
-+			AllowedProtocols: []models.Protocol{
-+				models.TCP,
- 			},
--			
+@@ -46,6 +46,7 @@ require (
+ 	github.com/klauspost/compress v1.20.3
+ 	github.com/matryer/is v1.4.1
+ 	github.com/pquerna/otp v1.5.0
++	github.com/sams96/rgeo v1.3.0
+ 	github.com/spf13/cobra v1.10.2
+ 	golang.org/x/time v0.15.0
+ 	google.golang.org/api v0.272.0
+@@ -76,6 +77,7 @@ require (
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-sql-driver/mysql v1.8.1 // indirect
+ 	github.com/goccy/go-json v0.10.6 // indirect
++	github.com/golang/geo v0.0.0-20230421003525-6adc56603217 // indirect
+ 	github.com/google/s2a-go v0.1.9 // indirect
+ 	github.com/googleapis/enterprise-certificate-proxy v0.3.14 // indirect
+ 	github.com/googleapis/gax-go/v2 v2.18.0 // indirect
+@@ -94,6 +96,7 @@ require (
+ 	github.com/segmentio/asm v1.2.1 // indirect
+ 	github.com/shopspring/decimal v1.4.0 // indirect
+ 	github.com/spf13/pflag v1.0.9 // indirect
++	github.com/twpayne/go-geom v1.6.0 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
+ 	go.opentelemetry.io/otel v1.46.0 // indirect
 ```
 
-**File**: `controllers/ext_client.go` (modified, +8/-0)
+**File**: `go.sum` (modified, +14/-0)
 ```diff
-@@ -1629,6 +1629,14 @@ func validateCustomExtClient(ctx context.Context, customExtClient *models.Custom
- 			}
- 		}
- 	}
-+	// PostUp/PostDown: nil = omit/leave unchanged on update; non-nil applies
-+	// (including "" to clear). Enforce max length when the field is present.
-+	if customExtClient.PostUp != nil && len(*customExtClient.PostUp) > 1024 {
-+		return errors.New("postup exceeds max length of 1024")
-+	}
-+	if customExtClient.PostDown != nil && len(*customExtClient.PostDown) > 1024 {
-+		return errors.New("postdown exceeds max length of 1024")
-+	}
+@@ -12,6 +12,10 @@ github.com/ClickHouse/clickhouse-go/v2 v2.49.0 h1:HgiLTraLGgMe8kYivQ6RzMHDUkU/uF
+ github.com/ClickHouse/clickhouse-go/v2 v2.49.0/go.mod h1:o8dSgGJGxY7CeWFNiKusF9a5RnLpgzuo7OaNyH0NQPE=
+ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
+ github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
++github.com/alecthomas/assert/v2 v2.10.0 h1:jjRCHsj6hBJhkmhznrCzoNpbA3zqy0fYiUcYZP/GkPY=
++github.com/alecthomas/assert/v2 v2.10.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
++github.com/alecthomas/repr v0.4.0 h1:GhI2A8MACjfegCPVq9f1FLvIBS+DrQ2KQBFZP1iFzXc=
++github.com/alecthomas/repr v0.4.0/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+ github.com/andybalholm/brotli v1.2.6 h1:ftYnfj6usCp+UGV5kSJ3+chpMQgU+gJf/AxsUQ52REI=
+ github.com/andybalholm/brotli v1.2.6/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
+ github.com/biter777/countries v1.7.5 h1:MJ+n3+rSxWQdqVJU8eBy9RqcdH6ePPn4PJHocVWUa+Q=
+@@ -59,6 +63,8 @@ github.com/go-playground/validator/v10 v10.30.5/go.mod h1:wEqiaov48pXX1kjhc3Da8y
+ github.com/go-sql-driver/mysql v1.7.0/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
+ github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
+ github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
++github.com/go-test/deep v1.1.1 h1:0r/53hagsehfO4bzD2Pgr/+RgHqhmf+k1Bpse2cTu1U=
++github.com/go-test/deep v1.1.1/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
+ github.com/goccy/go-json v0.10.6 h1:p8HrPJzOakx/mn/bQtjgNjdTcN+/S6FcG2CTtQOrHVU=
+ github.com/goccy/go-json v0.10.6/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
+ github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
+@@ -67,6 +73,8 @@ github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 h1:au07oEsX2xN0kt
+ github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9/go.mod h1:8vg3r2VgvsThLBIFL93Qb5yWzgyZWhEmBwUJWevAkK0=
+ github.com/golang-sql/sqlexp v0.1.0 h1:ZCD6MBpcuOVfGVqsEmY5/4FtYiKz6tSyUv9LPEDei6A=
+ github.com/golang-sql/sqlexp v0.1.0/go.mod h1:J4ad9Vo8ZCWQ2GMrC4UCQy1JpCbwU9m3EOqtpKwwwHI=
++github.com/golang/geo v0.0.0-20230421003525-6adc56603217 h1:HKlyj6in2JV6wVkmQ4XmG/EIm+SCYlPZ+V4GWit7Z+I=
++github.com/golang/geo v0.0.0-20230421003525-6adc56603217/go.mod h1:8wI0hitZ3a1IxZfeH3/5I97CI8i5cLGsYe7xNhQGs9U=
+ github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
+ github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
+ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+@@ -99,6 +107,8 @@ github.com/hashicorp/go-version v1.9.0 h1:CeOIz6k+LoN3qX9Z0tyQrPtiB1DFYRPfCIBtaX
+ github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
+ github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs4luLUK2k=
+ github.com/hashicorp/golang-lru/v2 v2.0.7/go.mod h1:QeFd9opnmA6QUJc5vARoKUSoFhyfM2/ZepoAG6RGpeM=
++github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUqJM=
++github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
+ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
+ github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
+@@ -151,6 +161,8 @@ github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJ
+ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
+ github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
+ github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
++github.com/sams96/rgeo v1.3.0 h1:IkXcEPP5fRU8t0tRj5FBqqPnd2XDoxROwY3EKQlLEvQ=
++github.com/sams96/rgeo v1.3.0/go.mod h1:iSKFW5MpJ1Ow02Jzcm5UYUg/jrrSZp7mzRrWis0K9Qg=
+ github.com/segmentio/asm v1.2.1 h1:DTNbBqs57ioxAD4PrArqftgypG4/qNpXoJx8TVXxPR0=
+ github.com/segmentio/asm v1.2.1/go.mod h1:BqMnlJP91P8d+4ibuonYZw9mfnzI9HfxselHZr5aAcs=
+ github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp81k=
+@@ -166,6 +178,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
+ github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+ github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
+ github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
++github.com/twpayne/go-geom v1.6.0 h1:WPOJLCdd8OdcnHvKQepLKwOZrn5BzVlNxtQB59IDHRE=
++github.com/twpayne/go-geom v1.6.0/go.mod h1:Kr+Nly6BswFsKM5sd31YaoWS5PeDDH2NftJTK7Gd028=
+ github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZqKjWU=
+ github.com/xyproto/randomstring v1.0.5/go.mod h1:rg
+```
+
+**File**: `logic/auto_relay.go` (modified, +10/-18)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"net"
+ 
+ 	"github.com/gravitl/netmaker/db"
++	"github.com/gravitl/netmaker/db/expr"
+ 	"github.com/gravitl/netmaker/logger"
+ 	"github.com/gravitl/netmaker/models"
+ 	"github.com/gravitl/netmaker/schema"
+@@ -112,28 +113,19 @@ func ResetAutoRelayedPeer(ctx context.Context, autoRelayedNode *models.Node) err
  	return nil
  }
  
-```
-
-**File**: `controllers/user.go` (modified, +35/-0)
-```diff
-@@ -70,6 +70,7 @@ func userHandlers(r *mux.Router) {
- 	r.HandleFunc("/api/v1/users/access_token", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getUserAccessTokens)))).Methods(http.MethodGet).Queries("username", "{username}")
- 	r.HandleFunc("/api/v1/users/access_token", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteUserAccessTokens)))).Methods(http.MethodDelete)
- 	r.HandleFunc("/api/v1/users/logout", middleware.Scope(scope.TenantScope, logic.SecurityCheck(false, logic.ContinueIfUserMatch(http.HandlerFunc(logout))))).Methods(http.MethodPost).Queries("username", "{username}")
-+	r.HandleFunc("/api/v1/users/network", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listNetworkUsers)))).Methods(http.MethodGet).Queries("network", "{network}")
- }
- 
- // @Summary     Create a user API access token
-@@ -1282,6 +1283,40 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
- 	json.NewEncoder(w).Encode(users)
- }
- 
-+// @Summary     List users with access to a network
-+// @Router      /api/v1/users/network [get]
-+// @Tags        Users
-+// @Security    oauth
-+// @Produce     json
-+// @Param       network query string true "Network ID"
-+// @Success     200 {array} models.ReturnUser
-+// @Failure     400 {object} models.ErrorResponse
-+// @Failure     500 {object} models.ErrorResponse
-+func listNetworkUsers(w http.ResponseWriter, r *http.Request) {
-+	network := r.URL.Query().Get("network")
-+	if network == "" {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("network is required"), logic.BadReq))
-+		return
-+	}
-+	if err := (&schema.Network{Name: network}).Get(r.Context()); err != nil {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(fmt.Errorf("network %s not found", network), logic.BadReq))
-+		return
-+	}
-+
-+	_users, err := (&schema.User{}).ListAllWithMembership(r.Context())
-+	if err != nil {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-+		return
-+	}
-+	networkUsers := make([]models.ReturnUser, 0)
-+	for i := range _users {
-+		if logic.UserHasAccessToNetwork(r.Context(), &_users[i], network) {
-+			networkUsers = append(networkUsers, logic.ToReturnUser(&_users[i]))
-+		}
-+	}
-+	logic.ReturnSuccessResponseWithJson(w, r, networkUsers, "fetched users for network "+network)
-+}
-+
- // @Summary     List all users
- // @Router      /api/v2/users [get]
- // @Tags        Users
-```
-
-**File**: `logic/acls.go` (modified, +90/-33)
-```diff
-@@ -3207,6 +3207,24 @@ func getSelectedEgressIPNets(dstTags []models.AclPolicyTag) (dst4, dst6 []net.IP
- 	return
- }
- 
-+// validateCENetworkAclProtoAndPorts rejects protocol/port scoping on CE.
-+// Network-access policies must be all-protocols / all-ports (type Any).
-+func validateCENetworkAclProtoAndPorts(acl models.Acl) error {
-+	if servercfg.IsPro || !acl.IsNetworkAccess() {
-+		return nil
-+	}
-+	if acl.ServiceType != "" && acl.ServiceType != models.Any {
-+		return errors.New("custom protocol and port policies are not allowed on CE")
-+	}
-+	if acl.Proto != "" && acl.Proto != models.ALL {
-+		return errors.New("custom protocols are not allowed on CE")
-+	}
-+	if len(acl.Port) > 0 {
-+		return errors.New("custom ports are not allowed on CE")
-+	}
-+	return nil
-+}
-+
- func checkIfAclTagisValid(ctx context.Context, a models.Acl, t models.AclPolicyTag, isSrc bool) (err error) {
- 	switch t.ID {
- 	case models.NodeID:
-@@ -3233,6 +3251,23 @@ func checkIfAclTagisValid(ctx context.Context, a models.Acl, t models.AclPolicyT
- 		if err != nil {
- 			return err
- 		}
-+	case models.UserAclID:
-+		if a.RuleType == models.DevicePolicy {
-+			return errors.New("device policy source mismatch")
-+		}
-+		if !isSrc {
-+			return errors.New("user cannot be added to destination")
-+		}
-+		if t.Value == "*" {
-+			return nil
-+		}
-+		userCheck := &schema.User{Username: t.Value}
-+		if err := userCheck.Get(ctx); err != nil {
-+			return errors.New("invalid user " + t.Value)
-+		}
-+	case models.UserGroupAclID:
-+		// User groups remain Pro-only.
-+		return errors.New("user groups are not supported")
- 	default:
- 		return errors.New("invalid policy")
- 	}
-@@ -3248,12 +3283,42 @@ var IsAclPolicyValid = func(ctx context.Context, acl models.Acl) (err error) {
+-// ResetAutoRelay - reset autorelayed peers
+ func ResetAutoRelay(ctx context.Context, autoRelayNode *models.Node) error {
+-	// Unset autorelayed peers
+-	nodes, err := GetNetworkNodes(ctx, autoRelayNode.Network)
++	autoRelayNodeID := autoRelayNode.ID.String()
++	_node := &schema.Node{ID: autoRelayNodeID}
++	err := _node.Get(ctx)
+ 	if err != nil {
  		return err
  	}
- 
--	//check if src and dst are valid
--	if acl.IsNetworkAccess() && acl.AllowedDirection == models.TrafficDirectionUni {
-+	// Device/resource policies on CE must be bidirectional. User policies are
-+	// always unidirectional (users → resources).
-+	if acl.RuleType == models.DevicePolicy && acl.IsNetworkAccess() &&
-+		acl.AllowedDirection == models.TrafficDirectionUni {
- 		return errors.New("uni traffic flow not allowed on CE")
- 	}
-+	if err := validateCENetworkAclProtoAndPorts(acl); err != nil {
-+		return err
-+	}
- 	switch acl.RuleType {
--
-+	case models.UserPolicy:
-+		for _, srcI := range acl.Src {
-+			if srcI.Value == "*" {
-+				if srcI.ID != models.UserAclID {
-+					return errors.New("user policy source mismatch")
-+				}
-+				continue
-+			}
-+			if srcI.ID == models.UserGroupAclID {
-+				return errors.New("user groups are not supported")
-+			}
-+			if err = checkIfAclTagisValid(ctx, acl, srcI, true); err != nil {
-+				return err
-+			}
-+		}
-+		for _, dstI := range acl.Dst {
-+			if dstI.Value == "*" {
-+				continue
-+			}
-+			if dstI.ID == models.NodeTagID && dstI.Value == fmt.Sprintf("%s.%s", acl.NetworkID.String(), models.GwTagName) {
-+				continue
-+			}
-+			if err = checkIfAclTagisValid(ctx, acl, dstI, false); err != nil {
-+				return err
-+			}
-+		}
- 	case models.DevicePolicy:
- 		for _, srcI := range acl.Src {
- 			if srcI.Value == "*" {
-@@ -3473,7 +3538,9 @@ func MigrateAclPolicies(ctx context.Context) {
- 			UpsertAcl(ctx, acl)
- 		}
- 		if !servercfg.IsPro {
--			if acl.IsNetworkAccess() && acl.AllowedDirection == models.TrafficDirectionUni {
-+			// Keep user policies unidirectional; only force device policies to bi on CE.
-+			if acl.RuleType == models.DevicePolicy && acl.IsNetworkAccess() &&
-+				acl.AllowedDirection == models.TrafficDirectionUni {
- 				acl.AllowedDirection = models.TrafficDirectionBi
- 				UpsertAcl(ctx, acl)
- 			}
-@@ -3747,9 +3814,6 @@ func GetDefaultPolicy(ctx context.Context, netID schema.NetworkID, ruleType mode
- 	if ruleType == models.DevicePolicy {
- 		aclID = "all-nodes"
- 	}
--	if !servercfg.IsPro && ruleType == models.UserPolicy {
--		return models.Acl{Enabled: true}, nil
--	}
- 	acl, err := GetAcl(ctx, fmt.Sprintf("%s.%s", netID, aclID))
- 	if err != nil {
- 		return models.Acl{}, errors.New("default rule not found")
-@@ -3789,9 +3853,6 @@ func ListAclsByNetwork(ctx context.Context, netID schema.NetworkID) ([]models.Ac
- 	allAcls := ListAcls(ctx)
- 	var netAcls []models.Acl
- 	for _, acl := range allAcls {
--		if !servercfg.IsPro && acl.RuleType == models.UserPolicy {
--			continue
--		}
- 		if acl.NetworkID == netID {
- 			netAcls = append(netAcls, acl)
- 		}
-@@ -3803,9 +3864,6 @@ func ListEgressAcls(ctx context.Context, egressID string) ([]models.Acl, error)
- 	acls := ListAcls(ctx)
- 	var egressAcls []models.Acl
- 	for _, acl := range acls {
--		if !servercfg.IsPro && acl.RuleType == models.UserPolicy {
--			continue
--		}
- 		for _, dst := range acl.Dst {
- 			if dst.ID == models.EgressID && dst.Value == egressID {
- 				egressAcls = append(egressAcls, acl)
-@@ -3954,28 +4012,27 @@ func ListAcls(ctx context.Context) (acls []models.Acl) {
- 	for _, r := range aclRecords {
- 		acl := r.Value.Data()
- 		if !servercfg.IsPro {
--			if acl.RuleType == models.UserPolicy {
+-	for _, node := range nodes {
+-		for autoRelayedPeerID, autoRelayID := range node.AutoRelayedPeers {
+-			if autoRelayID != autoRelayNode.ID.String() {
 -				continue
 -			}
--			skip :
-```
-
-**File**: `logic/extpeers.go` (modified, +8/-9)
-```diff
-@@ -315,14 +315,13 @@ func UpdateExtClient(old *models.ExtClient, update *models.CustomExtClient) mode
- 	if update.DeniedACLs != nil && !reflect.DeepEqual(old.DeniedACLs, update.DeniedACLs) {
- 		new.DeniedACLs = update.DeniedACLs
- 	}
--	// PostUp/PostDown: omitted and explicit "" both decode to empty, so treat
--	// empty as "leave unchanged" (same idea as PublicKey). Sparse updates
--	// (toggle, rename) must not wipe existing scripts.
--	if update.PostUp != "" {
--		new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
-+	// PostUp/PostDown are *string: nil leaves the stored script unchanged;
-+	// non-nil (including "") applies the value after normalizing newlines.
-+	if update.PostUp != nil {
-+		new.PostUp = strings.Replace(*update.PostUp, "\r\n", "\n", -1)
- 	}
--	if update.PostDown != "" {
--		new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
-+	if update.PostDown != nil {
-+		new.PostDown = strings.Replace(*update.PostDown, "\r\n", "\n", -1)
- 	}
- 	// Tags are usually managed via the tags API. Extclient edit payloads often
- 	// omit tags (nil); overwriting would drop the client from all tags. Only
-@@ -396,8 +395,8 @@ func listExtClients(ctx context.Context, options ...dbtypes.Option) ([]models.Ex
- // ToggleExtClientConnectivity - enables or disables an ext client
- //
- // Flips Enabled in place and saves. Does not go through UpdateExtClient with a
--// sparse CustomExtClient, which would drop fields omitted from the update
--// (notably PostUp/PostDown before those were guarded).
-+// sparse CustomExtClient (nil PostUp/PostDown would leave scripts unchanged
-+// now, but toggling still bypasses the full update path).
- func ToggleExtClientConnectivity(ctx context.Context, client *models.ExtClient, enable bool) (models.ExtClient, error) {
- 	if client == nil {
- 		return models.ExtClient{}, errors.New("nil ext client")
-```
-
-**File**: `logic/extpeers_test.go` (modified, +16/-2)
-```diff
-@@ -259,13 +259,27 @@ func TestUpdateExtClientPreservesPostUpPostDownWhenOmitted(t *testing.T) {
- 	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", updated.PostUp)
- 	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", updated.PostDown)
- 
-+	postUp := "echo up\r\necho up2"
-+	postDown := "echo down\r\necho down2"
- 	withScripts := UpdateExtClient(&old, &models.CustomExtClient{
- 		ClientID: "client-1",
--		PostUp:   "echo up\r\necho up2",
--		PostDown: "echo down\r\necho down2",
-+		PostUp:   &postUp,
-+		PostDown: &postDown,
- 	})
- 	assert.Equal(t, "echo up\necho up2", withScripts.PostUp)
- 	assert.Equal(t, "echo down\necho down2", withScripts.PostDown)
-+
-+	empty := ""
-+	cleared := UpdateExtClient(&old, &models.CustomExtClient{
-+		ClientID: "client-1",
-+		PostUp:   &empty,
-+		PostDown: &empty,
-+	})
-+	assert.Equal(t, "", cleared.PostUp)
-+	assert.Equal(t, "", cleared.PostDown)
-+	// Omitted pointers still leave scripts unchanged after a clear payload shape.
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", old.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", old.PostDown)
- }
- 
- func TestDeleteExtClient(t *testing.T) {
-```
-
-**File**: `logic/peers.go` (modified, +0/-3)
-```diff
-@@ -210,9 +210,6 @@ func (g *PeerGraph) HostPeerInfo(ctx context.Context, host *schema.Host) (models
- func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl) bool {
- 	deviceOn := device.Enabled && aclOpenBothSides(device)
- 	userOn := user.Enabled && aclOpenBothSides(user)
--	if !servercfg.IsPro {
--		userOn = true
+-			delete(node.AutoRelayedPeers, autoRelayedPeerID)
+-			UpsertNode(&node)
+-			peer, err := GetNodeByID(autoRelayedPeerID)
+-			if err == nil {
+-				delete(peer.AutoRelayedPeers, node.ID.String())
+-				UpsertNode(&peer)
+-			}
+-		}
 -	}
- 	for _, acl := range acls {
- 		if !acl.Enabled || !aclOpenBothSides(acl) {
- 			continue
-```
-
-**File**: `logic/user_device_acls.go` (renamed, +58/-53)
-```diff
-@@ -4,22 +4,27 @@ import (
- 	"context"
- 	"net"
- 
--	"github.com/gravitl/netmaker/logic"
- 	"github.com/gravitl/netmaker/models"
- 	"github.com/gravitl/netmaker/schema"
- )
- 
-+func init() {
-+	GetUserDeviceAclRulesForNode = getUserDeviceAclRulesForNode
-+	GetUserDeviceEgressRulesForNode = getUserDeviceEgressRulesForNode
-+	GetFwRulesForUserDevicesOnGw = getFwRulesForUserDevicesOnGw
-+}
+-	return nil
 +
- // Host-backed user devices (schema.Host.OwnerUsername) are real nodes, so their
- // firewall source is the node's own overlay address instead of a static-node
- // address. These hooks run alongside the ExtClient/RAC user hooks in
--// pro/logic/acls.go, which stay untouched.
-+// logic/user_policy_acls.go, which stay untouched.
- 
- // userDeviceRuleSuffix keeps user-device rule IDs from colliding with the
- // ExtClient user rules, which are keyed by the bare policy ID.
- const userDeviceRuleSuffix = "#user-device"
- 
- // listUserDevicesForACL lists host-backed user devices; tests may override.
--var listUserDevicesForACL = logic.ListUserDevicesByNetwork
-+var listUserDevicesForACL = ListUserDevicesByNetwork
- 
- // listEgressForUserDeviceACL lists network egresses; tests may override.
- var listEgressForUserDeviceACL = func(ctx context.Context, network string) ([]schema.Egress, error) {
-@@ -28,7 +33,7 @@ var listEgressForUserDeviceACL = func(ctx context.Context, network string) ([]sc
- 
- // getDefaultUserPolicyForUserDeviceACL loads the default user policy; tests may override.
- var getDefaultUserPolicyForUserDeviceACL = func(ctx context.Context, netID schema.NetworkID) (models.Acl, error) {
--	return logic.GetDefaultPolicy(ctx, netID, models.UserPolicy)
-+	return GetDefaultPolicy(ctx, netID, models.UserPolicy)
++	return db.FromContext(ctx).Model(&schema.Node{}).
++		Where("network_id = ?", _node.NetworkID).
++		Where(expr.WhereHasValue("auto_relayed_peers", autoRelayNodeID)).
++		UpdateColumn("auto_relayed_peers", expr.RemoveByValue("auto_relayed_peers", autoRelayNodeID)).
++		Error
  }
  
- // userDeviceSrcIPsForPolicy returns the overlay addresses of the devices whose
-@@ -55,10 +60,10 @@ func userDeviceSrcIPsForPolicy(policy models.Acl, devices []models.Node,
+ // GetAutoRelayPeerIps - adds the autorelayed peerIps by the peer
+```
+
+**File**: `mq/handlers.go` (modified, +4/-0)
+```diff
+@@ -187,6 +187,10 @@ func DeleteAndCleanupHost(h *schema.Host) {
+ 		slog.Error("failed to delete host", "id", h.ID, "error", err)
  		return
  	}
- 	for i := range devices {
--		if _, ok := owners[logic.NodeOwnerUsername(&devices[i])]; !ok {
-+		if _, ok := owners[NodeOwnerUsername(&devices[i])]; !ok {
- 			continue
- 		}
--		deviceSrc4, deviceSrc6 := logic.UserDeviceSrcIPs(&devices[i])
-+		deviceSrc4, deviceSrc6 := UserDeviceSrcIPs(&devices[i])
- 		if deviceSrc4.IP != nil {
- 			src4 = append(src4, deviceSrc4)
- 		}
-@@ -73,7 +78,7 @@ func userDeviceSrcIPsForPolicy(policy models.Acl, devices []models.Node,
- // policy which covers all users.
- func allUserDeviceSrcIPs(devices []models.Node) (src4, src6 []net.IPNet) {
- 	for i := range devices {
--		deviceSrc4, deviceSrc6 := logic.UserDeviceSrcIPs(&devices[i])
-+		deviceSrc4, deviceSrc6 := UserDeviceSrcIPs(&devices[i])
- 		if deviceSrc4.IP != nil {
- 			src4 = append(src4, deviceSrc4)
- 		}
-@@ -94,7 +99,7 @@ func egressMatchesPolicyDst(e schema.Egress, dstTags map[string]struct{}) bool {
- 			return true
- 		}
++	// delete if any pending reqs
++	if err := (&schema.PendingHost{HostID: h.ID.String()}).DeleteAllPendingHosts(ctx); err != nil {
++		slog.Error("failed to delete pending host reqs", "id", h.ID, "error", err)
++	}
+ }
+ 
+ func SignalPeer(signal models.Signal) {
+```
+
+**File**: `utils/geoinfo.go` (modified, +58/-1)
+```diff
+@@ -6,9 +6,12 @@ import (
+ 	"fmt"
+ 	"net"
+ 	"net/http"
++	"strconv"
+ 	"strings"
+ 	"sync"
+ 	"time"
++
++	"github.com/sams96/rgeo"
+ )
+ 
+ type GeoInfo struct {
+@@ -21,10 +24,64 @@ type GeoInfo struct {
+ func GetGeoInfo(ip ...net.IP) (*GeoInfo, error) {
+ 	geoInfo, err := getGeoInfoFromIPAPI(ip...)
+ 	if err == nil && geoInfo.HasUsableGeo() {
++		geoInfo.fillCountryCodeFromLocation()
+ 		return geoInfo, nil
  	}
--	for _, domainAns := range logic.AllDomainAnsFromEgress(e) {
-+	for _, domainAns := range AllDomainAnsFromEgress(e) {
- 		if _, ok := dstTags[domainAns]; ok {
- 			return true
- 		}
-@@ -128,8 +133,8 @@ func nodeRoutesEgress(node *models.Node, e *schema.Egress) bool {
- // show up as iptables "anywhere" and bypass per-egress IP restrictions.
- func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
- 	policy models.Acl, egs []schema.Egress, dst4, dst6 *[]net.IPNet) {
--	selectedIP4, selectedIP6 := getSelectedUserEgressIPNets(policy.Dst)
--	dstTags := logic.ConvAclTagToValueMap(policy.Dst)
-+	selectedIP4, selectedIP6 := getSelectedEgressIPNets(policy.Dst)
-+	dstTags := ConvAclTagToValueMap(policy.Dst)
- 	_, dstAll := dstTags["*"]
- 	for _, egI := range egs {
- 		if !egI.Status || (len(egI.Nodes) == 0 && len(egI.Tags) == 0) {
-@@ -139,12 +144,12 @@ func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
- 			continue
- 		}
- 		routes := nodeRoutesEgress(node, &egI)
--		if logic.IsEgressInternetGateway(egI) {
-+		if IsEgressInternetGateway(egI) {
- 			// 0.0.0.0/0 must only be installed on the exit's routing node.
- 			if !routes {
- 				continue
- 			}
--			logic.AppendEgressPolicyRange(egI, egI.Range, dst4, dst6)
-+			AppendEgressPolicyRange(egI, egI.Range, dst4, dst6)
- 			continue
- 		}
- 		if len(selectedIP4) > 0 || len(selectedIP6) > 0 {
-@@ -160,11 +165,11 @@ func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
- 			egressRange = egI.VirtualRange
- 		}
- 		if egressRange != "" {
--			logic.AppendEgressPolicyRange(egI, egressRange, dst4, dst6)
-+			AppendEgressPolicyRange(egI, egressRange, dst4, dst6)
- 			continue
- 		}
--		if logic.HasEgressDomainAns(egI) {
--			for _, domainAns := range logic.AllDomainAnsFromEgress(egI) {
-+		if HasEgressDomainAns(egI) {
-+			for _, domainAns := range AllDomainAnsFromEgress(egI) {
- 				ip, cidr, err := net.ParseCIDR(domainAns)
- 				if err != nil {
- 					continue
-@@ -201,21 +206,21 @@ func addUserDeviceAclRule(rules map[string]models.AclRule, policy models.Acl,
- 			Allowed:         true,
- 		}
- 	}
--	r.IPList = logic.UniqueIPNetList(append(r.IPList, src4...))
--	r.IP6List = logic.UniqueIPN
+ 
+-	return getGeoInfoFromIpInfo(ip...)
++	geoInfo, err = getGeoInfoFromIpInfo(ip...)
++	if err == nil {
++		geoInfo.fillCountryCodeFromLocation()
++	}
++	return geoInfo, err
++}
++
++var (
++	countryReverseGeocoder     *rgeo.Rgeo
++	countryReverseGeocoderOnce sync.Once
++)
++
++// fillCountryCodeFromLocation resolves CountryCode from Location via offline
++// reverse geocoding when the geo source returned coordinates but no code
++// (e.g. ipapi.is's free tier, which only returns a full country name).
++func (g *GeoInfo) fillCountryCodeFromLocation() {
++	if g == nil || g.CountryCode != "" {
++		return
++	}
++	lat, lon, ok := parseLatLon(g.Location)
++	if !ok {
++		return
++	}
++
++	countryReverseGeocoderOnce.Do(func() {
++		r, err := rgeo.New(rgeo.Countries110)
++		if err != nil {
++			return
++		}
++		countryReverseGeocoder = r
++	})
++	if countryReverseGeocoder == nil {
++		return
++	}
++
++	loc, err := countryReverseGeocoder.ReverseGeocode([]float64{lon, lat})
++	if err != nil {
++		return
++	}
++	g.CountryCode = loc.CountryCode2
++}
++
++// parseLatLon parses a "lat,lon" formatted Location string.
++func parseLatLon(location string) (lat, lon float64, ok bool) {
++	parts := strings.SplitN(strings.TrimSpace(location), ",", 2)
++	if len(parts) != 2 {
++		return 0, 0, false
++	}
++	lat, err1 := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
++	lon, err2 := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
++	if err1 != nil || err2 != nil {
++		return 0, 0, false
++	}
++	return lat, lon, true
+ }
+ 
+ // HasUsableGeo reports whether payload contains meaningful geo data.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4232** (2026-11-16): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4231** (2026-11-14): NM-356: Enable CE user ACL policies with All Users and per-user sources (@abhishek9686)
 - **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
 - **PR #4224** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4223** (closed): Release v1.7.0 (@abhishek9686)
-- **PR #4222** (2026-11-11): NM-356: skip FwUpdate calc for user-owned devices, allow relayed/auto-relayed egress traffic on gateway ACL paths (@abhishek9686)
 
 ---
 
@@ -1733,133 +1350,33 @@ after NM-378, so auth fell thr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NM-356: Enable CE user ACL policies with All Users and per-user sources
+## X. Pre-Release Fixes v1.8.0
 
 **RULE**:
-When implementing operations in `controllers/acls.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ccc98823`: NM-356: Enable CE user ACL policies with All Users and per-user sources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5485d954`: Pre-Release Fixes v1.8.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/acls.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/gravitl/netmaker/servercfg"
-	srcGroupTypes := []models.AclGroupType{
-		models.UserAclID,
-		models.NodeTagID,
-		models.NodeID,
-	}
-	// User groups remain Pro-only.
-	if servercfg.IsPro {
-		srcGroupTypes = []models.AclGroupType{
-			models.UserAclID,
-			models.UserGroupAclID,
-			models.NodeTagID,
-			models.NodeID,
-		}
-	}
-		SrcGroupTypes: srcGroupTypes,
-		ProtocolTypes: ceOrProProtocolTypes(),
-	}
-	logic.ReturnSuccessResponseWithJson(w, r, resp, "fetched acls types")
-}
-
-// ceOrProProtocolTypes returns Any-only protocol types on CE. Custom
-// protocol/port policies are Pro-only.
-func ceOrProProtocolTypes() []models.ProtocolType {
-	anyType := models.ProtocolType{
-		Name:       models.Any,
-		AccessType: models.NetworkAccess,
-		AllowedProtocols: []models.Protocol{
-			models.ALL,
-		},
-		PortRange:        "All ports",
-		AllowPortSetting: false,
-	}
-	if !servercfg.IsPro {
-		return []models.ProtocolType{anyType}
-	}
-	return []models.ProtocolType{
-		anyType,
-		{
-			Name:       models.Http,
-			AccessType: models.NetworkAccess,
-			AllowedProtocols: []models.Protocol{
-				models.TCP,
-			PortRange: "80",
-		},
-		{
-			Name:       models.Https,
-			AccessType: models.NetworkAccess,
-			AllowedPr
+	github.com/sams96/rgeo v1.3.0
+	github.com/golang/geo v0.0.0-20230421003525-6adc56603217 // indirect
+	github.com/twpayne/go-geom v1.6.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		SrcGroupTypes: []models.AclGroupType{
-			models.UserAclID,
-			models.UserGroupAclID,
-			models.NodeTagID,
-			models.NodeID,
-		},
-		ProtocolTypes: []models.ProtocolType{
-			{
-				Name:       models.Any,
-				AccessType: models.NetworkAccess,
-				AllowedProtocols: []models.Protocol{
-					models.ALL,
-				},
-				PortRange:        "All ports",
-				AllowPortSetting: false,
-			},
-			{
-				Name:       models.Http,
-				AccessType: models.NetworkAccess,
-				AllowedProtocols: []models.Protocol{
-					models.TCP,
-				},
-				PortRange: "80",
-			{
-				Name:       models.Https,
-				AccessType: models.NetworkAccess,
-				AllowedProtocols: []models.Protocol{
-					models.TCP,
-				},
-				PortRange: "443",
-			// {
-			// 	Name: "MySQL",
-			// 	AllowedProtocols: []models.Protocol{
-			// 		models.TCP,
-			// 	},
-			// 	PortRange: "3306",
-			// },
-			// {
-			// 	Name: "DNS TCP",
-			// 	AllowedProtocols: []models.Protocol{
-			// 		models.TCP,
-			// 	},
-			// 	PortRange: "53",
-			// },
-			// {
-			// 	Name: "DNS UDP",
-			// 	AllowedProtocols: []models.Protocol{
-			// 		models.UDP,
-			// 	},
-			// 	PortRange: "53",
-			// },
-			{
-				Name:       models.AllTCP,
-				AccessType: models.NetworkAccess,
-				AllowedPro
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ccc98823` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5485d954` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -10314,3 +10314,5 @@
 | `CYCLE-20261116-XC81` | `2026-11-16T18:10:50.017Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8766` | Yes (`fd4f9f98...`) |
 | `CYCLE-20261116-XEA2` | `2026-11-16T18:10:52.682Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8767` | Yes (`caca7c63...`) |
 | `CYCLE-20261116-XGPT` | `2026-11-16T18:10:55.841Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8768` | Yes (`a63beb76...`) |
+| `CYCLE-20261116-7ML7` | `2026-11-16T18:18:50.011Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8769` | Yes (`de49ec6f...`) |
+| `CYCLE-20261116-7T2G` | `2026-11-16T18:18:58.408Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5802` | Yes (`22cd038f...`) |

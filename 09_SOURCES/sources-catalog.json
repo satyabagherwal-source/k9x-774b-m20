@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "ccc98823",
+    "sourceVersion": "5485d954",
     "license": "NOASSERTION",
-    "contentHash": "198f9ed6cadb6f0184664283e264914e64f99530af8dadf4943aea24e6cbe101",
-    "lastHarvestedAt": "2026-11-15T07:41:58.803Z",
+    "contentHash": "22cd038f42c7c8da2eda25e00ff51b97d577192bff3dbc13a6d1291c27192b42",
+    "lastHarvestedAt": "2026-11-16T18:18:58.412Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -9313,10 +9313,10 @@
     "repository": "lxml/lxml",
     "platform": "github",
     "sourceUrl": "https://github.com/lxml/lxml",
-    "sourceVersion": "ba82d526",
+    "sourceVersion": "74e94856",
     "license": "BSD-3-Clause",
-    "contentHash": "47b8bac021feae427ec12f2f3ab1fd8c28097eb6e6068d7308cee11f58b4b8a4",
-    "lastHarvestedAt": "2026-11-12T01:52:01.991Z",
+    "contentHash": "de49ec6fc0b76239af7d6bc461c60ffd62716947977bc8a34ce3ec031055d4ff",
+    "lastHarvestedAt": "2026-11-16T18:18:50.015Z",
     "learningId": "learn-github-lxml-lxml"
   },
   "mazzzystar-queryable": {

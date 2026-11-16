@@ -10347,3 +10347,5 @@ Every entry in this ledger must capture:
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `866ce54b` | Multi-dimensional audit evidence | 2026-11-16T18:10:50.021Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `53db4d13` | Multi-dimensional audit evidence | 2026-11-16T18:10:52.686Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `6406c3f8` | Multi-dimensional audit evidence | 2026-11-16T18:10:55.844Z |
+| `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `74e94856` | Multi-dimensional audit evidence | 2026-11-16T18:18:50.015Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `5485d954` | Multi-dimensional audit evidence | 2026-11-16T18:18:58.412Z |
