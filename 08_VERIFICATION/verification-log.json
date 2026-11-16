@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-G394",
-    "timestamp": "2026-11-13T21:50:21.304Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "da3282fae4b163e86cce4ffecee66fb870984d625505162de2c0bc37ff9dcbe5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-QOMP",
-    "timestamp": "2026-11-13T21:58:35.569Z",
-    "repository": "Xudong-Huang/may",
-    "learningId": "learn-github-xudong-huang-may",
-    "contentHash": "e88e8b5195a76c7ce3913fd16863afddb2a759dd8faec3ae841cb10b45950762",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-QRM6",
-    "timestamp": "2026-11-13T21:58:39.438Z",
-    "repository": "FaridSafi/react-native-gifted-chat",
-    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
-    "contentHash": "91fb6f02cef4942a8ee82c3b2627cceee706c18e77be8ad64a8d3cb4563bc212",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-QYFI",
     "timestamp": "2026-11-13T21:58:48.270Z",
     "repository": "paradedb/paradedb",
@@ -7492,6 +7447,51 @@
     "contentHash": "c6ae4f8a676f9ed5249876a581a2b747d04082690736a6eed5c62cab0b405aea",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-0WLZ",
+    "timestamp": "2026-11-16T16:21:37.943Z",
+    "repository": "LiquidAI/LFM3-Audio-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+    "contentHash": "fa61a25d94de1d1069507ff1bc4730e797e246a9362e7b1bf86032943070d81c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-0Y9S",
+    "timestamp": "2026-11-16T16:21:40.096Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "d2495af9aff15a251a96c84e8e55e357e634ce62222b41f1d1f21373038c1087",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-16GX",
+    "timestamp": "2026-11-16T16:21:50.721Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "b0a2da97fd33e7128ae5f045e3da35144d60960a67e08b60f8ad4ccb5332f9c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

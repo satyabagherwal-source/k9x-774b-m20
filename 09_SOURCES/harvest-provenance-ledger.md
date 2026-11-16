@@ -10334,3 +10334,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-16T16:00:18.854Z |
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `45f478d2` | Multi-dimensional audit evidence | 2026-11-16T16:08:59.588Z |
 | `learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf` | `https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | `hf-hauhauc` | Multi-dimensional audit evidence | 2026-11-16T16:09:22.016Z |
+| `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-16T16:21:37.947Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `8bb6096b` | Multi-dimensional audit evidence | 2026-11-16T16:21:40.100Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `99b389db` | Multi-dimensional audit evidence | 2026-11-16T16:21:50.725Z |

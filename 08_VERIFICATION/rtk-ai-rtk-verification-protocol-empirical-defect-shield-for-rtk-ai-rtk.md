@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for rtk/ai/rtk
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for rtk-ai/rtk
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "rtk/ai/rtk",
-  "source_url": "https://github.com/rtk/ai/rtk",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "rtk-ai/rtk",
+  "source_url": "https://github.com/rtk-ai/rtk",
+  "source_version": "8bb6096b",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-16T16:21:40.266Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-rtk-ai-rtk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rtk/ai/rtk](https://github.com/rtk/ai/rtk) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [rtk-ai/rtk](https://github.com/rtk-ai/rtk) (Revision: `8bb6096b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T16:21:40.266Z`  
+> **Learning ID**: `learn-github-rtk-ai-rtk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rtk/ai/rtk` (Commit: `historical`)
+- **Target Repository**: `rtk-ai/rtk` (Commit: `8bb6096b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
-> **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `8bc263a9`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:00:22.980Z  
-> **Learning ID**: `learn-github-rtk-ai-rtk`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): rtk-ai/rtk
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:00:22.551Z  
+> **Harvest Timestamp**: 2026-11-16T16:21:39.220Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 86183 stars
+- **Stars / Engagement**: 86747 stars
 
 ---
 
@@ -1747,14 +1733,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5115** (2026-11-14): **rtk x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build**
+  *Symptoms*: # `rtk` x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build  ## Summary  The prebuilt `rtk-x86_64-unknown-linux-musl` binary from the latest release (v1.2.0) crashes immediately with `SIGILL` (Illegal instruction, exit code 132) on x86-64 CPUs that lack AVX2. The binary contains unguarded AVX2 instructions that execute before any runtime CPU-feature dispatch can pick a scalar fallback. A baseline build artifact (compiled with `target-cpu=x86-64` and AVX2/BMI2/FMA disabled at codegen) is needed for the many homelab and older-server machines still on Ivy Bridge / Sandy Bridge / pre-Excavator AMD.  ## Environment  - **OS:** Alpine Linux edge (musl), kernel 6.x - **CPU:** Intel Xeon E5-2695 v2 (Ivy Bridge, 2012) — has AVX, **no AVX2, no BMI1/BMI2, no FMA** - **CPU flags:** `sse sse2 ssse3 sse4_1 sse4_2 avx` (no `avx2`, no `bmi1`, no `bmi2`, no `fma`) - **rtk:** `v1.2.0`, installed via `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh` (asset `rtk-x86_64-unknown-linux-musl.tar.gz`) - **Reproduced commands:** `rtk`, `rtk --help`, `rtk --version` — all exit 132  ## Steps to reproduce  1. On any x86-64 CPU without AVX2 (Ivy Bridge, Sandy Bridge, pre-Ryzen AMD), run:    ```bash    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh    rtk --version    ``` 2. Alternatively, on an AVX2-capable machine, reproduce under QEMU:    ```bas
+
 - **Issue #5035** (2026-11-08): **fix(copilot): let the repository's Copilot hook run without rtk installed**
   *Symptoms*: Fixes the repository's own `.github/hooks/rtk-rewrite.json`, which broke Copilot sessions on this repository.  The hook ran `rtk hook`, which exits 2 because the subcommand is missing. Copilot denies the tool call when a `preToolUse` command hook exits non-zero, so every call was denied. Where `rtk` is not installed, such as the Copilot cloud agent sandbox, the command exits 127 with the same result.  The config now carries the stock entry that `rtk init --copilot` writes (`rtk hook copilot`, `version: 1`) in `bash` and `powershell` fields that exit 0 when `rtk` is not on `PATH`, so the tool call runs unchanged. The cloud agent honours `bash` and VS Code maps `bash` and `powershell` per OS. `hooks/copilot/rtk-awareness.md` named the command `rtk hook`; it now says `rtk hook copilot`.  `rtk init --copilot` is untouched. An opt-in guarded form for every agent is #5033.  ## Test plan  - [x] `tests/copilot_repo_hook_test.rs` runs the checked-in `bash` string through `sh` with an empty `PATH` (exit 0, no output) and with `rtk` on `PATH` (a `run_in_terminal` `git status` gets `updatedInput` `rtk git status`, no `permissionDecision`) - [x] The `powershell` string run through `pwsh` in `mcr.microsoft.com/powershell`: no `rtk` gives exit 0 with no output, `rtk` on `PATH` gives the same rewrite reply with stdin reaching `rtk`. Not run in CI and not run on Windows PowerShell - [x] `cargo fmt --all`, `cargo clippy --all-targets`, `cargo test --all` clean on the pushed commit  🤖 Generate
-
-- **Issue #5019** (2026-11-06): **fix(hooks): honour exclude_commands for a swapped program called by path**
-  *Symptoms*: ## Cause  The swap gate (#4685) checks `exclude_commands` only at the start of each word, so a program called by path is not matched: with `git` excluded, `/usr/bin/git log` is still swapped and the agent gets the worker's digest instead of git's output. Master runs it as typed.  ## Fix  Also match the word after a `/`. Patterns are anchored as `^name($|\s)`, so only a whole final path component matches (`/usr/bin/curlie` and `tools/curl/run.py` still swap). 
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/rtk-ai/rtk?pullRequest=5019) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/rtk-ai/rtk?pullRequest=5019) before we can accept your contribution.<br/><hr/>**Adrien EPPLING** seems not to be a GitHub user. You need a GitHub account to be able to sign the CLA. If you have already a GitHub account, please [add the email address used for this commit to your account](https://help.github.com/articles/why-are-my-commits-linked-to-the-wrong-user/#commits-are-not-linked-to-any-user).<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/rtk-ai/rtk?pullRequest=5019) it.</sub>
-  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes the swap-gate's exclude_commands matching so that a program invoked by its full or relative path (e.g. /usr/bin/git) is correctly matched against the exclusion list, not just bare command names at the start of a word. Adds a test covering excluded commands called via path, env-prefixed, and piped invocations, plus negative cases for similarly-named commands.  ### Review Checklist - [x] Tests present - [ ] Breaking change - [ ] Docs updated  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1771,611 +1754,439 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8bc263a9` (2026-11-10)
-**Commit Message**: Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning
+### Incident Patch 1: `61de0133` (2026-11-16)
+**Commit Message**: docs(guide): bring the embedding page in line with rtk 1.2.0
 
-docs: present RTK as the cost reduction engine for AI coding agents
+- Call `rtk rewrite -- "<command>"`: without `--`, a command string such
+  as `--help` or `-h` makes rtk print its own help on stdout with exit 0,
+  and the sketch handed that text back as the command to run.
+- The sketch now caches its version probe, checks `RTK_DISABLED` and
+  `rtk_ready()` before spawning, and fails open on `ValueError` (an
+  embedded NUL), as the page's own rules ask.
+- `rtk gain --format json` has carried `oversized_excluded` since 1.0.0;
+  a command above the 30,000-byte cap only increments it, so a
+  per-command database reads all zeros for a large output.
+- The exit-code table names partial allow rules, shell wrappers and an
+  unparseable settings file (exit 3), a deny inside a wrapper's script
+  (exit 1) and an inherited `RTK_REWRITE_HOST`; the settings paths
+  follow the nearest `.claude/` and `$CLAUDE_CONFIG_DIR`.
+- OpenCode now runs `rtk hook opencode`, not `rtk rewrite`; the Hermes
+  plugin's timeout is 5 s; `rtk bypass` is the escape hatch's name since
+  1.0.0; Linux caps a single argument at 32 pages; the
+  `exclude_commands` example uses commands rtk rewrites.
+- Version references move to
 
-**File**: `.github/assets/src/before-after.html` (added, +104/-0)
+**File**: `docs/guide/getting-started/embedding.md` (modified, +42/-31)
 ```diff
-@@ -0,0 +1,104 @@
-+<!doctype html>
-+<html><head><meta charset="utf-8">
-+<!-- Real output. Captured with `rtk bypass cargo test` (left) and `rtk cargo test` (right)
-+     on a 48-test crate with one failing assertion, rtk core 1.0.1. Only the lines marked
-+     "⋯ N more lines" are elided; the counts are exact. -->
-+<link rel="preconnect" href="https://fonts.googleapis.com">
-+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
-+<style>
-+:root{--bg:#060b18;--bg-card:#0f1629;--text:#e2e8f0;--text-bright:#f8fafc;--text-muted:#94a3b8;--text-dim:#7e8ca6;--accent:#00e599;--accent-dim:rgba(0,229,153,.10);--accent-glow:rgba(0,229,153,.25);--red:#f87171;--scene:rgba(0,229,153,.09);--tint:rgba(0,229,153,.045);--vignette:rgba(0,0,0,.42);--grid:rgba(148,163,184,.05);--line:rgba(148,163,184,.14)}
-+*{margin:0;padding:0;box-sizing:border-box}
-+html,body{width:1280px;height:560px;background:transparent}
-+.card{position:relative;width:1280px;height:560px;border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid var(--line);isolation:isolate;font-family:'Geist','Inter',sans-serif;color:var(--text)}
-+.atmo{position:absolute;inset:0;z-index:-1;background-image:
-+ radial-gradient(ellipse 34% 80% at 50% 50%,var(--scene),transparent 62%),
-+ linear-gradient(180deg,transparent 4%,var(--tint) 42%,transparent 84%),
-+ radial-gradient(ellipse 120% 105% at 50% 48%,transparent 56%,var(--vignette) 100%)}
-+.grid{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse 30% 70% at 50% 50%,#000 20%,transparent 75%)}
-+.eyebrow{position:absolute;left:56px;top:34px;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
-+.eyebrow b{color:var(--text-muted);font-weight:500}
-+.cmd{position:absolute;right:56px;top:30px;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-muted)}
-+.cmd span{color:var(--accent)}
-+.panel{position:absolute;top:84px;width:470px;height:440px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 30%),var(--bg-card);overflow:hidden}
-+.panel.left{left:56px}.panel.right{right:56px}
-+.ph{display:flex;align-items:center;gap:10px;height:42px;padding:0 18px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
-+.ph i{width:9px;height:9px;border-radius:50%;display:inline-block}
-+.left .ph i{background:var(--red);opacity:.8}.right .ph i{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
-+.ph .n{margin-left:auto;letter-spacing:.04em;text-transform:none}
-+.left .ph .n{color:var(--red);opacity:.85}.right .ph .n{color:var(--accent)}
-+pre{font-family:'JetBrains Mono',monospace}
-+.left pre{white-space:pre;padding:10px 18px;font-size:11.5px;line-height:13.5px;color:rgba(148,163,184,.55)}
-+.left pre .f{color:var(--red);opacity:.9}
-+.left pre .m{color:rgba(148,163,184,.38);font-style:italic}
-+.right pre{white-space:pre-wrap;padding:18px 20px;font-size:13.5px;line-height:22px;color:var(--text)}
-+.right pre .f{color:var(--red)}
-+.right pre .ok{color:var(--accent)}
-+.right pre .p{color:var(--text-muted)}
-+.right pre .r{color:var(--accent);opacity:.85}
-+.gate{position:absolute;left:526px;top:84px;width:228px;height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
-+.gate::before{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,var(--accent-glow) 30%,var(--accent-glow) 70%,transparent)}
-+.gate::after{content:'';position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--accent-glow) 0%,transparent 62%);opacity:.7}
-+.gate img{position:relative;z-index:1;width:124px;height:124px;filter:drop-shadow(0 0 10px var(--accent-glow)) drop-shadow(0 0 32px var(--accent-glow))}
-+.gate .lbl{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.26em;color:var(--text-muted)}
-+.strand{position:absolute;left:526px;top:84px;width:228px;height:440px;z-index:0}
-+</style></head>
-+<body><div class="card"><div class="atmo"></div><div class="grid"></div>
-+<p class="eyebrow">01 / Install &amp; forget · <b>what your agent reads</b></p>
-+<p class="cmd"><span>$</span> cargo test</p>
-+
-+<div class="panel left">
-+ <div class="ph"><i></i>without rtk<span class="n">71 lines</span></div>
-+<pre>   Compiling authkit v0.4.2 (/private/tmp/claude-501/-Users-aeppling--superconductor-worktrees-rtk-sc-flux-phonon-4e98/d36bac6a-c158-4776-8c24-adbe62511c7f/scratchpad/demo)
-+    Finished `test` 
-```
-
-**File**: `.github/assets/src/companies.html` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+<!doctype html>
-+<html><head><meta charset="utf-8">
-+<!-- The 18 logos of rtk-ai.app's "Starred by developers at" strip (rtk-ldp Companies.astro) plus a third
-+     row of the largest companies found in the stargazers' public profiles. Transparent background and one
-+     flat grey so it reads on GitHub's light and dark themes alike. -->
-+<link rel="preconnect" href="https://fonts.googleapis.com">
-+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
-+<style>
-+*{margin:0;padding:0;box-sizing:border-box}
-+html,body{width:1280px;height:300px;background:transparent}
-+.wrap{width:1280px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-family:'Inter',sans-serif}
-+.eyebrow{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:#8b95a7}
-+.rows{display:flex;flex-direction:column;gap:26px}
-+.row{display:flex;align-items:center;justify-content:center;gap:26px}
-+.row img{display:block;width:auto;height:calc(var(--h) * 1.4);filter:brightness(0) invert(.6);opacity:.95}
-+.more{font-size:18px;color:#8b95a7;white-space:nowrap}
-+</style></head>
-+<body><div class="wrap">
-+ <p class="eyebrow">Starred by developers at</p>
-+ <div class="rows"><div class="row"><img src="companies/microsoft.svg" alt="Microsoft" style="--h:20px"><img src="companies/google.svg" alt="Google" style="--h:22px"><img src="companies/amazon.svg" alt="Amazon" style="--h:22px"><img src="companies/meta.svg" alt="Meta" style="--h:20px"><img src="companies/apple.svg" alt="Apple" style="--h:29px"><img src="companies/nvidia.svg" alt="NVIDIA" style="--h:19px"><img src="companies/ibm.svg" alt="IBM" style="--h:24px"><img src="companies/tencent.svg" alt="Tencent" style="--h:17px"><img src="companies/bytedance.svg" alt="ByteDance" style="--h:19px"></div><div class="row"><img src="companies/alibaba.svg" alt="Alibaba" style="--h:18px"><img src="companies/shopify.svg" alt="Shopify" style="--h:21px"><img src="companies/datadog.svg" alt="Datadog" style="--h:22px"><img src="companies/sap.svg" alt="SAP" style="--h:26px"><img src="companies/adobe.svg" alt="Adobe" style="--h:21px"><img src="companies/intel.svg" alt="Intel" style="--h:24px"><img src="companies/samsung.svg" alt="Samsung" style="--h:18px"><img src="companies/bosch.svg" alt="Bosch" style="--h:20px"><img src="companies/cisco.svg" alt="Cisco" style="--h:26px"></div><div class="row"><img src="companies/jpmorgan-chase.svg" alt="JPMorgan Chase" style="--h:14px"><img src="companies/oracle.svg" alt="Oracle" style="--h:13px"><img src="companies/netflix.svg" alt="Netflix" style="--h:18px"><img src="companies/toyota.svg" alt="Toyota" style="--h:14px"><img src="companies/salesforce.svg" alt="Salesforce" style="--h:26px"><img src="companies/siemens.svg" alt="Siemens" style="--h:16px"><img src="companies/accenture.svg" alt="Accenture" style="--h:21px"><img src="companies/uber.svg" alt="Uber" style="--h:19px"><img src="companies/spotify.svg" alt="Spotify" style="--h:19px"></div></div>
-+ <p class="more">and 1,100+ more companies</p>
-+</div></body></html>
-```
-
-**File**: `.github/assets/src/companies/accenture.svg` (added, +410/-0)
-```diff
-@@ -0,0 +1,410 @@
-+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-+<!-- Created with Inkscape (http://www.inkscape.org/) -->
-+<svg
-+   xmlns:svg="http://www.w3.org/2000/svg"
-+   xmlns="http://www.w3.org/2000/svg"
-+   version="1.0"
-+   width="1133.8583"
-+   height="374.88187"
-+   id="svg2">
-+  <defs
-+     id="defs4">
-+    <clipPath
-+       id="clipPath2349">
-+      <path
-+         d="M -85.5,-19 L -85.5,19 L 85.5,19 L 85.5,-19 L -85.5,-19 z"
-+         id="path2351" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2341">
-+      <path
-+         d="M 0,0 L 603.7795,0 L 603.7795,841.8898 L 0,841.8898 L 0,0 z"
-+         id="path2343" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2926">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2928" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2918">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2920" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2694">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2696" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2686">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2688" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2678">
-+      <path
-+         d="M 405.35,120.15 L 510.24,120.15 L 510.24,91.8 L 405.35,91.8 L 405.35,120.15 z"
-+         id="path2680" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2498">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2500" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2490">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2492" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2482">
-+      <path
-+         d="M 51.02,680.71 L 595.28,680.71 L 595.28,126.67 L 51.02,126.67 L 51.02,680.71 z"
-+         id="path2484" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2464">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2466" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2456">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2458" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5050">
-+      <path
-+         d="M -610.389,657.405 L -56.916,657.405 L -56.916,664.488 L -610.389,664.488 L -610.389,657.405 z"
-+         id="path5052" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5036">
-+      <path
-+         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
-+         id="path5038" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5028">
-+      <path
-+         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
-+         id="path5030" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5016">
-+      <path
-+         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
-+         id="path5018" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5008">
-+      <path
-+         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
-+         id="path5010" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4996">
-+      <path
-+         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
-+         id="path4998" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4988">
-+      <path
-+         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
-+         id="path4990" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4972">
-+      <path
-+         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
-+         id="path4974" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4964">
-+      <path
-+         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
-+         id="path4966" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4950">
-+      <path
-+         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
-+         id="path4952" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4942">
-+      <path
-+         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
-+         id="path4944" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4928">
-+      <path
-+         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 40.806,657.405 z"
-+         id="path4930" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4920">
-+      <path
-+         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 4
-```
-
-**File**: `.github/assets/src/companies/adobe.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" fill="#fa0c00" viewBox="-0.27 -0.27 54.97 14.88"><path d="M5.996 0H0v14.34zm4.219 0h5.988v14.34zm-2.11 5.285 3.817 9.055H9.418l-1.14-2.883H5.483Zm17.88 3.835.707 2.027c.024.05.059.074.121.074h1.36c.074 0 .086-.035.074-.11l-2.809-7.8c-.011-.063-.023-.075-.086-.075h-1.687c-.047 0-.074.036-.074.086-.024.41-.059.536-.11.657l-2.504 7.12c-.011.087.016.122.086.122h1.215c.074 0 .11-.024.137-.098l.668-2.004ZM23.47 7.794c.367-1.11.851-2.531 1.047-3.344h.011c.242.852.813 2.54 1.07 3.344zm8.388 3.548a5.8 5.8 0 0 0 2.297-.473c.062-.023.074-.05.074-.11a8 8 0 0 1-.051-.776V2.639c0-.047 0-.07-.059-.07h-1.324c-.05 0-.074.023-.074.085v2.489a4 4 0 0 0-.523-.035c-2.137 0-3.45 1.41-3.45 3.171 0 2.043 1.348 3.063 3.11 3.063m.863-1.36c-.219.07-.461.098-.707.098-.969 0-1.762-.547-1.762-1.875 0-1.176.817-1.87 1.899-1.87.218 0 .41.023.57.085zm5.732-4.874c-1.824 0-2.953 1.398-2.953 3.125 0 1.542.899 3.109 2.926 3.109 1.715 0 2.918-1.262 2.918-3.149 0-1.664-1.02-3.085-2.89-3.085m-.074 1.226c1.031 0 1.469.887 1.469 1.899 0 1.25-.645 1.87-1.395 1.87-.925 0-1.472-.777-1.472-1.898 0-1.152.582-1.87 1.398-1.87m4.333-3.767c-.05 0-.086.024-.086.086v8.313c0 .035.035.098.086.11q.875.267 1.82.265c1.801 0 3.551-1.117 3.551-3.367 0-1.63-1.117-2.867-2.867-2.867a3.5 3.5 0 0 0-1.106.171l-.015-2.613c0-.086-.024-.098-.11-.098zm3.875 5.555c0 1.348-.922 1.98-1.918 1.98-.207 0-.39-.011-.559-.062V6.494c.192-.074.422-.136.848-.136.961 0 1.629.609 1.629 1.765m6.438.437c.594 0 1.082-.011 1.25-.05.063-.012.086-.035.098-.086.035-.133.05-.41.05-.75 0-1.156-.695-2.566-2.492-2.566-1.836 0-2.855 1.496-2.855 3.183 0 1.496.789 3.05 3 3.05.828 0 1.363-.132 1.824-.35.047-.024.07-.063.07-.133V9.846c0-.059-.035-.07-.07-.047q-.688.293-1.508.293c-1.238 0-1.8-.684-1.836-1.531zm-2.469-1.046c.098-.594.473-1.239 1.313-1.239.926 0 1.168.778 1.168 1.13v.097c-.051.012-.207.012-.668.012zm0 0"/></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/alibaba.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-3.87 -3.87 781.00 129.73" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="none"/><g class="currentLayer"><path d="M487.347 82.828c0 12.332-6.25 18.498-18.741 18.498-8.006 0-12.006-2.926-12.006-8.798 0-5.323 4.217-8.716 12.62-10.185 3.105-.544 9.143-.818 18.127-.818zm35.239-16.99c0-21.399-16.204-31.45-47.942-32.108-33.079-.683-47.053 7.93-49.832 26.019h34.3c1.654-5.891 5.616-9.188 13.826-8.9 8.07.287 14.077 4.382 14.377 15.104-18.46.275-32.057 1.348-41.392 3.585-18.013 4.32-26.964 14.14-26.964 27.5 0 9.004 3.987 15.579 11.935 19.706 5.988 3.093 13.757 4.978 23.303 4.646 15.642-.544 26.914-5.003 33.897-14.23v12.357h34.504zm215.44 16.99c0 12.332-6.255 18.498-18.74 18.498-8.007 0-12.007-2.926-12.007-8.798 0-5.323 4.211-8.716 12.62-10.185 3.105-.544 9.137-.818 18.127-.818zm35.239-16.99c0-21.399-16.21-31.45-47.941-32.108-33.086-.683-47.06 7.93-49.833 26.019h34.3c1.654-5.891 5.616-9.188 13.827-8.9 8.063.287 14.07 4.382 14.37 15.104-18.453.275-32.057 1.348-41.392 3.585-18.006 4.32-26.958 14.14-26.958 27.5 0 9.004 3.98 15.579 11.93 19.706 5.993 3.093 13.763 4.978 23.302 4.646 15.649-.544 26.92-5.003 33.897-14.23v12.357h34.504zM59.577 72.005 79.148 28.44l18.537 43.565zM59.717 0 0 119.652h38.772l9.476-21.565h59.718l8.817 21.565h43.028L102.848 0zm111.197 119.648h37.577V.003h-37.577zM232.338.003v23.762h37.576V.003zm0 36.69v82.955h37.576V36.693zM364.89 91.505c-6.895 9.489-15.495 11.591-25.789 6.326a26 26 0 0 1-1.565-1.125c-3.24-3.01-5.304-6.702-6.186-11.086q-1.984-9.66.614-19.13c1.233-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.44-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.61 10.792 1.635 4.051 2.421 8.294 2.357 12.71q.096 7.502-3.258 14.171m-71.085 28.185h36.69v-15.086c9.718 12.402 21.999 17.603 36.918 17.067 8.313-.422 15.962-3.304 22.888-8.14 9.386-7.496 14.46-17.368 15.214-29.63 1.067-12.625-1.987-24.07-9.17-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.306 2.972-38.83 14.396V.114h-36.945zm321.671-28.185c-6.894 9.489-15.495 11.591-25.788 6.326a26 26 0 0 1-1.566-1.125c-3.24-3.01-5.303-6.702-6.185-11.086q-1.984-9.66.613-19.13c1.234-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.441-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.604 10.792 1.642 4.051 2.428 8.294 2.364 12.71q.096 7.502-3.259 14.171m-71.084 28.185h36.689v-15.086c9.718 12.402 22 17.603 36.92 17.067 8.312-.422 15.96-3.304 22.887-8.14 9.386-7.496 14.46-17.368 15.213-29.63 1.068-12.625-1.987-24.07-9.169-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.307 2.972-38.83 14.396V.114H544.43z" class="selected" style="fill:#ff5a00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6.38963"/></g></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/amazon.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-2.65 -2.77 608.30 187.52" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:#221f1f"><path d="M374.006 142.184c-35 25.797-85.729 39.561-129.406 39.561-61.242 0-116.376-22.651-158.087-60.325-3.278-2.962-.341-7 3.591-4.693 45.015 26.191 100.673 41.947 158.166 41.947 38.775 0 81.43-8.022 120.65-24.67 5.925-2.516 10.88 3.88 5.086 8.18" style="fill:#f90"/><path d="M388.557 125.536c-4.457-5.715-29.573-2.7-40.846-1.363-3.434.42-3.959-2.57-.865-4.719 20.003-14.078 52.827-10.015 56.654-5.296 3.828 4.745-.996 37.648-19.793 53.352-2.884 2.411-5.637 1.127-4.352-2.072 4.22-10.539 13.685-34.16 9.202-39.902" style="fill:#f90"/><path d="M348.497 20.066V6.381c0-2.071 1.573-3.46 3.461-3.46h61.269c1.966 0 3.54 1.415 3.54 3.46V18.1c-.027 1.966-1.679 4.535-4.615 8.599l-31.749 45.329c11.798-.289 24.25 1.468 34.947 7.498 2.412 1.363 3.068 3.356 3.251 5.322V99.45c0 1.992-2.202 4.325-4.509 3.12-18.85-9.884-43.887-10.96-64.73.104-2.123 1.154-4.351-1.153-4.351-3.146V85.661c0-2.229.026-6.03 2.254-9.412L384.047 23.5h-32.01c-1.967 0-3.54-1.39-3.54-3.434m-223.498 85.388h-18.64c-1.783-.13-3.199-1.468-3.33-3.172V6.617c0-1.914 1.6-3.435 3.592-3.435h17.382c1.809.079 3.25 1.468 3.382 3.199v12.505h.34c4.536-12.086 13.056-17.722 24.54-17.722 11.666 0 18.954 5.636 24.198 17.722 4.509-12.086 14.76-17.722 25.744-17.722 7.813 0 16.36 3.224 21.577 10.46 5.899 8.049 4.693 19.741 4.693 29.992l-.026 60.378c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.862-.13-3.356-1.625-3.356-3.46V51.29c0-4.037.367-14.104-.524-17.932-1.39-6.423-5.558-8.232-10.959-8.232-4.51 0-9.228 3.015-11.142 7.839s-1.73 12.898-1.73 18.325v50.704c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.888-.13-3.356-1.625-3.356-3.46l-.026-50.704c0-10.67 1.757-26.374-11.483-26.374-13.397 0-12.872 15.31-12.872 26.374v50.704c0 1.913-1.6 3.46-3.592 3.46M469.514 1.164c27.66 0 42.629 23.752 42.629 53.954 0 29.18-16.543 52.329-42.629 52.329-27.16 0-41.947-23.753-41.947-53.352 0-29.782 14.97-52.931 41.947-52.931m.158 19.531c-13.738 0-14.603 18.719-14.603 30.386 0 11.692-.184 36.65 14.445 36.65 14.446 0 15.128-20.134 15.128-32.403 0-8.075-.341-17.723-2.78-25.378-2.097-6.66-6.265-9.255-12.19-9.255m78.336 84.759h-18.562c-1.861-.13-3.356-1.625-3.356-3.46l-.026-95.692c.157-1.756 1.704-3.12 3.592-3.12h17.277c1.625.079 2.962 1.18 3.33 2.674v14.63h.34c5.217-13.083 12.532-19.322 25.404-19.322 8.363 0 16.517 3.015 21.76 11.273 4.877 7.655 4.877 20.528 4.877 29.782v60.22c-.21 1.678-1.757 3.015-3.592 3.015h-18.693c-1.704-.13-3.12-1.39-3.303-3.015V50.478c0-10.461 1.206-25.772-11.667-25.772-4.535 0-8.704 3.042-10.775 7.656-2.621 5.846-2.962 11.666-2.962 18.116v51.516c-.026 1.913-1.652 3.46-3.644 3.46"/><use xlink:href="#a" transform="translate(244.367)"/><path id="a" d="M55.288 59.758v-4.037c-13.475 0-27.71 2.884-27.71 18.771 0 8.049 4.168 13.502 11.325 13.502 5.243 0 9.936-3.225 12.898-8.468 3.67-6.45 3.487-12.506 3.487-19.768m18.798 45.434c-1.232 1.101-3.015 1.18-4.405.446-6.187-5.139-7.288-7.524-10.696-12.427-10.225 10.434-17.46 13.554-30.726 13.554-15.678 0-27.895-9.674-27.895-29.048 0-15.127 8.206-25.43 19.872-30.464 10.12-4.457 24.25-5.244 35.052-6.476v-2.412c0-4.43.341-9.674-2.254-13.501-2.281-3.435-6.633-4.85-10.46-4.85-7.106 0-13.45 3.644-14.997 11.194-.315 1.678-1.547 3.33-3.225 3.408l-18.09-1.94c-1.52-.34-3.198-1.573-2.778-3.906C7.652 6.853 27.446.246 45.169.246c9.07 0 20.92 2.412 28.078 9.28 9.07 8.469 8.206 19.768 8.206 32.064v29.048c0 8.73 3.618 12.558 7.026 17.277 1.206 1.678 1.468 3.697-.053 4.955-3.801 3.172-10.565 9.071-14.288 12.375z"/></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/apple.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-5.00 -5.00 824.10 1009.90" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2m-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3"/></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/bosch.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.17 -1.98 437.33 100.73"><path d="M185.2 46.88a13.77 13.77 0 0 0 8.8-13c0-11.7-8.3-17.5-19.7-17.5h-29.9V80h32.5c10 0 19.8-7 19.8-17.7 0-12.72-11.5-15.3-11.5-15.42M160 29.58h11.6a5.66 5.66 0 0 1 6 5.31v.69a5.93 5.93 0 0 1-6 5.81h-11.7Zm11.7 37.1h-11.6v-12.5h11.3c5.7 0 8.4 2.5 8.4 6.2 0 4.62-3.4 6.3-8.1 6.3m59.4-51.9c-18.4 0-29.2 14.7-29.2 33.3s10.8 33.3 29.2 33.3 29.2-14.6 29.2-33.3-10.7-33.3-29.2-33.3m0 51.4c-9 0-13.5-8.1-13.5-18.1s4.5-18 13.5-18 13.6 8.1 13.6 18c0 10.1-4.6 18.1-13.6 18.1m63.1-24.8-2.2-.5c-5.4-1.1-9.7-2.5-9.7-6.4 0-4.2 4.1-5.9 7.7-5.9a17.86 17.86 0 0 1 13 5.9l9.9-9.8c-4.5-5.1-11.8-10-23.2-10-13.4 0-23.6 7.5-23.6 20 0 11.4 8.2 17 18.2 19.1l2.2.5c8.3 1.7 11.4 3 11.4 7 0 3.8-3.4 6.3-8.6 6.3-6.2 0-11.8-2.7-16.1-8.2l-10.1 10c5.6 6.7 12.7 11.9 26.4 11.9 11.9 0 24.6-6.8 24.6-20.7.2-14.5-10.8-17.3-19.9-19.2m55.5 24.8c-7 0-14.3-5.8-14.3-18.5 0-11.3 6.8-17.6 13.9-17.6 5.6 0 8.9 2.6 11.5 7.1l12.8-8.5c-6.4-9.7-14-13.8-24.5-13.8-19.2 0-29.6 14.9-29.6 32.9 0 18.9 11.5 33.7 29.4 33.7 12.6 0 18.6-4.4 25.1-13.8L361.1 59c-2.6 4.18-5.4 7.18-11.4 7.18m66.6-49.8v23.4H397v-23.4h-16.7v63.6H397v-25.1h19.3v25.1H433v-63.6z" style="fill:#ed0007;fill-rule:evenodd"/><path d="M48.2.18a48.2 48.2 0 1 0 48.2 48.2A48.2 48.2 0 0 0 48.2.18m0 91.9a43.7 43.7 0 1 1 43.7-43.7 43.71 43.71 0 0 1-43.7 43.7"/><path d="M68.1 18.28h-3.3v16.5H31.7v-16.5h-3.4a36.06 36.06 0 0 0 0 60.2h3.4V62h33.1v16.5h3.3a36.05 36.05 0 0 0 0-60.2ZM27.1 72a31.59 31.59 0 0 1-2.63-44.6 33 33 0 0 1 2.63-2.62Zm37.7-14.6H31.7V39.28h33.1Zm4.5 14.5V24.78a31.65 31.65 0 0 1 2.39 44.71 34 34 0 0 1-2.39 2.39Z"/></svg>
-\ No newline at end of file
+@@ -7,46 +7,46 @@ sidebar:
+ 
+ # Embedding rtk in your own agent harness
+ 
+-This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi, OpenCode and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 0.48.0.
++This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
+ 
+ ## What `rtk rewrite` returns
+ 
+-`rtk rewrite "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
++`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
+ 
+ | Exit | Stdout | Meaning | What your host should do |
+ |------|--------|---------|--------------------------|
+-| 0 | rewritten command | Rewrite, and an explicit Claude Code allow rule matched | Run the rewritten command |
+-| 1 | empty | No RTK equivalent | Run the original command |
++| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
++| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper's script (`bash -c '…'`) | Run the original command |
+ | 2 | empty | A Claude Code deny rule matched | Your call. The rule comes from Claude Code's settings, so the usual choice is to run the original command and let your own policy decide |
+-| 3 | rewritten command | Rewrite, with an "ask" rule matched or no rule matched at all | Run the rewritten command |
++| 3 | rewritten command | Rewrite, with an "ask" rule matched, allow rules covering only part of the command, a shell wrapper (`bash -c '…'`), a settings file that cannot be parsed, or no rule matched at all | Run the rewritten command |
+ 
+-The exit code carries a permission verdict read from Claude Code's settings files (`.claude/settings.json` in the project and `~/.claude/settings.json`, plus their `.local` variants). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
++The exit code carries a permission verdict read from Claude Code's settings files (`settings.json` and `settings.local.json` in the nearest `.claude/` directory above the working directory, and in `~/.claude`, or in `$CLAUDE_CONFIG_DIR` when it is set to a non-empty path; for a project under your home with no `.claude/` of its own, the nearest one is usually `~/.claude` itself). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
+ 
+ ```bash
+-$ rtk rewrite "git status"; echo " -> exit $?"
++$ rtk rewrite -- "git status"; echo " -> exit $?"
+ rtk git status -> exit 3
+-$ rtk rewrite "htop"; echo " -> exit $?"
++$ rtk rewrite -- "htop"; echo " -> exit $?"
+  -> exit 1
+ ```
+ 
+-A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2; treating 0 and 3 alike keeps your host indifferent to that.
++A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2, and an `RTK_REWRITE_HOST=openclaw` inherited from the environment turns the ordinary 3 into 0; treating 0 and 3 alike keeps your host indifferent to both.
+ 
+ Three more details of the call:
+ 
+-- **Read stdout only.** Stderr can carry advisory lines: a once-a-day "No
 ```
 
 ---
 
-### Incident Patch 2: `cf7f2cd5` (2026-11-09)
-**Commit Message**: docs: present RTK as the cost reduction engine for AI coding agents
+### Incident Patch 2: `8bb6096b` (2026-11-16)
+**Commit Message**: Merge pull request #3918 from zerone0x/docs/embedding-guide
 
-RTK stopped being only a bash compressor at v1.0.0, but the README still
-sold it as one. Readers who wanted the install-and-forget story had to
-dig for it, readers who wanted pipelines, delegation or RTK Pro found
-almost nothing, and the few figures on the page did not say what they
-measured.
+docs(guide): add a guide for embedding rtk in a custom agent harness
 
-The README now opens with install & forget (the compressor: up to 90%
-less command output on 100+ commands, under 25 ms per command), then
-"go further" with pipelines, then RTK Pro as the control layer for every
-agent in a company, with one door per audience: the Dev plan for one
-developer, Teams, Business and Enterprise for companies. Every figure
-says what it measures.
-
-Supporting material lives in .github/assets with its sources so it can
-be regenerated: a banner and a "go further" picture in the site style,
-an RTK Pro card naming the gateway, cost control, Shield, policies, team
-catalog and audit log, a logo strip of the companies whose developers
-starred the repo, and a real terminal recording of rtk init, a claude -p
-run and rtk gain (record-demo.sh reproduces it).
-
-rtk gain ends with one line about RTK Pro once the us
-
-**File**: `.github/assets/src/before-after.html` (added, +104/-0)
+**File**: `docs/guide/getting-started/embedding.md` (added, +186/-0)
 ```diff
-@@ -0,0 +1,104 @@
-+<!doctype html>
-+<html><head><meta charset="utf-8">
-+<!-- Real output. Captured with `rtk bypass cargo test` (left) and `rtk cargo test` (right)
-+     on a 48-test crate with one failing assertion, rtk core 1.0.1. Only the lines marked
-+     "⋯ N more lines" are elided; the counts are exact. -->
-+<link rel="preconnect" href="https://fonts.googleapis.com">
-+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
-+<style>
-+:root{--bg:#060b18;--bg-card:#0f1629;--text:#e2e8f0;--text-bright:#f8fafc;--text-muted:#94a3b8;--text-dim:#7e8ca6;--accent:#00e599;--accent-dim:rgba(0,229,153,.10);--accent-glow:rgba(0,229,153,.25);--red:#f87171;--scene:rgba(0,229,153,.09);--tint:rgba(0,229,153,.045);--vignette:rgba(0,0,0,.42);--grid:rgba(148,163,184,.05);--line:rgba(148,163,184,.14)}
-+*{margin:0;padding:0;box-sizing:border-box}
-+html,body{width:1280px;height:560px;background:transparent}
-+.card{position:relative;width:1280px;height:560px;border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid var(--line);isolation:isolate;font-family:'Geist','Inter',sans-serif;color:var(--text)}
-+.atmo{position:absolute;inset:0;z-index:-1;background-image:
-+ radial-gradient(ellipse 34% 80% at 50% 50%,var(--scene),transparent 62%),
-+ linear-gradient(180deg,transparent 4%,var(--tint) 42%,transparent 84%),
-+ radial-gradient(ellipse 120% 105% at 50% 48%,transparent 56%,var(--vignette) 100%)}
-+.grid{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse 30% 70% at 50% 50%,#000 20%,transparent 75%)}
-+.eyebrow{position:absolute;left:56px;top:34px;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
-+.eyebrow b{color:var(--text-muted);font-weight:500}
-+.cmd{position:absolute;right:56px;top:30px;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-muted)}
-+.cmd span{color:var(--accent)}
-+.panel{position:absolute;top:84px;width:470px;height:440px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 30%),var(--bg-card);overflow:hidden}
-+.panel.left{left:56px}.panel.right{right:56px}
-+.ph{display:flex;align-items:center;gap:10px;height:42px;padding:0 18px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
-+.ph i{width:9px;height:9px;border-radius:50%;display:inline-block}
-+.left .ph i{background:var(--red);opacity:.8}.right .ph i{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
-+.ph .n{margin-left:auto;letter-spacing:.04em;text-transform:none}
-+.left .ph .n{color:var(--red);opacity:.85}.right .ph .n{color:var(--accent)}
-+pre{font-family:'JetBrains Mono',monospace}
-+.left pre{white-space:pre;padding:10px 18px;font-size:11.5px;line-height:13.5px;color:rgba(148,163,184,.55)}
-+.left pre .f{color:var(--red);opacity:.9}
-+.left pre .m{color:rgba(148,163,184,.38);font-style:italic}
-+.right pre{white-space:pre-wrap;padding:18px 20px;font-size:13.5px;line-height:22px;color:var(--text)}
-+.right pre .f{color:var(--red)}
-+.right pre .ok{color:var(--accent)}
-+.right pre .p{color:var(--text-muted)}
-+.right pre .r{color:var(--accent);opacity:.85}
-+.gate{position:absolute;left:526px;top:84px;width:228px;height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
-+.gate::before{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,var(--accent-glow) 30%,var(--accent-glow) 70%,transparent)}
-+.gate::after{content:'';position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--accent-glow) 0%,transparent 62%);opacity:.7}
-+.gate img{position:relative;z-index:1;width:124px;height:124px;filter:drop-shadow(0 0 10px var(--accent-glow)) drop-shadow(0 0 32px var(--accent-glow))}
-+.gate .lbl{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.26em;color:var(--text-muted)}
-+.strand{position:absolute;left:526px;top:84px;width:228px;height:440px;z-index:0}
-+</style></head>
-+<body><div class="card"><div class="atmo"></div><div class="grid"></div>
-+<p class="eyebrow">01 / Install &amp; forget · <b>what your agent reads</b></p>
-+<p class="cmd"><span>$</span> cargo test</p>
+@@ -0,0 +1,186 @@
++---
++title: Embedding rtk in your own agent harness
++description: Call rtk rewrite from your own bash tool instead of installing a shipped hook — the exit-code contract, where the call goes, fail-open rules, and per-session accounting
++sidebar:
++  order: 5
++---
 +
-+<div class="panel left">
-+ <div class="ph"><i></i>without rtk<span class="n">71 lines</span></div>
-+<pre>   Compiling authkit v0.4.2 (/private/tmp/claude-501/-Users-aeppling--superconductor-worktrees-rtk-sc-flux-phonon-4e98/d36bac6a-c158-4776-8c24-adbe62511c7f/scratchpad/demo)
-+    Finished `test` 
++# Embedding rtk in your own agent harness
++
++This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
++
++## What `rtk rewrite` returns
++
++`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
++
++| Exit | Stdout | Meaning | What your host should do |
++|------|--------|---------|--------------------------|
++| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
++| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper's script (`bash -c '…'`) | Run the original command |
++| 2 | empty | A Claude Code deny rule matched | Your call. The rule comes from Claude Code's settings, so the usual choice is to run the original command and let your own policy decide |
++| 3 | rewritten command | Rewrite, with an "ask" rule matched, allow rules covering only part of the command, a shell wrapper (`bash -c '…'`), a settings file that cannot be parsed, or no rule matched at all | Run the rewritten command |
++
++The exit code carries a permission verdict read from Claude Code's settings files (`settings.json` and `settings.local.json` in the nearest `.claude/` directory above the working directory, and in `~/.claude`, or in `$CLAUDE_CONFIG_DIR` when it is set to a non-empty path; for a project under your home with no `.claude/` of its own, the nearest one is usually `~/.claude` itself). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
++
++```bash
++$ rtk rewrite -- "git status"; echo " -> exit $?"
++rtk git status -> exit 3
++$ rtk rewrite -- "htop"; echo " -> exit $?"
++ -> exit 1
++```
++
++A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2, and an `RTK_REWRITE_HOST=openclaw` inherited from the environment turns the ordinary 3 into 0; treating 0 and 3 alike keeps your host indifferent to both.
++
++Three more details of the call:
++
++- **Read stdout only.** Stderr can carry advisory lines: a once-a-day "No hook installed" notice on machines where the Claude Code config directory (`~/.claude`, or `$CLAUDE_CONFIG_DIR`) exists without an RTK hook, or an `RTK_DISABLED=1 detected` message.
++- **Compare output with input.** A command that already starts with `rtk` comes back unchanged (still exit 3), and there is nothing to substitute.
++- **Check `RTK_DISABLED` yourself before spawning `rtk rewrite`**, as the Pi extension does. Releases up to 1.2.0 honor it only as an in-command prefix (`rtk rewrite -- "RTK_DISABLED=1 git status"` exits 1); [rtk-ai/rtk#3917](https://github.com/rtk-ai/rtk/pull/3917) makes `rtk rewrite` honor the exported variable as well.
++
++`rtk rewrite` does not run the command and does not open the savings database. Compound commands are handled (`cargo fmt --all && cargo test` becomes `rtk cargo fmt --all && rtk cargo test`); commands containing a file redirect (`> out.txt`) or command substitution pass through with exit 1; a file-descriptor duplication such as `2>&1` does not block the rewrite.
++
++## Where the call goes
++
++Run the rewrite **after your own approval gate and before you spawn the shell**:
++
++```text
++agent asks for "git status"
++  -> your policy check or permission prompt sees "git status"
++  -> rtk rewrite -- "git status"     prints "rtk git status", exit 3
++  -> the shell runs "rtk git status"
++  -> the model reads the filtered output
++```
++
++A person approving a command then sees the command the agent asked for, not the rewritten one, and allow or deny patterns written for `git ...` keep matching. If your transcript shows the executed command, show the re
 ```
 
-**File**: `.github/assets/src/companies.html` (added, +22/-0)
+**File**: `docs/guide/getting-started/supported-agents.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,22 @@
-+<!doctype html>
-+<html><head><meta charset="utf-8">
-+<!-- The 18 logos of rtk-ai.app's "Starred by developers at" strip (rtk-ldp Companies.astro) plus a third
-+     row of the largest companies found in the stargazers' public profiles. Transparent background and one
-+     flat grey so it reads on GitHub's light and dark themes alike. -->
-+<link rel="preconnect" href="https://fonts.googleapis.com">
-+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
-+<style>
-+*{margin:0;padding:0;box-sizing:border-box}
-+html,body{width:1280px;height:300px;background:transparent}
-+.wrap{width:1280px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-family:'Inter',sans-serif}
-+.eyebrow{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:#8b95a7}
-+.rows{display:flex;flex-direction:column;gap:26px}
-+.row{display:flex;align-items:center;justify-content:center;gap:26px}
-+.row img{display:block;width:auto;height:calc(var(--h) * 1.4);filter:brightness(0) invert(.6);opacity:.95}
-+.more{font-size:18px;color:#8b95a7;white-space:nowrap}
-+</style></head>
-+<body><div class="wrap">
-+ <p class="eyebrow">Starred by developers at</p>
-+ <div class="rows"><div class="row"><img src="companies/microsoft.svg" alt="Microsoft" style="--h:20px"><img src="companies/google.svg" alt="Google" style="--h:22px"><img src="companies/amazon.svg" alt="Amazon" style="--h:22px"><img src="companies/meta.svg" alt="Meta" style="--h:20px"><img src="companies/apple.svg" alt="Apple" style="--h:29px"><img src="companies/nvidia.svg" alt="NVIDIA" style="--h:19px"><img src="companies/ibm.svg" alt="IBM" style="--h:24px"><img src="companies/tencent.svg" alt="Tencent" style="--h:17px"><img src="companies/bytedance.svg" alt="ByteDance" style="--h:19px"></div><div class="row"><img src="companies/alibaba.svg" alt="Alibaba" style="--h:18px"><img src="companies/shopify.svg" alt="Shopify" style="--h:21px"><img src="companies/datadog.svg" alt="Datadog" style="--h:22px"><img src="companies/sap.svg" alt="SAP" style="--h:26px"><img src="companies/adobe.svg" alt="Adobe" style="--h:21px"><img src="companies/intel.svg" alt="Intel" style="--h:24px"><img src="companies/samsung.svg" alt="Samsung" style="--h:18px"><img src="companies/bosch.svg" alt="Bosch" style="--h:20px"><img src="companies/cisco.svg" alt="Cisco" style="--h:26px"></div><div class="row"><img src="companies/jpmorgan-chase.svg" alt="JPMorgan Chase" style="--h:14px"><img src="companies/oracle.svg" alt="Oracle" style="--h:13px"><img src="companies/netflix.svg" alt="Netflix" style="--h:18px"><img src="companies/toyota.svg" alt="Toyota" style="--h:14px"><img src="companies/salesforce.svg" alt="Salesforce" style="--h:26px"><img src="companies/siemens.svg" alt="Siemens" style="--h:16px"><img src="companies/accenture.svg" alt="Accenture" style="--h:21px"><img src="companies/uber.svg" alt="Uber" style="--h:19px"><img src="companies/spotify.svg" alt="Spotify" style="--h:19px"></div></div>
-+ <p class="more">and 1,100+ more companies</p>
-+</div></body></html>
+@@ -328,6 +328,8 @@ Strips only RTK's `[[hooks]]` block and the `~/.vibe/prompts/rtk.md` file. Any o
+ 
+ Rules file integrations (Cline, Windsurf, Kilo Code) rely on the model following instructions. Full hook integrations (Claude Code, Trae, Cursor, Gemini, Codex, Factory Droid, Antigravity) apply rewrites before execution whenever RTK supports and can safely attest the command. Plugin integrations (OpenCode, Pi, Hermes) use in-place mutation via the agent's extension or plugin API.
+ 
++Building a harness of your own? A host can skip these hooks and call `rtk rewrite` from its own bash tool. [Embedding rtk in your own agent harness](embedding.md) covers the exit-code contract, where the call goes, the fail-open rules, and per-session accounting.
++
+ ## Windows support
+ 
+ Since v0.37.2 the hooks for Claude Code, Cursor, Copilot, Codex, Trae, Factory Droid and Mistral Vibe are native binary commands (`rtk hook <agent>`), so auto-rewrite works on native Windows — no Unix shell, bash or jq required. `rtk init -g` installs the native hook on Windows exactly as on Linux and macOS, and adds it to Claude Code's `settings.json` once you answer `y` to the prompt (or pass `--auto-patch`).
 ```
 
-**File**: `.github/assets/src/companies/accenture.svg` (added, +410/-0)
+---
+
+### Incident Patch 3: `2f90f4a9` (2026-11-16)
+**Commit Message**: Merge pull request #4507 from TechWizard9999/fix/4462-opencode-path-resolution
+
+fix(opencode): resolve rtk binary path for GUI-launched OpenCode (#4462)
+
+**File**: `hooks/opencode/README.md` (modified, +1/-2)
 ```diff
-@@ -0,0 +1,410 @@
-+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-+<!-- Created with Inkscape (http://www.inkscape.org/) -->
-+<svg
-+   xmlns:svg="http://www.w3.org/2000/svg"
-+   xmlns="http://www.w3.org/2000/svg"
-+   version="1.0"
-+   width="1133.8583"
-+   height="374.88187"
-+   id="svg2">
-+  <defs
-+     id="defs4">
-+    <clipPath
-+       id="clipPath2349">
-+      <path
-+         d="M -85.5,-19 L -85.5,19 L 85.5,19 L 85.5,-19 L -85.5,-19 z"
-+         id="path2351" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2341">
-+      <path
-+         d="M 0,0 L 603.7795,0 L 603.7795,841.8898 L 0,841.8898 L 0,0 z"
-+         id="path2343" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2926">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2928" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2918">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2920" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2694">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2696" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2686">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2688" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2678">
-+      <path
-+         d="M 405.35,120.15 L 510.24,120.15 L 510.24,91.8 L 405.35,91.8 L 405.35,120.15 z"
-+         id="path2680" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2498">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2500" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2490">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2492" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2482">
-+      <path
-+         d="M 51.02,680.71 L 595.28,680.71 L 595.28,126.67 L 51.02,126.67 L 51.02,680.71 z"
-+         id="path2484" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2464">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2466" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2456">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2458" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5050">
-+      <path
-+         d="M -610.389,657.405 L -56.916,657.405 L -56.916,664.488 L -610.389,664.488 L -610.389,657.405 z"
-+         id="path5052" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5036">
-+      <path
-+         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
-+         id="path5038" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5028">
-+      <path
-+         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
-+         id="path5030" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5016">
-+      <path
-+         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
-+         id="path5018" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5008">
-+      <path
-+         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
-+         id="path5010" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4996">
-+      <path
-+         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
-+         id="path4998" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4988">
-+      <path
-+         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
-+         id="path4990" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4972">
-+      <path
-+         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
-+         id="path4974" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4964">
-+      <path
-+         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
-+         id="path4966" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4950">
-+      <path
-+         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
-+         id="path4952" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4942">
-+      <path
-+         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
-+         id="path4944" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4928">
-+      <path
-+         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 40.806,657.405 z"
-+         id="path4930" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4920">
-+      <path
-+         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 4
+@@ -11,8 +11,7 @@
+ - The Rust side judges the command against OpenCode's own permission rules and answers `{}` whenever the rewrite would change the verdict those rules give — OpenCode evaluates the final command itself, so RTK never lifts a deny, silences an ask, or blocks an allow (#4195). Rules are read from root and project `opencode.json`/`.jsonc` in the order OpenCode resolves them: the legacy `permission` map first, then the 2.x `permissions` list, whatever order the file declares them. Every file's root rules load before any file's agent rules, so a project `allow` cannot outrank a global agent `ask`. 2.x list actions match as globs against `shell`, so `sh*` covers it; a list rule whose action only names `bash` does not count, because OpenCode ignores it there. A legacy map key the two generations read differently (`shell` and `sh*` apply only on 2.x, `b*` only on 1.x) makes rtk leave the command as typed, because it cannot tell which generation it is serving. Global rules come before project rules. An agent defined as a markdown file in `agents/` or `agent/`, under `~/.config/opencode/` or any `.opencode/` from the working directory up, whose frontmatter declares `permission:` or `permissions:`, is not parsed here, so no rewrite happens for that agent and OpenCode applies its own rules.
+ - Uses standard `node:child_process.execFile` (compatible with OpenCode CLI, OpenCode Desktop/Electron, and Windows; zero Bun/zx dependencies)
+ - Passes the command as a single argv element, never through a shell
+-- Resolves rtk from the system `PATH` only (`PATHEXT` on Windows), and skips a PATH entry that is a directory. OpenCode's shell tool runs with OpenCode's own `PATH` and never sources `.profile`/`.bashrc`, so an rtk found outside `PATH` cannot be spawned as a bare `rtk …` — see #4462
+-- Probes the resolved binary once per session with `rtk hook opencode --help` (cached): exit 0 means the subcommand is there, exit 2 means it predates it, and a broken or wrong-arch binary fails to spawn. Not a version number — a develop build reports `rtk 0.49.0` and so does a release that lacks the subcommand
++- Resolves rtk in this order, skipping any directory named `rtk`: OpenCode's own `PATH` (`PATHEXT` on Windows), then `RTK_BIN` when it is an absolute path to a file named `rtk`, then `~/.cargo/bin`, `~/.local/bin` (`install.sh`'s default), `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin` and, on Windows, `%LOCALAPPDATA%\cargo\bin` and `%ProgramFiles%\rtk`. The rewrite stays a bare `rtk …`, so OpenCode judges the same string `rtk hook opencode` judged; to make every `rtk` in it resolve, the plugin appends rtk's directory to the end of the spawned shell's `PATH` through OpenCode 2.x's `ctx.shell.hook("create.before")` and OpenCode 1.x's `shell.env` hook. Appending leaves every command that already resolves on `PATH` resolving to the same binary (the other programs in rtk's directory become reachable too), and changes nothing at all when rtk is already on `PATH`. That is also why an rtk on `PATH` comes before `RTK_BIN`: it is the one the shell runs, so it is the one that has to judge the command (#4462)
+ - Passes OpenCode 2.x's `event.agent` as `rtk hook opencode --agent <name>`, so an `agent.<name>.permission` ask or deny is judged against the agent that runs the command. OpenCode 1.x sends no agent field, so that path stays root-only
+ - Two separate off switches, both named `RTK_DISABLED`. The per-command form is `RTK_DISABLED=1 git status`, an env prefix inside the command string; the Rust rewrite engine handles that one and the plugin passes the string through untouched. The plugin also reads `RTK_DISABLED=1` from OpenCode's own process environment, which switches rewriting off for the whole session
+ - Mutates command in-place (`event.input.command` in v2, `output.args.command` in v1) if the answered rewrite differs from the original
 ```
 
-**File**: `.github/assets/src/companies/adobe.svg` (added, +1/-0)
+**File**: `hooks/opencode/rtk.test.mjs` (modified, +361/-25)
 ```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" fill="#fa0c00" viewBox="-0.27 -0.27 54.97 14.88"><path d="M5.996 0H0v14.34zm4.219 0h5.988v14.34zm-2.11 5.285 3.817 9.055H9.418l-1.14-2.883H5.483Zm17.88 3.835.707 2.027c.024.05.059.074.121.074h1.36c.074 0 .086-.035.074-.11l-2.809-7.8c-.011-.063-.023-.075-.086-.075h-1.687c-.047 0-.074.036-.074.086-.024.41-.059.536-.11.657l-2.504 7.12c-.011.087.016.122.086.122h1.215c.074 0 .11-.024.137-.098l.668-2.004ZM23.47 7.794c.367-1.11.851-2.531 1.047-3.344h.011c.242.852.813 2.54 1.07 3.344zm8.388 3.548a5.8 5.8 0 0 0 2.297-.473c.062-.023.074-.05.074-.11a8 8 0 0 1-.051-.776V2.639c0-.047 0-.07-.059-.07h-1.324c-.05 0-.074.023-.074.085v2.489a4 4 0 0 0-.523-.035c-2.137 0-3.45 1.41-3.45 3.171 0 2.043 1.348 3.063 3.11 3.063m.863-1.36c-.219.07-.461.098-.707.098-.969 0-1.762-.547-1.762-1.875 0-1.176.817-1.87 1.899-1.87.218 0 .41.023.57.085zm5.732-4.874c-1.824 0-2.953 1.398-2.953 3.125 0 1.542.899 3.109 2.926 3.109 1.715 0 2.918-1.262 2.918-3.149 0-1.664-1.02-3.085-2.89-3.085m-.074 1.226c1.031 0 1.469.887 1.469 1.899 0 1.25-.645 1.87-1.395 1.87-.925 0-1.472-.777-1.472-1.898 0-1.152.582-1.87 1.398-1.87m4.333-3.767c-.05 0-.086.024-.086.086v8.313c0 .035.035.098.086.11q.875.267 1.82.265c1.801 0 3.551-1.117 3.551-3.367 0-1.63-1.117-2.867-2.867-2.867a3.5 3.5 0 0 0-1.106.171l-.015-2.613c0-.086-.024-.098-.11-.098zm3.875 5.555c0 1.348-.922 1.98-1.918 1.98-.207 0-.39-.011-.559-.062V6.494c.192-.074.422-.136.848-.136.961 0 1.629.609 1.629 1.765m6.438.437c.594 0 1.082-.011 1.25-.05.063-.012.086-.035.098-.086.035-.133.05-.41.05-.75 0-1.156-.695-2.566-2.492-2.566-1.836 0-2.855 1.496-2.855 3.183 0 1.496.789 3.05 3 3.05.828 0 1.363-.132 1.824-.35.047-.024.07-.063.07-.133V9.846c0-.059-.035-.07-.07-.047q-.688.293-1.508.293c-1.238 0-1.8-.684-1.836-1.531zm-2.469-1.046c.098-.594.473-1.239 1.313-1.239.926 0 1.168.778 1.168 1.13v.097c-.051.012-.207.012-.668.012zm0 0"/></svg>
-\ No newline at end of file
+@@ -1,34 +1,49 @@
+ import test, { after, before } from "node:test"
+ import assert from "node:assert/strict"
+-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
++import { execSync } from "node:child_process"
++import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs"
+ import { tmpdir } from "node:os"
+-import { delimiter, join } from "node:path"
++import { delimiter, dirname, join } from "node:path"
+ import RtkOpenCodePlugin, {
++  candidateRtkDirs,
+   probeRtkHookOpencode,
+   resolveRtkPath,
+   runHookOpencode,
+   tryRewriteCommand,
+   _resetCachedRtkPath,
+ } from "./rtk.ts"
+ 
+-// The plugin resolves rtk off PATH and runs it, so the tests need a real rtk
+-// to find. node is copied in under the name `rtk`, and because the plugin
+-// spawns `[<rtk>, "hook", "opencode", …]` — node reading argv[2] as the script
+-// to run — the mock script is named `hook` and the tests chdir into the mock
+-// directory so it is found there instead of over whatever sits in the repo.
++// The plugin resolves rtk off PATH or candidate directories and runs it, so
++// the tests need a real rtk to find. Node is symlinked/copied in under the name
++// `rtk`, and because the plugin spawns `[<rtk>, "hook", "opencode", …]` — node
++// reading argv[2] as the script to run — the mock script is named `hook` and the
++// tests chdir into the mock directory so it is found there instead of over
++// whatever sits in the repo.
+ // Everything below then exercises the shipped code path: PATH discovery, the
+ // `hook opencode --help` probe, argv construction, and the registered hooks.
+ const BIN = process.platform === "win32" ? "rtk.EXE" : "rtk"
+ let mockDir = ""
+ let emptyDir = ""
+ let savedPath = ""
++let savedHome = ""
++let savedUserProfile = ""
+ let savedCwd = ""
+ 
++function installMockBin(dest) {
++  try {
++    symlinkSync(process.execPath, dest)
++  } catch {
++    copyFileSync(process.execPath, dest)
++  }
++}
++
+ const MOCK = `
+ const fs = require("fs")
+ const [sub, ...rest] = process.argv.slice(2)
+ 
+ if (rest[0] === "--help") {
++  // marks a run from a shell command, so a test can count which rtk ran
++  console.log("rtk-mock")
+   if (process.env.MOCK_PROBE_LOG) fs.appendFileSync(process.env.MOCK_PROBE_LOG, "probe\\n")
+   // pre-#4349 rtk has no such subcommand and answers like clap does: exit 2
+   process.exit(process.env.MOCK_NO_SUB ? 2 : 0)
+@@ -42,6 +57,10 @@ if (process.env.MOCK_ECHO) {
+   console.log(JSON.stringify({ command: JSON.stringify(process.argv.slice(2)) }))
+ } else if (command === "ls -la") {
+   console.log(JSON.stringify({ command: "rtk ls -la" }))
++} else if (command === "cd sub && ls -la") {
++  console.log(JSON.stringify({ command: "cd sub && rtk ls -la" }))
++} else if (command === "ls -la && git status") {
++  console.log(JSON.stringify({ command: "rtk ls -la && rtk git status" }))
+ } else if (command === "unchanged") {
+   // what the Rust side answers when the rewrite would change the verdict
+   console.log("{}")
+@@ -73,17 +92,25 @@ const v1Input = { tool: "bash", sessionID: "ses_1", callID: "call_1" }
+ const v1Output = (command) => ({ args: { command, description: "list files" } })
+ 
+ async function captureSetup() {
+-  const names = []
+-  let hook = null
++  const toolHooks = []
++  const shellHooks = []
++  let toolHook = null
++  let shellHook = null
+   await RtkOpenCodePlugin.setup({
+     tool: {
+       hook(name, callback) {
+-        names.push(name)
+-        if (name === "execute.before") hook = callback
++        toolHooks.push(name)
++        if (name === "execute.before") toolHook = callback
++      },
++    },
++    shell: {
++      hook(name, callback) {
++        shellHooks.push(name)
++        if (name === "create.before") shellHook = callback
+       },
+     },
+   })
+-  return { names, hook }
++  return { names: toolHooks, hook: toolHook, toolHooks, shellHooks, shellHook }
+ }
+ 
+ async function captureServer() {
+@@ -94,33 +121,47 @@ async function captureServer() {
+ before(() => {
+   savedCwd = process.cwd()
+   savedPath = process.env.PATH ?? ""
++  savedHome = process.env.HOME ?? ""
++  savedUserProfile = process.env.USERPROFILE ?? ""
+   mockDir = mkdtempSync(join(tmpdir(), "rtk-opencode-mock-"))
+   emptyDir = mkdtempSync(join(tmpdir(), "rtk-opencode-empty-"))
+   writeFileSync(join(mockDir, "package.json"), '{"type":"commonjs"}')
+   writeFileSync(join(mockDir, "hook"), MOCK)
+-  copyFileSync(process.execPath, mockBin())
++  installMockBin(mockBin())
+   process.chdir(mockDir)
+   process.env.PATH = `${mockDir}${delimiter}${savedPath}`
++  process.env.HOME = emptyDir
++  process.env.USERPROFILE = emptyDir
++  delete process.env.RTK_BIN
+   _resetCachedRtkPath()
+ })
+ 
+ after(() => {
+   process.chdir(savedCwd)
+   process.env.PATH = savedPath
++  process.env.HOME = savedHome
++  process.env.USERPROFILE = savedUserProfile
+   delete process.env.MOCK_ECHO
+   delete process.env.MOCK_NO_SUB
+   delete process.env.MOCK_PROBE_LOG
+   delete proce
 ```
 
-**File**: `.github/assets/src/companies/alibaba.svg` (added, +1/-0)
+**File**: `hooks/opencode/rtk.ts` (modified, +130/-25)
 ```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-3.87 -3.87 781.00 129.73" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="none"/><g class="currentLayer"><path d="M487.347 82.828c0 12.332-6.25 18.498-18.741 18.498-8.006 0-12.006-2.926-12.006-8.798 0-5.323 4.217-8.716 12.62-10.185 3.105-.544 9.143-.818 18.127-.818zm35.239-16.99c0-21.399-16.204-31.45-47.942-32.108-33.079-.683-47.053 7.93-49.832 26.019h34.3c1.654-5.891 5.616-9.188 13.826-8.9 8.07.287 14.077 4.382 14.377 15.104-18.46.275-32.057 1.348-41.392 3.585-18.013 4.32-26.964 14.14-26.964 27.5 0 9.004 3.987 15.579 11.935 19.706 5.988 3.093 13.757 4.978 23.303 4.646 15.642-.544 26.914-5.003 33.897-14.23v12.357h34.504zm215.44 16.99c0 12.332-6.255 18.498-18.74 18.498-8.007 0-12.007-2.926-12.007-8.798 0-5.323 4.211-8.716 12.62-10.185 3.105-.544 9.137-.818 18.127-.818zm35.239-16.99c0-21.399-16.21-31.45-47.941-32.108-33.086-.683-47.06 7.93-49.833 26.019h34.3c1.654-5.891 5.616-9.188 13.827-8.9 8.063.287 14.07 4.382 14.37 15.104-18.453.275-32.057 1.348-41.392 3.585-18.006 4.32-26.958 14.14-26.958 27.5 0 9.004 3.98 15.579 11.93 19.706 5.993 3.093 13.763 4.978 23.302 4.646 15.649-.544 26.92-5.003 33.897-14.23v12.357h34.504zM59.577 72.005 79.148 28.44l18.537 43.565zM59.717 0 0 119.652h38.772l9.476-21.565h59.718l8.817 21.565h43.028L102.848 0zm111.197 119.648h37.577V.003h-37.577zM232.338.003v23.762h37.576V.003zm0 36.69v82.955h37.576V36.693zM364.89 91.505c-6.895 9.489-15.495 11.591-25.789 6.326a26 26 0 0 1-1.565-1.125c-3.24-3.01-5.304-6.702-6.186-11.086q-1.984-9.66.614-19.13c1.233-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.44-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.61 10.792 1.635 4.051 2.421 8.294 2.357 12.71q.096 7.502-3.258 14.171m-71.085 28.185h36.69v-15.086c9.718 12.402 21.999 17.603 36.918 17.067 8.313-.422 15.962-3.304 22.888-8.14 9.386-7.496 14.46-17.368 15.214-29.63 1.067-12.625-1.987-24.07-9.17-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.306 2.972-38.83 14.396V.114h-36.945zm321.671-28.185c-6.894 9.489-15.495 11.591-25.788 6.326a26 26 0 0 1-1.566-1.125c-3.24-3.01-5.303-6.702-6.185-11.086q-1.984-9.66.613-19.13c1.234-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.441-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.604 10.792 1.642 4.051 2.428 8.294 2.364 12.71q.096 7.502-3.259 14.171m-71.084 28.185h36.689v-15.086c9.718 12.402 22 17.603 36.92 17.067 8.312-.422 15.96-3.304 22.887-8.14 9.386-7.496 14.46-17.368 15.213-29.63 1.068-12.625-1.987-24.07-9.169-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.307 2.972-38.83 14.396V.114H544.43z" class="selected" style="fill:#ff5a00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6.38963"/></g></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/amazon.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-2.65 -2.77 608.30 187.52" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:#221f1f"><path d="M374.006 142.184c-35 25.797-85.729 39.561-129.406 39.561-61.242 0-116.376-22.651-158.087-60.325-3.278-2.962-.341-7 3.591-4.693 45.015 26.191 100.673 41.947 158.166 41.947 38.775 0 81.43-8.022 120.65-24.67 5.925-2.516 10.88 3.88 5.086 8.18" style="fill:#f90"/><path d="M388.557 125.536c-4.457-5.715-29.573-2.7-40.846-1.363-3.434.42-3.959-2.57-.865-4.719 20.003-14.078 52.827-10.015 56.654-5.296 3.828 4.745-.996 37.648-19.793 53.352-2.884 2.411-5.637 1.127-4.352-2.072 4.22-10.539 13.685-34.16 9.202-39.902" style="fill:#f90"/><path d="M348.497 20.066V6.381c0-2.071 1.573-3.46 3.461-3.46h61.269c1.966 0 3.54 1.415 3.54 3.46V18.1c-.027 1.966-1.679 4.535-4.615 8.599l-31.749 45.329c11.798-.289 24.25 1.468 34.947 7.498 2.412 1.363 3.068 3.356 3.251 5.322V99.45c0 1.992-2.202 4.325-4.509 3.12-18.85-9.884-43.887-10.96-64.73.104-2.123 1.154-4.351-1.153-4.351-3.146V85.661c0-2.229.026-6.03 2.254-9.412L384.047 23.5h-32.01c-1.967 0-3.54-1.39-3.54-3.434m-223.498 85.388h-18.64c-1.783-.13-3.199-1.468-3.33-3.172V6.617c0-1.914 1.6-3.435 3.592-3.435h17.382c1.809.079 3.25 1.468 3.382 3.199v12.505h.34c4.536-12.086 13.056-17.722 24.54-17.722 11.666 0 18.954 5.636 24.198 17.722 4.509-12.086 14.76-17.722 25.744-17.722 7.813 0 16.36 3.224 21.577 10.46 5.899 8.049 4.693 19.741 4.693 29.992l-.026 60.378c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.862-.13-3.356-1.625-3.356-3.46V51.29c0-4.037.367-14.104-.524-17.932-1.39-6.423-5.558-8.232-10.959-8.232-4.51 0-9.228 3.015-11.142 7.839s-1.73 12.898-1.73 18.325v50.704c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.888-.13-3.356-1.625-3.356-3.46l-.026-50.704c0-10.67 1.757-26.374-11.483-26.374-13.397 0-12.872 15.31-12.872 26.374v50.704c0 1.913-1.6 3.46-3.592 3.46M469.514 1.164c27.66 0 42.629 23.752 42.629 53.954 0 29.18-16.543 52.329-42.629 52.329-27.16 0-41.947-23.753-41.947-53.352 0-29.782 14.97-52.931 41.947-52.931m.158 19.531c-13.738 0-14.603 18.719-14.603 30.386 0 11.692-.184 36.65 14.445 36.65 14.446 0 15.128-20.134 15.128-32.403 0-8.075-.341-17.723-2.78-25.378-2.097-6.66-6.265-9.255-12.19-9.255m78.336 84.759h-18.562c-1.861-.13-3.356-1.625-3.356-3.46l-.026-95.692c.157-1.756 1.704-3.12 3.592-3.12h17.277c1.625.079 2.962 1.18 3.33 2.674v14.63h.34c5.217-13.083 12.532-19.322 25.404-19.322 8.363 0 16.517 3.015 21.76 11.273 4.877 7.655 4.877 20.528 4.877 29.782v60.22c-.21 1.678-1.757 3.015-3.592 3.015h-18.693c-1.704-.13-3.12-1.39-3.303-3.015V50.478c0-10.461 1.206-25.772-11.667-25.772-4.535 0-8.704 3.042-10.775 7.656-2.621 5.846-2.962 11.666-2.962 18.116v51.516c-.026 1.913-1.652 3.46-3.644 3.46"/><use xlink:href="#a" transform="translate(244.367)"/><path id="a" d="M55.288 59.758v-4.037c-13.475 0-27.71 2.884-27.71 18.771 0 8.049 4.168 13.502 11.325 13.502 5.243 0 9.936-3.225 12.898-8.468 3.67-6.45 3.487-12.506 3.487-19.768m18.798 45.434c-1.232 1.101-3.015 1.18-4.405.446-6.187-5.139-7.288-7.524-10.696-12.427-10.225 10.434-17.46 13.554-30.726 13.554-15.678 0-27.895-9.674-27.895-29.048 0-15.127 8.206-25.43 19.872-30.464 10.12-4.457 24.25-5.244 35.052-6.476v-2.412c0-4.43.341-9.674-2.254-13.501-2.281-3.435-6.633-4.85-10.46-4.85-7.106 0-13.45 3.644-14.997 11.194-.315 1.678-1.547 3.33-3.225 3.408l-18.09-1.94c-1.52-.34-3.198-1.573-2.778-3.906C7.652 6.853 27.446.246 45.169.246c9.07 0 20.92 2.412 28.078 9.28 9.07 8.469 8.206 19.768 8.206 32.064v29.048c0 8.73 3.618 12.558 7.026 17.277 1.206 1.678 1.468 3.697-.053 4.955-3.801 3.172-10.565 9.071-14.288 12.375z"/></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/apple.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-5.00 -5.00 824.10 1009.90" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2m-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3"/></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/bosch.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.17 -1.98 437.33 100.73"><path d="M185.2 46.88a13.77 13.77 0 0 0 8.8-13c0-11.7-8.3-17.5-19.7-17.5h-29.9V80h32.5c10 0 19.8-7 19.8-17.7 0-12.72-11.5-15.3-11.5-15.42M160 29.58h11.6a5.66 5.66 0 0 1 6 5.31v.69a5.93 5.93 0 0 1-6 5.81h-11.7Zm11.7 37.1h-11.6v-12.5h11.3c5.7 0 8.4 2.5 8.4 6.2 0 4.62-3.4 6.3-8.1 6.3m59.4-51.9c-18.4 0-29.2 14.7-29.2 33.3s10.8 33.3 29.2 33.3 29.2-14.6 29.2-33.3-10.7-33.3-29.2-33.3m0 51.4c-9 0-13.5-8.1-13.5-18.1s4.5-18 13.5-18 13.6 8.1 13.6 18c0 10.1-4.6 18.1-13.6 18.1m63.1-24.8-2.2-.5c-5.4-1.1-9.7-2.5-9.7-6.4 0-4.2 4.1-5.9 7.7-5.9a17.86 17.86 0 0 1 13 5.9l9.9-9.8c-4.5-5.1-11.8-10-23.2-10-13.4 0-23.6 7.5-23.6 20 0 11.4 8.2 17 18.2 19.1l2.2.5c8.3 1.7 11.4 3 11.4 7 0 3.8-3.4 6.3-8.6 6.3-6.2 0-11.8-2.7-16.1-8.2l-10.1 10c5.6 6.7 12.7 11.9 26.4 11.9 11.9 0 24.6-6.8 24.6-20.7.2-14.5-10.8-17.3-19.9-19.2m55.5 24.8c-7 0-14.3-5.8-14.3-18.5 0-11.3 6.8-17.6 13.9-17.6 5.6 0 8.9 2.6 11.5 7.1l12.8-8.5c-6.4-9.7-14-13.8-24.5-13.8-19.2 0-29.6 14.9-29.6 32.9 0 18.9 11.5 33.7 29.4 33.7 12.6 0 18.6-4.4 25.1-13.8L361.1 59c-2.6 4.18-5.4 7.18-11.4 7.18m66.6-49.8v23.4H397v-23.4h-16.7v63.6H397v-25.1h19.3v25.1H433v-63.6z" style="fill:#ed0007;fill-rule:evenodd"/><path d="M48.2.18a48.2 48.2 0 1 0 48.2 48.2A48.2 48.2 0 0 0 48.2.18m0 91.9a43.7 43.7 0 1 1 43.7-43.7 43.71 43.71 0 0 1-43.7 43.7"/><path d="M68.1 18.28h-3.3v16.5H31.7v-16.5h-3.4a36.06 36.06 0 0 0 0 60.2h3.4V62h33.1v16.5h3.3a36.05 36.05 0 0 0 0-60.2ZM27.1 72a31.59 31.59 0 0 1-2.63-44.6 33 33 0 0 1 2.63-2.62Zm37.7-14.6H31.7V39.28h33.1Zm4.5 14.5V24.78a31.65 31.65 0 0 1 2.39 44.71 34 34 0 0 1-2.39 2.39Z"/></svg>
-\ No newline at end of file
+@@ -1,6 +1,7 @@
+ import { execFile } from "node:child_process"
+ import { existsSync, statSync } from "node:fs"
+-import { delimiter, join } from "node:path"
++import { homedir } from "node:os"
++import { basename, delimiter, dirname, isAbsolute, join } from "node:path"
+ 
+ // RTK OpenCode plugin — rewrites commands to use rtk for token savings.
+ //
+@@ -28,40 +29,127 @@ export function _resetCachedRtkPath(): void {
+   probedBin = null
+ }
+ 
++function probeDirsForRtk(dirs: string[], exts: string[]): string | null {
++  for (const dir of dirs) {
++    for (const ext of exts) {
++      const fullPath = join(dir, `rtk${ext}`)
++      try {
++        if (existsSync(fullPath) && !statSync(fullPath).isDirectory()) {
++          return fullPath
++        }
++      } catch {
++        continue
++      }
++    }
++  }
++  return null
++}
++
++/**
++ * Whether the shell reaches `bin` as a bare `rtk` once `dirname(bin)` is
++ * appended to its PATH: an absolute path (a relative one would be resolved
++ * against the shell's working directory) to a file named `rtk`.
++ */
++function reachableAsRtk(bin: string, exts: string[]): boolean {
++  const fold = (s: string) => (process.platform === "win32" ? s.toLowerCase() : s)
++  const name = fold(basename(bin))
++  if (!isAbsolute(bin) || !exts.some((ext) => name === fold(`rtk${ext}`))) return false
++  try {
++    return existsSync(bin) && !statSync(bin).isDirectory()
++  } catch {
++    return false
++  }
++}
++
+ /**
+- * Resolves the rtk binary from the system PATH.
++ * Resolves the rtk binary that OpenCode's shell will run.
+  *
+- * PATH only, deliberately. OpenCode's bash/shell tool runs commands with
+- * OpenCode's own PATH and never sources `.profile`, `.bashrc` or
+- * `.bash_profile`, so an rtk found outside PATH cannot be spawned as a bare
+- * `rtk …` — the tool comes back `rtk: command not found`. Finding one anyway
+- * is worse than not rewriting (#4462 carries that case). A directory on PATH
+- * named `rtk` is skipped rather than frozen as the answer: it disables the
+- * plugin for the whole session.
++ * The rewrite stays a bare `rtk …` and the shell hooks only append rtk's
++ * directory to the shell's PATH, so an rtk already on PATH is the one every
++ * rewritten command runs. It is therefore checked first (PATHEXT on Windows,
++ * #1993): probing and judging the command with any other rtk would let the
++ * binary that judged it and the one that runs it disagree. Without one,
++ * RTK_BIN is used when the shell can reach it as `rtk`, then the standard
++ * install directories: ~/.cargo/bin, ~/.local/bin, /opt/homebrew/bin,
++ * /usr/local/bin, /usr/bin, and Windows local app data / program files. Those
++ * are where an rtk sits when OpenCode is launched from a desktop GUI (macOS
++ * Dock, a Linux desktop entry) that does not source the shell profile (#4462).
+  *
+- * Windows still probes PATHEXT, which is the #1993 fix: `which` does not exist
+- * there.
++ * A directory named `rtk` is skipped rather than returned.
+  */
+ export function resolveRtkPath(): string | null {
+   if (cachedRtkPath && existsSync(cachedRtkPath)) return cachedRtkPath
+ 
+-  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean)
+   const exts = process.platform === "win32"
+     ? (process.env.PATHEXT ?? ".EXE;.CMD;.BAT;.COM").split(";")
+     : [""]
++  const rtkBinEnv = process.env.RTK_BIN
+ 
+-  for (const dir of dirs) {
+-    for (const ext of exts) {
+-      const fullPath = join(dir, `rtk${ext}`)
+-      if (existsSync(fullPath) && !statSync(fullPath).isDirectory()) {
+-        return (cachedRtkPath = fullPath)
+-      }
++  // 1. System PATH
++  const pathDirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean)
++  const pathMatch = probeDirsForRtk(pathDirs, exts)
++  if (pathMatch) {
++    if (rtkBinEnv && rtkBinEnv !== pathMatch) {
++      console.warn(`[rtk] RTK_BIN=${rtkBinEnv} ignored: ${pathMatch} is on PATH, so it is the rtk OpenCode's shell runs`)
+     }
++    return (cachedRtkPath = pathMatch)
+   }
+ 
++  // 2. RTK_BIN
++  if (rtkBinEnv) {
++    if (reachableAsRtk(rtkBinEnv, exts)) return (cachedRtkPath = rtkBinEnv)
++    console.warn(`[rtk] RTK_BIN=${rtkBinEnv} ignored: it must be an absolute path to a file named rtk`)
++  }
++
++  // 3. Candidate directories outside system PATH (#4462)
++  const candidateMatch = probeDirsForRtk(candidateRtkDirs(), exts)
++  if (candidateMatch) return (cachedRtkPath = candidateMatch)
++
+   return (cachedRtkPath = null)
+ }
+ 
++/** Install directories probed when rtk is on neither `PATH` nor `RTK_BIN`. */
++export function candidateRtkDirs(): string[] {
++  const home = homedir()
++  const dirs: string[] = [
++    join(home, ".cargo", "bin"),
++    join(home, ".local", "bin"), // install.sh's default INSTALL_DIR
++    "/opt/homebrew/bin",
++    "/usr/local/bin",
++    "/usr/bin",
++  ]
++
++  if (process.platform === "win32") {
++    if (process.env.LOCALAPPDATA) dirs.push(join(process.env.LOCALAPPDATA, "cargo", "bin"))
++    if (process.env.ProgramFiles) dirs.push(join(process.env.ProgramFiles, "rtk"))
++ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5072** (closed): hook: add Kiro CLI agent support (@evandrojr)
+- **PR #5069** (2026-11-11): chore(deps): bump anyhow from 1.0.102 to 1.0.104 (@dependabot[bot])
+- **PR #5068** (2026-11-11): chore(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
+- **PR #5067** (2026-11-11): chore(deps): bump codepage from 0.1.2 to 0.1.3 (@dependabot[bot])
 - **PR #5060** (closed): Sync/upstream reliability (@idolgoff)
 - **PR #5053** (2026-11-10): docs: present RTK as the cost reduction engine for AI coding agents (@aeppling)
-- **PR #5052** (closed): docs: present RTK as the cost reduction engine for AI coding agents (@aeppling)
-- **PR #5036** (2026-11-08): chore(master): release 1.2.0 (@rtk-release-bot[bot])
-- **PR #5035** (2026-11-08): fix(copilot): let the repository's Copilot hook run without rtk installed (@KuSh)
-- **PR #5019** (2026-11-06): fix(hooks): honour exclude_commands for a swapped program called by path (@aeppling)
 
 ---
 
@@ -2395,43 +2206,39 @@ rtk gain ends with one line about RTK Pro once the us
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning
+## X. docs(guide): bring the embedding page in line with rtk 1.2.0
 
 **RULE**:
-When implementing operations in `.github/assets/src/before-after.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/getting-started/embedding.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8bc263a9`: Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61de0133`: docs(guide): bring the embedding page in line with rtk 1.2.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/assets/src/before-after.html`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/getting-started/embedding.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-<!doctype html>
-<html><head><meta charset="utf-8">
-<!-- Real output. Captured with `rtk bypass cargo test` (left) and `rtk cargo test` (right)
-     on a 48-test crate with one failing assertion, rtk core 1.0.1. Only the lines marked
-     "⋯ N more lines" are elided; the counts are exact. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
-<style>
-:root{--bg:#060b18;--bg-card:#0f1629;--text:#e2e8f0;--text-bright:#f8fafc;--text-muted:#94a3b8;--text-dim:#7e8ca6;--accent:#00e599;--accent-dim:rgba(0,229,153,.10);--accent-glow:rgba(0,229,153,.25);--red:#f87171;--scene:rgba(0,229,153,.09);--tint:rgba(0,229,153,.045);--vignette:rgba(0,0,0,.42);--grid:rgba(148,163,184,.05);--line:rgba(148,163,184,.14)}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:1280px;height:560px;background:transparent}
-.card{position:relative;width:1280px;height:560px;border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid var(--line);isolation:isolate;font-family:'Geist','Inter',sans-serif;color:var(--text)}
-.atmo{position:absolute;in
+This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
+`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
+| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
+| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi, OpenCode and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 0.48.0.
+`rtk rewrite "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
+| 0 | rewritten command | Rewrite, and an explicit Claude Code allow rule matched | Run the rewritten command |
+| 1 | empty | No RTK equivalent | Run the original command |
+| 3 | rewritten command | Rewrite, with an "ask" rule matched or no rule matched at all | Run the rewritten command |
+The exit code carries a permission verdict read from Claude Code's settings files (`.claude/sett
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8bc263a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61de0133` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

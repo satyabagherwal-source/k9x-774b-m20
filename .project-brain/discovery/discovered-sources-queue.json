@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T16:09:25.239Z",
+  "updated_at": "2026-11-16T16:21:53.943Z",
   "stats": {
-    "total_discovered": 4315,
-    "approved_pending_harvest": 4055,
+    "total_discovered": 4318,
+    "approved_pending_harvest": 4057,
     "harvested_count": 0,
-    "rejected_count": 260,
+    "rejected_count": 261,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4056,
+      "COMMUNITY_AND_EXPERT": 4059,
       "OFFICIAL_DOCUMENTATION": 138,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -93131,6 +93131,65 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stakater-reloader-learnings.md",
         "fileName": "stakater-reloader-learnings.md"
+      }
+    },
+    "SRC-8D0F2CB392C2": {
+      "id": "SRC-8D0F2CB392C2",
+      "url": "https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh",
+      "title": "https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T16:21:53.888Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-B94398E7305C": {
+      "id": "SRC-B94398E7305C",
+      "url": "https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs",
+      "title": "https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T16:21:53.916Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-2B2892D80647": {
+      "id": "SRC-2B2892D80647",
+      "url": "https://github.com/rtk-ai/rtk/pull/3917",
+      "title": "https://github.com/rtk-ai/rtk/pull/3917",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T16:21:53.942Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
       }
     }
   }

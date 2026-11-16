@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T16:09:26.086Z",
-  "total_records": 1283,
+  "last_updated": "2026-11-16T16:21:54.990Z",
+  "total_records": 1287,
   "domains": {
     "A": {
       "total": 7,
@@ -40,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 587,
+      "total": 589,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -628,7 +628,9 @@
         "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-zyphra-zonos3-mini-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggress",
-        "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr"
+        "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-audio-2b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria"
       ]
     },
     "E": {
@@ -1277,7 +1279,7 @@
       ]
     },
     "K": {
-      "total": 47,
+      "total": 49,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1325,7 +1327,9 @@
         "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants",
         "domain_intelligence-quality-verification-intelligence-shifthackz-stable-diffusion-kmp-learnings-core",
         "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-learnings-core-invariant"
+        "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-learnings-core-invariant",
+        "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants"
       ]
     },
     "L": {
@@ -7170,8 +7174,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "f486b01cb352e94e275388d79830b4478ec6b86cafba01d60c4b6113644c6f5b",
-      "created_at": "2026-11-16T04:30:25.455Z"
+      "content_hash": "13f95a1b3e18d98aa67a6a9c33f0ae4afa38e6e4dfe497e75c6b1ab15aaef9b6",
+      "created_at": "2026-11-16T16:21:51.009Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -12197,8 +12201,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "a8a9a136dca40e42e3e169fa9e026e0647fcab0f2e07a0a616f5fe64b28fd245",
-      "created_at": "2026-11-16T04:30:32.417Z"
+      "content_hash": "896baa9a1952cd855ca265bf151e39c73b08a565517f450b5ff682d048e836aa",
+      "created_at": "2026-11-16T16:21:54.990Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -23384,6 +23388,42 @@
       "repository": "stakater-reloader-learnings",
       "content_hash": "22aa8db5c96b3784f6d4003dbe6d3a6cf04e883b145df5ca6a28233708be0c3c",
       "created_at": "2026-11-16T16:09:25.481Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-audio-2b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-audio-2b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Audio-2B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-audio-2b-research-knowledge-intelligence-liquidai-lfm3-audio-2b.md",
+      "repository": "LiquidAI/LFM3-Audio-2B",
+      "content_hash": "72e473a0d4313cd3162f711dcd6ca7ea3f4824c7fb22362c8cb3f3bb471a4be9",
+      "created_at": "2026-11-16T16:21:38.113Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
+      "repository": "rtk-ai/rtk",
+      "content_hash": "549031f99d46a4a038452484a6bdefdb2d4538f9908fcea19245a5b5cbbfe4ff",
+      "created_at": "2026-11-16T16:21:40.377Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-learnings-quality-verification-intelligence-rtk-ai-rtk-learnings-core.md",
+      "repository": "rtk-ai-rtk-learnings",
+      "content_hash": "c90d9be4e2baed405353c5ef13ae70c4d28e380a4fef4c40bbb6b3c7508687c4",
+      "created_at": "2026-11-16T16:21:54.226Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-audio-2b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-audio-2b-learnings-research-knowledge-intelligence-hf-liquidai-.md",
+      "repository": "hf-liquidai-lfm3-audio-2b-learnings",
+      "content_hash": "24f2ff8678fffcda47d2fa0f72813974160d5ca8bf1520c8c5f5fa2037fd10bf",
+      "created_at": "2026-11-16T16:21:54.602Z"
     }
   }
 }

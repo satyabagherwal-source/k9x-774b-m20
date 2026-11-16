@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `2a786dca`  
+> **Source Version**: `8bb6096b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T05:15:45.011Z  
+> **Timestamp**: 2026-11-16T16:21:39.226Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T05:15:45.003Z  
+> **Harvest Timestamp**: 2026-11-16T16:21:39.220Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 86404 stars
+- **Stars / Engagement**: 86747 stars
 
 ---
 
@@ -1722,14 +1722,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5115** (2026-11-14): **rtk x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build**
+  *Symptoms*: # `rtk` x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build  ## Summary  The prebuilt `rtk-x86_64-unknown-linux-musl` binary from the latest release (v1.2.0) crashes immediately with `SIGILL` (Illegal instruction, exit code 132) on x86-64 CPUs that lack AVX2. The binary contains unguarded AVX2 instructions that execute before any runtime CPU-feature dispatch can pick a scalar fallback. A baseline build artifact (compiled with `target-cpu=x86-64` and AVX2/BMI2/FMA disabled at codegen) is needed for the many homelab and older-server machines still on Ivy Bridge / Sandy Bridge / pre-Excavator AMD.  ## Environment  - **OS:** Alpine Linux edge (musl), kernel 6.x - **CPU:** Intel Xeon E5-2695 v2 (Ivy Bridge, 2012) — has AVX, **no AVX2, no BMI1/BMI2, no FMA** - **CPU flags:** `sse sse2 ssse3 sse4_1 sse4_2 avx` (no `avx2`, no `bmi1`, no `bmi2`, no `fma`) - **rtk:** `v1.2.0`, installed via `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh` (asset `rtk-x86_64-unknown-linux-musl.tar.gz`) - **Reproduced commands:** `rtk`, `rtk --help`, `rtk --version` — all exit 132  ## Steps to reproduce  1. On any x86-64 CPU without AVX2 (Ivy Bridge, Sandy Bridge, pre-Ryzen AMD), run:    ```bash    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh    rtk --version    ``` 2. Alternatively, on an AVX2-capable machine, reproduce under QEMU:    ```bas
+
 - **Issue #5035** (2026-11-08): **fix(copilot): let the repository's Copilot hook run without rtk installed**
   *Symptoms*: Fixes the repository's own `.github/hooks/rtk-rewrite.json`, which broke Copilot sessions on this repository.  The hook ran `rtk hook`, which exits 2 because the subcommand is missing. Copilot denies the tool call when a `preToolUse` command hook exits non-zero, so every call was denied. Where `rtk` is not installed, such as the Copilot cloud agent sandbox, the command exits 127 with the same result.  The config now carries the stock entry that `rtk init --copilot` writes (`rtk hook copilot`, `version: 1`) in `bash` and `powershell` fields that exit 0 when `rtk` is not on `PATH`, so the tool call runs unchanged. The cloud agent honours `bash` and VS Code maps `bash` and `powershell` per OS. `hooks/copilot/rtk-awareness.md` named the command `rtk hook`; it now says `rtk hook copilot`.  `rtk init --copilot` is untouched. An opt-in guarded form for every agent is #5033.  ## Test plan  - [x] `tests/copilot_repo_hook_test.rs` runs the checked-in `bash` string through `sh` with an empty `PATH` (exit 0, no output) and with `rtk` on `PATH` (a `run_in_terminal` `git status` gets `updatedInput` `rtk git status`, no `permissionDecision`) - [x] The `powershell` string run through `pwsh` in `mcr.microsoft.com/powershell`: no `rtk` gives exit 0 with no output, `rtk` on `PATH` gives the same rewrite reply with stdin reaching `rtk`. Not run in CI and not run on Windows PowerShell - [x] `cargo fmt --all`, `cargo clippy --all-targets`, `cargo test --all` clean on the pushed commit  🤖 Generate
-
-- **Issue #5019** (2026-11-06): **fix(hooks): honour exclude_commands for a swapped program called by path**
-  *Symptoms*: ## Cause  The swap gate (#4685) checks `exclude_commands` only at the start of each word, so a program called by path is not matched: with `git` excluded, `/usr/bin/git log` is still swapped and the agent gets the worker's digest instead of git's output. Master runs it as typed.  ## Fix  Also match the word after a `/`. Patterns are anchored as `^name($|\s)`, so only a whole final path component matches (`/usr/bin/curlie` and `tools/curl/run.py` still swap). 
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/rtk-ai/rtk?pullRequest=5019) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/rtk-ai/rtk?pullRequest=5019) before we can accept your contribution.<br/><hr/>**Adrien EPPLING** seems not to be a GitHub user. You need a GitHub account to be able to sign the CLA. If you have already a GitHub account, please [add the email address used for this commit to your account](https://help.github.com/articles/why-are-my-commits-linked-to-the-wrong-user/#commits-are-not-linked-to-any-user).<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/rtk-ai/rtk?pullRequest=5019) it.</sub>
-  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes the swap-gate's exclude_commands matching so that a program invoked by its full or relative path (e.g. /usr/bin/git) is correctly matched against the exclusion list, not just bare command names at the start of a word. Adds a test covering excluded commands called via path, env-prefixed, and piped invocations, plus negative cases for similarly-named commands.  ### Review Checklist - [x] Tests present - [ ] Breaking change - [ ] Docs updated  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1746,1046 +1743,439 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ae76938` (2026-11-12)
-**Commit Message**: fix(core): send the classifier key and reach local hosts directly on ureq 3
+### Incident Patch 1: `61de0133` (2026-11-16)
+**Commit Message**: docs(guide): bring the embedding page in line with rtk 1.2.0
 
-The ureq 3 migration sent a literal placeholder instead of the
-classifier's bearer key. ureq 3 also reads HTTP_PROXY/HTTPS_PROXY/
-ALL_PROXY, which ureq 2 did not: a proxy cannot reach this machine, so
-the llm-proxy health check, rtk task through the local daemon and a
-local classifier failed whenever a proxy was set. And ureq 3 has no
-default connect timeout, so a blackholed host could hang a call.
+- Call `rtk rewrite -- "<command>"`: without `--`, a command string such
+  as `--help` or `-h` makes rtk print its own help on stdout with exit 0,
+  and the sketch handed that text back as the command to run.
+- The sketch now caches its version probe, checks `RTK_DISABLED` and
+  `rtk_ready()` before spawning, and fails open on `ValueError` (an
+  embedded NUL), as the page's own rules ask.
+- `rtk gain --format json` has carried `oversized_excluded` since 1.0.0;
+  a command above the 30,000-byte cap only increments it, so a
+  per-command database reads all zeros for a large output.
+- The exit-code table names partial allow rules, shell wrappers and an
+  unparseable settings file (exit 3), a deny inside a wrapper's script
+  (exit 1) and an inherited `RTK_REWRITE_HOST`; the settings paths
+  follow the nearest `.claude/` and `$CLAUDE_CONFIG_DIR`.
+- OpenCode now runs `rtk hook opencode`, not `rtk rewrite`; the Hermes
+  plugin's timeout is 5 s; `rtk bypass` is the escape hatch's name since
+  1.0.0; Linux caps a single argument at 32 pages; the
+  `exclude_commands` example uses commands rtk rewrites.
+- Version references move to
 
-core::http sets timeouts per request instead of building an Agent per
-call, connects to localhost and loopback directly, and calls to RTK's
-own daemon never use a proxy. Remote hosts follow the proxy variables;
-the module documents the limits of that path (CONNECT tunnels for
-http:// targets, task's substring daemon match, no SOCKS, how ureq
-reads the variables). Every request gets back ureq 2's 30s connect
-cap. Bodies are read as ureq 2's into_string did: at most 10 MiB once
-decompressed (ureq 3's own limit counts the bytes on the wire), invalid
-UTF-8 decoded lossily whatever the content type, JSON parsed from that
-text. Requests send JSON with send_json, and the health check caps the
-body it reads at 64 KiB.
-
-
-**File**: `Cargo.lock` (modified, +319/-0)
+**File**: `docs/guide/getting-started/embedding.md` (modified, +42/-31)
 ```diff
-@@ -334,6 +334,35 @@ dependencies = [
-  "unicode-segmentation",
- ]
+@@ -7,46 +7,46 @@ sidebar:
  
-+[[package]]
-+name = "cookie"
-+version = "0.18.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
-+dependencies = [
-+ "percent-encoding",
-+ "time",
-+ "version_check",
-+]
-+
-+[[package]]
-+name = "cookie_store"
-+version = "0.22.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "15b2c103cf610ec6cae3da84a766285b42fd16aad564758459e6ecf128c75206"
-+dependencies = [
-+ "cookie",
-+ "document-features",
-+ "idna",
-+ "indexmap",
-+ "log",
-+ "serde",
-+ "serde_derive",
-+ "serde_json",
-+ "time",
-+ "url",
-+]
-+
- [[package]]
- name = "core-foundation-sys"
- version = "0.8.7"
-@@ -541,6 +570,17 @@ dependencies = [
-  "windows-sys 0.61.2",
- ]
+ # Embedding rtk in your own agent harness
  
-+[[package]]
-+name = "displaydoc"
-+version = "0.2.7"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
-+dependencies = [
-+ "proc-macro2",
-+ "quote",
-+ "syn 3.0.5",
-+]
-+
- [[package]]
- name = "document-features"
- version = "0.2.12"
-@@ -680,6 +720,15 @@ version = "0.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+-This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi, OpenCode and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 0.48.0.
++This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
  
-+[[package]]
-+name = "form_urlencoded"
-+version = "1.2.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+dependencies = [
-+ "percent-encoding",
-+]
-+
- [[package]]
- name = "generic-array"
- version = "0.14.7"
-@@ -845,12 +894,116 @@ dependencies = [
-  "cc",
- ]
+ ## What `rtk rewrite` returns
  
-+[[package]]
-+name = "icu_collections"
-+version = "2.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "fe090a42a0d3140fed8c63263ed1fecc02422cb2f4bfe55cd8de2de1b8e105dd"
-+dependencies = [
-+ "displaydoc",
-+ "potential_utf",
-+ "utf8_iter",
-+ "yoke",
-+ "zerofrom",
-+ "zerovec",
-+]
-+
-+[[package]]
-+name = "icu_locale_core"
-+version = "2.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "25d29b57c17c6528d0dc4c2141cfa2d08200465acb537a3909c8b9b8a4a984c0"
-+dependencies = [
-+ "displaydoc",
-+ "litemap",
-+ "tinystr",
-+ "writeable",
-+ "zerovec",
-+]
-+
-+[[package]]
-+name = "icu_normalizer"
-+version = "2.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "404a3b8c486f205c87fe7f23ab6894d84a4ad76d6e4671ae1981ba7def87c599"
-+dependencies = [
-+ "icu_collections",
-+ "icu_normalizer_data",
-+ "icu_properties",
-+ "icu_provider",
-+ "smallvec",
-+ "zerovec",
-+]
-+
-+[[package]]
-+name = "icu_normalizer_data"
-+version = "2.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "20f0088bfb7441f7a37fa0c9e20cb1e9cba1cac6b9ce8cd2a6dc44294f8e8cbc"
-+
-+[[package]]
-+name = "icu_properties"
-+version = "2.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2ea83d991c56158f7cf898bf86436c1dfe7c07ee82fe88951f2695c9f37a379f"
-+dependencies = [
-+ "displaydoc",
-+ "icu_collections",
-+ "icu_locale_core",
-+ "icu_properties_data",
-+ "icu_provider",
-+ "zerotrie",
-+ "zerovec",
-+]
-+
-+[[package]]
-+name = "icu_properties_data"
-+version = "2.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "b98f29af82d02b163fe50161388350e743bb3107cc8e8c2f7314cb505faddfcf"
-+
-+[[package]]
-+name = "icu_provider"
-+version = "2.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "413099315636c588ee8f011190b329b971a09a8fae9d157e01dcae8379468514"
-+dependencies = [
-+ "displaydoc",
-+ "icu_locale_core",
-+ "writeable",
-+ "yoke",
-+ "zerofrom",
-+ "zerotrie",
-+ "zerovec",
-+]
-+
- [[package]]
- name = "ident_case"
- version = "1.0.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
+-`rtk rewrite "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
++`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
  
-+[[package]]
-+name = "idna"
-+version = "1.1.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "3b0875f23caa03898994f6ddc501886a45c7d3d62d04d2d90788d47be1b1e4de"
-+dependencies = [
-+ "idna_adapter",
-+ "smallvec",
-+ "utf8_iter",
-+]
-+
-+[[package]]
-+name = "idna_adapter"
-+version = "1.2.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cb68373c0d6620ef8105e855e7745e18b0d00d3bdb07fb532e434244cdb9a714"
-+dependencies = [
-+ "icu_normalizer",
-+ "icu_properties",
-+]
-+
- [[package]]
- name = "ignore"
- version = "0.4.33"
-@@ -1009,6 +1162,12 @@ version = "0.12.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+ | Exit | Stdout | Meaning | What your host should do |
+ |------|--------|---------|--------------------------|
+-| 0 | rewritten command | Rewrite, and an explicit Claude Code allow rule matched | Run the rewritten command |
+-| 1 | empty | No RTK equivalent | Run the original command |
++| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
++| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper's script (`bash -c '…'`) | Run the original command |
+ | 2 | empty | A Claude Code deny rule matched | Your call. The rule comes from Claude Code's settings, so the usual choice is to run the original command and let your own policy decide |
+-| 3 | rewritten command | Rewrite, with an "ask" rule matched or no rule matched at all | Run the rewritten command |
++| 3 | rewritten command | Rewrite, with an "ask" rule matched, allow rules covering only part of the command, a shell wrapper (`bash -c '…'`), a settings file that cannot be parsed, or no rule matched at all | Run the rewritten command |
  
-+[[package]]
-+name = "litemap"
-+version = "0.8.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
-+
- [[package]]
- name = "litrs"
- version = "1.0.1"
-@@ -1489,6 +1648,15 @@ version = "1.15.0"
- source = "regi
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -78,7 +78,7 @@ toml_edit = "0.22"
- chrono = "0.4"
- tempfile = "3"
- sha2 = "0.10"
--ureq = "3"
-+ureq = { version = "3", features = ["json"] }
- getrandom = "0.4"
- flate2 = "1.0"
- quick-xml = "0.37"
-```
-
-**File**: `src/core/README.md` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ tracking before calling `stream::die_by_relayed_signal`.
+-The exit code carries a permission verdict read from Claude Code's settings files (`.claude/settings.json` in the project and `~/.claude/settings.json`, plus their `.local` variants). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
++The exit code carries a permission verdict read from Claude Code's settings files (`settings.json` and `settings.local.json` in the nearest `.claude/` directory above the working directory, and in `~/.claude`, or in `$CLAUDE_CONFIG_DIR` when it is set to a non-empty path; for a project under your home with no `.claude/` of its own, the nearest one is usually `~/.claude` itself). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
  
- Domain-agnostic building blocks with **no knowledge of any specific command, hook, or agent**. If a module references "git", "cargo", "claude", or any external tool by name, it does not belong here. Core is a leaf in the dependency graph — it is consumed by all other components but imports from none of them.
+ ```bash
+-$ rtk rewrite "git status"; echo " -> exit $?"
++$ rtk rewrite -- "git status"; echo " -> exit $?"
+ rtk git status -> exit 3
+-$ rtk rewrite "htop"; echo " -> exit $?"
++$ rtk rewrite -- "htop"; echo " -> exit $?"
+  -> exit 1
+ ```
  
--Owns: configuration loading, token tracking persistence, TOML filter engine, tee output recovery, display formatting, explicit shell/direct command construction, telemetry, and shared utilities.
-+Owns: configuration loading, token tracking persistence, TOML filter engine, tee output recovery, display formatting, explicit shell/direct command construction, telemetry, per-request HTTP settings (`http.rs`: timeout, direct connection to this machine), and shared utilities.
+-A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2; treating 0 and 3 alike keeps your host indifferent to that.
++A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2, and an `RTK_REWRITE_HOST=openclaw` inherited from the environment turns the ordinary 3 into 0; treating 0 and 3 alike keeps your host indifferent to both.
  
- Does **not** own: command-specific filtering logic (that's `cmds/`), hook lifecycle management (that's `src/hooks/`), or analytics dashboards (that's `analytics/`).
+ Three more details of the call:
  
-```
-
-**File**: `src/core/classify.rs` (modified, +42/-12)
-```diff
-@@ -15,6 +15,7 @@
- //! - **Memoized.** Answers are cached by (classifier config, content head)
- //!   in the tracking DB, so repeated outputs classify once.
- 
-+use crate::core::http;
- use crate::core::tracking::Tracker;
- use rtk_engine::pipeline::{ClassifierDef, Fact, Facts, Position, Resolved, UpstreamDef};
- use std::collections::BTreeMap;
-@@ -127,7 +128,7 @@ fn classify_batch(
-     questions: &[(&str, &ClassifierDef)],
- ) -> Option<(BTreeMap<String, Answer>, (i64, i64))> {
-     let env = upstream.api_key_env.as_deref()?;
--    let _key = std::env::var(env).ok()?;
-+    let key = std::env::var(env).ok()?;
-     let url = upstream.base_url.as_deref()?;
-     let head = questions
-         .iter()
-@@ -141,18 +142,11 @@ fn classify_batch(
-     };
-     let body = build_request(upstream, content, questions);
-     let timeout = Duration::from_secs(upstream.timeout_secs.unwrap_or(DEFAULT_TIMEOUT_SECS));
--    let agent = ureq::Agent::config_builder()
--        .timeout_global(Some(timeout))
--        .build()
--        .new_agent();
--    let mut response = agent
--        .post(url)
--        .header("authorization", "******")
--        .header("content-type", "application/json")
--        .send(body.to_string())
-+    let request = ureq::post(url).header("authorization", format!("Bearer {key}"));
-+    let mut response = http::global_timeout(request, timeout)
-+        .send_json(&body)
-         .ok()?;
--    let body = response.body_mut().read_to_string().ok()?;
--    let json: serde_json::Value = serde_json::from_str(&body).ok()?;
-+    let json = http::read_json(&mut response).ok()?;
-     Some((parse_answers(&json), usage_of(&json)))
- }
- 
-@@ -428,6 +422,42 @@ mod tests {
-         assert_eq!(answers["is_error"], Answer::Noul { value: 0.97 });
-     }
- 
-+    #[test]
-+    fn batch_request_carries_the_bearer_key_and_parses_the_reply() {
-+        let (port, server) = crate::core::http::test_server::serve_once(
-+            r#"{"answers":{"intent":{"type":"choice","choice":"build_log","confidence":0.9}},"usage":{"input_tokens":7,"output_tokens":2}}"#,
-+        );
-+        let upstream = UpstreamDef {
-+            model: "judge-v1".to_string(),
-+            base_url: Some(format!("http://127.0.0.1:{port}/classify")),
-+            api_key_env: Some("RTK_TEST_CLASSIFIER_KEY".to_string()),
-+            ..UpstreamDef::default()
-+        };
-+        let def = intent();
-+        let result = temp_env::with_var("RTK_TEST_CLASSIFIER_KEY", Some("sk-test"), || {
-+            classify_batch(&upstream, "output", false, &[("intent", &def)])
-+        });
-+        let (answers, usage) = result.expect("a parsed reply");
-+        let request = server.join().expect("server");
-+        assert_eq!(
-+            answers["intent"],
-+            Answer::Choice {
-+                label: "build_log".to_string(),
-+                confidence: 0.9
-+            }
-+        );
-+        assert_eq!(usage, (7, 2));
-+        let headers = request.to_ascii_lowercase();
-+        assert!(
-+            headers.contains("\r\nauthorization: bearer sk-test\r\n"),
-+            "{request}"
-+        );
-+        assert!(
-+            headers.contains("\r\ncontent-type: application/json"),
-+            "{request}"
-+        );
-+    }
-+
-     #[test]
-     fn low_confidence_inserts_no_fact() {
-         let def = intent();
-```
-
-**File**: `src/core/http.rs` (added, +384/-0)
-```diff
-@@ -0,0 +1,384 @@
-+//! Per-request settings shared by RTK's outbound HTTP calls.
-+//!
-+//! ureq takes a proxy from `HTTP_PROXY`/`HTTPS_PROXY`/`ALL_PROXY` (minus `NO_PROXY`).
-+//! A proxy on another machine cannot reach this machine's loopback, so every request
-+//! built here connects to `localhost` and loopback addresses directly, and calls to
-+//! the daemon RTK located itself (`daemon_bind`) go through [`direct_global_timeout`]
-+//! whatever address it is bound to.
-+//!
-+//! Known limitations of the proxy path:
-+//! - ureq reaches every target through a `CONNECT` tunnel, `http://` ones included,
-+//!   and proxies commonly allow `CONNECT` to port 443 only: a plain-HTTP server on
-+//!   another machine needs a `NO_PROXY` entry.
-+//! - `rtk task` treats a `base_url` as its daemon (and skips the proxy) when the URL
-+//!   merely contains `localhost`, `127.0.0.1`, `[::1]` or `0.0.0.0`; a `base_url`
-+//!   naming the daemon by a LAN address follows the proxy variables.
-+//! - SOCKS proxies (`socks5://` and the like) are not supported.
-+//! - ureq takes the first of `ALL_PROXY`, `HTTPS_PROXY`, `HTTP_PROXY` for every
-+//!   scheme, and matches `NO_PROXY` entries as written: no trimming around commas,
-+//!   no CIDR ranges.
-+
-+use std::net::IpAddr;
-+use std::time::Duration;
-+use ureq::RequestBuilder;
-+use ureq::http::Uri;
-+
-+/// The longest a connection may take to open, whatever the request's own deadline.
-+const CONNECT_TIMEOUT: Duration = Duration::from_secs(30);
-+
-+/// Abandons the whole exchange after `timeout` (ureq's `timeout_global`), and the
-+/// connection after [`CONNECT_TIMEOUT`] if that comes first.
-+pub fn global_timeout<B>(request: RequestBuilder<B>, timeout: Duration) -> RequestBuilder<B> {
-+    skip_proxy_if_local(with_global_timeout(request, timeout))
-+}
-+
-+/// [`global_timeout`], never through a proxy: for RTK's own daemon, which may be
-+/// bound to any of this machine's addresses.
-+pub fn direct_global_timeout<B>(
-+    request: RequestBuilder<B>,
-+    timeout: Duration,
-+) -> RequestBuilder<B> {
-+    direct(with_global_timeout(request, timeout))
-+}
-+
-+fn with_global_timeout<B>(request: RequestBuilder<B>, timeout: Duration) -> RequestBuilder<B> {
-+    request
-+        .config()
-+        .timeout_global(Some(timeout))
-+        .timeout_connect(Some(timeout.min(CONNECT_TIMEOUT)))
-+        .build()
-+}
-+
-+/// GET of a pipeline source, abandoned if the connection takes longer than
-+/// [`CONNECT_TIMEOUT`]; a slow body is left to finish.
-+#[cfg(feature = "engine")]
-+pub fn get(url: &str) -> anyhow::Result<ureq::http::Response<ureq::Body>> {
-+    use anyhow::Context;
-+    // nosemgrep: ureq-outside-telemetry -- inbound GET of a pipeline source the user named (a URL, or the GitHub API for a repository)
-+    let request = ureq::get(url);
-+    connect_timeout(request, CONNECT_TIMEOUT)
-+        .call()
-+        .with_context(|| format!("GET {url}"))
-+}
-+
-+/// Abandons the request if the connection takes longer than `timeout` (ureq's
-+/// `timeout_connect`); a slow body is left to finish.
-+#[cfg(feature = "engine")]
-+fn connect_timeout<B>(request: RequestBuilder<B>, timeout: Duration) -> RequestBuilder<B> {
-+    skip_proxy_if_local(request.config().timeout_connect(Some(timeout)).build())
-+}
-+
-+/// The largest body RTK reads, once decompressed.
-+#[cfg(feature = "engine")]
-+pub const MAX_BODY: u64 = 10 * 1024 * 1024;
-+
-+/// The body as text, at most `limit` bytes once decompressed, whatever its content
-+/// type: invalid UTF-8 becomes U+FFFD. ureq's own limit counts the bytes on the
-+/// wire, so a small gzip body could inflate far past it; and its `read_to_string`
-+/// decodes lossily for `text/*` only.
-+pub fn read_text_lossy(
-+    response: &mut ureq::http::Response<ureq::Body>,
-+    limit: u64,
-+) -> anyhow::Result<String> {
-+    use anyhow::Context;
-+    use std::io::Read;
-+    let mut bytes = Vec::new();
-+    response
-+        .body_mut()
-+        .with_config()
-+        .reader()
-+        .take(limit.saturating_add(1))
-+        .read_to_end(&mut bytes)
-+        .context("read body")?;
-+    if bytes.len() as u64 > limit {
-+        anyhow::bail!("body larger than {limit} bytes");
-+    }
-+    Ok(String::from_utf8(bytes)
-+        .unwrap_or_else(|e| String::from_utf8_lossy(e.as_bytes()).into_owned()))
-+}
-+
-+/// The body parsed as JSON, read through [`read_text_lossy`] with [`MAX_BODY`].
-+#[cfg(feature = "engine")]
-+pub fn read_json(
-+    response: &mut ureq::http::Response<ureq::Body>,
-+) -> anyhow::Result<serde_json::Value> {
-+    use anyhow::Context;
-+    let text = read_text_lossy(response, MAX_BODY)?;
-+    serde_json::from_str(&text).context("body is not JSON")
-+}
-+
-+/// Never goes through a proxy.
-+fn direct<B>(request: RequestBuilder<B>) -> RequestBuilder<B> {
-+    request.config().proxy(None).build()
-+}
-+
-+fn skip_proxy_if_local<B>(request: RequestBuilder<B>) -> RequestBuilder<B> {
-+    if request.uri_ref().is_some_and(is_local) {
-+        direct(request)
-+    } else {
-+        request
-+    }
-+}
-
-```
-
-**File**: `src/core/mod.rs` (modified, +1/-0)
-```diff
-@@ -11,6 +11,7 @@ pub mod constants;
- pub mod display_helpers;
- pub mod filter;
- pub mod guard;
-+pub mod http;
- #[cfg(feature = "engine")]
- pub mod pipeline_cmd;
- #[cfg(feature = "engine")]
-```
-
-**File**: `src/core/pipeline_cmd.rs` (modified, +3/-5)
-```diff
-@@ -1,5 +1,6 @@
- //! `rtk pipeline` and `rtk methods` command surface over the engine.
- 
-+use crate::core::http;
- use crate::core::pipeline_config::{self, LoadedPipeline};
- use anyhow::{Context, Result};
- use regex::Regex;
-@@ -219,11 +220,8 @@ fn read_source(source: &str) -> Result<String> {
-     if source.starts_with("http://") || source.starts_with("https://") {
-         let url = gist_raw_url(source);
-         // GET of a URL the user typed on the CLI; inbound content only.
--        // nosemgrep: ureq-outside-telemetry
--        let mut response = ureq::get(&url).call().context("fetch pipeline")?;
--        return response
--            .body_mut()
--            .read_to_string()
-+        let mut response = http::get(&url).context("fetch pipeline")?;
-+        return http::read_text_lossy(&mut response, http::MAX_BODY)
-             .context("read fetched pipeline");
-     }
-     std::fs::read_to_string(source).with_context(|| format!("read {source}"))
-```
-
-**File**: `src/core/pipeline_remote.rs` (modified, +3/-8)
-```diff
-@@ -4,6 +4,7 @@
- //! nothing, reviews nothing, and never holds a token — everything goes
- //! through the user's own `gh`.
- 
-+use crate::core::http;
- use crate::core::pipeline_config;
- use anyhow::{Context, Result};
- use rtk_engine::pipeline::has_errors;
-@@ -131,14 +132,8 @@ fn resolve_sha(src: &GithubSource) -> Option<String> {
- 
- fn http_get(url: &str) -> Result<String> {
-     // GET of a public GitHub endpoint the user asked for; inbound content only.
--    // nosemgrep: ureq-outside-telemetry
--    let mut response = ureq::get(url)
--        .call()
--        .with_context(|| format!("GET {url}"))?;
--    response
--        .body_mut()
--        .read_to_string()
--        .context("read response")
-+    let mut response = http::get(url)?;
-+    http::read_text_lossy(&mut response, http::MAX_BODY).context("read response")
- }
- 
- pub struct InstallOrigin {
+-- **Read stdout only.** Stderr can carry advisory lines: a once-a-day "No
 ```
 
 ---
 
-### Incident Patch 2: `3d94dc2c` (2026-11-12)
-**Commit Message**: refactor(dotnet): read quick-xml 0.42 content events directly
+### Incident Patch 2: `8bb6096b` (2026-11-16)
+**Commit Message**: Merge pull request #3918 from zerone0x/docs/embedding-guide
 
-Text no longer carries references in quick-xml 0.42, so unescaping it
-was a no-op: use xml10_content() for text and CDATA (CRLF becomes LF)
-and resolve references in one helper shared by the TRX parser and the
-MSBuild property scan, keeping undeclared entities as written. The
-scan now also reads a value split by a comment or held in CDATA.
+docs(guide): add a guide for embedding rtk in a custom agent harness
 
-0.42 rejects a bare `&`, which 0.37 read as text and which would now
-discard a whole TRX file: both readers allow it again. Resolved
-references can carry control characters, so failure details and test
-names go through sanitize_for_terminal, a CR becoming a line break.
-
-trim_text(false) is the default, so the call goes. Names use
-quick-xml's local_name() and readers built from a &str read events
-without a buffer.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/cmds/dotnet/dotnet_cmd.rs` (modified, +83/-34)
+**File**: `docs/guide/getting-started/embedding.md` (added, +186/-0)
 ```diff
-@@ -13,7 +13,6 @@ use crate::core::utils::{resolved_command, truncate};
- use crate::dotnet_format_report;
- use crate::dotnet_trx;
- use anyhow::{Context, Result};
--use quick_xml::Reader;
- use quick_xml::events::Event;
- use serde_json::Value;
- use std::ffi::OsString;
-@@ -711,60 +710,55 @@ fn scan_mtp_kind_in_file(path: &Path) -> MtpProjectKind {
-         Err(_) => return MtpProjectKind::None,
-     };
- 
--    let mut reader = Reader::from_str(&content);
--    reader.config_mut().trim_text(false);
--    let mut buf = Vec::new();
--    let mut inside_mtp_element = false;
--    let mut mtp_element_text = String::new();
-+    let mut reader = dotnet_trx::xml_reader(&content);
-+    // The text of the MTP property being read, if inside one.
-+    let mut value: Option<String> = None;
-+    let is_true = |value: &Option<String>| {
-+        value
-+            .as_deref()
-+            .is_some_and(|v| v.trim().eq_ignore_ascii_case("true"))
-+    };
- 
-+    // Decided after the loop: a malformed end tag or a truncated file still ends a
-+    // value read in full.
-     loop {
--        match reader.read_event_into(&mut buf) {
-+        match reader.read_event() {
-             Ok(Event::Start(e)) => {
-                 let name_lower = e.local_name().as_ref().to_ascii_lowercase();
-                 // All project-file MTP properties run in VSTest bridge mode and require
-                 // MTP-specific args to come after `--`. Only global.json MTP mode is native.
--                inside_mtp_element = matches!(
-+                let is_mtp_element = matches!(
-                     name_lower.as_str(),
-                     "usemicrosofttestingplatformrunner"
-                         | "usetestingplatformrunner"
-                         | "testingplatformdotnettestsupport"
-                 );
--                if inside_mtp_element {
--                    mtp_element_text.clear();
--                }
-+                value = is_mtp_element.then(String::new);
-             }
--            Ok(Event::Text(e)) if inside_mtp_element => {
--                if let Ok(text) = quick_xml::escape::unescape(e.as_ref()) {
--                    mtp_element_text.push_str(&text);
--                }
--            }
--            Ok(Event::GeneralRef(e)) if inside_mtp_element => {
--                let text = e
--                    .resolve_char_ref()
--                    .ok()
--                    .flatten()
--                    .map(|ch| ch.to_string())
--                    .or_else(|| {
--                        quick_xml::escape::resolve_predefined_entity(e.as_ref()).map(str::to_owned)
--                    });
--                if let Some(text) = text {
--                    mtp_element_text.push_str(&text);
-+            Ok(event @ (Event::Text(_) | Event::CData(_) | Event::GeneralRef(_))) => {
-+                if let Some(value) = value.as_mut() {
-+                    dotnet_trx::push_content(&event, value);
-                 }
-             }
-+            // MSBuild reads a property as its inner XML, which a child element makes
-+            // something other than `true`.
-+            Ok(Event::Empty(_)) => value = None,
-             Ok(Event::End(_)) => {
--                if inside_mtp_element && mtp_element_text.trim().eq_ignore_ascii_case("true") {
--                    return MtpProjectKind::VsTestBridge;
-+                if is_true(&value) {
-+                    break;
-                 }
--                inside_mtp_element = false;
-+                value = None;
-             }
--            Ok(Event::Eof) => break,
--            Err(_) => break,
-+            Ok(Event::Eof) | Err(_) => break,
-             _ => {}
-         }
--        buf.clear();
-     }
- 
--    MtpProjectKind::None
-+    if is_true(&value) {
-+        MtpProjectKind::VsTestBridge
-+    } else {
-+        MtpProjectKind::None
-+    }
- }
- 
- fn parse_global_json_mtp_mode(path: &Path) -> bool {
-@@ -2748,6 +2742,61 @@ mod tests {
-         assert_eq!(scan_mtp_kind_in_file(&csproj), MtpProjectKind::VsTestBridge);
-     }
- 
-+    #[test]
-+    fn test_scan_mtp_kind_reads_the_value_around_markup() {
-+        let temp_dir = test_isolation::tempdir();
-+        let csproj = temp_dir.path().join("MTP.Tests.csproj");
-+        for (property, expected) in [
-+            (
-+                "<UseTestingPlatformRunner>true<!-- opt in --></UseTestingPlatformRunner>",
-+                MtpProjectKind::VsTestBridge,
-+            ),
-+            (
-+                "<UseTestingPlatformRunner><![CDATA[true]]></UseTestingPlatformRunner>",
-+                MtpProjectKind::VsTestBridge,
-+            ),
-+            (
-+                "<UseTestingPlatformRunner>true</UseTestingplatformRunner>",
-+                MtpProjectKind::VsTestBridge,
-+            ),
-+            (
-+                "<Description>Tom & Jerry</Description><UseTestingPlatformRunner>true</UseTestingPlatformRunner>",
-+                MtpProjectKind::VsTestBridge,
-+            ),
-+            (
-+                "<UseTestingPlatformRunner>tr<!-- x -->ue-ish</UseTestingPla
+@@ -0,0 +1,186 @@
++---
++title: Embedding rtk in your own agent harness
++description: Call rtk rewrite from your own bash tool instead of installing a shipped hook — the exit-code contract, where the call goes, fail-open rules, and per-session accounting
++sidebar:
++  order: 5
++---
++
++# Embedding rtk in your own agent harness
++
++This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
++
++## What `rtk rewrite` returns
++
++`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
++
++| Exit | Stdout | Meaning | What your host should do |
++|------|--------|---------|--------------------------|
++| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
++| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper's script (`bash -c '…'`) | Run the original command |
++| 2 | empty | A Claude Code deny rule matched | Your call. The rule comes from Claude Code's settings, so the usual choice is to run the original command and let your own policy decide |
++| 3 | rewritten command | Rewrite, with an "ask" rule matched, allow rules covering only part of the command, a shell wrapper (`bash -c '…'`), a settings file that cannot be parsed, or no rule matched at all | Run the rewritten command |
++
++The exit code carries a permission verdict read from Claude Code's settings files (`settings.json` and `settings.local.json` in the nearest `.claude/` directory above the working directory, and in `~/.claude`, or in `$CLAUDE_CONFIG_DIR` when it is set to a non-empty path; for a project under your home with no `.claude/` of its own, the nearest one is usually `~/.claude` itself). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
++
++```bash
++$ rtk rewrite -- "git status"; echo " -> exit $?"
++rtk git status -> exit 3
++$ rtk rewrite -- "htop"; echo " -> exit $?"
++ -> exit 1
++```
++
++A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2, and an `RTK_REWRITE_HOST=openclaw` inherited from the environment turns the ordinary 3 into 0; treating 0 and 3 alike keeps your host indifferent to both.
++
++Three more details of the call:
++
++- **Read stdout only.** Stderr can carry advisory lines: a once-a-day "No hook installed" notice on machines where the Claude Code config directory (`~/.claude`, or `$CLAUDE_CONFIG_DIR`) exists without an RTK hook, or an `RTK_DISABLED=1 detected` message.
++- **Compare output with input.** A command that already starts with `rtk` comes back unchanged (still exit 3), and there is nothing to substitute.
++- **Check `RTK_DISABLED` yourself before spawning `rtk rewrite`**, as the Pi extension does. Releases up to 1.2.0 honor it only as an in-command prefix (`rtk rewrite -- "RTK_DISABLED=1 git status"` exits 1); [rtk-ai/rtk#3917](https://github.com/rtk-ai/rtk/pull/3917) makes `rtk rewrite` honor the exported variable as well.
++
++`rtk rewrite` does not run the command and does not open the savings database. Compound commands are handled (`cargo fmt --all && cargo test` becomes `rtk cargo fmt --all && rtk cargo test`); commands containing a file redirect (`> out.txt`) or command substitution pass through with exit 1; a file-descriptor duplication such as `2>&1` does not block the rewrite.
++
++## Where the call goes
++
++Run the rewrite **after your own approval gate and before you spawn the shell**:
++
++```text
++agent asks for "git status"
++  -> your policy check or permission prompt sees "git status"
++  -> rtk rewrite -- "git status"     prints "rtk git status", exit 3
++  -> the shell runs "rtk git status"
++  -> the model reads the filtered output
++```
++
++A person approving a command then sees the command the agent asked for, not the rewritten one, and allow or deny patterns written for `git ...` keep matching. If your transcript shows the executed command, show the re
 ```
 
-**File**: `src/cmds/dotnet/dotnet_trx.rs` (modified, +104/-66)
+**File**: `docs/guide/getting-started/supported-agents.md` (modified, +2/-0)
 ```diff
-@@ -3,28 +3,54 @@
- use crate::binlog::{FailedTest, TestSummary};
- use chrono::{DateTime, FixedOffset};
- use quick_xml::Reader;
--use quick_xml::events::{BytesRef, BytesStart, Event};
-+use quick_xml::events::{BytesStart, Event};
- use std::path::{Path, PathBuf};
- use std::time::SystemTime;
+@@ -328,6 +328,8 @@ Strips only RTK's `[[hooks]]` block and the `~/.vibe/prompts/rtk.md` file. Any o
  
--fn local_name(name: &str) -> &str {
--    name.rsplit(':').next().unwrap_or(name)
-+/// A reader for the XML files dotnet tooling and hand edits produce, shared with the
-+/// MSBuild property scan. A bare `&` in text is read as text: ill-formed, but common enough
-+/// in third-party TRX writers and edited project files that rejecting it would
-+/// discard a whole file over one character.
-+pub(crate) fn xml_reader(content: &str) -> Reader<&[u8]> {
-+    let mut reader = Reader::from_str(content);
-+    reader.config_mut().allow_dangling_amp = true;
-+    reader
- }
+ Rules file integrations (Cline, Windsurf, Kilo Code) rely on the model following instructions. Full hook integrations (Claude Code, Trae, Cursor, Gemini, Codex, Factory Droid, Antigravity) apply rewrites before execution whenever RTK supports and can safely attest the command. Plugin integrations (OpenCode, Pi, Hermes) use in-place mutation via the agent's extension or plugin API.
  
--fn resolve_reference(reference: &BytesRef<'_>) -> Option<String> {
--    reference
--        .resolve_char_ref()
--        .ok()
--        .flatten()
--        .map(|ch| ch.to_string())
--        .or_else(|| {
--            quick_xml::escape::resolve_predefined_entity(reference.as_ref()).map(str::to_owned)
--        })
-+/// Appends the character data `event` carries. Text and CDATA come with XML 1.0
-+/// line endings; a reference is resolved, or kept as written when it is not a valid
-+/// character (`&#0;`) or names an entity declared in a DTD, which this reader does
-+/// not load. A resolved reference can be any character, controls included: text
-+/// bound for the terminal goes through [`terminal_text`].
-+pub(crate) fn push_content(event: &Event<'_>, out: &mut String) {
-+    match event {
-+        Event::Text(text) => out.push_str(&text.xml10_content()),
-+        Event::CData(cdata) => out.push_str(&cdata.xml10_content()),
-+        Event::GeneralRef(reference) => {
-+            if let Ok(Some(ch)) = reference.resolve_char_ref() {
-+                out.push(ch);
-+            } else if let Some(resolved) = quick_xml::escape::resolve_predefined_entity(reference) {
-+                out.push_str(resolved);
-+            } else {
-+                out.push('&');
-+                out.push_str(reference);
-+                out.push(';');
-+            }
-+        }
-+        _ => {}
-+    }
-+}
++Building a harness of your own? A host can skip these hooks and call `rtk rewrite` from its own bash tool. [Embedding rtk in your own agent harness](embedding.md) covers the exit-code contract, where the call goes, the fail-open rules, and per-session accounting.
 +
-+/// Text from the TRX made safe to print. A CR written as `&#xD;` survives XML
-+/// line-ending normalization, so every CR becomes a line break; any other control
-+/// character (an `&#x1B;` escape sequence, a backspace) is dropped.
-+fn terminal_text(text: &str) -> String {
-+    crate::core::utils::sanitize_for_terminal(&text.replace("\r\n", "\n").replace('\r', "\n"))
- }
+ ## Windows support
  
- fn extract_attr_value(start: &BytesStart<'_>, key: &str) -> Option<String> {
-     for attr in start.attributes().flatten() {
--        if local_name(attr.key.as_ref()) != key {
-+        if attr.key.local_name().as_ref() != key {
-             continue;
-         }
- 
-@@ -67,15 +93,12 @@ fn format_duration_between(
- }
- 
- fn parse_trx_time_bounds(content: &str) -> Option<(DateTime<FixedOffset>, DateTime<FixedOffset>)> {
--    let mut reader = Reader::from_str(content);
--    reader.config_mut().trim_text(true);
--    let mut buf = Vec::new();
-+    let mut reader = xml_reader(content);
- 
-     loop {
--        match reader.read_event_into(&mut buf) {
-+        match reader.read_event() {
-             Ok(Event::Start(e)) | Ok(Event::Empty(e)) => {
--                if local_name(e.name().as_ref()) != "Times" {
--                    buf.clear();
-+                if e.local_name().as_ref() != "Times" {
-                     continue;
-                 }
- 
-@@ -89,8 +112,6 @@ fn parse_trx_time_bounds(content: &str) -> Option<(DateTime<FixedOffset>, DateTi
-             Err(_) => return None,
-             _ => {}
-         }
--
--        buf.clear();
-     }
- 
-     None
-@@ -218,9 +239,7 @@ fn parse_trx_content(content: &str) -> Option<TestSummary> {
-         StackTrace,
-     }
- 
--    let mut reader = Reader::from_str(content);
--    reader.config_mut().trim_text(false);
--    let mut buf = Vec::new();
-+    let mut reader = xml_reader(content);
-     let mut summary = TestSummary::default();
-     let mut saw_test_run = false;
-     let mut in_failed_result = false;
-@@ -231,8 +250,8 @@ fn parse_trx_content(content: &str) -> Option<TestSummary> {
-     let mut capture_field: Option<CaptureField> = None;
- 
-     loop {
--        match reader.read_event_into(&mut buf) {
--            Ok(Event::Start(e)) => match local_name(e.name().as_ref()) {
-+        match reader.read_event() {
-+            Ok(Event::Start(e)) => match e.local_name().as_ref() {
-                 "TestRun" => saw_test_run = true,
-                 "Times" => {
-                     let start = extract_attr_value(&e, "start");
-@@ -257,7 +276,7 @@ fn parse_trx_content(content: &str) -> Option<TestSummary> {
-                         message_buf.clear();
-                         stack_buf.clear();
-                         failed_test_name = extract_attr_value(&e, "testName")
--                            
+ Since v0.37.2 the hooks for Claude Code, Cursor, Copilot, Codex, Trae, Factory Droid and Mistral Vibe are native binary commands (`rtk hook <agent>`), so auto-rewrite works on native Windows — no Unix shell, bash or jq required. `rtk init -g` installs the native hook on Windows exactly as on Linux and macOS, and adds it to Claude Code's `settings.json` once you answer `y` to the prompt (or pass `--auto-patch`).
 ```
 
 ---
 
-### Incident Patch 3: `2a786dca` (2026-11-12)
-**Commit Message**: Merge pull request #4845 from ecoyoung/fix/dotnet-test-project-count
+### Incident Patch 3: `2f90f4a9` (2026-11-16)
+**Commit Message**: Merge pull request #4507 from TechWizard9999/fix/4462-opencode-path-resolution
 
-fix(dotnet): count distinct test projects, not path mentions
+fix(opencode): resolve rtk binary path for GUI-launched OpenCode (#4462)
 
-**File**: `src/cmds/dotnet/binlog.rs` (modified, +118/-1)
+**File**: `hooks/opencode/README.md` (modified, +1/-2)
 ```diff
-@@ -88,6 +88,9 @@ static TEST_SUMMARY_RE: LazyLock<Regex> = LazyLock::new(|| {
-     )
-     .expect("valid regex")
- });
-+static TEST_RUN_FOR_RE: LazyLock<Regex> = LazyLock::new(|| {
-+    Regex::new(r"(?m)^\s*Test run for\s+(?P<dll>[^\r\n(]*\.dll)").expect("valid regex")
-+});
- static FAILED_TEST_HEAD_RE: LazyLock<Regex> = LazyLock::new(|| {
-     Regex::new(r"(?m)^\s*Failed\s+(?P<name>[^\r\n\[]+)\s+\[[^\]\r\n]+\]\s*$").expect("valid regex")
- });
-@@ -1046,7 +1049,33 @@ pub fn parse_restore_issues_from_text(text: &str) -> (Vec<BinlogIssue>, Vec<Binl
+@@ -11,8 +11,7 @@
+ - The Rust side judges the command against OpenCode's own permission rules and answers `{}` whenever the rewrite would change the verdict those rules give — OpenCode evaluates the final command itself, so RTK never lifts a deny, silences an ask, or blocks an allow (#4195). Rules are read from root and project `opencode.json`/`.jsonc` in the order OpenCode resolves them: the legacy `permission` map first, then the 2.x `permissions` list, whatever order the file declares them. Every file's root rules load before any file's agent rules, so a project `allow` cannot outrank a global agent `ask`. 2.x list actions match as globs against `shell`, so `sh*` covers it; a list rule whose action only names `bash` does not count, because OpenCode ignores it there. A legacy map key the two generations read differently (`shell` and `sh*` apply only on 2.x, `b*` only on 1.x) makes rtk leave the command as typed, because it cannot tell which generation it is serving. Global rules come before project rules. An agent defined as a markdown file in `agents/` or `agent/`, under `~/.config/opencode/` or any `.opencode/` from the working directory up, whose frontmatter declares `permission:` or `permissions:`, is not parsed here, so no rewrite happens for that agent and OpenCode applies its own rules.
+ - Uses standard `node:child_process.execFile` (compatible with OpenCode CLI, OpenCode Desktop/Electron, and Windows; zero Bun/zx dependencies)
+ - Passes the command as a single argv element, never through a shell
+-- Resolves rtk from the system `PATH` only (`PATHEXT` on Windows), and skips a PATH entry that is a directory. OpenCode's shell tool runs with OpenCode's own `PATH` and never sources `.profile`/`.bashrc`, so an rtk found outside `PATH` cannot be spawned as a bare `rtk …` — see #4462
+-- Probes the resolved binary once per session with `rtk hook opencode --help` (cached): exit 0 means the subcommand is there, exit 2 means it predates it, and a broken or wrong-arch binary fails to spawn. Not a version number — a develop build reports `rtk 0.49.0` and so does a release that lacks the subcommand
++- Resolves rtk in this order, skipping any directory named `rtk`: OpenCode's own `PATH` (`PATHEXT` on Windows), then `RTK_BIN` when it is an absolute path to a file named `rtk`, then `~/.cargo/bin`, `~/.local/bin` (`install.sh`'s default), `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin` and, on Windows, `%LOCALAPPDATA%\cargo\bin` and `%ProgramFiles%\rtk`. The rewrite stays a bare `rtk …`, so OpenCode judges the same string `rtk hook opencode` judged; to make every `rtk` in it resolve, the plugin appends rtk's directory to the end of the spawned shell's `PATH` through OpenCode 2.x's `ctx.shell.hook("create.before")` and OpenCode 1.x's `shell.env` hook. Appending leaves every command that already resolves on `PATH` resolving to the same binary (the other programs in rtk's directory become reachable too), and changes nothing at all when rtk is already on `PATH`. That is also why an rtk on `PATH` comes before `RTK_BIN`: it is the one the shell runs, so it is the one that has to judge the command (#4462)
+ - Passes OpenCode 2.x's `event.agent` as `rtk hook opencode --agent <name>`, so an `agent.<name>.permission` ask or deny is judged against the agent that runs the command. OpenCode 1.x sends no agent field, so that path stays root-only
+ - Two separate off switches, both named `RTK_DISABLED`. The per-command form is `RTK_DISABLED=1 git status`, an env prefix inside the command string; the Rust rewrite engine handles that one and the plugin passes the string through untouched. The plugin also reads `RTK_DISABLED=1` from OpenCode's own process environment, which switches rewriting off for the whole session
+ - Mutates command in-place (`event.input.command` in v2, `output.args.command` in v1) if the answered rewrite differs from the original
+```
+
+**File**: `hooks/opencode/rtk.test.mjs` (modified, +361/-25)
+```diff
+@@ -1,34 +1,49 @@
+ import test, { after, before } from "node:test"
+ import assert from "node:assert/strict"
+-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
++import { execSync } from "node:child_process"
++import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs"
+ import { tmpdir } from "node:os"
+-import { delimiter, join } from "node:path"
++import { delimiter, dirname, join } from "node:path"
+ import RtkOpenCodePlugin, {
++  candidateRtkDirs,
+   probeRtkHookOpencode,
+   resolveRtkPath,
+   runHookOpencode,
+   tryRewriteCommand,
+   _resetCachedRtkPath,
+ } from "./rtk.ts"
+ 
+-// The plugin resolves rtk off PATH and runs it, so the tests need a real rtk
+-// to find. node is copied in under the name `rtk`, and because the plugin
+-// spawns `[<rtk>, "hook", "opencode", …]` — node reading argv[2] as the script
+-// to run — the mock script is named `hook` and the tests chdir into the mock
+-// directory so it is found there instead of over whatever sits in the repo.
++// The plugin resolves rtk off PATH or candidate directories and runs it, so
++// the tests need a real rtk to find. Node is symlinked/copied in under the name
++// `rtk`, and because the plugin spawns `[<rtk>, "hook", "opencode", …]` — node
++// reading argv[2] as the script to run — the mock script is named `hook` and the
++// tests chdir into the mock directory so it is found there instead of over
++// whatever sits in the repo.
+ // Everything below then exercises the shipped code path: PATH discovery, the
+ // `hook opencode --help` probe, argv construction, and the registered hooks.
+ const BIN = process.platform === "win32" ? "rtk.EXE" : "rtk"
+ let mockDir = ""
+ let emptyDir = ""
+ let savedPath = ""
++let savedHome = ""
++let savedUserProfile = ""
+ let savedCwd = ""
+ 
++function installMockBin(dest) {
++  try {
++    symlinkSync(process.execPath, dest)
++  } catch {
++    copyFileSync(process.execPath, dest)
++  }
++}
++
+ const MOCK = `
+ const fs = require("fs")
+ const [sub, ...rest] = process.argv.slice(2)
+ 
+ if (rest[0] === "--help") {
++  // marks a run from a shell command, so a test can count which rtk ran
++  console.log("rtk-mock")
+   if (process.env.MOCK_PROBE_LOG) fs.appendFileSync(process.env.MOCK_PROBE_LOG, "probe\\n")
+   // pre-#4349 rtk has no such subcommand and answers like clap does: exit 2
+   process.exit(process.env.MOCK_NO_SUB ? 2 : 0)
+@@ -42,6 +57,10 @@ if (process.env.MOCK_ECHO) {
+   console.log(JSON.stringify({ command: JSON.stringify(process.argv.slice(2)) }))
+ } else if (command === "ls -la") {
+   console.log(JSON.stringify({ command: "rtk ls -la" }))
++} else if (command === "cd sub && ls -la") {
++  console.log(JSON.stringify({ command: "cd sub && rtk ls -la" }))
++} else if (command === "ls -la && git status") {
++  console.log(JSON.stringify({ command: "rtk ls -la && rtk git status" }))
+ } else if (command === "unchanged") {
+   // what the Rust side answers when the rewrite would change the verdict
+   console.log("{}")
+@@ -73,17 +92,25 @@ const v1Input = { tool: "bash", sessionID: "ses_1", callID: "call_1" }
+ const v1Output = (command) => ({ args: { command, description: "list files" } })
+ 
+ async function captureSetup() {
+-  const names = []
+-  let hook = null
++  const toolHooks = []
++  const shellHooks = []
++  let toolHook = null
++  let shellHook = null
+   await RtkOpenCodePlugin.setup({
+     tool: {
+       hook(name, callback) {
+-        names.push(name)
+-        if (name === "execute.before") hook = callback
++        toolHooks.push(name)
++        if (name === "execute.before") toolHook = callback
++      },
++    },
++    shell: {
++      hook(name, callback) {
++        shellHooks.push(name)
++        if (name === "create.before") shellHook = callback
+       },
+     },
+   })
+-  return { names, hook }
++  return { names: toolHooks, hook: toolHook, toolHooks, shellHooks, shellHook }
  }
  
- fn count_projects(text: &str) -> usize {
--    PROJECT_PATH_RE.captures_iter(text).count()
-+    // Count projects, not lines that mention one: restore warnings name a project's .csproj
-+    // once per warning, and a fresh restore names it again in a `Restored <csproj>` line. Each
-+    // test assembly the run executes prints one `Test run for <dll>` line with its full path, so
-+    // those lines are counted when present. Output without them falls back to the DISTINCT lines
-+    // naming a .csproj, keyed by the path token — `Restored <path> (in 1.2 sec).` and
-+    // `<path> : warning NU1900: …` name the same project once (#4844; the keying #4846 uses).
-+    let mut projects: HashSet<&str> = HashSet::new();
-+    for captures in TEST_RUN_FOR_RE.captures_iter(text) {
-+        if let Some(dll) = captures.name("dll") {
-+            projects.insert(dll.as_str());
-+        }
-+    }
-+    if !projects.is_empty() {
-+        return projects.len();
-+    }
-+    let mut csprojs: HashSet<&str> = HashSet::new();
-+    for captures in PROJECT_PATH_RE.captures_iter(text) {
-+        // The key is the last whitespace-separated token of the match, which is the whole path
-+        // when the path has no spaces; a leading `Restored ` stays out of it.
-+        if let Some(path) = captures
-+            .get(0)
-+            .and_then(|m| m.as_str().split_whitespace().last())
-+        {
-+            csprojs.insert(path);
-+        }
-+    }
-+    csprojs.len()
+ async function captureServer() {
+@@ -94,33 +121,47 @@ async function captureServer() {
+ before(() => {
+   savedCwd = process.cwd()
+   savedPath = process.env.PATH ?? ""
++  savedHome = process.env.HOME ?? ""
++  savedUserProfile = process.env.USERPROFILE ?? ""
+   mockDir = mkdtempSync(join(tmpdir(), "rtk-opencode-mock-"))
+   emptyDir = mkdtempSync(join(tmpdir(), "rtk-opencode-empty-"))
+   writeFileSync(join(mockDir, "package.json"), '{"type":"commonjs"}')
+   writeFileSync(join(mockDir, "hook"), MOCK)
+-  copyFileSync(process.execPath, mockBin())
++  installMockBin(mockBin())
+   process.chdir(mockDir)
+   process.env.PATH = `${mockDir}${delimiter}${savedPath}`
++  process.env.HOME = emptyDir
++  process.env.USERPROFILE = emptyDir
++  delete process.env.RTK_BIN
+   _resetCachedRtkPath()
+ })
+ 
+ after(() => {
+   process.chdir(savedCwd)
+   process.env.PATH = savedPath
++  process.env.HOME = savedHome
++  process.env.USERPROFILE = savedUserProfile
+   delete process.env.MOCK_ECHO
+   delete process.env.MOCK_NO_SUB
+   delete process.env.MOCK_PROBE_LOG
+   delete proce
+```
+
+**File**: `hooks/opencode/rtk.ts` (modified, +130/-25)
+```diff
+@@ -1,6 +1,7 @@
+ import { execFile } from "node:child_process"
+ import { existsSync, statSync } from "node:fs"
+-import { delimiter, join } from "node:path"
++import { homedir } from "node:os"
++import { basename, delimiter, dirname, isAbsolute, join } from "node:path"
+ 
+ // RTK OpenCode plugin — rewrites commands to use rtk for token savings.
+ //
+@@ -28,40 +29,127 @@ export function _resetCachedRtkPath(): void {
+   probedBin = null
  }
  
- fn extract_duration(text: &str) -> Option<String> {
-@@ -1346,6 +1375,80 @@ Time Elapsed 00:00:12.34
-         assert_eq!(summary.duration_text.as_deref(), Some("00:00:12.34"));
++function probeDirsForRtk(dirs: string[], exts: string[]): string | null {
++  for (const dir of dirs) {
++    for (const ext of exts) {
++      const fullPath = join(dir, `rtk${ext}`)
++      try {
++        if (existsSync(fullPath) && !statSync(fullPath).isDirectory()) {
++          return fullPath
++        }
++      } catch {
++        continue
++      }
++    }
++  }
++  return null
++}
++
++/**
++ * Whether the shell reaches `bin` as a bare `rtk` once `dirname(bin)` is
++ * appended to its PATH: an absolute path (a relative one would be resolved
++ * against the shell's working directory) to a file named `rtk`.
++ */
++function reachableAsRtk(bin: string, exts: string[]): boolean {
++  const fold = (s: string) => (process.platform === "win32" ? s.toLowerCase() : s)
++  const name = fold(basename(bin))
++  if (!isAbsolute(bin) || !exts.some((ext) => name === fold(`rtk${ext}`))) return false
++  try {
++    return existsSync(bin) && !statSync(bin).isDirectory()
++  } catch {
++    return false
++  }
++}
++
+ /**
+- * Resolves the rtk binary from the system PATH.
++ * Resolves the rtk binary that OpenCode's shell will run.
+  *
+- * PATH only, deliberately. OpenCode's bash/shell tool runs commands with
+- * OpenCode's own PATH and never sources `.profile`, `.bashrc` or
+- * `.bash_profile`, so an rtk found outside PATH cannot be spawned as a bare
+- * `rtk …` — the tool comes back `rtk: command not found`. Finding one anyway
+- * is worse than not rewriting (#4462 carries that case). A directory on PATH
+- * named `rtk` is skipped rather than frozen as the answer: it disables the
+- * plugin for the whole session.
++ * The rewrite stays a bare `rtk …` and the shell hooks only append rtk's
++ * directory to the shell's PATH, so an rtk already on PATH is the one every
++ * rewritten command runs. It is therefore checked first (PATHEXT on Windows,
++ * #1993): probing and judging the command with any other rtk would let the
++ * binary that judged it and the one that runs it disagree. Without one,
++ * RTK_BIN is used when the shell can reach it as `rtk`, then the standard
++ * install directories: ~/.cargo/bin, ~/.local/bin, /opt/homebrew/bin,
++ * /usr/local/bin, /usr/bin, and Windows local app data / program files. Those
++ * are where an rtk sits when OpenCode is launched from a desktop GUI (macOS
++ * Dock, a Linux desktop entry) that does not source the shell profile (#4462).
+  *
+- * Windows still probes PATHEXT, which is the #1993 fix: `which` does not exist
+- * there.
++ * A directory named `rtk` is skipped rather than returned.
+  */
+ export function resolveRtkPath(): string | null {
+   if (cachedRtkPath && existsSync(cachedRtkPath)) return cachedRtkPath
+ 
+-  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean)
+   const exts = process.platform === "win32"
+     ? (process.env.PATHEXT ?? ".EXE;.CMD;.BAT;.COM").split(";")
+     : [""]
++  const rtkBinEnv = process.env.RTK_BIN
+ 
+-  for (const dir of dirs) {
+-    for (const ext of exts) {
+-      const fullPath = join(dir, `rtk${ext}`)
+-      if (existsSync(fullPath) && !statSync(fullPath).isDirectory()) {
+-        return (cachedRtkPath = fullPath)
+-      }
++  // 1. System PATH
++  const pathDirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean)
++  const pathMatch = probeDirsForRtk(pathDirs, exts)
++  if (pathMatch) {
++    if (rtkBinEnv && rtkBinEnv !== pathMatch) {
++      console.warn(`[rtk] RTK_BIN=${rtkBinEnv} ignored: ${pathMatch} is on PATH, so it is the rtk OpenCode's shell runs`)
      }
++    return (cachedRtkPath = pathMatch)
+   }
  
-+    #[test]
-+    fn test_parse_test_from_text_counts_distinct_projects_despite_warnings() {
-+        // Hand-written after the `dotnet test` shape (.NET 10): two test projects, each named by
-+        // two restore warnings (NU1900). The warnings name the .csproj, but each project is ONE project
-+        // (#4844) — the count must not grow with every line that mentions the path.
-+        let input = r#"
-+/work/A.Tests.csproj : warning NU1900: Unable to find package 'Coverlet.Collector'. No sets of versions.
-+/work/A.Tests.csproj : warning NU1900: Unable to find package 'Microsoft.NET.Test.Sdk'. No sets of versions.
-+  Test run for /work/A.Tests/bin/Debug/A.Tests.dll (.NETCoreApp,Version=v10.0)
-+  Passed A.Tests.Tests.SaysHello [1 ms]
-+/work/B.Tests.csproj : warning NU1900: Unable to find package 'Coverlet.Collector'. No sets of versions.
-+/work/B.Tests.csproj : warning NU1900: Unable to find package 'Microsoft.NET.Test.Sdk'. No sets of versions.
-+  Test run for /work/B.Tests/bin/Debug/B.Tests.dll (.NETCoreApp,Version=v10.0)
-+  Passed B.Tests.Tests.SaysBye [2 ms]
-+Passed! - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 1 ms - A.Tests.dll
-+Passed! - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 1 ms - B.Tests.dll
-+"#;
++  // 2. RTK_BIN
++  if (rtkBinEnv) {
++    if (reachableAsRtk(rtkBinEnv, exts)) return (cachedRtkPath = rtkBinEnv)
++    console.warn(`[rtk] RTK_BIN=${rtkBinEnv} ignored: it must be an absolute path to a file named rtk`)
++  }
 +
-+        let summary = parse_test_from_text(input);
++  // 3. Candidate directories outside system PATH (#4462)
++  const candidateMatch = probeDirsForRtk(candidateRtkDirs(), exts)
++  if (candidateMatch) return (cachedRtkPath = candidateMatch)
 +
-+        assert_eq!(summary.passed, 3);
-+        assert_eq!(summary.failed, 0);
-+        assert_eq!(
-+            summary.project_count, 2,
-+            "a warning naming a project must not inflate the project count"
-+        );
-+    }
+   return (cachedRtkPath = null)
+ }
+ 
++/** Install directories probed when rtk is on neither `PATH` nor `RTK_BIN`. */
++export function candidateRtkDirs(): string[] {
++  const home = homedir()
++  const dirs: string[] = [
++    join(home, ".cargo", "bin"),
++    join(home, ".local", "bin"), // install.sh's default INSTALL_DIR
++    "/opt/homebrew/bin",
++    "/usr/local/bin",
++    "/usr/bin",
++  ]
 +
-+    #[test]
-+    fn test_parse_test_from_text_counts_test_projects_not_referenced_libraries() {
-+        // `dotnet test -v q` (.NET 10.0.400) on a solution with two test projects and a library
-+        // they reference: restore warnings name all three .csproj files, but only the two test
-+        // projects run, so the count comes from the `Test run for` lines.
-+        let input =
-+            include_str!("../../../tests/fixtures/dotnet/test_library_restore_warnings.txt");
-+
-+        let summary = parse_test_from_text(input);
-+
-+        assert_eq!(summary.passed, 3);
-+        assert_eq!(
-+            summary.project_count, 2,
-+            "a referenced library named by restore warnings is not a test project"
-+        );
-+    }
-+
-+    #[test]
-+    fn test_parse_test_from_text_counts_distinct_projects_across_restore_and_warning_lines() {
-+        // Real `dotnet build` output on a fresh restore of a 3-project solution with NU1900 audit
-+        // warnings: every project is named by a `Restored <csproj>` line AND by warning lines. The
-+        // fallback counts DISTINCT project paths (#4844; the keying #4846 uses).
-+        let input =
-+            include_str!("../../../tests/fixtures/dotne
-```
-
-**File**: `tests/fixtures/dotnet/build_fresh_restore_all_projects_warn.txt` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+  Determining projects to restore...
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/fresh/Two.sln]
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/fresh/Two.sln]
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/fresh/Two.sln]
-+/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/fresh/Two.sln]
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/fresh/Two.sln]
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/fresh/Two.sln]
-+  Restored /fx/fresh/Lib/Lib.csproj (in 11.15 sec).
-+  Restored /fx/fresh/B.Tests/B.Tests.csproj (in 11.15 sec).
-+  Restored /fx/fresh/A.Tests/A.Tests.csproj (in 11.15 sec).
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
-+/fx/fresh/B.Tests/UnitTest1.cs(5,39): warning CS0168: The variable 'unused' is declared but never used [/fx/fresh/B.Tests/B.Tests.csproj]
-+  B.Tests -> /fx/fresh/B.Tests/bin/Debug/net10.0/B.Tests.dll
-+/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
-+/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
-+/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
-+  Lib -> /fx/fresh/Lib/bin/Debug/net10.0/Lib.dll
-+  A.Tests -> /fx/fresh/A.Tests/bin/Debug/net10.0/A.Tests.dll
-+
-+Build succeeded.
-+
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
-+/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/fresh/Two.sln]
-+/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900
-```
-
-**File**: `tests/fixtures/dotnet/fresh_restore_nu1900_warnings.txt` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+  Determining projects to restore...
-+  Restored /private/tmp/dotnet-repro/Lib/Lib.csproj (in 22 ms).
-+/private/tmp/dotnet-repro/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/private/tmp/dotnet-repro/Warnings.slnx]
-+/private/tmp/dotnet-repro/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/private/tmp/dotnet-repro/Warnings.slnx]
-+  Restored /private/tmp/dotnet-repro/B.Tests/B.Tests.csproj (in 5.48 sec).
-+  Restored /private/tmp/dotnet-repro/A.Tests/A.Tests.csproj (in 5.48 sec).
-+/private/tmp/dotnet-repro/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+  Lib -> /private/tmp/dotnet-repro/Lib/bin/Debug/net10.0/Lib.dll
-+/private/tmp/dotnet-repro/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+  B.Tests -> /private/tmp/dotnet-repro/B.Tests/bin/Debug/net10.0/B.Tests.dll
-+  A.Tests -> /private/tmp/dotnet-repro/A.Tests/bin/Debug/net10.0/A.Tests.dll
-+
-+Build succeeded.
-+
-+/private/tmp/dotnet-repro/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/private/tmp/dotnet-repro/Warnings.slnx]
-+/private/tmp/dotnet-repro/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/private/tmp/dotnet-repro/Warnings.slnx]
-+/private/tmp/dotnet-repro/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+/private/tmp/dotnet-repro/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+    4 Warning(s)
-+    0 Error(s)
-+
-+Time Elapsed 00:00:06.21
-```
-
-**File**: `tests/fixtures/dotnet/test_library_restore_warnings.txt` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+/fx/three/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/three/Two.sln]
-+/fx/three/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/three/Two.sln]
-+/fx/three/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/three/Two.sln]
-+/fx/three/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/three/Two.sln]
-+/fx/three/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/three/Two.sln]
-+/fx/three/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/three/Two.sln]
-+/fx/three/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/three/Two.sln]
-+/fx/three/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/three/Two.sln]
-+/fx/three/Lib/Lib.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/three/Two.sln]
-+/fx/three/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/three/Two.sln]
-+/fx/three/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/three/Two.sln]
-+/fx/three/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/three/Two.sln]
-+/fx/three/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
-+/fx/three/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
-+/fx/three/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+/fx/three/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+/fx/three/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
-+/fx/three/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
-+/fx/three/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
-+/fx/three/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
-+/fx/three/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
-+/fx/three/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
-+/fx/three/Lib/Lib.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
-+/fx/three/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
-+Test run for /fx/three/B.Tests/bin/Debug/net10.0/B.Tests.dll (.NETCoreApp,Version=v10.0)
-+A total of 1 test files matched the specified pattern.
-+Test run for /fx/three/A.Tests/bin/Debug/net10.0/A.Tests.dll (.NETCoreApp,Version=v10.0)
-+A total of 1 test files matched the specified pattern.
-+
-+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 10 ms - B.Tests.dll (net10.0)
-+
-+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 5 ms - A.Tests.dll (net10.0)
++  if (process.platform === "win32") {
++    if (process.env.LOCALAPPDATA) dirs.push(join(process.env.LOCALAPPDATA, "cargo", "bin"))
++    if (process.env.ProgramFiles) dirs.push(join(process.env.ProgramFiles, "rtk"))
++ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5072** (closed): hook: add Kiro CLI agent support (@evandrojr)
 - **PR #5069** (2026-11-11): chore(deps): bump anyhow from 1.0.102 to 1.0.104 (@dependabot[bot])
 - **PR #5068** (2026-11-11): chore(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
 - **PR #5067** (2026-11-11): chore(deps): bump codepage from 0.1.2 to 0.1.3 (@dependabot[bot])
 - **PR #5060** (closed): Sync/upstream reliability (@idolgoff)
 - **PR #5053** (2026-11-10): docs: present RTK as the cost reduction engine for AI coding agents (@aeppling)
-- **PR #5052** (closed): docs: present RTK as the cost reduction engine for AI coding agents (@aeppling)
 
 ---
 
@@ -2805,80 +2195,36 @@ fix(dotnet): count distinct test projects, not path mentions
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): send the classifier key and reach local hosts directly on ureq 3
+## X. docs(guide): bring the embedding page in line with rtk 1.2.0
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/getting-started/embedding.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ae76938`: core): send the classifier key and reach local hosts directly on ureq 3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61de0133`: docs(guide): bring the embedding page in line with rtk 1.2.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/getting-started/embedding.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "cookie"
-version = "0.18.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
-dependencies = [
- "percent-encoding",
- "time",
- "version_check",
-]
-
-[[package]]
-name = "cookie_store"
-version = "0.22.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15b2c103cf610ec6cae3da84a766285b42fd16aad564758459e6ecf128c75206"
-dependencies = [
- "cookie",
- "document-features",
- "idna",
- "indexmap",
- "log",
- "serde",
- "serde_derive",
- "serde_json",
- "time",
- "url",
-]
-
-[[package]]
-name = "displaydoc"
-version = "0.2.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 3.0.5",
-]
-
-[[package]]
-name = "form_urlencoded"
-version = "1.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-dependencies = [
- "percent-encoding",
-]
-
-[[package]]
-name = "icu_collections"
-version = "2.4.0"
-source = "registry+https://github.com/rust-lang/crates.io
+This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
+`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
+| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
+| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi, OpenCode and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 0.48.0.
+`rtk rewrite "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
+| 0 | rewritten command | Rewrite, and an explicit Claude Code allow rule matched | Run the rewritten command |
+| 1 | empty | No RTK equivalent | Run the original command |
+| 3 | rewritten command | Rewrite, with an "ask" rule matched or no rule matched at all | Run the rewritten command |
+The exit code carries a permission verdict read from Claude Code's settings files (`.claude/sett
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ae76938` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61de0133` are properly handled with clean fallback behavior.

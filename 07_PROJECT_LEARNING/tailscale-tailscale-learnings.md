@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `6e16dac9`  
+> **Source Version**: `99b389db`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T04:30:24.330Z  
+> **Timestamp**: 2026-11-16T16:21:49.883Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T04:30:24.030Z  
+> **Harvest Timestamp**: 2026-11-16T16:21:49.878Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39176 stars
+- **Stars / Engagement**: 39191 stars
 
 ---
 
@@ -823,200 +823,191 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e16dac9` (2026-11-15)
-**Commit Message**: net/netmon: make static monitors work without netlink
+### Incident Patch 1: `99b389db` (2026-11-15)
+**Commit Message**: ipn/ipnlocal: don't abandon netmap delta batches on unknown peers
 
-Userspace-only programs like tailcat don't need to watch the OS
-network state, so in sandboxes without netlink access (as in ChatGPT
-Work's) they'd like to use netmon.NewStatic instead of netmon.New,
-which fails there. But two things broke with a static Monitor:
+nodeBackend.UpdateNetmapDelta returned false on a per-field patch for a
+peer it didn't have, such as one filtered out by tailnet lock, dropping
+the batch's remaining patches. LocalBackend ignored the result and
+reported success, so controlclient never sent a full netmap, and its
+peer dedup then hid later updates for those peers. Skip such patches
+instead, and return false from LocalBackend if nodeBackend fails.
 
-If reading the interface state failed, NewStatic left it nil, and
-callers of InterfaceState don't expect nil.
+Updates #22379
 
-LinkChangeLogLimiter, used by magicsock, subscribed to the static
-Monitor's nil event bus client and panicked. Static monitors never
-publish link changes, so skip the subscription.
-
-Updates #22412
-
+Change-Id: I142bd47a89568d0f6c457f0da08601f41609d8f7
 Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-Change-Id: Ifa826c8cbac6a82b8a15f57bc8178b364fc30e54
 
-**File**: `net/netmon/loghelper.go` (modified, +13/-10)
+**File**: `ipn/ipnlocal/local.go` (modified, +6/-1)
 ```diff
-@@ -23,16 +23,19 @@ const cooldownSeconds = 300
- func LinkChangeLogLimiter(ctx context.Context, logf logger.Logf, nm *Monitor) logger.Logf {
- 	var formatLastSeen sync.Map // map[string]int64
+@@ -2587,7 +2587,12 @@ func (b *LocalBackend) UpdateNetmapDelta(muts []netmap.NodeMutation) (handled bo
+ 	muts = b.tkaFilterDeltaMutsLocked(muts)
+ 	needsAuthReconfig := netmapDeltaNeedsAuthReconfig(cn, muts)
  
--	// The delta is passed by value, but it contains pointers to the old and
--	// new interface states, which are shared. The delta must not be mutated.
--	sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
--		// Any link changes that are flagged as likely require a rebind are
--		// interesting enough that we should log them.
--		if cd.RebindLikelyRequired {
--			formatLastSeen.Clear()
--		}
--	})
--	context.AfterFunc(ctx, sub.Close)
-+	// Static monitors never publish link changes and have no event bus client.
-+	if !nm.static {
-+		// The delta is passed by value, but it contains pointers to the old and
-+		// new interface states, which are shared. The delta must not be mutated.
-+		sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
-+			// Any link changes that are flagged as likely require a rebind are
-+			// interesting enough that we should log them.
-+			if cd.RebindLikelyRequired {
-+				formatLastSeen.Clear()
-+			}
-+		})
-+		context.AfterFunc(ctx, sub.Close)
+-	deltaRes, _ := cn.UpdateNetmapDelta(muts)
++	deltaRes, ok := cn.UpdateNetmapDelta(muts)
++	if !ok {
++		// Returning false makes controlclient deliver a full netmap
++		// instead.
++		return false
 +	}
- 	return func(format string, args ...any) {
- 		// get the current timestamp
- 		now := time.Now().Unix()
+ 	b.notifyPeerUpdateLocked()
+ 	b.checkCachedDNSLocked()
+ 	if buildfeatures.HasDrive {
 ```
 
-**File**: `net/netmon/netmon.go` (modified, +7/-3)
+**File**: `ipn/ipnlocal/node_backend.go` (modified, +5/-2)
 ```diff
-@@ -403,10 +403,14 @@ func New(bus *eventbus.Bus, logf logger.Logf) (*Monitor, error) {
+@@ -1158,8 +1158,11 @@ func (nb *nodeBackend) UpdateNetmapDelta(muts []netmap.NodeMutation) (res netmap
+ 		if !ok {
+ 			nv, ok := nb.peers[nid]
+ 			if !ok {
+-				// TODO(bradfitz): unexpected metric?
+-				return res, false
++				// The peer may have been filtered out by tailnet lock,
++				// which control doesn't know about, so it keeps sending
++				// patches for it. Skip it rather than abandoning the rest
++				// of the batch.
++				continue
+ 			}
+ 			n = nv.AsStruct()
+ 			mak.Set(&mutableNodes, nv.ID(), n)
+```
+
+**File**: `ipn/ipnlocal/node_backend_test.go` (modified, +37/-0)
+```diff
+@@ -457,6 +457,43 @@ func TestNodeBackendDiscoChangedDelta(t *testing.T) {
+ 	}
  }
  
- // NewStatic returns a Monitor that's a one-time snapshot of the network state
--// but doesn't actually monitor for changes. It should only be used in tests
--// and situations like cleanups or short-lived CLI programs.
-+// but doesn't actually monitor for changes. It should only be used in tests,
-+// situations like cleanups or short-lived CLI programs, and userspace-only
-+// programs that don't need to react to network changes.
-+//
-+// It doesn't fail if the network state can't be read, such as in sandboxes
-+// without netlink access. The snapshot is then empty.
- func NewStatic() *Monitor {
--	m := &Monitor{static: true}
-+	m := &Monitor{static: true, ifState: &State{}} // callers expect non-nil
- 	if st, err := m.interfaceStateUncached(); err == nil {
- 		m.ifState = st
- 	}
-```
-
-**File**: `net/netmon/netmon_static_test.go` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package netmon
-+
-+import (
-+	"errors"
-+	"reflect"
-+	"testing"
-+
-+	"tailscale.com/tstest"
-+)
-+
-+func TestNewStaticInterfaceDiscoveryFailure(t *testing.T) {
-+	tstest.Replace(t, &altNetInterfaces, func() ([]Interface, error) {
-+		return nil, errors.New("interface enumeration unavailable")
-+	})
-+	mon := NewStatic()
-+	if got := mon.InterfaceState(); !reflect.DeepEqual(got, &State{}) {
-+		t.Fatalf("InterfaceState = %#v, want non-nil empty state", got)
++// Tests that a per-field patch for a peer missing from nodeBackend (such as
++// one filtered out by tailnet lock) doesn't stop the rest of the batch from
++// being applied.
++func TestNodeBackendDeltaUnknownPeer(t *testing.T) {
++	nb := newNodeBackend(t.Context(), tstest.WhileTestRunningLogger(t), eventbus.New())
++	mkNode := func(id tailcfg.NodeID) tailcfg.NodeView {
++		return (&tailcfg.Node{ID: id, Key: key.NewNode().Public(), HomeDERP: 1}).View()
 +	}
-+	mon.Start()
-+	if err := mon.Close(); err != nil {
-+		t.Fatal(err)
++	nb.SetNetMap(&netmap.NetworkMap{Peers: []tailcfg.NodeView{mkNode(1), mkNode(3)}})
++
++	muts, ok := netmap.MutationsFromMapResponse(&tailcfg.MapResponse{
++		PeersChangedPatch: []*tailcfg.PeerChange{
++			{NodeID: 1, DERPRegion: 2},
++			{NodeID: 2, DERPRegion: 2},
++			{NodeID: 3, DERPRegion: 2},
++		},
++	}, time.Now())
++	if !ok {
++		t.Fatal("MutationsFromMapResponse failed")
++	}
++	if _, handled := nb.UpdateNetmapDelta(muts); !handled {
++		t.Fatal("UpdateNetmapDelta not handled")
++	}
++	for _, id := range []tailcfg.NodeID{1, 3} {
++		n, ok := nb.NodeByID(id)
++		if !ok {
++			t.Fatalf("peer %d missing", id)
++		}
++		if got := n.HomeDERP(); got != 2 {
++			t.Errorf("peer %d HomeDERP = %d; want 2", id, got)
++		}
++	}
++	if _, ok := nb.NodeByID(2); ok {
++		t.Error("patch for unknown peer 2 added it")
 +	}
 +}
 +
-+func TestLinkChangeLogLimiterStatic(t *testing.T) {
-+	mon := NewStatic()
-+	calls := 0
-+	logf := LinkChangeLogLimiter(t.Context(), func(string, ...any) { calls++ }, mon)
-+	logf("first format")
-+	logf("first format")
-+	logf("second format")
-+	if calls != 2 {
-+		t.Fatalf("logged %d messages, want 2", calls)
-+	}
-+}
+ func TestNodeBackendRouteManagerExtras(t *testing.T) {
+ 	nb := newNodeBackend(t.Context(), tstest.WhileTestRunningLogger(t), eventbus.New())
+ 
 ```
 
 ---
 
-### Incident Patch 2: `167d05bc` (2026-11-15)
-**Commit Message**: net/netns: honor ALL_PROXY when netns is disabled
+### Incident Patch 2: `fe572693` (2026-11-15)
+**Commit Message**: ipn/ipnlocal: recompute suggested exit node on exit node DERP home deltas
 
-netns.SetEnabled(false) is for processes like userspace-only clients
-whose traffic never routes back into themselves, so they don't need
-the namespace setup. But FromDialer also skipped the ALL_PROXY SOCKS
-wrapping when disabled, so such processes couldn't reach the internet
-in environments that only allow egress via a proxy, such as ChatGPT
-Work's sandbox.
+suggestExitNode groups candidates by DERP home region, but a HomeDERP
+patch on an exit node other than the current suggestion didn't trigger
+a recompute, so the suggestion could stay stale until the next full
+netmap.
 
-Only skip the namespace setup when disabled, and still wrap the dialer
-for the proxy.
+Updates #22379
 
-Updates #22412
-
+Change-Id: Ib0c1dd9bf41fe40eac77fca378015c97fba600d1
 Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-Change-Id: Ic2023a329c640a1e8de32b157ed608ba385000a1
 
-**File**: `net/netns/control_test.go` (modified, +3/-3)
+**File**: `ipn/ipnlocal/local.go` (modified, +4/-5)
 ```diff
-@@ -109,10 +109,10 @@ func TestFromDialerControlContext(t *testing.T) {
- 						}
- 					}
- 					got := FromDialer(t.Logf, netmon.NewStatic(), d)
--					if want := proxy && !disable; wrapped != want {
--						t.Errorf("proxy wrapped = %v; want %v", wrapped, want)
-+					if wrapped != proxy {
-+						t.Errorf("proxy wrapped = %v; want %v", wrapped, proxy)
- 					}
--					if disable && got != d {
-+					if disable && !proxy && got != d {
- 						t.Error("disabled FromDialer did not return the original dialer")
- 					}
- 					if d.Control != nil {
+@@ -2934,12 +2934,11 @@ func mutationsAreWorthyOfRecalculatingSuggestedExitNode(muts []netmap.NodeMutati
+ 			continue
+ 		}
+ 
+-		// Some exit node is being mutated.  We care about it if it's online
+-		// or offline state has changed.  We *might* eventually care about it for other reasons
+-		// but for the sake of finding a "better" suggested exit node, this is probably
+-		// sufficient.
++		// Some exit node is being mutated.  We care about it if its online
++		// or offline state has changed, or its DERP home, which
++		// [suggestExitNode] uses to group candidates by region.
+ 		switch m.(type) {
+-		case netmap.NodeMutationOnline:
++		case netmap.NodeMutationOnline, netmap.NodeMutationDERPHome:
+ 			return true
+ 		}
+ 	}
 ```
 
-**File**: `net/netns/netns.go` (modified, +7/-4)
+**File**: `ipn/ipnlocal/local_test.go` (modified, +32/-0)
 ```diff
-@@ -119,18 +119,21 @@ func NewDialer(logf logger.Logf, netMon *netmon.Monitor) Dialer {
- //
- // FromDialer modifies d and may wrap it to use SOCKS if configured by ALL_PROXY.
- // The hooks apply to the underlying socket (to the proxy when using SOCKS).
--// When netns is disabled, d is returned unchanged and without proxy wrapping.
-+// When netns is disabled, d gets no namespace setup but may still be wrapped
-+// to use SOCKS.
- func FromDialer(logf logger.Logf, netMon *netmon.Monitor, d *net.Dialer) Dialer {
- 	if netMon == nil {
- 		panic("netns.FromDialer called with nil netMon")
+@@ -6308,6 +6308,38 @@ func deterministicNodeForTest(t testing.TB, want views.Slice[tailcfg.StableNodeI
  	}
- 	if d.Control != nil {
- 		panic("netns.FromDialer: use ControlContext instead of Control")
- 	}
--	if disabled.Load() {
--		return d
-+	// Disabling netns only turns off the namespace setup. Processes that
-+	// disable it, such as userspace-only clients that never route traffic
-+	// back into themselves, may still need to honor ALL_PROXY.
-+	if !disabled.Load() {
-+		setNamespaceControl(d, control(logf, netMon))
- 	}
--	setNamespaceControl(d, control(logf, netMon))
- 	if wrapDialer != nil {
- 		return wrapDialer(d)
- 	}
+ }
+ 
++func TestMutationsAreWorthyOfRecalculatingSuggestedExitNode(t *testing.T) {
++	nb := newNodeBackend(t.Context(), tstest.WhileTestRunningLogger(t), eventbus.New())
++	nb.SetNetMap(&netmap.NetworkMap{Peers: []tailcfg.NodeView{
++		(&tailcfg.Node{ID: 1, StableID: "exit", AllowedIPs: tsaddr.ExitRoutes()}).View(),
++		(&tailcfg.Node{ID: 2, StableID: "other"}).View(),
++	}})
++
++	tests := []struct {
++		name   string
++		change tailcfg.PeerChange
++		sid    tailcfg.StableNodeID
++		want   bool
++	}{
++		{"exit-online", tailcfg.PeerChange{NodeID: 1, Online: new(true)}, "", true},
++		{"exit-derp", tailcfg.PeerChange{NodeID: 1, DERPRegion: 2}, "", true},
++		{"exit-lastseen", tailcfg.PeerChange{NodeID: 1, LastSeen: new(time.Now())}, "", false},
++		{"other-derp", tailcfg.PeerChange{NodeID: 2, DERPRegion: 2}, "", false},
++		{"suggested-lastseen", tailcfg.PeerChange{NodeID: 2, LastSeen: new(time.Now())}, "other", true},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			muts, ok := netmap.NodeMutationsFromPatch(&tt.change)
++			if !ok {
++				t.Fatal("NodeMutationsFromPatch failed")
++			}
++			if got := mutationsAreWorthyOfRecalculatingSuggestedExitNode(muts, nb, tt.sid); got != tt.want {
++				t.Errorf("got %v; want %v", got, tt.want)
++			}
++		})
++	}
++}
++
+ func TestSuggestExitNode(t *testing.T) {
+ 	t.Parallel()
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22432** (2026-11-16): go.mod: bump 5 modules (@tailscale-code-updater[bot])
 - **PR #22427** (2026-11-15): net/memnet: implement CloseRead and CloseWrite (@emrelab)
+- **PR #22426** (2026-11-16): ipn/ipnlocal: recompute suggested exit node on exit node DERP home deltas (@bradfitz)
+- **PR #22425** (2026-11-16): ipn/ipnlocal: don't abandon netmap delta batches on unknown peers (@bradfitz)
 - **PR #22421** (2026-11-16): net/netns: honor ALL_PROXY when netns is disabled (@bradfitz)
 - **PR #22420** (2026-11-16): net/netmon: make static monitors work without netlink (@bradfitz)
-- **PR #22408** (2026-11-15): prober: deflake TestHTTPBandwidth on coarse-clock machines (@emrelab)
-- **PR #22406** (2026-11-14): go.mod: bump golang.org/x/sys (@tailscale-code-updater[bot])
-- **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
 
 ---
 
@@ -1036,49 +1027,33 @@ Change-Id: Ic2023a329c640a1e8de32b157ed608ba385000a1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. net/netmon: make static monitors work without netlink
+## X. ipn/ipnlocal: don't abandon netmap delta batches on unknown peers
 
 **RULE**:
-When implementing operations in `net/netmon/loghelper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ipn/ipnlocal/local.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e16dac9`: net/netmon: make static monitors work without netlink. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99b389db`: ipn/ipnlocal: don't abandon netmap delta batches on unknown peers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/netmon/loghelper.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/local.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Static monitors never publish link changes and have no event bus client.
-	if !nm.static {
-		// The delta is passed by value, but it contains pointers to the old and
-		// new interface states, which are shared. The delta must not be mutated.
-		sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
-			// Any link changes that are flagged as likely require a rebind are
-			// interesting enough that we should log them.
-			if cd.RebindLikelyRequired {
-				formatLastSeen.Clear()
-			}
-		})
-		context.AfterFunc(ctx, sub.Close)
+	deltaRes, ok := cn.UpdateNetmapDelta(muts)
+	if !ok {
+		// Returning false makes controlclient deliver a full netmap
+		// instead.
+		return false
 	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// The delta is passed by value, but it contains pointers to the old and
-	// new interface states, which are shared. The delta must not be mutated.
-	sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
-		// Any link changes that are flagged as likely require a rebind are
-		// interesting enough that we should log them.
-		if cd.RebindLikelyRequired {
-			formatLastSeen.Clear()
-		}
-	})
-	context.AfterFunc(ctx, sub.Close)
+	deltaRes, _ := cn.UpdateNetmapDelta(muts)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e16dac9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99b389db` are properly handled with clean fallback behavior.

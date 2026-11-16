@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T16:09:25.675Z",
+  "last_updated": "2026-11-16T16:21:54.879Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19414,6 +19414,46 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-633AD9-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-1935",
+      "directive_title": "docs(guide): bring the embedding page in line with rtk 1.2.0",
+      "source_repo": "rtk-ai-rtk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1935-docs-guide-bring-the-embedding-page-in-line-with-rtk-1-2-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-19OF",
+      "directive_title": "ipn/ipnlocal: don't abandon netmap delta batches on unknown peers",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-19OF-ipn-ipnlocal-don-t-abandon-netmap-delta-batches-on-unknown-peers.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-3EC25B",
+      "directive_title": "docs(guide): bring the embedding page in line with rtk 1.2.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rtk-ai-rtk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3EC25B-docs-guide-bring-the-embedding-page-in-l.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-88B762",
+      "directive_title": "ipn/ipnlocal: don't abandon netmap delta batches on unknown peers",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-88B762-ipn-ipnlocal-don-t-abandon-netmap-delta-.md",
       "staged_date": "2026-11-16"
     }
   ]
