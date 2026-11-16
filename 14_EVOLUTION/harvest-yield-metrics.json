@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T16:21:50.730Z",
-  "total_cycles_completed": 9893,
-  "total_learnings_persisted": 9893,
-  "total_rules_promoted": 9494,
+  "last_updated": "2026-11-16T17:43:59.958Z",
+  "total_cycles_completed": 9896,
+  "total_learnings_persisted": 9896,
+  "total_rules_promoted": 9496,
   "history": [
-    {
-      "timestamp": "2026-11-15T09:49:56.404Z",
-      "repository": "thaw-app/Thaw",
-      "learningId": "learn-github-thaw-app-thaw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T09:49:58.385Z",
-      "repository": "open-policy-agent/gatekeeper",
-      "learningId": "learn-github-open-policy-agent-gatekeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T09:55:04.096Z",
-      "repository": "LiquidAI/d1-2B",
-      "learningId": "learn-huggingface-liquidai-d1-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T10:04:13.092Z",
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-16T16:21:50.730Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T17:43:49.903Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T17:43:54.778Z",
+      "repository": "ArchiveBox/ArchiveBox",
+      "learningId": "learn-github-archivebox-archivebox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T17:43:59.958Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

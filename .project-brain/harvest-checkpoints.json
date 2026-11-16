@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T16:21:50.734Z",
+  "last_updated": "2026-11-16T17:43:59.961Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "6b2161ea2c06f0be829bedb522e5c7c3512c4ea2fc60df40e6a3b0f7337de4ba",
-      "verified_at": "2026-11-16T14:35:01.412Z",
+      "content_hash": "745dfdd34ffddb75855db35e7abf8b47c84ce7894b4e5a95d167b6eef41d93b8",
+      "verified_at": "2026-11-16T17:43:49.906Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T14:35:01.412Z"
+      "last_updated": "2026-11-16T17:43:49.906Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "b770a9b8166830cf06931be3c0c448f76577fdc2e8e99f799ffe102420f983b4",
-      "verified_at": "2026-11-16T06:59:40.886Z",
+      "content_hash": "f7dcf9bf2a0050220357641caf336307c1f0f87a150fbefca7dcb4ca238a0eb6",
+      "verified_at": "2026-11-16T17:43:59.960Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T06:59:40.886Z"
+      "last_updated": "2026-11-16T17:43:59.960Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -13971,14 +13971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-archivebox-archivebox",
-      "content_hash": "dd619f037f60ee4a27d6767fe49d315d82f551ada64e9660a40df331f9e9d9b5",
-      "verified_at": "2026-11-12T01:31:23.751Z",
+      "content_hash": "d755a7204236bddf490d2a91f6a9e1d7382d4ba0aa9fffb75081c9dc18a667bc",
+      "verified_at": "2026-11-16T17:43:54.780Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T01:31:23.751Z"
+      "last_updated": "2026-11-16T17:43:54.780Z"
     },
     "buriy/python-readability": {
       "repository": "buriy/python-readability",

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:02.171Z",
+  "timestamp": "2026-11-16T17:44:03.877Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-tursodatabase-turso-learnings",
+  "learning_id": "LEARN-EVO-tursodatabase-turso-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-turso-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:02.171Z`  
-> **Learning ID**: `LEARN-REEXTRACT-tursodatabase-turso-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T17:44:03.877Z`  
+> **Learning ID**: `LEARN-EVO-tursodatabase-turso-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `444dc948`  
+> **Source Version**: `063ca631`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:59:38.423Z  
+> **Timestamp**: 2026-11-16T17:43:59.119Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:59:38.411Z  
+> **Harvest Timestamp**: 2026-11-16T17:43:47.547Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25232 stars
+- **Stars / Engagement**: 25271 stars
 
 ---
 
@@ -1457,11 +1457,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11772** (2026-11-12): **postgres: report reserved role names with SQLSTATE 42939**
-  *Symptoms*: CREATE ROLE with a name that PostgreSQL reserves failed with SQLSTATE 42601 (syntax_error) instead of 42939 (reserved_name).  | Statement | Before | After | |---|---|---| | CREATE ROLE public, CREATE ROLE none | 42601, Invalid statement: role name "none" is reserved | 42939, role name "none" is reserved | | CREATE ROLE current_user and the other role keywords | 42601, Invalid statement: CURRENT_USER cannot be used as a role name here | 42939, CURRENT_USER cannot be used as a role name here | | CREATE ROLE pg_anything | 42601, role name "pg_anything" is reserved | 42939, role name "pg_anything" is reserved |  PostgreSQL's grammar refuses public, none and the role keywords, and pg_query reports these errors with only a message, no SQLSTATE. The parser now recognizes them by their message where it converts pg_query's errors. The translator's own check for the pg_ prefix now carries the SQLSTATE too.  The frontend and the wire server both turned every parser error into a plain parse error, which dropped any SQLSTATE the parser had set. They now share a conversion that keeps it.
+- **Issue #11880** (2026-11-16): **tests: move six more MVCC tests that need only the public API out of core**
+  *Symptoms*: Six MVCC tests in core open a database, so they need a dialect. Core is to stop having one (#11816). These six need nothing private from core, so they move to `tests/integration/mvcc`. No core code changes.  | Tests | From | To | |---|---|---| | `test_non_overlapping_concurrent_inserts`, `test_overlapping_concurrent_inserts_read_your_writes` | `core/mvcc/mod.rs` | new file `concurrent_inserts.rs` | | `test_logical_log_read`, `test_logical_log_read_multiple_transactions`, `test_logical_log_read_fuzz`, `test_logical_log_read_table_and_index_rows` | `core/mvcc/persistent_storage/logical_log.rs` | new file `logical_log.rs` |  - **The two concurrent insert tests are ignored**, as they were in core (both carry a FIXME). They are moved so that `core/mvcc/mod.rs` no longer has a test module that needs a dialect. - **Test bodies** change in three ways, all to use what the integration tests already share:   - `conn.pager.load()` becomes `conn.get_pager()`.   - `commit_tx_no_conn(&db, tx, &conn)` becomes `commit_tx(db.get_mvcc_store(), &conn, tx)`. `commit_tx` in `transactions.rs` runs the same loop.   - The four logical log tests call `common::maybe_setup_tracing` where they called their own `init_tracing`. - **No new helpers.** The tests use `MvccTestDbNoConn` from `test_db.rs` and `commit_tx` and `generate_simple_string_row` from `transactions.rs`. Core's `commit_tx_no_conn` is removed, because nothing in core uses it any more.  ## Testing  - `cargo test -p core_tester --test integra
 
-- **Issue #11770** (2026-11-12): **postgres: refuse renames of objects other than tables and columns with 0A000**
-  *Symptoms*: ALTER ... RENAME is supported only for tables and columns. The translator looked for a relation before it checked what kind of object was being renamed. So renaming any other object failed with SQLSTATE 42601 (syntax_error) and a message that did not say what was wrong.  | Statement | Before | After | |---|---|---| | ALTER ROLE, ALTER SCHEMA, ALTER TYPE ... RENAME | 42601, RENAME missing relation | 0A000, ALTER ROLE ... RENAME is not supported | | ALTER VIEW, ALTER INDEX, ALTER SEQUENCE ... RENAME | 42601, Unsupported RENAME type: ObjectView | 0A000, ALTER VIEW ... RENAME is not supported | | ALTER POLICY ... RENAME | 42601, Unsupported RENAME type: ObjectPolicy | 0A000, ALTER POLICY ... RENAME is not supported | | ALTER TABLE ... RENAME CONSTRAINT | 42601, Unsupported RENAME type: ObjectTabconstraint | 0A000, ALTER TABLE ... RENAME CONSTRAINT is not supported |  Renaming tables and columns does not change.
+- **Issue #11879** (2026-11-16): **tests: move the tests of the schema code that left util out of core**
+  *Symptoms*: `core/util.rs` had 17 unit tests that parse SQL, so they need a dialect. Core is to stop having one (#11816). This moves them to `tests/integration`.  #11878 moved the code under test into public modules (`schema::alter_table`, `schema::view`, `dialect`). The functions the tests call became public API there, so this PR needs no change to core code.  ## What moves  | Tests | From | To | |---|---|---| | 15 tests of the `ALTER TABLE` rewriting (`rewrite_view_sql_for_column_rename`, `rewrite_select_table_refs`) | `core/util.rs` | new file `tests/integration/alter_table.rs` | | 1 test of the columns of a view (`extract_view_columns`) | `core/util.rs` | `tests/integration/views.rs` | | 1 test of `sql_is_create_virtual_table` | `core/util.rs` | `tests/integration/dialect.rs` |  - No core code changes. In core only the 17 tests, the helpers that only they used, and imports are removed. - The test bodies are unchanged apart from the paths of what they call. - The view test uses three helpers of `alter_table.rs` (`schema_with_a_table_t_in_two_namespaces`, `select`, `column_names`), which are `pub(crate)` for that. Its sibling test in `alter_table.rs` uses the same fixture.  ## Testing  - `cargo test -p core_tester --test integration_tests -- alter_table:: views:: dialect::`: 39 passed. - `cargo test -p turso_core --lib util::`: 71 passed. - The test names under `core` and `tests/integration` are the same before and after (3950). - `cargo clippy --workspace --all-features --all-targets 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1478,152 +1478,146 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae542a8c` (2026-11-12)
-**Commit Message**: postgres/conformance: test that security_invoker views are refused
+### Incident Patch 1: `9e4d354c` (2026-11-13)
+**Commit Message**: core: require CREATE on the schema for the new owner of ALTER ... OWNER TO
 
-A view reads its tables as its owner, and views that read as their
-reader are not supported. Test that they fail with 0A000 rather than
-being created as views that read as their owner.
+PostgreSQL lets a role that is not a superuser give its relation to
+another role only when it may SET ROLE to that role and that role has
+CREATE on the relation's schema. tursopg checked only the first, which
+did not matter while a role could set no role but itself. Now that a
+member may set the roles it is a member of, an owner could give its
+table to such a role where PostgreSQL refuses with "permission denied
+for schema public".
 
-**File**: `postgres/conformance/pg-sqltests/row-security/bypass.sqltest` (modified, +10/-0)
+Only a superuser has CREATE on a schema until GRANT on schemas exists,
+so the new owner must be a superuser, or the role that already owns the
+relation, which changes nothing.
+
+Tests: ownership.sqltest cases that pass on tursopg and PostgreSQL 18;
+the refused one succeeds before this change.
+
+**File**: `core/translate/roles.rs` (modified, +45/-8)
 ```diff
-@@ -226,6 +226,16 @@ expect {
-     2
+@@ -123,10 +123,26 @@ pub fn check_statement_privileges(
+                 // itself, such as a role it is a member of, as in
+                 // PostgreSQL. Anyone else must be the owner.
+                 ast::AlterTableBody::OwnerTo { role, .. } if owner => {
+-                    if may_set_role(resolver, connection, role) {
+-                        return Ok(());
++                    match settable_role(resolver, connection, role) {
++                        // As in PostgreSQL, a new owner also needs CREATE on
++                        // the relation's schema, which only a superuser has
++                        // until GRANT on schemas exists. Giving the relation
++                        // to the role that owns it changes nothing.
++                        Some(new_owner)
++                            if resolver
++                                .catalog
++                                .dialect
++                                .role_is_superuser(resolver.schema(), new_owner)
++                                || table_owner(resolver, &alter.name) == Some(new_owner) =>
++                        {
++                            return Ok(())
++                        }
++                        Some(_) => create_in_schema_denial(&alter.name),
++                        None => PermissionDenied::privilege(
++                            Action::SetRole,
++                            Object::Role(role_spec_name(role)),
++                        ),
+                     }
+-                    PermissionDenied::privilege(Action::SetRole, Object::Role(role_spec_name(role)))
+                 }
+                 ast::AlterTableBody::OwnerTo { .. } => owner_denial(),
+                 // Renaming also needs CREATE on the schema, as in
+@@ -272,17 +288,38 @@ fn may_act_as_owner(
+     })
  }
  
-+@skip-if postgres "PostgreSQL supports security_invoker views"
-+test view-that-reads-as-its-reader-is-not-supported {
-+    CREATE TABLE by_invoker_base (id INT);
-+    CREATE VIEW by_invoker_view WITH (security_invoker = true) AS SELECT id FROM by_invoker_base;
-+}
-+@sqlstate 0A000
-+expect error {
-+    CREATE VIEW ... WITH \(options\) is not supported
+-/// Whether the session may `SET ROLE` to `role`, which is what giving a
+-/// relation to `role` takes.
+-fn may_set_role(resolver: &Resolver, connection: &Arc<Connection>, role: &ast::RoleSpec) -> bool {
++/// The role `role` names, if the current role may `SET ROLE` to it, which
++/// is what giving a relation to `role` takes.
++fn settable_role(
++    resolver: &Resolver,
++    connection: &Arc<Connection>,
++    role: &ast::RoleSpec,
++) -> Option<RoleId> {
+     let dialect = &resolver.catalog.dialect;
+     let schema = resolver.schema();
+     let target = match role {
+         ast::RoleSpec::CurrentRole => Some(connection.current_role()),
+         ast::RoleSpec::SessionUser => Some(connection.session_role()),
+         ast::RoleSpec::Name(name) => dialect.role_by_name(schema, name),
+-    };
+-    target.is_some_and(|target| dialect.can_set_role(schema, connection.current_role(), target))
++    }?;
++    dialect
++        .can_set_role(schema, connection.current_role(), target)
++        .then_some(target)
 +}
 +
- test owner-writes-every-row-of-its-table-with-row-security {
-     CREATE ROLE rw_owner_20;
-     CREATE TABLE rw_docs_20 (id INT PRIMARY KEY, owner TEXT);
++/// The role that owns the table or view `name` of the main database names.
++fn table_owner(resolver: &Resolver, name: &ast::QualifiedName) -> Option<RoleId> {
++    let namespace = resolver.find_existing_table(name).ok().flatten()?;
++    if namespace.database_id != MAIN_DB_ID {
++        return None;
++    }
++    let normalized = crate::util::normalize_ident(name.name.as_str());
++    resolver.with_schema(MAIN_DB_ID, |schema| {
++        resolver
++            .catalog
++            .dialect
++            .relation_owner(schema, namespace.id, &normalized)
++    })
+ }
+ 
+ /// The name a denial calls `role` by.
 ```
 
----
-
-### Incident Patch 2: `c8bcab22` (2026-11-12)
-**Commit Message**: postgres/conformance: test that the owner enables row-level security and FORCE is refused
-
-Only the refusal for a role that does not own the table was tested. FORCE
-ROW LEVEL SECURITY was only tested from Rust, so add a .sqltest that it
-fails as not supported (0A000).
-
-**File**: `postgres/conformance/pg-sqltests/row-security/enable.sqltest` (modified, +22/-0)
+**File**: `postgres/conformance/pg-sqltests/roles/ownership.sqltest` (modified, +29/-0)
 ```diff
-@@ -209,3 +209,25 @@ test role-that-does-not-own-the-table-cannot-enable-row-security {
- expect error {
-     must be owner of table rp_docs_17
+@@ -504,3 +504,32 @@ test owner-may-give-its-table-to-a-role-it-is-a-member-of {
+ expect {
+     postgres
  }
 +
-+test owner-may-enable-row-security {
-+    CREATE ROLE en_owner;
-+    CREATE TABLE en_owned (id INT);
-+    ALTER TABLE en_owned OWNER TO en_owner;
-+    SET ROLE en_owner;
-+    ALTER TABLE en_owned ENABLE ROW LEVEL SECURITY;
-+    SELECT relrowsecurity FROM pg_class WHERE relname = 'en_owned';
-+}
-+expect {
-+    t
-+}
-+
-+@skip-if postgres "PostgreSQL supports FORCE ROW LEVEL SECURITY"
-+test force-row-level-security-is-not-supported {
-+    CREATE TABLE en_forced (id INT);
-+    ALTER TABLE en_forced FORCE ROW LEVEL SECURITY;
-+}
-+@sqlstate 0A000
-+expect error {
-+    ALTER TABLE ... FORCE ROW LEVEL SECURITY is not supported
-+}
-```
-
----
-
-### Incident Patch 3: `be784bfd` (2026-11-12)
-**Commit Message**: postgres/conformance: test policies that call auth.uid()
-
-USING (user_id = auth.uid()) is the policy most Supabase projects write,
-but no test called auth.uid() from a policy. Test that it limits the
-rows a user reads, and that WITH CHECK refuses a row of another user.
-
-On PostgreSQL, the setup now grants USAGE on schema auth to every role,
-as Supabase does, so that a role may call the functions.
-
-**File**: `postgres/conformance/pg-sqltests/auth.sqltest` (modified, +37/-2)
-```diff
-@@ -2,11 +2,13 @@
- 
- @database :memory:
- 
--# The SQL definitions of the functions. tursopg has the functions built in,
--# so this setup runs only on PostgreSQL.
-+# The SQL definitions of the functions, and USAGE on their schema for every
-+# role, as Supabase grants it. tursopg has the functions built in, so this
-+# setup runs only on PostgreSQL.
- @backend postgres
- setup auth_functions {
-     create schema auth;
-+    grant usage on schema auth to public;
- 
-     create or replace function auth.uid()
-     returns uuid
-@@ -794,6 +796,39 @@ expect {
-     mine
- }
- 
-+@setup auth_functions
-+test auth-uid-in-a-policy-shows-the-user-its-rows {
-+    CREATE ROLE au_reader;
-+    CREATE TABLE au_read_todos (id int, user_id uuid, task text);
-+    INSERT INTO au_read_todos VALUES (1, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'mine'), (2, '11111111-1111-1111-1111-111111111111', 'theirs');
-+    ALTER TABLE au_read_todos ENABLE ROW LEVEL SECURITY;
-+    CREATE POLICY own ON au_read_todos USING (user_id = auth.uid());
-+    GRANT SELECT ON au_read_todos TO au_reader;
-+    SET ROLE au_reader;
-+    SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
-+    SELECT task FROM au_read_todos;
-+}
-+expect {
-+    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
-+    mine
-+}
-+
-+@setup auth_functions
-+test auth-uid-in-a-policy-refuses-a-row-of-another-user {
-+    CREATE ROLE au_writer;
-+    CREATE TABLE au_written_todos (id int, user_id uuid, task text);
-+    ALTER TABLE au_written_todos ENABLE ROW LEVEL SECURITY;
-+    CREATE POLICY own ON au_written_todos USING (user_id = (SELECT auth.uid())) WITH CHECK (user_id = (SELECT auth.uid()));
-+    GRANT SELECT, INSERT ON au_written_todos TO au_writer;
-+    SET ROLE au_writer;
-+    SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
-+    INSERT INTO au_written_todos VALUES (1, '11111111-1111-1111-1111-111111111111', 'theirs');
++# The new owner also needs CREATE on the relation's schema, which only a
++# superuser has here and in PostgreSQL's public schema.
++test owner-may-not-give-its-table-to-a-role-without-create-on-the-schema {
++    CREATE ROLE ro_no_create_owner;
++    CREATE ROLE ro_no_create_group;
++    CREATE TABLE ro_no_create_given (x INT);
++    ALTER TABLE ro_no_create_given OWNER TO ro_no_create_owner;
++    GRANT ro_no_create_group TO ro_no_create_owner;
++    SET ROLE ro_no_create_owner;
++    ALTER TABLE ro_no_create_given OWNER TO ro_no_create_group;
 +}
 +@sqlstate 42501
 +expect error {
-+    new row violates row-level security policy for table "au_written_todos"
++    permission denied for schema public
 +}
 +
- @setup auth_functions
- test auth-uid-in-a-column-default {
-     SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
++test owner-may-give-its-table-to-itself-without-create-on-the-schema {
++    CREATE ROLE ro_same_owner;
++    CREATE TABLE ro_same_owner_kept (x INT);
++    ALTER TABLE ro_same_owner_kept OWNER TO ro_same_owner;
++    SET ROLE ro_same_owner;
++    ALTER TABLE ro_same_owner_kept OWNER TO ro_same_owner;
++    RESET ROLE;
++    SELECT pg_get_userbyid(relowner) FROM pg_class WHERE relname = 'ro_same_owner_kept';
++}
++expect {
++    ro_same_owner
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11772** (2026-11-12): postgres: report reserved role names with SQLSTATE 42939 (@penberg)
-- **PR #11770** (2026-11-12): postgres: refuse renames of objects other than tables and columns with 0A000 (@penberg)
-- **PR #11769** (2026-11-12): postgres: refuse unsupported statements with SQLSTATE 0A000 (@penberg)
-- **PR #11766** (2026-11-12): postgres: move roles from core to the frontend (@penberg)
-- **PR #11764** (2026-11-12): postgres/conformance: Improve access control test coverage (@penberg)
-- **PR #11757** (2026-11-12): core: Connect to database with explicit role (@penberg)
+- **PR #11880** (2026-11-16): tests: move six more MVCC tests that need only the public API out of core (@penberg)
+- **PR #11879** (2026-11-16): tests: move the tests of the schema code that left util out of core (@penberg)
+- **PR #11878** (2026-11-16): core: move code from util to schema (@penberg)
+- **PR #11873** (2026-11-16): tests: move the MVCC tests that need only MvStore::begin_tx out of core (@penberg)
+- **PR #11870** (2026-11-16): tests: move six MVCC tests that need only the public API out of core (@penberg)
+- **PR #11868** (2026-11-16): tests: move the pager rollback tests out of core (@penberg)
 
 ---
 
@@ -1643,40 +1637,59 @@ as Supabase does, so that a role may call the functions.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres/conformance: test that security_invoker views are refused
+## X. core: require CREATE on the schema for the new owner of ALTER ... OWNER TO
 
 **RULE**:
-When implementing operations in `postgres/conformance/pg-sqltests/row-security/bypass.sqltest`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/translate/roles.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae542a8c`: postgres/conformance: test that security_invoker views are refused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e4d354c`: core: require CREATE on the schema for the new owner of ALTER ... OWNER TO. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `postgres/conformance/pg-sqltests/row-security/bypass.sqltest`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/roles.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-@skip-if postgres "PostgreSQL supports security_invoker views"
-test view-that-reads-as-its-reader-is-not-supported {
-    CREATE TABLE by_invoker_base (id INT);
-    CREATE VIEW by_invoker_view WITH (security_invoker = true) AS SELECT id FROM by_invoker_base;
-}
-@sqlstate 0A000
-expect error {
-    CREATE VIEW ... WITH \(options\) is not supported
-}
-
+                    match settable_role(resolver, connection, role) {
+                        // As in PostgreSQL, a new owner also needs CREATE on
+                        // the relation's schema, which only a superuser has
+                        // until GRANT on schemas exists. Giving the relation
+                        // to the role that owns it changes nothing.
+                        Some(new_owner)
+                            if resolver
+                                .catalog
+                                .dialect
+                                .role_is_superuser(resolver.schema(), new_owner)
+                                || table_owner(resolver, &alter.name) == Some(new_owner) =>
+                        {
+                            return Ok(())
+                        }
+                        Some(_) => create_in_schema_denial(&alter.name),
+                        None => PermissionDenied::privilege(
+                            Action::SetRole,
+                            Object::Role(role_spec_name(role)),
+                        ),
+/// The role `role` names, if the current role may `SET ROLE` to it, which
+/// is what giving a relation to `role` takes.
+fn sett
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+                    if may_set_role(resolver, connection, role) {
+                        return Ok(());
+                    PermissionDenied::privilege(Action::SetRole, Object::Role(role_spec_name(role)))
+/// Whether the session may `SET ROLE` to `role`, which is what giving a
+/// relation to `role` takes.
+fn may_set_role(resolver: &Resolver, connection: &Arc<Connection>, role: &ast::RoleSpec) -> bool {
+    };
+    target.is_some_and(|target| dialect.can_set_role(schema, connection.current_role(), target))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae542a8c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e4d354c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

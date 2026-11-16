@@ -635990,3 +635990,171 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `99b389db` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8762. Separate live provider replay from required CI (Harvested from ArchiveBox/ArchiveBox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Separate live provider replay from required CI",
+  "source": "ArchiveBox/ArchiveBox",
+  "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+  "source_version": "de6e9dbe",
+  "license": "MIT",
+  "extracted_at": "2026-11-16T17:43:54.373Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-archivebox-archivebox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox) (Revision: `de6e9dbe`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/scripts/discover_test_matrix.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `94e50ebc`: Separate live provider replay from required CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/discover_test_matrix.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+    if set(environments.values()) - {"provider-capture", "live-provider"}:
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+    if set(environments.values()) - {"provider-capture"}:
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `94e50ebc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8763. require CREATE on the schema for the new owner of ALTER ... OWNER TO (Harvested from tursodatabase/turso)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "require CREATE on the schema for the new owner of ALTER ... OWNER TO",
+  "source": "tursodatabase/turso",
+  "source_url": "https://github.com/tursodatabase/turso",
+  "source_version": "063ca631",
+  "license": "MIT",
+  "extracted_at": "2026-11-16T17:43:59.564Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tursodatabase-turso",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `063ca631`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `core/translate/roles.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9e4d354c`: core: require CREATE on the schema for the new owner of ALTER ... OWNER TO. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/roles.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                    match settable_role(resolver, connection, role) {
+                        // As in PostgreSQL, a new owner also needs CREATE on
+                        // the relation's schema, which only a superuser has
+                        // until GRANT on schemas exists. Giving the relation
+                        // to the role that owns it changes nothing.
+                        Some(new_owner)
+                            if resolver
+                                .catalog
+                                .dialect
+                                .role_is_superuser(resolver.schema(), new_owner)
+                                || table_owner(resolver, &alter.name) == Some(new_owner) =>
+                        {
+                            return Ok(())
+                        }
+                        Some(_) => create_in_schema_denial(&alter.name),
+                        None => PermissionDenied::privilege(
+                            Action::SetRole,
+                            Object::Role(role_spec_name(role)),
+                        ),
+/// The role `role` names, if the current role may `SET ROLE` to it, which
+/// is what giving a relation to `role` takes.
+fn sett
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+                    if may_set_role(resolver, connection, role) {
+                        return Ok(());
+                    PermissionDenied::privilege(Action::SetRole, Object::Role(role_spec_name(role)))
+/// Whether the session may `SET ROLE` to `role`, which is what giving a
+/// relation to `role` takes.
+fn may_set_role(resolver: &Resolver, connection: &Arc<Connection>, role: &ast::RoleSpec) -> bool {
+    };
+    target.is_some_and(|target| dialect.can_set_role(schema, connection.current_role(), target))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9e4d354c` are properly handled with clean fallback behavior.

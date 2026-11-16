@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T16:21:55.101Z",
-  "total_verified_learnings": 8788,
+  "last_updated": "2026-11-16T17:44:04.783Z",
+  "total_verified_learnings": 8789,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19191,
+  "total_items": 19204,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112990,25 +112990,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "323ddd36",
-      "content_hash": "92fe4b5524c4b547f637552769772eb23272c4ad47250aebed89648855238445",
+      "source_version": "063ca631",
+      "content_hash": "811f0a9cc543e710e16d82b2391a5615f44ee1ca3b454d6229325570534345af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:59:41.176Z"
+      "persisted_at": "2026-11-16T17:44:00.232Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "323ddd36",
-      "content_hash": "469ffa4e46a69df94e5513232c3528b7768017ab0a110147f1e10223ed22f5cc",
+      "source_version": "063ca631",
+      "content_hash": "0533db00290935326c17e8a6281a3fa4b2352cb04ce32bd1677f326250f7750f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T06:59:41.302Z"
+      "persisted_at": "2026-11-16T17:44:00.337Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213365,13 +213365,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "323ddd36",
-      "content_hash": "b770a9b8166830cf06931be3c0c448f76577fdc2e8e99f799ffe102420f983b4",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "063ca631",
+      "content_hash": "f7dcf9bf2a0050220357641caf336307c1f0f87a150fbefca7dcb4ca238a0eb6",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213387,6 +213387,11 @@
           "number": 8723,
           "title": "Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pek",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8763,
+          "title": "require CREATE on the schema for the new owner of ALTER ... OWNER TO",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213394,7 +213399,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T06:59:40.706Z",
+      "verified_at": "2026-11-16T17:43:59.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227582,8 +227587,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "11001bac",
-      "content_hash": "6b2161ea2c06f0be829bedb522e5c7c3512c4ea2fc60df40e6a3b0f7337de4ba",
+      "source_version": "8b9262f0",
+      "content_hash": "745dfdd34ffddb75855db35e7abf8b47c84ce7894b4e5a95d167b6eef41d93b8",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -227628,7 +227633,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T14:35:01.252Z",
+      "verified_at": "2026-11-16T17:43:49.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227670,10 +227675,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "2e5f2516",
-      "content_hash": "c41186fed72f05cdf7cbd8ced9f47631b8bafe9e745b96d419ccb59644dd3a57",
+      "source_version": "8b9262f0",
+      "content_hash": "c965c05c1e5fa7cfd897586988df71b0d4823b6a8c465dafb2238e893b4271d0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T12:48:22.186Z"
+      "persisted_at": "2026-11-16T17:43:50.185Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -227682,10 +227687,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "11001bac",
-      "content_hash": "04d5a33c082f18fc240d11e34cede129185369e944b4fd3e0f31038edc970bd1",
+      "source_version": "8b9262f0",
+      "content_hash": "cb4c68e131f5c230d9554b1c33c209e5bc9157ad5d7e6a7c82969f44ef985f48",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T14:35:01.790Z"
+      "persisted_at": "2026-11-16T17:43:50.296Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -228637,9 +228642,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c60bbee0854f8ddf80fc948495e78a76266ed56e920eacd7ca696626dfae2ac",
+      "content_hash": "6a37961347c4789443a1b368224a50bee6d54f3f7ef07f52093fa7f3e2975f23",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:37:13.175Z"
+      "persisted_at": "2026-11-16T17:44:04.679Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -228649,9 +228654,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "825d73549738313e6edf3ef5f2904e2fb74a74137d7533ff46866d68cff20bc2",
+      "content_hash": "e96e277c456ad783d6b63124e0015c9ffb27df2d0f5ef3b2ed74ac0ad1f8b78b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T14:35:32.195Z"
+      "persisted_at": "2026-11-16T17:44:04.783Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -255359,6 +255364,187 @@
       "content_hash": "24f2ff8678fffcda47d2fa0f72813974160d5ca8bf1520c8c5f5fa2037fd10bf",
       "domain_letter": "D",
       "persisted_at": "2026-11-16T16:21:54.602Z"
+    },
+    "candidate_directive-nuc-108-list-and-population-partitions": {
+      "item_id": "candidate_directive-nuc-108-list-and-population-partitions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YXGD-nuc-108-list-and-population-partitions.md",
+      "title": "NUC 108 List and Population Partitions",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fbbc965f84a564df479a5ae18ac1707e587d3176ad565422cd8e280942b299f8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T17:44:04.576Z"
+    },
+    "learn-github-archivebox-archivebox": {
+      "learning_id": "learn-github-archivebox-archivebox",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ArchiveBox/ArchiveBox",
+      "repository": "ArchiveBox/ArchiveBox",
+      "slug": "archivebox-archivebox",
+      "platform": "github",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "de6e9dbe",
+      "content_hash": "d755a7204236bddf490d2a91f6a9e1d7382d4ba0aa9fffb75081c9dc18a667bc",
+      "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8762,
+          "title": "Separate live provider replay from required CI",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T17:43:54.619Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8762": {
+      "learning_id": "rule-8762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8762,
+      "title": "Separate live provider replay from required CI",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "de6e9dbe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T17:43:54.619Z"
+    },
+    "candidate_directive-separate-live-provider-replay-from-required-ci": {
+      "item_id": "candidate_directive-separate-live-provider-replay-from-required-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YWLT-separate-live-provider-replay-from-required-ci.md",
+      "title": "Separate live provider replay from required CI",
+      "repository": "archivebox-archivebox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a120d1d5230af6ba9222535b00e5a5eea6ba576a7d99a7572ed593cc5ca00318",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T17:44:03.476Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-archivebox-archivebox-search-distribution-intelligence-archivebox-archivebox-cor.md",
+      "title": "Search & Distribution Intelligence: ArchiveBox/ArchiveBox Core Invariants",
+      "repository": "ArchiveBox/ArchiveBox",
+      "source_version": "de6e9dbe",
+      "content_hash": "d799a80aabfc597af058f13dea8b7f689535a7bd3977515ad815d7a3172b95ac",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T17:43:55.051Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-archivebox-archivebox": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-archivebox-archivebox",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/archivebox-archivebox-verification-protocol-empirical-defect-shield-for-archiveb.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ArchiveBox/ArchiveBox",
+      "repository": "ArchiveBox/ArchiveBox",
+      "source_version": "de6e9dbe",
+      "content_hash": "c92f4359894eba5cf1888d9ad980d762b8837c986b4c122e16f259f66ac41a8c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T17:43:55.164Z"
+    },
+    "rule-8763": {
+      "learning_id": "rule-8763",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8763,
+      "title": "require CREATE on the schema for the new owner of ALTER ... OWNER TO",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "063ca631",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T17:43:59.805Z"
+    },
+    "candidate_directive-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to": {
+      "item_id": "candidate_directive-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YU0N-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to.md",
+      "title": "require CREATE on the schema for the new owner of ALTER ... OWNER TO",
+      "repository": "tursodatabase/turso",
+      "source_version": "063ca631",
+      "content_hash": "781b2ebd983460693d0b2c54c59478336d5659e774c914a5f71e77354cb93ff0",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T17:44:00.120Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-learnings-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-archivebox-archivebox-learnings-search-distribution-intelligence-archivebox-arch.md",
+      "title": "Search & Distribution Intelligence: archivebox-archivebox-learnings Core Invariants",
+      "repository": "archivebox-archivebox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f976f48eaee84d524f5e415d40e3257e6a3a1f9d5571bbd304378d671b306ce8",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T17:44:03.580Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-archivebox-archivebox-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-archivebox-archivebox-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/archivebox-archivebox-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for archivebox-archivebox-learnings",
+      "repository": "archivebox-archivebox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "00129e920c5cde17072947d8cb119a4b5817d926f6276b49c0b2945ce88b7524",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T17:44:03.684Z"
+    },
+    "candidate_directive-core-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to": {
+      "item_id": "candidate_directive-core-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YWZJ-core-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to.md",
+      "title": "core: require CREATE on the schema for the new owner of ALTER ... OWNER TO",
+      "repository": "tursodatabase-turso-learnings",
+      "source_version": "HEAD",
+      "content_hash": "59de8efa661d95d3a86e6a9263665cd4e4b56bb5162f359fde0dcbc4cc5a18cc",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T17:44:03.968Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-learnings-technical-construction-intelligence-tursodatabase-.md",
+      "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
+      "repository": "tursodatabase-turso-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4a4c9ec6324ad4d66dc8201c7fc8c2d0cbdb43b806010822dceb6f6e5ef7b7b1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T17:44:04.083Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-turso-learnings",
+      "repository": "tursodatabase-turso-learnings",
+      "source_version": "HEAD",
+      "content_hash": "03b2ae4e00c4bc025dd3f9c884858b7b76cf04580d8d02ad5b29255a9bbad271",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T17:44:04.191Z"
     }
   },
   "ai-builder-brain": {

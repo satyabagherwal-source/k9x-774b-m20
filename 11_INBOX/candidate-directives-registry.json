@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T16:21:54.879Z",
+  "last_updated": "2026-11-16T17:44:04.576Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19454,6 +19454,68 @@
       "source_repo": "tailscale-tailscale",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-88B762-ipn-ipnlocal-don-t-abandon-netmap-delta-.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-YXGD",
+      "directive_title": "NUC 108 List and Population Partitions",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YXGD-nuc-108-list-and-population-partitions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YWLT",
+      "directive_title": "Separate live provider replay from required CI",
+      "source_repo": "archivebox-archivebox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YWLT-separate-live-provider-replay-from-required-ci.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-YU0N",
+      "directive_title": "require CREATE on the schema for the new owner of ALTER ... OWNER TO",
+      "source_repo": "tursodatabase/turso",
+      "source_commit": "063ca631",
+      "staged_file": "11_INBOX/candidate-directives/CD-YU0N-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-FBC6CD",
+      "directive_title": "Separate live provider replay from required CI",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "archivebox-archivebox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FBC6CD-separate-live-provider-replay-from-requi.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-YWZJ",
+      "directive_title": "core: require CREATE on the schema for the new owner of ALTER ... OWNER TO",
+      "source_repo": "tursodatabase-turso-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YWZJ-core-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-C1B3AA",
+      "directive_title": "NUC 108 List and Population Partitions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C1B3AA-nuc-108-list-and-population-partitions.md",
       "staged_date": "2026-11-16"
     }
   ]

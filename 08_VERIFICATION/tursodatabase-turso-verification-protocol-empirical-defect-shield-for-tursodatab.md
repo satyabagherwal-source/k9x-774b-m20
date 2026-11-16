@@ -4,22 +4,22 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/turso",
-  "source_version": "c718b2ad",
+  "source_version": "063ca631",
   "license": "MIT",
-  "timestamp": "2026-11-15T06:00:14.853Z",
+  "timestamp": "2026-11-16T17:44:00.119Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `c718b2ad`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T06:00:14.853Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `063ca631`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T17:44:00.119Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tursodatabase/turso` (Commit: `c718b2ad`)
+- **Target Repository**: `tursodatabase/turso` (Commit: `063ca631`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:00:14.000Z  
+> **Harvest Timestamp**: 2026-11-16T17:43:47.547Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25259 stars
+- **Stars / Engagement**: 25271 stars
 
 ---
 
@@ -1443,11 +1443,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11844** (2026-11-14): **core/mvcc: read-only accessors for tests, and move the tests that only read store state**
-  *Symptoms*: Unit tests in core that open a database keep the SQL parser inside core, so they have to move to `tests/integration/mvcc/`. Some of them read private fields of `MvStore`, `Transaction`, `Connection`, `Database` and `Pager` to check internal state. This PR gives those tests a small read-only API, changes them to use it, and moves the ones that then need nothing private.  It is an alternative to the field part of #11822: no field becomes public, no module becomes public, and there is no macro or feature that widens visibility. Follow-up to #11839.  ## What changes in core  All of it is read-only. No logic changes.  - `MvStore::tx_snapshot(tx_id) -> Option<TxSnapshot>`: state, begin timestamp, number of transactions it waits for, `abort_now` and `log_appended` of one transaction. Replaces lookups in `txs` and reads of `Transaction` fields. `TransactionState` is public because the snapshot returns it. - `MvStore::watermarks() -> Watermarks`: `last_committed_tx_ts` and `durable_txid_max`. Replaces loads of the two atomics. - `MvStore::debug_gc_snapshot()` and `GcDebugSnapshot` are public, and the snapshot has three new values: `finalized_tx_states` (replaces `finalized_tx_states.len()`), `table_sweep_unfinished` and `index_sweep_unfinished` (replace `gc_table_cursor` / `gc_index_cursor` `.lock().is_some()`). Its `active_txs` replaces `txs.is_empty()`. - `MvStore::should_checkpoint()`: replaces `storage.should_checkpoint()`. - `Database::clone_schema()` is public: replaces `Databas
+- **Issue #11880** (2026-11-16): **tests: move six more MVCC tests that need only the public API out of core**
+  *Symptoms*: Six MVCC tests in core open a database, so they need a dialect. Core is to stop having one (#11816). These six need nothing private from core, so they move to `tests/integration/mvcc`. No core code changes.  | Tests | From | To | |---|---|---| | `test_non_overlapping_concurrent_inserts`, `test_overlapping_concurrent_inserts_read_your_writes` | `core/mvcc/mod.rs` | new file `concurrent_inserts.rs` | | `test_logical_log_read`, `test_logical_log_read_multiple_transactions`, `test_logical_log_read_fuzz`, `test_logical_log_read_table_and_index_rows` | `core/mvcc/persistent_storage/logical_log.rs` | new file `logical_log.rs` |  - **The two concurrent insert tests are ignored**, as they were in core (both carry a FIXME). They are moved so that `core/mvcc/mod.rs` no longer has a test module that needs a dialect. - **Test bodies** change in three ways, all to use what the integration tests already share:   - `conn.pager.load()` becomes `conn.get_pager()`.   - `commit_tx_no_conn(&db, tx, &conn)` becomes `commit_tx(db.get_mvcc_store(), &conn, tx)`. `commit_tx` in `transactions.rs` runs the same loop.   - The four logical log tests call `common::maybe_setup_tracing` where they called their own `init_tracing`. - **No new helpers.** The tests use `MvccTestDbNoConn` from `test_db.rs` and `commit_tx` and `generate_simple_string_row` from `transactions.rs`. Core's `commit_tx_no_conn` is removed, because nothing in core uses it any more.  ## Testing  - `cargo test -p core_tester --test integra
 
-- **Issue #11840** (2026-11-14): **tests: move MVCC checkpoint tests out of core**
-  *Symptoms*: Unit tests in core that open a database or run SQL keep the SQL parser inside core. This PR moves MVCC checkpoint tests to `tests/integration/mvcc/checkpoint.rs`. It is an alternative to the MVCC part of #11822: instead of making the fields of `MvStore`, `RowVersion` and the checkpoint state machine public under `test_helper`, the tests stop reading fields.  Follow-up to #11839.  ## The approach  The unit tests in `core/mvcc/database/checkpoint.rs` built a `CheckpointStateMachine` over an empty database, pushed hand-made row versions into the private maps of the store, called one private step, and read the private write sets. None of them ran SQL.  The new tests commit rows with SQL, step a real checkpoint with the already public `step()`, and read what it collected through a few new read-only methods. A test that needs a commit in the middle of a checkpoint uses a passive checkpoint and a second connection, which is how that happens for real.  ## What changes in core  - `checkpointable_versions()` is a free function now. Which versions of a row a checkpoint writes depends on three inputs only, so its tests need no database and stay in core. - `CheckpointStateMachine` gets `state()`, `bounds()`, `collected_table_rows()`, `collected_index_rows()` and `collected_table_drop()`. The first two replace test-only methods. - `COLLECT_PREEMPTION_THRESHOLD` is public. - `CheckpointYieldPoint`, `CommitYieldPoint`, `ExclusiveTxYieldPoint` and `TransactionYieldPoint` are public, like `Cur
+- **Issue #11879** (2026-11-16): **tests: move the tests of the schema code that left util out of core**
+  *Symptoms*: `core/util.rs` had 17 unit tests that parse SQL, so they need a dialect. Core is to stop having one (#11816). This moves them to `tests/integration`.  #11878 moved the code under test into public modules (`schema::alter_table`, `schema::view`, `dialect`). The functions the tests call became public API there, so this PR needs no change to core code.  ## What moves  | Tests | From | To | |---|---|---| | 15 tests of the `ALTER TABLE` rewriting (`rewrite_view_sql_for_column_rename`, `rewrite_select_table_refs`) | `core/util.rs` | new file `tests/integration/alter_table.rs` | | 1 test of the columns of a view (`extract_view_columns`) | `core/util.rs` | `tests/integration/views.rs` | | 1 test of `sql_is_create_virtual_table` | `core/util.rs` | `tests/integration/dialect.rs` |  - No core code changes. In core only the 17 tests, the helpers that only they used, and imports are removed. - The test bodies are unchanged apart from the paths of what they call. - The view test uses three helpers of `alter_table.rs` (`schema_with_a_table_t_in_two_namespaces`, `select`, `column_names`), which are `pub(crate)` for that. Its sibling test in `alter_table.rs` uses the same fixture.  ## Testing  - `cargo test -p core_tester --test integration_tests -- alter_table:: views:: dialect::`: 39 passed. - `cargo test -p turso_core --lib util::`: 71 passed. - The test names under `core` and `tests/integration` are the same before and after (3950). - `cargo clippy --workspace --all-features --all-targets 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1464,935 +1464,146 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c718b2ad` (2026-11-14)
-**Commit Message**: Merge 'tests: move the MVCC tests that need only the public API out of core' from Pekka Enberg
+### Incident Patch 1: `9e4d354c` (2026-11-13)
+**Commit Message**: core: require CREATE on the schema for the new owner of ALTER ... OWNER TO
 
-Core will stop parsing SQL by itself, and opening a database parses SQL,
-so a test that opens a database cannot stay in core. This moves the 216
-MVCC tests that compile against core as it is on main to
-`tests/integration/mvcc/`. They use SQL and the public methods of
-`MvStore`, `Connection` and `Database`, including the read-only
-accessors from #11844.
+PostgreSQL lets a role that is not a superuser give its relation to
+another role only when it may SET ROLE to that role and that role has
+CREATE on the relation's schema. tursopg checked only the first, which
+did not matter while a role could set no role but itself. Now that a
+member may set the roles it is a member of, an owner could give its
+table to such a role where PostgreSQL refuses with "permission denied
+for schema public".
 
-Core itself does not change: no item becomes public, no `cfg` is
-widened, and there is no visibility macro.
+Only a superuser has CREATE on a schema until GRANT on schemas exists,
+so the new owner must be a superuser, or the role that already owns the
+relation, which changes nothing.
 
-- `core/mvcc/database/tests.rs`: 187 tests move to `database.rs`, 166
-stay.
-- `core/mvcc/database/hermitage_tests.rs`: all 17 tests move to
-`hermitage.rs`.
-- `core/mvcc/database/group_commit_tests.rs`: 11 tests move to
-`group_commit.rs`, 9 stay.
-- `core/mvcc/mod.rs`: 1 test moves to `store.rs`.
+Tests: ownership.sqltest cases that pass on tursopg and PostgreSQL 18;
+the refused one succeeds before this change.
 
-The tests keep their names and assertions; only paths and fixture calls
-change. The set of test names under `core/mvcc` and
-`tests/integration/mvcc` is the same before and after (624). Helpers
-that both sides need are in both places. The fixture gains
-`new_encrypted` and `set_encryption`.
-
-122 tests that open a database and also use private
-
-**File**: `Cargo.lock` (modified, +2/-0)
+**File**: `core/translate/roles.rs` (modified, +45/-8)
 ```diff
-@@ -1203,9 +1203,11 @@ dependencies = [
-  "rand 0.9.4",
-  "rand_chacha 0.9.0",
-  "rusqlite",
-+ "rustc-hash 2.1.1",
-  "serde_json",
-  "serial_test",
-  "similar-asserts",
-+ "sorted-vec",
-  "sql_generation",
-  "tempfile",
-  "test-log",
-```
-
-**File**: `core/mvcc/database/group_commit_tests.rs` (modified, +1/-226)
-```diff
-@@ -1,21 +1,11 @@
- use super::{get_rows, FixedYieldInjector, MvccTestDbNoConn};
- use crate::mvcc::database::{CommitCoordinator, CommitYieldPoint, GroupWork, LogRecord};
- use crate::mvcc::yield_hooks::YieldPointMarker;
--use crate::security::roles::SessionRole;
- use crate::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
--use crate::{ConnectOpts, Connection, Database, LimboError, StepResult, SyncMode, Value};
-+use crate::{Connection, LimboError, StepResult, SyncMode, Value};
- use std::sync::{Arc, Barrier};
- use std::time::{Duration, Instant};
- 
--fn pragma_int(conn: &Arc<Connection>, query: &str) -> i64 {
--    let rows = get_rows(conn, query);
--    assert_eq!(rows.len(), 1, "{query} returned {rows:?}");
--    match rows[0][0] {
--        Value::Numeric(crate::Numeric::Integer(n)) => n,
--        ref other => panic!("{query} returned {other:?}"),
--    }
--}
--
- fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
-     for _ in 0..100_000 {
-         match conn.execute(sql) {
-@@ -27,113 +17,6 @@ fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
-     Err(LimboError::Busy)
+@@ -123,10 +123,26 @@ pub fn check_statement_privileges(
+                 // itself, such as a role it is a member of, as in
+                 // PostgreSQL. Anyone else must be the owner.
+                 ast::AlterTableBody::OwnerTo { role, .. } if owner => {
+-                    if may_set_role(resolver, connection, role) {
+-                        return Ok(());
++                    match settable_role(resolver, connection, role) {
++                        // As in PostgreSQL, a new owner also needs CREATE on
++                        // the relation's schema, which only a superuser has
++                        // until GRANT on schemas exists. Giving the relation
++                        // to the role that owns it changes nothing.
++                        Some(new_owner)
++                            if resolver
++                                .catalog
++                                .dialect
++                                .role_is_superuser(resolver.schema(), new_owner)
++                                || table_owner(resolver, &alter.name) == Some(new_owner) =>
++                        {
++                            return Ok(())
++                        }
++                        Some(_) => create_in_schema_denial(&alter.name),
++                        None => PermissionDenied::privilege(
++                            Action::SetRole,
++                            Object::Role(role_spec_name(role)),
++                        ),
+                     }
+-                    PermissionDenied::privilege(Action::SetRole, Object::Role(role_spec_name(role)))
+                 }
+                 ast::AlterTableBody::OwnerTo { .. } => owner_denial(),
+                 // Renaming also needs CREATE on the schema, as in
+@@ -272,17 +288,38 @@ fn may_act_as_owner(
+     })
  }
  
--#[test]
--fn group_commit_pragma_defaults_on_and_round_trips() {
--    let db = MvccTestDbNoConn::new_with_random_db();
--    let conn = db.connect();
--
--    assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
--
--    for off in ["no", "off", "false", "0"] {
--        conn.execute(format!("PRAGMA mvcc_group_commit = {off}"))
--            .unwrap();
--        assert_eq!(
--            pragma_int(&conn, "PRAGMA mvcc_group_commit"),
--            0,
--            "`= {off}` should disable group commit"
--        );
--        conn.execute("PRAGMA mvcc_group_commit = on").unwrap();
--        assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
--    }
--}
--
--#[test]
--fn group_commit_pragma_is_store_wide() {
--    let db = MvccTestDbNoConn::new_with_random_db();
--    let setter = db.connect();
--    let observer = db.connect();
--
--    setter.execute("PRAGMA mvcc_group_commit = yes").unwrap();
--    assert_eq!(pragma_int(&observer, "PRAGMA mvcc_group_commit"), 1);
--}
--
--#[test]
--fn group_commit_pragma_needs_mvcc() {
--    let io = Arc::new(crate::io::MemoryIO::new());
--    let db = Database::open_file(io, ":memory:", Arc::new(crate::EngineDialect)).unwrap();
--    let conn = db
--        .connect(ConnectOpts::new(SessionRole::Superuser))
--        .unwrap();
--
--    let err = conn
--        .execute("PRAGMA mvcc_group_commit = yes")
--        .expect_err("group commit needs an MVCC store");
--    assert!(
--        err.to_string().contains("MVCC not enabled"),
--        "unexpected error: {err}"
--    );
--    let err = conn
--        .prepare("PRAGMA mvcc_group_commit")
--        .expect_err("querying group commit needs an MVCC store");
--    assert!(
--        err.to_string().contains("MVCC not enabled"),
--        "unexpected error: {err}"
--    );
--}
--
--fn two_writers_both_commit(db: MvccTestDbNoConn, group_commit: bool) {
--    let setup = db.connect();
--    setup
--        .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
--        .unwrap();
--    if group_commit {
--        setup.execute("PRAGMA mvcc_group_commit = yes").unwrap();
--    }
--    setup.close().unwrap();
--
--    let conn_a = db.connect();
--    let conn_b = db.connect();
--    let rounds = 40i64;
--    for round in 0..rounds {
--        conn_a.execute("BEGIN CONCURRENT").unwrap();
--        conn_b.execute("BEGIN CONCURRENT").unwrap();
--        exec_retry(&conn_a, &format!("INSERT INTO t VALUES ({}, 1)", round * 2)).unwrap();
--        exec_retry(
--            &conn_b,
--            &format!("INSERT INTO t VALUES ({}, 1)", round * 2 + 1),
--        )
--        .unwrap();
--        exec_retry(&conn_a, "COMMIT").unwrap();
--        exec_retry(&conn_b, "COMMIT").unwrap();
--    }
--
--    let reader = db.connect();
--    assert_eq!(
--        get_rows(&reader, "SELECT COUNT(*) FROM t"),
--        vec![vec![Value::from_i64(rounds * 2)]]
--    );
--}
--
--#[test]
--fn two_writers_both_commit_with_group_commit_truncate() {
--    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), true);
--}
--
--#[test]
--fn two_writers_both_commit_with_group_commit_passive() {
--    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), true);
--}
--
--#[test]
--fn two_writers_both_commit_with_group_commit_off_truncate() {
--    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), false);
--}
--
--#[test]
--fn two_writers_both_commit_with_group_commit_off_passive() {
--    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), false);
--}
--
- #[test]
- fn commits_batch_into_one_group() {
-     let db = MvccTestDbNoConn::new_with_random_db();
-@@ -205,56 +88,6 @@ fn commits_batch_into_one_group() {
-     );
+-/// Whether the session may `SET ROLE` to `role`, which is what giving a
+-/// relation to `role` takes.
+-fn may_set_role(resolver: &Resolver, connection: &Arc<Connection>, role: &ast::RoleSpec) -> bool {
++/// The role `role` names, if the current role may `SET ROLE` to it, which
++/// is what giving a relation to `role` takes.
++fn settable_role(
++    resolver: &Resolver,
++    connection: &Arc<Connection>,
++    role: &ast::RoleSpec,
++) -> Option<RoleId> {
+     let dialect = &resolver.catalog.dialect;
+     let schema = resolver.schema();
+     let target = match role {
+         ast::RoleSpec::CurrentRole => Some(connection.current_role()),
+         ast::RoleSpec::SessionUser => Some(connection.session_role()),
+         ast::RoleSpec::Name(name) => dialect.role_by_name(schema, name),
+-    };
+-    target.is_some_and(|target| dialect.can_set_role(schema, connection.current_role(), target))
++    }?;
++    dialect
++        .can_set_role(schema, connection.current_role(), target)
++        .then_some(target)
++}
++
++/// The role that owns the table or view `name` of the main database names.
++fn table_owner(resolver: &Resolver, name: &ast::QualifiedName) -> Option<RoleId> {
++    let namespace = resolver.find_existing_table(name).ok().flatten()?;
++    if namespace.database_id != MAIN_DB_ID {
++        return None;
++    }
++    let normalized = crate::util::normalize_ident(name.name.as_str());
++    resolver.with_schema(MAIN_DB_ID, |schema| {
++        resolver
++            .catalog
++            .dialect
++            .relation_owner(schema, namespace.id, &normalized)
++    })
  }
  
--#[test]
--fn batched_records_survive_a_restart() {
--    let mut db = MvccTestDbNoConn::new_with_random_db();
--    const WRITERS: usize = 4;
--    let rounds = 25usize;
--    {
--        let setup = db.connect();
--        setup
--            .exec
+ /// The name a denial calls `role` by.
 ```
 
-**File**: `core/mvcc/database/mod.rs` (modified, +0/-2)
+**File**: `postgres/conformance/pg-sqltests/roles/ownership.sqltest` (modified, +29/-0)
 ```diff
-@@ -82,8 +82,6 @@ use super::portable_logical::{
-     portable_schema_row_from_record, PortableLogicalBuilder, PortableObjectMapEntry,
- };
- 
--#[cfg(test)]
--pub mod hermitage_tests;
- #[cfg(test)]
- pub mod tests;
- 
-```
-
-**File**: `core/mvcc/mod.rs` (modified, +0/-44)
-```diff
-@@ -312,48 +312,4 @@ mod tests {
-             th.join().unwrap();
-         }
-     }
--
--    #[test]
--    fn test_mvcc_dual_cursor_transaction_isolation() {
--        let res = tracing_subscriber::fmt::try_init();
--        drop(res);
--        let mut db = MvccTestDbNoConn::new_with_random_db();
--
--        {
--            let conn = db.connect();
--            conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, val INTEGER)")
--                .unwrap();
--            conn.execute("INSERT INTO t VALUES (1, 100)").unwrap();
--            conn.execute("INSERT INTO t VALUES (2, 200)").unwrap();
--            conn.execute("PRAGMA wal_checkpoint(TRUNCATE)").unwrap();
--        }
--
--        db.restart();
--
--        // Tx1: Update B-tree row
--        let conn1 = db.connect();
--        conn1.execute("BEGIN CONCURRENT").unwrap();
--        conn1
--            .execute("UPDATE t SET val = 999 WHERE id = 1")
--            .unwrap();
--
--        // Tx2: Should see old B-tree value, not Tx1's MVCC change
--        let conn2 = db.connect();
--        conn2.execute("BEGIN CONCURRENT").unwrap();
--        let rows = get_rows(&conn2, "SELECT val FROM t WHERE id = 1");
--        assert_eq!(rows[0][0].as_int().unwrap(), 100); // Original B-tree value
--
--        conn1.execute("COMMIT").unwrap();
--        conn2.execute("COMMIT").unwrap();
--    }
--    fn get_rows(conn: &Arc<crate::Connection>, sql: &str) -> Vec<Vec<crate::Value>> {
--        let mut stmt = conn.prepare(sql).unwrap();
--        let mut rows = Vec::new();
--        stmt.run_with_row_callback(|row| {
--            rows.push(row.get_values().cloned().collect());
--            Ok(())
--        })
--        .unwrap();
--        rows
--    }
+@@ -504,3 +504,32 @@ test owner-may-give-its-table-to-a-role-it-is-a-member-of {
+ expect {
+     postgres
  }
-```
-
-**File**: `tests/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -61,6 +61,8 @@ serial_test = { version = "3", features = ["file_locks"] }
- test-log = { version = "0.2.17", features = ["trace"] }
- turso_macros.workspace = true
- crossbeam-epoch = "0.9.18"
-+rustc-hash = "2.0"
-+sorted-vec = "0.8.6"
- 
- [features]
- default = [
-```
-
-**File**: `tests/integration/mvcc/group_commit.rs` (added, +253/-0)
-```diff
-@@ -0,0 +1,253 @@
-+use super::checkpoint::{get_rows, FixedYieldInjector};
-+use super::test_db::MvccTestDbNoConn;
-+use crate::mvcc::SqliteDialect;
-+use std::sync::{Arc, Barrier};
-+use turso_core::mvcc::database::CommitYieldPoint;
-+use turso_core::mvcc::yield_hooks::YieldPointMarker;
-+use turso_core::security::roles::SessionRole;
-+use turso_core::{ConnectOpts, Connection, Database, LimboError, StepResult, Value};
 +
-+fn pragma_int(conn: &Arc<Connection>, query: &str) -> i64 {
-+    let rows = get_rows(conn, query);
-+    assert_eq!(rows.len(), 1, "{query} returned {rows:?}");
-+    match rows[0][0] {
-+        Value::Numeric(turso_core::Numeric::Integer(n)) => n,
-+        ref other => panic!("{query} returned {other:?}"),
-+    }
++# The new owner also needs CREATE on the relation's schema, which only a
++# superuser has here and in PostgreSQL's public schema.
++test owner-may-not-give-its-table-to-a-role-without-create-on-the-schema {
++    CREATE ROLE ro_no_create_owner;
++    CREATE ROLE ro_no_create_group;
++    CREATE TABLE ro_no_create_given (x INT);
++    ALTER TABLE ro_no_create_given OWNER TO ro_no_create_owner;
++    GRANT ro_no_create_group TO ro_no_create_owner;
++    SET ROLE ro_no_create_owner;
++    ALTER TABLE ro_no_create_given OWNER TO ro_no_create_group;
++}
++@sqlstate 42501
++expect error {
++    permission denied for schema public
 +}
 +
-+fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
-+    for _ in 0..100_000 {
-+        match conn.execute(sql) {
-+            Ok(()) => return Ok(()),
-+            Err(LimboError::Busy) => std::thread::yield_now(),
-+            Err(err) => return Err(err),
-+        }
-+    }
-+    Err(LimboError::Busy)
++test owner-may-give-its-table-to-itself-without-create-on-the-schema {
++    CREATE ROLE ro_same_owner;
++    CREATE TABLE ro_same_owner_kept (x INT);
++    ALTER TABLE ro_same_owner_kept OWNER TO ro_same_owner;
++    SET ROLE ro_same_owner;
++    ALTER TABLE ro_same_owner_kept OWNER TO ro_same_owner;
++    RESET ROLE;
++    SELECT pg_get_userbyid(relowner) FROM pg_class WHERE relname = 'ro_same_owner_kept';
 +}
-+
-+#[test]
-+fn group_commit_pragma_defaults_on_and_round_trips() {
-+    let db = MvccTestDbNoConn::new_with_random_db();
-+    let conn = db.connect();
-+
-+    assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
-+
-+    for off in ["no", "off", "false", "0"] {
-+        conn.execute(format!("PRAGMA mvcc_group_commit = {off}"))
-+            .unwrap();
-+        assert_eq!(
-+            pragma_int(&conn, "PRAGMA mvcc_group_commit"),
-+            0,
-+            "`= {off}` should disable group commit"
-+        );
-+        conn.execute("PRAGMA mvcc_group_commit = on").unwrap();
-+        assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
-+    }
++expect {
++    ro_same_owner
 +}
-+
-+#[test]
-+fn group_commit_pragma_is_store_wide() {
-+    let db = MvccTestDbNoConn::new_with_random_db();
-+    let setter = db.connect();
-+    let observer = db.connect();
-+
-+    setter.execute("PRAGMA mvcc_group_commit = yes").unwrap();
-+    assert_eq!(pragma_int(&observer, "PRAGMA mvcc_group_commit"), 1);
-+}
-+
-+#[test]
-+fn group_commit_pragma_needs_mvcc() {
-+    let io = Arc::new(turso_core::io::MemoryIO::new());
-+    let db = Database::open_file(io, ":memory:", Arc::new(SqliteDialect)).unwrap();
-+    let conn = db
-+        .connect(ConnectOpts::new(SessionRole::Superuser))
-+        .unwrap();
-+
-+    let err = conn
-+        .execute("PRAGMA mvcc_group_commit = yes")
-+        .expect_err("group commit needs an MVCC store");
-+    assert!(
-+        err.to_string().contains("MVCC not enabled"),
-+        "unexpected error: {err}"
-+    );
-+    let err = conn
-+        .prepare("PRAGMA mvcc_group_commit")
-+        .expect_err("querying group commit needs an MVCC store");
-+    assert!(
-+        err.to_string().contains("MVCC not enabled"),
-+        "unexpected error: {err}"
-+    );
-+}
-+
-+fn two_writers_both_commit(db: MvccTestDbNoConn, group_commit: bool) {
-+    let setup = db.connect();
-+    setup
-+        .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
-+        .unwrap();
-+    if group_commit {
-+        setup.execute("PRAGMA mvcc_group_commit = yes").unwrap();
-+    }
-+    setup.close().unwrap();
-+
-+    let conn_a = db.connect();
-+    let conn_b = db.connect();
-+    let rounds = 40i64;
-+    for round in 0..rounds {
-+        conn_a.execute("BEGIN CONCURRENT").unwrap();
-+        conn_b.execute("BEGIN CONCURRENT").unwrap();
-+        exec_retry(&conn_a, &format!("INSERT INTO t VALUES ({}, 1)", round * 2)).unwrap();
-+        exec_retry(
-+            &conn_b,
-+            &format!("INSERT INTO t VALUES ({}, 1)", round * 2 + 1),
-+        )
-+        .unwrap();
-+        exec_retry(&conn_a, "COMMIT").unwrap();
-+        exec_retry(&conn_b, "COMMIT").unwrap();
-+    }
-+
-+    let reader = db.connect();
-+    assert_eq!(
-+        get_rows(&reader, "SELECT COUNT(*) FROM t"),
-+        vec![vec![Value::from_i64(rounds * 2)]]
-+    );
-+}
-+
-+#[test]
-+fn two_writers_both_commit_with_group_commit_truncate() {
-+    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), true);
-+}
-+
-+#[test]
-+fn two_writers_both_commit_with_group_commit_passive() {
-+    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), true);
-+}
-+
-+#[test]
-+fn two_writers_both_commit_with_group_commit_off_truncate() {
-+    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), false);
-+}
-+
-+#[test]
-+fn two_writers_both_commit_with_group_commit_off_passive() {
-+    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), false);
-+}
-+
-+#[test]
-+fn batched_records_survive_a_restart() {
-+    let mut db = MvccTestDbNoConn::new_with_random_db();
-+    const WRITERS: usize = 4;
-+    let rounds = 25usize;
-+    {
-+        let setup = db.connect();
-+        setup
-+            .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
-+            .unwrap();
-+        setup
-+            .execute("PRAGMA mvcc_checkpoint_threshold = -1")
-+            .unwrap();
-+        setup.execute("PRAGMA mvcc_group_commit = 
-```
-
-**File**: `tests/integration/mvcc/hermitage.rs` (renamed, +4/-4)
-```diff
-@@ -1,8 +1,8 @@
--use crate::mvcc::database::tests::MvccTestDbNoConn;
--use crate::Connection;
--use crate::LimboError;
--use crate::Value;
-+use super::test_db::MvccTestDbNoConn;
- use std::sync::Arc;
-+use turso_core::Connection;
-+use turso_core::LimboError;
-+use turso_core::Value;
- 
- //        /\
- //       /  \
-```
-
-**File**: `tests/integration/mvcc/mod.rs` (modified, +3/-0)
-```diff
-@@ -1,5 +1,8 @@
- mod checkpoint;
- mod database;
-+mod group_commit;
-+mod hermitage;
-+mod store;
- mod test_db;
- 
- use crate::common::{ExecRows, TempDatabase};
-```
-
----
-
-### Incident Patch 2: `1e1ebeaa` (2026-11-14)
-**Commit Message**: tests: move the MVCC tests that need only the public API out of core
-
-Core will stop parsing SQL by itself, and opening a database parses SQL,
-so a test that opens a database cannot stay in core. Move the 216 MVCC
-tests that compile against core as it is: they use SQL and the public
-methods of MvStore, Connection and Database.
-
-Core itself does not change. No item becomes public and no cfg is
-widened. The 122 tests that open a database and also use private parts
-of core stay where they are for now. Most of them start transactions
-with MvStore::begin_tx, which exists only in test builds, or write to
-private fields of MvStore.
-
-The tests keep their names and assertions; only paths and fixture calls
-change. Helpers that both sides need are
-in both places; helpers that only the moved tests used are deleted from
-core. The fixture gains new_encrypted and set_encryption, which the core
-fixture had.
-
-Tests: cargo test -p turso_core --lib,
-cargo test -p core_tester --test integration_tests mvcc::
-
-**File**: `Cargo.lock` (modified, +2/-0)
-```diff
-@@ -1203,9 +1203,11 @@ dependencies = [
-  "rand 0.9.4",
-  "rand_chacha 0.9.0",
-  "rusqlite",
-+ "rustc-hash 2.1.1",
-  "serde_json",
-  "serial_test",
-  "similar-asserts",
-+ "sorted-vec",
-  "sql_generation",
-  "tempfile",
-  "test-log",
-```
-
-**File**: `core/mvcc/database/group_commit_tests.rs` (modified, +1/-226)
-```diff
-@@ -1,21 +1,11 @@
- use super::{get_rows, FixedYieldInjector, MvccTestDbNoConn};
- use crate::mvcc::database::{CommitCoordinator, CommitYieldPoint, GroupWork, LogRecord};
- use crate::mvcc::yield_hooks::YieldPointMarker;
--use crate::security::roles::SessionRole;
- use crate::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
--use crate::{ConnectOpts, Connection, Database, LimboError, StepResult, SyncMode, Value};
-+use crate::{Connection, LimboError, StepResult, SyncMode, Value};
- use std::sync::{Arc, Barrier};
- use std::time::{Duration, Instant};
- 
--fn pragma_int(conn: &Arc<Connection>, query: &str) -> i64 {
--    let rows = get_rows(conn, query);
--    assert_eq!(rows.len(), 1, "{query} returned {rows:?}");
--    match rows[0][0] {
--        Value::Numeric(crate::Numeric::Integer(n)) => n,
--        ref other => panic!("{query} returned {other:?}"),
--    }
--}
--
- fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
-     for _ in 0..100_000 {
-         match conn.execute(sql) {
-@@ -27,113 +17,6 @@ fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
-     Err(LimboError::Busy)
- }
- 
--#[test]
--fn group_commit_pragma_defaults_on_and_round_trips() {
--    let db = MvccTestDbNoConn::new_with_random_db();
--    let conn = db.connect();
--
--    assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
--
--    for off in ["no", "off", "false", "0"] {
--        conn.execute(format!("PRAGMA mvcc_group_commit = {off}"))
--            .unwrap();
--        assert_eq!(
--            pragma_int(&conn, "PRAGMA mvcc_group_commit"),
--            0,
--            "`= {off}` should disable group commit"
--        );
--        conn.execute("PRAGMA mvcc_group_commit = on").unwrap();
--        assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
--    }
--}
--
--#[test]
--fn group_commit_pragma_is_store_wide() {
--    let db = MvccTestDbNoConn::new_with_random_db();
--    let setter = db.connect();
--    let observer = db.connect();
--
--    setter.execute("PRAGMA mvcc_group_commit = yes").unwrap();
--    assert_eq!(pragma_int(&observer, "PRAGMA mvcc_group_commit"), 1);
--}
--
--#[test]
--fn group_commit_pragma_needs_mvcc() {
--    let io = Arc::new(crate::io::MemoryIO::new());
--    let db = Database::open_file(io, ":memory:", Arc::new(crate::EngineDialect)).unwrap();
--    let conn = db
--        .connect(ConnectOpts::new(SessionRole::Superuser))
--        .unwrap();
--
--    let err = conn
--        .execute("PRAGMA mvcc_group_commit = yes")
--        .expect_err("group commit needs an MVCC store");
--    assert!(
--        err.to_string().contains("MVCC not enabled"),
--        "unexpected error: {err}"
--    );
--    let err = conn
--        .prepare("PRAGMA mvcc_group_commit")
--        .expect_err("querying group commit needs an MVCC store");
--    assert!(
--        err.to_string().contains("MVCC not enabled"),
--        "unexpected error: {err}"
--    );
--}
--
--fn two_writers_both_commit(db: MvccTestDbNoConn, group_commit: bool) {
--    let setup = db.connect();
--    setup
--        .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
--        .unwrap();
--    if group_commit {
--        setup.execute("PRAGMA mvcc_group_commit = yes").unwrap();
--    }
--    setup.close().unwrap();
--
--    let conn_a = db.connect();
--    let conn_b = db.connect();
--    let rounds = 40i64;
--    for round in 0..rounds {
--        conn_a.execute("BEGIN CONCURRENT").unwrap();
--        conn_b.execute("BEGIN CONCURRENT").unwrap();
--        exec_retry(&conn_a, &format!("INSERT INTO t VALUES ({}, 1)", round * 2)).unwrap();
--        exec_retry(
--            &conn_b,
--            &format!("INSERT INTO t VALUES ({}, 1)", round * 2 + 1),
--        )
--        .unwrap();
--        exec_retry(&conn_a, "COMMIT").unwrap();
--        exec_retry(&conn_b, "COMMIT").unwrap();
--    }
--
--    let reader = db.connect();
--    assert_eq!(
--        get_rows(&reader, "SELECT COUNT(*) FROM t"),
--        vec![vec![Value::from_i64(rounds * 2)]]
--    );
--}
--
--#[test]
--fn two_writers_both_commit_with_group_commit_truncate() {
--    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), true);
--}
--
--#[test]
--fn two_writers_both_commit_with_group_commit_passive() {
--    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), true);
--}
--
--#[test]
--fn two_writers_both_commit_with_group_commit_off_truncate() {
--    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), false);
--}
--
--#[test]
--fn two_writers_both_commit_with_group_commit_off_passive() {
--    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), false);
--}
--
- #[test]
- fn commits_batch_into_one_group() {
-     let db = MvccTestDbNoConn::new_with_random_db();
-@@ -205,56 +88,6 @@ fn commits_batch_into_one_group() {
-     );
- }
- 
--#[test]
--fn batched_records_survive_a_restart() {
--    let mut db = MvccTestDbNoConn::new_with_random_db();
--    const WRITERS: usize = 4;
--    let rounds = 25usize;
--    {
--        let setup = db.connect();
--        setup
--            .exec
-```
-
-**File**: `core/mvcc/database/mod.rs` (modified, +0/-2)
-```diff
-@@ -82,8 +82,6 @@ use super::portable_logical::{
-     portable_schema_row_from_record, PortableLogicalBuilder, PortableObjectMapEntry,
- };
- 
--#[cfg(test)]
--pub mod hermitage_tests;
- #[cfg(test)]
- pub mod tests;
- 
-```
-
-**File**: `core/mvcc/mod.rs` (modified, +0/-44)
-```diff
-@@ -312,48 +312,4 @@ mod tests {
-             th.join().unwrap();
-         }
-     }
--
--    #[test]
--    fn test_mvcc_dual_cursor_transaction_isolation() {
--        let res = tracing_subscriber::fmt::try_init();
--        drop(res);
--        let mut db = MvccTestDbNoConn::new_with_random_db();
--
--        {
--            let conn = db.connect();
--            conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, val INTEGER)")
--                .unwrap();
--            conn.execute("INSERT INTO t VALUES (1, 100)").unwrap();
--            conn.execute("INSERT INTO t VALUES (2, 200)").unwrap();
--            conn.execute("PRAGMA wal_checkpoint(TRUNCATE)").unwrap();
--        }
--
--        db.restart();
--
--        // Tx1: Update B-tree row
--        let conn1 = db.connect();
--        conn1.execute("BEGIN CONCURRENT").unwrap();
--        conn1
--            .execute("UPDATE t SET val = 999 WHERE id = 1")
--            .unwrap();
--
--        // Tx2: Should see old B-tree value, not Tx1's MVCC change
--        let conn2 = db.connect();
--        conn2.execute("BEGIN CONCURRENT").unwrap();
--        let rows = get_rows(&conn2, "SELECT val FROM t WHERE id = 1");
--        assert_eq!(rows[0][0].as_int().unwrap(), 100); // Original B-tree value
--
--        conn1.execute("COMMIT").unwrap();
--        conn2.execute("COMMIT").unwrap();
--    }
--    fn get_rows(conn: &Arc<crate::Connection>, sql: &str) -> Vec<Vec<crate::Value>> {
--        let mut stmt = conn.prepare(sql).unwrap();
--        let mut rows = Vec::new();
--        stmt.run_with_row_callback(|row| {
--            rows.push(row.get_values().cloned().collect());
--            Ok(())
--        })
--        .unwrap();
--        rows
--    }
- }
-```
-
-**File**: `tests/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -61,6 +61,8 @@ serial_test = { version = "3", features = ["file_locks"] }
- test-log = { version = "0.2.17", features = ["trace"] }
- turso_macros.workspace = true
- crossbeam-epoch = "0.9.18"
-+rustc-hash = "2.0"
-+sorted-vec = "0.8.6"
- 
- [features]
- default = [
-```
-
-**File**: `tests/integration/mvcc/group_commit.rs` (added, +253/-0)
-```diff
-@@ -0,0 +1,253 @@
-+use super::checkpoint::{get_rows, FixedYieldInjector};
-+use super::test_db::MvccTestDbNoConn;
-+use crate::mvcc::SqliteDialect;
-+use std::sync::{Arc, Barrier};
-+use turso_core::mvcc::database::CommitYieldPoint;
-+use turso_core::mvcc::yield_hooks::YieldPointMarker;
-+use turso_core::security::roles::SessionRole;
-+use turso_core::{ConnectOpts, Connection, Database, LimboError, StepResult, Value};
-+
-+fn pragma_int(conn: &Arc<Connection>, query: &str) -> i64 {
-+    let rows = get_rows(conn, query);
-+    assert_eq!(rows.len(), 1, "{query} returned {rows:?}");
-+    match rows[0][0] {
-+        Value::Numeric(turso_core::Numeric::Integer(n)) => n,
-+        ref other => panic!("{query} returned {other:?}"),
-+    }
-+}
-+
-+fn exec_retry(conn: &Arc<Connection>, sql: &str) -> Result<(), LimboError> {
-+    for _ in 0..100_000 {
-+        match conn.execute(sql) {
-+            Ok(()) => return Ok(()),
-+            Err(LimboError::Busy) => std::thread::yield_now(),
-+            Err(err) => return Err(err),
-+        }
-+    }
-+    Err(LimboError::Busy)
-+}
-+
-+#[test]
-+fn group_commit_pragma_defaults_on_and_round_trips() {
-+    let db = MvccTestDbNoConn::new_with_random_db();
-+    let conn = db.connect();
-+
-+    assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
-+
-+    for off in ["no", "off", "false", "0"] {
-+        conn.execute(format!("PRAGMA mvcc_group_commit = {off}"))
-+            .unwrap();
-+        assert_eq!(
-+            pragma_int(&conn, "PRAGMA mvcc_group_commit"),
-+            0,
-+            "`= {off}` should disable group commit"
-+        );
-+        conn.execute("PRAGMA mvcc_group_commit = on").unwrap();
-+        assert_eq!(pragma_int(&conn, "PRAGMA mvcc_group_commit"), 1);
-+    }
-+}
-+
-+#[test]
-+fn group_commit_pragma_is_store_wide() {
-+    let db = MvccTestDbNoConn::new_with_random_db();
-+    let setter = db.connect();
-+    let observer = db.connect();
-+
-+    setter.execute("PRAGMA mvcc_group_commit = yes").unwrap();
-+    assert_eq!(pragma_int(&observer, "PRAGMA mvcc_group_commit"), 1);
-+}
-+
-+#[test]
-+fn group_commit_pragma_needs_mvcc() {
-+    let io = Arc::new(turso_core::io::MemoryIO::new());
-+    let db = Database::open_file(io, ":memory:", Arc::new(SqliteDialect)).unwrap();
-+    let conn = db
-+        .connect(ConnectOpts::new(SessionRole::Superuser))
-+        .unwrap();
-+
-+    let err = conn
-+        .execute("PRAGMA mvcc_group_commit = yes")
-+        .expect_err("group commit needs an MVCC store");
-+    assert!(
-+        err.to_string().contains("MVCC not enabled"),
-+        "unexpected error: {err}"
-+    );
-+    let err = conn
-+        .prepare("PRAGMA mvcc_group_commit")
-+        .expect_err("querying group commit needs an MVCC store");
-+    assert!(
-+        err.to_string().contains("MVCC not enabled"),
-+        "unexpected error: {err}"
-+    );
-+}
-+
-+fn two_writers_both_commit(db: MvccTestDbNoConn, group_commit: bool) {
-+    let setup = db.connect();
-+    setup
-+        .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
-+        .unwrap();
-+    if group_commit {
-+        setup.execute("PRAGMA mvcc_group_commit = yes").unwrap();
-+    }
-+    setup.close().unwrap();
-+
-+    let conn_a = db.connect();
-+    let conn_b = db.connect();
-+    let rounds = 40i64;
-+    for round in 0..rounds {
-+        conn_a.execute("BEGIN CONCURRENT").unwrap();
-+        conn_b.execute("BEGIN CONCURRENT").unwrap();
-+        exec_retry(&conn_a, &format!("INSERT INTO t VALUES ({}, 1)", round * 2)).unwrap();
-+        exec_retry(
-+            &conn_b,
-+            &format!("INSERT INTO t VALUES ({}, 1)", round * 2 + 1),
-+        )
-+        .unwrap();
-+        exec_retry(&conn_a, "COMMIT").unwrap();
-+        exec_retry(&conn_b, "COMMIT").unwrap();
-+    }
-+
-+    let reader = db.connect();
-+    assert_eq!(
-+        get_rows(&reader, "SELECT COUNT(*) FROM t"),
-+        vec![vec![Value::from_i64(rounds * 2)]]
-+    );
-+}
-+
-+#[test]
-+fn two_writers_both_commit_with_group_commit_truncate() {
-+    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), true);
-+}
-+
-+#[test]
-+fn two_writers_both_commit_with_group_commit_passive() {
-+    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), true);
-+}
-+
-+#[test]
-+fn two_writers_both_commit_with_group_commit_off_truncate() {
-+    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db(), false);
-+}
-+
-+#[test]
-+fn two_writers_both_commit_with_group_commit_off_passive() {
-+    two_writers_both_commit(MvccTestDbNoConn::new_with_random_db_passive(), false);
-+}
-+
-+#[test]
-+fn batched_records_survive_a_restart() {
-+    let mut db = MvccTestDbNoConn::new_with_random_db();
-+    const WRITERS: usize = 4;
-+    let rounds = 25usize;
-+    {
-+        let setup = db.connect();
-+        setup
-+            .execute("CREATE TABLE t (pk INTEGER PRIMARY KEY, v INTEGER)")
-+            .unwrap();
-+        setup
-+            .execute("PRAGMA mvcc_checkpoint_threshold = -1")
-+            .unwrap();
-+        setup.execute("PRAGMA mvcc_group_commit = 
-```
-
-**File**: `tests/integration/mvcc/hermitage.rs` (renamed, +4/-4)
-```diff
-@@ -1,8 +1,8 @@
--use crate::mvcc::database::tests::MvccTestDbNoConn;
--use crate::Connection;
--use crate::LimboError;
--use crate::Value;
-+use super::test_db::MvccTestDbNoConn;
- use std::sync::Arc;
-+use turso_core::Connection;
-+use turso_core::LimboError;
-+use turso_core::Value;
- 
- //        /\
- //       /  \
-```
-
-**File**: `tests/integration/mvcc/mod.rs` (modified, +3/-0)
-```diff
-@@ -1,5 +1,8 @@
- mod checkpoint;
- mod database;
-+mod group_commit;
-+mod hermitage;
-+mod store;
- mod test_db;
- 
- use crate::common::{ExecRows, TempDatabase};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11844** (2026-11-14): core/mvcc: read-only accessors for tests, and move the tests that only read store state (@penberg)
-- **PR #11840** (2026-11-14): tests: move MVCC checkpoint tests out of core (@penberg)
-- **PR #11839** (2026-11-14): core/mvcc: rename checkpoint_state_machine.rs to checkpoint.rs (@penberg)
-- **PR #11838** (2026-11-14): core/optimizer: skip DISTINCT when rows are already unique (@iarymov)
-- **PR #11826** (2026-11-13): core: add connection APIs for storage stats and disabling MVCC checkpoints (@pedrocarlo)
-- **PR #11822** (2026-11-14): tests: move the MVCC tests that need only the public API out of core (@penberg)
+- **PR #11880** (2026-11-16): tests: move six more MVCC tests that need only the public API out of core (@penberg)
+- **PR #11879** (2026-11-16): tests: move the tests of the schema code that left util out of core (@penberg)
+- **PR #11878** (2026-11-16): core: move code from util to schema (@penberg)
+- **PR #11873** (2026-11-16): tests: move the MVCC tests that need only MvStore::begin_tx out of core (@penberg)
+- **PR #11870** (2026-11-16): tests: move six MVCC tests that need only the public API out of core (@penberg)
+- **PR #11868** (2026-11-16): tests: move the pager rollback tests out of core (@penberg)
 
 ---
 
@@ -2412,32 +1623,59 @@ cargo test -p core_tester --test integration_tests mvcc::
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'tests: move the MVCC tests that need only the public API out of core' fro
+## X. core: require CREATE on the schema for the new owner of ALTER ... OWNER TO
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/translate/roles.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c718b2ad`: Merge 'tests: move the MVCC tests that need only the public API out of core' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e4d354c`: core: require CREATE on the schema for the new owner of ALTER ... OWNER TO. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/roles.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "rustc-hash 2.1.1",
- "sorted-vec",
+                    match settable_role(resolver, connection, role) {
+                        // As in PostgreSQL, a new owner also needs CREATE on
+                        // the relation's schema, which only a superuser has
+                        // until GRANT on schemas exists. Giving the relation
+                        // to the role that owns it changes nothing.
+                        Some(new_owner)
+                            if resolver
+                                .catalog
+                                .dialect
+                                .role_is_superuser(resolver.schema(), new_owner)
+                                || table_owner(resolver, &alter.name) == Some(new_owner) =>
+                        {
+                            return Ok(())
+                        }
+                        Some(_) => create_in_schema_denial(&alter.name),
+                        None => PermissionDenied::privilege(
+                            Action::SetRole,
+                            Object::Role(role_spec_name(role)),
+                        ),
+/// The role `role` names, if the current role may `SET ROLE` to it, which
+/// is what giving a relation to `role` takes.
+fn sett
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                    if may_set_role(resolver, connection, role) {
+                        return Ok(());
+                    PermissionDenied::privilege(Action::SetRole, Object::Role(role_spec_name(role)))
+/// Whether the session may `SET ROLE` to `role`, which is what giving a
+/// relation to `role` takes.
+fn may_set_role(resolver: &Resolver, connection: &Arc<Connection>, role: &ast::RoleSpec) -> bool {
+    };
+    target.is_some_and(|target| dialect.can_set_role(schema, connection.current_role(), target))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c718b2ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e4d354c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

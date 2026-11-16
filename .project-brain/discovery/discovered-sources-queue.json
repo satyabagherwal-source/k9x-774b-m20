@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T16:21:53.943Z",
+  "updated_at": "2026-11-16T17:44:03.802Z",
   "stats": {
-    "total_discovered": 4318,
-    "approved_pending_harvest": 4057,
+    "total_discovered": 4327,
+    "approved_pending_harvest": 4064,
     "harvested_count": 0,
-    "rejected_count": 261,
+    "rejected_count": 263,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4059,
+      "COMMUNITY_AND_EXPERT": 4068,
       "OFFICIAL_DOCUMENTATION": 138,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -93190,6 +93190,190 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
         "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-0F63A2A5A562": {
+      "id": "SRC-0F63A2A5A562",
+      "url": "https://news.ycombinator.com/",
+      "title": "https://news.ycombinator.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T17:44:03.109Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-FE79251BDD44": {
+      "id": "SRC-FE79251BDD44",
+      "url": "https://github.com/ArchiveBox/abx-plugins/pull/106",
+      "title": "https://github.com/ArchiveBox/abx-plugins/pull/106",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T17:44:03.136Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-BBC3137A92CA": {
+      "id": "SRC-BBC3137A92CA",
+      "url": "http://azure/.archive/.ubuntu/.com/ubuntu/[[:space",
+      "title": "http://azure/.archive/.ubuntu/.com/ubuntu/[[:space",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T17:44:03.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-BD2C656C3264": {
+      "id": "SRC-BD2C656C3264",
+      "url": "http://archivebox.localhost:{urlsplit(live_server.url",
+      "title": "http://archivebox.localhost:{urlsplit(live_server.url",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T17:44:03.191Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-7C9ECB0EA47D": {
+      "id": "SRC-7C9ECB0EA47D",
+      "url": "https://example.com/folder-menu",
+      "title": "https://example.com/folder-menu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T17:44:03.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-53ED02348017": {
+      "id": "SRC-53ED02348017",
+      "url": "https://delete-fixture.test/%7Bi",
+      "title": "https://delete-fixture.test/%7Bi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T17:44:03.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-ACAA42366B61": {
+      "id": "SRC-ACAA42366B61",
+      "url": "https://collector-fixture.test/%7Bi",
+      "title": "https://collector-fixture.test/%7Bi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T17:44:03.274Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-EE76FE55AE15": {
+      "id": "SRC-EE76FE55AE15",
+      "url": "https://staff-fixture.test/",
+      "title": "https://staff-fixture.test/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T17:44:03.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-DA414DDEAA6E": {
+      "id": "SRC-DA414DDEAA6E",
+      "url": "https://github.com/tursodatabase/turso",
+      "title": "https://github.com/tursodatabase/turso",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T17:44:03.802Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+        "fileName": "tursodatabase-turso-learnings.md"
       }
     }
   }

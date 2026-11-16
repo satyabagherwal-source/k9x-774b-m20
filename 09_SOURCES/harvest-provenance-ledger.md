@@ -10337,3 +10337,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-16T16:21:37.947Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `8bb6096b` | Multi-dimensional audit evidence | 2026-11-16T16:21:40.100Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `99b389db` | Multi-dimensional audit evidence | 2026-11-16T16:21:50.725Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8b9262f0` | Multi-dimensional audit evidence | 2026-11-16T17:43:49.888Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `de6e9dbe` | Multi-dimensional audit evidence | 2026-11-16T17:43:54.773Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `063ca631` | Multi-dimensional audit evidence | 2026-11-16T17:43:59.952Z |

@@ -10304,3 +10304,6 @@
 | `CYCLE-20261116-0WLZ` | `2026-11-16T16:21:37.943Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | Yes (`fa61a25d...`) |
 | `CYCLE-20261116-0Y9S` | `2026-11-16T16:21:40.096Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8760` | Yes (`d2495af9...`) |
 | `CYCLE-20261116-16GX` | `2026-11-16T16:21:50.721Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8761` | Yes (`b0a2da97...`) |
+| `CYCLE-20261116-YM4C` | `2026-11-16T17:43:49.884Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`745dfdd3...`) |
+| `CYCLE-20261116-YPW1` | `2026-11-16T17:43:54.769Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8762` | Yes (`d755a720...`) |
+| `CYCLE-20261116-YTVX` | `2026-11-16T17:43:59.949Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8763` | Yes (`f7dcf9bf...`) |
