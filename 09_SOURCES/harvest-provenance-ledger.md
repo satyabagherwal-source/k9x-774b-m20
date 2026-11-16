@@ -10340,3 +10340,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8b9262f0` | Multi-dimensional audit evidence | 2026-11-16T17:43:49.888Z |
 | `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `de6e9dbe` | Multi-dimensional audit evidence | 2026-11-16T17:43:54.773Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `063ca631` | Multi-dimensional audit evidence | 2026-11-16T17:43:59.952Z |
+| `learn-huggingface-n4ze3m-tiny-voca` | `https://huggingface.co/n4ze3m/tiny-voca` | `hf-n4ze3m-` | Multi-dimensional audit evidence | 2026-11-16T18:01:34.805Z |
+| `learn-github-yazinsai-openoats` | `https://github.com/yazinsai/OpenOats` | `123ec38d` | Multi-dimensional audit evidence | 2026-11-16T18:01:43.724Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1c341ad3` | Multi-dimensional audit evidence | 2026-11-16T18:01:50.074Z |
+| `learn-dom-d-bcdf73e3` | `project://hf-n4ze3m-tiny-voca` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md` | 2026-11-16T18:02:18.580Z |

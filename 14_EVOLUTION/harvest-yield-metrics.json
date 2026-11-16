@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T17:43:59.958Z",
-  "total_cycles_completed": 9896,
-  "total_learnings_persisted": 9896,
-  "total_rules_promoted": 9496,
+  "last_updated": "2026-11-16T18:01:50.078Z",
+  "total_cycles_completed": 9899,
+  "total_learnings_persisted": 9899,
+  "total_rules_promoted": 9498,
   "history": [
-    {
-      "timestamp": "2026-11-15T10:04:13.092Z",
-      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
-      "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T10:04:31.077Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T10:48:14.774Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T10:53:00.249Z",
       "repository": "FusionCow/Sulphur-3",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-16T17:43:59.958Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T18:01:34.810Z",
+      "repository": "n4ze3m/tiny-voca",
+      "learningId": "learn-huggingface-n4ze3m-tiny-voca",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T18:01:43.729Z",
+      "repository": "yazinsai/OpenOats",
+      "learningId": "learn-github-yazinsai-openoats",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T18:01:50.078Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T17:44:03.802Z",
+  "updated_at": "2026-11-16T18:02:19.062Z",
   "stats": {
-    "total_discovered": 4327,
-    "approved_pending_harvest": 4064,
+    "total_discovered": 4334,
+    "approved_pending_harvest": 4070,
     "harvested_count": 0,
-    "rejected_count": 263,
+    "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4068,
+      "COMMUNITY_AND_EXPERT": 4075,
       "OFFICIAL_DOCUMENTATION": 138,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -93374,6 +93374,153 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
         "fileName": "tursodatabase-turso-learnings.md"
+      }
+    },
+    "SRC-AA761416B311": {
+      "id": "SRC-AA761416B311",
+      "url": "https://huggingface.co/n4ze3m/tiny-voca",
+      "title": "https://huggingface.co/n4ze3m/tiny-voca",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:02:18.593Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md",
+        "fileName": "hf-n4ze3m-tiny-voca-learnings.md"
+      }
+    },
+    "SRC-AA9B5311A2AC": {
+      "id": "SRC-AA9B5311A2AC",
+      "url": "https://github.com/yazinsai/OpenOats",
+      "title": "https://github.com/yazinsai/OpenOats",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:02:18.927Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-4ED67BFE5954": {
+      "id": "SRC-4ED67BFE5954",
+      "url": "https://api.anthropic.com/",
+      "title": "https://api.anthropic.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:02:18.950Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-426B13808D5E": {
+      "id": "SRC-426B13808D5E",
+      "url": "https://api.assemblyai.com/v2",
+      "title": "https://api.assemblyai.com/v2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:02:18.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-CE43B912D8E7": {
+      "id": "SRC-CE43B912D8E7",
+      "url": "http://localhost:11434/v1%60",
+      "title": "http://localhost:11434/v1%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T18:02:19.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-D03E5CC8B624": {
+      "id": "SRC-D03E5CC8B624",
+      "url": "https://api.elevenlabs.io/v1",
+      "title": "https://api.elevenlabs.io/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:02:19.036Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-53765DAB58A9": {
+      "id": "SRC-53765DAB58A9",
+      "url": "https://generativelanguage.googleapis.com/v1beta",
+      "title": "https://generativelanguage.googleapis.com/v1beta",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:02:19.062Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
       }
     }
   }

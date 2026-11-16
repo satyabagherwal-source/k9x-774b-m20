@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T17:43:59.961Z",
+  "last_updated": "2026-11-16T18:01:50.082Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "bdf37aa45793ffaeaf74ce0677c971cfd7c2b1ee542bd36f8046dfd1b4e492f1",
-      "verified_at": "2026-11-16T05:10:45.633Z",
+      "content_hash": "63bf77338051da5f70ed160b031febc11d7ec911dc4b4730fd1178b83f707eef",
+      "verified_at": "2026-11-16T18:01:50.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T05:10:45.633Z"
+      "last_updated": "2026-11-16T18:01:50.081Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -19154,6 +19154,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-16T16:09:22.025Z"
+    },
+    "n4ze3m/tiny-voca": {
+      "repository": "n4ze3m/tiny-voca",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
+      "content_hash": "abdfd71d8a7453ad86f44304e9cd79d05affff37bf328761db55a28439946fa0",
+      "verified_at": "2026-11-16T18:01:34.813Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-16T18:01:34.813Z"
+    },
+    "yazinsai/OpenOats": {
+      "repository": "yazinsai/OpenOats",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-yazinsai-openoats",
+      "content_hash": "881024c9266959d0ab398fca49d0ec152cd8d704c1e5833003944c05f2d31fa2",
+      "verified_at": "2026-11-16T18:01:43.731Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-16T18:01:43.731Z"
     }
   },
   "repos": {

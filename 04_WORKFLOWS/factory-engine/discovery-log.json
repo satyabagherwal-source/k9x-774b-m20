@@ -21313,5 +21313,32 @@
     "downloads": 1718332,
     "qualityScore": 28200,
     "discoveredAt": "2026-11-16T16:06:30.499Z"
+  },
+  {
+    "name": "n4ze3m/tiny-voca",
+    "fullName": "n4ze3m/tiny-voca",
+    "url": "https://huggingface.co/n4ze3m/tiny-voca",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: n4ze3m/tiny-voca (145 likes, 860 downloads)",
+    "likes": 145,
+    "downloads": 860,
+    "qualityScore": 2310,
+    "discoveredAt": "2026-11-16T17:59:20.154Z"
+  },
+  {
+    "name": "OpenOats",
+    "fullName": "yazinsai/OpenOats",
+    "url": "https://github.com/yazinsai/OpenOats",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A minimal meeting recorder for Mac. Press Start, and after Stop you get Notes and a You/Them transcript in one markdown file. On-device, free and open source.",
+    "stars": 2673,
+    "forks": 260,
+    "openIssues": 1,
+    "language": "Swift",
+    "qualityScore": 1667,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-16T17:59:30.863Z"
   }
 ]

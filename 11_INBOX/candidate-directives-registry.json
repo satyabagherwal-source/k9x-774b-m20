@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T17:44:04.576Z",
+  "last_updated": "2026-11-16T18:02:19.924Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19516,6 +19516,46 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C1B3AA-nuc-108-list-and-population-partitions.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-ME4N",
+      "directive_title": "Window polish: wider sidebar so row meta never truncates, Reduce Motion fades th",
+      "source_repo": "yazinsai-openoats-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ME4N-window-polish-wider-sidebar-so-row-meta-never-truncates-reduce-motion-fades-th.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-MEME",
+      "directive_title": "Empirical Invariant Guard in mock.rs",
+      "source_repo": "aleo-labs-protocol-snarkos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MEME-empirical-invariant-guard-in-mock-rs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-0919F5",
+      "directive_title": "Window polish: wider sidebar so row meta never truncates, Reduce Motion fades th",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yazinsai-openoats",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0919F5-window-polish-wider-sidebar-so-row-meta-.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-148580",
+      "directive_title": "Empirical Invariant Guard in mock.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-148580-empirical-invariant-guard-in-mock-rs.md",
       "staged_date": "2026-11-16"
     }
   ]

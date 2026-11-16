@@ -10307,3 +10307,7 @@
 | `CYCLE-20261116-YM4C` | `2026-11-16T17:43:49.884Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`745dfdd3...`) |
 | `CYCLE-20261116-YPW1` | `2026-11-16T17:43:54.769Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8762` | Yes (`d755a720...`) |
 | `CYCLE-20261116-YTVX` | `2026-11-16T17:43:59.949Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8763` | Yes (`f7dcf9bf...`) |
+| `CYCLE-20261116-LFTE` | `2026-11-16T18:01:34.802Z` | `n4ze3m/tiny-voca` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md` | Yes (`abdfd71d...`) |
+| `CYCLE-20261116-LMP5` | `2026-11-16T18:01:43.721Z` | `yazinsai/OpenOats` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8764` | Yes (`881024c9...`) |
+| `CYCLE-20261116-LRLJ` | `2026-11-16T18:01:50.071Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8765` | Yes (`63bf7733...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T18:02:18.580Z` | `hf-n4ze3m-tiny-voca` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BCDF73E3` [Domain D] | Yes (`9fb36c40...`) |

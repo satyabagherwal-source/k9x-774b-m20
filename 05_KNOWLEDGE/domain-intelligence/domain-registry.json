@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T17:44:04.679Z",
-  "total_records": 1290,
+  "last_updated": "2026-11-16T18:02:20.026Z",
+  "total_records": 1295,
   "domains": {
     "A": {
       "total": 7,
@@ -40,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 589,
+      "total": 592,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -630,7 +630,10 @@
         "domain_intelligence-research-knowledge-intelligence-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggress",
         "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr",
         "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-audio-2b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
+        "DOM-D-BCDF73E3",
+        "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants"
       ]
     },
     "E": {
@@ -641,7 +644,7 @@
       ]
     },
     "F": {
-      "total": 27,
+      "total": 29,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -669,7 +672,9 @@
         "DOM-F-4F38FEA1",
         "domain_intelligence-design-intelligence-joreilly-confetti-core-invariants",
         "DOM-F-925AEC0F",
-        "domain_intelligence-design-intelligence-joreilly-confetti-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-joreilly-confetti-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants",
+        "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants"
       ]
     },
     "G": {
@@ -7396,8 +7401,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "5e428c87669b09dbe8990a2b485183f27b2af521a90dae8c510e728778a3b4aa",
-      "created_at": "2026-11-16T05:10:45.891Z"
+      "content_hash": "a604d0dc8ec7e5c5619f2731f31c605ce8ebd37599fc041b682357eca1553808",
+      "created_at": "2026-11-16T18:01:50.316Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -22812,8 +22817,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "e6b0e9d862f1c9543f8ab65525b7fe0410778cc77ccb02e1bc865c79986e8e02",
-      "created_at": "2026-11-16T05:10:49.006Z"
+      "content_hash": "63b65708f546a42127af4625d4c4ebf5193381756499a90dd887a7d9f97fc00c",
+      "created_at": "2026-11-16T18:02:20.026Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -23454,6 +23459,84 @@
       "repository": "tursodatabase-turso-learnings",
       "content_hash": "4a4c9ec6324ad4d66dc8201c7fc8c2d0cbdb43b806010822dceb6f6e5ef7b7b1",
       "created_at": "2026-11-16T17:44:04.083Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: n4ze3m/tiny-voca Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-n4ze3m-tiny-voca-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invari.md",
+      "repository": "n4ze3m/tiny-voca",
+      "content_hash": "f61e941878899ae71ddf252493dfe6d46beac6f136e1c6b9c0019a9471d50e27",
+      "created_at": "2026-11-16T18:01:34.948Z"
+    },
+    "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: yazinsai/OpenOats Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-yazinsai-openoats-design-intelligence-yazinsai-openoats-core-invariants.md",
+      "repository": "yazinsai/OpenOats",
+      "content_hash": "52ce42fe3e75691bbf334a64ea181ce9e49cf310f49bead9cb46c951303a111b",
+      "created_at": "2026-11-16T18:01:43.986Z"
+    },
+    "DOM-D-BCDF73E3": {
+      "record_id": "DOM-D-BCDF73E3",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): n4ze3m/tiny-voca",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/n4ze3m/tiny-voca](https://huggingface.co/n4ze3m/tiny-voca))  \n> **Source Version**: `hf-n4ze3m-ti`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-",
+      "content_hash": "9fb36c4080d268bf16f4ea0d02dfbab484703332ceaef27fbea3660a892d038d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md`  \n> **Source**: huggingface ([https://huggingface. -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md`  \n> **Source**: huggingface ([https://huggingface.",
+      "provenance": {
+        "source_uri": "project://hf-n4ze3m-tiny-voca/hf-n4ze3m-tiny-voca-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T18:01:53.129Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-n4ze3m-tiny-voca)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-n4ze3m-tiny-voca"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T18:02:18.564Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-n4ze3m-tiny-voca-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-n4ze3m-tiny-voca-learnings-research-knowledge-intelligence-hf-n4ze3m-tiny-voc.md",
+      "repository": "hf-n4ze3m-tiny-voca-learnings",
+      "content_hash": "40d397d9aaec84ee39a918043dc65538d8767c9d526fb7f27581369dd353fe65",
+      "created_at": "2026-11-16T18:02:18.773Z"
+    },
+    "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: yazinsai-openoats-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-yazinsai-openoats-learnings-design-intelligence-yazinsai-openoats-learnings-core.md",
+      "repository": "yazinsai-openoats-learnings",
+      "content_hash": "1388c962162fed4f3a3cf21de4f04754bffe027f1e875895ba9a8e47dc4f6ecd",
+      "created_at": "2026-11-16T18:02:19.399Z"
     }
   }
 }

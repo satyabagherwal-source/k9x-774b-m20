@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T17:44:04.783Z",
-  "total_verified_learnings": 8789,
+  "last_updated": "2026-11-16T18:02:20.140Z",
+  "total_verified_learnings": 8791,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19204,
+  "total_items": 19216,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112801,10 +112801,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "2299a19b",
-      "content_hash": "5e428c87669b09dbe8990a2b485183f27b2af521a90dae8c510e728778a3b4aa",
+      "source_version": "1c341ad3",
+      "content_hash": "a604d0dc8ec7e5c5619f2731f31c605ce8ebd37599fc041b682357eca1553808",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T05:10:45.891Z"
+      "persisted_at": "2026-11-16T18:01:50.316Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
@@ -112813,10 +112813,10 @@
       "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "2299a19b",
-      "content_hash": "d67a0570b7941f6f27ba3cca1dd9ebdd515f8d403872b28c157b2c4532469a19",
+      "source_version": "1c341ad3",
+      "content_hash": "75489e77a987549cb4f1487619a7676651503d960028b59251f228afbf72ae0e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:10:45.993Z"
+      "persisted_at": "2026-11-16T18:01:50.408Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215374,8 +215374,8 @@
       "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "2299a19b",
-      "content_hash": "bdf37aa45793ffaeaf74ce0677c971cfd7c2b1ee542bd36f8046dfd1b4e492f1",
+      "source_version": "1c341ad3",
+      "content_hash": "63bf77338051da5f70ed160b031febc11d7ec911dc4b4730fd1178b83f707eef",
       "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
@@ -215388,6 +215388,11 @@
           "number": 8685,
           "title": "Empirical Invariant Guard in decrypt.rs",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8765,
+          "title": "Empirical Invariant Guard in mock.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215395,7 +215400,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T05:10:45.474Z",
+      "verified_at": "2026-11-16T18:01:49.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252029,9 +252034,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6b0e9d862f1c9543f8ab65525b7fe0410778cc77ccb02e1bc865c79986e8e02",
+      "content_hash": "63b65708f546a42127af4625d4c4ebf5193381756499a90dd887a7d9f97fc00c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T05:10:49.006Z"
+      "persisted_at": "2026-11-16T18:02:20.026Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -252041,9 +252046,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca1238884f68dd9b2d3704a1478dd0ddb01043a349d66e673ab3dde55e929bd8",
+      "content_hash": "da9a8e32837773d266df307a806dffae447be12669d4b1db91f504926d323b08",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:10:49.101Z"
+      "persisted_at": "2026-11-16T18:02:20.140Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -255545,6 +255550,190 @@
       "content_hash": "03b2ae4e00c4bc025dd3f9c884858b7b76cf04580d8d02ad5b29255a9bbad271",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T17:44:04.191Z"
+    },
+    "learn-huggingface-n4ze3m-tiny-voca": {
+      "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "n4ze3m/tiny-voca",
+      "repository": "n4ze3m/tiny-voca",
+      "slug": "hf-n4ze3m-tiny-voca",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/n4ze3m/tiny-voca",
+      "source_version": "hf-n4ze3m-tiny-voca",
+      "content_hash": "abdfd71d8a7453ad86f44304e9cd79d05affff37bf328761db55a28439946fa0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T18:01:34.656Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-n4ze3m-tiny-voca-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invari.md",
+      "title": "Research & Knowledge Intelligence: n4ze3m/tiny-voca Core Invariants",
+      "repository": "n4ze3m/tiny-voca",
+      "source_version": "hf-n4ze3m-tiny-voca",
+      "content_hash": "f61e941878899ae71ddf252493dfe6d46beac6f136e1c6b9c0019a9471d50e27",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T18:01:34.948Z"
+    },
+    "learn-github-yazinsai-openoats": {
+      "learning_id": "learn-github-yazinsai-openoats",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yazinsai/OpenOats",
+      "repository": "yazinsai/OpenOats",
+      "slug": "yazinsai-openoats",
+      "platform": "github",
+      "source_url": "https://github.com/yazinsai/OpenOats",
+      "source_version": "123ec38d",
+      "content_hash": "881024c9266959d0ab398fca49d0ec152cd8d704c1e5833003944c05f2d31fa2",
+      "dossier_path": "07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8764,
+          "title": "Window polish: wider sidebar so row meta never truncates, Reduce Motion fades th",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T18:01:43.537Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8764": {
+      "learning_id": "rule-8764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8764,
+      "title": "Window polish: wider sidebar so row meta never truncates, Reduce Motion fades th",
+      "source_url": "https://github.com/yazinsai/OpenOats",
+      "source_version": "123ec38d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:01:43.537Z"
+    },
+    "candidate_directive-window-polish-wider-sidebar-so-row-meta-never-truncates-reduce-motion-fades-th": {
+      "item_id": "candidate_directive-window-polish-wider-sidebar-so-row-meta-never-truncates-reduce-motion-fades-th",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ME4N-window-polish-wider-sidebar-so-row-meta-never-truncates-reduce-motion-fades-th.md",
+      "title": "Window polish: wider sidebar so row meta never truncates, Reduce Motion fades th",
+      "repository": "yazinsai-openoats-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4c64fbfd6318ff36abafeb98e75d407ab996dbd1a779c3251181705f4c97b794",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T18:02:19.287Z"
+    },
+    "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-yazinsai-openoats-design-intelligence-yazinsai-openoats-core-invariants.md",
+      "title": "Design Intelligence: yazinsai/OpenOats Core Invariants",
+      "repository": "yazinsai/OpenOats",
+      "source_version": "123ec38d",
+      "content_hash": "52ce42fe3e75691bbf334a64ea181ce9e49cf310f49bead9cb46c951303a111b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T18:01:43.986Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yazinsai-openoats": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yazinsai-openoats",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yazinsai-openoats-verification-protocol-empirical-defect-shield-for-yazinsai-ope.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yazinsai/OpenOats",
+      "repository": "yazinsai/OpenOats",
+      "source_version": "123ec38d",
+      "content_hash": "db82d3da7014ba67850d7be51d860379fcb62e29935d3b7de47686a72136957a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T18:01:44.080Z"
+    },
+    "rule-8765": {
+      "learning_id": "rule-8765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8765,
+      "title": "Empirical Invariant Guard in mock.rs",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "1c341ad3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:01:49.939Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-mock-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-mock-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MEME-empirical-invariant-guard-in-mock-rs.md",
+      "title": "Empirical Invariant Guard in mock.rs",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d0f344e48cab57a53e35cf9023260b4396616410d5925313d33058ffe0873a8f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T18:02:19.924Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-n4ze3m-tiny-voca-learnings-research-knowledge-intelligence-hf-n4ze3m-tiny-voc.md",
+      "title": "Research & Knowledge Intelligence: hf-n4ze3m-tiny-voca-learnings Core Invariants",
+      "repository": "hf-n4ze3m-tiny-voca-learnings",
+      "source_version": "HEAD",
+      "content_hash": "40d397d9aaec84ee39a918043dc65538d8767c9d526fb7f27581369dd353fe65",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T18:02:18.773Z"
+    },
+    "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-yazinsai-openoats-learnings-design-intelligence-yazinsai-openoats-learnings-core.md",
+      "title": "Design Intelligence: yazinsai-openoats-learnings Core Invariants",
+      "repository": "yazinsai-openoats-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1388c962162fed4f3a3cf21de4f04754bffe027f1e875895ba9a8e47dc4f6ecd",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T18:02:19.399Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yazinsai-openoats-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yazinsai-openoats-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yazinsai-openoats-learnings-verification-protocol-empirical-defect-shield-for-ya.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yazinsai-openoats-learnings",
+      "repository": "yazinsai-openoats-learnings",
+      "source_version": "HEAD",
+      "content_hash": "14ba855c0afd405bc0deb846a68708f99cfc6cd2fef098799d423abe26ca3bb1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T18:02:19.529Z"
     }
   },
   "ai-builder-brain": {

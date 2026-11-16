@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-F1O2",
-    "timestamp": "2026-11-13T22:17:32.210Z",
-    "repository": "vercel-labs/agent-desktop",
-    "learningId": "learn-github-vercel-labs-agent-desktop",
-    "contentHash": "93d404a51ebf3649bbb99647ce59f1b26aaadcc2d64b9a14598df3c12e3b90f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-F7JK",
-    "timestamp": "2026-11-13T22:17:39.824Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "d455c12097f66dce150159bccd316a5ef9e63fa2633a01f703ef5f485d0440a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-W2CU",
-    "timestamp": "2026-11-13T22:30:46.254Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "9dc822c30f1783edd6626b8ee7dc8fafc9ec0223bcb857bd7e8d50af3cb92903",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-WB0Q",
     "timestamp": "2026-11-13T22:30:57.482Z",
     "repository": "infiniflow/infinity",
@@ -7490,6 +7445,51 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "f7dcf9bf2a0050220357641caf336307c1f0f87a150fbefca7dcb4ca238a0eb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-LFTE",
+    "timestamp": "2026-11-16T18:01:34.802Z",
+    "repository": "n4ze3m/tiny-voca",
+    "learningId": "learn-huggingface-n4ze3m-tiny-voca",
+    "contentHash": "abdfd71d8a7453ad86f44304e9cd79d05affff37bf328761db55a28439946fa0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-LMP5",
+    "timestamp": "2026-11-16T18:01:43.721Z",
+    "repository": "yazinsai/OpenOats",
+    "learningId": "learn-github-yazinsai-openoats",
+    "contentHash": "881024c9266959d0ab398fca49d0ec152cd8d704c1e5833003944c05f2d31fa2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-LRLJ",
+    "timestamp": "2026-11-16T18:01:50.071Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "63bf77338051da5f70ed160b031febc11d7ec911dc4b4730fd1178b83f707eef",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

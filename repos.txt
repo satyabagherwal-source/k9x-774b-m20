@@ -5130,3 +5130,9 @@ https://huggingface.co/IFM/PAN2
 # --- Automatically Discovered by AI Scout Engine [2026-11-16T16:08:38.880Z] ---
 # [HUGGINGFACE-AI-MODELS] HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF (28200 score) - Verified Hugging Face Model: HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive
 https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-16T18:01:28.483Z] ---
+# [HUGGINGFACE-AI-MODELS] n4ze3m/tiny-voca (2310 score) - Verified Hugging Face Model: n4ze3m/tiny-voca (145 likes, 860 downloads)
+https://huggingface.co/n4ze3m/tiny-voca
+# [MOBILE-CROSS-PLATFORM] yazinsai/OpenOats (1667 score) - A minimal meeting recorder for Mac. Press Start, and after Stop you get Notes an
+https://github.com/yazinsai/OpenOats
