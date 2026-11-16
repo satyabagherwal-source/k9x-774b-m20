@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T20:11:18.148Z",
-  "total_cycles_completed": 9924,
-  "total_learnings_persisted": 9924,
-  "total_rules_promoted": 9522,
+  "last_updated": "2026-11-16T20:21:07.598Z",
+  "total_cycles_completed": 9927,
+  "total_learnings_persisted": 9927,
+  "total_rules_promoted": 9524,
   "history": [
-    {
-      "timestamp": "2026-11-15T15:23:25.030Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T15:47:53.833Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T16:07:01.058Z",
-      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T16:07:07.781Z",
       "repository": "TableProApp/TablePro",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-16T20:11:18.148Z",
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T20:20:57.515Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T20:21:03.885Z",
+      "repository": "flux-iac/tofu-controller",
+      "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T20:21:07.598Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

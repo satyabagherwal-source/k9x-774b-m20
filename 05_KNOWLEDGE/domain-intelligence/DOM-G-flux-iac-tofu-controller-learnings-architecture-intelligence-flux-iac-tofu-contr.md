@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T00:37:02.564Z",
+  "timestamp": "2026-11-16T20:21:12.283Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-flux-iac-tofu-controller-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [flux-iac-tofu-controller-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T00:37:02.564Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T20:21:12.283Z`  
 > **Learning ID**: `LEARN-EVO-flux-iac-tofu-controller-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from flux-iac-tofu-controller-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source**: github ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
-> **Source Version**: `e938178a`  
+> **Source Version**: `1445ac44`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T00:36:24.600Z  
+> **Timestamp**: 2026-11-16T20:21:03.431Z  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T00:36:24.594Z  
+> **Harvest Timestamp**: 2026-11-16T20:21:03.425Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1109,11 +1109,13 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1945** (2026-11-16): **chore: release 0.17.0**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > 👍
+
 - **Issue #1944** (2026-11-13): **Remove unused tf-runner.cache-encryption secret**
   *Symptoms*: ## Summary The chart creates a `kubernetes.io/service-account-token` secret for the `tf-runner` SA in every allowed namespace. It never expires, and is not consumed: it was the encryption key for workspace BLOB caching (ADR-0003), a feature that never shipped. The ADR is deprecated and the `CreateWorkspaceBlob` RPC it describes was removed in #1917.  
-
-- **Issue #1943** (2026-11-13): **feat(runner): Set controller instance ID in environment**
-  *Symptoms*: ## Summary  Expose the current Terraform/OpenTofu runner instance ID as the environment variable `TOFU_CONTROLLER_INSTANCE_ID`.  The variable is set when the runner instance is created and preserved when its environment is updated. User-configured environment variables cannot override it.  ## Use cases  - **Log correlation:** Custom scripts and external tools invoked by Terraform/OpenTofu can include the instance ID in their logs, allowing those logs to be correlated with the controller's `instance-id` log field. - **Troubleshooting:** Distinguish executions from different runner instances when investigating failures or concurrent reconciliations. - **Execution tracing:** Attach the instance ID to requests or diagnostic artifacts produced by external programs, where supported.  For example, a script invoked through `local-exec` can include the ID in its output:      echo "Running deployment for controller instance: ${TOFU_CONTROLLER_INSTANCE_ID}"  This is a process environment variable, not a Terraform input variable. It does not automatically become available as `var.TOFU_CONTROLLER_INSTANCE_ID`.  The ID identifies the runner instance; it is not a unique ID for each individual plan or apply command.  ## Changes  - Set `TOFU_CONTROLLER_INSTANCE_ID` when creating a Terraform/OpenTofu runner instance. - Reapply the instance ID after merging configured environment variables in `SetEnv`. - Keep the environment scoped to the Terraform/OpenTofu subprocesses rather than modifying th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1130,645 +1132,206 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e938178a` (2026-11-13)
-**Commit Message**: feat(runner): Set controller instance ID in environment (#1943)
+### Incident Patch 1: `1445ac44` (2026-11-16)
+**Commit Message**: chore: release 0.17.0 (#1945)
 
-**File**: `runner/session_handlers.go` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +56/-0)
 ```diff
-@@ -50,6 +50,7 @@ func (r *TerraformRunnerServer) SetEnv(ctx context.Context, req *SetEnvRequest)
+@@ -2,6 +2,62 @@
  
- 	envs := utils.EnvMap(os.Environ())
- 	maps.Copy(envs, req.Envs)
-+	envs["TOFU_CONTROLLER_INSTANCE_ID"] = sessionFrom(ctx).id
- 	if err := sessionFrom(ctx).tf.SetEnv(envs); err != nil {
- 		return nil, err
- 	}
+ All notable changes of this project are documented in this file.
+ 
++## v0.17.0
++
++**Release date:** 2026-11-16
++
++## ⚠️ Breaking changes — read before upgrading
++
++**v1alpha1 API removed ([#1941](https://github.com/flux-iac/tofu-controller/pull/1941)).** The Terraform CRD now only defines `v1alpha2`.
++Complete the steps in [Removal of the v1alpha1 API](docs/use-tf-controller/upgrade-tf-controller.md#removal-of-the-v1alpha1-api) **before** upgrading:
++- Move any manifest still using `infra.contrib.fluxcd.io/v1alpha1` to `v1alpha2`.
++- Reset stale `v1alpha1` managedFields, or server-side apply will fail on those objects.
++- Clear `v1alpha1` from the CRD's `status.storedVersions`, or the CRD update will be rejected.
++- If your HelmRelease uses a floating range such as `>=0.16.6`, pin it to `0.16.x` until these steps are done.
++- Go importers: `github.com/flux-iac/tofu-controller/api/v1alpha1` no longer exists.
++
++**Runner and controller must run the same version ([#1917](https://github.com/flux-iac/tofu-controller/pull/1917)).** The gRPC contract between them has changed.
++Custom runner images built on an older `tf-runner` base image must be rebuilt from v0.17.0.
++
++**Error messages no longer start with `rpc error: code = … desc =` ([#1917](https://github.com/flux-iac/tofu-controller/pull/1917)).**
++Alerts, dashboards or scripts that match the full message text in conditions or events need updating.
++
++## Behaviour changes
++
++From [#1913](https://github.com/flux-iac/tofu-controller/pull/1913):
++- **Deleting a suspended Terraform no longer runs destroy**, even with `destroyResourcesOnDeletion: true`. Resources are left in place and a `DestroySkipped` event is emitted.
++- **Ready now waits for health checks when `writeOutputsToSecret` is set.** A failed health check sets Ready False with `HealthChecksFailed`. Previously Ready could go True before the checks ran, so `dependsOn` dependants could start too early.
++- **Drift no longer counts as a reconciliation failure.** It can't trigger `RetryLimitReached` any more.
++- **A denied cross-namespace `dependsOn` is now Stalled** with `AccessDenied`.
++- **Plan approvals by ID prefix now apply**, as the docs describe.
++- **New or changed condition and event reasons:** `RunnerFailed`, `FinalizeSecretsFailed`, `DestroySkipped` and `HealthChecksFailed`. The success event for written outputs is now `TerraformOutputsWritten`; it used to be `OutputsWritingFailed`. Check any alerts keyed on these.
++
++From [#1917](https://github.com/flux-iac/tofu-controller/pull/1917):
++- **Secret values are no longer written to runner logs, conditions or events.** This covers `SetEnv`, bad secret inputs and `var.x is "<value>"` diagnostics.
++- **`forceUnlock: auto` no longer gets stuck** when the lock is already gone.
++- **The runner exits promptly on SIGTERM.** A cancelled apply now gets the full `runnerTerminationGracePeriodSeconds` instead of a hard 60s.
++- **`DISABLE_TF_LOGS=1` now also silences** stderr from Init and Plan.
++
++## What's Changed
++* refactor: restructure the Terraform reconciler by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1913
++* refactor: restructure the runner by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1917
++* fix: recover from runner pods that fail or cannot start by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1921
++* feat(tfctl): add --all flag to 'reconcile' command for bulk reconciliation by @cschindlbeck in https://github.com/flux-iac/tofu-controller/pull/1744
++* fix: stop a pass hanging on a runner that never started by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1923
++* feat: support ExternalArtifact as a Terraform source by @agentydragon in https://github.com/flux-iac/tofu-controller/pull/1901
++* chore(deps): bump golang.org/x/net to v0.62.0 by @adonispd in https://github.com/flux-iac/tofu-controller/pull/1938
++* feat: add topologySpreadConstraints to runner pods by @adonispd in https://github.com/flux-iac/tofu-controller/pull/1936
++* chore(deps): bump the go-minor group across 3 directories with 12 updates by @dependabot[bot] in https://github.com/flux-iac/tofu-controller/pull/1932
++* chore(deps): bump the go-patch group across 3 directories with 14 updates by @dependabot[bot] in https://github.com/flux-iac/tofu-controller/pull/1933
++* chore(deps): bump the gh-minor group across 1 directory with 16 updates by @dependabot[bot] in https://github.com/flux-iac/tofu-controller/pull/1942
++* chore(deps): bump the gh-patch group across 1 directory with 3 updates by @dependabot[bot] in https://github.com/flux-iac/tofu-controller/pull/1931
++* Remove unused tf-runner.cache-encryption secret by @Wieneo in https://github.com/flux-iac/tofu-controller/pull/1944
++* feat!: remove the deprecated v1alpha1 Terraform API by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1941
++* feat(runner): Set controller instance ID in environment b
 ```
 
----
-
-### Incident Patch 2: `8d40c559` (2026-11-13)
-**Commit Message**: feat!: remove the deprecated v1alpha1 Terraform API (#1941)
-
-v1alpha1 has been deprecated since v0.15.0 (April 2023). Keeping it
-served lets outdated clients, such as an old tfctl, write through it.
-That leaves a v1alpha1 managedFields entry, which then breaks
-server-side apply of the object, for example by a Flux Kustomization.
-
-Remove api/v1alpha1 and its PROJECT entry, and regenerate the CRD so it
-only defines v1alpha2. Move test fixtures and docs to v1alpha2.
-
-Document the steps operators must take before upgrading: move manifests
-to v1alpha2, reset stale v1alpha1 managedFields, and clear v1alpha1
-from the CRD's status.storedVersions, which Kubernetes otherwise uses
-to reject the CRD update.
-
-BREAKING CHANGE: the infra.contrib.fluxcd.io/v1alpha1 API and the
-github.com/flux-iac/tofu-controller/api/v1alpha1 Go package are removed.
-
-Closes #1940
-
-**File**: `PROJECT` (modified, +0/-9)
+**File**: `charts/tofu-controller/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -4,15 +4,6 @@ layout:
- projectName: test-terraform-controller
- repo: github.com/flux-iac/tofu-controller
- resources:
--- api:
--    crdVersion: v1
--    namespaced: true
--  controller: true
--  domain: contrib.fluxcd.io
--  group: infra
--  kind: Terraform
--  path: github.com/flux-iac/tofu-controller/api/v1alpha1
--  version: v1alpha1
- - api:
-     crdVersion: v1
-     namespaced: true
+@@ -2,5 +2,5 @@ apiVersion: v2
+ name: tofu-controller
+ description: The Helm chart for Weave GitOps Terraform Controller
+ type: application
+-version: 0.16.6
+-appVersion: "v0.16.6"
++version: 0.17.0
++appVersion: "v0.17.0"
 ```
 
-**File**: `api/v1alpha1/cloud_spec_test.go` (removed, +0/-36)
+**File**: `charts/tofu-controller/README.md` (modified, +2/-2)
 ```diff
-@@ -1,36 +0,0 @@
--package v1alpha1
--
--import (
--	. "github.com/onsi/gomega"
--	"strings"
--	"testing"
--)
--
--// CloudSpec defines the desired state of Terraform Cloud
--func TestCloudSpec(t *testing.T) {
--	g := NewGomegaWithT(t)
--	cloudSpec := &CloudSpec{
--		Organization: "test-org",
--		Workspaces: &CloudWorkspacesSpec{
--			Name: "dev",
--			Tags: []string{"test-tag", "test-tag-2"},
--		},
--		Hostname: "app.terraform.io",
--		Token:    "test-token",
--	}
--
--	fixture := strings.TrimLeft(`
--terraform {
--  cloud {
--    organization = "test-org"
--    workspaces {
--      name = "dev"
--      tags = ["test-tag", "test-tag-2"]
--    }
--    hostname = "app.terraform.io"
--    token = "test-token"
--  }
--}
--`, "\n")
--	g.Expect(cloudSpec.ToHCL()).To(Equal(fixture))
--}
+@@ -1,6 +1,6 @@
+ # Tofu Controller
+ 
+-![Version: 0.16.6](https://img.shields.io/badge/Version-0.16.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.16.6](https://img.shields.io/badge/AppVersion-v0.16.6-informational?style=flat-square)
++![Version: 0.17.0](https://img.shields.io/badge/Version-0.17.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.17.0](https://img.shields.io/badge/AppVersion-v0.17.0-informational?style=flat-square)
+ 
+ This is the Helm chart for the [Tofu Controller](https://github.com/flux-iac/tofu-controller), an IAC controller for Flux [Flux](https://fluxcd.io) to reconcile OpenTofu and Terraform resources in the GitOps way.
+ 
+@@ -83,7 +83,7 @@ __Note__: If you need to use the `imagePullSecrets` it would be best to set `ser
+ | rbac.create | bool | `true` | If `true`, create and use RBAC resources |
+ | replicaCount | int | `1` | Number of tofu-controller pods to deploy |
+ | resources | object | `{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"200m","memory":"64Mi"}}` | Resource limits and requests |
+-| runner | object | `{"creationTimeout":"5m0s","grpc":{"maxMessageSize":4},"image":{"repository":"ghcr.io/flux-iac/tf-runner","tag":"v0.16.6"},"serviceAccount":{"allowedNamespaces":["flux-system"],"annotations":{},"create":true,"name":"","namespacedRoleBindings":false}}` | Runner-specific configurations |
++| runner | object | `{"creationTimeout":"5m0s","grpc":{"maxMessageSize":4},"image":{"repository":"ghcr.io/flux-iac/tf-runner","tag":"v0.17.0"},"serviceAccount":{"allowedNamespaces":["flux-system"],"annotations":{},"create":true,"name":"","namespacedRoleBindings":false}}` | Runner-specific configurations |
+ | runner.creationTimeout | string | `"5m0s"` | Timeout for runner-creation (Controller) |
+ | runner.grpc.maxMessageSize | int | `4` | Maximum GRPC message size (Controller) |
+ | runner.image.repository | string | `"ghcr.io/flux-iac/tf-runner"` | Runner image repository |
 ```
 
-**File**: `api/v1alpha1/condition_types.go` (removed, +0/-117)
+**File**: `charts/tofu-controller/values.yaml` (modified, +2/-2)
 ```diff
-@@ -1,117 +0,0 @@
--/*
--Copyright 2021.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package v1alpha1
--
--// These constants are the Condition Types that the Terraform Resource works with
--const (
--	ConditionTypeApply       = "Apply"
--	ConditionTypeHealthCheck = "HealthCheck"
--	ConditionTypeOutput      = "Output"
--	ConditionTypePlan        = "Plan"
--	ConditionTypeStateLocked = "StateLocked"
--)
--
--const (
--	// ArtifactFailedReason represents the fact that the artifact download
--	// for the Teraform failed.
--	ArtifactFailedReason = "ArtifactFailed"
--
--	// DeletionBlockedByDependantsReason represents the fact that the
--	// Terraform resource could not be deleted because there are
--	// still resources depending on it.
--	DeletionBlockedByDependants = "DeletionBlockedByDependantsReason"
--
--	// DependencyNotReadyReason represents the fact that
--	// one of the dependencies is not ready.
--	DependencyNotReadyReason = "DependencyNotReady"
--
--	// DriftDetectedReason represents the fact that drift was
--	// detected during Terraform reconciliation.
--	DriftDetectedReason = "DriftDetected"
--
--	// DriftDetectionFailedReason represents the fact that
--	// drift detection failed during reconciliation.
--	DriftDetectionFailedReason = "DriftDetectionFailed"
--
--	// HealthChecksPassedReason represents the fact that one or more
--	// health checks failed during reconciliation.
--	HealthChecksFailedReason = "HealthChecksFailed"
--
--	// NoDriftReason represents the fact that during reconcilliation
--	// no drift was detected.
--	NoDriftReason = "NoDrift"
--
--	// OutputsWritingFailedReason represents the fact that writing
--	// outputs for the Terraform resource status failed.
--	OutputsWritingFailedReason = "OutputsWritingFailed"
--
--	// PlannedNoChangesReason represents the fact that Terraform
--	// planned no changes during reconciliation.
--	PlannedNoChangesReason = "TerraformPlannedNoChanges"
--
--	// PlannedWithChangesReason represents the fact that Terraform
--	// planned changes during reconciliation.
--	PlannedWithChangesReason = "TerraformPlannedWithChanges"
--
--	// PostPlanningWebhookFailedReason represents the fact that
--	// the post-planning webhook failed during reconciliation.
--	PostPlanningWebhookFailedReason = "PostPlanningWebhookFailed"
--
--	// TFExecApplyFailedReason represents the fact that the execution
--	// of 'terraform apply' failed.
--	TFExecApplyFailedReason = "TFExecApplyFailed"
--
--	// TFExecApplySucceedReason represents the fact that the execution
--	// of 'terraform apply' succeeded.
--	TFExecApplySucceedReason = "TerraformAppliedSucceed"
--
--	// TFExecForceUnlockReason represents the fact that the controller
--	// is attempting to force unlock the Terraform state.
--	TFExecForceUnlockReason = "ForceUnlock"
--
--	// TFExecInitFailedReason represents the fact that the an error
--	// occured while initializing Terraform.
--	TFExecInitFailedReason = "TFExecInitFailed"
--
--	// TFExecLockHeldReason represents the fact that the Terraform
--	// state lock is held by another process.
--	TFExecLockHeldReason = "LockHeld"
--
--	// TFExecNewFailedReason represents the fact that the creation
--	// of the Terraform process failed.
--	TFExecNewFailedReason = "TFExecNewFailed"
--
--	// TFExecOutputFailedReason represents the fact that the execution
--	// of 'terraform output' failed.
--	TFExecOutputFailedReason = "TFExecOutputFailed"
--
--	// TFExecPlanFailedReason represents the fact that the execution
--	// of 'terraform plan' failed.
--	TFExecPlanFailedReason = "TFExecPlanFailed"
--
--	// TemplateGenerationFailedReason represents the fact that
--	// the generation of the Terraform .tf template failed.
--	TemplateGenerationFailedReason = "TemplateGenerationFailed"
--
--	// VarsGenerationFailedReason represents the fact that
--	// the generation of the Terraform variables failed.
--	VarsGenerationFailedReason = "VarsGenerationFailed"
--
--	// WorkspaceSelectFailedReason represents the fact that selecting
--	// a Terraform workspace failed.
--	WorkspaceSelectFailedReason = "SelectWorkspaceFailed"
--)
+@@ -31,7 +31,7 @@ image:
+   pullPolicy: IfNotPresent
+   # -- Overrides the image tag whose default is the chart appVersion.
+   # @default -- `.Chart.AppVersion`
+-  tag: "v0.16.6"
++  tag: "v0.17.0"
+ # -- Controller image pull secret
+ imagePullSecrets: []
+ # -- Resource limits and requests
+@@ -139,7 +139,7 @@ runner:
+     repository: ghcr.io/flux-iac/tf-runner
+     # -- Runner image tag
+     # @default -- `.Chart.AppVersion`
+-    tag: "v0.16.6"
++    tag: "v0.17.0"
+   grpc:
+     # -- Maximum GRPC message size (Controller)
+     maxMessageSize: 4
 ```
 
-**File**: `api/v1alpha1/doc.go` (removed, +0/-19)
+**File**: `config/branch-planner/kustomization.yaml` (modified, +1/-1)
 ```diff
-@@ -1,19 +0,0 @@
--/*
--Copyright 2021.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--// +kubebuilder:object:generate=true
--// +groupName=infra.contrib.fluxcd.io
--package v1alpha1
+@@ -8,4 +8,4 @@ generatorOptions:
+ images:
+   - name: flux-iac/branch-planner
+     newName: ghcr.io/flux-iac/branch-planner
+-    newTag: v0.16.6
++    newTag: v0.17.0
 ```
 
-**File**: `api/v1alpha1/groupversion_info.go` (removed, +0/-36)
+**File**: `config/manager/kustomization.yaml` (modified, +1/-1)
 ```diff
-@@ -1,36 +0,0 @@
--/*
--Copyright 2021.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--// Package v1alpha1 contains API Schema definitions for the infra v1alpha1 API group
--//+kubebuilder:object:generate=true
--//+groupName=infra.contrib.fluxcd.io
--package v1alpha1
--
--import (
--	"k8s.io/apimachinery/pkg/runtime/schema"
--	"sigs.k8s.io/controller-runtime/pkg/scheme"
--)
--
--var (
--	// GroupVersion is group version used to register these objects
--	GroupVersion = schema.GroupVersion{Group: "infra.contrib.fluxcd.io", Version: "v1alpha1"}
--
--	// SchemeBuilder is used to add go types to the GroupVersionKind scheme
--	SchemeBuilder = &scheme.Builder{GroupVersion: GroupVersion}
--
--	// AddToScheme adds the types in this group-version to the given scheme.
--	AddToScheme = SchemeBuilder.AddToScheme
--)
+@@ -8,4 +8,4 @@ generatorOptions:
+ images:
+   - name: flux-iac/tofu-controller
+     newName: ghcr.io/flux-iac/tofu-controller
+-    newTag: v0.16.6
++    newTag: v0.17.0
 ```
 
-**File**: `api/v1alpha1/inventory_types.go` (removed, +0/-35)
+**File**: `docs/branch-planner/release.yaml` (modified, +4/-4)
 ```diff
-@@ -1,35 +0,0 @@
--/*
--Copyright 2021.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package v1alpha1
--
--// ResourceInventory contains a list of Kubernetes resource object references that have been applied by a Kustomization.
--type ResourceInventory struct {
--	// Entries of Kubernetes resource object references.
--	Entries []ResourceRef `json:"entries"`
--}
--
--// ResourceRef contains the information necessary to locate a resource within a cluster.
--type ResourceRef struct {
--	// Terraform resource's name.
--	Name string `json:"n"`
--
--	// Type is Terraform resource's type
--	Type string `json:"t"`
--
--	// ID is the resource identifier. This is cloud-specific. For example, ARN is an ID on AWS.
--	Identifier string `json:"id"`
--}
+@@ -21,7 +21,7 @@ spec:
+       sourceRef:
+         kind: HelmRepository
+         name: tf-controller
+-      version: '>=0.16.6'
++      version: '0.17.0'
+   interval: 1h0s
+   releaseName: tf-controller
+   targetNamespace: flux-system
+@@ -46,13 +46,13 @@ spec:
+     caCertValidityDuration: 24h
+     certRotationCheckFrequency: 30m
+     image:
+-      tag: v0.16.6
++      tag: v0.17.0
+     runner:
+       image:
+-        tag: v0.16.6
++        tag: v0.17.0
+       grpc:
+         maxMessageSize: 30
+     branchPlanner:
+       enabled: true
+       image:
+-        tag: v0.16.6
++        tag: v0.17.0
 ```
 
-**File**: `api/v1alpha1/reference_types.go` (removed, +0/-219)
+**File**: `docs/release.yaml` (modified, +3/-3)
 ```diff
-@@ -1,219 +0,0 @@
--package v1alpha1
--
--import (
--	"fmt"
--	"time"
--
--	"github.com/fluxcd/pkg/apis/meta"
--
--	corev1 "k8s.io/api/core/v1"
--	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
--)
--
--// CrossNamespaceSourceReference contains enough information to let you locate the
--// typed Kubernetes resource object at cluster level.
--type CrossNamespaceSourceReference struct {
--	// API version of the referent.
--	// +optional
--	APIVersion string `json:"apiVersion,omitempty"`
--
--	// Kind of the referent.
--	// +kubebuilder:validation:Enum=GitRepository;Bucket;OCIRepository
--	// +required
--	Kind string `json:"kind"`
--
--	// Name of the referent.
--	// +required
--	Name string `json:"name"`
--
--	// Namespace of the referent, defaults to the namespace of the Kubernetes resource object that contains the reference.
--	// +optional
--	Namespace string `json:"namespace,omitempty"`
--}
--
--func (s *CrossNamespaceSourceReference) String() string {
--	if s.Namespace != "" {
--		return fmt.Sprintf("%s/%s/%s", s.Kind, s.Namespace, s.Name)
--	}
--	return fmt.Sprintf("%s/%s", s.Kind, s.Name)
--}
--
--type FileMapping struct {
--	// Reference to a Secret that contains the file content
--	SecretRef meta.SecretKeyReference `json:"secretRef"`
--	// Location can be either user's home directory or the Terraform workspace
--	// +kubebuilder:validation:Enum=home;workspace
--	// +required
--	Location string `json:"location"`
--	// Path of the file - relative to the "location"
--	// +kubebuilder:validation:Pattern=`^(.?[/_a-zA-Z0-9]{1,})*$`
--	// +required
--	Path string `json:"path"`
--}
--
--type BackendConfigsReference struct {
--	// Kind of the values referent, valid values are ('Secret', 'ConfigMap').
--	// +kubebuilder:validation:Enum=Secret;ConfigMap
--	// +required
--	Kind string `json:"kind"`
--
--	// Name of the configs referent. Should reside in the same namespace as the
--	// referring resource.
--	// +kubebuilder:validation:MinLength=1
--	// +kubebuilder:validation:MaxLength=253
--	// +required
--	Name string `json:"name"`
--
--	// Keys is the data key where a specific value can be found at. Defaults to all keys.
--	// +optional
--	Keys []string `json:"keys,omitempty"`
--
--	// Optional marks this BackendConfigsReference as optional. When set, a not found error
--	// for the values reference is ignored, but any Key or
--	// transient error will still result in a reconciliation failure.
--	// +optional
--	Optional bool `json:"optional,omitempty"`
--}
--
--// VarsReference contain a reference of a Secret or a ConfigMap to generate
--// variables for Terraform resources based on its data, selectively by varsKey.
--type VarsReference struct {
--	// Kind of the values referent, valid values are ('Secret', 'ConfigMap').
--	// +kubebuilder:validation:Enum=Secret;ConfigMap
--	// +required
--	Kind string `json:"kind"`
--
--	// Name of the values referent. Should reside in the same namespace as the
--	// referring resource.
--	// +kubebuilder:validation:MinLength=1
--	// +kubebuilder:validation:MaxLength=253
--	// +required
--	Name string `json:"name"`
--
--	// VarsKeys is the data key at which a specific value can be found. Defaults to all keys.
--	// +optional
--	VarsKeys []string `json:"varsKeys,omitempty"`
--
--	// Optional marks this VarsReference as optional. When set, a not found error
--	// for the values reference is ignored, but any VarsKey or
--	// transient error will still result in a reconciliation failure.
--	// +optional
--	Optional bool `json:"optional,omitempty"`
--}
--
--// HealthCheck contains configuration needed to perform a health check after
--// terraform is applied.
--type HealthCheck struct {
--	// Name of the health check.
--	// +kubebuilder:validation:MinLength=1
--	// +kubebuilder:validation:MaxLength=253
--	// +required
--	Name string `json:"name"`
--
--	// Type of the health check, valid values are ('tcp', 'http').
--	// If tcp is specified, address is required.
--	// If http is specified, url is required.
--	// +kubebuilder:validation:Enum=tcp;http
--	// +required
--	Type string `json:"type"`
--
--	// URL to perform http health check on. Required when http type is specified.
--	// Go template can be used to reference values from the terraform output
--	// (e.g. https://example.org, {{.output_url}}).
--	// +optional
--	URL string `json:"url,omitempty"`
--
--	// Address to perform tcp health check on. Required when tcp type is specified.
--	// Go template can be used to reference values from the terraform output
--	// (e.g. 127.0.0.1:8080, {{.address}}:{{.port}}).
--	// +optional
--	Address string `json:"address,omitempty"`
--
--	// The timeout period at which the connection should timeout if unable to
--	// complete the request.
--	// When not specified, default 20s timeout is used.
--	// +kubebuilder:default="20s"
--	// +optional
--	Timeout *metav1.Duration `json:"timeout,omitempty"`
--}
--
--type RunnerPodTemplate struct {
--
--	// +optional
--	Metadata RunnerPodMetadata `json:"metadata,omitempty"`
--
--	// +optional
--	Spec RunnerPodSpec `json:"spec,omitempty"`
--}
--
--type RunnerPodMetadata struct {
--
--	// Labels to add to
-```
-
-**File**: `api/v1alpha1/terraform_types.go` (removed, +0/-894)
-```diff
-@@ -1,894 +0,0 @@
--/*
--Copyright 2021.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package v1alpha1
--
--import (
--	"bytes"
--	"fmt"
--	"strings"
--	"time"
--	"unicode/utf8"
--
--	"github.com/fluxcd/pkg/apis/meta"
--	sourcev1 "github.com/fluxcd/source-controller/api/v1"
--	corev1 "k8s.io/api/core/v1"
--	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
--	apimeta "k8s.io/apimachinery/pkg/api/meta"
--	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
--	"k8s.io/apimachinery/pkg/runtime"
--	"k8s.io/apimachinery/pkg/runtime/serializer"
--)
--
--const (
--	CACertSecretName = "tf-controller.tls"
--	// RunnerTLSSecretName is the name of the secret containing a TLS cert that will be written to
--	// the namespace in which a terraform runner is created
--	RunnerTLSSecretName     = "terraform-runner.tls"
--	RunnerLabel             = "infra.contrib.fluxcd.io/terraform"
--	GitRepositoryIndexKey   = ".metadata.gitRepository"
--	BucketIndexKey          = ".metadata.bucket"
--	OCIRepositoryIndexKey   = ".metadata.ociRepository"
--	BreakTheGlassAnnotation = "break-the-glass.tf-controller/requestedAt"
--)
--
--type ReadInputsFromSecretSpec struct {
--	// +required
--	Name string `json:"name"`
--
--	// +required
--	As string `json:"as"`
--}
--
--// WriteOutputsToSecretSpec defines where to store outputs, and which outputs to be stored.
--type WriteOutputsToSecretSpec struct {
--	// Name is the name of the Secret to be written
--	// +required
--	Name string `json:"name"`
--
--	// Outputs contain the selected names of outputs to be written
--	// to the secret. Empty array means writing all outputs, which is default.
--	// +optional
--	Outputs []string `json:"outputs,omitempty"`
--}
--
--type Variable struct {
--	// Name is the name of the variable
--	// +required
--	Name string `json:"name"`
--
--	// +optional
--	Value *apiextensionsv1.JSON `json:"value,omitempty"`
--
--	// +optional
--	ValueFrom *corev1.EnvVarSource `json:"valueFrom,omitempty"`
--}
--
--// TerraformSpec defines the desired state of Terraform
--type TerraformSpec struct {
--
--	// ApprovePlan specifies name of a plan wanted to approve.
--	// If its value is "auto", the controller will automatically approve every plan.
--	// +optional
--	ApprovePlan string `json:"approvePlan,omitempty"`
--
--	// Destroy produces a destroy plan. Applying the plan will destroy all resources.
--	// +optional
--	Destroy bool `json:"destroy,omitempty"`
--
--	// +optional
--	BackendConfig *BackendConfigSpec `json:"backendConfig,omitempty"`
--
--	// +optional
--	BackendConfigsFrom []BackendConfigsReference `json:"backendConfigsFrom,omitempty"`
--
--	// +optional
--	Cloud *CloudSpec `json:"cloud,omitempty"`
--
--	// +optional
--	// +kubebuilder:default:=default
--	Workspace string `json:"workspace,omitempty"`
--
--	// List of input variables to set for the Terraform program.
--	// +optional
--	Vars []Variable `json:"vars,omitempty"`
--
--	// List of references to a Secret or a ConfigMap to generate variables for
--	// Terraform resources based on its data, selectively by varsKey. Values of the later
--	// Secret / ConfigMap with the same keys will override those of the former.
--	// +optional
--	VarsFrom []VarsReference `json:"varsFrom,omitempty"`
--
--	// Values map to the Terraform variable "values", which is an object of arbitrary values.
--	// It is a convenient way to pass values to Terraform resources without having to define
--	// a variable for each value. To use this feature, your Terraform file must define the variable "values".
--	// +optional
--	Values *apiextensionsv1.JSON `json:"values,omitempty"`
--
--	// List of all configuration files to be created in initialization.
--	// +optional
--	FileMappings []FileMapping `json:"fileMappings,omitempty"`
--
--	// The interval at which to reconcile the Terraform.
--	// +required
--	Interval metav1.Duration `json:"interval"`
--
--	// The interval at which to retry a previously failed reconciliation.
--	// The default value is 15 when not specified.
--	// +optional
--	RetryInterval *metav1.Duration `json:"retryInterval,omitempty"`
--
--	// Path to the directory containing Terraform (.tf) files.
--	// Defaults to 'None', which translates to the root path of the SourceRef.
--	// +optional
--	Path string `json:"path,omitempty"`
--
--	// SourceRef is the reference of the source where the Terraform files are stored.
--	// +required
--	SourceRef CrossNamespaceSourceReference `json:"sourceRef"`
--
--	// Suspend is to tell the controller to suspend subsequent TF executions,
--	// it does not apply to already started executions. Defaults to false.
--	// 
+@@ -20,7 +20,7 @@ spec:
+       sourceRef:
+         kind: HelmRepository
+         name: tofu-controller
+-      version: '>=0.16.6'
++      version: '0.17.0'
+   interval: 1h0s
+   releaseName: tofu-controller
+   targetNamespace: flux-system
+@@ -45,9 +45,9 @@ spec:
+     caCertValidityDuration: 24h
+     certRotationCheckFrequency: 30m
+     image:
+-      tag: v0.16.6
++      tag: v0.17.0
+     runner:
+       image:
+-        tag: v0.16.6
++        tag: v0.17.0
+       grpc:
+         maxMessageSize: 30
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1945** (2026-11-16): chore: release 0.17.0 (@alexandermarston)
 - **PR #1944** (2026-11-13): Remove unused tf-runner.cache-encryption secret (@Wieneo)
 - **PR #1943** (2026-11-13): feat(runner): Set controller instance ID in environment (@cgroschupp)
 - **PR #1942** (2026-11-13): chore(deps): bump the gh-minor group across 1 directory with 16 updates (@dependabot[bot])
 - **PR #1941** (2026-11-13): feat!: remove the deprecated v1alpha1 Terraform API (@alexandermarston)
 - **PR #1938** (2026-11-10): chore(deps): bump golang.org/x/net to v0.62.0 (@adonispd)
-- **PR #1936** (2026-11-11): feat: add topologySpreadConstraints to runner pods (@adonispd)
 
 ---
 
@@ -1788,21 +1351,38 @@ Closes #1940
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runner): Set controller instance ID in environment
+## X. release 0.17.0
 
 **RULE**:
-When implementing operations in `runner/session_handlers.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e938178a`: runner): Set controller instance ID in environment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1445ac44`: release 0.17.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `runner/session_handlers.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	envs["TOFU_CONTROLLER_INSTANCE_ID"] = sessionFrom(ctx).id
+## v0.17.0
+
+**Release date:** 2026-11-16
+
+## ⚠️ Breaking changes — read before upgrading
+
+**v1alpha1 API removed ([#1941](https://github.com/flux-iac/tofu-controller/pull/1941)).** The Terraform CRD now only defines `v1alpha2`.
+Complete the steps in [Removal of the v1alpha1 API](docs/use-tf-controller/upgrade-tf-controller.md#removal-of-the-v1alpha1-api) **before** upgrading:
+- Move any manifest still using `infra.contrib.fluxcd.io/v1alpha1` to `v1alpha2`.
+- Reset stale `v1alpha1` managedFields, or server-side apply will fail on those objects.
+- Clear `v1alpha1` from the CRD's `status.storedVersions`, or the CRD update will be rejected.
+- If your HelmRelease uses a floating range such as `>=0.16.6`, pin it to `0.16.x` until these steps are done.
+- Go importers: `github.com/flux-iac/tofu-controller/api/v1alpha1` no longer exists.
+
+**Runner and controller must run the same version ([#1917](https://github.com/flux-iac/tofu-controller/pull/1917)).** The gRPC contract between them has changed.
+Custom runner images built on an older `tf-runner` base image must be rebuilt from v0.17.0.
+
+**Error messages no longer start with `rpc error: code = … desc =` ([#1917](https://github.com/flux-iac
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1812,7 +1392,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e938178a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1445ac44` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T20:11:47.978Z",
+  "updated_at": "2026-11-16T20:21:12.939Z",
   "stats": {
-    "total_discovered": 4411,
-    "approved_pending_harvest": 4147,
+    "total_discovered": 4446,
+    "approved_pending_harvest": 4182,
     "harvested_count": 0,
     "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4151,
-      "OFFICIAL_DOCUMENTATION": 138,
+      "COMMUNITY_AND_EXPERT": 4183,
+      "OFFICIAL_DOCUMENTATION": 140,
       "STANDARDS_AND_SPECIFICATIONS": 96,
       "ENGINEERING_BLOGS": 3,
-      "SECURITY_ADVISORIES": 17,
+      "SECURITY_ADVISORIES": 18,
       "LEGAL_AND_REGULATORY": 1,
       "RESEARCH_AND_ACADEMIA": 5
     }
@@ -95215,6 +95215,776 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
         "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-CB723CC9C4D6": {
+      "id": "SRC-CB723CC9C4D6",
+      "url": "https://github.com/sharkdp/bat",
+      "title": "https://github.com/sharkdp/bat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:10.794Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-73FE0E2B4A62": {
+      "id": "SRC-73FE0E2B4A62",
+      "url": "https://github.com/user-attachments/assets/0fdda316-ace7-4aee-963f-9c960e9b0cf5",
+      "title": "https://github.com/user-attachments/assets/0fdda316-ace7-4aee-963f-9c960e9b0cf5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:10.823Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-BF60DD4E22B6": {
+      "id": "SRC-BF60DD4E22B6",
+      "url": "https://github.com/caddyserver/sublimetext.git",
+      "title": "https://github.com/caddyserver/sublimetext.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:10.852Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-28B0AA706BDD": {
+      "id": "SRC-28B0AA706BDD",
+      "url": "https://github.com/cue-lang/vscode-cue.git",
+      "title": "https://github.com/cue-lang/vscode-cue.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:10.880Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-6CC24BC30C81": {
+      "id": "SRC-6CC24BC30C81",
+      "url": "https://github.com/sharkdp/bat/releases",
+      "title": "https://github.com/sharkdp/bat/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:10.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-2A2D74D7855D": {
+      "id": "SRC-2A2D74D7855D",
+      "url": "https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads",
+      "title": "https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:10.950Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-3D9D97578C0F": {
+      "id": "SRC-3D9D97578C0F",
+      "url": "https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist",
+      "title": "https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:10.981Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-8AEB92AE4D63": {
+      "id": "SRC-8AEB92AE4D63",
+      "url": "https://docs.rs/bat",
+      "title": "https://docs.rs/bat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.011Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-3FCD33BF0272": {
+      "id": "SRC-3FCD33BF0272",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-42574",
+      "title": "Vulnerability Advisory CVE-2021-42574",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.042Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
+        "fileName": "sharkdp-bat-learnings.md"
+      }
+    },
+    "SRC-FA814F44E2D8": {
+      "id": "SRC-FA814F44E2D8",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1941",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1941",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.636Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-7F287EBE91AC": {
+      "id": "SRC-7F287EBE91AC",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1917",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1917",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-B0164BF54A06": {
+      "id": "SRC-B0164BF54A06",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1913",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1913",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.696Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-070D9250DE3F": {
+      "id": "SRC-070D9250DE3F",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1921",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1921",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-2245FCDFACB4": {
+      "id": "SRC-2245FCDFACB4",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1744",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1744",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-88E0BC03EDDA": {
+      "id": "SRC-88E0BC03EDDA",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1923",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1923",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.781Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-BD90ED32FAF5": {
+      "id": "SRC-BD90ED32FAF5",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1901",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1901",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-BBF3BD272C1A": {
+      "id": "SRC-BBF3BD272C1A",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1938",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1938",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-AB6655B4EA13": {
+      "id": "SRC-AB6655B4EA13",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1936",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1936",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.869Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-974E9BEC77D3": {
+      "id": "SRC-974E9BEC77D3",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1932",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1932",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.900Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-8E64834E33AC": {
+      "id": "SRC-8E64834E33AC",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1933",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1933",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-0EF6D699D4B1": {
+      "id": "SRC-0EF6D699D4B1",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1942",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1942",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.955Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-39184CF9CD92": {
+      "id": "SRC-39184CF9CD92",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1931",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1931",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:11.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-6113265C4CD2": {
+      "id": "SRC-6113265C4CD2",
+      "url": "https://github.com/flux-iac/tofu-controller/pull/1944",
+      "title": "https://github.com/flux-iac/tofu-controller/pull/1944",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-60F9A3BA100F": {
+      "id": "SRC-60F9A3BA100F",
+      "url": "https://img.shields.io/badge/Version-0.16.6-informational?style=flat-square",
+      "title": "https://img.shields.io/badge/Version-0.16.6-informational?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.042Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-2D4613627055": {
+      "id": "SRC-2D4613627055",
+      "url": "https://img.shields.io/badge/Type-application-informational?style=flat-square",
+      "title": "https://img.shields.io/badge/Type-application-informational?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-5F2993A60549": {
+      "id": "SRC-5F2993A60549",
+      "url": "https://img.shields.io/badge/AppVersion-v0.16.6-informational?style=flat-square",
+      "title": "https://img.shields.io/badge/AppVersion-v0.16.6-informational?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.100Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-610EDA54F949": {
+      "id": "SRC-610EDA54F949",
+      "url": "https://img.shields.io/badge/Version-0.17.0-informational?style=flat-square",
+      "title": "https://img.shields.io/badge/Version-0.17.0-informational?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.128Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-6BF2235A3B35": {
+      "id": "SRC-6BF2235A3B35",
+      "url": "https://img.shields.io/badge/AppVersion-v0.17.0-informational?style=flat-square",
+      "title": "https://img.shields.io/badge/AppVersion-v0.17.0-informational?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-77A7DC45D899": {
+      "id": "SRC-77A7DC45D899",
+      "url": "https://fluxcd.io/",
+      "title": "https://fluxcd.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.183Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-AD4B9D9152C4": {
+      "id": "SRC-AD4B9D9152C4",
+      "url": "https://github.com/flux-iac",
+      "title": "https://github.com/flux-iac",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.215Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-B6BC0B5F06D9": {
+      "id": "SRC-B6BC0B5F06D9",
+      "url": "https://defguard.net/enterprise-wireguard-vpn",
+      "title": "https://defguard.net/enterprise-wireguard-vpn",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-F31C22AF44A0": {
+      "id": "SRC-F31C22AF44A0",
+      "url": "https://docs.defguard.net/",
+      "title": "https://docs.defguard.net/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.856Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-BC463AB1BD83": {
+      "id": "SRC-BC463AB1BD83",
+      "url": "https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW",
+      "title": "https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.884Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-16CE191ED619": {
+      "id": "SRC-16CE191ED619",
+      "url": "https://www.youtube.com/@defguard",
+      "title": "https://www.youtube.com/@defguard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.913Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-A2B5D6818074": {
+      "id": "SRC-A2B5D6818074",
+      "url": "https://www.wireguard.com/trademark-policy",
+      "title": "https://www.wireguard.com/trademark-policy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:21:12.939Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
       }
     }
   }

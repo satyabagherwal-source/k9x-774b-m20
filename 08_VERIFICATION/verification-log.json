@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-601Q",
-    "timestamp": "2026-11-14T01:26:27.518Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d0b1b2beab32ae1d0840b957abdff3531e85e034b182b14cb742dd4e2b468d41",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-YEHJ",
-    "timestamp": "2026-11-14T01:48:32.599Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "f9e35df3ce1974d2b575ee9fd8808e487d140d70b6826f04e5cb6eede780fe35",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-YJ5W",
-    "timestamp": "2026-11-14T01:48:38.660Z",
-    "repository": "software-mansion/react-native-reanimated",
-    "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "e9fd7e5cae9cf1ea118411801e8608d60b068ef6c0393a44dde4af176a01af66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-YLSV",
     "timestamp": "2026-11-14T01:48:42.079Z",
     "repository": "zeromicro/go-zero",
@@ -7490,6 +7445,51 @@
     "repository": "lancedb/lancedb",
     "learningId": "learn-github-lancedb-lancedb",
     "contentHash": "c41e775bb8292d2b59e10dade3be27161ea3f43bae5bc11e131b8a1e6fdd2bea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-KOIP",
+    "timestamp": "2026-11-16T20:20:57.505Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "43b45712cca4c9f198789a6477cd23e13371cf1c8c9455d10bd77039e0cbd895",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-KTFD",
+    "timestamp": "2026-11-16T20:21:03.865Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "1ff4c45825202f42d328ad77b49bacd5e4cffa6332c25b4e17983304c4c906cb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-KWAS",
+    "timestamp": "2026-11-16T20:21:07.588Z",
+    "repository": "DefGuard/defguard",
+    "learningId": "learn-github-defguard-defguard",
+    "contentHash": "9bcf42066195262a6592e44fc2df83b94317d544f40c15a7737caa2820551afd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

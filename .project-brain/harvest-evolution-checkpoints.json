@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T20:11:49.117Z",
+  "last_updated": "2026-11-16T20:21:13.462Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T18:19:03.607Z",
@@ -323,7 +323,7 @@
       "staged_for_review": 1
     },
     "sharkdp-bat-learnings.md": {
-      "processed_at": "2026-11-11T14:17:01.731Z",
+      "processed_at": "2026-11-16T20:21:10.777Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -388,7 +388,7 @@
       "staged_for_review": 1
     },
     "flux-iac-tofu-controller-learnings.md": {
-      "processed_at": "2026-11-14T00:37:02.427Z",
+      "processed_at": "2026-11-16T20:21:11.595Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1348,7 +1348,7 @@
       "staged_for_review": 0
     },
     "defguard-defguard-learnings.md": {
-      "processed_at": "2026-11-12T23:42:22.333Z",
+      "processed_at": "2026-11-16T20:21:12.748Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3218,7 +3218,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1350,
+  "total_dossiers_evaluated": 1353,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1049
+  "total_staged_for_review": 1052
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `eaec0e89`  
+> **Source Version**: `a0570118`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T23:41:34.346Z  
+> **Timestamp**: 2026-11-16T20:21:06.652Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T23:41:34.339Z  
+> **Harvest Timestamp**: 2026-11-16T20:21:06.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2915 stars
+- **Stars / Engagement**: 2917 stars
 
 ---
 
@@ -1999,15 +1999,16 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3993** (2026-11-03): **macos systemextension is not uninstalled with application**
-  *Symptoms*: To reprouce: - installed app from .DMG - uninstalled via Applications  Result: command `systemextensionsctl list` returns:  `82GZ7KN29J net.defguard.VPNExtension (2.2.0/441) VPNExtension [activated enabled]`  Impact: When installed from appstore/testflight afterwards the app cannot connect to any location without clear reason.  We should clean up the systemextension on uninstall to the best of our abilities. We should create test scenario for removing systemextension on uninstall.
+- **Issue #4036** (2026-11-16): **2.2.0 regression: mobile biometric MFA unavailable for devices enrolled after upgrade**
+  *Symptoms*: Environment - Core / Edge / Gateway 2.2.0 (Open Source, docker), upgraded from 2.1.1/2.1.0/2.1.1 - Location MFA: "Default Internal MFA" flow (auto-created on upgrade), single step:   Authenticator App, Email, Mobile Biometric Authentication, Mobile App Approval - Mobile apps: iOS 2.2.0 (iPhone 13), iOS 2.0.0 (iPhone 11), Android latest Play Store (Xiaomi)  Observed - Devices enrolled BEFORE the upgrade (iPhone 12, Xiaomi): biometric works. - Devices enrolled AFTER the upgrade: "Biometric — Not configured" on connect,   on iOS and Android. Re-enrolling the previously working Xiaomi broke it too. - Core logs registration successfully each time:   "User test(14) registered mobile auth for device iPhone(26)" - Device appears under "Mobile App Approval Devices" in the user profile. - TOTP enabled before enrollment; TOTP works.  Expected: newly enrolled mobile devices can use biometric MFA as before.
   **Post-Mortem & Fix Analysis**:
-  > @filipslezaklab didn't empty the trash, hence the problem.  Normally, the extension can remain active and enabled after the app is moved to Trash. macOS is supposed to offer to remove the associated system extension when you delete its host app, but this is not always reliable, especially on recent macOS versions.  ## What normally happens  When you drag an app containing a system extension to Trash, Finder may show a prompt saying it will remove the associated system extension. The supported removal mechanism is for the host app to issue a deactivation request; macOS then stages the extension for removal, often completing it after a restart.  However, users and developers have reported cases where the app is deleted but the extension remains [activated enabled] even after emptying Trash and rebooting. This has been reported on macOS 15.3 and again on macOS 26 Tahoe.
+  >    Additional data: rolled back production (no users yet) to Core 2.1.1 / Edge 2.1.0 / Gateway 2.1.1    by restoring the pre-upgrade DB dump. A mobile device (Android, Xiaomi) enrolled on 2.1.1 can use    biometric immediately ("Desktop client login finished ... with method BIOMETRIC").    Same device enrolled on 2.2.0 -> "Biometric — Not configured".
+  >    Confirmed: after rolling back both staging and production to Core 2.1.1 / Edge 2.1.0 /    Gateway 2.1.1 (restore of pre-upgrade DB), newly enrolled mobile devices can use biometric    again (Android Xiaomi re-enrolled on 2.1.1 -> connect with BIOMETRIC works).
 
-- **Issue #3965** (2026-10-29): **Password special character check differs between UI and backend**
-  *Symptoms*: - [x] Treat space as special symbol - [x] Fix behaviour that password with space at the end won't work during login. - [x] Remove validation that blocks spaces in password edit forms. - [x] Align special character check between UI and backend. UI counts any non-alphanumeric character as special, backend only ASCII punctuation. Example: `Zażółć123` passes in UI, backend rejects it with `No special characters in password`.   https://github.com/user-attachments/assets/920fa237-6801-422e-a1db-24aafaa0574a
+- **Issue #4001** (2026-11-13): **The network is too small to accomodate all existing devices**
+  *Symptoms*: **Describe the bug** We have multiple locations. When editing an existing location, I cannot save the changes when there are more devices than the defined VPN CIDR on a location allows. But it doesn't only check the devices that apply for that location, it checks the total devices in defguard.  Error: ```The network is too small to accomodate all existing devices (network capacity: 253, total devices: 259)```  **Expected behavior** I would expect that I cannot save the location change(s), when the total devices that use this location exceed the configured CIDR. Otherwise we would need to set a large CIDR on all locations, even when only a small amount of the users/devices have access to it.  **Version information** - Defguard Core version: v2.1.1 
   **Post-Mortem & Fix Analysis**:
-  > Test scenario: Test if space is treated as special character during password change/setup. Test if passwords with space at the end works 
+  > Test scenario:  1. Create group `small`. 2. Add 3 devices to the admin user. 3. Create a user in group `small` and add 2 devices to them. 4. Create a user with no groups and add 2 devices to them. 5. Create a location with address `10.10.10.1/24`, restricted to group `small`. 6. Edit the location, change the address to `10.10.10.1/29` (capacity 5), and save.  Expected behaviour: Saving succeeds. Only 5 devices have access to the location: 2 from `small` and 3 from admin. admin groups always have access.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2024,244 +2025,82 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eaec0e89` (2026-11-12)
-**Commit Message**: Validate network size aganist allowed devices only (#4038)
+### Incident Patch 1: `a0570118` (2026-11-16)
+**Commit Message**: update to README core capabilities (#4011)
 
-**File**: `crates/defguard_common/src/db/models/wireguard.rs` (modified, +15/-4)
+2.1 and 2.2 features added
+
+**File**: `README.md` (modified, +33/-8)
 ```diff
-@@ -182,8 +182,13 @@ impl fmt::Debug for WireguardNetwork<Id> {
+@@ -21,12 +21,37 @@ For detailed security information see the [secure-by-design documentation](https
  
- #[derive(Debug, Error)]
- pub enum WireguardNetworkError {
--    #[error("Network address space cannot fit all devices")]
--    NetworkTooSmall,
-+    #[error(
-+        "The network is too small to accommodate all devices allowed in this location (network capacity: {network_size}, devices: {device_count}). Use a larger network or change allowed groups."
-+    )]
-+    NetworkTooSmall {
-+        network_size: usize,
-+        device_count: usize,
-+    },
-     #[error(transparent)]
-     IpNetworkError(#[from] IpNetworkError),
-     #[error("Database error")]
-@@ -329,14 +334,20 @@ impl<I> WireguardNetwork<I> {
-                     // +3: network address, broadcast address, gateway
-                     let count = (device_count + 3) as u32;
-                     if count > size {
--                        return Err(WireguardNetworkError::NetworkTooSmall);
-+                        return Err(WireguardNetworkError::NetworkTooSmall {
-+                            network_size: size.saturating_sub(3) as usize,
-+                            device_count,
-+                        });
-                     }
-                 }
-                 NetworkSize::V6(size) => {
-                     // +2: network address, gateway (IPv6 has no broadcast)
-                     let count = (device_count + 2) as u128;
-                     if count > size {
--                        return Err(WireguardNetworkError::NetworkTooSmall);
-+                        return Err(WireguardNetworkError::NetworkTooSmall {
-+                            network_size: size.saturating_sub(2) as usize,
-+                            device_count,
-+                        });
-                     }
-                 }
-             }
-```
-
-**File**: `crates/defguard_core/src/error.rs` (modified, +1/-1)
-```diff
-@@ -172,7 +172,7 @@ impl From<DeviceError> for WebError {
- impl From<WireguardNetworkError> for WebError {
-     fn from(error: WireguardNetworkError) -> Self {
-         match error {
--            WireguardNetworkError::NetworkTooSmall
-+            WireguardNetworkError::NetworkTooSmall { .. }
-             | WireguardNetworkError::IpNetworkError(_)
-             | WireguardNetworkError::InvalidDevicePubkey(_) => Self::BadRequest(error.to_string()),
-             WireguardNetworkError::DbError(_)
-```
-
-**File**: `crates/defguard_core/src/handlers/wireguard.rs` (modified, +3/-0)
-```diff
-@@ -428,6 +428,9 @@ pub(crate) async fn create_network(
-         save_group_client_mtus(&network, &mut transaction, overrides).await?;
-     }
+ ## Core Capabilities
  
-+    let allowed_devices = network.get_allowed_devices(&mut transaction).await?;
-+    network.validate_network_size(allowed_devices.len())?;
+-- 🌐 **WireGuard VPN** — multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
+-- 👥 **Identity & Access Management** — internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
+-- 🔑 **Multi-Factor Authentication** — TOTP, WebAuthn/FIDO2, email tokens, biometric via mobile app
+-- 🛡️ **Firewall** — allow/deny rules per VPN location by user or group, applied in real time
+-- 📋 **Activity Log** — audit log with filtering and search; real-time SIEM streaming (Enterprise)
+-- 🔗 **Integrations** — webhooks and REST API
++- 🌐 **WireGuard VPN**
++  - **Locations**: multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
++  - **Multi-location DNS**: each connected location applies its own resolvers and domains side by side
++  - **Custom MTU**: an MTU set by the admin that the client apps apply
++  - **Gateway on VyOS**: Defguard Gateway runs as a container on VyOS
++- 🔑 **Multi-Factor Authentication**
++  - **FIDO2 Hardware Keys** (Enterprise): hardware security keys such as YubiKey as an MFA factor for the VPN connection, registered in the desktop client and used on desktop and over NFC on mobile
++  - **MFA Flows** (Business): ordered MFA steps, each accepting a choice of factors, with the tunnel established only after the last step succeeds; one flow can be reused across locations
++  - **Group-level MFA Overrides** (Enterprise): different MFA flows for specific groups on the same VPN location, on top of the location's default flow
++  - **Factors**: TOTP, email tokens, biometric via the mobile app, external SSO (Business)
++  - **MFA Setup in the Desktop Client**: users without MFA set it up when they first connect to a protected location, without re-enrolling
++- 👥 **Identity & Access Management**
++  - **SSO & Directories**: internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
++  - **Windows Auto-provisioning**: a bulk action writes each user's enrollment token to an Active Directory field
++- 🛡️ **Access Control**
++  - **Firewall**: group-based firewall policies with support for OPNsense, pfSense, Linux and MikroTik
++  - **Device Posture** (Enterprise): checks a device must pass before it connects, set per location: client and OS version, security updates, Active Directory membership, antivirus, disk encryption
++  - **Allowed IPs from Firewall Rules** (Enterprise): each user's WireGuard config lists only the subnets their firewall rules allow
++  - **Firewall Bulk Actions**: manage rules, destinations and aliases in bulk
++- 💻 **Clients**
++  - **Desktop Client**: Windows, macOS and Linux app with multiple instances and locations, a tray mode and live configuration sync (Business)
++  - **Mobile Client**: redesigned iOS and Android app that works in MFA flows both as a factor and as a connecting client
++  - **Always-on & Pre-logon VPN** (Enterprise): Always-on VPN on Windows and Linux, connected at boot by a background service, and pre-logon VPN on Windows
++  - **Command-line Client**: connect, disconnect and check status from the terminal, with MFA and JSON output, for headless machines and scripts
++  - **Group Traffic Policies** (Enterprise): no limitations, disable all traffic or force all traffic, set per group instead of only globally
++- 📋 **Audit & Integrations**
++  - **Activity Log**: audit log with filtering and search; real-time SIEM streaming (Enterprise)
++  - **Integrations**: webhooks and REST API
 +
-     // generate IP addresses for existing devices
-     network.add_all_allowed_devices(&mut transaction).await?;
-     info!("Assigning IPs for existing devices in network {network}");
-```
-
-**File**: `web/src/pages/AddLocationPage/steps/AddLocationFirewallStep.tsx` (modified, +7/-0)
-```diff
-@@ -1,9 +1,11 @@
- import { useMutation, useQuery } from '@tanstack/react-query';
- import { useNavigate } from '@tanstack/react-router';
-+import type { AxiosError } from 'axios';
- import { cloneDeep, omit } from 'lodash-es';
- import { useCallback, useMemo, useState } from 'react';
- import { m } from '../../../paraglide/messages';
- import api from '../../../shared/api/api';
-+import type { ApiError } from '../../../shared/api/types';
- import { ActionCard } from '../../../shared/components/ActionCard/ActionCard';
- import { Controls } from '../../../shared/components/Controls/Controls';
- import { WizardCard } from '../../../shared/components/wizard/WizardCard/WizardCard';
-@@ -13,6 +15,7 @@ import { Checkbox } from '../../../shared/defguard-ui/components/Checkbox/Checkb
- import { Divider } from '../../../shared/defguard-ui/components/Divider/Divider';
- import { Radio } from '../../../shared/defguard-ui/components/Radio/Radio';
- import { SizedBox } from '../../../shared/defguard-ui/components/SizedBox/SizedBox';
-+import { Snackbar } from '../../../shared/defguard-ui/providers/snackbar/snackbar';
- import { ThemeSpacing } from '../../../shared/defguard-ui/types';
- import { isPresent } from '../../../shared/defguard-ui/utils/isPresent';
- import { getLicenseInfoQueryOptions } from '../../../shared/query';
-@@ -58,6 +61,10 @@ export const AddLocationFirewallStep = () => {
-         });
-       }
-     },
-+    onError: (error: AxiosError<ApiError>) => {
-+      const msg = error.response?.status === 400 ? error.response.data?.msg : undefined;
-+      Snackbar.error(msg ?? m.error_unknown());
-+    },
-   });
++
++Explore all features in the [Product overview](https://defguard.net/enterprise-wireguard-vpn/).
  
-   const saveChanges = useCallback((value: Choice) => {
-```
-
-**File**: `web/src/pages/AddLocationPage/steps/AddLocationInternalVpnStep.tsx` (modified, +0/-17)
-```diff
-@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
- import z from 'zod';
- import { useShallow } from 'zustand/react/shallow';
- import { m } from '../../../paraglide/messages';
--import api from '../../../shared/api/api';
- import { LicenseFeature } from '../../../shared/api/types';
- import { Controls } from '../../../shared/components/Controls/Controls';
- import { DescriptionBlock } from '../../../shared/components/DescriptionBlock/DescriptionBlock';
-@@ -11,14 +10,12 @@ import { externalLink } from '../../../shared/constants';
- import { Button } from '../../../shared/defguard-ui/components/Button/Button';
- import { Helper } from '../../../shared/defguard-ui/components/Helper/Helper';
- import { SizedBox } from '../../../shared/defguard-ui/components/SizedBox/SizedBox';
--import { Snackbar } from '../../../shared/defguard-ui/providers/snackbar/snackbar';
- import { ThemeSpacing } from '../../../shared/defguard-ui/types';
- import { isPresent } from '../../../shared/defguard-ui/utils/isPresent';
- import { useAppForm } from '../../../shared/form';
- import { formChangeLogic } from '../../../shared/formLogic';
- import { getLicenseInfoQueryOptions } from '../../../shared/query';
- import { canUseEnterpriseFeature } from '../../../shared/utils/license';
--import { smallestNetworkCapacity } from '../../../shared/utils/network';
- import { Validate } from '../../../shared/validate';
- import { AddLocationPageStep } from '../types';
- import { useAddLocationStore } from '../useAddLocationStore';
-@@ -75,12 +72,6 @@ export const AddLocationInternalVpnStep = () => {
-     LicenseFeature.AclAllowedIps,
-   ).result;
+ ## Clients
  
--  const { data: devices } = useQuery({
--    queryKey: ['device', 'all'],
--    queryFn: api.device.getDevices,
--    select: (resp) => resp.data,
--  });
--
-   const defaultValues = useAddLocationStore(
-     useShallow((s) => ({
-       allowed_ips: s.allowed_ips,
-@@ -100,14 +91,6 @@ export const AddLocationInternalVpnStep = () => {
-       onChange: formSchema,
-     },
-     onSubmit: ({ value }) => {
--      const deviceCount = Array.isArray(devices) ? devices.length : 0;
--      const network_size = smallestNetworkCapacity(value.address);
--      if (deviceCount > network_size) {
--        Snackbar.error(
--          m.location_error_network_too_small({ network_size, device_count: deviceCount }),
--        );
--        return;
--      }
-       useAddLocationStore.setState({
-         ...value,
-         allowed_ips: value.allowed_ips.join(','),
-```
-
-**File**: `web/src/pages/EditLocationPage/EditLocationPage.tsx` (modified, +5/-18)
-```diff
-@@ -2,12 +2,14 @@ import './style.scss';
+@@ -64,7 +89,7 @@ Comprehensive documentation is available at: https://docs.defguard.net
  
- import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
- import { Link, useNavigate, useParams } from '@tanstack/react-router';
-+import type { AxiosError } from 'axios';
- import { cloneDeep, isEqual, omit } from 'lodash-es';
- import { useMemo, useState } from 'react';
- import z from 'zod';
- import { m } from '../../paraglide/messages';
- import api from '../../shared/api/api';
- import {
-+  type ApiError,
-   type EditNetworkLocation,
-   type GroupClientMtu,
-   LicenseFeature,
-@@ -58,7 +60,6 @@ import {
-   canUseBusinessFeature,
-   canUseEnterpriseFeature,
- } from '../../shared/utils/license';
--import { smallestNetworkCapacity } from '../../shared/utils/network';
- import { confirmLocationPostureChange } from '../../shared/utils/postureWarning';
- import { Validate } from '../../shared/validate';
- import postureCheckShield from './assets/posture_check_shield.png';
-@@ -475,12 +476,6 @@ const EditLocationForm = ({
-     );
-   }, [postureChecksSectionState.locked]);
+ ## Video guides
  
--  const { data: devices } = useQuery({
--    queryKey: ['device', 'all'],
--    queryFn: api.device.getDevices,
--    select: (resp) => resp.data,
--  });
--
-   const { data: groupsOptions } = useQuery({
-     queryFn: api.group.getGroups,
-     queryKey: ['group'],
-@@ -521,8 +516,9 @@ const EditLocationForm = ({
-         replace: true,
-       });
-     },
--    onError: () => {
--      Snackbar.error(m.location_edit_failed());
-+    onError: (error: AxiosError<ApiError>) => {
-+      const msg = error.response?.status === 400 ? error.response.data?.msg : undefined;
-+      Snackbar.error(msg ?? m.location_edit_failed());
-     },
-   });
+-Visit out YouTube channel to see our [video guides](https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW).
++Visit out YouTube channel to see our [video guides](https://www.youtube.com/@defguard
  
-@@ -602,15 +598,6 @@ const EditLocationForm = ({
-         return;
-       }
+ ## Community
  
--      const deviceCount = Array.isArray(devices) ? devices.length : 0;
--      const network_size = smallestNetworkCapacity(value.address);
--      if (deviceCount > network_size) {
--        Snackbar.error(
--          m.location_error_network_too_small({ network_size, device_count: deviceCount }),
--        );
--        return;
--      }
--
-       const changedFields = getDisconnectRelevantChangedFields(
-         getDisconnectRelevantLocationData(
-           buildLocationSubmissionData(
+@@ -84,4 +109,4 @@ The code in this repository is available under a dual licensing model:
+ - Enterprise License: All code in this repository (including within the "crates/defguard_core/src/enterprise" directory) is licensed under a separate Enterprise License (see file crates/defguard_core/src/enterprise/LICENSE.md).
+ 
+ ## Legal
+-WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
+\ No newline at end of file
++WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4055** (2026-11-16): Re-enable E2E tests (@jakub-tldr)
+- **PR #4042** (2026-11-16): Devices page (@filipslezaklab)
 - **PR #4039** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
 - **PR #4038** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
 - **PR #4025** (2026-11-09): Posture device attestation (@filipslezaklab)
-- **PR #4010** (2026-11-06): Add Device::{attestation_status,attested_at} fields (@j-chmielewski)
-- **PR #4008** (2026-11-06): chore: post 2.2 release sync (@wojcik91)
-- **PR #3999** (2026-11-04): chore: prerelease cleanup (@wojcik91)
+- **PR #4011** (2026-11-16): update to README core capabilities (@mike767)
 
 ---
 
@@ -2281,45 +2120,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Validate network size aganist allowed devices only (#4038)
+## X. update to README core capabilities
 
 **RULE**:
-When implementing operations in `crates/defguard_common/src/db/models/wireguard.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eaec0e89`: Validate network size aganist allowed devices only (#4038). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0570118`: update to README core capabilities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/defguard_common/src/db/models/wireguard.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[error(
-        "The network is too small to accommodate all devices allowed in this location (network capacity: {network_size}, devices: {device_count}). Use a larger network or change allowed groups."
-    )]
-    NetworkTooSmall {
-        network_size: usize,
-        device_count: usize,
-    },
-                        return Err(WireguardNetworkError::NetworkTooSmall {
-                            network_size: size.saturating_sub(3) as usize,
-                            device_count,
-                        });
-                        return Err(WireguardNetworkError::NetworkTooSmall {
-                            network_size: size.saturating_sub(2) as usize,
-                            device_count,
-                        });
+- 🌐 **WireGuard VPN**
+  - **Locations**: multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
+  - **Multi-location DNS**: each connected location applies its own resolvers and domains side by side
+  - **Custom MTU**: an MTU set by the admin that the client apps apply
+  - **Gateway on VyOS**: Defguard Gateway runs as a container on VyOS
+- 🔑 **Multi-Factor Authentication**
+  - **FIDO2 Hardware Keys** (Enterprise): hardware security keys such as YubiKey as an MFA factor for the VPN connection, registered in the desktop client and used on desktop and over NFC on mobile
+  - **MFA Flows** (Business): ordered MFA steps, each accepting a choice of factors, with the tunnel established only after the last step succeeds; one flow can be reused across locations
+  - **Group-level MFA Overrides** (Enterprise): different MFA flows for specific groups on the same VPN location, on top of the location's default flow
+  - **Factors**: TOTP, email tokens, biometric via the mobile app, external SSO (Business)
+  - **MFA Setup in the Desktop Client**: users without MFA set it up when they first connect to a protected location, w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    #[error("Network address space cannot fit all devices")]
-    NetworkTooSmall,
-                        return Err(WireguardNetworkError::NetworkTooSmall);
-                        return Err(WireguardNetworkError::NetworkTooSmall);
+// Induced defect failure mode:
+- 🌐 **WireGuard VPN** — multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
+- 👥 **Identity & Access Management** — internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
+- 🔑 **Multi-Factor Authentication** — TOTP, WebAuthn/FIDO2, email tokens, biometric via mobile app
+- 🛡️ **Firewall** — allow/deny rules per VPN location by user or group, applied in real time
+- 📋 **Activity Log** — audit log with filtering and search; real-time SIEM streaming (Enterprise)
+- 🔗 **Integrations** — webhooks and REST API
+Visit out YouTube channel to see our [video guides](https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW).
+WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eaec0e89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0570118` are properly handled with clean fallback behavior.

@@ -10337,3 +10337,6 @@
 | `CYCLE-20261116-83N7` | `2026-11-16T20:11:10.579Z` | `superhighfives/pika` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8785` | Yes (`ca7f7609...`) |
 | `CYCLE-20261116-89H8` | `2026-11-16T20:11:18.140Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8786` | Yes (`c41e775b...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T20:11:46.441Z` | `cheeriojs-dom-serializer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2A843A13` [Domain H] | Yes (`9dd6700a...`) |
+| `CYCLE-20261116-KOIP` | `2026-11-16T20:20:57.505Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8787` | Yes (`43b45712...`) |
+| `CYCLE-20261116-KTFD` | `2026-11-16T20:21:03.865Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md` | Yes (`1ff4c458...`) |
+| `CYCLE-20261116-KWAS` | `2026-11-16T20:21:07.588Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8788` | Yes (`9bcf4206...`) |

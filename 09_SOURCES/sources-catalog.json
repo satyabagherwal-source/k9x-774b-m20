@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "eaec0e89",
+    "sourceVersion": "a0570118",
     "license": "NOASSERTION",
-    "contentHash": "420abd1b14347f6db4320df31aeb9d5ad8ed3336244f211d61068a22ab9c3f0e",
-    "lastHarvestedAt": "2026-11-12T23:41:55.987Z",
+    "contentHash": "9bcf42066195262a6592e44fc2df83b94317d544f40c15a7737caa2820551afd",
+    "lastHarvestedAt": "2026-11-16T20:21:07.592Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "8cf33bdd",
+    "sourceVersion": "fbd9a416",
     "license": "Apache-2.0",
-    "contentHash": "e0514c55057f62d119772bf4bcea1f1a888b6b24eca974307ac161b76ee081e4",
-    "lastHarvestedAt": "2026-11-11T14:16:44.401Z",
+    "contentHash": "43b45712cca4c9f198789a6477cd23e13371cf1c8c9455d10bd77039e0cbd895",
+    "lastHarvestedAt": "2026-11-16T20:20:57.509Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "e938178a",
+    "sourceVersion": "1445ac44",
     "license": "Apache-2.0",
-    "contentHash": "5908209035e79c2c41505b8954504a97f7330c6ca5c1393b10fae4148fc5cc68",
-    "lastHarvestedAt": "2026-11-14T00:36:25.578Z",
+    "contentHash": "1ff4c45825202f42d328ad77b49bacd5e4cffa6332c25b4e17983304c4c906cb",
+    "lastHarvestedAt": "2026-11-16T20:21:03.870Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {

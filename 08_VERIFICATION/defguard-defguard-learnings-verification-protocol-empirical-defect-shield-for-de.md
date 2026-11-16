@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:57.700Z",
+  "timestamp": "2026-11-16T20:21:12.997Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-defguard-defguard-learnings",
+  "learning_id": "LEARN-EVO-defguard-defguard-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [defguard-defguard-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:57.700Z`  
-> **Learning ID**: `LEARN-REEXTRACT-defguard-defguard-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T20:21:12.997Z`  
+> **Learning ID**: `LEARN-EVO-defguard-defguard-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `e17756e7`  
+> **Source Version**: `a0570118`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:40:43.126Z  
+> **Timestamp**: 2026-11-16T20:21:06.652Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:40:43.121Z  
+> **Harvest Timestamp**: 2026-11-16T20:21:06.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2899 stars
+- **Stars / Engagement**: 2917 stars
 
 ---
 
@@ -2024,15 +2024,16 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3993** (2026-11-03): **macos systemextension is not uninstalled with application**
-  *Symptoms*: To reprouce: - installed app from .DMG - uninstalled via Applications  Result: command `systemextensionsctl list` returns:  `82GZ7KN29J net.defguard.VPNExtension (2.2.0/441) VPNExtension [activated enabled]`  Impact: When installed from appstore/testflight afterwards the app cannot connect to any location without clear reason.  We should clean up the systemextension on uninstall to the best of our abilities. We should create test scenario for removing systemextension on uninstall.
+- **Issue #4036** (2026-11-16): **2.2.0 regression: mobile biometric MFA unavailable for devices enrolled after upgrade**
+  *Symptoms*: Environment - Core / Edge / Gateway 2.2.0 (Open Source, docker), upgraded from 2.1.1/2.1.0/2.1.1 - Location MFA: "Default Internal MFA" flow (auto-created on upgrade), single step:   Authenticator App, Email, Mobile Biometric Authentication, Mobile App Approval - Mobile apps: iOS 2.2.0 (iPhone 13), iOS 2.0.0 (iPhone 11), Android latest Play Store (Xiaomi)  Observed - Devices enrolled BEFORE the upgrade (iPhone 12, Xiaomi): biometric works. - Devices enrolled AFTER the upgrade: "Biometric — Not configured" on connect,   on iOS and Android. Re-enrolling the previously working Xiaomi broke it too. - Core logs registration successfully each time:   "User test(14) registered mobile auth for device iPhone(26)" - Device appears under "Mobile App Approval Devices" in the user profile. - TOTP enabled before enrollment; TOTP works.  Expected: newly enrolled mobile devices can use biometric MFA as before.
   **Post-Mortem & Fix Analysis**:
-  > @filipslezaklab didn't empty the trash, hence the problem.  Normally, the extension can remain active and enabled after the app is moved to Trash. macOS is supposed to offer to remove the associated system extension when you delete its host app, but this is not always reliable, especially on recent macOS versions.  ## What normally happens  When you drag an app containing a system extension to Trash, Finder may show a prompt saying it will remove the associated system extension. The supported removal mechanism is for the host app to issue a deactivation request; macOS then stages the extension for removal, often completing it after a restart.  However, users and developers have reported cases where the app is deleted but the extension remains [activated enabled] even after emptying Trash and rebooting. This has been reported on macOS 15.3 and again on macOS 26 Tahoe.
+  >    Additional data: rolled back production (no users yet) to Core 2.1.1 / Edge 2.1.0 / Gateway 2.1.1    by restoring the pre-upgrade DB dump. A mobile device (Android, Xiaomi) enrolled on 2.1.1 can use    biometric immediately ("Desktop client login finished ... with method BIOMETRIC").    Same device enrolled on 2.2.0 -> "Biometric — Not configured".
+  >    Confirmed: after rolling back both staging and production to Core 2.1.1 / Edge 2.1.0 /    Gateway 2.1.1 (restore of pre-upgrade DB), newly enrolled mobile devices can use biometric    again (Android Xiaomi re-enrolled on 2.1.1 -> connect with BIOMETRIC works).
 
-- **Issue #3965** (2026-10-29): **Password special character check differs between UI and backend**
-  *Symptoms*: - [x] Treat space as special symbol - [x] Fix behaviour that password with space at the end won't work during login. - [x] Remove validation that blocks spaces in password edit forms. - [x] Align special character check between UI and backend. UI counts any non-alphanumeric character as special, backend only ASCII punctuation. Example: `Zażółć123` passes in UI, backend rejects it with `No special characters in password`.   https://github.com/user-attachments/assets/920fa237-6801-422e-a1db-24aafaa0574a
+- **Issue #4001** (2026-11-13): **The network is too small to accomodate all existing devices**
+  *Symptoms*: **Describe the bug** We have multiple locations. When editing an existing location, I cannot save the changes when there are more devices than the defined VPN CIDR on a location allows. But it doesn't only check the devices that apply for that location, it checks the total devices in defguard.  Error: ```The network is too small to accomodate all existing devices (network capacity: 253, total devices: 259)```  **Expected behavior** I would expect that I cannot save the location change(s), when the total devices that use this location exceed the configured CIDR. Otherwise we would need to set a large CIDR on all locations, even when only a small amount of the users/devices have access to it.  **Version information** - Defguard Core version: v2.1.1 
   **Post-Mortem & Fix Analysis**:
-  > Test scenario: Test if space is treated as special character during password change/setup. Test if passwords with space at the end works 
+  > Test scenario:  1. Create group `small`. 2. Add 3 devices to the admin user. 3. Create a user in group `small` and add 2 devices to them. 4. Create a user with no groups and add 2 devices to them. 5. Create a location with address `10.10.10.1/24`, restricted to group `small`. 6. Edit the location, change the address to `10.10.10.1/29` (capacity 5), and save.  Expected behaviour: Saving succeeds. Only 5 devices have access to the location: 2 from `small` and 3 from admin. admin groups always have access.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2049,309 +2050,82 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ddbf7f3` (2026-10-23)
-**Commit Message**: Update dependency vitest to v4.1.11 [SECURITY] (#3936)
+### Incident Patch 1: `a0570118` (2026-11-16)
+**Commit Message**: update to README core capabilities (#4011)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+2.1 and 2.2 features added
 
-**File**: `web/package.json` (modified, +1/-1)
+**File**: `README.md` (modified, +33/-8)
 ```diff
-@@ -88,6 +88,6 @@
-     "typescript": "~6.0.3",
-     "vite": "^8.3.4",
-     "vite-plugin-image-optimizer": "^2.0.3",
--    "vitest": "4.1.9"
-+    "vitest": "4.1.11"
-   }
- }
-```
-
-**File**: `web/pnpm-lock.yaml` (modified, +59/-43)
-```diff
-@@ -283,7 +283,7 @@ importers:
-         version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       '@vitest/ui':
-         specifier: 4.1.9
--        version: 4.1.9(vitest@4.1.9)
-+        version: 4.1.9(vitest@4.1.11)
-       autoprefixer:
-         specifier: ^10.6.1
-         version: 10.6.1(postcss@8.5.31)
-@@ -321,8 +321,8 @@ importers:
-         specifier: ^2.0.3
-         version: 2.0.3(sharp@0.35.5(@types/node@26.6.5))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       vitest:
--        specifier: 4.1.9
--        version: 4.1.9(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-+        specifier: 4.1.11
-+        version: 4.1.11(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
+@@ -21,12 +21,37 @@ For detailed security information see the [secure-by-design documentation](https
  
- packages:
+ ## Core Capabilities
  
-@@ -1842,11 +1842,11 @@ packages:
-       oxc-transform-react:
-         optional: true
- 
--  '@vitest/expect@4.1.9':
--    resolution: {integrity: sha512-vl/rYsUKcBr3SnQn166+XR5ZQcgMx3DQhFWdfli/cWpLnLUmbxZvyrJZotLFUryib+LtArYMSTJ5RbQ57ZqrlA==}
-+  '@vitest/expect@4.1.11':
-+    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
- 
--  '@vitest/mocker@4.1.9':
--    resolution: {integrity: sha512-EVkXzBjrPGM+cK8/ANWgBrkUCfJfb38/EfTSO8h7pWvKkyPkpWxvR7BkD2MyItMF62C97zAEoqdpUixwR/e+Rw==}
-+  '@vitest/mocker@4.1.11':
-+    resolution: {integrity: sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==}
-     peerDependencies:
-       msw: ^2.4.9
-       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-@@ -1856,23 +1856,29 @@ packages:
-       vite:
-         optional: true
- 
-+  '@vitest/pretty-format@4.1.11':
-+    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
+-- 🌐 **WireGuard VPN** — multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
+-- 👥 **Identity & Access Management** — internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
+-- 🔑 **Multi-Factor Authentication** — TOTP, WebAuthn/FIDO2, email tokens, biometric via mobile app
+-- 🛡️ **Firewall** — allow/deny rules per VPN location by user or group, applied in real time
+-- 📋 **Activity Log** — audit log with filtering and search; real-time SIEM streaming (Enterprise)
+-- 🔗 **Integrations** — webhooks and REST API
++- 🌐 **WireGuard VPN**
++  - **Locations**: multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
++  - **Multi-location DNS**: each connected location applies its own resolvers and domains side by side
++  - **Custom MTU**: an MTU set by the admin that the client apps apply
++  - **Gateway on VyOS**: Defguard Gateway runs as a container on VyOS
++- 🔑 **Multi-Factor Authentication**
++  - **FIDO2 Hardware Keys** (Enterprise): hardware security keys such as YubiKey as an MFA factor for the VPN connection, registered in the desktop client and used on desktop and over NFC on mobile
++  - **MFA Flows** (Business): ordered MFA steps, each accepting a choice of factors, with the tunnel established only after the last step succeeds; one flow can be reused across locations
++  - **Group-level MFA Overrides** (Enterprise): different MFA flows for specific groups on the same VPN location, on top of the location's default flow
++  - **Factors**: TOTP, email tokens, biometric via the mobile app, external SSO (Business)
++  - **MFA Setup in the Desktop Client**: users without MFA set it up when they first connect to a protected location, without re-enrolling
++- 👥 **Identity & Access Management**
++  - **SSO & Directories**: internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
++  - **Windows Auto-provisioning**: a bulk action writes each user's enrollment token to an Active Directory field
++- 🛡️ **Access Control**
++  - **Firewall**: group-based firewall policies with support for OPNsense, pfSense, Linux and MikroTik
++  - **Device Posture** (Enterprise): checks a device must pass before it connects, set per location: client and OS version, security updates, Active Directory membership, antivirus, disk encryption
++  - **Allowed IPs from Firewall Rules** (Enterprise): each user's WireGuard config lists only the subnets their firewall rules allow
++  - **Firewall Bulk Actions**: manage rules, destinations and aliases in bulk
++- 💻 **Clients**
++  - **Desktop Client**: Windows, macOS and Linux app with multiple instances and locations, a tray mode and live configuration sync (Business)
++  - **Mobile Client**: redesigned iOS and Android app that works in MFA flows both as a factor and as a connecting client
++  - **Always-on & Pre-logon VPN** (Enterprise): Always-on VPN on Windows and Linux, connected at boot by a background service, and pre-logon VPN on Windows
++  - **Command-line Client**: connect, disconnect and check status from the terminal, with MFA and JSON output, for headless machines and scripts
++  - **Group Traffic Policies** (Enterprise): no limitations, disable all traffic or force all traffic, set per group instead of only globally
++- 📋 **Audit & Integrations**
++  - **Activity Log**: audit log with filtering and search; real-time SIEM streaming (Enterprise)
++  - **Integrations**: webhooks and REST API
 +
-   '@vitest/pretty-format@4.1.9':
-     resolution: {integrity: sha512-s0iufns3iIFitdgm+YR7g1whCAaGtXz459VS9/PqyKDEEFgYIhsHOQmXgIgDuYCt7DeQmiZT0Qe2OA2p4ZPu5A==}
- 
--  '@vitest/runner@4.1.9':
--    resolution: {integrity: sha512-KXLMDtc7oe70+3mJfGrPUWPesswH+3sTxAMAMl8DG7I8IUQT4XW718dY5ID3vPUcmlu27CcKfY4P3h3I29SLJg==}
-+  '@vitest/runner@4.1.11':
-+    resolution: {integrity: sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==}
- 
--  '@vitest/snapshot@4.1.9':
--    resolution: {integrity: sha512-Jc7RKGNBo8Z28WYIm0Niej4xdSPByRf6mU58VpHQkd6Zh05rlnA+twjbK5HyeIGHxrzsc3mJgS43uM0CZKzaIA==}
-+  '@vitest/snapshot@4.1.11':
-+    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
- 
--  '@vitest/spy@4.1.9':
--    resolution: {integrity: sha512-fHpsS6mIi+PiEW+vcRVOMkX1oSaPKne3VOclSFICPcGOmfKgXPU5iAah+wcNcj2xPrCCmfq99IDGf+EojhhvhA==}
-+  '@vitest/spy@4.1.11':
-+    resolution: {integrity: sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==}
- 
-   '@vitest/ui@4.1.9':
-     resolution: {integrity: sha512-U/cRvtqfEPj27FI1n9cyUvi4vXXdcLhjJiI+InYKdk8hP4VrS6RXOjGL7rfFaeBc37iRKANsR6eEzIoC7lmgBQ==}
-     peerDependencies:
-       vitest: 4.1.9
- 
-+  '@vitest/utils@4.1.11':
-+    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
 +
-   '@vitest/utils@4.1.9':
-     resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
++Explore all features in the [Product overview](https://defguard.net/enterprise-wireguard-vpn/).
  
-@@ -3591,20 +3597,20 @@ packages:
-       yaml:
-         optional: true
+ ## Clients
  
--  vitest@4.1.9:
--    resolution: {integrity: sha512-nE3/LEyc0z87uHYLZebqCUOaJr2hdtuPp7BQ4BosVFnfltxgAvMG08NyrSGlPpOUWvR27c5flSmYFTNr78L9GQ==}
-+  vitest@4.1.11:
-+    resolution: {integrity: sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==}
-     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
-     hasBin: true
-     peerDependencies:
-       '@edge-runtime/vm': '*'
-       '@opentelemetry/api': ^1.9.0
-       '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
--      '@vitest/browser-playwright': 4.1.9
--      '@vitest/browser-preview': 4.1.9
--      '@vitest/browser-webdriverio': 4.1.9
--      '@vitest/coverage-istanbul': 4.1.9
--      '@vitest/coverage-v8': 4.1.9
--      '@vitest/ui': 4.1.9
-+      '@vitest/browser-playwright': 4.1.11
-+      '@vitest/browser-preview': 4.1.11
-+      '@vitest/browser-webdriverio': 4.1.11
-+      '@vitest/coverage-istanbul': 4.1.11
-+      '@vitest/coverage-v8': 4.1.11
-+      '@vitest/ui': 4.1.11
-       happy-dom: '*'
-       jsdom: '*'
-       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-@@ -5035,42 +5041,46 @@ snapshots:
-       '@rolldown/pluginutils': 1.0.1
-       vite: 8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2)
+@@ -64,7 +89,7 @@ Comprehensive documentation is available at: https://docs.defguard.net
  
--  '@vitest/expect@4.1.9':
-+  '@vitest/expect@4.1.11':
-     dependencies:
-       '@standard-schema/spec': 1.1.0
-       '@types/chai': 5.2.3
--      '@vitest/spy': 4.1.9
--      '@vitest/utils': 4.1.9
-+      '@vitest/spy': 4.1.11
-+      '@vitest/utils': 4.1.11
-       chai:
-```
-
-**File**: `web/pnpm-workspace.yaml` (modified, +3/-0)
-```diff
-@@ -15,3 +15,6 @@ onlyBuiltDependencies:
-   - '@swc/core'
-   - esbuild
-   - sharp
-+minimumReleaseAgeExclude:
-+  # Renovate security update: vitest@4.1.11
-+  - vitest@4.1.11
-```
-
----
-
-### Incident Patch 2: `d76aa308` (2026-10-28)
-**Commit Message**: fix cargo deny (#3971)
-
-**File**: `Cargo.lock` (modified, +3/-3)
-```diff
-@@ -1278,7 +1278,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
- dependencies = [
-  "quote",
-- "syn 3.0.9",
-+ "syn 2.0.119",
- ]
+ ## Video guides
  
- [[package]]
-@@ -5137,9 +5137,9 @@ dependencies = [
+-Visit out YouTube channel to see our [video guides](https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW).
++Visit out YouTube channel to see our [video guides](https://www.youtube.com/@defguard
  
- [[package]]
- name = "pulldown-cmark"
--version = "0.13.4"
-+version = "0.13.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
-+checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
- dependencies = [
-  "bitflags 2.13.2",
-  "getopts",
-```
-
----
-
-### Incident Patch 3: `38f81762` (2026-10-26)
-**Commit Message**: Fix 403 error after user switch (#3953)
-
-**File**: `web/src/pages/user-profile/UserProfilePage/UserProfilePage.tsx` (modified, +5/-1)
-```diff
-@@ -32,6 +32,7 @@ const defaultTab = UserProfileTab.Details;
- export const UserProfilePage = () => {
-   const navigate = useNavigate();
-   const authUsername = useAuth((s) => s.user?.username as string);
-+  const isAdmin = useAuth((s) => s.isAdmin);
-   const search = useSearch({ from: '/_authorized/_default/user/$username' });
-   const activeTab = search.tab ?? defaultTab;
+ ## Community
  
-@@ -46,7 +47,10 @@ export const UserProfilePage = () => {
+@@ -84,4 +109,4 @@ The code in this repository is available under a dual licensing model:
+ - Enterprise License: All code in this repository (including within the "crates/defguard_core/src/enterprise" directory) is licensed under a separate Enterprise License (see file crates/defguard_core/src/enterprise/LICENSE.md).
  
-   const { data: userProfile } = useSuspenseQuery(userProfileQueryOptions(username));
-   const { data: userAuthKeys } = useSuspenseQuery(getUserAuthKeysQueryOptions(username));
--  const { data: licenseInfo } = useQuery(getLicenseInfoQueryOptions);
-+  const { data: licenseInfo } = useQuery({
-+    ...getLicenseInfoQueryOptions,
-+    enabled: isAdmin,
-+  });
- 
-   const apiTokensTabAvailability = useMemo((): ApiTokensTabAvailabilityValue => {
-     if (!userProfile.user.is_admin) {
-```
-
-**File**: `web/src/routes/auth.tsx` (modified, +2/-1)
-```diff
-@@ -6,7 +6,7 @@ import api from '../shared/api/api';
- import { ActiveWizard, type User, UserMfaMethod } from '../shared/api/types';
- import { isPresent } from '../shared/defguard-ui/utils/isPresent';
- import { useAuth } from '../shared/hooks/useAuth';
--import { getSessionInfoQueryOptions } from '../shared/query';
-+import { getLicenseInfoQueryOptions, getSessionInfoQueryOptions } from '../shared/query';
- 
- const basicSchema = z.object({
-   url: z.string().nullable().optional(),
-@@ -73,6 +73,7 @@ function RouteComponent() {
-       const basicResult = basicSchema.safeParse(state);
-       const basicResponse = basicResult.data;
-       if (isPresent(basicResponse) && basicResult.success) {
-+        queryClient.removeQueries({ queryKey: getLicenseInfoQueryOptions.queryKey });
-         useAuth.getState().setUser(basicResponse.user);
-         await Promise.all([
-           queryClient.invalidateQueries({
-```
-
-**File**: `web/tests/auth-user-switch.test.tsx` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-+import { act, render } from '@testing-library/react';
-+import { type ComponentType, createElement } from 'react';
-+import { afterEach, describe, expect, it, vi } from 'vitest';
-+import { Route } from '../src/routes/auth';
-+import api from '../src/shared/api/api';
-+import type { User } from '../src/shared/api/types';
-+import { useAuth } from '../src/shared/hooks/useAuth';
-+import { getLicenseInfoQueryOptions } from '../src/shared/query';
-+
-+vi.mock('@tanstack/react-router', async (importOriginal) => ({
-+  ...(await importOriginal<typeof import('@tanstack/react-router')>()),
-+  useNavigate: () => vi.fn(),
-+  Outlet: () => null,
-+}));
-+
-+afterEach(() => {
-+  vi.clearAllTimers();
-+  vi.useRealTimers();
-+  vi.restoreAllMocks();
-+  useAuth.getState().reset();
-+});
-+
-+describe('switching users', () => {
-+  it('discards the previous user license error when login succeeds', async () => {
-+    vi.useFakeTimers();
-+    const queryClient = new QueryClient({
-+      defaultOptions: { queries: { retry: false } },
-+    });
-+    const forbidden = new Error('Request failed with status code 403');
-+    vi.spyOn(api, 'getSessionInfo').mockResolvedValue({
-+      data: { authorized: true, is_admin: true, active_wizard: null, username: 'admin' },
-+    } as Awaited<ReturnType<typeof api.getSessionInfo>>);
-+
-+    await expect(
-+      queryClient.fetchQuery({
-+        ...getLicenseInfoQueryOptions,
-+        queryFn: async () => {
-+          throw forbidden;
-+        },
-+      }),
-+    ).rejects.toThrow(forbidden);
-+    expect(queryClient.getQueryState(getLicenseInfoQueryOptions.queryKey)?.status).toBe(
-+      'error',
-+    );
-+
-+    render(
-+      <QueryClientProvider client={queryClient}>
-+        {createElement(Route.options.component as ComponentType)}
-+      </QueryClientProvider>,
-+    );
-+
-+    await act(async () => {
-+      useAuth.getState().authSubject.next({
-+        user: { username: 'admin', is_admin: true } as User,
-+      });
-+    });
-+
-+    expect(
-+      queryClient.getQueryState(getLicenseInfoQueryOptions.queryKey),
-+    ).toBeUndefined();
-+    queryClient.clear();
-+  });
-+});
+ ## Legal
+-WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
+\ No newline at end of file
++WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4010** (2026-11-06): Add Device::{attestation_status,attested_at} fields (@j-chmielewski)
-- **PR #4008** (2026-11-06): chore: post 2.2 release sync (@wojcik91)
-- **PR #3999** (2026-11-04): chore: prerelease cleanup (@wojcik91)
-- **PR #3996** (2026-11-03): update trusted authenticators db (@filipslezaklab)
-- **PR #3982** (2026-11-02): add MFA flows e2e tests (@wojcik91)
-- **PR #3981** (2026-10-30): update labels (@filipslezaklab)
+- **PR #4055** (2026-11-16): Re-enable E2E tests (@jakub-tldr)
+- **PR #4042** (2026-11-16): Devices page (@filipslezaklab)
+- **PR #4039** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
+- **PR #4038** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
+- **PR #4025** (2026-11-09): Posture device attestation (@filipslezaklab)
+- **PR #4011** (2026-11-16): update to README core capabilities (@mike767)
 
 ---
 
@@ -2371,31 +2145,48 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependency vitest to v4.1.11 [SECURITY] (#3936)
+## X. update to README core capabilities
 
 **RULE**:
-When implementing operations in `web/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ddbf7f3`: Update dependency vitest to v4.1.11 [SECURITY] (#3936). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0570118`: update to README core capabilities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "vitest": "4.1.11"
+- 🌐 **WireGuard VPN**
+  - **Locations**: multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
+  - **Multi-location DNS**: each connected location applies its own resolvers and domains side by side
+  - **Custom MTU**: an MTU set by the admin that the client apps apply
+  - **Gateway on VyOS**: Defguard Gateway runs as a container on VyOS
+- 🔑 **Multi-Factor Authentication**
+  - **FIDO2 Hardware Keys** (Enterprise): hardware security keys such as YubiKey as an MFA factor for the VPN connection, registered in the desktop client and used on desktop and over NFC on mobile
+  - **MFA Flows** (Business): ordered MFA steps, each accepting a choice of factors, with the tunnel established only after the last step succeeds; one flow can be reused across locations
+  - **Group-level MFA Overrides** (Enterprise): different MFA flows for specific groups on the same VPN location, on top of the location's default flow
+  - **Factors**: TOTP, email tokens, biometric via the mobile app, external SSO (Business)
+  - **MFA Setup in the Desktop Client**: users without MFA set it up when they first connect to a protected location, w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    "vitest": "4.1.9"
+// Induced defect failure mode:
+- 🌐 **WireGuard VPN** — multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
+- 👥 **Identity & Access Management** — internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
+- 🔑 **Multi-Factor Authentication** — TOTP, WebAuthn/FIDO2, email tokens, biometric via mobile app
+- 🛡️ **Firewall** — allow/deny rules per VPN location by user or group, applied in real time
+- 📋 **Activity Log** — audit log with filtering and search; real-time SIEM streaming (Enterprise)
+- 🔗 **Integrations** — webhooks and REST API
+Visit out YouTube channel to see our [video guides](https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW).
+WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ddbf7f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0570118` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

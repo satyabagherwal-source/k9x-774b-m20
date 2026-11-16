@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T20:11:48.865Z",
-  "total_records": 1323,
+  "last_updated": "2026-11-16T20:21:13.221Z",
+  "total_records": 1327,
   "domains": {
     "A": {
-      "total": 7,
+      "total": 9,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -13,7 +13,9 @@
         "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
         "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants",
-        "domain_intelligence-human-need-intelligence-gravitl-netmaker-core-invariants"
+        "domain_intelligence-human-need-intelligence-gravitl-netmaker-core-invariants",
+        "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants",
+        "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants"
       ]
     },
     "B": {
@@ -647,7 +649,7 @@
       ]
     },
     "F": {
-      "total": 31,
+      "total": 33,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -679,7 +681,9 @@
         "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants",
         "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants",
         "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants",
-        "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-sharkdp-bat-core-invariants",
+        "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants"
       ]
     },
     "G": {
@@ -11233,8 +11237,8 @@
       "title": "Architecture Intelligence: flux-iac/tofu-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flux-iac-tofu-controller-architecture-intelligence-flux-iac-tofu-controller-core.md",
       "repository": "flux-iac/tofu-controller",
-      "content_hash": "731252da739e462b2c1fbc4b52c2f8d95fcff437eb4f0975afea5ee90502c3d1",
-      "created_at": "2026-11-14T00:36:25.888Z"
+      "content_hash": "289b32fdb218c729ebbc1a719673e4c0c60e699de1ba3c2619f8a1c6b6c84e93",
+      "created_at": "2026-11-16T20:21:04.186Z"
     },
     "DOM-D-C4A2A37A": {
       "record_id": "DOM-D-C4A2A37A",
@@ -11293,8 +11297,8 @@
       "title": "Architecture Intelligence: flux-iac-tofu-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flux-iac-tofu-controller-learnings-architecture-intelligence-flux-iac-tofu-contr.md",
       "repository": "flux-iac-tofu-controller-learnings",
-      "content_hash": "b641d36a83035151fecdab57296ad21caa386ae66ae17e06f239da1959b7d268",
-      "created_at": "2026-11-14T00:37:02.800Z"
+      "content_hash": "1aa51d6cb00da027443426fd24373488a8a2708e34b35f440a85cd91616a4566",
+      "created_at": "2026-11-16T20:21:12.501Z"
     },
     "domain_intelligence-research-knowledge-intelligence-scantist-glm-5-3-slim-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-scantist-glm-5-3-slim-gguf-core-invariants",
@@ -23850,6 +23854,42 @@
       "repository": "superhighfives-pika-learnings",
       "content_hash": "fd401bba2261c113dde7fcf9002da1bb84f00cf7ecf57c533c901f893dc41304",
       "created_at": "2026-11-16T20:11:48.296Z"
+    },
+    "domain_intelligence-design-intelligence-sharkdp-bat-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-sharkdp-bat-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: sharkdp/bat Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-design-intelligence-sharkdp-bat-core-invariants.md",
+      "repository": "sharkdp/bat",
+      "content_hash": "6f8d15708c7cf98c702d5a89fa1888e5d69966200efbaa734a1e56dd715600a7",
+      "created_at": "2026-11-16T20:20:57.819Z"
+    },
+    "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
+      "repository": "DefGuard/defguard",
+      "content_hash": "e3db02ae7dd79961a5bc3313ad2d2602e5625348c84443f80b30ef26f245300d",
+      "created_at": "2026-11-16T20:21:07.888Z"
+    },
+    "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: sharkdp-bat-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-learnings-design-intelligence-sharkdp-bat-learnings-core-invariants.md",
+      "repository": "sharkdp-bat-learnings",
+      "content_hash": "a678d6e85a44cdfe450c578bed7cea17b2d918f00bf797be5991be4feb176b80",
+      "created_at": "2026-11-16T20:21:11.348Z"
+    },
+    "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: defguard-defguard-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-learnings-human-need-intelligence-defguard-defguard-learnings-.md",
+      "repository": "defguard-defguard-learnings",
+      "content_hash": "e3d230c6ec7508ab2c763c239b78bbf17c6153f29561bca106b5653d27ca0b1e",
+      "created_at": "2026-11-16T20:21:13.221Z"
     }
   }
 }
