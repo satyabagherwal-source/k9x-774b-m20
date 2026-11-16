@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:43:37.361Z",
+  "timestamp": "2026-11-16T15:00:51.431Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-qdrant-qdrant-learnings",
+  "learning_id": "LEARN-EVO-qdrant-qdrant-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [qdrant-qdrant-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:43:37.361Z`  
-> **Learning ID**: `LEARN-REEXTRACT-qdrant-qdrant-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T15:00:51.431Z`  
+> **Learning ID**: `LEARN-EVO-qdrant-qdrant-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/qdrant-qdrant-learnings.md`  
 > **Source**: github ([https://github.com/qdrant/qdrant](https://github.com/qdrant/qdrant))  
-> **Source Version**: `222b2e44`  
+> **Source Version**: `23065a0b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T19:22:50.061Z  
+> **Timestamp**: 2026-11-16T15:00:46.228Z  
 > **Learning ID**: `learn-github-qdrant-qdrant`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/qdrant-qdrant-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/qdrant/qdrant](https://github.com/qdrant/qdrant))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T19:22:50.055Z  
+> **Harvest Timestamp**: 2026-11-16T15:00:46.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Qdrant - High-performance, massive-scale Vector Database and Vector Search Engine for the next generation of AI. Also available in the cloud https://cloud.qdrant.io/
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 35187 stars
+- **Stars / Engagement**: 35592 stars
 
 ---
 
@@ -279,13 +279,15 @@ impl Collection {
                 );
             }
 
+            // Save before updating config in memory. If saving fails, the in-memory config
+            // must stay unchanged, so retrying the same state applies and saves it again,
+            // instead of seeing no changes.
+            new_config.save(&self.path)?;
             *config = new_config;
 
             // We need to recreate optimizers, if "core" config was updated
             recreate_optimizers = is_core_config_updated;
         }
-
-        self.collection_config.read().await.save(&self.path)?;
 
         self.print_warnings().await;
 
@@ -304,11 +306,88 @@ impl Collection {
         shards: AHashMap<ShardId, ShardInfo>,
         shards_key_mapping: ShardKeyMapping,
     ) -> CollectionResult<()> {
-        let mut extra_shards: AHashMap<ShardId, ShardReplicaSet> = AHashMap::new();
+        let mut
+```
 
-        let shard_ids = shards.keys().copied().collect::<HashSet<_>>();
+### Core Architecture Module: `lib/collection/src/collection_manager/segments_searcher/rescore.rs`
+```
+use std::sync::Arc;
+use std::time::Duration;
 
-        // There are two components, where shard-related info i
+use common::ambient;
+use common::ambient::hw;
+use futures::TryStreamExt;
+use futures::stream::FuturesUnordered;
+use segment::common::operation_error::OperationError;
+use segment::data_types::query_context::FormulaContext;
+use segment::types::ScoredPoint;
+use shard::search_result_aggregator::BatchResultAggregator;
+use shard::segment_holder::locked::LockedSegmentHolder;
+use tokio_util::task::AbortOnDropHandle;
+
+use super::SegmentsSearcher;
+use crate::common::adaptive_handle::AdaptiveSearchHandle;
+use crate::operations::types::{CollectionError, CollectionResult};
+
+impl SegmentsSearcher {
+    /// Rescore results with a formula that can reference payload values.
+    ///
+    /// Aggregates rescores from the segments.
+    pub async fn rescore_with_formula(
+        segments: LockedSegmentHolder,
+        arc_ctx: Arc<FormulaContext>,
+        runtime_handle: &AdaptiveSearchHandle,
+        timeout: Duration,
+    ) -> CollectionResult<Vec<ScoredPoint>> {
+        let limit = arc_ctx.limit;
+
+        let mut futures = {
+            let segments: Vec<_> = {
+                let Some(segments_guard) = segments.try_read_for(timeout) else {
+                    return Err(CollectionError::timeout(timeout, "rescore_with_formula"));
+                };
+                // Collect the segments first so we don't lock the segment holder during the operations.
+                segments_guard
+                    .non_appendable_then_appendable_segments()
+                    .collect()
+            };
+
+            segments
+                .into_iter()
+                .map(|segment| {
+                    let handle = runtime_handle.spawn_blocking({
+                        let arc_ctx = arc_ctx.clone();
+                        let handoff = ambient::current();
+                        let cpu_utilization = hw::cpu_utilization();
+                        move || {
+                            let _scope = handoff.enter_guard();
+                            cpu_utilization
+                                .measure(|| segment.get().read().rescore_with_formula(arc_ctx))
+                        }
+                    });
+                    AbortOnDropHandle::new(handle)
+                })
+                .collect::<FuturesUnordered<_>>()
+        };
+
+        let mut segments_results = Vec::with_capacity(futures.len());
+        while let Some(result) = futures.try_next().await? {
+            segments_results.push(result?)
+        }
+
+        // use aggregator with only one "batch"
+        let mut aggregator = BatchResultAggregator::new(std::iter::once(limit));
+        aggregator.update_point_versions(segments_results.iter().flatten());
+        aggregator.update_batch_results(0, segments_results.into_iter().flatten());
+        let top =
+            aggregator.into_topk().into_iter().next().ok_or_else(|| {
+                OperationError::service_error("expected first result of aggregator")
+            })?;
+
+        Ok(top)
+    }
+}
+
 ```
 
 ### Core Architecture Module: `lib/collection/src/collection_state.rs`
@@ -1616,29 +1695,17 @@ pub struct InternalUpdateResult {
 
 ```
 
-### Core Architecture Module: `lib/collection/src/update_workers/mod.rs`
-```
-pub mod applied_seq;
-pub mod flush_workers;
-pub mod internal_update_result;
-mod optimization_worker;
-mod update_worker;
-
-pub struct UpdateWorkers {}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11258** (2026-10-20): **SQ8 quantized Euclid search returns empty results for large-magnitude vectors (1.19.1)**
-  *Symptoms*: <!--- Provide a general summary of the issue in the Title above -->  ## Current Behavior With scalar quantization (INT8) and Euclid distance, collections whose vectors have large magnitudes (components ~1e20, representable float32) return **zero results** for every query — 10 stored points, limit 10, both `rescore=false` and `rescore=true`. Manhattan at the same scale works (10/10 with correct ~1e20 distances), isolating the defect to the squared-distance path.  ## Steps to Reproduce See `reproduce.py`. Qdrant 1.19.1 (docker); SQ8 config `{"type":"int8"}`, dim 4, vectors `uniform(-1,1)*1e20`, query at the same scale.  [reproduce.py](https://github.com/user-attachments/files/33697746/reproduce.py)   ## Expected Behavior `min(limit, count)` results; overflowed dequantized distances should be clamped or flagged rather than silently dropped. Same magnitude family as the unquantified L2 drop (reported separately); this is the quantized path with the same completeness observable.   ## Context (Environment) Server: Qdrant 1.19.1 (docker, default settings).   
+- **Issue #11475** (2026-11-10): **Cross-shard scroll incorrectly deduplicates points with the same ID across different custom shard keys**
+  *Symptoms*: ## Current Behavior  Qdrant's MMR query incorrectly removes candidates that share the same numeric point ID across different custom shard keys.  Four distinct points are stored across shards `x` and `y`:  | Shard Key | Point ID | Vector | Dot Score | |---|---|---|---| | x | 1 | [1.0, 0.0] | 1.0 | | x | 2 | [0.9, 0.1] | 0.9 | | y | 1 | [0.0, 1.0] | 0.0 | | y | 3 | [-1.0, 0.0] | -1.0 |  An exact MMR query with `diversity=0`, `limit=4`, and query vector `[1,0]` should return all four points.  Instead, Qdrant returns only three:  ```text [(x,1,1.0), (x,2,0.9), (y,3,-1.0)] ```  The point `y/1` is silently omitted, although `x/1` and `y/1` are independent records belonging to different custom shards.  ## Steps to Reproduce  ### Python Reproducer  ```python import os import uuid import requests  BASE = os.getenv("QDRANT_URL", "http://127.0.0.1:6333") PREFIX = "bug16_" + uuid.uuid4().hex[:8]  S = requests.Session() S.trust_env = False  SEED = {     "x": [         (1, [1.0, 0.0]),         (2, [0.9, 0.1]),     ],     "y": [         (1, [0.0, 1.0]),         (3, [-1.0, 0.0]),     ], }  # MR66: append a new highest-scoring point y/4. MUTANT = {     "x": list(SEED["x"]),     "y": SEED["y"] + [(4, [2.0, 0.0])], }  # Unique-ID control: rename y/1 to y/4 # and append the dominant point as y/5. CONTROL = {     "x": list(SEED["x"]),     "y": [         (4, [0.0, 1.0]),         (3, [-1.0, 0.0]),         (5, [2.0, 0.0]),     ], }   def api(method, path, body=None):     r = S.request(         metho
 
-- **Issue #11257** (2026-10-20): **Binary-quantized Manhattan query returns results ordered from farthest to nearest when rescore=false (1.19.1)**
-  *Symptoms*: ## Current Behavior With binary quantization enabled and `quantization.rescore=false`, a Manhattan nearest-neighbor query returns points roughly ordered from the **largest** reported score to the smallest — i.e. the *worst* candidates first — and the reported scores are the discrete BQ distance levels rather than rescored Manhattan distances.  `exact=true` and `rescore=true` both return correctly ascending distances, so the ranking inversion is specific to the unrescored BQ path.  This looks related to #10607 (same symptom for `Euclid`), but manifests for the `Manhattan` distance, where the returned order is almost fully reversed rather than merely locally disordered.  ## Steps to Reproduce 1. Start Qdrant v1.19.1 (observed server reports `1.19.1`). 2. Run the attached `qdrant_bq_manhattan_reproduce.py` (Python 3, standard library    HTTP only):     ```sh    python qdrant_bq_manhattan_reproduce.py --url http://127.0.0.1:6333    ```  3. It creates a temporary collection    `{"vectors":{"size":32,"distance":"Manhattan"},"quantization_config":{"binary":{"always_ram":true}}}`,    upserts 300 random `[-1,1)^32` points, queries once with    `{"params":{"exact":false,"quantization":{"rescore":false}}}`, and then with    `rescore=true` and `exact=true` as controls.  [reproduce.py](https://github.com/user-attachments/files/33697109/reproduce.py)   ## Expected Behavior For a distance metric (lower = better), returned points should be ordered by ascending reported score, and the scores 
+- **Issue #11473** (2026-11-10): **Cross-shard scroll incorrectly deduplicates points with the same ID across different custom shard keys**
+  *Symptoms*: ## Current Behavior  Qdrant's collection-wide scroll incorrectly deduplicates points that share the same numeric ID across different custom shard keys.  Four points are stored across shards `x` and `y`:  | Shard Key | Point ID | Vector | |---|---|---| | x | 1 | [1, 0] | | x | 2 | [2, 0] | | y | 1 | [3, 0] | | y | 3 | [4, 0] |  A collection-wide scroll with `limit=10` returns only three records:  ```text [x/1, x/2, y/3] ```  The record `y/1` is silently omitted.  The root cause is in `lib/collection/src/collection/point_ops.rs`, where `Collection::scroll_by()` deduplicates records using only their numeric IDs:  ```rust .sorted_unstable_by_key(|point| point.id) .dedup_by(|a, b| a.id == b.id) ```  This ignores `shard_key` and incorrectly collapses records from distinct custom shards.  ## Steps to Reproduce   ### Python Reproducer  ```python import os import uuid import requests  BASE = os.getenv("QDRANT_URL", "http://127.0.0.1:6333") PREFIX = "bug19_" + uuid.uuid4().hex[:8]  session = requests.Session() session.trust_env = False  SEED = {     "x": [(1, [1.0, 0.0]), (2, [2.0, 0.0])],     "y": [(1, [3.0, 0.0]), (3, [4.0, 0.0])], }  # MR31: swap vector coordinates. MUTANT = {     shard: [(pid, [v[1], v[0]]) for pid, v in rows]     for shard, rows in SEED.items() }  # Control: replace y/1 with y/4. CONTROL = {     "x": SEED["x"],     "y": [(4, [3.0, 0.0]), (3, [4.0, 0.0])], }   def api(method, path, body=None):     r = session.request(         method, BASE + path, json=body, timeout
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1655,1298 +1722,163 @@ pub struct UpdateWorkers {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `10039ce8` (2026-10-19)
-**Commit Message**: [AI, graph indexing variations] Graph builder cleanups before indexing variations (#11192)
+### Incident Patch 1: `f8cdcfef` (2026-11-15)
+**Commit Message**: Disable PiPNN graph building by default (#11553)
 
-* HNSW build: share the GPU vectors through an `Arc`
-
-`GpuInsertContext` borrowed `GpuVectorStorage`, so whoever held an insert
-context had to keep the vectors alive somewhere else. It now holds an
-`Arc` of them and has no lifetime: the vector buffers live as long as any
-insert context that uses them.
-
-This lets one struct own both the uploaded vectors and the insert
-context for payload blocks, which the GPU graph builder needs. No
-behavior changes.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* HNSW build: drop the unused count of points linked by payload blocks
-
-`build_additional_links` counted the points it linked, and the build
-kept the larger of that count and the number of indexed points. Since
-the GPU integration (#5535), the number of indexed points is every
-non-deleted point, also when `m == 0`, and the points of payload blocks
-are a subset of them. So the count never changed the result, and
-`indexed_vector_count` stays the number of non-deleted points.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
+PiPNN ignores ef_construct, so with it enabled the graph quality of
+large segments can only be tuned through m. Keep it opt-in through the
+pipnn_graph_building feature flag. with_pipnn_min_points now also
+enables PiPNN on its thread, so PiPNN tests don't depend on the default.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-(cherry 
 
-**File**: `lib/segment/src/index/hnsw_index/gpu/gpu_graph_builder.rs` (modified, +14/-11)
+**File**: `docs/redoc/master/openapi.json` (modified, +2/-2)
 ```diff
-@@ -16,8 +16,8 @@ pub static GPU_MAX_VISITED_FLAGS_FACTOR: usize = 32;
- 
- /// Build HNSW graph on GPU.
- #[allow(clippy::too_many_arguments)]
--pub fn build_hnsw_on_gpu<'a, 'b>(
--    gpu_insert_context: &mut GpuInsertContext<'b>,
-+pub fn build_hnsw_on_gpu<'a>(
-+    gpu_insert_context: &mut GpuInsertContext,
-     // Graph with all settings like m, ef, levels, etc.
-     reference_graph: &GraphLayersBuilder,
-     // Parallel inserts count.
-@@ -103,6 +103,7 @@ pub fn build_hnsw_on_gpu<'a, 'b>(
- #[cfg(test)]
- mod tests {
-     use std::borrow::Borrow;
-+    use std::sync::Arc;
- 
-     use common::ambient;
- 
-@@ -125,17 +126,19 @@ mod tests {
-         let instance = gpu::GPU_TEST_INSTANCE.clone();
-         let device = gpu::Device::new(instance.clone(), &instance.physical_devices()[0]).unwrap();
- 
--        let gpu_vector_storage = GpuVectorStorage::new(
--            device.clone(),
--            test.vector_storage.borrow(),
--            None,
--            false,
--            &false.into(),
--        )
--        .unwrap();
-+        let gpu_vector_storage = Arc::new(
-+            GpuVectorStorage::new(
-+                device.clone(),
-+                test.vector_storage.borrow(),
-+                None,
-+                false,
-+                &false.into(),
-+            )
-+            .unwrap(),
-+        );
- 
-         let mut gpu_search_context = GpuInsertContext::new(
--            &gpu_vector_storage,
-+            gpu_vector_storage,
-             groups_count,
-             test.graph_layers_builder.hnsw_m(),
-             test.graph_layers_builder.ef_construct(),
+@@ -12073,8 +12073,8 @@
+             "type": "boolean"
+           },
+           "pipnn_graph_building": {
+-            "description": "Build the main HNSW graph of large segments with PiPNN instead of inserting point by point. When disabled, PiPNN is *never* used and graphs are built with HNSW. When enabled, PiPNN is used where it applies: segments that are large enough, have no older graph to build from, and whose vectors support it. Only changes how graphs are built: the resulting graph has the same format either way.\n\nEnabled by default.",
+-            "default": true,
++            "description": "Build the main HNSW graph of large segments with PiPNN instead of inserting point by point. When disabled, PiPNN is *never* used and graphs are built with HNSW. When enabled, PiPNN is used where it applies: segments that are large enough, have no older graph to build from, and whose vectors support it. Only changes how graphs are built: the resulting graph has the same format either way.\n\nDisabled by default: PiPNN ignores `ef_construct`, so with it the graph quality of large segments can only be tuned through `m`.",
++            "default": false,
+             "type": "boolean"
+           },
+           "serverless_compatible": {
 ```
 
-**File**: `lib/segment/src/index/hnsw_index/gpu/gpu_insert_context.rs` (modified, +16/-14)
+**File**: `lib/common/common/src/flags.rs` (modified, +3/-2)
 ```diff
-@@ -28,11 +28,12 @@ pub struct GpuRequest {
- /// Structure to perform insert and update entries operations on GPU.
- /// It handles all GPU resources and shaders instead of gpu vector storage,
- /// which may be shared between multiple hnsw constructions.
--pub struct GpuInsertContext<'a> {
-+pub struct GpuInsertContext {
-     context: gpu::Context,
-     groups_count: usize,
+@@ -106,7 +106,8 @@ pub struct FeatureFlags {
+     /// no older graph to build from, and whose vectors support it. Only changes how graphs
+     /// are built: the resulting graph has the same format either way.
+     ///
+-    /// Enabled by default.
++    /// Disabled by default: PiPNN ignores `ef_construct`, so with it the graph quality of large
++    /// segments can only be tuned through `m`.
+     pub pipnn_graph_building: bool,
  
--    gpu_vector_storage: &'a GpuVectorStorage,
-+    /// Shared with whoever uploaded the vectors, so the vector buffers outlive the context.
-+    gpu_vector_storage: Arc<GpuVectorStorage>,
-     gpu_links: GpuLinks,
-     gpu_visited_flags: GpuVisitedFlags,
-     insert_resources: GpuInsertResources,
-@@ -178,9 +179,9 @@ impl GpuInsertResources {
-     }
- }
- 
--impl<'a> GpuInsertContext<'a> {
-+impl GpuInsertContext {
-     pub fn new(
--        gpu_vector_storage: &'a GpuVectorStorage,
-+        gpu_vector_storage: Arc<GpuVectorStorage>,
-         // Parallel inserts count.
-         groups_count: usize,
-         hnsw_m: HnswM,
-@@ -196,7 +197,7 @@ impl<'a> GpuInsertContext<'a> {
-         let device = gpu_vector_storage.device();
-         let points_count = gpu_vector_storage.num_vectors();
-         let insert_resources =
--            GpuInsertResources::new(gpu_vector_storage, groups_count, points_count, ef, exact)?;
-+            GpuInsertResources::new(&gpu_vector_storage, groups_count, points_count, ef, exact)?;
- 
-         let gpu_links = GpuLinks::new(device.clone(), hnsw_m.m, hnsw_m.m0, points_count)?;
- 
-@@ -209,15 +210,15 @@ impl<'a> GpuInsertContext<'a> {
- 
-         let greedy_search_shader = ShaderBuilder::new(device.clone())
-             .with_shader_code(include_str!("shaders/run_greedy_search.comp"))
--            .with_parameters(gpu_vector_storage)
-+            .with_parameters(gpu_vector_storage.as_ref())
-             .with_parameters(&gpu_links)
-             .with_parameters(&gpu_visited_flags)
-             .with_parameters(&insert_resources)
-             .build("run_greedy_search.comp")?;
- 
-         let insert_shader = ShaderBuilder::new(device.clone())
-             .with_shader_code(include_str!("shaders/run_insert_vector.comp"))
--            .with_parameters(gpu_vector_storage)
-+            .with_parameters(gpu_vector_storage.as_ref())
-             .with_parameters(&gpu_links)
-             .with_parameters(&gpu_visited_flags)
-             .with_parameters(&insert_resources)
-@@ -503,7 +504,7 @@ mod tests {
-         groups_count: usize,
-         m: usize,
-         ef: usize,
--        gpu_vector_storage: GpuVectorStorage,
-+        gpu_vector_storage: Arc<GpuVectorStorage>,
-         vector_holder: TestRawScorerProducer,
-         graph_layers_builder: GraphLayersBuilder,
-     }
-@@ -547,8 +548,9 @@ mod tests {
-         let instance = gpu::GPU_TEST_INSTANCE.clone();
-         let device = gpu::Device::new(instance.clone(), &instance.physical_devices()[0]).unwrap();
- 
--        let gpu_vector_storage =
--            GpuVectorStorage::new(device.clone(), &storage, None, false, &false.into()).unwrap();
-+        let gpu_vector_storage = Arc::new(
-+            GpuVectorStorage::new(device.clone(), &storage, None, false, &false.into()).unwrap(),
-+        );
- 
-         TestData {
-             groups_count,
-@@ -560,12 +562,12 @@ mod tests {
+     /// Serverless-compatible deployment mode. Implies [`Self::write_segment_manifest`],
+@@ -137,7 +138,7 @@ impl Default for FeatureFlags {
+             persist_proxy_segments: false,
+             combined_vector_storage: true,
+             versioned_deletes: false,
+-            pipnn_graph_building: true,
++            pipnn_graph_building: false,
+             serverless_compatible: false,
          }
      }
- 
--    fn create_insert_context(test_data: &TestData) -> GpuInsertContext<'_> {
-+    fn create_insert_context(test_data: &TestData) -> GpuInsertContext {
-         let total_num_vectors = test_data.gpu_vector_storage.num_vectors() + test_data.groups_count;
-         let point_ids = (0..total_num_vectors as PointOffsetType).collect_vec();
- 
-         let mut gpu_insert_context = GpuInsertContext::new(
--            &test_data.gpu_vector_storage,
-+            test_data.gpu_vector_storage.clone(),
-             test_data.groups_count,
-             HnswM::new(test_data.m, test_data.m),
-             test_data.ef,
-@@ -617,7 +619,7 @@ mod tests {
- 
-         let search_shader = ShaderBuilder::new(device.clone())
-             .with_shader_code(include_str!("shaders/tests/test_hnsw_search.comp"))
--            .with_parameters(gpu_insert_context.gpu_vector_storage)
-+            .with_parameters(gpu_insert_context.gpu_vector_storage.as_ref())
-             .with_parameters(&gpu_insert_context.gpu_links)
-             .with_parameters(&gpu_insert_context.gpu_visited_flags)
-             .with_parameters(&gpu_insert_context.insert_resources)
-@@ -894,7 +896,7 @@ mod tests {
-         // Create test pipeline
-         let shader = ShaderBuilder::new(device.clone())
-             .with_shader_code(include_str!("shaders/tests/test_heuristic.comp"))
--            .with_parameters(gpu_insert_context.gpu_vector_storage)
-+            .with_parameters(gpu_insert_context.gpu_vector_storage.as_ref())
-             .with_parameters(&gpu_insert_context.gpu_links)
-             .with_parameters(&gpu_insert_context.gpu_visited_flags)
-             .with_parameters(&gpu_insert_context.insert_resources)
 ```
 
-**File**: `lib/segment/src/index/hnsw_index/gpu/gpu_level_builder.rs` (modified, +12/-9)
+**File**: `lib/segment/src/index/hnsw_index/hnsw/build/graph_builder.rs` (modified, +2/-3)
 ```diff
-@@ -98,6 +98,7 @@ fn gpu_batched_apply_entries(batch: &Batch, new_entries: Vec<PointOffsetType>) {
- #[cfg(test)]
- mod tests {
-     use std::borrow::Borrow;
-+    use std::sync::Arc;
+@@ -1,6 +1,5 @@
+ use std::sync::atomic::AtomicU64;
  
-     use common::ambient;
-     use common::types::PointOffsetType;
-@@ -139,17 +140,19 @@ mod tests {
-         let instance = gpu::GPU_TEST_INSTANCE.clone();
-         let device = gpu::Device::new(instance.clone(), &instance.physical_devices()[0]).unwrap();
- 
--        let gpu_vector_storage = GpuVectorStorage::new(
--            device.clone(),
--            test.vector_storage.borrow(),
--            None,
--            false,
--            &false.into(),
--        )
--        .unwrap();
-+        let gpu_vector_storage = Arc::new(
-+            GpuVectorStorage::new(
-+                device.clone(),
-+                test.vector_storage.borrow(),
-+                None,
-+                false,
-+                &false.into(),
-+            )
-+            .unwrap(),
-+        );
- 
-         let mut gpu_search_context = GpuInsertContext::new(
--            &gpu_vector_storage,
-+            gpu_vector_storage,
-             groups_count,
-             hnsw_m,
-             ef,
+-use common::flags::feature_flags;
+ use common::types::PointOffsetType;
+ use rand::Rng;
+ use rayon::ThreadPool;
+@@ -12,7 +11,7 @@ use super::healing_builder::HealingBuilder;
+ use super::hnsw_builder::HnswBuilder;
+ use super::local_builder::LocalBuilder;
+ use super::payload_blocks::FieldBlocks;
+-use super::pipnn_builder::PipnnBuilder;
++use super::pipnn_builder::{self, PipnnBuilder};
+ use crate::common::operation_error::{OperationResult, check_process_stopped};
+ use crate::index::hnsw_index::gpu::gpu_devices_manager::LockedGpuDevice;
+ use crate::index::hnsw_index::graph_layers_builder::GraphLayersBuilder;
+@@ -113,7 +112,7 @@ impl<'a> GraphBuilder<'a> {
+         match old_index {
+             // Healing wins, also over PiPNN, which can't build incrementally
+             Some(old_index) => Self::Healing(HealingBuilder::from_local(local, old_index)),
+-            None if feature_flags().pipnn_graph_building => match PipnnBuilder::new(local) {
++            None if pipnn_builder::enabled() => match PipnnBuilder::new(local) {
+                 Ok(builder) => Self::Pipnn(builder),
+                 Err(local) => Self::Hnsw(HnswBuilder(*local)),
+             },
 ```
 
-**File**: `lib/segment/src/index/hnsw_index/hnsw/build.rs` (modified, +1/-5)
+**File**: `lib/segment/src/index/hnsw_index/hnsw/build/pipnn_builder.rs` (modified, +14/-2)
 ```diff
-@@ -214,7 +214,7 @@ impl HNSWIndex {
-             #[cfg(not(feature = "gpu"))]
-             let mut gpu_insert_context = None;
+@@ -1,6 +1,7 @@
+ use std::sync::atomic::AtomicU64;
+ use std::time::Instant;
  
--            let indexed_payload_vectors = build_additional_links(
-+            build_additional_links(
-                 id_tracker_ref.deref(),
-                 &vector_storage_ref,
-                 &quantized_vectors_ref,
-@@ -230,10 +230,6 @@ impl HNSWIndex {
-                 rng,
-                 stopped,
-             )?;
--
--            debug_assert!(indexed_vectors >= indexed_payload_vectors || config.m == 0);
--            indexed_vectors = indexed_vectors.max(indexed_payload_vectors);
--            debug_assert!(indexed_payload_vectors <= total_vector_count);
-         } else {
-             debug!("skip building additional HNSW links");
-         }
-```
-
-**File**: `lib/segment/src/index/hnsw_index/hnsw/build/additional_links.rs` (modified, +4/-19)
-```diff
-@@ -6,7 +6,7 @@ use std::collections::HashMap;
- use std::sync::atomic::AtomicBool;
- 
- use common::ambient;
--use common::bitvec::{BitSliceExt as _, BitVec};
-+use common::bitvec::BitSliceExt as _;
- use common::progress_tracker::ProgressTracker;
- use common::reason::reason;
- use common::types::{DeferredBehavior, PointOffsetType};
-@@ -83,8 +83,6 @@ fn in_build_order(
- ///
- /// With an `old_index` (whose payload links have the same `m`), each block starts from the
- /// links its points had to each other in the old graph; see [`BlockSeeds`].
--///
--/// Returns the number of vectors that got indexed through these subgraphs.
- #[allow(clippy::too_many_arguments)]
- #[cfg_attr(
-     not(feature = "gpu"),
-@@ -95,7 +93,7 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
-     vector_storage: &VectorStorageEnum,
-     quantized_vectors: &Option<QuantizedVectors>,
-     payload_index: &StructPayloadIndex,
--    gpu_insert_context: &mut Option<GpuInsertContext<'_>>,
-+    gpu_insert_context: &mut Option<GpuInsertContext>,
-     graph_layers_builder: &mut GraphLayersBuilder,
-     config: &HnswGraphConfig,
-     payload_m: HnswM,
-@@ -105,7 +103,7 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
-     pool: &ThreadPool,
-     rng: &mut R,
-     stopped: &AtomicBool,
--) -> OperationResult<usize> {
-+) -> OperationResult<()> {
-     let total_vector_count = vector_storage.total_vector_count();
-     let deleted_bitslice = vector_storage.deleted_vector_bitslice();
- 
-@@ -156,13 +154,6 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
-     let mut seeded_points = 0;
-     let mut block_points = 0;
- 
--    let mut indexed_vectors_set = if config.m != 0 {
--        // Every vector is already indexed in the main graph, so skip counting.
--        BitVec::new()
--    } else {
--        BitVec::repeat(false, total_vector_count)
--    };
--
-     // The GPU stores vectors and links by segment id, so it builds blocks in a segment-sized
-     // builder. This one only carries the block graph's settings: `payload_m`, `ef_construct`
-     // and level 0 for every point.
-@@ -245,12 +236,6 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
-                 trace!("graph connectivity: {graph_connectivity} for {field}");
-             }
- 
--            if !indexed_vectors_set.is_empty() {
--                for &point_id in &points_to_index {
--                    indexed_vectors_set.set(point_id as usize, true);
--                }
--            }
--
-             #[cfg(feature = "gpu")]
-             if let (Some(gpu_insert_context), Some(reference_graph)) =
-                 (gpu_insert_context.as_mut(), &gpu_block_reference)
-@@ -318,7 +303,7 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
-     if seeds.is_some() {
-         debug!("seeded {seeded_points} of {block_points} payload block points from the old graph");
-     }
--    Ok(indexed_vectors_set.count_ones())
-+    Ok(())
++use common::flags::feature_flags;
+ use common::types::PointOffsetType;
+ use log::debug;
+ use rand::RngExt as _;
+@@ -27,6 +28,16 @@ thread_local! {
+     static MIN_POINTS_OVERRIDE: std::cell::Cell<Option<usize>> = const { std::cell::Cell::new(None) };
  }
  
- /// Get list of points for indexing, associated with payload block filtering condition
-```
-
-**File**: `lib/segment/src/index/hnsw_index/hnsw/gpu_build.rs` (modified, +12/-10)
-```diff
-@@ -1,3 +1,4 @@
-+use std::sync::Arc;
- use std::sync::atomic::AtomicBool;
- 
- use common::ambient;
-@@ -36,12 +37,13 @@ pub(super) fn upload_and_build_main_graph(
-     deleted_bitslice: &BitSlice,
-     entry_points_num: usize,
-     stopped: &AtomicBool,
--) -> OperationResult<(Option<GpuVectorStorage>, Option<GraphLayersBuilder>)> {
-+) -> OperationResult<(Option<Arc<GpuVectorStorage>>, Option<GraphLayersBuilder>)> {
-     if !(build_main_graph || has_additional_links) {
-         return Ok((None, None));
-     }
-     let timer = std::time::Instant::now();
--    let gpu_vectors = create_gpu_vectors(gpu_device, vector_storage, quantized_vectors, stopped)?;
-+    let gpu_vectors =
-+        create_gpu_vectors(gpu_device, vector_storage, quantized_vectors, stopped)?.map(Arc::new);
-     if !build_main_graph {
-         return Ok((gpu_vectors, None));
-     }
-@@ -66,7 +68,7 @@ fn build_main_graph_on_gpu(
-     id_tracker: &IdTrackerEnum,
-     vector_storage: &VectorStorageEnum,
-     quantized_vectors: &Option<QuantizedVectors>,
--    gpu_vectors: Option<&GpuVectorStorage>,
-+    gpu_vectors: Option<&Arc<GpuVectorStorage>>,
-     graph_layers_builder: &GraphLayersBuilder,
-     deleted_bitslice: &BitSlice,
-     entry_points_num: usize,
-@@ -84,7 +86,7 @@ fn build_main_graph_on_gpu(
- 
-     let mut gpu_insert_context = if let Some(gpu_vectors) = gpu_vectors {
-         Some(GpuInsertContext::new(
--            gpu_vectors,
-+            gpu_vectors.clone(),
-             get_gpu_groups_count(),
-             graph_layers_builder.hnsw_m(),
-             graph_layers_builder.ef_construct(),
-@@ -113,7 +115,7 @@ pub(super) fn build_block_on_gpu(
-     id_tracker: &IdTrackerEnum,
-     vector_storage: &VectorStorageEnum,
-     quantized_vectors: &Option<QuantizedVectors>,
--    gpu_insert_context: &mut GpuInsertContext<'_>,
-+    gpu_insert_context: &mut GpuInsertContext,
-     reference_graph: &GraphLayersBuilder,
-     points_to_index: &[PointOffsetType],
-     stopped: &AtomicBool,
-@@ -138,8 +140,8 @@ pub(super) fn build_block_on_gpu(
-     )
++/// Whether PiPNN may build on this thread: the `pipnn_graph_building` feature flag, or
++/// always within [`with_pipnn_min_points`].
++pub(super) fn enabled() -> bool {
++    #[cfg(feature = "testing")]
++    if MIN_POINTS_OVERRIDE.get().is_some() {
++        return true;
++    }
++    feature_flags().pipnn_graph_building
++}
++
+ /// Fewest points for a PiPNN main graph on this thread.
+ fn min_points() -> usize {
+     #[cfg(feature = "testing")]
+@@ -36,8 +47,9 @@ fn min_points() -> usize {
+     PIPNN_MIN_POINTS
  }
  
--fn build_graph_on_gpu<'a, 'b>(
--    gpu_insert_context: Option<&mut GpuInsertContext<'b>>,
-+fn build_graph_on_gpu<'a>(
-+    gpu_insert_context: Option<&mut GpuInsertContext>,
-     graph_layers_builder: &GraphLayersBuilder,
-     points_to_index: impl Iterator<Item = PointOffsetType>,
-     entry_points_num: usize,
-@@ -216,14 +218,14 @@ fn create_gpu_vectors(
- }
- 
- pub(super) fn create_gpu_insert_context(
--    gpu_vectors: Option<&GpuVectorStorage>,
-+    gpu_vectors: Option<&Arc<GpuVectorStorage>>,
-     payload_m: HnswM,
-     ef_construct: usize,
--) -> OperationResult<Option<GpuInsertContext<'_>>> {
-+) -> OperationResult<Option<GpuInsertContext>> {
-     gpu_vectors
-         .map(|gpu_vectors| {
-             GpuInsertContext::new(
--                gpu_vectors,
-+                gpu_vectors.clone(),
-                 get_gpu_groups_count(),
-                 payload_m,
-                 ef_construct,
-```
-
-**File**: `lib/segment/src/index/hnsw_index/mod.rs` (modified, +1/-3)
-```diff
-@@ -67,9 +67,7 @@ pub mod gpu {
- 
-     pub mod gpu_insert_context {
-         /// Placeholder for GPU insertion context to process indexing on.
--        pub struct GpuInsertContext<'a> {
--            phantom: std::marker::PhantomData<&'a usize>,
--        }
-+        pub struct GpuInsertContext {}
-     }
- 
-     pub mod gpu_vector_storage {
+-/// Run `f` with PiPNN's minimum segment size lowered to `min_points` on this thread, so that
+-/// tests can build small segments with PiPNN. `usize::MAX` keeps every build on HNSW.
++/// Run `f` with PiPNN enabled and its minimum segment size lowered to `min_points` on this
++/// thread, so that tests can build small segments with PiPNN, whatever the feature flag says.
++/// `usize::MAX` keeps every build on HNSW.
+ #[cfg(feature = "testing")]
+ pub fn with_pipnn_min_points<R>(min_points: usize, f: impl FnOnce() -> R) -> R {
+     /// Restores the previous value, also when `f` panics.
 ```
 
 ---
 
-### Incident Patch 2: `1d4bcbb8` (2026-10-21)
-**Commit Message**: fix(object-storage-snapshot): add option to override client settings for timeouts and retries (#11289)
+### Incident Patch 2: `0d79e520` (2026-11-13)
+**Commit Message**: Make ctrlc an optional dependency of service_debug (#11540)
 
-* fix(s3-snapshot): add option to override s3 client settings
+Only the model_testing binary uses it, and that binary requires
+service_debug, so default builds warned about an unused dependency.
 
-* feat(gcs,azure-blob-storage): also be able to configure timeouts and retries
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-For parity.
-
-(cherry picked from commit 17161f79c946a74d11f9c715f9f388090cbe0f91)
-
-**File**: `config/config.yaml` (modified, +15/-0)
+**File**: `Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -37,6 +37,11 @@ storage:
-     #   secret_key: ""
-     #   # Custom endpoint, for MinIO and similar
-     #   endpoint_url: ""
-+    #   # Timeouts and retries, in seconds
-+    #   timeout_sec: 30
-+    #   connect_timeout_sec: 5
-+    #   max_retries: 10
-+    #   retry_timeout_sec: 180
+@@ -19,7 +19,7 @@ workspace = true
  
-     # Google Cloud Storage. Without credential fields, Application Default
-     # Credentials are used: GOOGLE_* environment, gcloud config or the
-@@ -51,6 +56,11 @@ storage:
-     #   application_credentials_path: ""
-     #   # Custom endpoint, for fake-gcs-server and similar
-     #   endpoint_url: ""
-+    #   # Timeouts and retries, same as in s3_config
-+    #   timeout_sec: 30
-+    #   connect_timeout_sec: 5
-+    #   max_retries: 10
-+    #   retry_timeout_sec: 180
- 
-     # Azure Blob Storage. Without credential fields, the default chain is
-     # used: AZURE_* environment, managed identity or the Azure CLI.
-@@ -67,6 +77,11 @@ storage:
-     #   tenant_id: ""
-     #   # Custom endpoint, for Azurite and similar
-     #   endpoint_url: ""
-+    #   # Timeouts and retries, same as in s3_config
-+    #   timeout_sec: 30
-+    #   connect_timeout_sec: 5
-+    #   max_retries: 10
-+    #   retry_timeout_sec: 180
- 
-   # Where to store temporary files
-   # If null, temporary snapshots are stored in: storage/snapshots_temp/
-```
-
-**File**: `lib/collection/src/common/snapshots_manager.rs` (modified, +270/-25)
-```diff
-@@ -1,15 +1,16 @@
-+use std::num::NonZeroU64;
- use std::path::{Path, PathBuf};
-+use std::time::Duration;
- 
- use common::defaults::APP_USER_AGENT;
- use common::tempfile_ext::MaybeTempPath;
- use fs_err as fs;
- use fs_err::tokio as tokio_fs;
--use http::HeaderValue;
--use object_store::aws::AmazonS3Builder;
-+use object_store::aws::{AmazonS3Builder, AmazonS3ConfigKey};
- use object_store::azure::{AzureConfigKey, MicrosoftAzureBuilder};
--use object_store::gcp::GoogleCloudStorageBuilder;
-+use object_store::gcp::{GoogleCloudStorageBuilder, GoogleConfigKey};
- use object_store::prefix::PrefixStore;
--use object_store::{ClientOptions, ObjectStoreExt};
-+use object_store::{ClientConfigKey, ObjectStoreExt, RetryConfig};
- use serde::Deserialize;
- use tempfile::TempPath;
- use tokio::io::AsyncWriteExt;
-@@ -55,6 +56,14 @@ pub struct S3Config {
-     pub access_key: Option<String>,
-     pub secret_key: Option<String>,
-     pub endpoint_url: Option<String>,
-+    /// Request timeout. Overrides `AWS_TIMEOUT`.
-+    pub timeout_sec: Option<NonZeroU64>,
-+    /// Connect timeout. Overrides `AWS_CONNECT_TIMEOUT`.
-+    pub connect_timeout_sec: Option<NonZeroU64>,
-+    /// Retries for a failed request. 0 disables retries.
-+    pub max_retries: Option<usize>,
-+    /// How long to keep retrying after the first attempt.
-+    pub retry_timeout_sec: Option<u64>,
- }
- 
- /// Google Cloud Storage connection parameters.
-@@ -75,6 +84,14 @@ pub struct GcsConfig {
-     pub application_credentials_path: Option<String>,
-     /// Custom base URL, for emulators such as fake-gcs-server.
-     pub endpoint_url: Option<String>,
-+    /// See [`S3Config::timeout_sec`]. Overrides `GOOGLE_TIMEOUT`.
-+    pub timeout_sec: Option<NonZeroU64>,
-+    /// See [`S3Config::connect_timeout_sec`]. Overrides `GOOGLE_CONNECT_TIMEOUT`.
-+    pub connect_timeout_sec: Option<NonZeroU64>,
-+    /// See [`S3Config::max_retries`].
-+    pub max_retries: Option<usize>,
-+    /// See [`S3Config::retry_timeout_sec`].
-+    pub retry_timeout_sec: Option<u64>,
- }
- 
- /// Azure Blob Storage connection parameters.
-@@ -99,6 +116,14 @@ pub struct AzureConfig {
-     pub tenant_id: Option<String>,
-     /// Custom endpoint URL, for emulators such as Azurite.
-     pub endpoint_url: Option<String>,
-+    /// See [`S3Config::timeout_sec`]. Overrides `AZURE_TIMEOUT`.
-+    pub timeout_sec: Option<NonZeroU64>,
-+    /// See [`S3Config::connect_timeout_sec`]. Overrides `AZURE_CONNECT_TIMEOUT`.
-+    pub connect_timeout_sec: Option<NonZeroU64>,
-+    /// See [`S3Config::max_retries`].
-+    pub max_retries: Option<usize>,
-+    /// See [`S3Config::retry_timeout_sec`].
-+    pub retry_timeout_sec: Option<u64>,
- }
- 
- pub struct SnapshotStorageCloud {
-@@ -137,23 +162,108 @@ pub enum SnapshotStorageManager {
-     Cloud(SnapshotStorageCloud),
- }
- 
--/// HTTP client options shared by all object store backends.
--///
--/// Identifies Qdrant with its user agent so providers can attribute snapshot traffic.
--/// Plain HTTP is only allowed for explicitly configured `http://` endpoints, which
--/// are typically local emulators.
--fn client_options(endpoint_url: Option<&str>) -> ClientOptions {
--    let allow_http = endpoint_url.is_some_and(|url| url.starts_with("http://"));
--    let mut options = ClientOptions::new().with_allow_http(allow_http);
--    if let Ok(user_agent) = HeaderValue::from_str(APP_USER_AGENT.as_str()) {
--        options = options.with_user_agent(user_agent);
-+/// HTTP client settings that every object store backend accepts.
-+#[derive(Clone, Copy, Debug, Default)]
-+struct ClientSettings<'a> {
-+    endpoint_url: Option<&'a str>,
-+    timeout_sec: Option<NonZeroU64>,
-+    connect_timeout_sec: Option<NonZeroU64>,
-+    max_retries: Option<usize>,
-+    retry_timeout_sec: Option<u64>,
-+}
-+
-+impl<'a> From<&'a S3Config> for ClientSettings<'a> {
-+    fn from(config: &'a S3Config) -> Self {
-+        Self {
-+            endpoint_url: config.endpoint_url.as_deref(),
-+            timeout_sec: config.timeout_sec,
-+            connect_timeout_sec: config.connect_timeout_sec,
-+            max_retries: config.max_retries,
-+            retry_timeout_sec: config.retry_timeout_sec,
-+        }
-+    }
-+}
-+
-+impl<'a> From<&'a GcsConfig> for ClientSettings<'a> {
-+    fn from(config: &'a GcsConfig) -> Self {
-+        Self {
-+            endpoint_url: config.endpoint_url.as_deref(),
-+            timeout_sec: config.timeout_sec,
-+            connect_timeout_sec: config.connect_timeout_sec,
-+            max_retries: config.max_retries,
-+            retry_timeout_sec: config.retry_timeout_sec,
-+        }
-+    }
-+}
-+
-+impl<'a> From<&'a AzureConfig> for ClientSettings<'a> {
-+    fn from(config: &'a AzureConfig) -> Self {
-+        Self {
-+            endpoint_url: config.endpoint_url.as_deref(),
-+            timeout_sec: config.timeout_sec,
-+            connect_timeout_sec: config.connect_timeout_sec,
-+            max_retries: config.max_retries,
-+            retry_timeout_sec: config.retry_timeout_sec,
-+        }
-+    }
-+}
-+
-+impl ClientSetting
-```
-
----
-
-### Incident Patch 3: `1079e85c` (2026-10-21)
-**Commit Message**: fix: enforce CRC64NVME for S3 writes (#11262)
-
-* fix: retry SHA256-checksummed S3 appends
-
-* test: fix object-store integration setup
-
-* fix: enforce CRC64NVME for S3 writes
-
-* chore: drop the snapshot manager change
-
-(cherry picked from commit 38bec7e76d2ff23edb556a5defb3ffac9d24e124)
-
-**File**: `Cargo.lock` (modified, +2/-0)
-```diff
-@@ -3916,6 +3916,8 @@ version = "0.0.0"
- dependencies = [
-  "bytes",
-  "common",
-+ "crc-fast",
-+ "data-encoding",
-  "futures",
-  "http 1.5.0",
-  "io_bridge",
-```
-
-**File**: `Cargo.toml` (modified, +4/-1)
-```diff
-@@ -118,7 +118,7 @@ raft-proto = { git = "https://github.com/tikv/raft-rs", rev = "aafb07c7bab439c61
-     "prost-codec",
- ], default-features = false }
- 
--common = { path = "lib/common/common" }
-+common = { workspace = true }
- cancel = { path = "lib/common/cancel" }
- issues = { path = "lib/common/issues" }
- segment = { path = "lib/segment", default-features = false }
-@@ -220,7 +220,9 @@ bytes = "1.11.1"
- cc = "1.2"
- chrono = { version = "0.4.44", features = ["serde"] }
- clap = { version = "4.6.1", features = ["derive", "env"] }
-+common = { path = "lib/common/common" }
- core_affinity = "0.8.3"
-+crc-fast = "1.10.0"
- criterion = "0.8.2"
- data-encoding = "2.11.0"
- duplicate = { version = "2.0.1", default-features = false }
-@@ -246,6 +248,7 @@ url = { version = "2.5.8", features = ["serde"] }
- urlencoding = "2.1.3"
- indicatif = { version = "0.18.4", features = ["rayon"] }
- integer-encoding = "4.1.0"
-+io_bridge = { path = "lib/common/io_bridge" }
- itertools = "0.15.0"
- log = "0.4.31"
- memchr = "2.8.0"
-```
-
-**File**: `lib/common/io_bridge_object_store/Cargo.toml` (modified, +5/-3)
-```diff
-@@ -8,15 +8,17 @@ publish = false
- workspace = true
- 
- [dependencies]
--common = { path = "../common" }
--io_bridge = { path = "../io_bridge" }
- bytes = { workspace = true }
-+common = { workspace = true }
-+crc-fast = { workspace = true }
-+data-encoding = { workspace = true }
+ [features]
+ default = []
+-service_debug = ["parking_lot/deadlock_detection", "collection/testing"]
++service_debug = ["parking_lot/deadlock_detection", "collection/testing", "dep:ctrlc"]
+ tracing = [
+     "api/tracing",
+     "collection/tracing",
+@@ -70,7 +70,7 @@ anyhow = "1.0.98"
  futures = { workspace = true }
- http = { workspace = true }
-+io_bridge = { workspace = true }
- object_store = { workspace = true }
- tokio = { workspace = true }
- url = { workspace = true }
- 
- [dev-dependencies]
--common = { path = "../common", features = ["testing"] }
-+common = { workspace = true, features = ["testing"] }
- tempfile = { workspace = true }
-```
-
-**File**: `lib/common/io_bridge_object_store/src/append/context/aws_tests.rs` (added, +173/-0)
-```diff
-@@ -0,0 +1,173 @@
-+use bytes::Bytes;
-+use object_store::ObjectStoreExt as _;
-+use object_store::aws::AmazonS3;
-+use object_store::path::Path;
-+
-+use super::stub::{StubResponse, stub_server};
-+use crate::BlobBackend as _;
-+use crate::backends::aws::{AwsConfig, AwsCredentials};
-+
-+fn assert_crc64nvme_uploads(credentials: AwsCredentials) {
-+    let (endpoint, seen) = stub_server(vec![
-+        StubResponse::new(200).header("etag", "\"put\""),
-+        StubResponse::new(200).body(
-+            "<InitiateMultipartUploadResult><UploadId>upload-1</UploadId>\
-+             </InitiateMultipartUploadResult>",
-+        ),
-+        StubResponse::new(200)
-+            .header("etag", "\"part\"")
-+            .header("x-amz-checksum-crc64nvme", "rosUhgp5mIg="),
-+        StubResponse::new(200).body(
-+            "<CompleteMultipartUploadResult><ETag>\"complete\"</ETag>\
-+             </CompleteMultipartUploadResult>",
-+        ),
-+    ]);
-+    let store = AmazonS3::build_store(&AwsConfig {
-+        bucket: "bucket".into(),
-+        region: Some("us-east-1".into()),
-+        endpoint: Some(endpoint),
-+        s3_express: false,
-+        native_append: false,
-+        credentials,
-+    })
-+    .unwrap();
-+    io_bridge::BridgeRuntime::global().block_on(async {
-+        let key = Path::from("checksum.dat");
-+        store
-+            .put(&key, Bytes::from_static(b"123456789").into())
-+            .await
-+            .unwrap();
-+        let mut upload = store.put_multipart(&key).await.unwrap();
-+        upload
-+            .put_part(Bytes::from_static(b"123456789").into())
-+            .await
-+            .unwrap();
-+        upload.complete().await.unwrap();
-+    });
-+    let seen = seen.lock().unwrap();
-+    assert_eq!(seen.len(), 4);
-+    for request in [&seen[0], &seen[2]] {
-+        assert_eq!(request.headers["x-amz-checksum-crc64nvme"], "rosUhgp5mIg=");
-+        assert!(!request.headers.contains_key("x-amz-checksum-sha256"));
-+    }
-+    assert_eq!(seen[1].headers["x-amz-checksum-algorithm"], "CRC64NVME");
-+    assert!(
-+        String::from_utf8_lossy(&seen[3].body)
-+            .contains("<ChecksumCRC64NVME>rosUhgp5mIg=</ChecksumCRC64NVME>")
-+    );
-+}
-+
-+#[test]
-+fn static_credentials_uploads_use_crc64nvme() {
-+    assert_crc64nvme_uploads(AwsCredentials::Static {
-+        access_key_id: "id".into(),
-+        secret_access_key: "secret".into(),
-+        session_token: None,
-+    });
-+}
-+
-+#[test]
-+fn uploads_override_sha256_from_the_environment() {
-+    const CHILD: &str = "QDRANT_CRC64_CHECKSUM_TEST";
-+    if std::env::var_os(CHILD).is_some() {
-+        assert_crc64nvme_uploads(AwsCredentials::Default);
-+        return;
-+    }
-+    let status = std::process::Command::new(std::env::current_exe().unwrap())
-+        .args([
-+            "--exact",
-+            "append::context::aws_tests::uploads_override_sha256_from_the_environment",
-+            "--nocapture",
-+        ])
-+        .env(CHILD, "1")
-+        .env("AWS_CHECKSUM_ALGORITHM", "SHA256")
-+        .env("AWS_ACCESS_KEY_ID", "id")
-+        .env("AWS_SECRET_ACCESS_KEY", "secret")
-+        .env_remove("AWS_SESSION_TOKEN")
-+        .status()
-+        .unwrap();
-+    assert!(status.success());
-+}
-+
-+#[test]
-+#[ignore = "requires S3 Express credentials and S3_EXPRESS_INTEGRATION_TEST=1"]
-+fn crc64nvme_survives_uploads_appends_and_multipart_rewrites() {
-+    if std::env::var("S3_EXPRESS_INTEGRATION_TEST").as_deref() != Ok("1") {
-+        return;
-+    }
-+    let config = AwsConfig {
-+        bucket: std::env::var("S3_EXPRESS_BUCKET").expect("S3_EXPRESS_BUCKET"),
-+        region: Some(std::env::var("AWS_REGION").expect("AWS_REGION")),
-+        endpoint: None,
-+        s3_express: true,
-+        native_append: false,
-+        credentials: AwsCredentials::Default,
-+    };
-+    let store = std::sync::Arc::new(AmazonS3::build_store(&config).unwrap());
-+    let super::AppendContext::Native(native) = AmazonS3::append_context(&config).unwrap().unwrap()
-+    else {
-+        panic!("expected native append");
-+    };
-+    let nonce = std::time::SystemTime::now()
-+        .duration_since(std::time::UNIX_EPOCH)
-+        .unwrap()
-+        .as_nanos();
-+    let key = Path::from(format!(
-+        "_integration_tests/crc64-lifecycle-{}-{nonce}.dat",
-+        std::process::id()
-+    ));
-+    io_bridge::BridgeRuntime::global().block_on(async {
-+        let seed = Bytes::from(vec![b'x'; 5 * 1024 * 1024]);
-+        let result = async {
-+            store.put(&key, seed.clone().into()).await?;
-+            native
-+                .append(&store, &key, seed.len() as u64, Bytes::from_static(b"-put"))
-+                .await?;
-+
-+            let mut upload = store.put_multipart(&key).await?;
-+            let uploaded = async {
-+                upload.put_part(seed.clone().into()).await?;
-+                upload
-+                    .put_part(Bytes::from_static(b"-multipart").into())
-+                    .await?;
-+                upload.complete().await
-+            }
-+            .await;
-+ 
-```
-
-**File**: `lib/common/io_bridge_object_store/src/append/context/mod.rs` (modified, +7/-0)
-```diff
-@@ -1,6 +1,8 @@
- //! The append strategies: one object per strategy, each implementing its
- //! own append logic, combined by [`AppendContext`].
- 
-+#[cfg(test)]
-+mod aws_tests;
- mod compose;
- mod native;
- pub(super) mod part_copy;
-@@ -13,6 +15,11 @@ pub use native::NativeAppend;
- pub use part_copy::PartCopyAppend;
- pub use signed::SignedRequestContext;
- 
-+fn crc64nvme(data: &[u8]) -> String {
-+    let checksum = crc_fast::checksum(crc_fast::CrcAlgorithm::Crc64Nvme, data);
-+    data_encoding::BASE64.encode(&checksum.to_be_bytes())
-+}
-+
- /// Text of the first `<tag>…</tag>` element in an S3 XML response, with
- /// surrounding whitespace trimmed. Tolerates attributes on the opening tag
- /// (`<Error xmlns="…">`) and pretty-printed bodies. Deliberately not a
-```
-
-**File**: `lib/common/io_bridge_object_store/src/append/context/native.rs` (modified, +10/-317)
-```diff
-@@ -8,10 +8,7 @@
- //!
- //! The write-offset append API exists on AWS S3 Express One Zone directory
- //! buckets and on S3-compatible stores that adopted it (e.g. MinIO AiStor) —
--//! plain S3 Standard buckets reject it. MinIO-AiStor-compatible stores are
--//! the primary supported target for now; real S3 Express directory buckets
--//! use zonal endpoints and session-token auth that have not been verified
--//! against this implementation yet.
-+//! plain S3 Standard buckets reject it.
- 
- use std::path::PathBuf;
- use std::sync::Arc;
-@@ -23,6 +20,7 @@ use object_store::ObjectStoreExt as _;
- use object_store::aws::{AmazonS3, AwsAuthorizer};
- use object_store::client::HttpRequestBody;
- 
-+use super::crc64nvme;
- use super::part_copy::PartCopyAppend;
- use super::signed::SignedRequestContext;
- 
-@@ -45,11 +43,7 @@ const NO_SUCH_KEY_CODE: &str = "NoSuchKey";
- /// a whole-object rewrite.
- const TOO_MANY_PARTS_CODE: &str = "TooManyParts";
- 
--/// Total attempts for one append: transient failures (connection errors,
--/// 5xx, 429) are retried with a short linear backoff, like `object_store`
--/// does for its own requests. Retrying is safe: the write offset acts as a
--/// compare-and-swap, and a conflict caused by a lost-acknowledgement
--/// attempt is reconciled in [`append_request`].
-+/// Retry limit for connection errors, 5xx and 429 responses.
- const MAX_ATTEMPTS: u32 = 3;
- 
- /// Backoff before retry attempt `n` is `n * RETRY_BACKOFF`.
-@@ -111,6 +105,8 @@ async fn append_request(
-     // object_store crate does not support the append operation.
-     // See: <https://github.com/apache/arrow-rs-object-store/issues/632>
-     let mut attempt = 1;
-+    let checksum = crc64nvme(&data);
-+    let mut may_have_appended = false;
-     loop {
-         // Built and signed per attempt: the SigV4 signature embeds the
-         // request date. Building can fail — `url` accepts URIs the `http`
-@@ -119,6 +115,7 @@ async fn append_request(
-             .method(http::Method::PUT)
-             .uri(url.as_str())
-             .header(WRITE_OFFSET_HEADER, offset.to_string())
-+            .header("x-amz-checksum-crc64nvme", &checksum)
-             .body(HttpRequestBody::from(data.clone()))
-             .map_err(|err| UniversalIoError::S3Config {
-                 description: format!("append request for {key}: {err}"),
-@@ -134,6 +131,7 @@ async fn append_request(
-         let response = match client.execute(request).await {
-             Ok(response) => response,
-             Err(_) if attempt < MAX_ATTEMPTS => {
-+                may_have_appended = true;
-                 tokio::time::sleep(RETRY_BACKOFF * attempt).await;
-                 attempt += 1;
-                 continue;
-@@ -145,6 +143,7 @@ async fn append_request(
-         if (status.is_server_error() || status == http::StatusCode::TOO_MANY_REQUESTS)
-             && attempt < MAX_ATTEMPTS
-         {
-+            may_have_appended = true;
-             tokio::time::sleep(RETRY_BACKOFF * attempt).await;
-             attempt += 1;
-             continue;
-@@ -232,7 +231,7 @@ async fn append_request(
-             // A conflict on a retried attempt may just mean the earlier,
-             // lost-acknowledgement attempt landed; under the single-writer
-             // contract a matching object size proves the tail is ours.
--            if attempt > 1
-+            if may_have_appended
-                 && let Ok(meta) = store.head(key).await
-                 && meta.size == offset + data_len
-             {
-@@ -267,310 +266,4 @@ async fn append_request(
- }
- 
- #[cfg(test)]
--mod tests {
--    use std::assert_matches;
--
--    use object_store::aws::AmazonS3Builder;
--    use url::Url;
--
--    use super::super::stub::{StubResponse, stub_server, stub_store_and_context};
--    use super::*;
--
--    /// Request building failures (URIs the `http` crate rejects) surface as
--    /// errors instead of panics. Fails before any network IO.
--    #[test]
--    fn unbuildable_request_is_an_error_not_a_panic() {
--        let store = Arc::new(
--            AmazonS3Builder::new()
--                .with_bucket_name("bucket")
--                .with_region("us-east-1")
--                .with_access_key_id("id")
--                .with_secret_access_key("secret")
--                .build()
--                .unwrap(),
--        );
--        let context = SignedRequestContext::new(
--            true,
--            "bucket".to_string(),
--            Url::parse("http://localhost:9000/bucket").unwrap(),
--            "us-east-1".to_string(),
--            "s3",
--        );
--        // `url` accepts this; `http` caps URIs at u16::MAX bytes.
--        let key = object_store::path::Path::from("k".repeat(70_000));
--
--        let result = io_bridge::BridgeRuntime::global().block_on(
--            NativeAppend::new(context).append(&store, &key, 0, Bytes::from_static(b"data")),
--        );
--        assert!(matches!(result, Err(UniversalIoError::S3Config { .. })));
--    }
--
--    /// Append `b"data"` at `offset` to `dir/append.dat` via the stub, so a
-```
-
-**File**: `lib/common/io_bridge_object_store/src/append/context/native/tests.rs` (added, +348/-0)
-```diff
-@@ -0,0 +1,348 @@
-+use std::assert_matches;
-+
-+use object_store::aws::AmazonS3Builder;
-+use url::Url;
-+
-+use super::super::stub::{StubResponse, stub_server, stub_store_and_context};
-+use super::*;
-+
-+fn checksum_mismatch() -> StubResponse {
-+    StubResponse::new(400).body(
-+        "<Error><Code>InvalidRequest</Code><Message>Checksum Type mismatch occurred, \
-+         expected checksum Type: sha256, actual checksum Type: crc64nvme.</Message></Error>",
-+    )
-+}
-+
-+#[test]
-+fn append_always_sends_the_crc64nvme_of_the_new_bytes() {
-+    let (endpoint, seen) = stub_server(vec![success_with_size(9)]);
-+    assert_eq!(append_data_at(&endpoint, 5).unwrap(), 9);
-+
-+    let seen = seen.lock().unwrap();
-+    let [request] = &seen[..] else {
-+        panic!("expected one append");
-+    };
-+    assert_eq!(request.headers["x-amz-checksum-crc64nvme"], "7a5hQ478J4A=");
-+    assert!(!request.headers.contains_key("x-amz-checksum-sha256"));
-+    assert!(
-+        request.headers["authorization"]
-+            .to_str()
-+            .unwrap()
-+            .contains("x-amz-checksum-crc64nvme")
-+    );
-+    assert_eq!(request.write_offset.as_deref(), Some("5"));
-+    assert_eq!(request.body, b"data");
-+}
-+
-+#[test]
-+fn checksum_mismatch_stops_without_switching_algorithms() {
-+    let (endpoint, seen) = stub_server(vec![checksum_mismatch()]);
-+    let err = append_data_at(&endpoint, 5).unwrap_err();
-+    assert!(err.to_string().contains("Checksum Type mismatch"), "{err}");
-+    assert_eq!(seen.lock().unwrap().len(), 1);
-+}
-+
-+#[test]
-+fn checksum_mismatch_after_an_uncertain_write_does_not_retry_or_reconcile() {
-+    let (endpoint, seen) = stub_server(vec![StubResponse::new(503), checksum_mismatch()]);
-+    let err = append_data_at(&endpoint, 5).unwrap_err();
-+    assert!(err.to_string().contains("Checksum Type mismatch"), "{err}");
-+    assert_eq!(seen.lock().unwrap().len(), 2);
-+}
-+
-+#[test]
-+fn crc64nvme_append_preserves_lost_acknowledgement_recovery() {
-+    let (endpoint, seen) = stub_server(vec![
-+        StubResponse::new(503),
-+        write_offset_conflict(),
-+        head_with_size(9),
-+    ]);
-+
-+    assert_eq!(append_data_at(&endpoint, 5).unwrap(), 9);
-+
-+    let seen = seen.lock().unwrap();
-+    assert_eq!(seen.len(), 3);
-+    assert_eq!(seen[2].method, "HEAD");
-+    for request in &seen[..2] {
-+        assert_eq!(request.headers["x-amz-checksum-crc64nvme"], "7a5hQ478J4A=");
-+        assert!(!request.headers.contains_key("x-amz-checksum-sha256"));
-+    }
-+}
-+
-+#[test]
-+fn unrelated_invalid_request_is_not_retried() {
-+    let (endpoint, seen) = stub_server(vec![
-+        StubResponse::new(400).body(
-+            "<Error><Code>InvalidRequest</Code><Message>Invalid bucket configuration</Message></Error>",
-+        ),
-+        success_with_size(9),
-+    ]);
-+
-+    let err = append_data_at(&endpoint, 5).unwrap_err();
-+
-+    assert!(
-+        err.to_string().contains("Invalid bucket configuration"),
-+        "{err}"
-+    );
-+    assert_eq!(seen.lock().unwrap().len(), 1);
-+}
-+
-+#[test]
-+fn unbuildable_request_is_an_error_not_a_panic() {
-+    let store = Arc::new(
-+        AmazonS3Builder::new()
-+            .with_bucket_name("bucket")
-+            .with_region("us-east-1")
-+            .with_access_key_id("id")
-+            .with_secret_access_key("secret")
-+            .build()
-+            .unwrap(),
-+    );
-+    let context = SignedRequestContext::new(
-+        true,
-+        "bucket".to_string(),
-+        Url::parse("http://localhost:9000/bucket").unwrap(),
-+        "us-east-1".to_string(),
-+        "s3",
-+    );
-+    // `url` accepts this; `http` caps URIs at u16::MAX bytes.
-+    let key = object_store::path::Path::from("k".repeat(70_000));
-+
-+    let result = io_bridge::BridgeRuntime::global().block_on(NativeAppend::new(context).append(
-+        &store,
-+        &key,
-+        0,
-+        Bytes::from_static(b"data"),
-+    ));
-+    assert!(matches!(result, Err(UniversalIoError::S3Config { .. })));
-+}
-+
-+fn append_data_at(endpoint: &str, offset: u64) -> UioResult<u64> {
-+    let (store, context) = stub_store_and_context(endpoint);
-+    let key = object_store::path::Path::from("dir/append.dat");
-+
-+    io_bridge::BridgeRuntime::global().block_on(NativeAppend::new(context).append(
-+        &store,
-+        &key,
-+        offset,
-+        Bytes::from_static(b"data"),
-+    ))
-+}
-+
-+fn success_with_size(size: u64) -> StubResponse {
-+    StubResponse::new(200).header(OBJECT_SIZE_HEADER, size)
-+}
-+
-+fn write_offset_conflict() -> StubResponse {
-+    StubResponse::new(400).body("<Error><Code>InvalidWriteOffset</Code></Error>")
-+}
-+
-+fn head_with_size(size: u64) -> StubResponse {
-+    StubResponse::new(200)
-+        .header("content-length", size)
-+        .header("last-modified", "Tue, 14 Jul 2026 12:00:00 GMT")
-+        .header("etag", "\"stub\"")
-+}
-+
-+#[test]
-+fn append_sends_a_signed_write_offset_put_and_returns_the_new_size() {
-+    let (endpoint, seen) = stub_server(vec![success_with_size(9)]);
-+    assert_eq!(append_dat
-```
-
-**File**: `lib/common/io_bridge_object_store/src/append/context/part_copy.rs` (modified, +21/-205)
-```diff
-@@ -17,8 +17,8 @@ use object_store::aws::{AmazonS3, AwsAuthorizer, AwsCredential};
- use object_store::client::{HttpClient, HttpRequestBody};
- use url::Url;
- 
--use super::extract_xml_tag;
- use super::signed::SignedRequestContext;
-+use super::{crc64nvme, extract_xml_tag};
- 
- /// Max bytes per `UploadPartCopy` part: the S3 5 GiB part-size ceiling.
- const MAX_COPY_PART_SIZE: u64 = 5 * 1024 * 1024 * 1024;
-@@ -177,7 +177,10 @@ async fn multipart_rewrite(
-         .request(
-             http::Method::POST,
-             "uploads",
--            &[],
-+            &[
-+                ("x-amz-checksum-algorithm", "CRC64NVME"),
-+                ("x-amz-checksum-type", "FULL_OBJECT"),
-+            ],
-             HttpRequestBody::from(Bytes::new()),
-             "initiate multipart rewrite",
-         )
-@@ -227,13 +230,13 @@ async fn rewrite_parts(
-     expected_etag: Option<&str>,
-     upload_id: &str,
- ) -> UioResult<u64> {
--    let mut etags = Vec::new();
-+    let mut parts = Vec::new();
-     let copy_source = format!("/{}/{}", context.bucket, key);
-     let part_len = offset.div_ceil(offset.div_ceil(MAX_COPY_PART_SIZE).max(1));
-     let mut start = 0;
-     while start < offset {
-         let end = (start + part_len).min(offset);
--        let part_number = etags.len() + 1;
-+        let part_number = parts.len() + 1;
-         let range = format!("bytes={start}-{}", end - 1);
-         let mut headers = vec![
-             ("x-amz-copy-source", copy_source.as_str()),
-@@ -262,18 +265,24 @@ async fn rewrite_parts(
-                 "multipart rewrite part copy for {key}: no ETag in response: {excerpt}",
-             )))
-         })?;
--        etags.push(etag.to_string());
-+        let checksum = extract_xml_tag(&body, "ChecksumCRC64NVME").ok_or_else(|| {
-+            UniversalIoError::s3(std::io::Error::other(format!(
-+                "multipart rewrite part copy for {key}: no ChecksumCRC64NVME in response",
-+            )))
-+        })?;
-+        parts.push((etag.to_string(), checksum.to_string()));
-         start = end;
-     }
- 
-     // The new data as the final part (no minimum size for the last part).
-     let final_size = offset + data.len() as u64;
--    let part_number = etags.len() + 1;
-+    let part_number = parts.len() + 1;
-+    let checksum = crc64nvme(&data);
-     let (headers, _) = client
-         .request(
-             http::Method::PUT,
-             &format!("partNumber={part_number}&uploadId={upload_id}"),
--            &[],
-+            &[("x-amz-checksum-crc64nvme", &checksum)],
-             HttpRequestBody::from(data),
-             "multipart rewrite data part",
-         )
-@@ -286,12 +295,13 @@ async fn rewrite_parts(
-                 "multipart rewrite data part for {key}: no ETag response header",
-             )))
-         })?;
--    etags.push(etag.to_string());
-+    parts.push((etag.to_string(), checksum));
- 
-     let mut complete = String::from("<CompleteMultipartUpload>");
--    for (index, etag) in etags.iter().enumerate() {
-+    for (index, (etag, checksum)) in parts.iter().enumerate() {
-         complete += &format!(
--            "<Part><PartNumber>{}</PartNumber><ETag>{etag}</ETag></Part>",
-+            "<Part><PartNumber>{}</PartNumber><ETag>{etag}</ETag>\
-+             <ChecksumCRC64NVME>{checksum}</ChecksumCRC64NVME></Part>",
-             index + 1,
-         );
-     }
-@@ -324,198 +334,4 @@ async fn rewrite_parts(
- }
- 
- #[cfg(test)]
--mod tests {
--    use std::assert_matches;
--
--    use super::super::stub::{StubResponse, stub_server, stub_store_and_context};
--    use super::*;
--
--    /// Multipart-rewrite `dir/append.dat` as its `[0, offset)` prefix plus
--    /// `b"data"` via the stub.
--    fn rewrite_data_at(endpoint: &str, offset: u64) -> UioResult<u64> {
--        rewrite_data_at_if_match(endpoint, offset, None)
--    }
--
--    fn rewrite_data_at_if_match(
--        endpoint: &str,
--        offset: u64,
--        expected_etag: Option<&str>,
--    ) -> UioResult<u64> {
--        let (store, context) = stub_store_and_context(endpoint);
--        let key = object_store::path::Path::from("dir/append.dat");
--
--        io_bridge::BridgeRuntime::global().block_on(PartCopyAppend::new(context).append(
--            &store,
--            &key,
--            offset,
--            Bytes::from_static(b"data"),
--            expected_etag,
--        ))
--    }
--
--    fn initiate_ok() -> StubResponse {
--        StubResponse::new(200).body(
--            "<InitiateMultipartUploadResult><UploadId>upload-1</UploadId>\
--             </InitiateMultipartUploadResult>",
--        )
--    }
--
--    fn copy_part_ok() -> StubResponse {
--        StubResponse::new(200).body("<CopyPartResult><ETag>\"etag-copy\"</ETag></CopyPartResult>")
--    }
--
--    fn data_part_ok() -> StubResponse {
--        StubResponse::new(200).header("etag", "\"etag-data\"")
--    }
--
--    fn complete_ok() -> StubResponse {
--        StubResponse::new(200).body("<CompleteMultipartUploadResult/>")
--    }
--
--    #[test]
--    fn multipart_rewrite_copies_the_prefix_and_comp
+ futures-util = { workspace = true }
+ clap = { workspace = true }
+-ctrlc = "3.5.2"
++ctrlc = { version = "3.5.2", optional = true }
+ env_logger = { workspace = true }
+ serde_cbor = { workspace = true }
+ uuid = { workspace = true }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11300** (closed): Bump the cargo-minor-patch group across 1 directory with 3 updates (@dependabot[bot])
-- **PR #11299** (2026-10-21): Bump dev version to 1.20.1-dev (@generall)
-- **PR #11298** (2026-10-21): Bump version to 1.20.0 (@generall)
-- **PR #11290** (2026-10-21): Reject . and .. as vector names (@generall)
-- **PR #11289** (2026-10-21): fix(object-storage-snapshot): add option to override client settings for timeouts and retries (@syndbg)
-- **PR #11284** (2026-10-22): Revise guidelines on struct organization in files (@generall)
+- **PR #11564** (2026-11-16): CI: mount a dedicated tmpfs for test temp files (@agourlay)
+- **PR #11561** (2026-11-16): fix(uio): send Content-Length on signed S3 part-copy requests (@generall)
+- **PR #11560** (2026-11-16): Read dense postings straight into a bitset (@generall)
+- **PR #11559** (2026-11-16): Bump dev version to 1.20.3-dev (@generall)
+- **PR #11558** (2026-11-16): Bump version to 1.20.2 (@generall)
+- **PR #11557** (2026-11-16): Keep collection data when migrating from standalone to cluster (@generall)
 
 ---
 
@@ -2966,54 +1898,33 @@ For parity.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [AI, graph indexing variations] Graph builder cleanups before indexing variation
+## X. Disable PiPNN graph building by default
 
 **RULE**:
-When implementing operations in `lib/segment/src/index/hnsw_index/gpu/gpu_graph_builder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in qdrant/qdrant. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/redoc/master/openapi.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in qdrant/qdrant. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `10039ce8`: [AI, graph indexing variations] Graph builder cleanups before indexing variations (#11192). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8cdcfef`: Disable PiPNN graph building by default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/segment/src/index/hnsw_index/gpu/gpu_graph_builder.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/redoc/master/openapi.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub fn build_hnsw_on_gpu<'a>(
-    gpu_insert_context: &mut GpuInsertContext,
-    use std::sync::Arc;
-        let gpu_vector_storage = Arc::new(
-            GpuVectorStorage::new(
-                device.clone(),
-                test.vector_storage.borrow(),
-                None,
-                false,
-                &false.into(),
-            )
-            .unwrap(),
-        );
-            gpu_vector_storage,
+            "description": "Build the main HNSW graph of large segments with PiPNN instead of inserting point by point. When disabled, PiPNN is *never* used and graphs are built with HNSW. When enabled, PiPNN is used where it applies: segments that are large enough, have no older graph to build from, and whose vectors support it. Only changes how graphs are built: the resulting graph has the same format either way.\n\nDisabled by default: PiPNN ignores `ef_construct`, so with it the graph quality of large segments can only be tuned through `m`.",
+            "default": false,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-pub fn build_hnsw_on_gpu<'a, 'b>(
-    gpu_insert_context: &mut GpuInsertContext<'b>,
-        let gpu_vector_storage = GpuVectorStorage::new(
-            device.clone(),
-            test.vector_storage.borrow(),
-            None,
-            false,
-            &false.into(),
-        )
-        .unwrap();
-            &gpu_vector_storage,
+// Induced defect failure mode:
+            "description": "Build the main HNSW graph of large segments with PiPNN instead of inserting point by point. When disabled, PiPNN is *never* used and graphs are built with HNSW. When enabled, PiPNN is used where it applies: segments that are large enough, have no older graph to build from, and whose vectors support it. Only changes how graphs are built: the resulting graph has the same format either way.\n\nEnabled by default.",
+            "default": true,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `10039ce8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8cdcfef` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

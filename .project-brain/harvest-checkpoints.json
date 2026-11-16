@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T14:35:01.412Z",
+  "last_updated": "2026-11-16T15:00:47.098Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10131,14 +10131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qdrant-qdrant",
-      "content_hash": "854ab292cf2dbd1dbf1a9e8519f0a2fc3f0ffa420bb1e65bbaeaecf2c44c4609",
-      "verified_at": "2026-11-13T18:26:02.892Z",
+      "content_hash": "2fdda9e36f03c4baf38a033bf11dcf0e360b3fc46ca507efc1b5645aed7eac2f",
+      "verified_at": "2026-11-16T15:00:47.097Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:26:02.892Z"
+      "last_updated": "2026-11-16T15:00:47.097Z"
     },
     "vuetifyjs/vuetify": {
       "repository": "vuetifyjs/vuetify",
@@ -13866,14 +13866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-revenuecat-purchases-ios",
-      "content_hash": "b5c65542003761eb5a2d2caeb8536ee8d630e09839655037da7e454f6abd7f4f",
-      "verified_at": "2026-11-13T03:10:46.578Z",
+      "content_hash": "5743b956ceb725c6038815cfdcbb6b2973cd827743c6d9911ffe60fcaac04390",
+      "verified_at": "2026-11-16T15:00:40.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:10:46.578Z"
+      "last_updated": "2026-11-16T15:00:40.003Z"
     },
     "reflection/Beam-1.0-501B-A23B": {
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "80b16de04a3c4bf2e03c5758261a55a19a7a2d5a9666c3aa26669670783666f4",
-      "verified_at": "2026-11-14T18:14:39.519Z",
+      "content_hash": "5c94cdb4cbed2893091319ff761980656ef653c9a805d4cecc3ebf2b76127716",
+      "verified_at": "2026-11-16T15:00:35.791Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T18:14:39.519Z"
+      "last_updated": "2026-11-16T15:00:35.792Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",

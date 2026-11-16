@@ -4,22 +4,22 @@
 {
   "source_repository": "qdrant/qdrant",
   "source_url": "https://github.com/qdrant/qdrant",
-  "source_version": "95d89e51",
+  "source_version": "23065a0b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T18:26:03.091Z",
+  "timestamp": "2026-11-16T15:00:47.263Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-qdrant-qdrant",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [qdrant/qdrant](https://github.com/qdrant/qdrant) (Revision: `95d89e51`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T18:26:03.091Z`  
+> **Provenance**: Harvested from [qdrant/qdrant](https://github.com/qdrant/qdrant) (Revision: `23065a0b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T15:00:47.263Z`  
 > **Learning ID**: `learn-github-qdrant-qdrant`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `qdrant/qdrant` (Commit: `95d89e51`)
+- **Target Repository**: `qdrant/qdrant` (Commit: `23065a0b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/qdrant-qdrant-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/qdrant/qdrant](https://github.com/qdrant/qdrant))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:26:02.248Z  
+> **Harvest Timestamp**: 2026-11-16T15:00:46.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Qdrant - High-performance, massive-scale Vector Database and Vector Search Engine for the next generation of AI. Also available in the cloud https://cloud.qdrant.io/
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 35537 stars
+- **Stars / Engagement**: 35592 stars
 
 ---
 
@@ -1708,652 +1708,163 @@ pub struct InternalUpdateResult {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f606fb33` (2026-11-12)
-**Commit Message**: Add `PATCH /cluster/consensus_state` API to fix consensus state (#11411)
+### Incident Patch 1: `f8cdcfef` (2026-11-15)
+**Commit Message**: Disable PiPNN graph building by default (#11553)
 
-* Split cluster state replacement out of Persistent::update_from_snapshot
+PiPNN ignores ef_construct, so with it enabled the graph quality of
+large segments can only be tuned through m. Keep it opt-in through the
+pipnn_graph_building feature flag. with_pipnn_min_points now also
+enables PiPNN on its thread, so PiPNN tests don't depend on the default.
 
-Peer addresses, peer metadata and cluster metadata can now be replaced
-without touching Raft state, through the new update_cluster_state.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Serialize consensus state application with a lock
-
-Entry application, Raft snapshot application and creation, local state
-sync and adding peers now take ConsensusManager::apply_lock. This allows
-changing applied state outside of the consensus thread without racing
-with it.
-
-The lock is reentrant, because Raft may call Storage::snapshot while
-entries are being applied on the same thread.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Add ConsensusManager::consensus_state_data
-
-Returns the current applied consensus state as SnapshotData, built by
-the same code that builds Raft snapshots.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Add typed diff of consensus state
-
-ConsensusStateDiff describes changes to SnapshotData. Map entries are
-set or removed, and values below a map entry are replaced whole.
-Applying a diff validates it and
-
-**File**: `Cargo.lock` (modified, +2/-1)
+**File**: `docs/redoc/master/openapi.json` (modified, +2/-2)
 ```diff
-@@ -7869,7 +7869,8 @@ dependencies = [
-  "serde",
-  "serde_cbor",
-  "serde_json",
-- "sha2 0.11.0",
-+ "serde_with",
-+ "sha2 0.11.1",
-  "shard",
-  "slog",
-  "strum",
+@@ -12073,8 +12073,8 @@
+             "type": "boolean"
+           },
+           "pipnn_graph_building": {
+-            "description": "Build the main HNSW graph of large segments with PiPNN instead of inserting point by point. When disabled, PiPNN is *never* used and graphs are built with HNSW. When enabled, PiPNN is used where it applies: segments that are large enough, have no older graph to build from, and whose vectors support it. Only changes how graphs are built: the resulting graph has the same format either way.\n\nEnabled by default.",
+-            "default": true,
++            "description": "Build the main HNSW graph of large segments with PiPNN instead of inserting point by point. When disabled, PiPNN is *never* used and graphs are built with HNSW. When enabled, PiPNN is used where it applies: segments that are large enough, have no older graph to build from, and whose vectors support it. Only changes how graphs are built: the resulting graph has the same format either way.\n\nDisabled by default: PiPNN ignores `ef_construct`, so with it the graph quality of large segments can only be tuned through `m`.",
++            "default": false,
+             "type": "boolean"
+           },
+           "serverless_compatible": {
 ```
 
-**File**: `config/development.yaml` (modified, +5/-0)
+**File**: `lib/common/common/src/flags.rs` (modified, +3/-2)
 ```diff
-@@ -17,6 +17,11 @@ service:
-   #grpc_port: 6334
-   #api_key: your_secret_api_key_here
- 
-+  # Enable `PATCH /cluster/consensus_state`, which changes consensus state of this peer only,
-+  # without going through consensus. Last resort tool to repair broken clusters.
-+  # Disabled by default. Uncomment to enable:
-+  #enable_consensus_state_patch: true
-+
- cluster:
-   resharding_enabled: true
- 
-```
-
-**File**: `lib/collection/src/collection/state_management.rs` (modified, +4/-2)
-```diff
-@@ -213,14 +213,16 @@ impl Collection {
-                 );
-             }
- 
-+            // Save before updating config in memory. If saving fails, the in-memory config
-+            // must stay unchanged, so retrying the same state applies and saves it again,
-+            // instead of seeing no changes.
-+            new_config.save(&self.path)?;
-             *config = new_config;
- 
-             // We need to recreate optimizers, if "core" config was updated
-             recreate_optimizers = is_core_config_updated;
-         }
- 
--        self.collection_config.read().await.save(&self.path)?;
--
-         self.print_warnings().await;
- 
-         // Recreate optimizers in the background: this path is reached from consensus (Raft snapshot
-```
-
-**File**: `lib/collection/src/shards/shard_holder/mod.rs` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ mod shard_management;
- mod snapshots;
- mod transfers;
- pub(crate) use resharding::ReshardingCheck;
--pub(crate) mod shard_mapping;
-+pub mod shard_mapping;
- pub mod shared_shard_holder;
- 
- use std::collections::{BTreeMap, HashMap, HashSet};
-```
-
-**File**: `lib/storage/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -33,6 +33,7 @@ tokio = { workspace = true }
- tokio-util = { workspace = true }
- serde = { workspace = true }
- serde_json = { workspace = true }
-+serde_with = { workspace = true }
- schemars = { workspace = true }
- itertools = { workspace = true }
- log = { workspace = true }
-```
-
-**File**: `lib/storage/src/content_manager/consensus/persistent.rs` (modified, +32/-11)
-```diff
-@@ -69,18 +69,19 @@ impl Persistent {
-         &mut self,
-         meta: &SnapshotMetadata,
-         address_by_id: PeerAddressById,
--        mut metadata_by_id: PeerMetadataById,
--        new_cluster_metadata: HashMap<String, serde_json::Value>,
-+        metadata_by_id: PeerMetadataById,
-+        cluster_metadata: HashMap<String, serde_json::Value>,
-     ) -> Result<(), StorageError> {
-         // IF YOU ADD NEW DATA INTO `PERSISTENT` STATE, DON'T FORGET TO ALSO ADD IT INTO RAFT SNAPSHOT!
-         let Self {
-             state,
-             latest_snapshot_meta,
-             apply_progress_queue,
-             first_voter: _,
--            peer_address_by_id,
--            peer_metadata_by_id,
--            cluster_metadata,
-+            // Replaced by `replace_cluster_state` below
-+            peer_address_by_id: _,
-+            peer_metadata_by_id: _,
-+            cluster_metadata: _,
-             this_peer_id: _,
-             path: _,
-             dirty: _,
-@@ -93,22 +94,42 @@ impl Persistent {
-         apply_progress_queue.set_from_snapshot(meta.index);
-         *latest_snapshot_meta = meta.into();
- 
--        metadata_by_id.retain(|peer_id, _| address_by_id.contains_key(peer_id));
--
--        *peer_address_by_id.write() = address_by_id;
--        *peer_metadata_by_id.write() = metadata_by_id;
--        *cluster_metadata = new_cluster_metadata;
--
-         // Last Raft commit and last snapshot index must be equal and persisted in one operation
-         // Our `ConsensusManager::new` function relies on this for reconciling WAL clears
-         debug_assert_eq!(
-             state.hard_state.commit, latest_snapshot_meta.index,
-             "applied Raft commit and last snapshot index must be equal",
-         );
- 
-+        self.replace_cluster_state(address_by_id, metadata_by_id, cluster_metadata);
-+
-+        self.save()
-+    }
-+
-+    /// Replace peer addresses, peer metadata and cluster metadata, without touching Raft state
-+    pub fn update_cluster_state(
-+        &mut self,
-+        address_by_id: PeerAddressById,
-+        metadata_by_id: PeerMetadataById,
-+        cluster_metadata: HashMap<String, serde_json::Value>,
-+    ) -> Result<(), StorageError> {
-+        self.replace_cluster_state(address_by_id, metadata_by_id, cluster_metadata);
-         self.save()
-     }
- 
-+    fn replace_cluster_state(
-+        &mut self,
-+        address_by_id: PeerAddressById,
-+        mut metadata_by_id: PeerMetadataById,
-+        new_cluster_metadata: HashMap<String, serde_json::Value>,
-+    ) {
-+        metadata_by_id.retain(|peer_id, _| address_by_id.contains_key(peer_id));
-+
-+        *self.peer_address_by_id.write() = address_by_id;
-+        *self.peer_metadata_by_id.write() = metadata_by_id;
-+        self.cluster_metadata = new_cluster_metadata;
-+    }
-+
-     /// Returns state and if it was initialized for the first time
+@@ -106,7 +106,8 @@ pub struct FeatureFlags {
+     /// no older graph to build from, and whose vectors support it. Only changes how graphs
+     /// are built: the resulting graph has the same format either way.
      ///
-     /// `peer_id` is used only when raft state is not found.
+-    /// Enabled by default.
++    /// Disabled by default: PiPNN ignores `ef_construct`, so with it the graph quality of large
++    /// segments can only be tuned through `m`.
+     pub pipnn_graph_building: bool,
+ 
+     /// Serverless-compatible deployment mode. Implies [`Self::write_segment_manifest`],
+@@ -137,7 +138,7 @@ impl Default for FeatureFlags {
+             persist_proxy_segments: false,
+             combined_vector_storage: true,
+             versioned_deletes: false,
+-            pipnn_graph_building: true,
++            pipnn_graph_building: false,
+             serverless_compatible: false,
+         }
+     }
 ```
 
-**File**: `lib/storage/src/content_manager/consensus_manager.rs` (modified, +44/-8)
+**File**: `lib/segment/src/index/hnsw_index/hnsw/build/graph_builder.rs` (modified, +2/-3)
 ```diff
-@@ -17,7 +17,7 @@ use collection::shards::CollectionId;
- use collection::shards::shard::PeerId;
- use common::defaults;
- use futures::future::join_all;
--use parking_lot::{Mutex, RwLock};
-+use parking_lot::{Mutex, ReentrantMutex, RwLock};
- use raft::eraftpb::{ConfChange, ConfChangeType, ConfChangeV2, Entry as RaftEntry, EntryType};
- use raft::{GetEntriesContext, RaftState, RawNode, SoftState, Storage};
- use serde::{Deserialize, Serialize};
-@@ -44,6 +44,7 @@ use crate::types::{
- };
+@@ -1,6 +1,5 @@
+ use std::sync::atomic::AtomicU64;
  
- mod action_applier;
-+pub mod local_patch;
- pub mod state_machine;
- mod validation;
+-use common::flags::feature_flags;
+ use common::types::PointOffsetType;
+ use rand::Rng;
+ use rayon::ThreadPool;
+@@ -12,7 +11,7 @@ use super::healing_builder::HealingBuilder;
+ use super::hnsw_builder::HnswBuilder;
+ use super::local_builder::LocalBuilder;
+ use super::payload_blocks::FieldBlocks;
+-use super::pipnn_builder::PipnnBuilder;
++use super::pipnn_builder::{self, PipnnBuilder};
+ use crate::common::operation_error::{OperationResult, check_process_stopped};
+ use crate::index::hnsw_index::gpu::gpu_devices_manager::LockedGpuDevice;
+ use crate::index::hnsw_index::graph_layers_builder::GraphLayersBuilder;
+@@ -113,7 +112,7 @@ impl<'a> GraphBuilder<'a> {
+         match old_index {
+             // Healing wins, also over PiPNN, which can't build incrementally
+             Some(old_index) => Self::Healing(HealingBuilder::from_local(local, old_index)),
+-            None if feature_flags().pipnn_graph_building => match PipnnBuilder::new(local) {
++            None if pipnn_builder::enabled() => match PipnnBuilder::new(local) {
+                 Ok(builder) => Self::Pipnn(builder),
+                 Err(local) => Self::Hnsw(HnswBuilder(*local)),
+             },
+```
+
+**File**: `lib/segment/src/index/hnsw_index/hnsw/build/pipnn_builder.rs` (modified, +14/-2)
+```diff
+@@ -1,6 +1,7 @@
+ use std::sync::atomic::AtomicU64;
+ use std::time::Instant;
  
-@@ -118,6 +119,11 @@ pub struct ConsensusManager<C: CollectionContainer> {
-     applied_log: AppliedEntryRing,
-     /// Consensus state machine used to plan application and check applied state
-     state_machine: Mutex<CachedStateMachine>,
-+    /// Serializes changes to applied state (entries, Raft snapshots, local state patches)
-+    /// with each other and with reads of the whole applied state.
-+    ///
-+    /// Reentrant, because Raft can call `Storage::snapshot` while entries are applied.
-+    apply_lock: ReentrantMutex<()>,
++use common::flags::feature_flags;
+ use common::types::PointOffsetType;
+ use log::debug;
+ use rand::RngExt as _;
+@@ -27,6 +28,16 @@ thread_local! {
+     static MIN_POINTS_OVERRIDE: std::cell::Cell<Option<usize>> = const { std::cell::Cell::new(None) };
  }
  
- impl<C: CollectionContainer> ConsensusManager<C> {
-@@ -165,6 +171,7 @@ impl<C: CollectionContainer> ConsensusManager<C> {
-             next_peer_metadata_update_attempt: Mutex::new(Instant::now()),
-             applied_log: Default::default(),
-             state_machine: Mutex::new(state_machine),
-+            apply_lock: ReentrantMutex::new(()),
-         })
-     }
- 
-@@ -378,6 +385,8 @@ impl<C: CollectionContainer> ConsensusManager<C> {
-     /// Return `true` if consensus should be stopped (peer removed)
-     /// Return `false` if everything is ok.
-     pub fn apply_entries<T: Storage>(&self, raw_node: &mut RawNode<T>) -> anyhow::Result<bool> {
-+        let _apply_guard = self.apply_lock.lock();
-+
-         let result = self.apply_entries_impl(raw_node);
- 
-         // Consensus reapplies a failed entry after restart.
-@@ -688,6 +697,8 @@ impl<C: CollectionContainer> ConsensusManager<C> {
-         &self,
-         snapshot: &raft::eraftpb::Snapshot,
-     ) -> Result<Result<(), StorageError>, StorageError> {
-+        let _apply_guard = self.apply_lock.lock();
-+
-         let meta = snapshot.get_metadata();
- 
-         // Snapshot recovery replaces applied state without updating consensus state machine.
-@@ -813,6 +824,9 @@ impl<C: CollectionContainer> ConsensusManager<C> {
-     }
- 
-     pub fn add_peer(&self, peer_id: PeerId, uri: Uri) -> Result<(), StorageError> {
-+        // Bootstrap adds peers outside of entry application
-+        let _apply_guard = self.apply_lock.lock();
-+
-         let mut persistent = self.persistent.write();
-         let result = persistent.insert_peer(peer_id, uri);
-         // Peer discovery updates addresses without going through consensus.
-@@ -979,6 +993,29 @@ impl<C: CollectionContainer> ConsensusManager<C> {
-         Ok(res)
-     }
- 
-+    /// Current applied consensus state, in the same form a Raft snapshot carries it
-+    pub fn consensus_state_data(&self) -> SnapshotData {
-+        let _apply_guard = self.apply_lock.lock();
-+
-+        let collections_data = self.toc.collections_snapshot();
-+        let persistent = self.persistent.read();
-+        self.snapshot_data(collections_data, &persistent)
++/// Whether PiPNN may build on this thread: the `pipnn_graph_building` feature flag, or
++/// always within [`with_pipnn_min_points`].
++pub(super) fn enabled() -> bool {
++    #[cfg(feature = "testing")]
++    if MIN_POINTS_OVERRIDE.get().is_some() {
++        return true;
 +    }
++    feature_flags().pipnn_graph_building
++}
 +
-+    fn snapshot_data(
-+        &self,
-+        collections_data: CollectionsSnapshot,
-+        persistent: &Persistent,
-+    ) -> SnapshotData {
-+        SnapshotData {
-+            collections_data,
-+            address_by_id: persistent.peer_address_by_id(),
-+            metadata_by_id: persistent.peer_metadata_by_id(),
-+            cluster_metadata: persistent.cluster_metadata.clone(),
-+            quota_config: Some(self.toc.quota_config()),
-+        }
-+    }
-+
-     pub fn peer_address_by_id(&self) -> PeerAddressById {
-         self.persistent.read().peer_address_by_id()
-     }
-@@ -1005,6 +1042,8 @@ impl<C: CollectionContainer> ConsensusManager<C> {
-     }
+ /// Fewest points for a PiPNN main graph on this thread.
+ fn min_points() -> usize {
+     #[cfg(feature = "testing")]
+@@ -36,8 +47,9 @@ fn min_points() -> usize {
+     PIPNN_MIN_POINTS
+ }
  
-     pub fn sync_local_state(&self) -> Result<(), StorageError> {
-+        let _apply_guard = self.apply_lock.lock();
-+
-         self.try_update_peer_metadata();
-         self.toc.sync_local_state()
-     }
-@@ -1340,6 +1379,9 @@ impl<C: CollectionContainer> Storage for ConsensusManager<C> {
-     }
- 
-     fn snapshot(&self, request_index: u64, _to: u64) -> raft::Result<raft::eraftpb::Snapshot> {
-+        // Don't send a partially applied state patch to other peers
-+        let _apply_guard = self.apply_lock.lock();
-+
-         let collections_data = self.toc.collections_snapshot();
- 
-         // Lock first WAL and then persistent to avoid deadlock
-@@ -1354,13 +1396,7 @@ impl<C: CollectionContainer> Storage for ConsensusManager<C> {
-             ));
-         }
- 
--        let data = SnapshotData {
--            collections_data,
--            address_by_id: persistent.peer_address_by_id(),
--            metadata_by_id: persistent.peer_metadata_by_id(),
--            cluster_metadata: persistent.cluster_metadata.clone(),
--            quota_c
-```
-
-**File**: `lib/storage/src/content_manager/consensus_manager/local_patch/diff.rs` (added, +523/-0)
-```diff
-@@ -0,0 +1,523 @@
-+mod shard_layout;
-+
-+use std::collections::{HashMap, HashSet};
-+use std::fmt::Display;
-+use std::hash::{BuildHasher, Hash};
-+use std::str::FromStr;
-+
-+use collection::collection_state::{ShardInfo, State};
-+use collection::config::CollectionConfigInternal;
-+use collection::operations::types::PeerMetadata;
-+use collection::shards::CollectionId;
-+use collection::shards::replica_set::replica_set_state::ReplicaState;
-+use collection::shards::resharding::ReshardState;
-+use collection::shards::shard::{PeerId, ShardId};
-+use collection::shards::shard_holder::shard_mapping::ShardKeyMapping;
-+use collection::shards::transfer::ShardTransfer;
-+use segment::types::{PayloadFieldSchema, PayloadKeyType};
-+use serde::{Deserialize, Serialize};
-+use tonic::transport::Uri;
-+use validator::Validate as _;
-+
-+use crate::content_manager::alias_mapping::AliasMapping;
-+use crate::content_manager::consensus_manager::{CollectionsSnapshot, SnapshotData};
-+use crate::content_manager::errors::{StorageError, StorageResult};
-+use crate::quota::QuotaConfig;
-+use crate::types::PeerAddressById;
-+
-+/// Changes to consensus state, applied to a single peer without going through consensus.
-+///
-+/// `None` fields are left unchanged.
-+/// Map entries are set to the given value, or removed when the value is `null`.
-+/// Values below a map entry are replaced whole.
-+#[derive(Debug, Deserialize)]
-+#[serde(deny_unknown_fields)]
-+pub struct ConsensusStateDiff {
-+    pub collections: Option<HashMap<CollectionId, CollectionDiff>>,
-+    pub aliases: Option<HashMap<String, Option<CollectionId>>>,
-+    /// URI edits of known peers only. Peers can't be added or removed.
-+    pub peer_addresses: Option<HashMap<PeerId, String>>,
-+    pub peer_metadata: Option<HashMap<PeerId, Option<PeerMetadata>>>,
-+    pub cluster_metadata: Option<HashMap<String, Option<serde_json::Value>>>,
-+    pub quota_config: Option<QuotaConfig>,
-+}
-+
-+/// Change to an existing collection. Collections can't be created.
-+#[derive(Debug, Deserialize)]
-+#[serde(rename_all = "snake_case")]
-+pub enum CollectionDiff {
-+    Update(Box<CollectionStateDiff>),
-+    /// Also removes aliases of the collection
-+    Delete,
-+}
-+
-+#[derive(Debug, Deserialize)]
-+#[serde(deny_unknown_fields)]
-+pub struct CollectionStateDiff {
-+    /// UUID and incompatible params can't be changed: Raft snapshot application would
-+    /// recreate the collection empty.
-+    ///
-+    /// `created_at` is ignored, the collection keeps its own.
-+    pub config: Option<CollectionConfigInternal>,
-+    pub shards: Option<HashMap<ShardId, Option<ShardInfoDiff>>>,
-+    /// Outer `None` = unchanged, `Some(None)` = clear resharding
-+    #[serde(default, with = "serde_with::rust::double_option")]
-+    pub resharding: Option<Option<ReshardState>>,
-+    pub transfers: Option<HashSet<ShardTransfer>>,
-+    pub shards_key_mapping: Option<ShardKeyMapping>,
-+    pub payload_index_schema: Option<HashMap<PayloadKeyType, Option<PayloadFieldSchema>>>,
-+}
-+
-+#[derive(Debug, Deserialize)]
-+#[serde(deny_unknown_fields)]
-+pub struct ShardInfoDiff {
-+    pub replicas: HashMap<PeerId, Option<ReplicaState>>,
-+}
-+
-+/// Changes made by applying a [`ConsensusStateDiff`]
-+#[derive(Debug, Default, Serialize)]
-+pub struct PatchReport {
-+    pub changes: Vec<Change>,
-+}
-+
-+#[derive(Debug, Serialize)]
-+pub struct Change {
-+    pub path: String,
-+    /// `None` if the value didn't exist
-+    pub old: Option<serde_json::Value>,
-+    /// `None` if the value was removed
-+    pub new: Option<serde_json::Value>,
-+}
-+
-+impl ConsensusStateDiff {
-+    /// `this_peer_id` is the peer the patched state belongs to
-+    pub fn apply(
-+        self,
-+        state: &mut SnapshotData,
-+        this_peer_id: PeerId,
-+        report: &mut PatchReport,
-+    ) -> StorageResult<()> {
-+        let Self {
-+            collections,
-+            aliases,
-+            peer_addresses,
-+            peer_metadata,
-+            cluster_metadata,
-+            quota_config,
-+        } = self;
-+
-+        let SnapshotData {
-+            collections_data:
-+                CollectionsSnapshot {
-+                    collections: state_collections,
-+                    aliases: state_aliases,
-+                },
-+            address_by_id: state_addresses,
-+            metadata_by_id: state_metadata,
-+            cluster_metadata: state_cluster_metadata,
-+            quota_config: state_quota_config,
-+        } = state;
-+
-+        for (name, diff) in collections.into_iter().flatten() {
-+            let path = format!("collections.{name}");
-+
-+            match diff {
-+                CollectionDiff::Update(diff) => {
-+                    let Some(collection) = state_collections.get_mut(&name) else {
-+                        return Err(StorageError::bad_request(format!(
-+                            "can't update collection {name}: collection doesn't exist",
-+                        )));
-+                    };
-+
-+                    diff.apply(collection, state_addresses, this_p
+-/// Run `f` with PiPNN's minimum segment size lowered to `min_points` on this thread, so that
+-/// tests can build small segments with PiPNN. `usize::MAX` keeps every build on HNSW.
++/// Run `f` with PiPNN enabled and its minimum segment size lowered to `min_points` on this
++/// thread, so that tests can build small segments with PiPNN, whatever the feature flag says.
++/// `usize::MAX` keeps every build on HNSW.
+ #[cfg(feature = "testing")]
+ pub fn with_pipnn_min_points<R>(min_points: usize, f: impl FnOnce() -> R) -> R {
+     /// Restores the previous value, also when `f` panics.
 ```
 
 ---
 
-### Incident Patch 2: `90545701` (2026-11-12)
-**Commit Message**: Revert "Don't hold shards holder lock across shard cleanup batches (#11498)" (#11515)
+### Incident Patch 2: `0d79e520` (2026-11-13)
+**Commit Message**: Make ctrlc an optional dependency of service_debug (#11540)
 
-This reverts commit 106986a7b3b7a74d164265d16ee64f8a68425870.
+Only the model_testing binary uses it, and that binary requires
+service_debug, so default builds warned about an unused dependency.
 
-**File**: `lib/collection/src/collection/clean.rs` (modified, +19/-23)
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -327,30 +327,21 @@ async fn clean_task(
-     let mut deleted_points = 0;
+@@ -19,7 +19,7 @@ workspace = true
  
-     loop {
--        // Get shard and hash ring, don't hold shard holder lock while cleaning
--        let (shard, hashring) = {
--            let Some(shard_holder) = shard_holder.upgrade() else {
--                return Err(CollectionError::not_found("Shard holder dropped"));
--            };
--            let shard_holder = shard_holder.read().await;
--            let Some(shard) = shard_holder.get_shard(shard_id) else {
--                return Err(CollectionError::not_found(format!(
--                    "Shard {shard_id} not found",
--                )));
--            };
--            if !shard.is_local().await {
--                return Err(CollectionError::not_found(format!(
--                    "Shard {shard_id} is not a local shard",
--                )));
--            }
--            let hashring = shard_holder.hash_ring_router(shard_id).ok_or_else(|| {
--                CollectionError::service_error(format!(
--                    "Shard {shard_id} cannot be cleaned, failed to get shard hash ring"
--                ))
--            })?;
--
--            (shard.clone(), hashring.clone())
-+        // Get shard
-+        let Some(shard_holder) = shard_holder.upgrade() else {
-+            return Err(CollectionError::not_found("Shard holder dropped"));
-         };
-+        let shard_holder = shard_holder.read().await;
-+        let Some(shard) = shard_holder.get_shard(shard_id) else {
-+            return Err(CollectionError::not_found(format!(
-+                "Shard {shard_id} not found",
-+            )));
-+        };
-+        if !shard.is_local().await {
-+            return Err(CollectionError::not_found(format!(
-+                "Shard {shard_id} is not a local shard",
-+            )));
-+        }
- 
-         // Scroll next batch of points
-         let mut ids = match shard
-@@ -388,6 +379,11 @@ async fn clean_task(
-         // significantly slower, because then we'll do the expensive hash ring check on every
-         // point, in every segment.
-         // See: <https://github.com/qdrant/qdrant/pull/6085>
-+        let hashring = shard_holder.hash_ring_router(shard_id).ok_or_else(|| {
-+            CollectionError::service_error(format!(
-+                "Shard {shard_id} cannot be cleaned, failed to get shard hash ring"
-+            ))
-+        })?;
-         let ids: Vec<ExtendedPointId> = ids
-             .into_iter()
-             // TODO: run test with this inverted?
-```
-
----
-
-### Incident Patch 3: `2f4126d9` (2026-11-12)
-**Commit Message**: fix: apply optimizers_overwrite to UpdateHandler thread config (#10014)
-
-* fix: apply optimizers_overwrite to UpdateHandler thread config
-
-LocalShard::new read flush_interval_sec, max_optimization_threads and
-prevent_unoptimized from the persisted collection config when building
-the UpdateHandler, while the optimizers themselves were built from the
-effective config that already merges the node-local optimizers_overwrite.
-
-As a result, a node-local optimizers_overwrite.max_optimization_threads
-of 1 did not take effect when the persisted value was 0: the optimizers
-were created but the UpdateHandler still gated on the persisted 0 and
-never ran optimizations.
-
-Pass the effective optimizers config into LocalShard::new and use it for
-the UpdateHandler thread configuration so every value in
-optimizers_overwrite overrides the persisted collection config.
-
-Fixes #9943
-
-* store effective optimizers config and use it in WAL recovery and queue info
-
-The prevent_unoptimized override was still read from the persisted collection
-config in load_from_wal and local_update_queue_info, so a node-local
-optimizers_overwrite was ignored during recovery and deferred-point reporting.
-Store the effective c
-
-**File**: `lib/collection/src/shards/local_shard/mod.rs` (modified, +13/-12)
-```diff
-@@ -150,6 +150,10 @@ pub struct LocalShard {
- 
-     /// Persist the applied op_num sequence number
-     applied_seq_handler: Arc<AppliedSeqHandler>,
-+
-+    /// Effective optimizer config, with any node-local `optimizers_overwrite` applied.
-+    /// Used everywhere the override must win over the persisted collection config.
-+    effective_optimizers_config: OptimizersConfig,
- }
- 
- /// Shard holds information about segments and WAL.
-@@ -261,6 +265,7 @@ impl LocalShard {
-         payload_index_schema: Arc<SaveOnDisk<PayloadIndexSchema>>,
-         wal: SerdeWal<OperationWithClockTag>,
-         optimizers: Arc<Vec<Arc<Optimizer>>>,
-+        effective_optimizers_config: OptimizersConfig,
-         optimizer_resource_budget: ResourceBudget,
-         shard_path: &Path,
-         clocks: LocalShardClocks,
-@@ -301,10 +306,9 @@ impl LocalShard {
-             update_runtime.clone(),
-             segment_holder.clone(),
-             locked_wal.clone(),
--            config.optimizer_config.flush_interval_sec,
--            config.optimizer_config.max_optimization_threads,
--            config
--                .optimizer_config
-+            effective_optimizers_config.flush_interval_sec,
-+            effective_optimizers_config.max_optimization_threads,
-+            effective_optimizers_config
-                 .prevent_unoptimized
-                 .unwrap_or_default(),
-             clocks.clone(),
-@@ -355,6 +359,7 @@ impl LocalShard {
-             is_gracefully_stopped: false,
-             update_operation_lock: scroll_read_lock,
-             applied_seq_handler,
-+            effective_optimizers_config,
-         }
-     }
- 
-@@ -573,6 +578,7 @@ impl LocalShard {
-             payload_index_schema,
-             wal,
-             optimizers,
-+            effective_optimizers_config,
-             optimizer_resource_budget,
-             shard_path,
-             clocks,
-@@ -741,6 +747,7 @@ impl LocalShard {
-             payload_index_schema,
-             wal,
-             optimizers,
-+            effective_optimizers_config,
-             optimizer_resource_budget,
-             shard_path,
-             LocalShardClocks::default(),
-@@ -793,10 +800,7 @@ impl LocalShard {
-         // (the pre-`applied_seq` behavior) keeps the shard unavailable until every acknowledged
-         // operation is applied, which is what every read path assumes.
-         let prevent_unoptimized = self
--            .collection_config
--            .read()
--            .await
--            .optimizer_config
-+            .effective_optimizers_config
-             .prevent_unoptimized
-             .unwrap_or_default();
-         let op_num_upper_bound = if prevent_unoptimized {
-@@ -1183,10 +1187,7 @@ impl LocalShard {
- 
-     pub async fn local_update_queue_info(&self) -> ShardUpdateQueueInfo {
-         let prevent_unoptimized = self
--            .collection_config
--            .read()
--            .await
--            .optimizer_config
-+            .effective_optimizers_config
-             .prevent_unoptimized
-             .unwrap_or(false);
- 
+ [features]
+ default = []
+-service_debug = ["parking_lot/deadlock_detection", "collection/testing"]
++service_debug = ["parking_lot/deadlock_detection", "collection/testing", "dep:ctrlc"]
+ tracing = [
+     "api/tracing",
+     "collection/tracing",
+@@ -70,7 +70,7 @@ anyhow = "1.0.98"
+ futures = { workspace = true }
+ futures-util = { workspace = true }
+ clap = { workspace = true }
+-ctrlc = "3.5.2"
++ctrlc = { version = "3.5.2", optional = true }
+ env_logger = { workspace = true }
+ serde_cbor = { workspace = true }
+ uuid = { workspace = true }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11542** (2026-11-13): Bump lodash from 4.17.23 to 4.18.1 in /tools/schema2openapi (@qdrant-cloud-bot)
-- **PR #11540** (2026-11-13): Make ctrlc an optional dependency of service_debug (@agourlay)
-- **PR #11538** (2026-11-13): Make REST HardwareUsage fields optional (@generall)
-- **PR #11534** (2026-11-13): Fix main graph phase check in test_gpu_before_pipnn (@generall)
-- **PR #11530** (closed): edge: ReadOnlyIdTracker (@xzfc)
-- **PR #11529** (2026-11-12): Measure more (@xzfc)
+- **PR #11564** (2026-11-16): CI: mount a dedicated tmpfs for test temp files (@agourlay)
+- **PR #11561** (2026-11-16): fix(uio): send Content-Length on signed S3 part-copy requests (@generall)
+- **PR #11560** (2026-11-16): Read dense postings straight into a bitset (@generall)
+- **PR #11559** (2026-11-16): Bump dev version to 1.20.3-dev (@generall)
+- **PR #11558** (2026-11-16): Bump version to 1.20.2 (@generall)
+- **PR #11557** (2026-11-16): Keep collection data when migrating from standalone to cluster (@generall)
 
 ---
 
@@ -2373,32 +1884,33 @@ Store the effective c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add `PATCH /cluster/consensus_state` API to fix consensus state (#11411)
+## X. Disable PiPNN graph building by default
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in qdrant/qdrant. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/redoc/master/openapi.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in qdrant/qdrant. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f606fb33`: Add `PATCH /cluster/consensus_state` API to fix consensus state (#11411). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8cdcfef`: Disable PiPNN graph building by default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/redoc/master/openapi.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "serde_with",
- "sha2 0.11.1",
+            "description": "Build the main HNSW graph of large segments with PiPNN instead of inserting point by point. When disabled, PiPNN is *never* used and graphs are built with HNSW. When enabled, PiPNN is used where it applies: segments that are large enough, have no older graph to build from, and whose vectors support it. Only changes how graphs are built: the resulting graph has the same format either way.\n\nDisabled by default: PiPNN ignores `ef_construct`, so with it the graph quality of large segments can only be tuned through `m`.",
+            "default": false,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
- "sha2 0.11.0",
+// Induced defect failure mode:
+            "description": "Build the main HNSW graph of large segments with PiPNN instead of inserting point by point. When disabled, PiPNN is *never* used and graphs are built with HNSW. When enabled, PiPNN is used where it applies: segments that are large enough, have no older graph to build from, and whose vectors support it. Only changes how graphs are built: the resulting graph has the same format either way.\n\nEnabled by default.",
+            "default": true,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f606fb33` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8cdcfef` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

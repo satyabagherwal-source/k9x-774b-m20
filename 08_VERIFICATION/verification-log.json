@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-G8WS",
-    "timestamp": "2026-11-13T20:54:29.404Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "fe9bfac98d4b2de803b2fe9c924aac493f1416ce1364b5582a16fa075ea4c14f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-G9X0",
-    "timestamp": "2026-11-13T20:54:30.708Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "496e828588f077f8f0de650a17a53a07c3f502d8a45be017fc92ad2aa6be84a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-GBU7",
-    "timestamp": "2026-11-13T20:54:33.199Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "b706159394d4afeb7a93872267c0afd5674bd59be93f3b7ad8651af19689aaf5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-WHJO",
     "timestamp": "2026-11-13T21:07:07.092Z",
     "repository": "google-bert/bert-base-uncased",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "6b2161ea2c06f0be829bedb522e5c7c3512c4ea2fc60df40e6a3b0f7337de4ba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-4OXW",
+    "timestamp": "2026-11-16T15:00:35.780Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "5c94cdb4cbed2893091319ff761980656ef653c9a805d4cecc3ebf2b76127716",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-4S6W",
+    "timestamp": "2026-11-16T15:00:39.992Z",
+    "repository": "RevenueCat/purchases-ios",
+    "learningId": "learn-github-revenuecat-purchases-ios",
+    "contentHash": "5743b956ceb725c6038815cfdcbb6b2973cd827743c6d9911ffe60fcaac04390",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-4XNY",
+    "timestamp": "2026-11-16T15:00:47.086Z",
+    "repository": "qdrant/qdrant",
+    "learningId": "learn-github-qdrant-qdrant",
+    "contentHash": "2fdda9e36f03c4baf38a033bf11dcf0e360b3fc46ca507efc1b5645aed7eac2f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

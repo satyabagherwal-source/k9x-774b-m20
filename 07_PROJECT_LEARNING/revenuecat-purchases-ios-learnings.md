@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source**: github ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
-> **Source Version**: `efd30907`  
+> **Source Version**: `547f252e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:10:36.646Z  
+> **Timestamp**: 2026-11-16T15:00:39.154Z  
 > **Learning ID**: `learn-github-revenuecat-purchases-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:10:36.641Z  
+> **Harvest Timestamp**: 2026-11-16T15:00:39.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: In-app purchases and subscriptions made easy. Support for iOS, watchOS, tvOS, macOS, and visionOS.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3094 stars
+- **Stars / Engagement**: 3096 stars
 
 ---
 
@@ -527,465 +527,233 @@ struct YarnShape: Shape {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c76a522` (2026-11-09)
-**Commit Message**: Revert "build: don't block releases on CocoaPods publishing (#8125)" (#8236)
+### Incident Patch 1: `5fc2465e` (2026-11-16)
+**Commit Message**: fix: prevent paywall hangs from repeated placeholder rendering (#8302)
 
-**File**: `.circleci/default_config.yml` (modified, +1/-2)
+**File**: `RevenueCatUI/Views/RemoteImage.swift` (modified, +5/-3)
 ```diff
-@@ -2884,8 +2884,7 @@ workflows:
-       - make-release:
-           context: github-bot-public
-           requires:
--            # TODO: restore after Nov 7, 2026, once CocoaPods trunk is writable again.
--            # - push-revenuecatui-pod
-+            - push-revenuecatui-pod
-             - deploy-to-spm
-             - docs-deploy
-           <<: *release-tags
+@@ -243,7 +243,7 @@ private struct ColorSchemeRemoteImage<Content: View>: View {
+                 }
+             } else {
+                 if let expectedSize = self.expectedSize {
+-                    content(Image.clearImage(size: expectedSize), expectedSize)
++                    content(Image.clearImage, expectedSize)
+                 } else {
+                     emptyView(error: nil)
+                 }
+@@ -333,7 +333,9 @@ private struct ColorSchemeRemoteImage<Content: View>: View {
+ 
+ private extension Image {
+     /// Returns a fully transparent SwiftUI Image of the given size.
+-    static func clearImage(size: CGSize) -> Image {
++    static let clearImage: Image = {
++        let size = CGSize(width: 1, height: 1)
++
+         #if os(iOS) || os(visionOS)
+         let renderer = UIGraphicsImageRenderer(size: size)
+         let uiImage = renderer.image { ctx in
+@@ -361,5 +363,5 @@ private extension Image {
+         return Image(nsImage: nsImage)
+ 
+         #endif
+-    }
++    }()
+ }
 ```
 
 ---
 
-### Incident Patch 2: `dcc4051c` (2026-11-11)
-**Commit Message**: Fix custom paywall purchase loading state cleanup (#8277)
+### Incident Patch 2: `393e7b26` (2026-11-13)
+**Commit Message**: Update AGENTS.md - SwiftUI performance (#8297)
 
-**File**: `RevenueCatUI/Purchasing/PurchaseHandler.swift` (modified, +1/-1)
+**File**: `AGENTS.md` (modified, +12/-0)
 ```diff
-@@ -977,7 +977,7 @@ extension PurchaseHandler {
-         self.purchaseError = nil
+@@ -106,6 +106,18 @@ Key top-level directories: `Sources/`, `RevenueCatUI/`, `Tests/`, `Examples/`, `
+ - **MVVM Pattern**: ViewModels with SwiftUI views
+ - **Main Components**: `PaywallView`, `CustomerCenterView`
  
-         defer {
--            self.restoreInProgress = false
-+            self.packageBeingPurchased = nil
-             self.actionTypeInProgress = nil
-         }
++#### SwiftUI update performance
++
++When changing or reviewing RevenueCatUI, distinguish a `body` update from layout or pixel rendering. An extra `body` call is a performance concern when it causes measurable work or a user-visible hitch; don't optimize update counts alone.
++
++- Keep changing state and its readers as close as practical to the view that uses it. Own a view-created reference model with `@StateObject`; use `@ObservedObject` for a model owned elsewhere. Pass a child only the values it needs instead of making it observe a broad model.
++- Publish only values that can change and affect the UI. Check for an actual value change before writing or calling `objectWillChange.send()`. Avoid expensive formatting, filtering, or object creation in `body`.
++- Treat `@EnvironmentObject` and custom environment snapshots as shared dependencies. In Paywalls V2, `PaywallStateStore` republishes a whole state dictionary into the environment; measure fan-out before adding more readers or changing its update path.
++- Preserve stable, unique identity for dynamic views. Avoid computed IDs, position-based IDs for reorderable items, and branches that replace a view when only a modifier value changes. Keep `List` / `ForEach` row construction predictable; don't put filtering or `AnyView` inside a large list's row builder without measuring the cost.
++- Use `.equatable()` only for a measured, value-driven view whose equality covers every input that affects its output. It is not a general redraw switch.
++- For code that runs on iOS 15, use `ObservableObject` and the existing SwiftUI property wrappers. `@Observable` requires iOS 17; use it only with an availability-gated path and an older-OS fallback.
++- For performance changes, reproduce the interaction, profile a Release build, and compare the same workload before and after. Use `_printChanges()` only for temporary debugging; remove it before shipping. Validate behavior on the oldest supported OS. The existing `PerformanceTests` cover memory, not SwiftUI view-update counts.
++
+ ### Thread Safety
  
-```
-
-**File**: `Tests/RevenueCatUITests/Purchasing/PurchaseHandlerTests.swift` (modified, +89/-0)
-```diff
-@@ -42,6 +42,95 @@ class PurchaseHandlerTests: TestCase {
-         expect(handler.restoreError).to(beNil())
-     }
- 
-+    func testCustomPurchaseSuccessClearsLoadingState() async throws {
-+        try await self.checkCustomPurchaseLoadingState(userCancelled: false, error: nil)
-+    }
-+
-+    func testCustomPurchaseCancellationClearsLoadingState() async throws {
-+        try await self.checkCustomPurchaseLoadingState(userCancelled: true, error: nil)
-+    }
-+
-+    func testCustomPurchaseFailureClearsLoadingState() async throws {
-+        try await self.checkCustomPurchaseLoadingState(userCancelled: false, error: ErrorCode.storeProblemError)
-+    }
-+
-+    func testCustomPurchaseCustomerInfoFailureClearsLoadingState() async throws {
-+        let purchases = MockPurchases(purchasesAreCompletedBy: .myApp) { _, _, _ in
-+            XCTFail("The app must complete its own purchase")
-+            return (nil, TestData.customerInfo, false)
-+        } restorePurchases: {
-+            TestData.customerInfo
-+        } trackEvent: { _ in
-+        } customerInfo: {
-+            throw ErrorCode.networkError
-+        }
-+        let handler = PurchaseHandler(
-+            purchases: purchases,
-+            performPurchase: { _ in (false, nil) },
-+            eventTracker: .init(purchases: purchases)
-+        )
-+
-+        do {
-+            try await handler.purchase(package: TestData.packageWithIntroOffer)
-+            XCTFail("Expected the customer info error")
-+        } catch {
-+            XCTAssertEqual(error as? ErrorCode, .networkError)
-+        }
-+
-+        XCTAssertNil(handler.packageBeingPurchased)
-+        XCTAssertFalse(handler.actionInProgress)
-+    }
-+
-+    func testCustomPurchaseCanRetryAfterCancellation() async throws {
-+        var packages: [Package] = []
-+        let handler = PurchaseHandler.mock(purchasesAreCompletedBy: .myApp, performPurchase: { package in
-+            packages.append(package)
-+            return (userCancelled: packages.count == 1, error: nil)
-+        })
-+
-+        try await handler.purchase(package: TestData.packageWithIntroOffer)
-+        XCTAssertNil(handler.packageBeingPurchased)
-+        expect(handler.purchaseResult) == .cancelled
-+
-+        try await handler.purchase(package: TestData.annualPackage)
-+        XCTAssertNil(handler.packageBeingPurchased)
-+        XCTAssertFalse(handler.actionInProgress)
-+        XCTAssertEqual(packages.count, 2)
-+        XCTAssertTrue(packages[0] === TestData.packageWithIntroOffer)
-+        XCTAssertTrue(packages[1] === TestData.annualPackage)
-+        expect(handler.purchaseResult) == .purchased(transaction: nil, customerInfo: TestData.customerInfo)
-+    }
-+
-+    private func checkCustomPurchaseLoadingState(userCancelled: Bool, error expectedError: Error?) async throws {
-+        weak var handlerReference: PurchaseHandler?
-+        let handler = PurchaseHandler.mock(purchasesAreCompletedBy: .myApp, performPurchase: { package in
-+            XCTAssertTrue(handlerReference?.packageBeingPurchased === package)
-+            XCTAssertTrue(handlerReference?.actionInProgress == true)
-+            return (userCancelled, expectedError)
-+        })
-+        handlerReference = handler
-+
-+        do {
-+            try await handler.purchase(package: TestData.packageWithIntroOffer)
-+            XCTAssertNil(expectedError)
-+        } catch {
-+            XCTAssertNotNil(expectedError)
-+            XCTAssertEqual(error as? ErrorCode, expectedError as? ErrorCode)
-+        }
-+
-+        XCTAssertNil(handler.packageBeingPurchased)
-+        XCTAssertFalse(handler.actionInProgress)
-+        XCTAssertFalse(handler.restoreInProgress)
-+        if expectedError != nil {
-+            XCTAssertNotNil(handler.purchaseError)
-+            XCTAssertNil(handler.purchaseResult)
-+        } else if userCancelled {
-+            expect(handler.purchaseResult) == .cancelled
-+        } else {
-+            expect(handler.purchaseResult) == .purchased(transaction: nil, customerInfo: TestData.customerInfo)
-+        }
-+    }
-+
-     func testPurchaseSetsCustomerInfo() async throws {
-         let handler: PurchaseHandler = .mock()
- 
+ The SDK is heavily concurrent — StoreKit callbacks, delegate calls, caching, and network responses can all arrive on different threads. See **`Contributing/ThreadSafety.md`** for the full guide. Key primitives:
 ```
 
 ---
 
-### Incident Patch 3: `11db1698` (2026-11-12)
-**Commit Message**: fix: prevent flaky StoreKit 1 transaction finish assertion (#8270)
+### Incident Patch 3: `e119bef9` (2026-11-13)
+**Commit Message**: ci: stop storing test build artifacts and unused logs (#8295)
 
-* fix: prevent flaky StoreKit 1 transaction finish assertion
+* ci: stop storing test build artifacts and unused logs
 
-* test: centralize StoreKit transaction finish verification
+* ci: keep test result bundle generation
 
-* refactor: clarify StoreKit finish verification
-
-* test: await consumable transaction finish log
-
-* docs: explain StoreKit 1 finish verification
-
-* test: preserve StoreKit 2 finish count semantics
-
-* test: scope StoreKit queue removal assertions
-
-* test: avoid flaky StoreKit queue removal wait
-
-**File**: `Tests/BackendIntegrationTests/Helpers/BaseStoreKitIntegrationTests+Verification.swift` (modified, +35/-6)
+**File**: `.circleci/default_config.yml` (modified, +0/-243)
 ```diff
-@@ -162,6 +162,31 @@ extension BaseStoreKitIntegrationTests {
-                                            line: line)
-     }
+@@ -281,23 +281,6 @@ commands:
+           paths:
+             - vendor/bundle
  
-+    func verifyTransactionWasFinished(
-+        _ transaction: StoreTransaction,
-+        count: Int? = 1,
-+        file: FileString = #file,
-+        line: UInt = #line
-+    ) async throws {
-+        switch Self.storeKitVersion {
-+        case .storeKit1:
-+            // StoreKit 1 can deliver duplicate updates, so exact finish-request counts are unreliable.
-+            try await self.verifySpecificTransactionIsEventuallyFinished(
-+                transaction,
-+                count: nil,
-+                file: file,
-+                line: line
-+            )
-+        case .storeKit2:
-+            try await self.verifySpecificTransactionIsEventuallyFinished(
-+                transaction,
-+                count: count,
-+                file: file,
-+                line: line
-+            )
-+        }
-+    }
-+
-     func verifySpecificTransactionIsEventuallyFinished(
-         _ transaction: StoreTransaction,
-         count: Int? = 1,
-@@ -207,13 +232,17 @@ extension BaseStoreKitIntegrationTests {
-         count: Int? = 1,
-         file: FileString = #file,
-         line: UInt = #line
--    ) {
-+    ) async throws {
-         let expectedLogRegexPattern = Self.finishingTransactionLogRegexPattern(productIdentifier: productIdentifier)
--        self.logger.verifyMessageWasLogged(regexPattern: expectedLogRegexPattern,
--                                           level: .info,
--                                           expectedCount: count,
--                                           file: file,
--                                           line: line)
-+        try await self.logger.verifyMessageIsEventuallyLogged(
-+            regexPattern: expectedLogRegexPattern,
-+            level: .info,
-+            expectedCount: count,
-+            timeout: .seconds(5),
-+            pollInterval: .milliseconds(100),
-+            file: file,
-+            line: line
-+        )
-     }
- 
-     func verifyNoTransactionsWereFinished(
-```
-
-**File**: `Tests/BackendIntegrationTests/OfflineStoreKitIntegrationTests.swift` (modified, +10/-16)
-```diff
-@@ -197,11 +197,7 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
-         }
- 
-         // 4. Ensure transaction is eventually finished
--        try await self.verifySpecificTransactionIsEventuallyFinished(
--            transactionId: transaction.transactionIdentifier,
--            productId: transaction.productIdentifier,
--            count: nil
--        )
-+        try await self.verifyTransactionWasFinished(transaction, count: nil)
- 
-         // 5. Restart app again
-         try self.purchases.invalidateCustomerInfoCache()
-@@ -414,7 +410,7 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
- 
-         // 2. Ensure the purchase transaction is finished before server goes down
-         let transaction = try XCTUnwrap(result.transaction)
--        self.verifySpecificTransactionWasFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
- 
-         // 3. Server goes down
-         self.serverDown()
-@@ -531,7 +527,7 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
-         try await self.verifyEntitlementWentThrough(info1)
- 
-         // 4. Ensure transaction is finished
--        self.verifySpecificTransactionWasFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
- 
-         // 5. Restart app
-         try self.purchases.invalidateCustomerInfoCache()
-@@ -580,13 +576,12 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
-         expect(info.nonSubscriptions.onlyElement?.productIdentifier) == Self.consumable10Coins
- 
-         // 6. Ensure transactions are finished
--        try await self.verifyAnyTransactionIsEventuallyFinished(count: 2)
+-  compress_result_bundle:
+-    parameters:
+-      directory:
+-        type: string
+-      bundle_name:
+-        type: string
+-    steps:
+-      - run:
+-          name: Compress result bundle
+-          command: |
+-            BUNDLE="<< parameters.directory >>/<< parameters.bundle_name >>.xcresult"
+-            if [ -d "$BUNDLE" ]; then
+-              tar -czf "$BUNDLE.tar.gz" -C "<< parameters.directory >>" "<< parameters.bundle_name >>.xcresult"
+-              rm -r "$BUNDLE"
+-            fi
+-          when: always
 -
--        try await self.verifySpecificTransactionIsEventuallyFinished(
--            transactionId: transaction.transactionIdentifier,
--            productId: transaction.productIdentifier
--        )
--        self.verifyTransactionWasFinishedForProductIdentifier(Self.consumable10Coins)
-+        if Self.storeKitVersion == .storeKit2 {
-+            try await self.verifyAnyTransactionIsEventuallyFinished(count: 2)
-+        }
-+        try await self.verifyTransactionWasFinished(transaction)
-+        let expectedCount = Self.storeKitVersion == .storeKit1 ? nil : 1
-+        try await self.verifyTransactionWasFinishedForProductIdentifier(Self.consumable10Coins, count: expectedCount)
-     }
+   scan:
+     parameters:
+       directory:
+@@ -312,9 +295,6 @@ commands:
+           command: bundle exec fastlane scan
+       - store_test_results:
+           path: fastlane/test_output
+-      - store_artifacts:
+-          path: fastlane/test_output/report.html
+-          destination: test_report.html
  
-     @available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *)
-@@ -630,8 +625,7 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
-                                            level: .verbose,
-                                            expectedCount: 1)
+   scan-and-archive:
+     parameters:
+@@ -330,9 +310,6 @@ commands:
+           command: bundle exec fastlane scan
+       - store_test_results:
+           path: fastlane/test_output
+-      - store_artifacts:
+-          path: fastlane/test_output/report.html
+-          destination: test_report.html
+       - run:
+           name: Archive
+           working_directory: << parameters.directory >>
+@@ -353,9 +330,6 @@ commands:
+           command: bundle exec fastlane scan
+       - store_test_results:
+           path: fastlane/test_output
+-      - store_artifacts:
+-          path: fastlane/test_output/report.html
+-          destination: test_report.html
+       - run:
+           name: Archive all platforms
+           working_directory: << parameters.directory >>
+@@ -558,18 +532,12 @@ commands:
+           no_output_timeout: 5m
+           environment:
+             SCAN_DEVICE: << parameters.device >>
+-      - compress_result_bundle:
+-          directory: fastlane/test_output/xctest/ios
+-          bundle_name: BackendIntegrationTests
+       - create-snapshot-pr-if-needed:
+           condition: << pipeline.parameters.generate_snapshots >>
+           job: "create_snapshot_pr"
+           version: "BackendIntegrationTests"
+       - store_test_results:
+           path: fastlane/test_output
+-      - store_artifacts:
+-          path: fastlane/test_output/xctest
+-          destination: scan-test-output
  
--        self.verifySpecificTransactionWasFinished(transactionId: transactionId,
--                                                  productId: transaction.productIdentifier)
-+        try await self.verifyTransactionWasFinished(transaction)
-         self.logger.verifyMessageWasLogged(
-             "API request completed: POST '/v1/receipts'",
-             level: .debug
-```
-
-**File**: `Tests/BackendIntegrationTests/PurchasesFallbackURLBackendIntegrationTests.swift` (modified, +2/-8)
-```diff
-@@ -91,10 +91,7 @@ class PurchasesFallbackURLBackendStoreKit2IntegrationTests: BaseStoreKitIntegrat
-         let onlineCustomerInfo = try await self.purchases.customerInfo()
+   checkout-with-minimal-permissions:
+     steps:
+@@ -637,14 +605,8 @@ jobs:
+           no_output_timeout: 10m
+           environment:
+             DEVICE: iPhone 17,OS=27.0
+-      - compress_result_bundle:
+-          directory: fastlane/test_output
+-          bundle_name: revenuecat_admob
+       - store_test_results:
+           path: fastlane/test_output/revenuecat_admob/tests.xml
+-      - store_artifacts:
+-          path: fastlane/test_output
+-          destination: scan-test-output
  
-         verifyCustomerInfoWasNotComputedOffline(customerInfo: onlineCustomerInfo)
--        try await self.verifySpecificTransactionIsEventuallyFinished(
--            transactionId: transactionIdentifier,
--            productId: transaction.productIdentifier
--        )
-+        try await self.verifyTransactionWasFinished(transaction)
-         try await asyncWait(description: "Recovered transaction is still unfinished", timeout: .seconds(5)) {
-             for await result in StoreKit.Transaction.unfinished {
-                 switch result {
-@@ -132,10 +129,7 @@ class PurchasesFallbackURLBackendStoreKit2IntegrationTests: BaseStoreKitIntegrat
+   revenuecat-ads-tests:
+     executor:
+@@ -667,14 +629,8 @@ jobs:
+           no_output_timeout: 10m
+           environment:
+             DEVICE: iPhone 17,OS=27.0
+-      - compress_result_bundle:
+-          directory: fastlane/test_output
+-          bundle_name: revenuecat_ads
+       - store_test_results:
+           path: fastlane/test_output/revenuecat_ads/tests.xml
+-      - store_artifacts:
+-          path: fastlane/test_output
+-          destination: scan-test-output
  
-         let onlineCustomerInfo = try await self.purchases.customerInfo()
- 
--        try await self.verifySpecificTransactionIsEventuallyFinished(
--            transaction,
--            count: nil
--        )
-+        try await self.verifyTransactionWasFinished(transaction, count: nil)
- 
-         verifyCustomerInfoWasNotComputedOffline(customerInfo: onlineCustomerInfo)
- 
-```
-
-**File**: `Tests/BackendIntegrationTests/StoreKitIntegrationTests.swift` (modified, +6/-6)
-```diff
-@@ -348,7 +348,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
-         expect(nonSubscription.storeTransactionIdentifier) == transaction.transactionIdentifier
-         expect(info.allPurchasedProductIdentifiers).to(contain(Self.consumable10Coins))
- 
--        self.verifySpecificTransactionWasFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
-     }
- 
-     func testCanPurchaseConsumableMultipleTimes() async throws {
-@@ -366,7 +366,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
-                                                                         count: count)
- 
-         for transaction in transactions {
--            self.verifySpecificTransactionWasFinished(transaction, count: nil)
-+            try await self.verifyTransactionWasFinished(transaction, count: nil)
-             if Self.storeKitVersion == .storeKit1 {
-                 await self.verifyTransactionIsEventuallyRemovedFromSK1Queue(transaction)
-             }
-@@ -397,7 +397,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
- 
-         expect(transaction1.transactionIdentifier).toNot(equal(transaction2.transactionIdentifier))
-         for transaction in [transaction1, transaction2] {
--            self.verifySpecificTransactionWasFinished(transaction)
-+            try await self.verifyTransactionWasFinished(transaction)
-             if Self.storeKitVersion == .storeKit1 {
-                 await self.verifyTransactionIsEventuallyRemovedFromSK1Queue(transaction)
-             }
-@@ -416,7 +416,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
- 
-         try await self.verifyEntitlementWentThrough(info)
- 
--        self.verifySpecificTransactionWasFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
-     }
- 
-     func testCanPurchaseNonRenewingSubscription() async throws {
-@@ -431,7 +431,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
- 
-         try await self.verifyEntitlementWentThrough(info)
- 
--        self.verifySpecificTransactionWasFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
-     }
- 
-     func testCanPurchaseMultipleSubscriptions() async throws {
-@@ -1236,7 +1236,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
- 
-         let transaction = try XCTUnwrap(result.transaction)
-         try await self.verifyEntitlementWentThrough(result.customerInfo)
--        self.verifySpecificTransactionWasFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
-     }
-     #endif
- 
-```
-
-**File**: `Tests/BackendIntegrationTests/VirtualCurrencyIntegrationTests.swift` (modified, +4/-4)
-```diff
-@@ -39,7 +39,7 @@ class VirtualCurrencyStoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
- 
-         let resultData = try await self.purchaseConsumablePackage()
-         let transaction = try XCTUnwrap(resultData.transaction)
--        try await self.verifySpecificTransactionIsEventuallyFinished(transaction, count: nil)
-+        try await self.verifyTransactionWasFinished(transaction)
-         await self.verifyTransactionIsEventuallyRemovedFromSK1Queue(transaction)
- 
-         try self.purchases.invalidateVirtualCurrenciesCache()
-@@ -73,7 +73,7 @@ class VirtualCurrencyStoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
- 
-         let resultData = try await self.purchaseNonConsumablePackage()
-         let transaction = try XCTUnwrap(resultData.transaction)
--        try await self.verifySpecificTransactionIsEventuallyFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
-         await self.verifyTransactionIsEventuallyRemovedFromSK1Queue(transaction)
- 
-         try self.purchases.invalidateVirtualCurrenciesCache()
-@@ -106,7 +106,7 @@ class VirtualCurrencyStoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
- 
-         let resultData = try await self.purchaseMonthlyOffering()
-         let transaction = try XCTUnwrap(resultData.transaction)
--        self.verifySpecificTransactionWasFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
- 
-         try self.purchases.invalidateVirtualCurrenciesCache()
- 
-@@ -138,7 +138,7 @@ class VirtualCurrencyStoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
- 
-         let purchaseResult = try await self.purchaseNonRenewingSubscriptionPackage()
-         let transaction = try XCTUnwrap(purchaseResult.transaction)
--        self.verifySpecificTransactionWasFinished(transaction)
-+        try await self.verifyTransactionWasFinished(transaction)
- 
-         try self.purchases.invalidateVirtualCurrenciesCache()
- 
-```
-
-**File**: `Tests/UnitTests/TestHelpers/TestLogHandler.swift` (modified, +34/-0)
-```diff
-@@ -204,6 +204,40 @@ extension TestLogHandler {
-         }
-     }
- 
-+    func verifyMessageIsEventuallyLogged(
-+        regexPattern: String,
-+        level: LogLevel? = nil,
-+        expectedCount: Int? = nil,
-+        timeout: NimbleTimeInterval = PollingDefaults.timeout,
-+        pollInterval: NimbleTimeInterval = PollingDefaults.pollInterval,
-+        file: FileString = #file,
-+        line: UInt = #line
-+    ) async throws {
-+        let condition = Self.regexEntryCondition(pattern: regexPattern, level: level)
-+
-+        try await asyncWait(
-+            description: "Message with pattern '\(regexPattern)' not found. Logged messages: \(self.messages)",
-+            timeout: timeout,
-+            pollInterval: pollInterval,
-+            file: file,
-+            line: line
-+        ) {
-+            self.messages.contains(where: condition)
-+        }
-+
-+        if let expectedCount = expectedCount {
-+            try await asyncWait(
-+                description: "Message with pattern '\(regexPattern)' expected \(expectedCount) times",
-+                timeout: timeout,
-+                pollInterval: pollInterval,
-+                file: file,
-+                line: line
-+            ) {
-+                self.messagesMatching(condition) == expectedCount
-+            }
-+        }
-+    }
-+
-     /// - Parameter allowNoMessages: by default, this method requires logs to not be empty
-     /// to eliminate the possibility of false positives due to log handler not being installed properly.
-     func verifyMessageWasNotLogged(
+   spm-receipt-parser:
+     executor:
+@@ -726,26 +682,12 @@ jobs:
+           no_output_timeout: 5m
+           environment:
+             DEVICE: iPhone 14,OS=16.4
+-      - compress_result_bundle:
+-          directory: fastlane/test_output
+-          bundle_name: revenuecatui
+-      - run:
+-          name: Preserve RevenueCatUI iOS 16 result bundle
+-          when: always
+-          command: |
+-            cd fastlane/test_output 2>/dev/null || exit 0
+-            if [ -f revenuecatui.xcresult.tar.gz ]; then
+-              mv revenuecatui.xcresult.tar.gz revenuecatui-iOS16.xcresult.tar.gz
+-            fi
+       - create-snapshot-pr-if-needed:
+           condition: << pipeline.parameters.generate_revenuecatui_snapshots >>
+           job: "create_snapshot_pr"
+           version: "revenuecatui-16"
+       - store_test_results:
+           path: fastlane/test_output/revenuecatui/tests.xml
+-      - store_artifacts:
+-          path: fastlane/test_output
+-          destination: scan-test-output-revenuecatui-16
+       - run:
+           name: Clean test output before RevenueCatUI iOS 15 run
+           command: rm -rf fastlane/test_output
+@@ -761,26 +703,12 @@ jobs:
+           no_output_timeout: 5m
+           environment:
+             DEVICE: iPhone 13,OS=15.5
+-      - compress_result_bundle:
+-          directory: fastlane/test_output
+-          bundle_name: revenuecatui
+-      - run:
+-          name: Preserve RevenueCatUI iOS 15 result bundle
+-          when: always
+-          command: |
+-            cd fastlane/test_output 2>/dev/null || exit 0
+-            if [ -f revenuecatui.xcresult.tar.gz ]; then
+-              mv revenuecatui.xcresult.tar.gz revenuecatui-iOS15.xcresult.tar.gz
+-          
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8302** (2026-11-16): fix: prevent paywall hangs from repeated placeholder rendering (@rickvdl)
+- **PR #8301** (closed): Chore(deps): Bump fastlane-plugin-revenuecat_internal from `52a8b95` to `8f4cd3f` (@dependabot[bot])
+- **PR #8297** (2026-11-13): chore(ui): Update AGENTS.md with information about SwiftUI performance (@JZDesign)
+- **PR #8295** (2026-11-13): ci: stop storing test build artifacts and unused logs (@rickvdl)
 - **PR #8292** (2026-11-12): Chore(deps): Bump fastlane-plugin-revenuecat_internal from `1e7875c` to `52a8b95` (@dependabot[bot])
 - **PR #8290** (2026-11-12): Route direct GitHub API calls through the plugin's retry helper (@ajpallares)
-- **PR #8284** (2026-11-12): chore(paywalls): Expose overload for hybrids (@JZDesign)
-- **PR #8283** (2026-11-11): Prepare next version: 5.104.0-SNAPSHOT (@RCGitBot)
-- **PR #8282** (2026-11-11): [AUTOMATIC] Release/5.103.0 (@RCGitBot)
-- **PR #8281** (2026-11-11): Update baseline swiftinterface files for `pallares/paywall-purchase-context` (@RCGitBot)
 
 ---
 
@@ -1005,29 +773,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "build: don't block releases on CocoaPods publishing (#8125)" (#8236)
+## X. prevent paywall hangs from repeated placeholder rendering
 
 **RULE**:
-When implementing operations in `.circleci/default_config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RevenueCatUI/Views/RemoteImage.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9c76a522`: Revert "build: don't block releases on CocoaPods publishing (#8125)" (#8236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fc2465e`: prevent paywall hangs from repeated placeholder rendering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/default_config.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `RevenueCatUI/Views/RemoteImage.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            - push-revenuecatui-pod
+                    content(Image.clearImage, expectedSize)
+    static let clearImage: Image = {
+        let size = CGSize(width: 1, height: 1)
+
+    }()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-            # TODO: restore after Nov 7, 2026, once CocoaPods trunk is writable again.
-            # - push-revenuecatui-pod
+// Induced defect failure mode:
+                    content(Image.clearImage(size: expectedSize), expectedSize)
+    static func clearImage(size: CGSize) -> Image {
+    }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9c76a522` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fc2465e` are properly handled with clean fallback behavior.

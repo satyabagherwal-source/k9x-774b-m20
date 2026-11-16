@@ -10315,3 +10315,6 @@ Every entry in this ledger must capture:
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `c9f1a879` | Multi-dimensional audit evidence | 2026-11-16T14:34:58.471Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `11001bac` | Multi-dimensional audit evidence | 2026-11-16T14:35:01.404Z |
 | `learn-dom-d-3870af12` | `project://hf-ifm-pan2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md` | 2026-11-16T14:35:30.659Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `f416c5d1` | Multi-dimensional audit evidence | 2026-11-16T15:00:35.784Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `547f252e` | Multi-dimensional audit evidence | 2026-11-16T15:00:39.995Z |
+| `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `23065a0b` | Multi-dimensional audit evidence | 2026-11-16T15:00:47.090Z |

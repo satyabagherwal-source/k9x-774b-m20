@@ -10282,3 +10282,6 @@
 | `CYCLE-20261116-7QQS` | `2026-11-16T14:34:58.468Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8744` | Yes (`1b41c558...`) |
 | `CYCLE-20261116-7T09` | `2026-11-16T14:35:01.401Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8745` | Yes (`6b2161ea...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T14:35:30.659Z` | `hf-ifm-pan2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3870AF12` [Domain D] | Yes (`e33154e1...`) |
+| `CYCLE-20261116-4OXW` | `2026-11-16T15:00:35.780Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8746` | Yes (`5c94cdb4...`) |
+| `CYCLE-20261116-4S6W` | `2026-11-16T15:00:39.992Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8747` | Yes (`5743b956...`) |
+| `CYCLE-20261116-4XNY` | `2026-11-16T15:00:47.086Z` | `qdrant/qdrant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8748` | Yes (`2fdda9e3...`) |

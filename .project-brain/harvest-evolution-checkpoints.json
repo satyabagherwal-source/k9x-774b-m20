@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T14:35:32.308Z",
+  "last_updated": "2026-11-16T15:00:51.851Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T14:07:06.724Z",
@@ -138,9 +138,9 @@
       "staged_for_review": 1
     },
     "facebook-folly-learnings.md": {
-      "processed_at": "2026-11-14T18:14:54.741Z",
+      "processed_at": "2026-11-16T15:00:50.226Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 0
     },
     "hf-unsloth-qwen3.8-flash-next-gguf-learnings.md": {
       "processed_at": "2026-11-16T00:36:58.054Z",
@@ -1478,7 +1478,7 @@
       "staged_for_review": 0
     },
     "revenuecat-purchases-ios-learnings.md": {
-      "processed_at": "2026-11-13T03:11:08.623Z",
+      "processed_at": "2026-11-16T15:00:50.794Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3171,9 +3171,14 @@
       "processed_at": "2026-11-16T14:35:30.987Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "qdrant-qdrant-learnings.md": {
+      "processed_at": "2026-11-16T15:00:51.306Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1299,
+  "total_dossiers_evaluated": 1302,
   "total_canonical_promoted": 288,
-  "total_staged_for_review": 1004
+  "total_staged_for_review": 1006
 }

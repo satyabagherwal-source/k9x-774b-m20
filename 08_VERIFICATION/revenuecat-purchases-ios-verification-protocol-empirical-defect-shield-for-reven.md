@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for revenuecat/purchases/ios
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for RevenueCat/purchases-ios
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "revenuecat/purchases/ios",
-  "source_url": "https://github.com/revenuecat/purchases/ios",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "RevenueCat/purchases-ios",
+  "source_url": "https://github.com/RevenueCat/purchases-ios",
+  "source_version": "547f252e",
+  "license": "MIT",
+  "timestamp": "2026-11-16T15:00:40.163Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-revenuecat-purchases-ios",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [revenuecat/purchases/ios](https://github.com/revenuecat/purchases/ios) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios) (Revision: `547f252e`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T15:00:40.163Z`  
+> **Learning ID**: `learn-github-revenuecat-purchases-ios`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `revenuecat/purchases/ios` (Commit: `historical`)
+- **Target Repository**: `RevenueCat/purchases-ios` (Commit: `547f252e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
-> **Source**: github ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
-> **Source Version**: `c9c4ede1`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T20:21:36.447Z  
-> **Learning ID**: `learn-github-revenuecat-purchases-ios`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): RevenueCat/purchases-ios
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T20:21:36.440Z  
+> **Harvest Timestamp**: 2026-11-16T15:00:39.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: In-app purchases and subscriptions made easy. Support for iOS, watchOS, tvOS, macOS, and visionOS.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3093 stars
+- **Stars / Engagement**: 3096 stars
 
 ---
 
@@ -552,580 +538,233 @@ struct YarnShape: Shape {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd2ea7ef` (2026-11-05)
-**Commit Message**: fix(paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230)
+### Incident Patch 1: `5fc2465e` (2026-11-16)
+**Commit Message**: fix: prevent paywall hangs from repeated placeholder rendering (#8302)
 
-* fix(paywalls): stop nested Fill stacks from hanging on iOS 17
-
-On iOS 17, SwiftUI places a frame's content three times per placement
-whenever an ancestor proposes an unbounded size, as the paywall's root
-ScrollView or ViewThatFits does. Each nested Fill stack multiplies that,
-so a paywall about a dozen stacks deep keeps the main thread busy for
-minutes and never appears.
-
-Fill sizing now goes through a single-child Layout on iOS 17 that sizes
-like the frame did and aligns by size, placing its content once.
-
-
-
-* refactor(paywalls): trim FillLayout to its essentials
-
-Drops the negative-proposal clamp, which SwiftUI never needs, and folds
-the alignment fractions inline. Behavior and test coverage are unchanged.
-
-
-
-* refactor(paywalls): move Layout conformances into extensions
-
-Follows the style guide: stored properties in the declaration, protocol
-conformance in an extension.
-
-
-
----------
-
-Co-authored-by: Nevyn Bengtsson <[REDACTED_EMAIL]>
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift` (modified, +62/-2)
+**File**: `RevenueCatUI/Views/RemoteImage.swift` (modified, +5/-3)
 ```diff
-@@ -40,7 +40,7 @@ extension View {
-             self
-         case let .fill(minMax):
-             self
--                .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-+                .fill(.horizontal, alignment: alignment)
-                 .applyWidthLimits(minMax, alignment: alignment)
-         case .fixed(let value):
-             self
-@@ -58,7 +58,7 @@ extension View {
-             self
-         case let .fill(minMax):
-             self
--                .frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
-+                .fill(.vertical, alignment: alignment)
-                 .applyHeightLimits(minMax, alignment: alignment)
-         case .fixed(let value):
-             self
-@@ -69,6 +69,31 @@ extension View {
-         }
-     }
+@@ -243,7 +243,7 @@ private struct ColorSchemeRemoteImage<Content: View>: View {
+                 }
+             } else {
+                 if let expectedSize = self.expectedSize {
+-                    content(Image.clearImage(size: expectedSize), expectedSize)
++                    content(Image.clearImage, expectedSize)
+                 } else {
+                     emptyView(error: nil)
+                 }
+@@ -333,7 +333,9 @@ private struct ColorSchemeRemoteImage<Content: View>: View {
  
-+    /// Takes all the space proposed along `axis`, like `.frame(minWidth: 0, maxWidth: .infinity)`.
-+    ///
-+    /// iOS 17 places a frame's content three times under an unbounded proposal, such as a `ScrollView`'s, and
-+    /// every nested Fill stack multiplies that until the paywall hangs. ``FillLayout`` places it once.
-+    @ViewBuilder
-+    func fill(_ axis: Axis, alignment: Alignment) -> some View {
-+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
-+            self.fillFrame(axis, alignment: alignment)
-+        } else if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
-+            FillLayout(axis: axis, alignment: alignment) { self }
-+        } else {
-+            self.fillFrame(axis, alignment: alignment)
-+        }
-+    }
+ private extension Image {
+     /// Returns a fully transparent SwiftUI Image of the given size.
+-    static func clearImage(size: CGSize) -> Image {
++    static let clearImage: Image = {
++        let size = CGSize(width: 1, height: 1)
 +
-+    @ViewBuilder
-+    private func fillFrame(_ axis: Axis, alignment: Alignment) -> some View {
-+        switch axis {
-+        case .horizontal:
-+            self.frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-+        case .vertical:
-+            self.frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
-+        }
-+    }
-+
-     @ViewBuilder
-     func applyWidthLimits(_ minMax: MinMax, alignment: Alignment) -> some View {
-         if minMax.hasLimit {
-@@ -97,6 +122,41 @@ extension View {
+         #if os(iOS) || os(visionOS)
+         let renderer = UIGraphicsImageRenderer(size: size)
+         let uiImage = renderer.image { ctx in
+@@ -361,5 +363,5 @@ private extension Image {
+         return Image(nsImage: nsImage)
  
+         #endif
+-    }
++    }()
  }
- 
-+/// Lays out its single subview like `.frame(minWidth: 0, maxWidth: .infinity, alignment:)` along `axis`.
-+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
-+private struct FillLayout {
-+
-+    let axis: Axis
-+    let alignment: Alignment
-+
-+}
-+
-+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
-+extension FillLayout: Layout {
-+
-+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-+        let size = subviews.first?.sizeThatFits(proposal) ?? .zero
-+        return self.axis == .horizontal
-+            ? CGSize(width: proposal.width ?? size.width, height: size.height)
-+            : CGSize(width: size.width, height: proposal.height ?? size.height)
-+    }
-+
-+    // By size, not `dimensions(in:)`: a stack's alignment guides lay out its whole subtree again.
-+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-+        guard let subview = subviews.first else { return }
-+        let size = subview.sizeThatFits(proposal)
-+        let horizontal = self.alignment.horizontal
-+        let vertical = self.alignment.vertical
-+        let xFraction: CGFloat = horizontal == .leading ? 0 : horizontal == .trailing ? 1 : 0.5
-+        let yFraction: CGFloat = vertical == .top ? 0 : vertical == .bottom ? 1 : 0.5
-+        subview.place(at: CGPoint(x: bounds.minX + xFraction * (bounds.width - size.width),
-+                                  y: bounds.minY + yFraction * (bounds.height - size.height)),
-+                      anchor: .topLeading,
-+                      proposal: proposal)
-+    }
-+
-+}
-+
- extension MinMax {
- 
-     fileprivate var hasLimit: Bool {
-```
-
-**File**: `Tests/RevenueCatUITests/PaywallsV2/SizeModifierTests.swift` (modified, +64/-0)
-```diff
-@@ -180,6 +180,35 @@ final class SizeModifierTests: TestCase {
-                        .init(width: 100, height: 600))
-     }
- 
-+    func testNestedFillStacksInsideScrollViewPlaceContentOnce() throws {
-+        guard #available(iOS 16.0, *) else { throw XCTSkip("PlacementRecorder needs iOS 16") }
-+        let log = PlacementRecorder.Log()
-+        var content = AnyView(PlacementRecorder(log: log) { Color.clear.frame(width: 10, height: 10) })
-+        for _ in 0..<10 {
-+            content = AnyView(VStack { content }.size(.init(width: .fill, height: .fit(nil))))
-+        }
-+
-+        Self.layOut(ScrollView { content }, in: .init(width: 100, height: 600))
-+
-+        // iOS 17 used to place each level's content three times: 2 * 3^10 placements of this leaf.
-+        XCTAssertGreaterThan(log.placements.count, 0)
-+        XCTAssertLessThan(log.placements.count, 20)
-+    }
-+
-+    func testFillAlignsContentLikeAFrame() throws {
-+        guard #available(iOS 16.0, *) else { throw XCTSkip("PlacementRecorder needs iOS 16") }
-+        for (alignment, minX) in [(HorizontalAlignment.leading, 0.0), (.center, 45), (.trailing, 90)] {
-+            let log = PlacementRecorder.Log()
-+            let view = PlacementRecorder(log: log) { Color.clear.frame(width: 10, height: 10) }
-+                .size(.init(width: .fill, height: .fixed(10)),
-+                      horizontalAlignment: Alignment(horizontal: alignment, vertical: .center))
-+
-+            Self.layOut(view.frame(width: 100, height: 10), in: .init(width: 100, height: 10))
-+
-+            XCTAssertEqual(log.placements.last?.minX, CGFloat(minX))
-+        }
-+    }
-+
-     private static func requireFitScrollAvailability() throws {
-         guard #available(iOS 16.0, *) else {
-             throw XCTSkip("FIT scrolling uses ViewThatFits on iOS 16 and later")
-@@ -190,6 +219,41 @@ final class SizeModifierTests: TestCase {
-         UIHostingController(rootView: view).sizeThatFits(in: proposal)
-     }
- 
-+    private static func layOut<Content: View>(_ view: Content, in size: CGSize) {
-+        let controller = UIHostingController(rootView: view)
-+        let window = UIWindow(frame: CGRect(origin: .zero, size: size))
-+        window.rootViewController = controller
-+        window.isHidden = false
-+        controller.view.frame = window.bounds
-+        controller.view.layoutIfNeeded()
-+    }
-+
-+}
-+
-+/// Passes its single subview through unchanged, logging the bounds of every placement.
-+@available(iOS 16.0, *)
-+private struct PlacementRecorder {
-+
-+    final class Log {
-+        var placements: [CGRect] = []
-+    }
-+
-+    let log: Log
-+
-+}
-+
-+@available(iOS 16.0, *)
-+extension PlacementRecorder: Layout {
-+
-+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-+        subviews.first?.sizeThatFits(proposal) ?? .zero
-+    }
-+
-+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-+        self.log.placements.append(bounds)
-+        subviews.first?.place(at: bounds.origin, proposal: proposal)
-+    }
-+
- }
- 
- #endif
 ```
 
 ---
 
-### Incident Patch 2: `87417b48` (2026-11-06)
-**Commit Message**: ci: merge gate that tightens once the full suite is approved (#8235)
+### Incident Patch 2: `393e7b26` (2026-11-13)
+**Commit Message**: Update AGENTS.md - SwiftUI performance (#8297)
 
-* ci: post a merge gate status that tightens once the full suite is approved
-
-Adds a ci/all-tests-gate commit status driven from CircleCI. A no-requires
-job posts success at pipeline start, approving the full-suite hold flips
-it to pending, and all-tasks-passed posts success again once every full
-job is green. Release pipelines post it from all-tests-succeeded so
-release PRs are not blocked once the context is required.
-
-The reduced suite needs no gate of its own: its jobs are already required
-individually.
-
-* test: find the merge gate by its instance name
-
-all-tasks-passed is now an instance of the parameterized post-gate-status
-job, so the workflow entry is keyed by the job name and carries name:.
-
-* ci: never post the default gate success once the full suite is requested
-
-full-suite-not-requested waits for the reduced suite and checks the
-hold first: approved means halt without posting, so the gate goes from
-unreported straight to pending; anything but on_hold fails the job
-rather than posting success. all-tasks-passed reaches the reduced suite
-through full-suite-started, so it keeps a single list, and the tes
-
-**File**: `.circleci/default_config.yml` (modified, +75/-32)
+**File**: `AGENTS.md` (modified, +12/-0)
 ```diff
-@@ -2453,23 +2453,49 @@ jobs:
-           name: Trigger RC App Pipeline
-           command: bundle exec fastlane trigger_bump_sdk_in_rc_mobile_app
+@@ -106,6 +106,18 @@ Key top-level directories: `Sources/`, `RevenueCatUI/`, `Tests/`, `Examples/`, `
+ - **MVVM Pattern**: ViewModels with SwiftUI views
+ - **Main Components**: `PaywallView`, `CustomerCenterView`
  
--  all-tests-succeeded:
--    docker:
--      - image: cimg/base:stable
--    resource_class: small
++#### SwiftUI update performance
++
++When changing or reviewing RevenueCatUI, distinguish a `body` update from layout or pixel rendering. An extra `body` call is a performance concern when it causes measurable work or a user-visible hitch; don't optimize update counts alone.
++
++- Keep changing state and its readers as close as practical to the view that uses it. Own a view-created reference model with `@StateObject`; use `@ObservedObject` for a model owned elsewhere. Pass a child only the values it needs instead of making it observe a broad model.
++- Publish only values that can change and affect the UI. Check for an actual value change before writing or calling `objectWillChange.send()`. Avoid expensive formatting, filtering, or object creation in `body`.
++- Treat `@EnvironmentObject` and custom environment snapshots as shared dependencies. In Paywalls V2, `PaywallStateStore` republishes a whole state dictionary into the environment; measure fan-out before adding more readers or changing its update path.
++- Preserve stable, unique identity for dynamic views. Avoid computed IDs, position-based IDs for reorderable items, and branches that replace a view when only a modifier value changes. Keep `List` / `ForEach` row construction predictable; don't put filtering or `AnyView` inside a large list's row builder without measuring the cost.
++- Use `.equatable()` only for a measured, value-driven view whose equality covers every input that affects its output. It is not a general redraw switch.
++- For code that runs on iOS 15, use `ObservableObject` and the existing SwiftUI property wrappers. `@Observable` requires iOS 17; use it only with an availability-gated path and an older-OS fallback.
++- For performance changes, reproduce the interaction, profile a Release build, and compare the same workload before and after. Use `_printChanges()` only for temporary debugging; remove it before shipping. Validate behavior on the oldest supported OS. The existing `PerformanceTests` cover memory, not SwiftUI view-update counts.
++
+ ### Thread Safety
+ 
+ The SDK is heavily concurrent — StoreKit callbacks, delegate calls, caching, and network responses can all arrive on different threads. See **`Contributing/ThreadSafety.md`** for the full guide. Key primitives:
+```
+
+---
+
+### Incident Patch 3: `e119bef9` (2026-11-13)
+**Commit Message**: ci: stop storing test build artifacts and unused logs (#8295)
+
+* ci: stop storing test build artifacts and unused logs
+
+* ci: keep test result bundle generation
+
+**File**: `.circleci/default_config.yml` (modified, +0/-243)
+```diff
+@@ -281,23 +281,6 @@ commands:
+           paths:
+             - vendor/bundle
+ 
+-  compress_result_bundle:
+-    parameters:
+-      directory:
+-        type: string
+-      bundle_name:
+-        type: string
 -    steps:
 -      - run:
--          name: All tests succeeded
--          command: echo "All tests succeeded"
+-          name: Compress result bundle
+-          command: |
+-            BUNDLE="<< parameters.directory >>/<< parameters.bundle_name >>.xcresult"
+-            if [ -d "$BUNDLE" ]; then
+-              tar -czf "$BUNDLE.tar.gz" -C "<< parameters.directory >>" "<< parameters.bundle_name >>.xcresult"
+-              rm -r "$BUNDLE"
+-            fi
+-          when: always
 -
--  all-tasks-passed:
-+  post-gate-status:
-+    parameters:
-+      state:
-+        type: enum
-+        enum: [success, pending]
-+      unless_full_suite_approved:
-+        type: boolean
-+        default: false
-     docker:
-       - image: cimg/base:stable
-     resource_class: small
+   scan:
+     parameters:
+       directory:
+@@ -312,9 +295,6 @@ commands:
+           command: bundle exec fastlane scan
+       - store_test_results:
+           path: fastlane/test_output
+-      - store_artifacts:
+-          path: fastlane/test_output/report.html
+-          destination: test_report.html
+ 
+   scan-and-archive:
+     parameters:
+@@ -330,9 +310,6 @@ commands:
+           command: bundle exec fastlane scan
+       - store_test_results:
+           path: fastlane/test_output
+-      - store_artifacts:
+-          path: fastlane/test_output/report.html
+-          destination: test_report.html
+       - run:
+           name: Archive
+           working_directory: << parameters.directory >>
+@@ -353,9 +330,6 @@ commands:
+           command: bundle exec fastlane scan
+       - store_test_results:
+           path: fastlane/test_output
+-      - store_artifacts:
+-          path: fastlane/test_output/report.html
+-          destination: test_report.html
+       - run:
+           name: Archive all platforms
+           working_directory: << parameters.directory >>
+@@ -558,18 +532,12 @@ commands:
+           no_output_timeout: 5m
+           environment:
+             SCAN_DEVICE: << parameters.device >>
+-      - compress_result_bundle:
+-          directory: fastlane/test_output/xctest/ios
+-          bundle_name: BackendIntegrationTests
+       - create-snapshot-pr-if-needed:
+           condition: << pipeline.parameters.generate_snapshots >>
+           job: "create_snapshot_pr"
+           version: "BackendIntegrationTests"
+       - store_test_results:
+           path: fastlane/test_output
+-      - store_artifacts:
+-          path: fastlane/test_output/xctest
+-          destination: scan-test-output
+ 
+   checkout-with-minimal-permissions:
      steps:
+@@ -637,14 +605,8 @@ jobs:
+           no_output_timeout: 10m
+           environment:
+             DEVICE: iPhone 17,OS=27.0
+-      - compress_result_bundle:
+-          directory: fastlane/test_output
+-          bundle_name: revenuecat_admob
+       - store_test_results:
+           path: fastlane/test_output/revenuecat_admob/tests.xml
+-      - store_artifacts:
+-          path: fastlane/test_output
+-          destination: scan-test-output
+ 
+   revenuecat-ads-tests:
+     executor:
+@@ -667,14 +629,8 @@ jobs:
+           no_output_timeout: 10m
+           environment:
+             DEVICE: iPhone 17,OS=27.0
+-      - compress_result_bundle:
+-          directory: fastlane/test_output
+-          bundle_name: revenuecat_ads
+       - store_test_results:
+           path: fastlane/test_output/revenuecat_ads/tests.xml
+-      - store_artifacts:
+-          path: fastlane/test_output
+-          destination: scan-test-output
+ 
+   spm-receipt-parser:
+     executor:
+@@ -726,26 +682,12 @@ jobs:
+           no_output_timeout: 5m
+           environment:
+             DEVICE: iPhone 14,OS=16.4
+-      - compress_result_bundle:
+-          directory: fastlane/test_output
+-          bundle_name: revenuecatui
 -      - run:
--          name: All tasks passed
--          command: echo "All tasks passed"
-+      - when:
-+          condition: << parameters.unless_full_suite_approved >>
-+          steps:
-+            - run:
-+                name: Halt if approve-full-tests was already approved
-+                command: |
-+                  approval=$(curl --fail --silent --show-error --max-time 30 --retry 5 \
-+                    -H "Circle-Token: ${CIRCLECI_API_TOKEN}" \
-+                    "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/job" \
-+                    | jq -r '.items[] | select(.name == "approve-full-tests") | .status')
-+                  case "$approval" in
-+                    success)
-+                      echo "Full suite already requested, leaving the gate to it"
-+                      circleci-agent step halt
-+                      ;;
-+                    on_hold) ;;
-+                    *)
-+                      echo "Unexpected approve-full-tests status '${approval}', not posting"
-+                      exit 1
-+                      ;;
-+                  esac
-+      - run:
-+          name: Post ci/all-tests-gate status (<< parameters.state >>)
-+          environment:
-+            GATE_STATE: << parameters.state >>
-+          command: |
-+            curl --fail --silent --show-error --output /dev/null --retry 5 \
-+              -X POST "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/statuses/${CIRCLE_SHA1}" \
-+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-+              -H "Accept: application/vnd.github+json" \
-+              -d "{\"state\":\"${GATE_STATE}\",\"context\":\"ci/all-tests-gate\",\"target_url\":\"${CIRCLE_BUILD_URL}\"}"
- 
- workflows:
-   record-performance-baselines:
-@@ -2585,12 +2611,38 @@ workflows:
-       - revenuecat-ads-tests:
-           context:
-             - slack-secrets
-+      - post-gate-status:
-+          name: full-suite-not-requested
-+          state: success
-+          unless_full_suite_approved: true
-+          requires:
-+            - performance-tests
-+            - performance-automation-tests
-+            - lint
-+            - check-api-changes
-+            - run-test-ios-27
-+            - build-samplecat
-+            - build-purchase-tester
-+            - pod-lib-lint
-+            - run-revenuecat-ui-ios-27
-+            - run-revenuecat-ui-ios-26
-+            - emerge_purchases_ui_snapshot_tests
-+            - binary_size_analysis
-+            - build-tv-watch-mac-and-visionos
-+            - revenuecat-admob-tests
-+            - revenuecat-ads-tests
- 
-       # =============================================================
-       # Hold gate for the Full Test Suite
-       # =============================================================
-       - approve-full-tests:
-           type: approval
-+      - post-gate-status:
-+          name: full-suite-started
-+          state: pending
-+          requires:
-+            - approve-full-tests
-+            - full-suite-not-requested
- 
-       # =============================================================
-       # Full Test Suite: Gated behind approve-full-tests
-@@ -2745,22 +2797,11 @@ workflows:
-       # =============================================================
-       # Summary gate: blocks merge until all jobs pass
-       # =============================================================
--      - all-tasks-passed:
-+      - post-gate-status:
-+          name: all-tasks-passed
-+          state: success
-           requires:
--            # Reduced Test Suite
--            - performance-tests
--            - performance-automation-tests
--            - lint
--            - check-api-changes
--            - run-test-ios-27
--            - build-samplecat
--            - build-purchase-tester
--            - pod-lib-lint
--            - run-revenuecat-ui-ios-27
--            - run-revenuecat-ui-ios-26
--            - emerge_purchases_ui_snapshot_tests
--            - binary_size_analysis
--            - build-tv-watch-mac-and-visionos
-+            - full-suite-started
-             # Full Test Suite
-             - backend-integration-tests-SK1
-             - backend-integration-tests-SK2
-@@ -2784,8 +2825,6 @@ workflows:
-             - api-tests
-             - spm-receipt-parser
-             - check-app-extension-safe-api-usage
--            - revenueca
-```
-
-**File**: `.github/workflows/rcgitbot_please_test.yml` (modified, +16/-1)
-```diff
-@@ -17,14 +17,17 @@ jobs:
-       github.event.comment.author_association == 'MEMBER'
-     permissions:
-       pull-requests: write
-+      statuses: write
- 
-     steps:
-       # GitHub Actions `issue_comment` workflows always run from the default branch,
-       # so we resolve the PR's head branch to find its CircleCI pipeline and approve
-       # the hold job in the existing workflow.
-       - name: Get PR branch
-         id: get-branch
--        run: echo "branch=$(gh pr view "$PR_NO" --repo "$REPO" --json headRefName --jq '.headRefName')" >> "$GITHUB_OUTPUT"
-+        run: |
-+          gh pr view "$PR_NO" --repo "$REPO" --json headRefName,headRefOid \
-+            --jq '"branch=\(.headRefName)\nsha=\(.headRefOid)"' >> "$GITHUB_OUTPUT"
-         env:
-           REPO: ${{ github.repository }}
-           PR_NO: ${{ github.event.issue.number }}
-@@ -126,6 +129,18 @@ jobs:
-           fi
- 
-           echo "Successfully approved '$APPROVAL_JOB_NAME' in workflow '$WORKFLOW_NAME'"
-+          echo "approved=true" >> "$GITHUB_OUTPUT"
-+
-+      - name: Mark the merge gate pending
-+        if: steps.approve.outputs.approved == 'true'
-+        env:
-+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          REPO: ${{ github.repository }}
-+          SHA: ${{ steps.get-branch.outputs.sha }}
-+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-+        run: |
-+          gh api "repos/$REPO/statuses/$SHA" \
-+            -f state=pending -f context=ci/all-tests-gate -f target_url="$RUN_URL"
- 
-       - name: React to comment
-         if: always()
-```
-
-**File**: `fastlane/performance_baseline_helper_test.rb` (modified, +14/-2)
-```diff
-@@ -72,8 +72,20 @@ def test_rejects_results_after_branch_changes
-   def test_pr_merge_gate_requires_the_memory_benchmark
-     config = YAML.safe_load(File.read(File.join(ROOT, '.circleci/default_config.yml')), aliases: true)
-     jobs = config.fetch('workflows').fetch('run-all-tests').fetch('jobs')
--    gate = jobs.find { |job| job.is_a?(Hash) && job.key?('all-tasks-passed') }
--    assert_includes gate.fetch('all-tasks-passed').fetch('requires'), 'performance-tests'
-+    gate = jobs.find { |job| job.is_a?(Hash) && job.values.first['name'] == 'full-suite-not-requested' }
-+    assert_includes gate.values.first.fetch('requires'), 'performance-tests'
-+  end
-+
-+  def test_merge_gate_posts_pending_after_the_default_success_and_success_last
-+    config = YAML.safe_load(File.read(File.join(ROOT, '.circleci/default_config.yml')), aliases: true)
-+    jobs = config.fetch('workflows').fetch('run-all-tests').fetch('jobs')
-+    gates = jobs.select { |job| job.is_a?(Hash) && job.key?('post-gate-status') }.to_h { |job| [job['post-gate-status']['name'], job['post-gate-status']] }
-+    assert_equal 'success', gates.fetch('full-suite-not-requested').fetch('state')
-+    assert_equal true, gates.fetch('full-suite-not-requested').fetch('unless_full_suite_approved')
-+    assert_equal 'pending', gates.fetch('full-suite-started').fetch('state')
-+    assert_equal %w[approve-full-tests full-suite-not-requested], gates.fetch('full-suite-started').fetch('requires').sort
-+    assert_equal 'success', gates.fetch('all-tasks-passed').fetch('state')
-+    assert_includes gates.fetch('all-tasks-passed').fetch('requires'), 'full-suite-started'
-   end
- 
-   def test_requested_job_enables_record_and_push_with_boolean_parameters
-```
-
----
-
-### Incident Patch 3: `05faffdd` (2026-11-05)
-**Commit Message**: fix(Paywalls) Package selection resolution on older OSes (#8226)
-
-**File**: `RevenueCatUI/Templates/V2/Components/Button/BottomSheetView.swift` (modified, +2/-2)
-```diff
-@@ -95,9 +95,9 @@ private struct SheetPackageSelectionModifier: ViewModifier {
-         )
-     }
- 
--    private var selectedPackageIsVisible: Bool {
-+    private func selectedPackageIsVisible() -> Bool {
-         guard let validator = self.viewModel.packageValidator,
--              !validator.packages.isEmpty else { return self.inheritedSelectionIsVisible }
-+              !validator.packages.isEmpty else { return self.inheritedSelectionIsVisible() }
-         guard let package = self.packageContext.package else { return false }
-         return validator.couldBeRendering(
-             package,
-```
-
-**File**: `RevenueCatUI/Templates/V2/Components/Tabs/TabsComponentView.swift` (modified, +5/-3)
-```diff
-@@ -252,7 +252,7 @@ struct LoadedTabsComponentView: View {
-     private func reconcileSelection(_ context: PackageContext, tabViewModel: TabViewModel) {
-         // A root row can intentionally clear the tab's highlight. Resuming after a sheet
-         // must preserve that manual root choice while it can still render.
--        if self.selectedPackageIsVisible,
-+        if self.selectedPackageIsVisible(),
-            self.selectionState.didUserSelectPackage,
-            self.packageContext.package?.identifier == self.selectionState.parentOwnedPackage?.identifier,
-            TabPackageParentPropagation.shouldSuppressNotifyingParent(
-@@ -368,13 +368,15 @@ struct LoadedTabsComponentView: View {
-             .environmentObject(tierPackageContext)
-             .environment(
-                 \.selectedPackageIsVisible,
--                tierPackageContext === self.packageContext ? self.selectedPackageIsVisible
--                    : activeTabViewModel.validatedSelection(
-+                {
-+                    tierPackageContext === self.packageContext ? self.selectedPackageIsVisible()
-+                        : activeTabViewModel.validatedSelection(
-                         tierPackageContext.package,
-                         in: self.packageSelectionContext,
-                         offerEligibilityLoading: self.offerEligibilityLoading,
-                         offerEligibilityAvailability: self.offerEligibilityAvailability
-                     ) != nil
-+                }
-             )
-             .environment(
-                 \.planSelectionDefaultPackage,
-```
-
-**File**: `RevenueCatUI/Templates/V2/EnvironmentObjects/PlanSelectionDefaultPackage.swift` (modified, +4/-3)
-```diff
-@@ -21,9 +21,10 @@ private struct PlanSelectionDefaultPackageKey: EnvironmentKey {
-     static let defaultValue: Package? = nil
- }
- 
--/// Whether the selected package has a card that can render in its owning scope.
-+/// Checks whether the current selection has a card that can render in its owning scope.
-+/// Evaluate lazily because pre-iOS 17 `onChange` closures capture the previous render's environment.
- private struct SelectedPackageIsVisibleKey: EnvironmentKey {
--    static let defaultValue = true
-+    static let defaultValue: () -> Bool = { true }
- }
- 
- extension EnvironmentValues {
-@@ -33,7 +34,7 @@ extension EnvironmentValues {
-         set { self[PlanSelectionDefaultPackageKey.self] = newValue }
-     }
- 
--    var selectedPackageIsVisible: Bool {
-+    var selectedPackageIsVisible: () -> Bool {
-         get { self[SelectedPackageIsVisibleKey.self] }
-         set { self[SelectedPackageIsVisibleKey.self] = newValue }
-     }
-```
-
-**File**: `RevenueCatUI/Templates/V2/PaywallsV2View.swift` (modified, +1/-1)
-```diff
-@@ -748,7 +748,7 @@ struct LoadedPaywallsV2View: View {
-         )
-     }
- 
--    private var selectedPackageIsVisible: Bool {
-+    private func selectedPackageIsVisible() -> Bool {
-         guard let package = self.selectedPackageContext.package else { return false }
-         return self.paywallState.viewModelFactory.packageValidator.couldBeRendering(
-             package,
-```
-
-**File**: `Tests/RevenueCatUITests/PaywallsV2/RootViewSheetDismissalTests.swift` (modified, +8/-1)
-```diff
-@@ -69,7 +69,12 @@ extension RootViewSheetDismissalTests {
-         try await PackageResolutionTestFixture.settlePresentation()
-         let snapshot = fixture.context.package
-         let variables = fixture.context.variableContext
--        let tabContext = try XCTUnwrap(fixture.context.tabsState(for: fixture.tabs).contextsByTabId["tab-2"])
-+        let tabsState = fixture.context.tabsState(for: fixture.tabs)
-+        let tabContext = try XCTUnwrap(tabsState.contextsByTabId["tab-2"])
-+        XCTAssertEqual(snapshot?.identifier, rootPackage.identifier)
-+        XCTAssertEqual(fixture.context.manuallySelectedPackage?.identifier, rootPackage.identifier)
-+        XCTAssertTrue(tabsState.didUserSelectPackage)
-+        XCTAssertEqual(tabsState.parentOwnedPackage?.identifier, rootPackage.identifier)
-         XCTAssertNil(tabContext.package)
- 
-         let sheetValidator = try XCTUnwrap(fixture.state.rootViewModel.stackViewModel.viewModels.compactMap {
-@@ -80,6 +85,8 @@ extension RootViewSheetDismissalTests {
-         try await PackageResolutionTestFixture.settlePresentation()
-         XCTAssertEqual(sheetContext.package?.identifier, "annual_xl")
-         XCTAssertEqual(fixture.context.package?.identifier, "annual_xl")
-+        XCTAssertEqual(fixture.context.manuallySelectedPackage?.identifier, rootPackage.identifier)
-+        XCTAssertEqual(tabsState.parentOwnedPackage?.identifier, rootPackage.identifier)
- 
-         fixture.context.update(
-             package: RootView.restoredPackageAfterSheetDismissal(
+-          name: Preserve RevenueCatUI iOS 16 result bundle
+-          when: always
+-          command: |
+-            cd fastlane/test_output 2>/dev/null || exit 0
+-            if [ -f revenuecatui.xcresult.tar.gz ]; then
+-              mv revenuecatui.xcresult.tar.gz revenuecatui-iOS16.xcresult.tar.gz
+-            fi
+       - create-snapshot-pr-if-needed:
+           condition: << pipeline.parameters.generate_revenuecatui_snapshots >>
+           job: "create_snapshot_pr"
+           version: "revenuecatui-16"
+       - store_test_results:
+           path: fastlane/test_output/revenuecatui/tests.xml
+-      - store_artifacts:
+-          path: fastlane/test_output
+-          destination: scan-test-output-revenuecatui-16
+       - run:
+           name: Clean test output before RevenueCatUI iOS 15 run
+           command: rm -rf fastlane/test_output
+@@ -761,26 +703,12 @@ jobs:
+           no_output_timeout: 5m
+           environment:
+             DEVICE: iPhone 13,OS=15.5
+-      - compress_result_bundle:
+-          directory: fastlane/test_output
+-          bundle_name: revenuecatui
+-      - run:
+-          name: Preserve RevenueCatUI iOS 15 result bundle
+-          when: always
+-          command: |
+-            cd fastlane/test_output 2>/dev/null || exit 0
+-            if [ -f revenuecatui.xcresult.tar.gz ]; then
+-              mv revenuecatui.xcresult.tar.gz revenuecatui-iOS15.xcresult.tar.gz
+-          
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8237** (2026-11-06): Prepare next version: 5.103.0-SNAPSHOT (@RCGitBot)
-- **PR #8235** (2026-11-06): ci: merge gate that tightens once the full suite is approved (@AlvaroBrey)
-- **PR #8233** (2026-11-06): [AUTOMATIC] Release/5.102.3 (@RCGitBot)
-- **PR #8232** (2026-11-06): feat(checkpoints): gate rewarded ad steps on an earned reward (@peterporfy)
-- **PR #8231** (2026-11-06): Prepare next version: 5.103.0-SNAPSHOT (@RCGitBot)
-- **PR #8230** (2026-11-05): fix(paywalls): stop nested Fill stacks from hanging on iOS 17  (@JZDesign)
+- **PR #8302** (2026-11-16): fix: prevent paywall hangs from repeated placeholder rendering (@rickvdl)
+- **PR #8301** (closed): Chore(deps): Bump fastlane-plugin-revenuecat_internal from `52a8b95` to `8f4cd3f` (@dependabot[bot])
+- **PR #8297** (2026-11-13): chore(ui): Update AGENTS.md with information about SwiftUI performance (@JZDesign)
+- **PR #8295** (2026-11-13): ci: stop storing test build artifacts and unused logs (@rickvdl)
+- **PR #8292** (2026-11-12): Chore(deps): Bump fastlane-plugin-revenuecat_internal from `1e7875c` to `52a8b95` (@dependabot[bot])
+- **PR #8290** (2026-11-12): Route direct GitHub API calls through the plugin's retry helper (@ajpallares)
 
 ---
 
@@ -1145,55 +784,37 @@ through full-suite-started, so it keeps a single list, and the tes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230)
+## X. prevent paywall hangs from repeated placeholder rendering
 
 **RULE**:
-When implementing operations in `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RevenueCatUI/Views/RemoteImage.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd2ea7ef`: paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fc2465e`: prevent paywall hangs from repeated placeholder rendering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `RevenueCatUI/Views/RemoteImage.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                .fill(.horizontal, alignment: alignment)
-                .fill(.vertical, alignment: alignment)
-    /// Takes all the space proposed along `axis`, like `.frame(minWidth: 0, maxWidth: .infinity)`.
-    ///
-    /// iOS 17 places a frame's content three times under an unbounded proposal, such as a `ScrollView`'s, and
-    /// every nested Fill stack multiplies that until the paywall hangs. ``FillLayout`` places it once.
-    @ViewBuilder
-    func fill(_ axis: Axis, alignment: Alignment) -> some View {
-        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
-            self.fillFrame(axis, alignment: alignment)
-        } else if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
-            FillLayout(axis: axis, alignment: alignment) { self }
-        } else {
-            self.fillFrame(axis, alignment: alignment)
-        }
-    }
+                    content(Image.clearImage, expectedSize)
+    static let clearImage: Image = {
+        let size = CGSize(width: 1, height: 1)
 
-    @ViewBuilder
-    private func fillFrame(_ axis: Axis, alignment: Alignment) -> some View {
-        switch axis {
-        case .horizontal:
-            self.frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-        case .vertical:
-            self.frame(minHeight: 0, maxHeight: .infinity, alignment: al
+    }()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-                .frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
+// Induced defect failure mode:
+                    content(Image.clearImage(size: expectedSize), expectedSize)
+    static func clearImage(size: CGSize) -> Image {
+    }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd2ea7ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fc2465e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

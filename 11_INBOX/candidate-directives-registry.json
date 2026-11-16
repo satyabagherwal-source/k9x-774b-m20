@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T14:35:31.962Z",
+  "last_updated": "2026-11-16T15:00:51.528Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19064,6 +19064,68 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B76ABE-draft-nuc-108-list-and-population-partit.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-4P2M",
+      "directive_title": "resend without zero copy when a zero copy write fails",
+      "source_repo": "meta/folly",
+      "source_commit": "f416c5d1",
+      "staged_file": "11_INBOX/candidate-directives/CD-4P2M-resend-without-zero-copy-when-a-zero-copy-write-fails.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-50NN",
+      "directive_title": "prevent paywall hangs from repeated placeholder rendering",
+      "source_repo": "revenuecat-purchases-ios-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-50NN-prevent-paywall-hangs-from-repeated-placeholder-rendering.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-513A",
+      "directive_title": "Disable PiPNN graph building by default",
+      "source_repo": "qdrant-qdrant-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-513A-disable-pipnn-graph-building-by-default.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-509A",
+      "directive_title": "AsyncIoUringSocket: resend without zero copy when a zero copy write fails",
+      "source_repo": "facebook-folly-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-509A-asynciouringsocket-resend-without-zero-copy-when-a-zero-copy-write-fails.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-361CCB",
+      "directive_title": "prevent paywall hangs from repeated placeholder rendering",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "revenuecat-purchases-ios",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-361CCB-prevent-paywall-hangs-from-repeated-plac.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-1F120C",
+      "directive_title": "Disable PiPNN graph building by default",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "qdrant-qdrant",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1F120C-disable-pipnn-graph-building-by-default.md",
       "staged_date": "2026-11-16"
     }
   ]

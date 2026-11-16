@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T14:35:32.195Z",
-  "total_verified_learnings": 8775,
+  "last_updated": "2026-11-16T15:00:51.751Z",
+  "total_verified_learnings": 8777,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19094,
+  "total_items": 19111,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114517,10 +114517,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-qdrant-qdrant-architecture-intelligence-qdrant-qdrant-core-invariants.md",
       "title": "Architecture Intelligence: qdrant/qdrant Core Invariants",
       "repository": "qdrant/qdrant",
-      "source_version": "95d89e51",
-      "content_hash": "a7dacad382e6718bb5a82472ab1c91a54c53105690739fb84ada91dcc7e9decc",
+      "source_version": "23065a0b",
+      "content_hash": "9d9880fe4cf3c2554d9973ee96be9679f0c0a2fb85bb07459b852b84cc4c32f1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T18:26:03.207Z"
+      "persisted_at": "2026-11-16T15:00:47.373Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-qdrant-qdrant": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qdrant-qdrant",
@@ -114529,10 +114529,10 @@
       "relative_path": "08_VERIFICATION/qdrant-qdrant-verification-protocol-empirical-defect-shield-for-qdrant-qdrant.md",
       "title": "Verification Protocol: Empirical Defect Shield for qdrant/qdrant",
       "repository": "qdrant/qdrant",
-      "source_version": "95d89e51",
-      "content_hash": "fc468c93c357b3f598d2557a2ce25a8f2039145de53ccafac4055c898a66f198",
+      "source_version": "23065a0b",
+      "content_hash": "6b95fdd4c068fadb06191a754b5bb97866784773d78c7c088c74c0aa800e05ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:26:03.305Z"
+      "persisted_at": "2026-11-16T15:00:47.490Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in",
@@ -232522,14 +232522,19 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "25bb18ff",
-      "content_hash": "80b16de04a3c4bf2e03c5758261a55a19a7a2d5a9666c3aa26669670783666f4",
+      "source_version": "f416c5d1",
+      "content_hash": "5c94cdb4cbed2893091319ff761980656ef653c9a805d4cecc3ebf2b76127716",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
         {
           "number": 8516,
           "title": "JSON Patch lifetime, add, index, and test semantics",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8746,
+          "title": "resend without zero copy when a zero copy write fails",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -232538,7 +232543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T18:14:39.252Z",
+      "verified_at": "2026-11-16T15:00:35.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232592,10 +232597,10 @@
       "relative_path": "08_VERIFICATION/facebook-folly-verification-protocol-empirical-defect-shield-for-meta-folly.md",
       "title": "Verification Protocol: Empirical Defect Shield for meta/folly",
       "repository": "meta/folly",
-      "source_version": "25bb18ff",
-      "content_hash": "2cded45da2cf43b4e9ef3ebc7bcde3db89acf00e0bcce316028ac186f79f3c65",
+      "source_version": "f416c5d1",
+      "content_hash": "ebeae3cfdfc4dc9540d303b38af898c303fa5cb2c843868f8a8cbe7eeadf18c6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T18:14:39.896Z"
+      "persisted_at": "2026-11-16T15:00:36.179Z"
     },
     "learn-github-gkd-kit-gkd": {
       "learning_id": "learn-github-gkd-kit-gkd",
@@ -232783,9 +232788,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for facebook-folly-learnings",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "accf84c1d5cca21b4255df1eafd7ad2d2e577e7624f9467e65b38c6f7e69120d",
+      "content_hash": "4b4a8efece9f35e83e57716b03ea403a1e327b0395a9e2378ba47368a6da977b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T18:14:55.255Z"
+      "persisted_at": "2026-11-16T15:00:50.680Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
@@ -253879,6 +253884,258 @@
       "content_hash": "9a6bc334e733c7237b9c56f9d01597c99335ebe785ad297ec929e2d87881665b",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T14:35:31.515Z"
+    },
+    "rule-8746": {
+      "learning_id": "rule-8746",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8746,
+      "title": "resend without zero copy when a zero copy write fails",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "f416c5d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:00:35.624Z"
+    },
+    "candidate_directive-resend-without-zero-copy-when-a-zero-copy-write-fails": {
+      "item_id": "candidate_directive-resend-without-zero-copy-when-a-zero-copy-write-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4P2M-resend-without-zero-copy-when-a-zero-copy-write-fails.md",
+      "title": "resend without zero copy when a zero copy write fails",
+      "repository": "meta/folly",
+      "source_version": "f416c5d1",
+      "content_hash": "08c037aa4d58398b1b058c3deb9c25541214cdf3e020e9fe5de9b81ab7682bc3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T15:00:35.953Z"
+    },
+    "domain_intelligence-content-information-intelligence-meta-folly-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-meta-folly-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-facebook-folly-content-information-intelligence-meta-folly-core-invariants.md",
+      "title": "Content & Information Intelligence: meta/folly Core Invariants",
+      "repository": "meta/folly",
+      "source_version": "f416c5d1",
+      "content_hash": "ae3dcd1e56f6aab1de0fbb6dbf495091e3815d06504baa11da8c15870f30a647",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T15:00:36.066Z"
+    },
+    "learn-github-revenuecat-purchases-ios": {
+      "learning_id": "learn-github-revenuecat-purchases-ios",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RevenueCat/purchases-ios",
+      "repository": "RevenueCat/purchases-ios",
+      "slug": "revenuecat-purchases-ios",
+      "platform": "github",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "547f252e",
+      "content_hash": "5743b956ceb725c6038815cfdcbb6b2973cd827743c6d9911ffe60fcaac04390",
+      "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8747,
+          "title": "prevent paywall hangs from repeated placeholder rendering",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T15:00:39.844Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8747": {
+      "learning_id": "rule-8747",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8747,
+      "title": "prevent paywall hangs from repeated placeholder rendering",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "547f252e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:00:39.844Z"
+    },
+    "candidate_directive-prevent-paywall-hangs-from-repeated-placeholder-rendering": {
+      "item_id": "candidate_directive-prevent-paywall-hangs-from-repeated-placeholder-rendering",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-50NN-prevent-paywall-hangs-from-repeated-placeholder-rendering.md",
+      "title": "prevent paywall hangs from repeated placeholder rendering",
+      "repository": "revenuecat-purchases-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5387e6253c4a66564df57416ffe1608eb0bddf6f7030eac4dfaba86af697abf1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:00:50.964Z"
+    },
+    "domain_intelligence-architecture-intelligence-revenuecat-purchases-ios-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-revenuecat-purchases-ios-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
+      "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
+      "repository": "RevenueCat/purchases-ios",
+      "source_version": "547f252e",
+      "content_hash": "ee954f7cda354c897215587bc92a90145a2a62622d3a0fbe6f3b9b3598bac386",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:00:40.274Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/revenuecat-purchases-ios-verification-protocol-empirical-defect-shield-for-reven.md",
+      "title": "Verification Protocol: Empirical Defect Shield for RevenueCat/purchases-ios",
+      "repository": "RevenueCat/purchases-ios",
+      "source_version": "547f252e",
+      "content_hash": "5b9b6c8b89bd84a98935147c3c01d0d6e39a846a3c563a8622c6db5b1cec42f4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T15:00:40.389Z"
+    },
+    "learn-github-qdrant-qdrant": {
+      "learning_id": "learn-github-qdrant-qdrant",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "qdrant/qdrant",
+      "repository": "qdrant/qdrant",
+      "slug": "qdrant-qdrant",
+      "platform": "github",
+      "source_url": "https://github.com/qdrant/qdrant",
+      "source_version": "23065a0b",
+      "content_hash": "2fdda9e36f03c4baf38a033bf11dcf0e360b3fc46ca507efc1b5645aed7eac2f",
+      "dossier_path": "07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8748,
+          "title": "Disable PiPNN graph building by default",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T15:00:46.935Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8748": {
+      "learning_id": "rule-8748",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8748,
+      "title": "Disable PiPNN graph building by default",
+      "source_url": "https://github.com/qdrant/qdrant",
+      "source_version": "23065a0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:00:46.935Z"
+    },
+    "candidate_directive-disable-pipnn-graph-building-by-default": {
+      "item_id": "candidate_directive-disable-pipnn-graph-building-by-default",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-513A-disable-pipnn-graph-building-by-default.md",
+      "title": "Disable PiPNN graph building by default",
+      "repository": "qdrant-qdrant-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7550638421362fb422c3bf817db0985727cb5d0b2d5289e7473d4cdbdd800afb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:00:51.528Z"
+    },
+    "candidate_directive-asynciouringsocket-resend-without-zero-copy-when-a-zero-copy-write-fails": {
+      "item_id": "candidate_directive-asynciouringsocket-resend-without-zero-copy-when-a-zero-copy-write-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-509A-asynciouringsocket-resend-without-zero-copy-when-a-zero-copy-write-fails.md",
+      "title": "AsyncIoUringSocket: resend without zero copy when a zero copy write fails",
+      "repository": "facebook-folly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7fee6f757f4488608630445d02b22f0728e72f525fb594f12ba8a2fe4492726a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T15:00:50.449Z"
+    },
+    "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-facebook-folly-learnings-content-information-intelligence-facebook-folly-learnin.md",
+      "title": "Content & Information Intelligence: facebook-folly-learnings Core Invariants",
+      "repository": "facebook-folly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1caaa302abb574d02a7862d81111b104a8f9a944f3e2bca2f4e1175b090d242d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T15:00:50.564Z"
+    },
+    "domain_intelligence-architecture-intelligence-revenuecat-purchases-ios-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-revenuecat-purchases-ios-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-learnings-architecture-intelligence-revenuecat-purchase.md",
+      "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
+      "repository": "revenuecat-purchases-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1be7fd01b40e89ae2ae140d5107611aea3ba791ff33dbc8ce0954fac3ca86e61",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:00:51.077Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/revenuecat-purchases-ios-learnings-verification-protocol-empirical-defect-shield.md",
+      "title": "Verification Protocol: Empirical Defect Shield for revenuecat-purchases-ios-learnings",
+      "repository": "revenuecat-purchases-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5804b7bd2e8314e5d1068a2a390b1bf442e460c9734c808cc3212b1322fb8f43",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T15:00:51.194Z"
+    },
+    "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-qdrant-qdrant-learnings-architecture-intelligence-qdrant-qdrant-learnings-core-i.md",
+      "title": "Architecture Intelligence: qdrant-qdrant-learnings Core Invariants",
+      "repository": "qdrant-qdrant-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cc5a45362e5d822f601329e1cd1d5fd667ae463c257a546c95e1ceefb1f2ae32",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:00:51.638Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-qdrant-qdrant-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qdrant-qdrant-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/qdrant-qdrant-learnings-verification-protocol-empirical-defect-shield-for-qdrant.md",
+      "title": "Verification Protocol: Empirical Defect Shield for qdrant-qdrant-learnings",
+      "repository": "qdrant-qdrant-learnings",
+      "source_version": "HEAD",
+      "content_hash": "295dd440920a062daae6b250a5603784aa13e10fc2bd0b0494dae50741d3baf8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T15:00:51.751Z"
     }
   },
   "ai-builder-brain": {

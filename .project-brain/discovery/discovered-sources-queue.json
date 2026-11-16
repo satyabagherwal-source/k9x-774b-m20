@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T14:35:31.076Z",
+  "updated_at": "2026-11-16T15:00:51.374Z",
   "stats": {
-    "total_discovered": 4210,
-    "approved_pending_harvest": 3957,
+    "total_discovered": 4213,
+    "approved_pending_harvest": 3959,
     "harvested_count": 0,
-    "rejected_count": 253,
+    "rejected_count": 254,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3957,
+      "COMMUNITY_AND_EXPERT": 3960,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -90870,6 +90870,65 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
         "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-97340B559D76": {
+      "id": "SRC-97340B559D76",
+      "url": "https://github.com/qdrant/qdrant",
+      "title": "https://github.com/qdrant/qdrant",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:00:51.322Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
+        "fileName": "qdrant-qdrant-learnings.md"
+      }
+    },
+    "SRC-55B85FF40644": {
+      "id": "SRC-55B85FF40644",
+      "url": "https://cloud.qdrant.io/",
+      "title": "https://cloud.qdrant.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:00:51.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
+        "fileName": "qdrant-qdrant-learnings.md"
+      }
+    },
+    "SRC-8CDA8C79B22E": {
+      "id": "SRC-8CDA8C79B22E",
+      "url": "http://127.0.0.1:6333/",
+      "title": "http://127.0.0.1:6333/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T15:00:51.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
+        "fileName": "qdrant-qdrant-learnings.md"
       }
     }
   }
