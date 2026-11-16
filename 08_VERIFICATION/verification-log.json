@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-C9YQ",
-    "timestamp": "2026-11-13T19:27:25.298Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "b31e046c6bce7a822a50c84ddbb9c2e71a9e2aa2b70468e1c350708d874934b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-CBA3",
-    "timestamp": "2026-11-13T19:27:27.003Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "884334c40d2bf3d1d63182489700e8d1d2bd96d7dea7508c2f11ffea30f487a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-CEXA",
     "timestamp": "2026-11-13T19:27:31.726Z",
     "repository": "clockworklabs/SpacetimeDB",
@@ -7492,6 +7462,36 @@
     "contentHash": "3d1d9cdc15047adb5c0db942fa63c1a3f7122c9d0c0223672d5b3d6419afdd71",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-5QNO",
+    "timestamp": "2026-11-16T05:41:32.340Z",
+    "repository": "joreilly/Confetti",
+    "learningId": "learn-github-joreilly-confetti",
+    "contentHash": "bfd3120534d734562788322e9bfe248fed013179c4e0fadf6153cf9aa85bc274",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-5VER",
+    "timestamp": "2026-11-16T05:41:38.499Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "acee1c479ab6f540ef735eb80e9aa0475c01f2c48ab1b3fcf8fe67ab3ce60ee7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

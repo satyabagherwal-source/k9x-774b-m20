@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T05:29:13.308Z",
-  "total_records": 1236,
+  "last_updated": "2026-11-16T05:42:07.943Z",
+  "total_records": 1239,
   "domains": {
     "A": {
       "total": 7,
@@ -628,7 +628,7 @@
       ]
     },
     "F": {
-      "total": 24,
+      "total": 27,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -653,7 +653,10 @@
         "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
         "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
         "DOM-F-DDC06A14",
-        "DOM-F-4F38FEA1"
+        "DOM-F-4F38FEA1",
+        "domain_intelligence-design-intelligence-joreilly-confetti-core-invariants",
+        "DOM-F-925AEC0F",
+        "domain_intelligence-design-intelligence-joreilly-confetti-learnings-core-invariants"
       ]
     },
     "G": {
@@ -7069,8 +7072,8 @@
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "694ca3d129ab80f3811a8be39eb1518547a4e3beb5f1498d5fcb5fe5897dc1b7",
-      "created_at": "2026-11-14T21:38:30.976Z"
+      "content_hash": "0c4e4a6c511538a3f7e6893cb74c51acc61b3549ee33b033ca1051aa49dd7568",
+      "created_at": "2026-11-16T05:41:38.760Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -7087,8 +7090,8 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-learnings-technical-construction-intelligence-dragonflydb-.md",
       "repository": "dragonflydb-dragonfly-learnings",
-      "content_hash": "e303a138ce6c7fbf6a5c7df27df7e9f2a51d3877332148436358cb30d161ff85",
-      "created_at": "2026-11-14T21:39:05.975Z"
+      "content_hash": "f90b0847631316f815ed77559c82b01085079deafae7c7cc2a36635a6a05e7d2",
+      "created_at": "2026-11-16T05:42:07.295Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -7969,8 +7972,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "dda3b5d81507e654317259f78fac1be0476789739f8be7d42f5b941d0b60b2ba",
-      "created_at": "2026-11-16T04:18:02.448Z"
+      "content_hash": "df216b7d65e9676cf24740d7ed780b3cbf80bae7affc23a9c1471a11d49c7942",
+      "created_at": "2026-11-16T05:42:07.943Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -22823,6 +22826,66 @@
       "repository": "dnscontrol-dnscontrol-learnings",
       "content_hash": "36e47b831625f9dc826945a719c29c56446a926b91f7b47c28aacf02538e2039",
       "created_at": "2026-11-16T05:29:13.308Z"
+    },
+    "domain_intelligence-design-intelligence-joreilly-confetti-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-joreilly-confetti-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: joreilly/Confetti Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-joreilly-confetti-design-intelligence-joreilly-confetti-core-invariants.md",
+      "repository": "joreilly/Confetti",
+      "content_hash": "b8ba6b3e7d0b68cf92b649fb94de787f8366bc2e1dfa7eaff116419d14b77d26",
+      "created_at": "2026-11-16T05:41:32.610Z"
+    },
+    "DOM-F-925AEC0F": {
+      "record_id": "DOM-F-925AEC0F",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Livery: session/speaker page headers as SDUI, and theme packs for the native UI",
+      "content": "When implementing operations in `livery/android/src/main/kotlin/dev/johnoreilly/confetti/livery/Sdui.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/Confetti. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "148b1764ecebe1cff128b80b5b693779e51bcc48f747c3e6621318de64b8e4f6",
+      "summary": "Prevents defects observed in production commit `775e01bb`: Livery: session/speaker page headers as SDUI, and theme packs for the native UI.  -> When implementing operations in `livery/android/src/main/kotlin/dev/johnoreilly/confetti/livery/Sdui.kt`, engineers MUST enforce rigorous bo",
+      "provenance": {
+        "source_uri": "project://joreilly-confetti/joreilly-confetti-learnings.md",
+        "source_version": "d62b1aa3",
+        "observed_at": "2026-11-16T05:41:31.526Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (joreilly-confetti)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of joreilly-confetti"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T05:42:06.317Z"
+    },
+    "domain_intelligence-design-intelligence-joreilly-confetti-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-joreilly-confetti-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: joreilly-confetti-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-joreilly-confetti-learnings-design-intelligence-joreilly-confetti-learnings-core.md",
+      "repository": "joreilly-confetti-learnings",
+      "content_hash": "6a9912c863d52235df5c75a847206b74b404aefd4471c7d9c036f09e073e6685",
+      "created_at": "2026-11-16T05:42:06.716Z"
     }
   }
 }

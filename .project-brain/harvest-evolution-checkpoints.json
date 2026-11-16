@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T05:29:13.533Z",
+  "last_updated": "2026-11-16T05:42:08.152Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T02:26:03.754Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-16T04:18:01.918Z",
+      "processed_at": "2026-11-16T05:42:07.517Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1343,9 +1343,9 @@
       "staged_for_review": 1
     },
     "joreilly-confetti-learnings.md": {
-      "processed_at": "2026-11-12T23:42:22.296Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-16T05:42:06.332Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "defguard-defguard-learnings.md": {
       "processed_at": "2026-11-12T23:42:22.333Z",
@@ -1903,7 +1903,7 @@
       "staged_for_review": 1
     },
     "dragonflydb-dragonfly-learnings.md": {
-      "processed_at": "2026-11-14T21:39:05.629Z",
+      "processed_at": "2026-11-16T05:42:06.945Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3158,7 +3158,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1251,
-  "total_canonical_promoted": 286,
-  "total_staged_for_review": 960
+  "total_dossiers_evaluated": 1254,
+  "total_canonical_promoted": 287,
+  "total_staged_for_review": 962
 }

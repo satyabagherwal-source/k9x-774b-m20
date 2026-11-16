@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "1975aa79",
+    "sourceVersion": "ce4df827",
     "license": "NOASSERTION",
-    "contentHash": "bc901b40dac24daa45b7f4598b28ee3ec179db89ce3ab6428188f78170293b41",
-    "lastHarvestedAt": "2026-11-14T21:38:30.704Z",
+    "contentHash": "acee1c479ab6f540ef735eb80e9aa0475c01f2c48ab1b3fcf8fe67ab3ce60ee7",
+    "lastHarvestedAt": "2026-11-16T05:41:38.502Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -8883,10 +8883,10 @@
     "repository": "joreilly/Confetti",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/Confetti",
-    "sourceVersion": "d29c8ec6",
+    "sourceVersion": "d62b1aa3",
     "license": "Apache-2.0",
-    "contentHash": "39c66e3effd7bd570a6c0069c9189297cdd17b8995ece7dbd29e12833db4dc29",
-    "lastHarvestedAt": "2026-11-12T23:41:45.889Z",
+    "contentHash": "bfd3120534d734562788322e9bfe248fed013179c4e0fadf6153cf9aa85bc274",
+    "lastHarvestedAt": "2026-11-16T05:41:32.343Z",
     "learningId": "learn-github-joreilly-confetti"
   },
   "m0ntydad0n-pseo-engine-oss": {

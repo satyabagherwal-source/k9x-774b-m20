@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T05:17:45.213Z",
+  "updated_at": "2026-11-16T05:42:06.429Z",
   "stats": {
-    "total_discovered": 4159,
-    "approved_pending_harvest": 3908,
+    "total_discovered": 4162,
+    "approved_pending_harvest": 3911,
     "harvested_count": 0,
     "rejected_count": 251,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3907,
+      "COMMUNITY_AND_EXPERT": 3910,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -89762,6 +89762,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
         "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-D675965DAC57": {
+      "id": "SRC-D675965DAC57",
+      "url": "https://github.com/joreilly",
+      "title": "https://github.com/joreilly",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:42:06.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+        "fileName": "joreilly-confetti-learnings.md"
+      }
+    },
+    "SRC-85DC620BF8E0": {
+      "id": "SRC-85DC620BF8E0",
+      "url": "https://claude.ai/code/session_017xSuvrVeXwesXMhnGAujEB",
+      "title": "https://claude.ai/code/session_017xSuvrVeXwesXMhnGAujEB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:42:06.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+        "fileName": "joreilly-confetti-learnings.md"
+      }
+    },
+    "SRC-2A043D678AAE": {
+      "id": "SRC-2A043D678AAE",
+      "url": "https://claude.ai/code/session_01XcDRQmXFy8nRzDWNT6FVtQ",
+      "title": "https://claude.ai/code/session_01XcDRQmXFy8nRzDWNT6FVtQ",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:42:06.429Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+        "fileName": "joreilly-confetti-learnings.md"
       }
     }
   }

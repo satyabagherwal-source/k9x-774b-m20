@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T05:29:09.048Z",
+  "last_updated": "2026-11-16T05:41:38.509Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "bc901b40dac24daa45b7f4598b28ee3ec179db89ce3ab6428188f78170293b41",
-      "verified_at": "2026-11-14T21:38:30.712Z",
+      "content_hash": "acee1c479ab6f540ef735eb80e9aa0475c01f2c48ab1b3fcf8fe67ab3ce60ee7",
+      "verified_at": "2026-11-16T05:41:38.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:38:30.712Z"
+      "last_updated": "2026-11-16T05:41:38.508Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -13371,14 +13371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-confetti",
-      "content_hash": "39c66e3effd7bd570a6c0069c9189297cdd17b8995ece7dbd29e12833db4dc29",
-      "verified_at": "2026-11-12T23:41:45.904Z",
+      "content_hash": "bfd3120534d734562788322e9bfe248fed013179c4e0fadf6153cf9aa85bc274",
+      "verified_at": "2026-11-16T05:41:32.351Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T23:41:45.904Z"
+      "last_updated": "2026-11-16T05:41:32.351Z"
     },
     "m0ntydad0n/pseo-engine-oss": {
       "repository": "m0ntydad0n/pseo-engine-oss",

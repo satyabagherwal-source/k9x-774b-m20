@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-16T03:57:49.587Z",
+  "updated_at": "2026-11-16T05:42:06.330Z",
   "statistics": {
-    "total_nodes": 282,
-    "total_edges": 146,
+    "total_nodes": 283,
+    "total_edges": 147,
     "domain_distribution": {
       "D": 217,
       "M": 1,
@@ -14,13 +14,13 @@
       "K": 12,
       "L": 3,
       "G": 1,
-      "F": 7,
+      "F": 8,
       "B": 1,
       "E": 1,
       "I": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 145,
+      "CONSTRAINED_BY_ARCHITECTURE": 146,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -6329,6 +6329,29 @@
       ],
       "created_at": "2026-11-16T03:57:49.587Z",
       "updated_at": "2026-11-16T03:57:49.587Z"
+    },
+    "DOM-F-925AEC0F": {
+      "id": "DOM-F-925AEC0F",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Livery: session/speaker page headers as SDUI, and theme packs for the native UI",
+      "summary": "Prevents defects observed in production commit `775e01bb`: Livery: session/speaker page headers as SDUI, and theme packs for the native UI.  -> When implementing operations in `livery/android/src/main/kotlin/dev/johnoreilly/confetti/livery/Sdui.kt`, engineers MUST enforce rigorous bo",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://joreilly-confetti/joreilly-confetti-learnings.md",
+        "source_version": "d62b1aa3",
+        "observed_at": "2026-11-16T05:41:31.526Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (joreilly-confetti)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-16T05:42:06.330Z",
+      "updated_at": "2026-11-16T05:42:06.330Z"
     }
   },
   "edges": [
@@ -7791,6 +7814,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-F-4F38FEA1 [F] with Domain G",
       "created_at": "2026-11-16T03:57:49.587Z"
+    },
+    {
+      "id": "EDGE-8AB8602AF007",
+      "sourceId": "DOM-F-925AEC0F",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-F-925AEC0F [F] with Domain G",
+      "created_at": "2026-11-16T05:42:06.330Z"
     }
   ]
 }

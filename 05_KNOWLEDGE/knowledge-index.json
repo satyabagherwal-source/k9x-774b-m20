@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T05:29:13.427Z",
-  "total_verified_learnings": 8767,
+  "last_updated": "2026-11-16T05:42:08.051Z",
+  "total_verified_learnings": 8768,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18984,
+  "total_items": 18995,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112225,10 +112225,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "1975aa79",
-      "content_hash": "694ca3d129ab80f3811a8be39eb1518547a4e3beb5f1498d5fcb5fe5897dc1b7",
+      "source_version": "ce4df827",
+      "content_hash": "0c4e4a6c511538a3f7e6893cb74c51acc61b3549ee33b033ca1051aa49dd7568",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T21:38:30.976Z"
+      "persisted_at": "2026-11-16T05:41:38.760Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112237,10 +112237,10 @@
       "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "1975aa79",
-      "content_hash": "6b455496ae1602a76c9a95cc998a9e0bcc7e5e34fb39700781b914f15ae0f717",
+      "source_version": "ce4df827",
+      "content_hash": "83f4dc6e32bb3a9a3983b172f73857b4e35b59a5691ffc1a721cefd75d64e738",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:38:31.077Z"
+      "persisted_at": "2026-11-16T05:41:38.859Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -112262,9 +112262,9 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "e303a138ce6c7fbf6a5c7df27df7e9f2a51d3877332148436358cb30d161ff85",
+      "content_hash": "f90b0847631316f815ed77559c82b01085079deafae7c7cc2a36635a6a05e7d2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T21:39:05.975Z"
+      "persisted_at": "2026-11-16T05:42:07.295Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning",
@@ -112274,9 +112274,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb-dragonfly-learnings",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "cfc1382a4091c39ecec0565e7e0844fbf464a189d628144787709312acd966f6",
+      "content_hash": "187a49f8fcee78a63d989b39f328156a7952a3c7aeceeaec8598c3ddebd1faa3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:39:06.094Z"
+      "persisted_at": "2026-11-16T05:42:07.407Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6CW2-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6I1K-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "21703eb5b44641e5694a47734ba61c2573340579cae6d15392ee5a4215309db2",
+      "content_hash": "683ae44fe6bb24dcce2bd677e54f7137d6c9a109c67cb1d6a5c5e1e159375d16",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T04:18:02.311Z"
+      "persisted_at": "2026-11-16T05:42:07.838Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "dda3b5d81507e654317259f78fac1be0476789739f8be7d42f5b941d0b60b2ba",
+      "content_hash": "df216b7d65e9676cf24740d7ed780b3cbf80bae7affc23a9c1471a11d49c7942",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T04:18:02.448Z"
+      "persisted_at": "2026-11-16T05:42:07.943Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "18b7403140e35caff86e16235dfd6267bedbf98065f03fa838119eb57e653bb9",
+      "content_hash": "035e2aabf5e1fb558a1976c9fbe4e55d95bb23e1dff5f9bdd71e5e028ada9ba6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T04:18:02.591Z"
+      "persisted_at": "2026-11-16T05:42:08.051Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -235481,14 +235481,19 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "1975aa79",
-      "content_hash": "bc901b40dac24daa45b7f4598b28ee3ec179db89ce3ab6428188f78170293b41",
+      "source_version": "ce4df827",
+      "content_hash": "acee1c479ab6f540ef735eb80e9aa0475c01f2c48ab1b3fcf8fe67ab3ce60ee7",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
         {
           "number": 8540,
           "title": "keep a document indexed when HINCRBY fails",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8720,
+          "title": "update size before shrinking allocation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -235497,7 +235502,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:38:30.554Z",
+      "verified_at": "2026-11-16T05:41:38.362Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252242,6 +252247,163 @@
       "content_hash": "36e47b831625f9dc826945a719c29c56446a926b91f7b47c28aacf02538e2039",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T05:29:13.308Z"
+    },
+    "learn-github-joreilly-confetti": {
+      "learning_id": "learn-github-joreilly-confetti",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "joreilly/Confetti",
+      "repository": "joreilly/Confetti",
+      "slug": "joreilly-confetti",
+      "platform": "github",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "d62b1aa3",
+      "content_hash": "bfd3120534d734562788322e9bfe248fed013179c4e0fadf6153cf9aa85bc274",
+      "dossier_path": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8719,
+          "title": "session/speaker page headers as SDUI, and theme packs for the native UI",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T05:41:32.198Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8719": {
+      "learning_id": "rule-8719",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8719,
+      "title": "session/speaker page headers as SDUI, and theme packs for the native UI",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "d62b1aa3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T05:41:32.198Z"
+    },
+    "candidate_directive-session-speaker-page-headers-as-sdui-and-theme-packs-for-the-native-ui": {
+      "item_id": "candidate_directive-session-speaker-page-headers-as-sdui-and-theme-packs-for-the-native-ui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5QS7-session-speaker-page-headers-as-sdui-and-theme-packs-for-the-native-ui.md",
+      "title": "session/speaker page headers as SDUI, and theme packs for the native UI",
+      "repository": "joreilly/Confetti",
+      "source_version": "d62b1aa3",
+      "content_hash": "c04ed7911ac8e9ccb20c270a7415876284f09a8ee7efe43f481ca8fb6fb313c0",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T05:41:32.507Z"
+    },
+    "domain_intelligence-design-intelligence-joreilly-confetti-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-joreilly-confetti-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-joreilly-confetti-design-intelligence-joreilly-confetti-core-invariants.md",
+      "title": "Design Intelligence: joreilly/Confetti Core Invariants",
+      "repository": "joreilly/Confetti",
+      "source_version": "d62b1aa3",
+      "content_hash": "b8ba6b3e7d0b68cf92b649fb94de787f8366bc2e1dfa7eaff116419d14b77d26",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T05:41:32.610Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-joreilly-confetti": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-joreilly-confetti",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/joreilly-confetti-verification-protocol-empirical-defect-shield-for-joreilly-con.md",
+      "title": "Verification Protocol: Empirical Defect Shield for joreilly/Confetti",
+      "repository": "joreilly/Confetti",
+      "source_version": "d62b1aa3",
+      "content_hash": "f219182f7e3fdedd27f1df884fec18f7e8c08fd6f807fb4dbac882ea7f612189",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T05:41:32.715Z"
+    },
+    "rule-8720": {
+      "learning_id": "rule-8720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8720,
+      "title": "update size before shrinking allocation",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "ce4df827",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T05:41:38.362Z"
+    },
+    "candidate_directive-update-size-before-shrinking-allocation": {
+      "item_id": "candidate_directive-update-size-before-shrinking-allocation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5VJ7-update-size-before-shrinking-allocation.md",
+      "title": "update size before shrinking allocation",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "ce4df827",
+      "content_hash": "dfadc5586518cb4b78ddb6f0aca38e5400f1b583638be3cf6ae2044700d836dd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T05:41:38.662Z"
+    },
+    "candidate_directive-livery-session-speaker-page-headers-as-sdui-and-theme-packs-for-the-native-ui": {
+      "item_id": "candidate_directive-livery-session-speaker-page-headers-as-sdui-and-theme-packs-for-the-native-ui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6H3I-livery-session-speaker-page-headers-as-sdui-and-theme-packs-for-the-native-ui.md",
+      "title": "Livery: session/speaker page headers as SDUI, and theme packs for the native UI",
+      "repository": "joreilly-confetti-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9b55e3c5bb342d0b657ba4e317803013314fca94e5d79fc92fed13b247a00ffc",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T05:42:06.612Z"
+    },
+    "domain_intelligence-design-intelligence-joreilly-confetti-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-joreilly-confetti-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-joreilly-confetti-learnings-design-intelligence-joreilly-confetti-learnings-core.md",
+      "title": "Design Intelligence: joreilly-confetti-learnings Core Invariants",
+      "repository": "joreilly-confetti-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a9912c863d52235df5c75a847206b74b404aefd4471c7d9c036f09e073e6685",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T05:42:06.716Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-joreilly-confetti-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-joreilly-confetti-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/joreilly-confetti-learnings-verification-protocol-empirical-defect-shield-for-jo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for joreilly-confetti-learnings",
+      "repository": "joreilly-confetti-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c8f71e2bf1799180027ffe902a6498a6fb3610b1b65928a90d493dd27ca4871",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T05:42:06.828Z"
+    },
+    "candidate_directive-listpack-update-size-before-shrinking-allocation": {
+      "item_id": "candidate_directive-listpack-update-size-before-shrinking-allocation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6HJI-listpack-update-size-before-shrinking-allocation.md",
+      "title": "listpack): update size before shrinking allocation",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b1d5ef711e7b5fa0430f97092300959b86c3cbbc0878030fe448716644b1ccf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T05:42:07.190Z"
     }
   },
   "ai-builder-brain": {

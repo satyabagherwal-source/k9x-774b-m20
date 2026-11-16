@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T05:29:13.183Z",
+  "last_updated": "2026-11-16T05:42:07.838Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-6CW2",
+      "id": "CD-6I1K",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-6CW2-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-6I1K-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -18345,6 +18345,59 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-5QS7",
+      "directive_title": "session/speaker page headers as SDUI, and theme packs for the native UI",
+      "source_repo": "joreilly/Confetti",
+      "source_commit": "d62b1aa3",
+      "staged_file": "11_INBOX/candidate-directives/CD-5QS7-session-speaker-page-headers-as-sdui-and-theme-packs-for-the-native-ui.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-5VJ7",
+      "directive_title": "update size before shrinking allocation",
+      "source_repo": "dragonflydb/dragonfly",
+      "source_commit": "ce4df827",
+      "staged_file": "11_INBOX/candidate-directives/CD-5VJ7-update-size-before-shrinking-allocation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6H3I",
+      "directive_title": "Livery: session/speaker page headers as SDUI, and theme packs for the native UI",
+      "source_repo": "joreilly-confetti-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6H3I-livery-session-speaker-page-headers-as-sdui-and-theme-packs-for-the-native-ui.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-6HJI",
+      "directive_title": "listpack): update size before shrinking allocation",
+      "source_repo": "dragonflydb-dragonfly-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6HJI-listpack-update-size-before-shrinking-allocation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-8C5496",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8C5496-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-16"
     }
   ]
 }

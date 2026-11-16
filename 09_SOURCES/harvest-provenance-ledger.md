@@ -10283,3 +10283,6 @@ Every entry in this ledger must capture:
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `e0ad273c` | Multi-dimensional audit evidence | 2026-11-16T05:29:02.004Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `845815ae` | Multi-dimensional audit evidence | 2026-11-16T05:29:04.257Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `9a5df815` | Multi-dimensional audit evidence | 2026-11-16T05:29:09.040Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `d62b1aa3` | Multi-dimensional audit evidence | 2026-11-16T05:41:32.343Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `ce4df827` | Multi-dimensional audit evidence | 2026-11-16T05:41:38.502Z |
+| `learn-dom-f-925aec0f` | `project://joreilly-confetti` | `d62b1aa3` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md` | 2026-11-16T05:42:06.332Z |

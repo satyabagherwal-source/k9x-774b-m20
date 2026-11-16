@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T21:39:05.748Z",
+  "timestamp": "2026-11-16T05:42:07.085Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dragonflydb-dragonfly-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dragonflydb-dragonfly-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T21:39:05.748Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T05:42:07.085Z`  
 > **Learning ID**: `LEARN-EVO-dragonflydb-dragonfly-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `1975aa79`  
+> **Source Version**: `ce4df827`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T21:38:29.853Z  
+> **Timestamp**: 2026-11-16T05:41:37.692Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:38:29.847Z  
+> **Harvest Timestamp**: 2026-11-16T05:41:37.687Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31873 stars
+- **Stars / Engagement**: 31876 stars
 
 ---
 
@@ -2325,11 +2325,11 @@ class Segment {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8786** (2026-11-15): **HSET aborts with a false listpack corruption error when shrinking a value larger than 4 MiB**
+  *Symptoms*: **Describe the bug** Replacing a listpack element larger than 4 MiB with a substantially smaller value aborts Dragonfly. We observed this abort four times in production and reproduced it with one hash field. The reported corruption is a false positive: the diagnostic compares the old logical listpack size with the new allocation size during an intentional shrink.  **To Reproduce** Run Dragonfly v2.0.2 or an image built from main commit 0219b0acb61418a1360dbe10a727bfcc07044e7f, store a 5 MiB hash value, and replace it with a small value:  ```sh #!/bin/sh set -eu  DRAGONFLY_IMAGE_NAME=${DRAGONFLY_IMAGE_NAME:-docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2} CONTAINER_NAME=lp-shrink-repro  docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true docker run -d --name "$CONTAINER_NAME" "$DRAGONFLY_IMAGE_NAME" --logtostderr --proactor_threads 1 >/dev/null until docker exec "$CONTAINER_NAME" redis-cli ping >/dev/null 2>&1; do sleep 0.2; done docker exec "$CONTAINER_NAME" sh -c '   head -c 5242880 /dev/zero | tr "\0" x > /tmp/big   redis-cli -x HSET k f < /tmp/big   redis-cli DEBUG OBJECT k   redis-cli HSET k f small ' sleep 1 docker inspect -f 'running={{.State.Running}} exit={{.State.ExitCode}}' "$CONTAINER_NAME" docker logs "$CONTAINER_NAME" 2>&1 | grep -E 'listpack size|SIGABRT' | head -2 ```  After the first `HSET`, Dragonfly stores the hash as a listpack containing the 5 MiB value. During the second `HSET`, Dragonfly compacts that listpack and shrinks its backing allocation for
+
 - **Issue #8754** (2026-11-10): **IoLoopV2 stalls a pipelined connection over pipeline_buffer_limit (debug: Check failed: is_deferred_reply_)**
   *Symptoms*: Found by fuzz-pr on #8752; pre-existing on main and in v2.1.0: https://github.com/dragonflydb/dragonfly/actions/runs/42001650757/job/127158081546  Repro (the commands must arrive in one packet; interactive redis-cli does not trigger it):  ``` printf 'CONFIG SET pipeline_buffer_limit 1\r\nFT.SEARCH idx *\r\nCLIENT GETNAME\r\nSET a b\r\nPING\r\n' | nc 127.0.0.1 6379 ```  - Debug: `Check failed: is_deferred_reply_` (parsed_command.cc:113) in `ParsedCommand::CanReply()`   <- `Connection::HasControlEvent()` <- `ParkOnBackpressure()` <- `IoLoopV2()`. - Release (v2.1.0): no crash, but the connection stalls: PING gets no reply for 30+ s (4/4 runs on a fresh server). - Does not reproduce with `--enable_resp_io_loop_v2=false`, without the FT.SEARCH, or with INFO instead of CLIENT.  Likely cause: the sync CLIENT command waits behind the in-flight FT.SEARCH. Over the limit, the connection parks in `ParkOnBackpressure()`, whose wake predicate calls `parsed_head_->CanReply()` on a head that was never dispatched. The other `CanReply()` call sites check `IsDeferredReply()` first. 
-
-- **Issue #8647** (2026-10-23): **WAIT crashes the primary (SIGSEGV, exit 139) when a replica stream is throttled**
-  *Symptoms*: ### Bug: `WAIT` crashes the primary (SIGSEGV, exit 139) when a replica stream is throttled  If `WAIT` runs while a replica's journal stream is at or over `replication_stream_output_limit` (1 MB default), the primary logs `Should not preempt dispatcher` and segfaults. Under the same backlog, normal writes are throttled safely; only `WAIT` crashes.  ### Repro (~1 min, Docker)  ```bash docker network create df docker run -d --name m --network df -p 6379:6379 docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2 --proactor_threads=2 docker run -d --name r --network df -p 6380:6379 docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2 --proactor_threads=2 redis-cli -p 6380 REPLICAOF m 6379 redis-cli -p 6379 WAIT 1 1000 # -> 1 docker pause r # replica stops reading python3 - <<'PYEOF' & # ~200 MiB of pipelined SETs, replies not read import socket s = socket.create_connection(("127.0.0.1", 6379)); v = b"x" * (1 << 20) for i in range(200):     k = b"k%d" % i     s.sendall(b"*3\r\n$3\r\nSET\r\n$%d\r\n%s\r\n$%d\r\n%s\r\n" % (len(k), k, len(v), v)) PYEOF sleep 3 redis-cli -p 6379 WAIT 1 2000 # -> "Server closed the connection" docker inspect -f '{{.State.ExitCode}}' m # -> 139 ```  Without the final `WAIT`, the primary stays up, and replication recovers after `docker unpause r`.  ### Stack  ``` E scheduler.cc:206] Should not preempt dispatcher: util::fb2::detail::Scheduler::WaitUntil() util::fb2::EventCount::wait_until() dfly::JournalStreamer::ThrottleIfNeeded() dfly::journal::JournalSlice::C
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2346,535 +2346,54 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1975aa79` (2026-11-13)
-**Commit Message**: fix(search): keep a document indexed when HINCRBY fails (#8812)
+### Incident Patch 1: `ce4df827` (2026-11-15)
+**Commit Message**: fix(listpack): update size before shrinking allocation (#8787)
 
-OpIncrBy removes the document from the search indices before it converts the listpack and
-increments the field, and on an increment error it returned without adding the document back,
-so HINCRBY on a non-numeric field, an overflow or a non-finite float unindexed the document
-until its next write. Nothing is journaled on the error, so a replica kept the document.
+fix: update listpack size before shrinking allocation
 
-Add the document back before returning the error.
+Signed-off-by: dabrusenin <[REDACTED_EMAIL]>
 
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-**File**: `src/server/hset_family.cc` (modified, +4/-1)
+**File**: `src/redis/listpack.c` (modified, +3/-1)
 ```diff
-@@ -426,8 +426,11 @@ OpStatus OpIncrBy(const OpArgs& op_args, string_view key, string_view field, Inc
-       res = it->second;
-   }
+@@ -932,6 +932,7 @@ unsigned char *lpInsert(unsigned char *lp, const unsigned char *elestr, unsigned
  
--  if (OpStatus status = IncrementValue(res, param); status != OpStatus::OK)
-+  if (OpStatus status = IncrementValue(res, param); status != OpStatus::OK) {
-+    if (!add_res.is_new)
-+      op_args.shard->search_indices()->AddDoc(key, op_args.db_cntx, &pv);
-     return status;
-+  }
- 
-   if (holds_alternative<double>(*param)) {
-     double new_val = get<double>(*param);
-```
-
-**File**: `src/server/search/search_family_test.cc` (modified, +4/-0)
-```diff
-@@ -2372,6 +2372,10 @@ TEST_F(SearchFamilyTest, SimpleUpdates) {
-     Run({"hset", "d:3", "visits", "175"});
-     EXPECT_THAT(Run({"ft.search", "i1", "@visits:[0 100]"}), kNoResults);
-     EXPECT_THAT(Run({"ft.search", "i1", "@visits:[150 1000]"}), AreDocIds("d:2", "d:3"));
-+
-+    // A failed increment must leave the document indexed.
-+    EXPECT_THAT(Run({"hincrby", "d:3", "title", "1"}), ErrArg("hash value is not an integer"));
-+    EXPECT_THAT(Run({"ft.search", "i1", "@visits:[150 1000]"}), AreDocIds("d:2", "d:3"));
-   }
- 
-   // Delete documents
-```
-
----
-
-### Incident Patch 2: `e718f3be` (2026-11-13)
-**Commit Message**: Simplify SnapshotStorage and fix cloud snapshot bugs (#8779)
-
-refactor: simplify SnapshotStorage and fix cloud snapshot bugs
-
-Unify S3, GCS and Azure storages under a shared CloudSnapshotStorage base that implements
-LoadPath and shard file expansion once; each backend only parses/builds paths and lists objects.
-Move cloud storage classes and their creation into snapshot_storage.cc, and return io::WriteFile*
-from OpenWriteFile instead of a (Sink*, FileType) pair.
-
-Fixes:
-- Remove std::regex, which ran inside fibers when matching snapshot names.
-- GCS/Azure shard file regexes were not escaped and could throw on special characters.
-- Only the trailing "summary.dfs" is replaced when expanding DFS shard files, not every
-  "summary" in the path.
-- Propagate GCS/Azure listing errors instead of reporting them as missing shard files.
-- Validate S3/GCS paths in CheckPath, so a mismatched path fails before the dataset is flushed.
-
-**File**: `src/server/detail/save_stages_controller.cc` (modified, +4/-13)
-```diff
-@@ -30,7 +30,6 @@ namespace detail {
- using namespace util;
- using absl::GetFlag;
- using absl::StrCat;
--using fb2::OpenLinux;
- 
- namespace fs = std::filesystem;
- 
-@@ -122,12 +121,10 @@ GenericError RdbSnapshot::Start(SaveMode save_mode, const std::string& path,
-   if (!res) {
-     return res.error();
-   }
-+  io_sink_.reset(*res);
- 
--  auto [file, file_type] = *res;
--  io_sink_.reset(file);
--
--  is_linux_file_ = file_type & FileType::IO_URING;
--  bool align_writes = (file_type & FileType::DIRECT) != 0;
-+  // Local files are opened with O_DIRECT.
-+  bool align_writes = !snapshot_storage_->IsCloud();
-   saver_.reset(
-       new RdbSaver(io_sink_.get(), save_mode, align_writes, snapshot_id, DflyVersion::CURRENT_VER));
- 
-@@ -162,14 +159,8 @@ RdbSaver::SnapshotStats RdbSnapshot::GetCurrentSnapshotProgress() const {
- }
- 
- error_code RdbSnapshot::Close() {
--#ifdef __linux__
--  if (is_linux_file_) {
--    return static_cast<LinuxWriteWrapper*>(io_sink_.get())->Close();
--  }
--#endif
--
-   error_code ec;
--  auto* file = static_cast<io::WriteFile*>(io_sink_.get());
-+  io::WriteFile* file = io_sink_.get();
- 
-   // S3 implementation is stack hungry. We use a fiber to close the file to
-   // avoid wasting stack space.
-```
-
-**File**: `src/server/detail/save_stages_controller.h` (modified, +2/-2)
-```diff
-@@ -7,6 +7,7 @@
- 
- #include <filesystem>
- 
-+#include "io/file.h"
- #include "server/rdb_save.h"
- #include "util/fibers/fiberqueue_threadpool.h"
- 
-@@ -66,12 +67,11 @@ class RdbSnapshot {
-   }
- 
-  private:
--  bool is_linux_file_ = false;
-   SnapshotStorage* snapshot_storage_ = nullptr;
- 
-   std::atomic_uint32_t started_shards_ = 0;
- 
--  unique_ptr<io::Sink> io_sink_;
-+  unique_ptr<io::WriteFile> io_sink_;
-   unique_ptr<RdbSaver> saver_;
-   RdbTypeFreqMap freq_map_;
- 
-```
-
-**File**: `src/server/detail/snapshot_storage.cc` (modified, +494/-644)
-```diff
-@@ -11,30 +11,42 @@
- #include <absl/strings/strip.h>
- 
- #include <algorithm>
--
--#include "util/cloud/aws/s3_storage.h"
--
--#ifdef WITH_GCP
--#include "util/cloud/gcp/gcs_file.h"
--#endif
--
--#include <regex>
-+#include <functional>
- 
- #include "base/logging.h"
- #include "io/file_util.h"
- #include "server/engine_shard_set.h"
- #include "strings/escaping.h"
- #include "strings/human_readable.h"
-+#include "util/cloud/aws/aws_creds_provider.h"
-+#include "util/cloud/aws/s3_storage.h"
- #include "util/cloud/azure/creds_provider.h"
- #include "util/cloud/azure/storage.h"
-+#include "util/cloud/utils.h"
- #include "util/fibers/fiber_file.h"
-+#include "util/fibers/fiberqueue_threadpool.h"
-+#include "util/fibers/uring_file.h"
-+
-+#ifdef WITH_GCP
-+#include "util/cloud/gcp/gcp_creds_provider.h"
-+#include "util/cloud/gcp/gcs.h"
-+#include "util/cloud/gcp/gcs_file.h"
-+#endif
- 
- ABSL_RETIRED_FLAG(bool, s3_use_helio_client, true,
-                   "Deprecated: the helio native S3 client is always used.");
- ABSL_FLAG(uint32_t, s3_upload_traffic_mark, 0,
-           "Linux SO_MARK applied to S3 snapshot upload sockets, so they can be assigned to an "
-           "externally configured tc bandwidth class. Requires CAP_NET_ADMIN. When set, socket "
-           "pacing from snapshot_egress_limit_bytes is not applied. 0 leaves sockets unmarked.");
-+ABSL_FLAG(std::string, s3_endpoint, "",
-+          "endpoint for s3 snapshots, default uses aws regional endpoint");
-+ABSL_FLAG(bool, s3_use_https, true, "whether to use https for s3 endpoints");
-+// Disable EC2 metadata by default, or if a users credentials are invalid the
-+// AWS client will spent 30s trying to connect to inaccessable EC2 endpoints
-+// to load the credentials.
-+ABSL_FLAG(bool, s3_ec2_metadata, false,
-+          "whether to load credentials and configuration from EC2 metadata");
- ABSL_DECLARE_FLAG(strings::MemoryBytesFlag, snapshot_egress_limit_bytes);
- 
- namespace rng = std::ranges;
-@@ -47,51 +59,99 @@ using namespace std;
- namespace {
- 
- constexpr string_view kSummarySuffix = "summary.dfs"sv;
--constexpr std::string_view kHttpsPrefix = "https://";
-+constexpr string_view kHttpsPrefix = "https://";
-+constexpr string_view kAzureBlobEndpointSuffix = ".blob.core.windows.net";
-+constexpr unsigned kBucketConnectMs = 2000;
-+constexpr unsigned kGcsConnectMs = 3000;
- 
--pair<string, string> GetBucketPath(string_view path) {
--  string_view clean = path;
--  string_view prefix = kGCSPrefix;
--  if (absl::StartsWith(clean, kS3Prefix)) {
--    prefix = kS3Prefix;
--  }
--  clean = absl::StripPrefix(clean, prefix);
-+// Matches any digit in a file name mask.
-+constexpr char kDigit = '\0';
- 
--  size_t pos = clean.find('/');
--  if (pos == string_view::npos) {
--    return make_pair(string(clean), "");
--  }
-+nonstd::unexpected_type<GenericError> Unexpected(errc code, string details) {
-+  return nonstd::make_unexpected(GenericError(make_error_code(code), std::move(details)));
-+}
- 
--  string bucket_name{clean.substr(0, pos)};
--  string obj_path{clean.substr(pos + 1)};
-+// Attaches `details` to the error of `res`.
-+template <typename T>
-+io::Result<T, GenericError> WithDetails(io::Result<T> res, string_view details) {
-+  if (!res)
-+    return nonstd::make_unexpected(GenericError(res.error(), string(details)));
-+  return *res;
-+}
- 
--  return make_pair(std::move(bucket_name), std::move(obj_path));
-+bool MatchesMask(string_view name, string_view mask) {
-+  return name.size() == mask.size() &&
-+         equal(mask.begin(), mask.end(), name.begin(),
-+               [](char m, char c) { return m == kDigit ? absl::ascii_isdigit(c) : m == c; });
- }
- 
--#ifdef __linux__
--const int kRdbWriteFlags = O_CREAT | O_WRONLY | O_TRUNC | O_CLOEXEC | O_DIRECT;
--#endif
-+// Returns whether `name` is a shard file of the DFS snapshot whose summary file is
-+// `base` + "summary.dfs", i.e. `base` followed by a 4 digit shard id and ".dfs".
-+bool IsShardFile(string_view name, string_view base) {
-+  return absl::ConsumePrefix(&name, base) && absl::ConsumeSuffix(&name, ".dfs") &&
-+         MatchesMask(name, string(4, kDigit));
-+}
- 
--std::string EscapeRegex(string_view input) {
--  // List of regex special characters that need escaping
--  // We don't escape "{}" since we use them for our own placeholders.
--  constexpr std::string_view chars{"\\.^$|?*+()[]"};
--  std::string escaped;
-+struct ObjectStat {
-+  string key;
-+  int64_t mtime;
-+};
- 
--  // Reserve space to avoid multiple reallocations
--  escaped.reserve(input.size() * 1.1);
-+// Returns the key of the newest object that is a snapshot file named `prefix` + `dbfilename`,
-+// or an empty string if there is none. The filename placeholders match the digits that
-+// SaveStagesController writes for them, and a filename without extension matches both RDB and
-+// DFS snapshots.
-+string FindNewestSnapshot(string_view prefix, string_view dbfilename,
-+                          const vector<ObjectStat>& objects) {
-+  const string d2(2, kDigit), d4(4, kDigit);
-+  const string ts = absl::StrCat(d4, "
-```
-
-**File**: `src/server/detail/snapshot_storage.h` (modified, +32/-162)
-```diff
-@@ -3,28 +3,20 @@
- 
- #pragma once
- 
--#include "util/cloud/aws/aws_creds_provider.h"
--#include "util/cloud/aws/s3_storage.h"
--#include "util/cloud/azure/creds_provider.h"
--
--#ifdef WITH_GCP
--#include "util/cloud/gcp/gcp_creds_provider.h"
--#include "util/cloud/gcp/gcs.h"
--#endif
--
- #include <absl/strings/match.h>
- 
- #include <filesystem>
-+#include <memory>
- #include <string>
- #include <string_view>
--#include <utility>
-+#include <vector>
- 
--#include "io/io.h"
-+#include "io/file.h"
- #include "server/execution_state.h"
--#include "util/cloud/azure/creds_provider.h"
--#include "util/cloud/utils.h"
--#include "util/fibers/fiberqueue_threadpool.h"
--#include "util/fibers/uring_file.h"
-+
-+namespace util::fb2 {
-+class FiberQueueThreadPool;
-+}  // namespace util::fb2
- 
- namespace dfly {
- namespace detail {
-@@ -33,187 +25,65 @@ namespace fs = std::filesystem;
- 
- constexpr std::string_view kS3Prefix = "s3://";
- constexpr std::string_view kGCSPrefix = "gs://";
--constexpr std::string_view kAzureBlobEndpointSuffix = ".blob.core.windows.net";
--
--const size_t kBucketConnectMs = 2000;
--
--enum FileType : uint8_t {
--  FILE = (1u << 0),
--  CLOUD = (1u << 1),
--  IO_URING = (1u << 2),
--  DIRECT = (1u << 3),
--};
- 
- class SnapshotStorage {
-  public:
-   virtual ~SnapshotStorage() = default;
- 
--  // Opens the file at the given path, and returns the open file and file
--  // type, which is a bitmask of FileType.
--  virtual io::Result<std::pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(
--      const std::string& path) = 0;
-+  // Opens the file at the given path for writing. Local files are opened with O_DIRECT, so their
-+  // writes must be aligned; cloud files are published only when closed.
-+  virtual io::Result<io::WriteFile*, GenericError> OpenWriteFile(const std::string& path) = 0;
- 
-   virtual io::ReadonlyFileOrError OpenReadFile(const std::string& path) = 0;
- 
--  // Returns the path of the RDB file or DFS summary file to load.
-+  // Returns the path of the newest RDB file or DFS summary file in `dir` that matches
-+  // `dbfilename`, or an empty string if `dbfilename` is empty.
-   virtual io::Result<std::string, GenericError> LoadPath(std::string_view dir,
-                                                          std::string_view dbfilename) = 0;
- 
--  using ExpandResult = std::vector<std::string>;
--  // Searches for all the relevant snapshot files given the RDB file or DFS summary file path.
--  io::Result<ExpandResult, GenericError> ExpandSnapshot(const std::string& load_path);
-+  // Returns all the files of the snapshot given the RDB file or DFS summary file path.
-+  // The DFS summary file is always the last one.
-+  io::Result<std::vector<std::string>, GenericError> ExpandSnapshot(const std::string& load_path);
- 
-   virtual bool IsCloud() const {
-     return false;
-   }
- 
-  protected:
--  struct SnapStat {
--    SnapStat(std::string file_name, int64_t ts) : name(std::move(file_name)), last_modified(ts) {
--    }
--    std::string name;
--    int64_t last_modified;
--  };
--
--  // Returns empty string if nothing is matched. vector is passed by value on purpose, as it is
--  // been sorted inside.
--  static std::string FindMatchingFile(std::string_view prefix, std::string_view dbfilename,
--                                      std::vector<SnapStat> keys);
--
--  virtual io::Result<std::vector<std::string>, GenericError> ExpandFromPath(
--      const std::string& path) = 0;
--
-+  // Returns an error if `path` can not be loaded.
-   virtual std::error_code CheckPath(const std::string& path) = 0;
-+
-+  // Returns the shard files of the DFS snapshot whose summary file path is `summary_path`.
-+  virtual io::Result<std::vector<std::string>, GenericError> ListShardFiles(
-+      const std::string& summary_path) = 0;
- };
- 
- class FileSnapshotStorage : public SnapshotStorage {
-  public:
-+  // `fq_threadpool` is used for file I/O when the proactors do not support io_uring.
-   explicit FileSnapshotStorage(util::fb2::FiberQueueThreadPool* fq_threadpool);
- 
--  io::Result<std::pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(
--      const std::string& path) override;
--
--  io::ReadonlyFileOrError OpenReadFile(const std::string& path) override;
--
--  io::Result<std::string, GenericError> LoadPath(std::string_view dir,
--                                                 std::string_view dbfilename) override;
--
-- private:
--  io::Result<std::vector<std::string>, GenericError> ExpandFromPath(const std::string& path) final;
--
--  std::error_code CheckPath(const std::string& path) final;
--  util::fb2::FiberQueueThreadPool* fq_threadpool_;
--};
--
--#ifdef WITH_GCP
--class GcsSnapshotStorage : public SnapshotStorage {
-- public:
--  ~GcsSnapshotStorage();
--
--  std::error_code Init(unsigned connect_ms);
--
--  io::Result<std::pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(
--      const std::string& path) override;
-+  io::Result<io::WriteFile*, GenericError> OpenWriteFile(const std::string& path) override;
- 
-   io::ReadonlyFileOrError OpenReadFile(const std::string& p
-```
-
-**File**: `src/server/rdb_test.cc` (modified, +2/-2)
-```diff
-@@ -714,11 +714,11 @@ class TestCloudStorage : public detail::FileSnapshotStorage {
-   explicit TestCloudStorage(Failure failure) : FileSnapshotStorage(nullptr), failure_(failure) {
-   }
- 
--  io::Result<pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(const string& path) override {
-+  io::Result<io::WriteFile*, GenericError> OpenWriteFile(const string& path) override {
-     if (failure_ == kOpenSummary && path.find("summary") != string::npos)
-       return nonstd::make_unexpected(GenericError(make_error_code(errc::io_error)));
-     ++opened;
--    return pair<io::Sink*, uint8_t>{new File(this), detail::FileType::CLOUD};
-+    return new File(this);
-   }
- 
-   bool IsCloud() const override {
-```
-
-**File**: `src/server/server_family.cc` (modified, +9/-65)
-```diff
-@@ -146,13 +146,6 @@ ABSL_FLAG(uint32_t, pause_wait_timeout, 1,
-           "Timeout in seconds, to set up the pause for all connections for CLIENT PAUSE command "
-           "and cluster slot migration finalization procedure.");
- 
--ABSL_FLAG(string, s3_endpoint, "", "endpoint for s3 snapshots, default uses aws regional endpoint");
--ABSL_FLAG(bool, s3_use_https, true, "whether to use https for s3 endpoints");
--// Disable EC2 metadata by default, or if a users credentials are invalid the
--// AWS client will spent 30s trying to connect to inaccessable EC2 endpoints
--// to load the credentials.
--ABSL_FLAG(bool, s3_ec2_metadata, false,
--          "whether to load credentials and configuration from EC2 metadata");
- ABSL_RETIRED_FLAG(bool, s3_sign_payload, true,
-                   "Deprecated: S3 snapshot uploads always use an unsigned payload.");
- 
-@@ -314,52 +307,11 @@ string UnknownCmd(string cmd, facade::ParsedArgs args, size_t num_args) {
-                       absl::StrJoin(args.begin(), end, ", ", CmdArgListFormatter()));
- }
- 
--// Returns an error instead of terminating the process: this is called at runtime by
--// SAVE/LOAD commands, where a transient failure (e.g. missing credentials) must not kill
--// an already serving instance.
--io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> CreateCloudSnapshotStorage(
--    std::string_view uri) {
--  auto make_err = [](std::error_code ec, std::string_view what) {
--    return nonstd::make_unexpected(GenericError{ec, absl::StrCat("Failed to initialize ", what)});
--  };
--
--  if (detail::IsS3Path(uri)) {
--    auto aws = std::make_shared<detail::AwsS3SnapshotStorage>(absl::GetFlag(FLAGS_s3_endpoint),
--                                                              absl::GetFlag(FLAGS_s3_use_https),
--                                                              absl::GetFlag(FLAGS_s3_ec2_metadata));
--    auto ec = shard_set->pool()->GetNextProactor()->Await(
--        [&] { return aws->Init(detail::kBucketConnectMs); });
--    if (ec)
--      return make_err(ec, "AWS S3 snapshot storage");
--    return aws;
--  } else if (detail::IsGCSPath(uri)) {
--#ifdef WITH_GCP
--    auto gcs = std::make_shared<detail::GcsSnapshotStorage>();
--    auto ec = shard_set->pool()->GetNextProactor()->Await([&] { return gcs->Init(3000); });
--    if (ec)
--      return make_err(ec, "GCS snapshot storage");
--    return gcs;
--#else
--    return nonstd::make_unexpected(
--        GenericError{make_error_code(errc::not_supported), "Compiled without GCP support"});
--#endif
--  } else if (detail::IsAzurePath(uri)) {
--    auto azure = std::make_shared<detail::AzureSnapshotStorage>();
--    auto ec = shard_set->pool()->GetNextProactor()->Await(
--        [&] { return azure->Init(uri, detail::kBucketConnectMs); });
--    if (ec)
--      return make_err(ec, "Azure snapshot storage");
--    return azure;
--  }
--  return nonstd::make_unexpected(GenericError{make_error_code(errc::invalid_argument),
--                                              absl::StrCat("Unknown cloud storage ", uri)});
--}
--
- // Cloud paths need their own storage, other paths use the server's default storage.
- io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> SelectSnapshotStorage(
-     std::string_view path, std::shared_ptr<detail::SnapshotStorage> default_storage) {
-   if (detail::IsCloudPath(path))
--    return CreateCloudSnapshotStorage(path);
-+    return detail::CreateCloudSnapshotStorage(path);
-   return default_storage;
- }
- 
-@@ -1639,16 +1591,14 @@ void ServerFamily::Init(util::AcceptServer* acceptor, std::vector<facade::Listen
-   string flag_dir = GetFlag(FLAGS_dir);
- 
-   if (detail::IsCloudPath(flag_dir)) {
--    auto res = CreateCloudSnapshotStorage(flag_dir);
-+    auto res = detail::CreateCloudSnapshotStorage(flag_dir);
-     if (!res) {
-       LOG(ERROR) << res.error().Format();
-       exit(1);
+     /* Realloc after: we need to free space. */
+     if (new_listpack_bytes < old_listpack_bytes) {
++        lpSetTotalBytesChecked(lp,new_listpack_bytes);
+         if ((lp = zrealloc(lp,new_listpack_bytes)) == NULL) return NULL;
+         dst = lp + poff;
      }
-     snapshot_storage_ = std::move(*res);
--  } else if (fq_threadpool_) {
--    snapshot_storage_ = std::make_shared<detail::FileSnapshotStorage>(fq_threadpool_.get());
-   } else {
--    snapshot_storage_ = std::make_shared<detail::FileSnapshotStorage>(nullptr);
-+    snapshot_storage_ = std::make_shared<detail::FileSnapshotStorage>(fq_threadpool_.get());
-   }
- 
-   if (GetFlag(FLAGS_aof)) {
-@@ -2223,19 +2173,15 @@ GenericError ServerFamily::DoSaveCheckAndStart(const SaveCmdOptions& save_cmd_op
-                           "SAVING - can not save database"};
+@@ -966,7 +967,8 @@ unsigned char *lpInsert(unsigned char *lp, const unsigned char *elestr, unsigned
+                 lpSetNumElements(lp,num_elements-1);
+         }
      }
+-    lpSetTotalBytesChecked(lp,new_listpack_bytes);
++    if (new_listpack_bytes >= old_listpack_bytes)
++        lpSetTotalBytesChecked(lp,new_listpack_bytes);
  
--    std::shared_ptr<detail::SnapshotStorage> snapshot_storage = snapshot_storage_;
--    if (!save_cmd_opts.cloud_uri.empty()) {
--      auto res = CreateCloudSnapshotStorage(save_cmd_opts.cloud_uri);
--      if (!res) {
--        LOG(ERROR) << res.error().Format();
--        return res.error();
--      }
--      snapshot_storage = std::move(*res);
-+    auto snapshot_storage = SelectSnapshotStorage(save_cmd_opts.cloud_uri, snapshot_storage_);
-+    if (!snapshot_storage) {
-+      LOG(ERROR) << snapshot_storage.error().Format();
-+      return snapshot_storage.error()
+ #if 0
+     /* This code path is normally disabled: what it does is to force listpack
+```
+
+**File**: `src/server/hset_family_test.cc` (modified, +10/-0)
+```diff
+@@ -763,6 +763,16 @@ TEST_F(HSetFamilyTest, SingleFieldLargeValueRemainsListpack) {
+   EXPECT_EQ(Run({"HGET", "hmap", "field2"}), "val");
+ }
+ 
++TEST_F(HSetFamilyTest, ShrinkLargeListpackValue) {
++  const string large_value(5 * 1024 * 1024, 'x');
++
++  EXPECT_EQ(1, CheckedInt({"HSET", "hmap", "field", large_value}));
++  EXPECT_THAT(Run({"DEBUG", "OBJECT", "hmap"}).GetString(), HasSubstr("encoding:listpack"));
++  EXPECT_EQ(0, CheckedInt({"HSET", "hmap", "field", "small"}));
++  EXPECT_EQ(Run({"HGET", "hmap", "field"}), "small");
++  EXPECT_THAT(Run({"DEBUG", "OBJECT", "hmap"}).GetString(), HasSubstr("encoding:listpack"));
++}
++
+ TEST_F(HSetFamilyTest, Issue1140) {
+   Run({"HSET", "CaseKey", "Foo", "Bar"});
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2903,34 +2422,33 @@ Fixes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): keep a document indexed when HINCRBY fails
+## X. listpack): update size before shrinking allocation
 
 **RULE**:
-When implementing operations in `src/server/hset_family.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/redis/listpack.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1975aa79`: search): keep a document indexed when HINCRBY fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce4df827`: listpack): update size before shrinking allocation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/hset_family.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redis/listpack.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  if (OpStatus status = IncrementValue(res, param); status != OpStatus::OK) {
-    if (!add_res.is_new)
-      op_args.shard->search_indices()->AddDoc(key, op_args.db_cntx, &pv);
-  }
+        lpSetTotalBytesChecked(lp,new_listpack_bytes);
+    if (new_listpack_bytes >= old_listpack_bytes)
+        lpSetTotalBytesChecked(lp,new_listpack_bytes);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  if (OpStatus status = IncrementValue(res, param); status != OpStatus::OK)
+    lpSetTotalBytesChecked(lp,new_listpack_bytes);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1975aa79` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce4df827` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

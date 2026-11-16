@@ -10250,3 +10250,6 @@
 | `CYCLE-20261116-PNOW` | `2026-11-16T05:29:02.000Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8718` | Yes (`89caf538...`) |
 | `CYCLE-20261116-PPFG` | `2026-11-16T05:29:04.252Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md` | Yes (`1e46b633...`) |
 | `CYCLE-20261116-PT4D` | `2026-11-16T05:29:09.037Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | Yes (`3d1d9cdc...`) |
+| `CYCLE-20261116-5QNO` | `2026-11-16T05:41:32.340Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8719` | Yes (`bfd31205...`) |
+| `CYCLE-20261116-5VER` | `2026-11-16T05:41:38.499Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8720` | Yes (`acee1c47...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T05:42:06.332Z` | `joreilly-confetti` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-925AEC0F` [Domain F] | Yes (`148b1764...`) |
