@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "e3ab04d5",
+    "sourceVersion": "103dc4ef",
     "license": "Apache-2.0",
-    "contentHash": "e812066f94fe7095c4d5e74e324dc34945aec2079bbcdc025483d91e6fd98c83",
-    "lastHarvestedAt": "2026-11-14T15:25:38.988Z",
+    "contentHash": "1cedd318c33fffce85df6678332d4785aaf70b5c951c19294a9e81f032dc1d05",
+    "lastHarvestedAt": "2026-11-16T07:37:15.804Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

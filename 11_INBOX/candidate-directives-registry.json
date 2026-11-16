@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T07:19:59.838Z",
+  "last_updated": "2026-11-16T07:37:20.296Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-OCWQ",
+      "id": "CD-ANDJ",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-OCWQ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ANDJ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -17757,11 +17757,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-YBFI",
+      "id": "CD-ANQG",
       "directive_title": "engine): detect uv run script shebangs",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-YBFI-engine-detect-uv-run-script-shebangs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ANQG-engine-detect-uv-run-script-shebangs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -18578,6 +18578,44 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-118F5C-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-AN0B",
+      "directive_title": "format/html/svelte): keep comments after block delimiters and opening tags",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AN0B-format-html-svelte-keep-comments-after-block-delimiters-and-opening-tags.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-4315AC",
+      "directive_title": "format/html/svelte): keep comments after block delimiters and opening tags",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "biomejs-biome",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4315AC-format-html-svelte-keep-comments-after-b.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-75FD1A",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-75FD1A-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-8FC78B",
+      "directive_title": "engine): detect uv run script shebangs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8FC78B-engine-detect-uv-run-script-shebangs.md",
       "staged_date": "2026-11-16"
     }
   ]

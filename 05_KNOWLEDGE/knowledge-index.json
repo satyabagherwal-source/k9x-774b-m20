@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T07:20:00.020Z",
+  "last_updated": "2026-11-16T07:37:20.575Z",
   "total_verified_learnings": 8769,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19012,
+  "total_items": 19014,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b8a732a5248a3edeb2a0e60354125dc15d563be117ce8f8689d5cf945d1aea49",
+      "content_hash": "fe99f0833a97a81d06bf16d32b4a449981c903791159590d7dfec33ccf8b790d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T06:59:45.103Z"
+      "persisted_at": "2026-11-16T07:37:20.489Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c658f7199fcf831a57c7b5a1741996d196a9b0e408debc5bb847da9dc34c66c5",
+      "content_hash": "a3fb50fa4d9b35091c6158ea46bdbf8fc39a54c2baa4c74ee0a00eefb11a422a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T06:59:45.215Z"
+      "persisted_at": "2026-11-16T07:37:20.575Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee2549af41b83b5a664c9b1bc6fed344199f5b911aa62a393aa5497d2e714490",
+      "content_hash": "b023207685fa8113c8fb5f326923ca0362a356b15ee59d8da43e062f79a56486",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:19:59.926Z"
+      "persisted_at": "2026-11-16T07:37:19.936Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7504b274a33be3a53c836eab6971e1cffdda218655cad761ae25c0dd8c16f1d",
+      "content_hash": "76137d40b5fe8e7cabb116b2b3e3fbde027ab722934081645835927aeb35caaf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:20:00.020Z"
+      "persisted_at": "2026-11-16T07:37:20.031Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214845,13 +214845,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OCWQ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ANDJ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9787e59611e8aa9de91aa89abb5dbb152fbb4b944d47b639863762f7c9449544",
+      "content_hash": "a5993e67ca6925d0bffb80b999b478430095bed10001458f8a65520a045e8a7d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:19:59.838Z"
+      "persisted_at": "2026-11-16T07:37:19.831Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -229687,14 +229687,19 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "e3ab04d5",
-      "content_hash": "e812066f94fe7095c4d5e74e324dc34945aec2079bbcdc025483d91e6fd98c83",
+      "source_version": "103dc4ef",
+      "content_hash": "1cedd318c33fffce85df6678332d4785aaf70b5c951c19294a9e81f032dc1d05",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
         {
           "number": 8496,
           "title": "locate classes in unquoted object keys correctly",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8725,
+          "title": "format/html/svelte): keep comments after block delimiters and opening tags",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -229703,7 +229708,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:25:38.852Z",
+      "verified_at": "2026-11-16T07:37:15.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229745,10 +229750,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "repository": "biomejs/biome",
-      "source_version": "e3ab04d5",
-      "content_hash": "bba425210bbd4d1f7bcc8c171ba6b814e14d696e056bd858e47a0d117b567da1",
+      "source_version": "103dc4ef",
+      "content_hash": "4c10f20ef17a39d8bba8ca9edcc36a4abb9c4e8a3166bda5223d0af55dfbba61",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T15:25:39.439Z"
+      "persisted_at": "2026-11-16T07:37:16.073Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome",
@@ -229757,10 +229762,10 @@
       "relative_path": "08_VERIFICATION/biomejs-biome-verification-protocol-empirical-defect-shield-for-biomejs-biome.md",
       "title": "Verification Protocol: Empirical Defect Shield for biomejs/biome",
       "repository": "biomejs/biome",
-      "source_version": "e3ab04d5",
-      "content_hash": "26ac39874f12b63fca8c9d58967785719465416aafacc0a46dc5ec7c35969499",
+      "source_version": "103dc4ef",
+      "content_hash": "db75d9e89143d5bcd41a2a9a1c011045a30d646afe1346834b37ccda65278d52",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:25:39.655Z"
+      "persisted_at": "2026-11-16T07:37:16.172Z"
     },
     "rule-8497": {
       "learning_id": "rule-8497",
@@ -229896,9 +229901,9 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "86567926e388ea1bd63795ee94cef433222c95844e0b647e444693adac782386",
+      "content_hash": "f81c68060c85fb872c273f1987803dc536e002de01498feccb7f80fc5ecc29c8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T15:26:22.960Z"
+      "persisted_at": "2026-11-16T07:37:19.460Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings",
@@ -229908,9 +229913,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "a2e0cda072c781eff9531951718b73eda12b1a581bbb2458056093ac2b3a70d7",
+      "content_hash": "4a59d389472e06a66e6083cc9ec37179fbfead7e356448c5f820511aa409fe65",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:26:23.076Z"
+      "persisted_at": "2026-11-16T07:37:19.568Z"
     },
     "candidate_directive-deps-bump-aiohttp": {
       "item_id": "candidate_directive-deps-bump-aiohttp",
@@ -250460,13 +250465,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YBFI-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ANQG-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a4cf00d4b2a277ca7da00d578761d0f791d957959f465c42ba03085fbb407056",
+      "content_hash": "a3d132a460bf7a31456e168faffa5827d05fe30f66169a640a94d0827724d585",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T06:59:44.863Z"
+      "persisted_at": "2026-11-16T07:37:20.296Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -250476,9 +250481,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0fb16d0bebfc0974f4b963ef1d6f8fa93d9dfec3db2e35e0c8d66cf3d6333ae",
+      "content_hash": "47009827f9ffa6f36d4f3588f7bf2ab762c4e30b0314efcdb3583b0050ae9ef8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T06:59:44.981Z"
+      "persisted_at": "2026-11-16T07:37:20.392Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -252652,6 +252657,32 @@
       "content_hash": "428c61c42aa44815277fe6b47e6c5e2784d2b031dbd384e94f86bcb3c38fe765",
       "domain_letter": "G",
       "persisted_at": "2026-11-16T07:19:58.855Z"
+    },
+    "rule-8725": {
+      "learning_id": "rule-8725",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8725,
+      "title": "format/html/svelte): keep comments after block delimiters and opening tags",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "103dc4ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T07:37:15.659Z"
+    },
+    "candidate_directive-format-html-svelte-keep-comments-after-block-delimiters-and-opening-tags": {
+      "item_id": "candidate_directive-format-html-svelte-keep-comments-after-block-delimiters-and-opening-tags",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AN0B-format-html-svelte-keep-comments-after-block-delimiters-and-opening-tags.md",
+      "title": "format/html/svelte): keep comments after block delimiters and opening tags",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "07518f21e5be41e75c49b7925124eeadf753f29a5238cdee0c0f6ff8f82eba4a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T07:37:19.357Z"
     }
   },
   "ai-builder-brain": {

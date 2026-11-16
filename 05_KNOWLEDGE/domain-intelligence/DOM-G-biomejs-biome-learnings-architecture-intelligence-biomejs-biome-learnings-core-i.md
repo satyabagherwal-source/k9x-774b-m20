@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T15:26:22.720Z",
+  "timestamp": "2026-11-16T07:37:19.260Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-biomejs-biome-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [biomejs-biome-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T15:26:22.720Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T07:37:19.260Z`  
 > **Learning ID**: `LEARN-EVO-biomejs-biome-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from biomejs-biome-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source**: github ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
-> **Source Version**: `e3ab04d5`  
+> **Source Version**: `103dc4ef`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T15:25:38.149Z  
+> **Timestamp**: 2026-11-16T07:37:15.002Z  
 > **Learning ID**: `learn-github-biomejs-biome`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:25:38.144Z  
+> **Harvest Timestamp**: 2026-11-16T07:32:13.864Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A toolchain for web projects, aimed to provide functionalities to maintain them. Biome offers formatter and linter, usable via CLI and LSP.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 26102 stars
+- **Stars / Engagement**: 26109 stars
 
 ---
 
@@ -969,11 +969,14 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13177** (2026-11-14): **fix(lint/complexity): do not report this alias in class property initializers**
-  *Symptoms*: ## Summary  Fixes #13125  In `lint/complexity/noUselessThisAlias`, a `this` alias whose reference appears within a class property or field initializer (such as `initial = self.count;` or `getCount = () => self.count;`) was previously reported as unnecessary and replaced with `this`. However, class property initializers execute with `this` bound to the instance being constructed (or to the class constructor for static fields), which alters runtime meaning and points `this` to a different object than the enclosing method.  ### Root Cause When finding the enclosing `this` scope via `AnyJsControlFlowRoot`, class property members (`JsPropertyClassMember` and `TsInitializedPropertySignatureClassMember`) were not treated as establishing their own `this` context for their initializer values. References inside field initializers consequently skipped up to the enclosing method's control flow root.  ### Changes - Implemented `find_this_scope` in `crates/biome_js_analyze/src/lint/complexity/no_useless_this_alias.rs`:   - Treats the initializer value of `JsPropertyClassMember` and `TsInitializedPropertySignatureClassMember` as its own distinct `this` scope.   - Preserves outer `this` evaluation for computed member names (e.g. `[self.key] = 1`).   - Correctly reports and fixes aliases defined directly inside property initializers when references stay within that same property initializer. - Added test cases for instance and static field initializers to `valid.js` and `invalid.js` spec test
+- **Issue #13200** (2026-11-15): **🐛 Publishing @biomejs/biome before platform packages causes broken installs during releases (2.6.8)**
+  *Symptoms*: ### Environment information  - GitHub Actions `ubuntu-latest`: Ubuntu 26.04.1, Linux x64 / glibc - Node.js: `v26.13.1`; npm: `11.20.0` - Dependency installer: Utoo `1.1.12`, using `https://registry.npmjs.org` - Declared dependency: `"@biomejs/biome": "^2.5.0"`, with no committed dependency lockfile - Affected release: `2.6.8`  These details come from the [failed CI job](https://github.com/ant-design/ant-design/actions/runs/43725278614/job/132845818892). The job did not collect `biome rage`; the launcher failed before starting the native CLI.  ### What happened?  A fresh Ant Design CI installation ran during the gap between publishing `@biomejs/biome@2.6.8` and its matching `@biomejs/cli-linux-x64@2.6.8` optional dependency. Installation completed, but `biome lint` could not start:  ```text Error: Cannot find module '@biomejs/cli-linux-x64/biome' Require stack: - /home/runner/work/ant-design/ant-design/node_modules/@biomejs/biome/bin/biome     at Object.<anonymous> (/home/runner/work/ant-design/ant-design/node_modules/@biomejs/biome/bin/biome:52:11) code: 'MODULE_NOT_FOUND' Node.js v26.13.1 ```  #### Observed reproduction  1. [Ant Design PR #59864](https://github.com/ant-design/ant-design/pull/59864) triggered a fresh Linux x64 CI job using merge commit `cf05642507c24a8d219f7204bf871486c52825fc`. 2. The workflow ran `ut` to install dependencies, then `ut lint`. The [manifest at that commit](https://github.com/ant-design/ant-design/blob/cf05642507c24a8d219f7204bf871486c52825fc/
 
-- **Issue #13163** (2026-11-13): **fix(noUselessThisAlias): do not report aliases used in class field initializers 🤖🤖🤖**
-  *Symptoms*: ## Summary  Fixes #13125  `noUselessThisAlias` compared the nearest `AnyJsControlFlowRoot` of each alias reference against the declarator's root. Class field initializers are not control flow roots, so a `self` used inside `class Widget { initial = self.count }` was considered to share the outer `this`, and the safe fix rewrote it to `this.count`, which binds to the class instance instead of the captured value.  The reference walk now also stops at a `JsInitializerClause` owned by `JsPropertyClassMember` or `TsInitializedPropertySignatureClassMember`, which introduces a `this` bound to the class instance. Aliases referenced there are correctly treated as required, so no diagnostic and no fix are emitted.  Computed member names (`[self.count]`) still report, since they evaluate in the enclosing scope.  ## Test Plan  - Added the issue reproduction to `valid.js` (instance fields, arrow-function fields, static fields) and `valid.ts` (typed fields, `TsInitializedPropertySignatureClassMember`). - Added a computed-member-name case to `invalid.js` to keep covering names evaluated in the outer scope. - `cargo test -p biome_js_analyze`: 4851 tests pass. - `cargo clippy -p biome_js_analyze --lib --all-features -- --deny warnings`: clean. Note: workspace-wide `cargo lint` currently fails on `main` on a pre-existing `biome_service` warning unrelated to this change.  ## Docs  No documentation changes; the existing rule docs already describe the intended behavior.  ---  AI assistance notice
+- **Issue #13199** (2026-11-15): **feat(tools): internal publisher**
+  *Symptoms*: <!--   IMPORTANT!!   If you generated this PR with the help of any AI assistance, please disclose it in the PR.   https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#ai-assistance-notice -->  <!-- 	Thanks for submitting a Pull Request! We appreciate you spending the time to work on these changes. 	Please provide enough information so that others can review your PR. 	Once created, your PR will be automatically labeled according to changed files. 	Learn more about contributing: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md -->  ## Summary  > Created via coding agent  This PR creates a local crate called `publish_crates` which is rate-limit-friendly. It also implements a dry-run mode, which is now mandatory in our workflows.  A dry-run check is useful and catches potential mistakes before publishing broken versions.  The logic is heavily inspired by what the OXC project does.    <!-- Explain the **motivation** for making this change. What existing problem does the pull request solve?-->  <!-- Link any relevant issues if necessary or include a transcript of any Discord discussion. -->  <!-- If you create a user-facing change, please write a changeset: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#writing-a-changeset (your changeset is often a good starting point for this summary as well) -->  ## Test Plan  Local tests. Merge and run it.   <!-- What demonstrates that your implementation is correct? -->  ## Docs 
+  **Post-Mortem & Fix Analysis**:
+  > ### ⚠️ No Changeset found  Latest commit: 9a2bbba5aa7ade23d7499e42e3f8ad3aa54ed6c5  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/tools/rate-limit-publisher?filename=.changeset/empty-sails-wave.md&value=---%0A%0A---%0A%0Afeat(tools)%3A%20internal%20publisher%0A)  
+  > ## Parser conformance results  ### js/262  | Test result | `main` count | This PR count | Difference | | :---------: | :----------: | :-----------: | :--------: | | Total | 49797 | 49797 | 0 | | Passed | 48773 | 48773 | 0 | | Failed | 1024 | 1024 | 0 | | Panics | 0 | 0 | 0 | | Coverage | 97.94% | 97.94% | 0.00% |  ### jsx/babel  | Test result | `main` count | This PR count | Difference | | :---------: | :----------: | :-----------: | :--------: | | Total | 40 | 40 | 0 | | Passed | 37 | 37 | 0 | | Failed | 3 | 3 | 0 | | Panics | 0 | 0 | 0 | | Coverage | 92.50% | 92.50% | 0.00% |  ### markdown/commonmark  | Test result | `main` count | This PR count | Difference | | :---------: | :----------: | :-----------: | :--------: | | Total | 652 | 652 | 0 | | Passed | 652 | 652 | 0 | | Failed | 0 | 0 | 0 | | Panics | 0 | 0 | 0 | | Coverage | 100.00% | 100.00% | 0.00% |  ### scss/sass-spec  | Test result | `main` count | This PR count | Difference | | :---------: | :----------: | :-----------: | :
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -990,507 +993,695 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3ab04d5` (2026-11-14)
-**Commit Message**: fix(tailwind): locate classes in unquoted object keys correctly (#12845)
+### Incident Patch 1: `e1556ae7` (2026-11-14)
+**Commit Message**: fix(format/html/svelte): keep comments after block delimiters and opening tags (#13181)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fix-tailwind-unquoted-object-key-range.md` (added, +5/-0)
+**File**: `.changeset/fix-html-comment-after-opening-tag.md` (added, +13/-0)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,13 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Fixed the location of Tailwind CSS diagnostics reported on unquoted object keys. In `clsx({ shadow: active })`, diagnostics now highlight `shadow` instead of starting one character later at `hadow:`.
-```
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -2147,6 +2147,7 @@ dependencies = [
-  "biome_console",
-  "biome_diagnostics",
-  "biome_html_syntax",
-+ "biome_js_parser",
-  "biome_js_syntax",
-  "biome_languages",
-  "biome_module_graph",
-```
-
-**File**: `crates/biome_js_analyze/src/tailwind.rs` (modified, +9/-2)
-```diff
-@@ -4,7 +4,7 @@ use biome_js_factory::make::{
-     js_literal_member_name, js_string_literal, js_string_literal_expression,
-     js_string_literal_single_quotes, js_template_chunk, js_template_chunk_element, jsx_string,
- };
--use biome_js_syntax::JsLanguage;
-+use biome_js_syntax::{JsLanguage, JsSyntaxKind};
- use biome_rowan::{BatchMutation, TextRange, TextSize};
- 
- pub(crate) type AnyTailwindClassString = AnyClassStringLike;
-@@ -74,7 +74,14 @@ fn inner_text_start(node: &AnyTailwindClassString) -> Option<TextSize> {
-             Some(node.value_token().ok()?.text_trimmed_range().start() + TextSize::from(1))
-         }
-         AnyTailwindClassString::JsLiteralMemberName(node) => {
--            Some(node.value().ok()?.text_trimmed_range().start() + TextSize::from(1))
-+            let value = node.value().ok()?;
-+            // Only string literal keys have an opening quote to skip.
-+            let quote_len = if value.kind() == JsSyntaxKind::JS_STRING_LITERAL {
-+                TextSize::from(1)
-+            } else {
-+                TextSize::from(0)
-+            };
-+            Some(value.text_trimmed_range().start() + quote_len)
-         }
-         AnyTailwindClassString::JsxString(node) => {
-             Some(node.value_token().ok()?.text_trimmed_range().start() + TextSize::from(1))
-```
-
-**File**: `crates/biome_js_analyze/tests/specs/nursery/noTailwindRestyledComponents/invalid.jsx.snap` (modified, +2/-2)
-```diff
-@@ -346,14 +346,14 @@ invalid.jsx:11:28 lint/nursery/noTailwindRestyledComponents ━━━━━━
- ```
- 
- ```
--invalid.jsx:11:52 lint/nursery/noTailwindRestyledComponents ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+invalid.jsx:11:51 lint/nursery/noTailwindRestyledComponents ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- 
-   i This Tailwind utility restyles a component.
-   
-      9 │ <Button className={active && "opacity-50"} />;
-     10 │ <Button className={cn("mt-4", active && "rounded-none")} />;
-   > 11 │ <Button className={clsx({ "rounded-none": active, shadow: active })} />;
--       │                                                    ^^^^^^
-+       │                                                   ^^^^^^
-     12 │ <Button className={`mt-4 ${extra} text-sm`} />;
-     13 │ <Button className="[font-size:14px] hover:[border-radius:0]" />;
-   
-```
-
-**File**: `crates/biome_tailwind_logic/Cargo.toml` (modified, +5/-4)
-```diff
-@@ -38,10 +38,11 @@ salsa                  = { workspace = true }
- smallvec               = { workspace = true }
- 
- [dev-dependencies]
--criterion     = { package = "codspeed-criterion-compat", version = "=5.0.1" }
--insta         = { workspace = true, features = ["glob"] }
--json_comments = "0.2.2"
--serde_json    = { workspace = true }
-+biome_js_parser = { path = "../biome_js_parser" }
-+criterion       = { package = "codspeed-criterion-compat", version = "=5.0.1" }
-+insta           = { workspace = true, features = ["glob"] }
-+json_comments   = "0.2.2"
-+serde_json      = { workspace = true }
- 
- [target.'cfg(all(target_family="unix", not(all(target_arch = "aarch64", target_env = "musl"))))'.dev-dependencies]
- tikv-jemallocator = { workspace = true }
-```
-
-**File**: `crates/biome_tailwind_logic/src/syntax_service.rs` (modified, +35/-1)
-```diff
-@@ -716,9 +716,16 @@ impl TailwindClassStringHost for JsLiteralMemberName {
-         if !inspect_string_literal(self.syntax(), options, is_class_attribute).unwrap_or(false) {
-             return None;
-         }
-+        let value = self.value().ok()?;
-+        // Only string literal keys have an opening quote to skip.
-+        let quote_len = if value.kind() == JsSyntaxKind::JS_STRING_LITERAL {
-+            TextSize::from(1)
-+        } else {
-+            TextSize::from(0)
-+        };
-         tailwind_class_string(
-             self.name().ok()?,
--            self.value().ok()?.text_trimmed_range().start() + TextSize::from(1),
-+            value.text_trimmed_range().start() + quote_len,
-             ClassStringHostKind::JsLiteralMemberName,
-         )
-         .into()
-@@ -808,3 +815,30 @@ impl TailwindClassStringHost for HtmlAttribute {
-         .into()
-     }
- }
++Fixed the HTML formatter printing a comment twice when it ends the line of an element's opening tag. For example, `<div><!-- comment -->` followed by `<i>x</i></div>` on the next line is now formatted as:
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use biome_js_parser::{JsParserOptions, parse};
-+
-+    /// Returns the source text at the `inner_range` of each object key that
-+    /// holds a class string in `source`.
-+    fn object_key_class_texts(source: &str) -> Vec<String> {
-+        let parse = parse(source, JsFileSource::jsx(), JsParserOptions::default());
-+        parse
-+            .syntax()
-+            .descendants()
-+            .filter_map(JsLiteralMemberName::cast)
-+            .filter_map(|name| name.tailwind_class_string(&TailwindOptions::default(), false))
-+            .map(|class_string| source[class_string.inner_range].to_string())
-+            .collect()
-+    }
-+
-+    #[test]
-+    fn object_key_inner_range() {
-+        assert_eq!(
-+            object_key_class_texts(r#"clsx({ flex: active, "p-2": active, 'm-2': active });"#),
-+            ["flex", "p-2", "m-2"]
-+        );
-+    }
-+}
++```diff
++- <div><!-- comment -->
+++ <div>
++  	<!-- comment -->
++  	<i>x</i>
++  </div>
++```
 ```
 
----
-
-### Incident Patch 2: `be58f67e` (2026-11-14)
-**Commit Message**: feat(lint): add useTopLevelRequire (#13081)
-
-Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
-
-**File**: `.changeset/add-use-top-level-require-rule.md` (added, +12/-0)
+**File**: `.changeset/fix-svelte-comment-after-block-delimiter.md` (added, +12/-0)
 ```diff
 @@ -0,0 +1,12 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Added the nursery rule [`useTopLevelRequire`](https://biomejs.dev/linter/rules/use-top-level-require/), which reports `require()` calls that aren't at the top level of the module, such as calls inside functions, blocks, or `try` statements.
++Fixed [#13167](https://github.com/biomejs/biome/issues/13167): The HTML formatter no longer deletes comments that follow a Svelte block delimiter on the same line, such as `{#if}`, `{:else}`, or `{#each}`. For example, `{#if a}<!-- comment --><i>x</i>{/if}` is now formatted as:
 +
-+```js
-+function readFile(filename, callback) {
-+    const fs = require("fs");
-+    fs.readFile(filename, callback);
-+}
++```diff
++  {#if a}
++- 	<i>x</i>
+++ 	<!-- comment --><i>x</i>
++  {/if}
 +```
 ```
 
-**File**: `crates/biome_cli/src/execute/migrate/eslint_any_rule_to_biome.rs` (modified, +24/-0)
+**File**: `crates/biome_html_formatter/src/comments.rs` (modified, +35/-0)
 ```diff
-@@ -2615,6 +2615,18 @@ pub(crate) fn migrate_eslint_any_rule(
-                 .get_or_insert(Default::default());
-             rule.set_level(rule.level().max(rule_severity.into()));
+@@ -149,6 +149,41 @@ impl CommentStyle for HtmlCommentStyle {
+             return CommentPlacement::leading(parent, comment);
          }
-+        "global-require" => {
-+            if !options.include_nursery {
-+                results.add(eslint_name, eslint_to_biome::RuleMigrationResult::Nursery);
-+                return false;
+ 
++        // A comment on the same line as the token before the children of an element or a Svelte
++        // block, which is the `>` of the opening tag or the `}` of `{#if a}`, is in the trailing
++        // trivia of that token. The element list of the children prints it before the first child,
++        // so it must be attached to that child, which leaves it to the list. Otherwise, it becomes
++        // a trailing comment of the opening tag, or of the node before the `}`, which prints it
++        // again.
++        //
++        // ```svelte
++        // <div><!-- this comment is attached to the `<span>` element -->
++        //   <span>a</span>
++        // </div>
++        // {#if a}<!-- this comment is attached to the `<span>` element -->
++        //   <span>a</span>
++        // {/if}
++        // ```
++        if comment.piece().text_range().start() >= token.text_trimmed_range().end()
++            && let Some(following_token) = comment.following_token()
++            && let Some(first_child) = following_token.ancestors().find(|node| {
++                node.parent()
++                    .is_some_and(|parent| parent.kind() == HtmlSyntaxKind::HTML_ELEMENT_LIST)
++            })
++            && first_child.prev_sibling().is_none()
++            && first_child.first_token().as_ref() == Some(following_token)
++            && let Some(children) = first_child.parent()
++            && match token.kind() {
++                HtmlSyntaxKind::R_CURLY => true,
++                HtmlSyntaxKind::R_ANGLE => children
++                    .parent()
++                    .is_some_and(|parent| parent.kind() == HtmlSyntaxKind::HTML_ELEMENT),
++                _ => false,
 +            }
-+            let group = rules.nursery.get_or_insert_with(Default::default);
-+            let rule = group
-+                .unwrap_group_as_mut()
-+                .use_top_level_require
-+                .get_or_insert(Default::default());
-+            rule.set_level(rule.level().max(rule_severity.into()));
++        {
++            return CommentPlacement::leading(first_child, comment);
 +        }
-         "grouped-accessor-pairs" => {
-             let group = rules.style.get_or_insert_with(Default::default);
-             let rule = group
-@@ -3423,6 +3435,18 @@ pub(crate) fn migrate_eslint_any_rule(
-                 .get_or_insert(Default::default());
-             rule.set_level(rule.level().max(rule_severity.into()));
++
+         // Attach comments between attributes to the following attribute as leading comments.
+         // This is required for suppression comments (e.g. `// biome-ignore format: reason`)
+         // to work on attributes:
+```
+
+**File**: `crates/biome_html_formatter/src/html/lists/element_list.rs` (modified, +7/-11)
+```diff
+@@ -389,7 +389,7 @@ impl FormatHtmlElementList {
+         let svelte_block_boundary = SvelteBlockBoundary::for_list(list);
+         let (opening_token, closing_token) = match &svelte_block_boundary {
+             Some(boundary) => (
+-                boundary.empty_list_preceding_token.clone(),
++                boundary.preceding_token.clone(),
+                 Some(boundary.token.clone()),
+             ),
+             None => {
+@@ -1224,9 +1224,9 @@ impl FormatHtmlElementList {
+ struct SvelteBlockBoundary {
+     /// The `{:` or `{/` token.
+     token: HtmlSyntaxToken,
+-    /// The token before the list, e.g. the `}` of `{#if a}`, if the list is empty. A comment on the
+-    /// same line as it is in its trailing trivia, e.g. in `{#if a}<!-- comment -->{/if}`.
+-    empty_list_preceding_token: Option<HtmlSyntaxToken>,
++    /// The token before the list, e.g. the `}` of `{#if a}`. A comment on the same line as it is in
++    /// its trailing trivia, e.g. in `{#if a}<!-- comment --><span>a</span>{/if}`.
++    preceding_token: Option<HtmlSyntaxToken>,
+ }
+ 
+ impl SvelteBlockBoundary {
+@@ -1237,11 +1237,7 @@ impl SvelteBlockBoundary {
+             return None;
          }
-+        "n/global-require" => {
-+            if !options.include_nursery {
-+                results.add(eslint_name, eslint_to_biome::RuleMigrationResult::Nursery);
-+                return false;
-+            }
-+            let group = rules.nursery.get_or_insert_with(Default::default);
-+            let rule = group
-+                .unwrap_group_as_mut()
-+                .use_top_level_require
-+                .get_or_insert(Default::default());
-+            rule.set_level(rule.level().max(rule_severity.into()));
-+        }
-         "n/no-deprecated-api" => {
-             if !options.include_inspired {
-                 results.add(eslint_name, eslint_to_biome::RuleMigrationResult::Inspired);
+ 
+-        let empty_list_preceding_token = if list.syntax().first_token().is_none() {
+-            list.syntax().prev_token()
+-        } else {
+-            None
+-        };
++        let preceding_token = list.syntax().prev_token();
+         let token = list.syntax().next_token()?;
+ 
+         matches!(
+@@ -1250,14 +1246,14 @@ impl SvelteBlockBoundary {
+         )
+         .then_some(Self {
+             token,
+-            empty_list_preceding_token,
++            preceding_token,
+         })
+     }
+ 
+     fn has_comments(&self) -> bool {
+         self.token.has_leading_comments()
+             || self
+-                .empty_list_preceding_token
++                .preceding_token
+                 .as_ref()
+                 .is_some_and(|token| token.has_trailing_comments())
+     }
 ```
 
-**File**: `crates/biome_configuration/src/analyzer/linter/rules.rs` (modified, +4/-0)
+**File**: `crates/biome_html_formatter/tests/specs/html/comments/ends-line-of-opening-tag.html` (added, +12/-0)
 ```diff
-@@ -816,6 +816,7 @@ pub enum RuleName {
-     UseThrowOnlyError,
-     UseTopLevelHeading,
-     UseTopLevelRegex,
-+    UseTopLevelRequire,
-     UseTrimStartEnd,
-     UseUnaryMinus,
-     UseUnicodeRegex,
-@@ -1641,6 +1642,7 @@ impl RuleName {
-             Self::UseThrowOnlyError => "useThrowOnlyError",
-             Self::UseTopLevelHeading => "useTopLevelHeading",
-             Self::UseTopLevelRegex => "useTopLevelRegex",
-+            Self::UseTopLevelRequire => "useTopLevelRequire",
-             Self::UseTrimStartEnd => "useTrimStartEnd",
-             Self::UseUnaryMinus => "useUnaryMinus",
-             Self::UseUnicodeRegex => "useUnicodeRegex",
-@@ -2460,6 +2462,7 @@ impl RuleName {
-             Self::UseThrowOnlyError => RuleGroup::Style,
-             Self::UseTopLevelHeading => RuleGroup::Nursery,
-             Self::UseTopLevelRegex => RuleGroup::Performance,
-+            Self::UseTopLevelRequire => RuleGroup::Nursery,
-             Self::UseTrimStartEnd => RuleGroup::Style,
-             Self::UseUnaryMinus => RuleGroup::Nursery,
-             Self::UseUnicodeRegex => RuleGroup::Style,
-@@ -3292,6 +3295,7 @@ impl std::str::FromStr for RuleName {
-             "useThrowOnlyError" => Ok(Self::UseThrowOnlyError),
-             "useTopLevelHeading" => Ok(Self::UseTopLevelHeading),
-             "useTopLevelRegex" => Ok(Self::UseTopLevelRegex),
-+            "useTopLevelRequire" => Ok(Self::UseTopLevelRequire),
-             "useTrimStartEnd" => Ok(Self::UseTrimStartEnd),
-             "useUnaryMinus" => Ok(Self::UseUnaryMinus),
-             "useUnicodeRegex" => Ok(Self::UseUnicodeRegex),
+@@ -0,0 +1,12 @@
++<div><!-- before element -->
++<i>x</i></div>
++<div><!-- trailing space --> 
++<i>x</i></div>
++<div> <!-- surrounded by spaces --> 
++<i>x</i></div>
++<div><!-- before text -->
++text</div>
++<div><!-- a --><!-- b -->
++<p>x</p></div>
++<pre><!-- verbatim -->
++foo</pre>
 ```
 
-**File**: `crates/biome_configuration/src/generated/linter_options_check.rs` (modified, +5/-0)
+**File**: `crates/biome_html_formatter/tests/specs/html/comments/ends-line-of-opening-tag.html.snap` (added, +55/-0)
 ```diff
-@@ -3400,6 +3400,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
-         "useTopLevelRegex",
-         TypeId::of::<biome_rule_options::use_top_level_regex::UseTopLevelRegexOptions>(),
-     ));
-+    result.push((
-+        "nursery",
-+        "useTopLevelRequire",
-+        TypeId::of::<biome_rule_options::use_top_level_require::UseTopLevelRequireOptions>(),
-+    ));
-     result.push((
-         "style",
-         "useTrimStartEnd",
+@@ -0,0 +1,55 @@
++---
++source: crates/biome_formatter_test/src/snapshot_builder.rs
++info: comments/ends-line-of-opening-tag.html
++---
++
++# Input
++
++```html
++<div><!-- before element -->
++<i>x</i></div>
++<div><!-- trailing space --> 
++<i>x</i></div>
++<div> <!-- surrounded by spaces --> 
++<i>x</i></div>
++<div><!-- before text -->
++text</div>
++<div><!-- a --><!-- b -->
++<p>x</p></div>
++<pre><!-- verbatim -->
++foo</pre>
++
++```
++
++
++# Formatted
++
++```html
++<div>
++	<!-- before element -->
++	<i>x</i>
++</div>
++<div>
++	<!-- trailing space --> <i>x</i>
++</div>
++<div>
++	<!-- surrounded by spaces --> <i>x</i>
++</div>
++<div>
++	<!-- before text -->
++	text
++</div>
++<div>
++	<!-- a --><!-- b -->
++	<p>x</p>
++</div>
++<pre><!-- verbatim -->
++foo</pre>
++
++```
++
++
++
++## Unimplemented nodes/tokens
++
++"<!-- verbatim -->\nfoo" => 239..260
 ```
 
-**File**: `crates/biome_diagnostics_categories/src/categories.rs` (modified, +1/-0)
+**File**: `crates/biome_html_formatter/tests/specs/html/svelte/comments/comment-after-block-delimiter.svelte` (added, +12/-0)
 ```diff
-@@ -537,6 +537,7 @@ define_categories! {
-     "lint/nursery/useTanstackQueryInfiniteQueryPropertyOrder": "https://biomejs.dev/linter/rules/use-tanstack-query-infinite-query-property-order",
-     "lint/nursery/useTanstackQueryStableQueryClient": "https://biomejs.dev/linter/rules/use-tanstack-query-stable-query-client",
-     "lint/nursery/useTopLevelHeading": "https://biomejs.dev/linter/rules/use-top-level-heading",
-+    "lint/nursery/useTopLevelRequire": "https://biomejs.dev/linter/rules/use-top-level-require",
-     "lint/nursery/useUnaryMinus": "https://biomejs.dev/linter/rules/use-unary-minus",
-     "lint/nursery/useUniqueArgumentNames": "https://biomejs.dev/linter/rules/use-unique-argument-names",
-     "lint/nursery/useUniqueFieldDefinitionNames": "https://biomejs.dev/linter/rules/use-unique-field-definition-names",
+@@ -0,0 +1,12 @@
++<span>{#if a}<!-- after if --><i>x</i>{/if}</span>
++<span>{#if b}<i>y</i>{:else}<!-- after else --><i>z</i>{/if}</span>
++{#each items as it}<!-- after each --><i>{it}</i>{/each}
++<span>{#if c}<!-- A --><!-- B --><i>s</i>{/if}</span>
++{#if d} <!-- with spaces --> <i>x</i>{/if}
++{#if f}<!-- before text -->text{/if}
++{#if g}<!-- before expression -->{g}{/if}
++{#if h}<!-- before block -->{#if i}<i>x</i>{/if}{/if}
++{#if j}<i>x</i>{:else if k}<!-- else if --><i>y</i>{/if}
++{#await p}<!-- pending --><i>x</i>{:then v}<!-- then --><i>{v}</i>{:catch e}<!-- catch --><i>{e}</i>{/await}
++{#key k}<!-- key --><i>x</i>{/key}
++{#snippet s()}<!-- snippet --><i>x</i>{/snippet}
 ```
 
-**File**: `crates/biome_js_analyze/src/lint/nursery/use_top_level_require.rs` (added, +175/-0)
+**File**: `crates/biome_html_formatter/tests/specs/html/svelte/comments/comment-after-block-delimiter.svelte.snap` (added, +82/-0)
 ```diff
-@@ -0,0 +1,175 @@
-+use crate::services::semantic::Semantic;
-+use biome_analyze::{Rule, RuleDiagnostic, RuleSource, context::RuleContext, declare_lint_rule};
-+use biome_console::markup;
-+use biome_diagnostics::Severity;
-+use biome_js_syntax::{
-+    JsAssignmentExpression, JsCallArgumentList, JsCallArguments, JsCallExpression,
-+    JsComputedMemberAssignment, JsComputedMemberExpression, JsConditionalExpression, JsExpressionStatement,
-+    JsInitializerClause, JsLanguage, JsModule, JsModuleItemList, JsParenthesizedExpression,
-+    JsScript, JsStatementList, JsStaticMemberAssignment, JsStaticMemberExpression, JsVariableDeclaration,
-+    JsVariableDeclarator, JsVariableDeclaratorList, JsVariableStatement, TsAsExpression,
-+    TsNonNullAssertionExpression, TsSatisfiesExpression, TsTypeAssertionExpression,
+@@ -0,0 +1,82 @@
++---
++source: crates/biome_formatter_test/src/snapshot_builder.rs
++info: svelte/comments/comment-after-block-delimiter.svelte
++---
++
++# Input
++
++```svelte
++<span>{#if a}<!-- after if --><i>x</i>{/if}</span>
++<span>{#if b}<i>y</i>{:else}<!-- after else --><i>z</i>{/if}</span>
++{#each items as it}<!-- after each --><i>{it}</i>{/each}
++<span>{#if c}<!-- A --><!-- B --><i>s</i>{/if}</span>
++{#if d} <!-- with spaces --> <i>x</i>{/if}
++{#if f}<!-- before text -->text{/if}
++{#if g}<!-- before expression -->{g}{/if}
++{#if h}<!-- before block -->{#if i}<i>x</i>{/if}{/if}
++{#if j}<i>x</i>{:else if k}<!-- else if --><i>y</i>{/if}
++{#await p}<!-- pending --><i>x</i>{:then v}<!-- then --><i>{v}</i>{:catch e}<!-- catch --><i>{e}</i>{/await}
++{#key k}<!-- key --><i>x</i>{/key}
++{#snippet s()}<!-- snippet --><i>x</i>{/snippet}
++
++```
++
++
++# Formatted
++
++```svelte
++<span
++	>{#if a}
++		<!-- after if --><i>x</i>
++	{/if}</span
++>
++<span
++	>{#if b}
++		<i>y</i>
++	{:else}
++		<!-- after else --><i>z</i>
++	{/if}</span
++>
++{#each items as it}
++	<!-- after each --><i>{it}</i>
++{/each}
++<span
++	>{#if c}
++		<!-- A --><!-- B --><i>s</i>
++	{/if}</span
++>
++{#if d}
++	<!-- with spaces --> <i>x</i>
++{/if}
++{#if f}
++	<!-- before text -->text
++{/if}
++{#if g}
++	<!-- before expression -->{g}
++{/if}
++{#if h}
++	<!-- before block -->
++	{#if i}
++		<i>x</i>
++	{/if}
++{/if}
++{#if j}
++	<i>x</i>
++{:else if k}
++	<!-- else if --><i>y</i>
++{/if}
++{#await p}
++	<!-- pending --><i>x</i>
++{:then v}
++	<!-- then --><i>{v}</i>
++{:catch e}
++	<!-- catch --><i>{e}</i>
++{/await}
++{#key k}
++	<!-- key --><i>x</i>
++{/key}
++{#snippet s()}
++	<!-- snippet --><i>x</i>
++{/snippet}
++
++```
+```
+
+---
+
+### Incident Patch 2: `ee7e535d` (2026-11-15)
+**Commit Message**: fix(parse/js): don't panic on import phase modifier without a call (#13180)
+
+**File**: `.changeset/fix-import-phase-modifier-panic.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@biomejs/biome": patch
++---
++
++Fixed [#13178](https://github.com/biomejs/biome/issues/13178): the JS parser no longer panics on `import.defer` or `import.source` when either is parsed as an expression without a following parenthesized argument list. It reports a syntax error instead.
+```
+
+**File**: `crates/biome_js_parser/src/syntax/expr.rs` (modified, +27/-3)
+```diff
+@@ -1359,9 +1359,33 @@ fn parse_primary_expression(p: &mut JsParser, context: ExpressionContext) -> Par
+             p.bump_any();
+ 
+             if p.eat(T![.]) {
+-                if p.eat(T![defer]) || p.eat(T![source]) {
+-                    // Parse the call arguments
+-                    parse_import_call_expression(p, context, m)
++                if p.at(T![defer]) || p.at(T![source]) {
++                    let phase = p.cur_range();
++                    p.bump_any();
++                    if p.at(T!['(']) {
++                        // Parse the call arguments
++                        parse_import_call_expression(p, context, m)
++                    } else {
++                        let recovered = ParseRecoveryTokenSet::new(
++                            JS_BOGUS_EXPRESSION,
++                            STMT_RECOVERY_SET.union(EXPR_RECOVERY_SET).union(token_set![
++                                T![,],
++                                T!['}'],
++                                T![:]
++                            ]),
++                        )
++                        .enable_recovery_on_line_break()
++                        .recover(p);
++
++                        let range = if let Ok(marker) = &recovered {
++                            TextRange::new(phase.start(), marker.range(p).end())
++                        } else {
++                            phase
++                        };
++                        p.error(js_parse_error::expected_import_call(p, range, phase));
++
++                        m.complete(p, JS_BOGUS_EXPRESSION)
++                    }
+                 } else if p.at(T![ident]) && p.text(p.cur_range()) == "meta" {
+                     p.bump_remap(META);
+                     m.complete(p, JS_IMPORT_META_EXPRESSION)
+```
+
+**File**: `crates/biome_js_parser/src/syntax/js_parse_error.rs` (modified, +11/-0)
+```diff
+@@ -158,6 +158,17 @@ pub(crate) fn expected_named_import_specifier(p: &JsParser, range: TextRange) ->
+     expected_node("identifier", range, p)
+ }
+ 
++pub(crate) fn expected_import_call(
++    p: &JsParser,
++    range: TextRange,
++    phase: TextRange,
++) -> ParseDiagnostic {
++    p.err_builder(
++        format!("Expected `(` after `import.{}`", p.text(phase)),
++        range,
++    )
++}
++
+ pub(crate) fn duplicate_assertion_keys_error(
+     p: &JsParser,
+     key: &str,
+```
+
+**File**: `crates/biome_js_parser/tests/js_test_suite/error/import_phase_modifier_without_call.js` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++import.defer
++import.source;
++import.defer.foo
++import.source x
++new import.defer
++a = import.defer + 1
++import.defer("x")
++import.source("x")
++import.meta
++if (import.defer) {}
++let a = import.defer, b = 1;
++import.defer
++foo()
++import.defer { foo(); }
++import.defer const x = 1;
++import.source
+```
+
+**File**: `crates/biome_js_parser/tests/js_test_suite/error/import_phase_modifier_without_call.js.snap` (added, +716/-0)
+```diff
+@@ -0,0 +1,716 @@
++---
++source: crates/biome_js_parser/tests/spec_test.rs
++expression: snapshot
++---
++
++## Input
++
++```js
++import.defer
++import.source;
++import.defer.foo
++import.source x
++new import.defer
++a = import.defer + 1
++import.defer("x")
++import.source("x")
++import.meta
++if (import.defer) {}
++let a = import.defer, b = 1;
++import.defer
++foo()
++import.defer { foo(); }
++import.defer const x = 1;
++import.source
++
++```
++
++
++## AST
++
++```
++JsModule {
++    bom_token: missing (optional),
++    interpreter_token: missing (optional),
++    directives: JsDirectiveList [],
++    items: JsModuleItemList [
++        JsExpressionStatement {
++            expression: JsBogusExpression {
++                items: [
++                    IMPORT_KW@0..6 "import" [] [],
++                    DOT@6..7 "." [] [],
++                    DEFER_KW@7..12 "defer" [] [],
++                ],
++            },
++            semicolon_token: missing (optional),
++        },
++        JsExpressionStatement {
++            expression: JsBogusExpression {
++                items: [
++                    IMPORT_KW@12..19 "import" [Newline("\n")] [],
++                    DOT@19..20 "." [] [],
++                    SOURCE_KW@20..26 "source" [] [],
++                ],
++            },
++            semicolon_token: SEMICOLON@26..27 ";" [] [],
++        },
++        JsExpressionStatement {
++            expression: JsBogusExpression {
++                items: [
++                    IMPORT_KW@27..34 "import" [Newline("\n")] [],
++                    DOT@34..35 "." [] [],
++                    DEFER_KW@35..40 "defer" [] [],
++                    JsBogusExpression {
++                        items: [
++                            DOT@40..41 "." [] [],
++                            IDENT@41..44 "foo" [] [],
++                        ],
++                    },
++                ],
++            },
++            semicolon_token: missing (optional),
++        },
++        JsExpressionStatement {
++            expression: JsBogusExpression {
++                items: [
++                    IMPORT_KW@44..51 "import" [Newline("\n")] [],
++                    DOT@51..52 "." [] [],
++                    SOURCE_KW@52..59 "source" [] [Whitespace(" ")],
++                    JsBogusExpression {
++                        items: [
++                            IDENT@59..60 "x" [] [],
++                        ],
++                    },
++                ],
++            },
++            semicolon_token: missing (optional),
++        },
++        JsExpressionStatement {
++            expression: JsNewExpression {
++                new_token: NEW_KW@60..65 "new" [Newline("\n")] [Whitespace(" ")],
++                callee: JsBogusExpression {
++                    items: [
++                        IMPORT_KW@65..71 "import" [] [],
++                        DOT@71..72 "." [] [],
++                        DEFER_KW@72..77 "defer" [] [],
++                    ],
++                },
++                type_arguments: missing (optional),
++                arguments: missing (optional),
++            },
++            semicolon_token: missing (optional),
++        },
++        JsExpressionStatement {
++            expression: JsAssignmentExpression {
++                left: JsIdentifierAssignment {
++                    name_token: IDENT@77..80 "a" [Newline("\n")] [Whitespace(" ")],
++                },
++                operator_token: EQ@80..82 "=" [] [Whitespace(" ")],
++                right: JsBogusExpression {
++                    items: [
++                        IMPORT_KW@82..88 "import" [] [],
++                        DOT@88..89 "." [] [],
++                        DEFER_KW@89..95 "defer" [] [Whitespace(" ")],
++                        JsBogusExpression {
++                            items: [
++                                PLUS@95..97 "+" [] [Whitespace(" ")],
++                                JS_NUMBER_LITERAL@97..98 "1" [] [],
++                            ],
++                        },
++                    ],
++                },
++            },
++            semicolon_token: missing (optional),
++        },
++        JsExpressionStatement {
++            expression: JsImportCallExpression {
++                import_token: IMPORT_KW@98..105 "import" [Newline("\n")] [],
++                dot_token: DOT@105..106 "." [] [],
++                phase: DEFER_KW@106..111 "defer" [] [],
++                arguments: JsCallArguments {
++                    l_paren_token: L_PAREN@111..112 "(" [] [],
++                    args: JsCallArgumentList [
++                        JsStringLiteralExpression {
++                            value_token: JS_STRING_LITERAL@112..115 "\"x\"" [] [],
++                        },
++                    ],
++                    r_paren_token: R_PAREN@115..116 ")" [] [],
++                },
++            },
++            semicolon_token: missing (optional),
++        },
++        JsExpressionStatement {
++            expression: JsImportCallExpression {
++                import_token: IMPORT_KW@116..123 "import" [Newline("\n")] []
+```
+
+---
+
+### Incident Patch 3: `c919f1cb` (2026-11-15)
+**Commit Message**: fix(js_type_info): apply destructuring defaults to binding types (#12548)
+
+**File**: `.changeset/fix-destructuring-default-undefined.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@biomejs/biome": patch
++---
++
++Fixed [`useNullishCoalescing`](https://biomejs.dev/linter/rules/use-nullish-coalescing/) reporting `inert || undefined` when `inert` is destructured with a default value, such as `{ inert = false }`.
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useNullishCoalescing/issue8043Invalid.ts` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++// should generate diagnostics
++
++type FormValues = {
++	value: string;
 +};
-+use biome_rowan::{AstNode, SyntaxKindSet};
-+use biome_rule_options::use_top_level_require::UseTopLevelRequireOptions;
 +
-+declare_lint_rule! {
-+    /// Require `require()` calls to be placed at the top level of the module.
-+    ///
-+    /// When `require()` calls are spread across functions, blocks, and other expressions,
-+    /// it's hard to see at a glance which modules a file depends on. `require()` also loads
-+    /// modules synchronously, so a call inside a function that runs later can pause the
-+    /// program at a moment you don't expect.
-+    ///
-+    /// A `require()` call is allowed only at the top level of the module, and only when it is
-+    /// used as a statement on its own, in a variable declaration, in an assignment, in a
-+    /// conditional (`? :`) expression, as an argument of another call, or when its result is
-+    /// accessed with a property or called. The rule reports every other `require()` call,
-+    /// including top-level calls inside objects, arrays, `export` declarations, or loops.
-+    ///
-+    /// The rule doesn't report `require` when it's a variable, parameter, or function declared
-+    /// in your own code.
-+    ///
-+    /// ## Examples
-+    ///
-+    /// ### Invalid
-+    ///
-+    /// ```js,expect_diagnostic
-+    /// function readFile(filename, callback) {
-+    ///     const fs = require("fs");
-+    ///     fs.readFile(filename, callback);
-+    /// }
-+    /// ```
-+    ///
-+    /// ```js,expect_diagnostic
-+    /// if (DEBUG) {
-+    ///     require("debug");
-+    /// }
-+    /// ```
-+    ///
-+    /// ```js,expect_diagnostic
-+    /// const getModule = (name) => require(name);
-+    /// ```
-+    ///
-+    /// ```js,expect_diagnostic
-+    /// try {
-+    ///     require(unsafeModule);
-+    /// } catch (e) {
-+    ///     console.log(e);
-+    /// }
-+    /// ```
-+    ///
-+    /// ### Valid
-+    ///
-+    /// ```js
-+    /// require("x");
-+    /// const y = require("y");
-+    /// let z;
-+    /// z = require("z").initialize();
-+    ///
-+    /// const fs = require("fs");
-+    /// function readFile(filename, callback) {
-+    ///     fs.readFile(filename, callback);
-+    /// }
-+    ///
-+    /// const logger = DEBUG ? require("dev-logger") : require("logger");
-+    ///
-+    /// function localRequire(require) {
-+    ///     require("y");
-+    /// }
-+    /// ```
-+    ///
-+    /// ## See Also
-+    ///
-+    /// - If you want to disallow `require` entirely, see [`noCommonJs`](https://biomejs.dev/linter/rules/no-common-js/).
-+    ///
-+    pub UseTopLevelRequire {
-+        version: "next",
-+        name: "useTopLevelRequire",
-+        language: "js",
-+        sources: &[
-+            RuleSource::Eslint("global-require").same(),
-+            RuleSource::EslintN("global-require").same(),
-+        ],
-+        recommended: false,
-+        severity: Severity::Warning,
-+    }
++type GenericProps<T extends FormValues> = {
++	values: T;
++	inert?: boolean;
++};
++
++type PlainProps = {
++	inert?: boolean;
++};
++
++export function genericWithoutDefault<T extends FormValues>({
++	inert,
++}: GenericProps<T>) {
++	return inert || undefined;
 +}
 +
-+impl Rule for UseTopLevelRequire {
-+    type Query = Semantic<JsCallExpression>;
-+    type State = ();
-+    type Signals = Option<Self::State>;
-+    type Options = UseTopLevelRequireOptions;
-+
-+    fn run(ctx: &RuleContext<Self>) -> Self::Signals {
-+        let node = ctx.query();
-+        let reference = node
-+            .callee()
-+            .ok()?
-+            .omit_parentheses()
-+            .as_js_identifier_expression()?
-+            .name()
-+            .ok()?;
-+        if reference.value_token().ok()?.text_trimmed() != "require" {
-+            return None;
-+        }
-+        // A local binding named `require` isn't the module loader.
-+        if ctx.model().binding(&reference).is_some() {
-+            return None;
-+        }
-+        let is_top_level = node
-+            .syntax()
-+            .ancestors()
-+            .skip(1)
-+            .all(|ancestor| TOP_LEVEL_REQUIRE_ANCESTOR_KINDS.matches(ancestor.kind()));
-+        (!is_top_level).then_some(())
-+    }
-+
-+    fn diagnostic(ctx: &RuleContext<Self>, _state: &Self::State) -> Option<RuleDiagnostic> {
-+        Some(
-+            RuleDiagnostic::new(
-+                rule_category!(),
-+                ctx.query().range(),
-+                markup! {
-+                    "This "<Emphasis>"require()"</Emphasis>" call isn't directly part of a top-level statement."
-+   
-```
-
-**File**: `crates/biome_js_analyze/tests/specs/nursery/useTopLevelRequire/invalid.js` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+/* should generate diagnostics */
-+if (process.env.NODE_ENV === 'DEVELOPMENT') {
-+	require('debug');
++export function plainWithoutDefault({ inert }: PlainProps) {
++	return inert || undefined;
 +}
-+var x; if (y) { x = require('debug'); }
-+var x2; if (y) { x2 = require('debug').baz; }
-+function f() { require('y') }
-+try { require('x'); } catch (e) { console.log(e); }
-+var getModule = x => require(x);
-+var weird = (x => require(x))('weird')
-+switch(x) { case '1': require('1'); break; }
-+{ require('block'); }
-+class A { static { require('static-block'); } }
-+var obj = { key: require('y') };
-+var arr = [require('y')];
-+var both = a || require('y');
-+var seq = (a, require('y'));
-+var inst = new Foo(require('y'));
-+var tagged = require('y')`template`;
-+var { withDefault = require('y') } = obj;
-+for (const item of require('y')) {}
-+label: require('y');
-+export const exported = require('y');
++
++export function nullableWithDefault({
++	value = "fallback",
++}: {
++	value?: string | null;
++}) {
++	return value || undefined;
++}
++
++declare const list: (number | undefined)[];
++const [head] = list;
++export const arrayResult = head || undefined;
 ```
 
-**File**: `crates/biome_js_analyze/tests/specs/nursery/useTopLevelRequire/invalid.js.snap` (added, +452/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useNullishCoalescing/issue8043Invalid.ts.snap` (added, +127/-0)
 ```diff
-@@ -0,0 +1,452 @@
+@@ -0,0 +1,127 @@
 +---
 +source: crates/biome_js_analyze/tests/spec_tests.rs
-+assertion_line: 211
-+expression: invalid.js
++expression: issue8043Invalid.ts
 +---
 +# Input
-+```js
-+/* should generate diagnostics */
-+if (process.env.NODE_ENV === 'DEVELOPMENT') {
-+	require('debug');
++```ts
++// should generate diagnostics
++
++type FormValues = {
++	value: string;
++};
++
++type GenericProps<T extends FormValues> = {
++	values: T;
++	inert?: boolean;
++};
++
++type PlainProps = {
++	inert?: boolean;
++};
++
++export function genericWithoutDefault<T extends FormValues>({
++	inert,
++}: GenericProps<T>) {
++	return inert || undefined;
 +}
-+var x; if (y) { x = require('debug'); }
-+var x2; if (y) { x2 = require('debug').baz; }
-+function f() { require('y') }
-+try { require('x'); } catch (e) { console.log(e); }
-+var getModule = x => require(x);
-+var weird = (x => require(x))('weird')
-+switch(x) { case '1': require('1'); break; }
-+{ require('block'); }
-+class A { static { require('static-block'); } }
-+var obj = { key: require('y') };
-+var arr = [require('y')];
-+var both = a || require('y');
-+var seq = (a, require('y'));
-+var inst = new Foo(require('y'));
-+var tagged = require('y')`template`;
-+var { withDefault = require('y') } = obj;
-+for (const item of require('y')) {}
-+label: require('y');
-+export const exported = require('y');
++
++export function plainWithoutDefault({ inert }: PlainProps) {
++	return inert || undefined;
++}
++
++export function nullableWithDefault({
++	value = "fallback",
++}: {
++	value?: string | null;
++}) {
++	return value || undefined;
++}
++
++declare const list: (number | undefined)[];
++const [head] = list;
++export const arrayResult = head || undefined;
 +
 +```
 +
 +# Diagnostics
 +```
-+invalid.js:3:2 lint/nursery/useTopLevelRequire ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++issue8043Invalid.ts:19:15 lint/nursery/useNullishCoalescing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  ! This require() call isn't directly part of a top-level statement.
++  i Use ?? instead of ||.
 +  
-+    1 │ /* should generate diagnostics */
-+    2 │ if (process.env.NODE_ENV === 'DEVELOPMENT') {
-+  > 3 │ 	require('debug');
-+      │ 	^^^^^^^^^^^^^^^^
-+    4 │ }
-+    5 │ var x; if (y) { x = require('debug'); }
++    17 │ 	inert,
++    18 │ }: GenericProps<T>) {
++  > 19 │ 	return inert || undefined;
++       │ 	             ^^
++    20 │ }
++    21 │ 
 +  
-+  i Modules loaded inside functions, blocks, or other expressions make it hard to see what the file depends on, and can be loaded at unexpected times.
++  i The || operator checks for all falsy values (including 0, '', and false), while ?? only checks for null and undefined.
 +  
-+  i Load the module in a top-level declaration, for example const name = require("module"), and use that variable here.
++  i This rule is still being actively worked on, so it may be missing features or have rough edges. Visit https://github.com/biomejs/biome/issues/8043 for more information or to report possible bugs.
 +  
 +  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
 +  
@@ -1498,20 +1689,19 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 +```
 +
 +```
-+invalid.js:5:21 lint/nursery/useTopLevelRequire ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++issue8043Invalid.ts:23:15 lint/nursery/useNullishCoalescing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  ! This require() call isn't directly part of a top-level statement.
++  i Use ?? instead of ||.
 +  
-+    3 │ 	require('debug');
-+    4 │ }
-+  > 5 │ var x; if (y) { x = require('debug'); }
-+      │                     ^^^^^^^^^^^^^^^^
-+    6 │ var x2; if (y) { x2 = require('debug').baz; }
-+    7 │ function f() { require('y') }
++    22 │ export function plainWithoutDefault({ inert }: PlainProps) {
++  > 23 │ 	return inert || undefined;
++       │ 	             ^^
++    24 │ }
++    25 │ 
 +  
-+  i Modules loaded inside functions, blocks, or other expressions make it hard to see what the file depends on, and can be loaded at unexpected times.
++  i The || operator checks for all falsy values (including 0, '', and false), while ?? only checks for null and undefined.
 +  
-+  i Load the module in a top-level declaration, for example const name = require("module"), and use that variable here.
++  i This rule is still being actively worked on, so it may be missing features or have rough edges. Visit https://github.com/biomejs/biome/issues/8043 for more information or to report possible bugs.
 +  
 +  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
 +  
@@ -1519,20 +1709,20 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 +```
 +
 +```
-+invalid.js:6:23 lint/nursery/useTopLevelRequire ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++issue8043Invalid.ts:31:15 lint/nursery/useNullishCoalescing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  ! This require() call isn't directly part of a top-level statement.
++  i Use ?? instead of ||.
 +  
-+    4 │ }
-+    5 │ var x; if (y) { x = require('debug'); }
-+  > 6 │ var x2; if (y) { x2 = require('debug').baz; }
-+      │                       ^^^^^^^^^^^^^^^^
-+    7 │ function f() { require('y') }
-+    8 │ try { require('x'); } catch (e) { console.log(e); }
++    29 │ 	value?: string | null;
++    30 │ }) {
++  > 31 │ 	return value || undefined;
++       │ 	             ^^
++    32 │ }
++    33 │ 
 +  
-+  i Modules loaded inside functions, blocks, or other expressions make it hard to see what the file depends on, and can be loaded at unexpected times.
++  i The || operator checks for all falsy values (including 0, '', and false), while ?? only checks for null and undefined.
 +  
-+  i Load the module in a top-level declaration, for example const name = require("module"), and use that variable here.
++  i This rule is still being actively worked on, so it may be missing features or have rough edges. Visit https://github.com/biomejs/biome/issues/8043 for more information or to report possible bugs.
 +  
 +  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
 +  
@@ -1540,572 +1730,183 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 +```
 +
 +```
-+invalid.js:7:16 lint/nursery/useTopLevelRequire ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++issue8043Invalid.ts:36:33 lint/nursery/useNullishCoalescing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  ! This require() call isn't directly part of a top-level statement.
++  i Use ?? instead of ||.
 +  
-+    5 │ var x; if (y) { x = require('debug'); }
-+    6 │ var x2; if (y) { x2 = require('debug').baz; }
-+  > 7 │ function f() { require('y') }
-+      │                ^^^^^^^^^^^^
-+    8 │ try { require('x'); } catch (e) { console.log(e); }
-+    9 │ var getModule = x => require(x);
++    34 │ declare const list: (number | undefined)[];
++    35 │ const [head] = list;
++  > 36 │ export const arrayResult = head || undefined;
++       │                                 ^^
++    37 │ 
 +  
-+  i Modules loaded inside functions, blocks, or other expressions make it hard to see what the file depends on, and can be loaded at unexpected times.
++  i The || operator checks for all falsy values (including 0, '', and false), while ?? only checks for null and undefined.
 +  
-+  i Load the module in a top-level declaration, for example const name = require("module"), and use that variable here.
++  i This rule is still being actively worked on, so it may be missing features or have rough edges. Visit https://github.com/biomejs/biome/issues/8043 for more information or to report possible bugs.
 +  
 +  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
 +  
 +
 +```
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useNullishCoalescing/issue8043Valid.ts` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++// should not generate diagnostics
 +
-+```
-+invalid.js:8:7 lint/nursery/useTopLevelRequire ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  ! This require() call isn't directly part of a top-level statement.
-+  
-+     6 │ var x2; if (y) { x2 = require('debug').baz; }
-+     7 │ function f() { require('y') }
-+   > 8 │ try { require('x'); } catch (e) { console.log(e); }
-+       │       ^^^^^^^^^^^^
-+     9 │ var getModule = x => require(x);
-+    10 │ va
-```
-
----
-
-### Incident Patch 3: `d5da3946` (2026-11-13)
-**Commit Message**: fix(analyze): emit suppression actions for plugin diagnostics (#12602)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fix-plugin-suppressions.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@biomejs/biome": patch
-+---
-+
-+Fixed [#12600](https://github.com/biomejs/biome/issues/12600): `biome lint --suppress` now adds suppression comments for diagnostics emitted by plugins, such as ``// biome-ignore lint/plugin/noFoo: ignored using `--suppress` ``.
-```
-
-**File**: `.changeset/reject-unsuppressible-plugin-names.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@biomejs/biome": patch
-+---
-+
-+Biome now reports an error when a GritQL plugin file name contains invalid characters that could conflict with Biome suppressions.
-```
-
-**File**: `crates/biome_analyze/src/analyzer_plugin.rs` (modified, +14/-2)
-```diff
-@@ -182,7 +182,13 @@ where
- 
-             let signal = PluginSignal::<L>::new(entry.diagnostic)
-                 .with_plugin_action(entry.action)
--                .with_root(node.clone());
-+                .with_root(node.clone())
-+                .with_suppression(
-+                    name.clone().into(),
-+                    ctx.root,
-+                    ctx.suppression_action,
-+                    ctx.options,
-+                );
- 
-             SignalEntry {
-                 text_range,
-@@ -299,7 +305,13 @@ where
- 
-                 let signal = PluginSignal::<L>::new(entry.diagnostic)
-                     .with_plugin_action(entry.action)
--                    .with_root(node.clone());
-+                    .with_root(node.clone())
-+                    .with_suppression(
-+                        name.clone().into(),
-+                        ctx.root,
-+                        ctx.suppression_action,
-+                        ctx.options,
-+                    );
- 
-                 SignalEntry {
-                     text_range,
-```
-
-**File**: `crates/biome_analyze/src/rule.rs` (modified, +8/-9)
-```diff
-@@ -1527,11 +1527,11 @@ pub trait Rule: RuleMeta + Sized {
-         None
-     }
- }
--fn build_top_level_suppression<L: Language>(
-+pub(crate) fn build_top_level_suppression<L: Language>(
-     root: L::Root,
-     category: RuleCategory,
--    group_name: &'static str,
--    rule_name: &'static str,
-+    group_name: &str,
-+    rule_name: &str,
-     suppression_action: &dyn SuppressionAction<Language = L>,
- ) -> Option<SuppressAction<L>> {
-     if matches!(
-@@ -1571,15 +1571,14 @@ fn build_top_level_suppression<L: Language>(
-     None
- }
- 
--/// Body of [Rule::inline_suppression], kept outside the trait so it is
--/// monomorphized once per language instead of once per rule: the rule only
--/// contributes its category, group name, and rule name.
--fn build_inline_suppression<L: Language>(
-+/// Shared by [Rule::inline_suppression] and plugin signals, and kept outside
-+/// the trait so it is monomorphized once per language instead of once per rule.
-+pub(crate) fn build_inline_suppression<L: Language>(
-     root: L::Root,
-     text_range: &TextRange,
-     category: RuleCategory,
--    group_name: &'static str,
--    rule_name: &'static str,
-+    group_name: &str,
-+    rule_name: &str,
-     suppression_action: &dyn SuppressionAction<Language = L>,
-     suppression_reason: Option<&str>,
- ) -> Option<SuppressAction<L>> {
-```
-
-**File**: `crates/biome_analyze/src/signals.rs` (modified, +116/-22)
-```diff
-@@ -2,16 +2,21 @@ use crate::categories::{
-     SUPPRESSION_INLINE_ACTION_CATEGORY, SUPPRESSION_TOP_LEVEL_ACTION_CATEGORY,
- };
- use crate::{
--    AnalyzerDiagnostic, AnalyzerOptions, FixKind, GroupCategory, OtherActionCategory,
-+    AnalyzerDiagnostic, AnalyzerOptions, FixKind, GroupCategory, OtherActionCategory, PLUGIN_GROUP,
-     PluginActionData, Queryable, RuleCategory, RuleDiagnostic, RuleGroup, ServiceBag,
-     SuppressionAction,
-     categories::ActionCategory,
-     context::RuleContext,
--    registry::{RuleLanguage, RuleRoot},
--    rule::{Rule, RuleAction, RuleMetadata, SuppressAction},
-+    registry::{LanguageRoot, RuleLanguage, RuleRoot},
-+    rule::{
-+        Rule, RuleAction, RuleMetadata, SuppressAction, build_inline_suppression,
-+        build_top_level_suppression,
-+    },
- };
- use biome_console::{MarkupBuf, markup};
--use biome_diagnostics::{Applicability, CodeSuggestion, Error, advice::CodeSuggestionAdvice};
-+use biome_diagnostics::{
-+    Applicability, CodeSuggestion, DiagnosticTags, Error, advice::CodeSuggestionAdvice,
++type FormValues = {
++	value: string;
 +};
- use biome_rowan::{BatchMutation, Language, SyntaxNode, TextRange};
- use biome_text_edit::TextEdit;
- use enumflags2::{BitFlag, BitFlags, bitflags};
-@@ -183,18 +188,29 @@ where
- /// Unlike [DiagnosticSignal] which converts through [Error] into
- /// [DiagnosticKind::Raw](crate::diagnostics::DiagnosticKind::Raw), this type
- /// directly converts via `AnalyzerDiagnostic::from(RuleDiagnostic)`.
--pub struct PluginSignal<L: Language> {
-+pub struct PluginSignal<'phase, L: Language> {
-     diagnostic: RuleDiagnostic,
-     plugin_action: Option<PluginActionData>,
-     root: Option<SyntaxNode<L>>,
-+    suppression: Option<PluginSuppression<'phase, L>>,
++
++type GenericProps<T extends FormValues> = {
++	values: T;
++	inert?: boolean;
++};
++
++type PlainProps = {
++	inert?: boolean;
++};
++
++export function genericWithDefault<T extends FormValues>({
++	inert = false,
++}: GenericProps<T>) {
++	return inert || undefined;
 +}
 +
-+/// Context required to build suppression comments for a plugin diagnostic.
-+struct PluginSuppression<'phase, L: Language> {
-+    /// Name used in `lint/plugin/<name>` suppression comments.
-+    plugin_name: Box<str>,
-+    file_root: &'phase LanguageRoot<L>,
-+    suppression_action: &'phase dyn SuppressionAction<Language = L>,
-+    options: &'phase AnalyzerOptions,
- }
- 
--impl<L: Language> PluginSignal<L> {
-+impl<'phase, L: Language> PluginSignal<'phase, L> {
-     pub fn new(diagnostic: RuleDiagnostic) -> Self {
-         Self {
-             diagnostic,
-             plugin_action: None,
-             root: None,
-+            suppression: None,
-         }
-     }
- 
-@@ -207,34 +223,97 @@ impl<L: Language> PluginSignal<L> {
-         self.root = Some(root);
-         self
-     }
--}
- 
--impl<L: Language> AnalyzerSignal<L> for PluginSignal<L> {
--    fn diagnostic(&self) -> Option<AnalyzerDiagnostic> {
--        Some(AnalyzerDiagnostic::from(self.diagnostic.clone()))
-+    /// Enables suppression actions for `lint/plugin/<plugin_name>`.
-+    pub fn with_suppression(
-+        mut self,
-+        plugin_name: Box<str>,
-+        file_root: &'phase LanguageRoot<L>,
-+        suppression_action: &'phase dyn SuppressionAction<Language = L>,
-+        options: &'phase AnalyzerOptions,
-+    ) -> Self {
-+        self.suppression = Some(PluginSuppression {
-+            plugin_name,
-+            file_root,
-+            suppression_action,
-+            options,
-+        });
-+        self
-     }
- 
--    fn actions(&self, filter: ActionFilter) -> AnalyzerActionIter<L> {
--        if !filter.is_rule_fix() {
--            return AnalyzerActionIter::new(vec![]);
-+    /// Verbose diagnostics, such as GritQL `log()` output, aren't suppressed.
-+    fn suppression(&self) -> Option<&PluginSuppression<'phase, L>> {
-+        if self.diagnostic.tags.contains(DiagnosticTags::VERBOSE) {
-+            return None;
-         }
-+        self.suppression.as_ref()
-+    }
- 
--        let Some(action_data) = &self.plugin_action else {
--            return AnalyzerActionIter::new(vec![]);
--        };
--
--        let Some(root) = &self.root else {
--            return AnalyzerActionIter::new(vec![]);
--        };
-+    fn rule_fix_action(&self) -> Option<AnalyzerAction<L>> {
-+        let action_data = self.plugin_action.as_ref()?;
-+        let root = self.root.as_ref()?;
- 
--        AnalyzerActionIter::new(vec![AnalyzerAction {
-+        Some(AnalyzerAction {
-             rule_name: None,
-             category: ActionCategory::QuickFix(Cow::Borrowed("plugin")),
-             applicability: action_data.applicability,
-             message: markup!({ action_data.message }).to_owned(),
-             mutation: BatchMutation::new(root.clone()),
-             text_edit: Some((action_data.source_range, action_data.text_edit.clone())),
--        }])
-+        })
-+    }
++export function plainWithDefault({ inert = false }: PlainProps) {
++	return inert || undefined;
 +}
 +
-+impl<L: Language> AnalyzerSignal<L> for PluginSignal<'_, L> {
-+    fn diagnostic(&self) -> Option<AnalyzerDiagnostic> {
-+        Some(AnalyzerDiagnostic::from(self.diagnostic.clone()))
-+    }
++export function renamedWithDefault({ inert: renamed = false }: PlainProps) {
++	return renamed || undefined;
++}
 +
-+    fn actions(&self, filter: ActionFilter) -> AnalyzerActionIter<L> {
-+        let mut actions = Vec::new();
++declare const props: PlainProps;
++const { inert: fromDeclarator = false } = props;
++export const declaratorResult = fromDeclarator || undefined;
 +
-+        if filter.is_rule_fix()
-+            && let Some(action) = self.rule_fix_action()
-+        {
-+            actions.push(actio
++declare const list: (number | undefined)[];
++const [first = 1] = list;
++export const arrayResult = first || undefined;
 ```
 
-**File**: `crates/biome_cli/tests/cases/suppressions.rs` (modified, +167/-1)
-```diff
-@@ -1,6 +1,6 @@
- use crate::TestArgs as Args;
- use crate::snap_test::SnapshotPayload;
--use crate::{FORMATTED, assert_cli_snapshot, run_cli};
-+use crate::{FORMATTED, assert_cli_snapshot, run_cli, run_cli_with_server_workspace};
- use biome_console::BufferConsole;
- use biome_fs::{FileSystemExt, MemoryFileSystem};
- use camino::Utf8Path;
-@@ -678,3 +678,169 @@ var bar = 33;",
-         result,
-     ));
- }
-+
-+#[test]
-+fn suppress_plugin_diagnostics() {
-+    let fs = MemoryFileSystem::default();
-+    let mut console = BufferConsole::default();
-+
-+    fs.insert(
-+        "biome.json".into(),
-+        br#"{
-+    "plugins": ["noFoo.grit"]
-+}
-+"#,
-+    );
-+    fs.insert(
-+        "noFoo.grit".into(),
-+        br#"language js
-+
-+`foo($args)` where {
-+    register_diagnostic(span=$args, message="Do not call foo", severity="error")
-+}
-+"#,
-+    );
-+
-+    let file_path = Utf8Path::new("file.js");
-+    fs.insert(file_path.into(), *b"debugger;\nfoo(1);\n");
-+
-+    let (fs, result) = run_cli_with_server_workspace(
-+        fs,
-+        &mut console,
-+        Args::from(["lint", "--suppress", file_path.as_str()].as_slice()),
-+    );
-+
-+    assert!(result.is_ok(), "run_cli returned {result:?}");
-+
-+    let mut buffer = String::new();
-+    fs.open(file_path)
-+        .unwrap()
-+        .read_to_string(&mut buffer)
-+        .unwrap();
-+
-+    assert_eq!(
-+        buffer,
-+        "// biome-ignore lint/suspicious/noDebugger: ignored using `--suppress`\ndebugger;\n// biome-ignore lint/plugin/noFoo: ignored using `--suppress`\nfoo(1);\n"
-+    );
-+
-+    assert_cli_snapshot(SnapshotPayload::new(
-+        module_path!(),
-+        "suppress_plugin_diagnostics",
-+        fs,
-+        console,
-+        result,
-+    ));
-+}
-+
-+#[test]
-+fn suppress_plugin_diagnostics_with_reason() {
-+    let fs = MemoryFileSystem::default();
-+    let mut console = BufferConsole::default();
-+
-+    fs.insert(
-+        "biome.json".into(),
-+        br#"{
-+    "plugins": ["noFoo.grit", "logBar.grit"]
-+}
-+"#,
-+    );
-+    fs.insert(
-+        "noFoo.grit".into(),
-+        br#"language js
-+
-+`foo($args)` where {
-+    register_diagnostic(span=$args, message="Do not call foo", severity="error")
-+}
-+"#,
-+    );
-+    fs.insert(
-+        "logBar.grit".into(),
-+        br#"language js
-+
-+`bar($args)` where {
-+    log(message="Found bar", variable=$args)
-+}
-+"#,
-+    );
-+
-+    let file_path = Utf8Path::new("file.js");
-+    fs.insert(file_path.into(), *b"foo(1);\nbar(2);\n");
-+
-+    let (fs, result) = run_cli_with_server_workspace(
-+        fs,
-+        &mut console,
-+        Args::from(
-+            [
-+                "lint",
-+                "--suppress",
-+                "--reason=We love Biome",
-+                file_path.as_str(),
-+            ]
-+            .as_slice(),
-+        ),
-+    );
-+
-+    assert!(result.is_ok(), "run_cli returned {result:?}");
-+
-+    let mut buffer = String::new();
-+    fs.open(file_path)
-+        .unwrap()
-+        .read_to_string(&mut buffer)
-+        .unwrap();
-+
-+    // `logBar` only logs, so it doesn't get a suppression comment.
-+    assert_eq!(
-+        buffer,
-+        "// biome-ignore lint/plugin/noFoo: We love Biome\nfoo(1);\nbar(2);\n"
-+    );
-+
-+    assert_cli_snapshot(SnapshotPayload::new(
-+        module_path!(),
-+        "suppress_plugin_diagnostics_with_reason",
-+        fs,
-+        console,
-+        result,
-+    ));
-+}
-+
-+#[test]
-+fn suppress_rejects_plugin_name_unusable_in_suppressions() {
-+    let fs = MemoryFileSystem::default();
-+    let mut console = BufferConsole::default();
-+
-+    fs.insert(
-+        "biome.json".into(),
-+        br#"{
-+    "plugins": ["no foo.grit"]
-+}
-+"#,
-+    );
-+    fs.insert(
-+        "no foo.grit".into(),
-+        br#"language js
-+
-+`foo($args)` where {
-+    register_diagnostic(span=$args, message="Do not call foo", severity="error")
-+}
-+"#,
-+    );
-+
-+    let file_path = Utf8Path::new("file.js");
-+    fs.insert(file_path.into(), *b"foo(1);\n");
-+
-+    let (fs, result) = run_cli_with_server_workspace(
-+        fs,
-+        &mut console,
-+        Args::from(["lint", "--suppress", file_path.as_str()].as_slice()),
-+    );
-+
-+    assert!(result.is_err(), "run_cli returned {result:?}");
-+
-+    assert_cli_snapshot(SnapshotPayload::new(
-+        module_path!(),
-+        "suppress_rejects_plugin_name_unusable_in_suppressions",
-+        fs,
-+        console,
-+        result,
-+    ));
-+}
-```
-
-**File**: `crates/biome_cli/tests/snapshots/main_cases_suppressions/suppress_plugin_diagnostics.snap` (added, +44/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useNullishCoalescing/issue8043Valid.ts.snap` (added, +44/-0)
 ```diff
 @@ -0,0 +1,44 @@
 +---
-+source: crates/biome_cli/tests/snap_test.rs
-+expression: redactor(content)
++source: crates/biome_js_analyze/tests/spec_tests.rs
++expression: issue8043Valid.ts
 +---
-+## Command
++# Input
++```ts
++// should not generate diagnostics
 +
-+```shell
-+biome lint --suppress file.js
-+```
++type FormValues = {
++	value: string;
++};
 +
-+## `biome.json`
++type GenericProps<T extends FormValues> = {
++	values: T;
++	inert?: boolean;
++};
 +
-+```json
-+{
-+  "plugins": ["noFoo.grit"]
-+}
-+```
++type PlainProps = {
++	inert?: boolean;
++};
 +
-+## `file.js`
-+
-+```js
-+// biome-ignore lint/suspicious/noDebugger: ignored using `--suppress`
-+debugger;
-+// biome-ignore lint/plugin/noFoo: ignored using `--suppress`
-+foo(1);
-+
-+```
-+
-+## `noFoo.grit`
-+
-+```grit
-+language js
-+
-+`foo($args)` where {
-+    register_diagnostic(span=$args, message="Do not call foo", severity="error")
++export function genericWithDefault<T extends FormValues>({
++	inert = false,
++}: GenericProps<T>) {
++	return inert || undefined;
 +}
 +
-+```
++export function plainWithDefault({ inert = false }: PlainProps) {
++	return inert || undefined;
++}
 +
-+# Emitted Messages
++export function renamedWithDefault({ inert: renamed = false }: PlainProps) {
++	return renamed || undefined;
++}
 +
-+```block
-+Checked 1 file in <TIME>. Fixed 1 file.
++declare const props: PlainProps;
++const { inert: fromDeclarator = false } = props;
++export const declaratorResult = fromDeclarator || undefined;
++
++declare const list: (number | undefined)[];
++const [first = 1] = list;
++export const arrayResult = first || undefined;
++
 +```
 ```
 
-**File**: `crates/biome_cli/tests/snapshots/main_cases_suppressions/suppress_plugin_diagnostics_with_reason.snap` (added, +54/-0)
+**File**: `crates/biome_js_type_info/src/format_inferred_type_info.rs` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,54 @@
-+---
-+source: crates/biome_cli/tests/snap_test.rs
-+expression: redactor(content)
-+---
-+## Command
-+
-+```shell
-+biome lint --suppress '--reason=We love Biome' file.js
-+```
-+
-+## `biome.json`
-+
-+```json
-+{
-+  "plugins": ["noFoo.grit", "logBar.grit"]
-+}
-+```
-+
-+## `file.js`
-+
-+```js
-+// biome-ignore lint/plugin/noFoo: We love Biome
-+foo(1);
-+bar(2);
-+
-+```
-+
-+## `logBar.grit`
-+
-+```grit
-+language js
-+
-+`bar($args)` where {
-+    log(message="Found bar", variable=$args)
-+}
-+
-+```
-+
-+## `noFoo.grit`
-+
-+```grit
-+language js
-+
-+`foo($args)` where {
-+    register_diagnostic(span=$args, message="Do not call foo", severity="error")
-+}
-+
-+```
-+
-+# Emitted Messages
-+
-+```block
-+Checked 1 file in <TIME>. Fixed 1 file.
-+```
+@@ -873,7 +873,7 @@ impl<'db> Format<FormatInferredTypeContext<'db>> for TypeofExpression<'db> {
+                 ])]
+             ),
+             Self::Destructure(expr) => match &expr.destructure_field {
+-                DestructureField::Index(index) => write!(
++                DestructureField::Index { index, .. } => write!(
+                     f,
+                     [&format_args![
+                         &expr.ty,
+@@ -882,7 +882,7 @@ impl<'db> Format<FormatInferredTypeContext<'db>> for TypeofExpression<'db> {
+                         token("]")
+                     ]]
+                 ),
+-                DestructureField::Name(name) => {
++                DestructureField::Name { name, .. } => {
+                     write!(f, [&format_args![&expr.ty, token("."), name]])
+                 }
+                 DestructureField::RestExcept(names) => write!(
+```
+
+**File**: `crates/biome_js_type_info/src/format_type_info.rs` (modified, +2/-2)
+```diff
+@@ -529,7 +529,7 @@ impl Format<FormatTypeContext> for TypeofExpression {
+                 )
+             }
+             Self::Destructure(destructure) => match &destructure.destructure_field {
+-                DestructureField::Index(index) => {
++                DestructureField::Index { index, .. } => {
+                     write!(
+                         f,
+                         [&format_args![
+@@ -540,7 +540,7 @@ impl Format<FormatTypeContext> for TypeofExpression {
+                         ]]
+                     )
+                 }
+-                DestructureField::Name(name) => {
++                DestructureField::Name { name, .. } => {
+                     write!(f, [&format_args![destructure.ty, token("."), name]])
+                 }
+                 DestructureField::RestExcept(names) => {
+```
+
+**File**: `crates/biome_js_type_info/src/interned_types.rs` (modified, +4/-1)
+```diff
+@@ -3999,7 +3999,10 @@ mod tests {
+                 &db,
+                 TypeofExpression::Destructure(TypeofDestructureExpression {
+                     ty: s.next(),
+-                    destructure_field: raw::DestructureField::Index(0),
++                    destructure_field: raw::DestructureField::Index {
++                        index: 0,
++                        has_initializer: true,
++                    },
+                 }),
+             )
+         });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13177** (closed): fix(lint/complexity): do not report this alias in class property initializers (@abdul-karim-mia)
-- **PR #13163** (closed): fix(noUselessThisAlias): do not report aliases used in class field initializers 🤖🤖🤖 (@nikolas-sapa)
-- **PR #13152** (2026-11-13): refactor(lint): make old vue rules use the new vue semantic model (@dyc3)
-- **PR #13151** (2026-11-13): perf(html): add token set for mathml elements (@dyc3)
-- **PR #13141** (closed): fix(lint/a11y): remove the whole paired element in the noDistractingElements unsafe fix (@rishabhx29)
-- **PR #13138** (2026-11-13): perf(package): sublinear SPDX licence lookup (@dyc3)
+- **PR #13199** (2026-11-15): feat(tools): internal publisher (@ematipico)
+- **PR #13198** (2026-11-15): docs(skill): improve writing style (@ematipico)
+- **PR #13197** (2026-11-15): docs(skills): improve comments writing (@ematipico)
+- **PR #13189** (2026-11-14): fix(format/html): print comment before suppressed first child once (@dyc3)
+- **PR #13182** (2026-11-14): chore(deps): ignore js-sys crate in renovate config (@dyc3)
+- **PR #13181** (2026-11-14): fix(format/html/svelte): keep comments after block delimiters and opening tags (@dyc3)
 
 ---
 
@@ -2125,16 +1926,16 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tailwind): locate classes in unquoted object keys correctly
+## X. format/html/svelte): keep comments after block delimiters and opening tags
 
 **RULE**:
-When implementing operations in `.changeset/fix-tailwind-unquoted-object-key-range.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/fix-html-comment-after-opening-tag.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3ab04d5`: tailwind): locate classes in unquoted object keys correctly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1556ae7`: format/html/svelte): keep comments after block delimiters and opening tags. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-tailwind-unquoted-object-key-range.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-html-comment-after-opening-tag.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
@@ -2143,7 +1944,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 "@biomejs/biome": patch
 ---
 
-Fixed the location of Tailwind CSS diagnostics reported on unquoted object keys. In `clsx({ shadow: active })`, diagnostics now highlight `shadow` instead of starting one character later at `hadow:`.
+Fixed the HTML formatter printing a comment twice when it ends the line of an element's opening tag. For example, `<div><!-- comment -->` followed by `<i>x</i></div>` on the next line is now formatted as:
+
+```diff
+- <div><!-- comment -->
++ <div>
+  	<!-- comment -->
+  	<i>x</i>
+  </div>
+```
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2153,7 +1962,7 @@ Fixed the location of Tailwind CSS diagnostics reported on unquoted object keys.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3ab04d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1556ae7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

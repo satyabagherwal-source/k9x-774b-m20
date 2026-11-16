@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-SF7F",
-    "timestamp": "2026-11-13T19:39:58.587Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "23431232df306e9a0de2dab6ecb9377b334cffef5a437ce56437a03769c630be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-SHJL",
     "timestamp": "2026-11-13T19:40:01.617Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7490,6 +7475,21 @@
     "repository": "codewhale-hq/Codewhale",
     "learningId": "learn-github-codewhale-hq-codewhale",
     "contentHash": "10f08cf6e988a2cc6c3eeb99b5b4098ab9db301b8f95cc98f8f0686f1022c857",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-AK9L",
+    "timestamp": "2026-11-16T07:37:15.801Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "1cedd318c33fffce85df6678332d4785aaf70b5c951c19294a9e81f032dc1d05",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
