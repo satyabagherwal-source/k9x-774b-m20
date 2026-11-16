@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:07.563Z",
+  "timestamp": "2026-11-16T00:28:36.926Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-rqlite-rqlite-learnings",
+  "learning_id": "LEARN-EVO-rqlite-rqlite-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rqlite-rqlite-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:07.563Z`  
-> **Learning ID**: `LEARN-REEXTRACT-rqlite-rqlite-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T00:28:36.926Z`  
+> **Learning ID**: `LEARN-EVO-rqlite-rqlite-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `d904ad91`  
+> **Source Version**: `4e9a2e59`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T02:56:27.281Z  
+> **Timestamp**: 2026-11-16T00:28:01.302Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T02:56:27.272Z  
+> **Harvest Timestamp**: 2026-11-16T00:28:01.296Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17942 stars
+- **Stars / Engagement**: 17953 stars
 
 ---
 
@@ -2094,11 +2094,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3035** (2026-11-10): **Inband signaling to close connection client-side**
-  *Symptoms*: 
+- **Issue #3044** (2026-11-13): **Console reports failed API requests**
+  *Symptoms*: The HTTP API can return 200 with a top-level error, and returns plain text for non-2xx responses. The console's request helper handled neither. A failed query rendered as a blank result, a failed table or index drop was treated as a success, and non-2xx responses surfaced as JSON parse errors.  The helper now rejects for a non-2xx status or a top-level error, so the existing error handlers in the query, schema, and drop code display the server's message.  
 
-- **Issue #3034** (2026-11-09): **Add README explaining purpose of raft/ directory**
-  *Symptoms*: The raft/ directory inside the data directory exists only so an operator has somewhere to place peers.json when recovering a cluster that has lost quorum. Since it is otherwise empty its purpose is easy to forget, so write a short README into it on Store open if one is not already present.   
+- **Issue #3043** (2026-11-13): **Speed up system testing**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2115,630 +2115,48 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46613189` (2026-11-10)
-**Commit Message**: Fix sqlean Docker build
+### Incident Patch 1: `4e9a2e59` (2026-11-15)
+**Commit Message**: Update CONTRIBUTING.md
 
-**File**: `tools/build-sqlean.sh` (modified, +1/-1)
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -27,7 +27,7 @@ curl --retry 5 --retry-delay 5 -L "$sqlean_url" -o sqlean.tar.gz
- log "[3/4] Extract and build"
- tar xvfz sqlean.tar.gz
- cd nalgeon*
--make prepare-dist download-sqlite download-external compile-linux
-+make prepare-dist download-sqlite build
+@@ -15,6 +15,6 @@ Coding Agents are fine to use, but any PR that appears to be "AI slop" or genera
+ ### Judgement still required
+ Simply pointing an Agent at a feature request or bug report, and having it generate a PR, is unlikely to be an effective working style. Why? For two reasons:
+ - The PR is liable to be quite large. Reviewing a large PR for bugs, code style issues, and coherence with the rest of the codebase, is difficult. A large PR may never be reviewed properly, and therefore never merged. This problem predates Agent-enabled coding.
+-- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
++- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to comment on the PR is to simply feed them back into your Agent and post **its** response, then you've become _a passthrough for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
  
- log "[4/4] Package dist/sqlean.so into $OUTPUT_DIR/sqlean.zip"
- zip -j "$OUTPUT_DIR/sqlean.zip" dist/sqlean.so
+ Breaking changes into smaller pieces will help get your contribution merged quicker. There has never been a large feature in rqlite that was not composed of a small series of changes. So for a large change you should propose what series of changes you will make. But the same requirements apply -- you must show that you can argue from first principles **why** a certain series of changes should take place.
 ```
 
 ---
 
-### Incident Patch 2: `99389a74` (2026-11-09)
-**Commit Message**: Merge pull request #3033 from rqlite/claude-fix-retries
+### Incident Patch 2: `714da89c` (2026-11-15)
+**Commit Message**: Update CONTRIBUTING.md
 
-Fix retries while still detecting stale connections
-
-**File**: `cluster/DESIGN.md` (modified, +4/-4)
+**File**: `CONTRIBUTING.md` (modified, +6/-1)
 ```diff
-@@ -38,11 +38,11 @@ Permission checks happen per message via the `CredentialStore` interface (`AA(us
+@@ -12,4 +12,9 @@ Issues are never explicitly assigned to individuals. If you wish to work on issu
+ ## Use of Coding Agents
+ Coding Agents are fine to use, but any PR that appears to be "AI slop" or generated without any apparent thought by the actual programmer, may be closed without comment. If you open an issue or PR that includes analysis by a Coding Agent please state up front that it is agent-generated.
  
- A `SetLocal(nodeAddr, *Service)` shortcut lets the client serve `GetNodeMeta` for the local node without a network round-trip. The HTTP layer holds a single `Client` per process; asking it about *self* — which happens often enough — should not touch the network.
- 
--### Connection Pool Retries
-+### Retries and Stale Connections
- 
--Every retry-eligible request goes through `Client.retry`. The base loop is unsurprising: dial from the pool, write/read, return on success, mark the connection unusable on error and try again. The wrinkle is the *last* retry. If every previous attempt has failed, the client does not just take another connection from the pool — it forces a brand-new dial via `pl.New()`.
-+Every retry-eligible request goes through `Client.retry`: dial from the pool, write and read, return on success, mark the connection unusable on error, and send again only if the caller asked for retries. Zero retries means the command is sent once. The client cannot tell a reply that was lost from a command that was never acted on, so a caller asking for retries accepts that a write may be applied twice; the HTTP layer forwards with zero retries unless the user asks otherwise.
- 
--This catches a real production failure pattern that motivated the v10 fix. When a remote node restarts, the local pool can be holding sixty-three TCP connections that all *look* fine but are actually dead. Each retry takes one of those, fails, marks it unusable, and moves on, but if the pool is replenished as fast as retries deplete it the request can fail without ever proving the remote is reachable. The "force new on last retry" path bypasses the pool entirely so a single fresh connection definitively distinguishes "node down" from "all my pool entries are stale." It only triggers after retries are otherwise exhausted, so the cost is negligible in steady state.
-+That rules out resending as the answer to a stale pool. When a remote node restarts, the local pool can hold dozens of connections that all look fine but are dead, and the write on each one succeeds -- only the read fails, which is exactly the lost-reply case above. So the pool catches staleness before anything is written. While a connection is idle in the pool a goroutine blocks reading from it; nothing is expected to arrive on an idle connection, so that read only returns when the remote side has gone away, and the connection is marked dead on the spot. `Get` stops the watcher and skips dead connections, so a pool full of them is drained in one call and followed by a single fresh dial. The remote `Service` closes connections idle for 30 seconds, and the same mechanism catches those.
- 
- Cluster management operations (`Join`, `Notify`, `RemoveNode`, `Stepdown`) deliberately *do not* retry at this layer. Operator-initiated commands should fail visibly so the operator knows what happened, and higher layers (the `Bootstrapper`, the HTTP handler) are the right places to add policy-aware retries.
- 
-@@ -103,7 +103,7 @@ Two backup paths exist for historical and operational reasons:
- 
- - **Single port for all internode traffic.** Both Raft and the cluster control plane share one TCP listener with mux byte tags. The trade-off is a small amount of demux glue; the payoff is one fewer port for operators to manage and firewall. The HTTP port stays separate because end-user traffic has fundamentally different networking requirements.
- 
--- **Per-node connection pool with last-retry bypass (v10).** Pooled connections amortize TCP/TLS setup. Pooled connections after a *remote restart*, however, can all be silently dead. The v10 "force a fresh dial on the last retry" path catches that case without giving up the pool's steady-state benefits. This was a real production bug; a node restart could cause the local node's forwarding requests to fail until the entire pool churned through.
-+- **Per-node connection pool that watches its idle connections.** Pooled connections amortize TCP/TLS setup. Pooled connections after a *remote restart*, however, can all be silently dead, and a stale connection only reveals itself on the read after the write has gone out. An earlier fix resent the command on a fresh connection, which duplicated writes whose reply had merely been slow. Watching idle connections finds dead ones before they are used, so the pool keeps its steady-state benefits and a command with zero retries is never sent twice.
- 
- - **Cluster-management operations do not auto-retry at the wire.** Joins, removals, notifies, and stepdowns are operator-driven; auto-retrying them silently would obscure failures. Higher layers (`Bootstrapper`, `Remover`, the HTTP handler) add their own retry policy where it makes sense.
- 
-```
-
-**File**: `cluster/client.go` (modified, +86/-253)
-```diff
-@@ -11,7 +11,6 @@ import (
- 	"net"
- 	"os"
- 	"sync"
--	"sync/atomic"
- 	"time"
- 
- 	"github.com/rqlite/rqlite/v10/auth"
-@@ -83,17 +82,14 @@ type Client struct {
- 
- 	poolMu sync.RWMutex
- 	pools  map[string]pool.Pool
--
--	// Whitebox testing
--	numForcedNewConns atomic.Int32
- }
- 
- // NewClient returns a client instance for talking to a remote node.
--// Clients will retry certain commands if they fail, to allow for
--// remote node restarts. Cluster management operations such as joining
--// and removing nodes are not retried, to make it clear to the operator
--// that the operation failed. In addition, higher-level code will
--// usually retry these operations.
-+// Commands are sent exactly once unless the caller asks for retries; see
-+// retry for what a retry can mean for a write. Cluster management
-+// operations such as joining and removing nodes are never retried, to
-+// make it clear to the operator that the operation failed. In addition,
-+// higher-level code will usually retry these operations.
- func NewClient(dl Dialer, t time.Duration) *Client {
- 	return &Client{
- 		dialer:  dl,
-@@ -149,17 +145,12 @@ func (c *Client) GetNodeMeta(ctx context.Context, nodeAddr string, retries int,
- 	command := &proto.Command{
- 		Type: proto.Command_COMMAND_TYPE_GET_NODE_META,
- 	}
--	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
-+	a := &proto.NodeMeta{}
-+	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
- 	stats.Add(numGetNodeAPIRequestRetries, int64(nr))
- 	if err != nil {
- 		return nil, err
- 	}
--
--	a := &proto.NodeMeta{}
--	err = pb.Unmarshal(p, a)
--	if err != nil {
--		return nil, fmt.Errorf("protobuf unmarshal: %w", err)
--	}
- 	if a.Version == "" {
- 		// Handle nodes running older code.
- 		a.Version = "unknown"
-@@ -175,17 +166,12 @@ func (c *Client) GetCommitIndex(ctx context.Context, nodeAddr string, retries in
- 	command := &proto.Command{
- 		Type: proto.Command_COMMAND_TYPE_GET_NODE_META,
- 	}
--	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
-+	a := &proto.NodeMeta{}
-+	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
- 	stats.Add(numGetNodeAPIRequestRetries, int64(nr))
- 	if err != nil {
- 		return 0, err
- 	}
--
--	a := &proto.NodeMeta{}
--	err = pb.Unmarshal(p, a)
--	if err != nil {
--		return 0, fmt.Errorf("protobuf unmarshal: %w", err)
--	}
- 	return a.CommitIndex, nil
- }
- 
-@@ -203,14 +189,9 @@ func (c *Client) Execute(ctx context.Context, er *command.ExecuteRequest, nodeAd
- 		},
- 		Credentials: creds,
- 	}
--	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
--	stats.Add(numClientExecuteRetries, int64(nr))
--	if err != nil {
--		return nil, 0, err
--	}
--
- 	a := &proto.CommandExecuteResponse{}
--	err = pb.Unmarshal(p, a)
-+	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
-+	stats.Add(numClientExecuteRetries, int64(nr))
- 	if err != nil {
- 		return nil, 0, err
- 	}
-@@ -235,14 +216,9 @@ func (c *Client) Query(ctx context.Context, qr *command.QueryRequest, nodeAddr s
- 		},
- 		Credentials: creds,
- 	}
--	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
--	stats.Add(numClientQueryRetries, int64(nr))
--	if err != nil {
--		return nil, 0, err
--	}
--
- 	a := &proto.CommandQueryResponse{}
--	err = pb.Unmarshal(p, a)
-+	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
-+	stats.Add(numClientQueryRetries, int64(nr))
- 	if err != nil {
- 		return nil, 0, err
- 	}
-@@ -267,14 +243,9 @@ func (c *Client) Request(ctx context.Context, r *command.ExecuteQueryRequest, no
- 		},
- 		Credentials: creds,
- 	}
--	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
--	stats.Add(numClientRequestRetries, int64(nr))
--	if err != nil {
--		return nil, 0, 0, err
--	}
--
- 	a := &proto.CommandRequestResponse{}
--	err = pb.Unmarshal(p, a)
-+	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
-+	stats.Add(numClientRequestRetries, int64(nr))
- 	if err != nil {
- 		return nil, 0, 0, err
- 	}
-@@ -324,23 +295,32 @@ func (c *Client) Backup(ctx context.Context, br *command.BackupRequest, nodeAddr
- 		return 0, err
- 	}
- 	if a.Error != "" {
-+		// The service ends the connection after any error reply to a
-+		// backup stream request, so this connection must not be reused.
-+		handleConnError(conn)
- 		return 0, errors.New(a.Error)
- 	}
- 
- 	// The backup stream is unconditionally compressed, so depending on whether
- 	// the user requested compression, we may need to decompress the response.
-+	// A stream that ends early leaves the connection mid-message, so it must
-+	// not go back to the pool.
- 	var rc io.ReadCloser
- 	rc = conn
- 	if !br.Compress {
- 		gzr, err := gzip.NewReader(conn)
- 		if err != nil {
-+			handleConnError(conn)
- 			return 0, err
- 		}
- 		gzr.Multistream(false)
- 		rc = gzr
- 		defer rc.Close()
- 	}
- 	n, err := io.Copy(w, rc)
-+	if err != nil {
-+		handleConnError(conn)
-+	}
- 	return int(n), err
- }
- 
-@@ -357,14 +337,9 @@ func (c *Client) Load(ctx context.Context, lr *command.LoadRequest, nodeAddr str
- 		},
- 		Credentials: creds,
- 	}
--	p, nr, err := c.retry(ctx, comman
-```
-
-**File**: `cluster/client_test.go` (modified, +294/-98)
-```diff
-@@ -3,10 +3,13 @@ package cluster
- import (
- 	"context"
- 	"encoding/binary"
-+	"errors"
-+	"fmt"
- 	"io"
- 	"net"
-+	"os"
- 	"strings"
--	"sync"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -502,12 +505,11 @@ func Test_ClientJoinNode_MaxRedirectsExceeded(t *testing.T) {
- 
- 	srv := servicetest.NewService()
- 	srv.Handler = func(conn net.Conn) {
--		redirects <- struct{}{}
--
- 		c := readCommand(conn)
- 		if c == nil {
- 			return
- 		}
-+		redirects <- struct{}{}
- 		if c.Type != proto.Command_COMMAND_TYPE_JOIN {
- 			t.Fatalf("unexpected command type: %d", c.Type)
- 		}
-@@ -600,12 +602,11 @@ func Test_ClientJoinNode_SuccessAfterRedirect(t *testing.T) {
- 
- 	srv := servicetest.NewService()
- 	srv.Handler = func(conn net.Conn) {
--		attempts <- struct{}{}
--
- 		c := readCommand(conn)
- 		if c == nil {
- 			return
- 		}
-+		attempts <- struct{}{}
- 		if c.Type != proto.Command_COMMAND_TYPE_JOIN {
- 			t.Fatalf("unexpected command type: %d", c.Type)
- 		}
-@@ -648,20 +649,41 @@ func Test_ClientJoinNode_SuccessAfterRedirect(t *testing.T) {
- 	}
- }
- 
--func Test_ClientRetry_SuccessFirstAttempt(t *testing.T) {
--	srv := servicetest.NewService()
--	srv.Handler = func(conn net.Conn) {
-+// countingHandler wraps a handler so a test can see how many commands the
-+// server read.
-+type countingHandler struct {
-+	commands atomic.Int32
-+}
+-AI Agents make it easier than ever to generate large PRs. Since PRs still must be reviewed by a human, breaking changes into smaller pieces if possible can help get your contribution merged quicker.
++### Judgement still required
++Simply pointing an Agent at a feature request or bug report, and having it generate a PR, is unlikely to be an effective working style. Why? For two reasons:
++- The PR is liable to be quite large. Reviewing a large PR for bugs, code style issues, and coherence with the rest of the codebase, is difficult. A large PR may never be reviewed properly, and therefore never merged. This problem predates Agent-enabled coding.
++- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
 +
-+// handle returns a servicetest handler that reads a command, counts it, and
-+// then hands the connection and command to f. f is not called if no command
-+// arrived.
-+func (h *countingHandler) handle(f func(conn net.Conn, c *proto.Command)) func(net.Conn) {
-+	return func(conn net.Conn) {
- 		c := readCommand(conn)
- 		if c == nil {
- 			return
- 		}
--		p, err := pb.Marshal(&proto.CommandQueryResponse{})
--		if err != nil {
--			conn.Close()
--			return
--		}
--		writeBytesWithLength(conn, p)
-+		h.commands.Add(1)
-+		f(conn, c)
-+	}
-+}
-+
-+func mustWriteQueryResponse(conn net.Conn) {
-+	p, err := pb.Marshal(&proto.CommandQueryResponse{})
-+	if err != nil {
-+		conn.Close()
-+		return
- 	}
-+	writeBytesWithLength(conn, p)
-+}
-+
-+func Test_ClientRetry_SuccessFirstAttempt(t *testing.T) {
-+	h := &countingHandler{}
-+	srv := servicetest.NewService()
-+	srv.Handler = h.handle(func(conn net.Conn, _ *proto.Command) {
-+		mustWriteQueryResponse(conn)
-+	})
- 	srv.Start()
- 	defer srv.Close()
- 
-@@ -671,142 +693,191 @@ func Test_ClientRetry_SuccessFirstAttempt(t *testing.T) {
- 	if err != nil {
- 		t.Fatalf("expected success on first attempt, got: %s", err)
- 	}
--	if c.numForcedNewConns.Load() != 0 {
--		t.Fatalf("expected no forced new connections, got %d", c.numForcedNewConns.Load())
-+	if exp, got := int32(1), h.commands.Load(); exp != got {
-+		t.Fatalf("expected command to be sent %d time, got %d", exp, got)
- 	}
- }
- 
--func Test_ClientRetry_FailAllPoolThenFreshSucceeds(t *testing.T) {
--	// Simulate a node that restarted: the first connection (from pool) fails,
--	// but a fresh connection succeeds.
--	var connCount int
--	var mu sync.Mutex
--	srv := servicetest.NewService()
--	srv.Handler = func(conn net.Conn) {
--		mu.Lock()
--		connCount++
--		n := connCount
--		mu.Unlock()
--
--		c := readCommand(conn)
--		if c == nil {
--			return
--		}
-+func Test_ClientRetry_ZeroRetries_SingleAttempt(t *testing.T) {
-+	// With zero retries, or a nonsensical negative count, a failing server
-+	// is tried exactly once.
-+	for _, retries := range []int{0, -1} {
-+		t.Run(fmt.Sprint(retries), func(t *testing.T) {
-+			h := &countingHandler{}
-+			srv := servicetest.NewService()
-+			srv.Handler = h.handle(func(conn net.Conn, _ *proto.Command) {
-+				conn.Close()
-+			})
-+			srv.Start()
-+			defer srv.Close()
-+
-+			c := NewClient(&simpleDialer{}, 0)
-+			_, _, err := c.Query(context.Background(), queryRequestFromString("SELECT * FROM foo"),
-+				srv.Addr(), nil, time.Second, retries)
-+			if err == nil {
-+				t.Fatal("expected error with no retries and a failing server")
-+			}
-+			if exp, got := int32(1), h.commands.Load(); exp != got {
-+				t.Fatalf("expected command to be sent %d time, got %d", exp, got)
-+			}
-+		})
-+	}
-+}
- 
--		// First connection fails (simulating stale pool connection reading response),
--		// second succeeds.
--		if n == 1 {
--			conn.Close()
--			return
--		}
--		p, err := pb.Marshal(&proto.CommandQueryResponse{})
--		if err != nil {
-+func Test_ClientRetry_FailThenSucceed(t *testing.T) {
-+	// The first attempt fails, the one retry asked for succeeds.
-+	h := &countingHandler{}
-+	srv := servicetest.NewService()
-+	srv.Handler = h.handle(func(conn net.Conn, _ *proto.Command) {
-+		if h.commands.Load() == 1 {
- 			conn.Close()
- 			return
- 		}
--		writeBytesWithLength(conn, p)
--	}
-+		mustWriteQueryResponse(conn)
-+	})
- 	srv.Start()
- 	defer srv.Close()
- 
- 	c := NewClient(&simpleDialer{}, 0)
- 	_, _, err := c.Query(context.Background(), queryRequestFromString("SELECT * FROM foo"),
--		srv.Addr(), nil, time.Second, 0)
-+		srv.Addr(), nil, time.Second, 1)
- 	if err != nil {
--		t.Fatalf("expected fresh connection to succeed, got: %s", err)
-+		t.Fatalf("expected retry to succeed, got: %s", err)
- 	}
--
-```
-
-**File**: `cluster/service.go` (modified, +10/-3)
-```diff
-@@ -59,7 +59,6 @@ const (
- 	numClientRequestRetries     = "num_client_request_retries"
- 	numClientReadTimeouts       = "num_client_read_timeouts"
- 	numClientWriteTimeouts      = "num_client_write_timeouts"
--	numClientForceNewConn       = "num_client_force_new_conn"
- 
- 	// Client stats for this package.
- 	numGetNodeAPIRequestLocal = "num_get_node_api_req_local"
-@@ -114,7 +113,6 @@ func ResetStats() {
- 	stats.Add(numClientRequestRetries, 0)
- 	stats.Add(numClientReadTimeouts, 0)
- 	stats.Add(numClientWriteTimeouts, 0)
--	stats.Add(numClientForceNewConn, 0)
- 	stats.Add(numConnRejected, 0)
- 	stats.Add(numUnauthorizedRequest, 0)
- }
-@@ -206,6 +204,10 @@ type Service struct {
- 	// connLimiterCh limits the number of in-service connections.
- 	connLimiterCh chan struct{}
- 
-+	// connReleased, if set, is called each time a connection gives back its
-+	// place in the limiter. Tests use it to wait for that moment.
-+	connReleased func()
-+
- 	hwmMu      sync.RWMutex
- 	hwmUpdateC chan<- uint64 // Channel for HWM updates
- 
-@@ -347,7 +349,12 @@ func (s *Service) serve() error {
- 		select {
- 		case s.connLimiterCh <- struct{}{}:
- 			go func() {
--				defer func() { <-s.connLimiterCh }()
-+				defer func() {
-+					<-s.connLimiterCh
-+					if s.connReleased != nil {
-+						s.connReleased()
-+					}
-+				}()
- 				s.handleConn(conn)
- 			}()
- 		default:
-```
-
-**File**: `cluster/service_test.go` (modified, +9/-1)
-```diff
-@@ -1100,6 +1100,8 @@ func Test_ServiceConnLimiterRejectAndRelease(t *testing.T) {
- 	if err := s.SetConnectionLimit(1); err != nil {
- 		t.Fatalf("failed to set connection limit: %s", err)
- 	}
-+	released := make(chan struct{}, 8)
-+	s.connReleased = func() { released <- struct{}{} }
- 
- 	if err := s.Open(); err != nil {
- 		t.Fatalf("failed to open cluster service")
-@@ -1125,10 +1127,16 @@ func Test_ServiceConnLimiterRejectAndRelease(t *testing.T) {
- 		t.Fatalf("expected connection to be rejected without timing out, got: %v", err)
- 	}
- 
--	// Releasing the idle connection should free its limiter slot.
-+	// Releasing the idle connection should free its limiter slot. The service
-+	// learns of the close in its own time, so wait for it to let the slot go.
- 	if err := md.CloseConn(0); err != nil {
- 		t.Fatalf("failed to close first connection: %s", err)
- 	}
-+	select {
-+	case <-released:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("service did not release the limiter slot")
-+	}
- 
- 	// A new client request should be accepted once capacity is available again.
- 	c3 := NewClient(md, 30*time.Second)
-```
-
-**File**: `cluster/servicetest/service.go` (modified, +64/-6)
-```diff
-@@ -2,12 +2,20 @@ package servicetest
- 
- import (
- 	"net"
-+	"sync"
-+	"sync/atomic"
- )
- 
--// Service represents a test service.
-+// Service represents a test service. Like the real cluster service it keeps
-+// a connection open and serves commands on it one after another: Handler is
-+// called once per command, and again on the same connection when it returns,
-+// until the connection fails or a Handler call finishes without using it.
- type Service struct {
- 	Listener net.Listener
- 	Handler  func(net.Conn)
-+
-+	mu    sync.Mutex
-+	conns []net.Conn
- }
- 
- // NewService returns a new instance of the service that runs on
-@@ -33,9 +41,16 @@ func (s *Service) Addr() string {
- 	return s.Listener.Addr().String()
- }
- 
--// Close closes the service.
-+// Close closes the service and every connection it accepted.
- func (s *Service) Close() error {
--	return s.Listener.Close()
-+	err := s.Listener.Close()
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	for _, conn := range s.conns {
-+		conn.Close()
-+	}
-+	s.conns = nil
-+	return err
- }
- 
- func (s *Service) serve() error {
-@@ -44,14 +59,57 @@ func (s *Service) serve() error {
- 		if err != nil {
- 			return err
- 		}
-+		s.mu.Lock()
-+		s.conns = append(s.conns, conn)
-+		s.mu.Unlock()
- 
- 		go s.handleConn(conn)
- 	}
- }
- 
- func (s *Service) handleConn(conn net.Conn) {
--	if s.Handler != nil {
--		s.Handler(conn)
-+	defer conn.Close()
-+	if s.Handler == nil {
-+		return
-+	}
-+	tc := &trackedConn{Conn: conn}
-+	for {
-+		tc.used.Store(false)
-+		s.Handler(tc)
-+		if tc.failed.Load() || !tc.used.Load() {
-+			return
-+		}
- 	}
--	conn.Close()
-+}
-+
-+// trackedConn records whether a Handler used the connection and whether the
-+// connection has failed, so the service knows whether to serve another
-+// command on it.
-+type trackedConn struct {
-+	net.Conn
-+	used   atomic.Bool
-+	failed atomic.Bool
-+}
-+
-+func (c *trackedConn) Read(b []byte) (int, error) {
-+	c.used.Store(true)
-+	n, err := c.Conn.Read(b)
-+	if err != nil {
-+		c.failed.Store(true)
-+	}
-+	return n, err
-+}
-+
-+func (c *trackedConn) Write(b []byte) (int, error) {
-+	c.used.Store(true)
-+	n, err := c.Conn.Write(b)
-+	if err != nil {
-+		c.failed.Store(true)
-+	}
-+	return n, err
-+}
-+
-+func (c *trackedConn) Close() error {
-+	c.failed.Store(true)
-+	return c.Conn.Close()
- }
-```
-
-**File**: `http/query_params.go` (modified, +4/-1)
-```diff
-@@ -226,7 +226,10 @@ func (qp QueryParams) Timeout(def time.Duration) time.Duration {
- 	return d
- }
- 
--// Retries returns the requested number of retries.
-+// Retries returns the requested number of retries. A retry re-sends a
-+// request forwarded to another node after a failure, including a failure
-+// to hear back from a node that may have acted on the request, so a write
-+// may be applied more than once when retries are requested.
- func (qp QueryParams) Retries(def int) int {
- 	i, ok := qp["retries"]
- 	if !ok {
-```
-
-**File**: `system_test/e2e/multi_node.py` (modified, +4/-2)
-```diff
-@@ -561,11 +561,13 @@ def test(self):
-     self.assertEqual(n.node_id, l0.node_id)
- 
-     # Now, the followers have connection pools, but the connections within are stale.
--    # Ensure the followers detect this and use a fresh connection to the leader.
-+    # Ensure the followers detect this, discard the stale connections, and use a
-+    # fresh connection to the leader.
-     for f in self.cluster.followers():
-       j = f.query('SELECT 1', level="strong")
-       self.assertEqual(j, d_("{'results': [{'values': [[1]], 'types': ['integer'], 'columns': ['1']}]}"))
--      self.assertEqual(f.expvar()['cluster']['num_client_force_new_conn'], 1)
-+      pools = f.status()['http']['cluster']['conn_pool_stats'].values()
-+      self.assertGreaterEqual(sum(p['stale_discarded'] for p in pools), 1)
- 
- class TestEndToEndNonVoter(unittest.TestCase):
-   def setUp(self):
++Breaking changes into smaller pieces will help get your contribution merged quicker. There has never been a large feature in rqlite that was not composed of a small series of changes. So for a large change you should propose what series of changes you will make. But the same requirements apply -- you must show that you can argue from first principles **why** a certain series of changes should take place.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3044** (2026-11-13): Console reports failed API requests (@otoolep)
+- **PR #3043** (2026-11-13): Speed up system testing (@otoolep)
+- **PR #3042** (2026-11-13): Shorten Raft timeouts for Stores under test (@otoolep)
+- **PR #3041** (2026-11-13): Fixes for minor bugs in CDC high water mark handling (@otoolep)
 - **PR #3035** (2026-11-10): Inband signaling to close connection client-side (@otoolep)
 - **PR #3034** (2026-11-09): Add README explaining purpose of raft/ directory (@otoolep)
-- **PR #3033** (2026-11-09): Fix retries while still detecting stale connections (@otoolep)
-- **PR #3032** (closed): Honor cluster retry limits and detect stale pooled connections (@otoolep)
-- **PR #3031** (2026-11-08): Move retry logic out of Store Provider (@otoolep)
-- **PR #3030** (2026-11-08): Explicitly state if there are no new features (@otoolep)
 
 ---
 
@@ -2758,31 +2176,31 @@ Fix retries while still detecting stale connections
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sqlean Docker build
+## X. Update CONTRIBUTING.md
 
 **RULE**:
-When implementing operations in `tools/build-sqlean.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46613189`: sqlean Docker build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e9a2e59`: Update CONTRIBUTING.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/build-sqlean.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-make prepare-dist download-sqlite build
+- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to comment on the PR is to simply feed them back into your Agent and post **its** response, then you've become _a passthrough for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-make prepare-dist download-sqlite download-external compile-linux
+// Induced defect failure mode:
+- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46613189` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e9a2e59` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

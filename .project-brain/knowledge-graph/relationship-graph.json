@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-16T00:01:01.445Z",
+  "updated_at": "2026-11-16T00:28:36.240Z",
   "statistics": {
-    "total_nodes": 276,
+    "total_nodes": 277,
     "total_edges": 145,
     "domain_distribution": {
-      "D": 215,
+      "D": 216,
       "M": 1,
       "H": 26,
       "J": 10,
@@ -6195,6 +6195,28 @@
       ],
       "created_at": "2026-11-16T00:01:01.445Z",
       "updated_at": "2026-11-16T00:01:01.445Z"
+    },
+    "DOM-D-B67F40D8": {
+      "id": "DOM-D-B67F40D8",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): LiconStudio/Minimax-H3-VBVR",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-liconstudio-minimax-h3-vbvr/hf-liconstudio-minimax-h3-vbvr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T00:28:06.073Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liconstudio-minimax-h3-vbvr)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-16T00:28:36.239Z",
+      "updated_at": "2026-11-16T00:28:36.239Z"
     }
   },
   "edges": [

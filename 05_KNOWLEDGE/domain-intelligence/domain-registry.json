@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T00:17:48.397Z",
-  "total_records": 1167,
+  "last_updated": "2026-11-16T00:28:37.165Z",
+  "total_records": 1173,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 563,
+      "total": 566,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -601,7 +601,10 @@
         "DOM-D-CB5F7DEE",
         "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants",
+        "DOM-D-B67F40D8",
+        "domain_intelligence-research-knowledge-intelligence-hf-liconstudio-minimax-h3-vbvr-learnings-core-in"
       ]
     },
     "E": {
@@ -640,7 +643,7 @@
       ]
     },
     "G": {
-      "total": 203,
+      "total": 204,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -844,11 +847,12 @@
         "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",
         "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants",
         "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 240,
+      "total": 242,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1089,7 +1093,9 @@
         "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-core-invariants",
         "DOM-H-503996F3",
         "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants",
-        "DOM-H-20A56733"
+        "DOM-H-20A56733",
+        "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-learnings-core-inv"
       ]
     },
     "I": {
@@ -15044,8 +15050,8 @@
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "repository": "rqlite/rqlite",
-      "content_hash": "43001af112ae1a01f86c2f3ffc98b76e2e6f219d6f719810cfe395d53ad2b1de",
-      "created_at": "2026-11-14T15:03:57.452Z"
+      "content_hash": "3d1496fc77b1540bd0a2b8d9b227b08b96458d8af06d034a80b827c96d7e7154",
+      "created_at": "2026-11-16T00:28:02.546Z"
     },
     "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
@@ -21959,6 +21965,93 @@
       "repository": "apache-shardingsphere-learnings",
       "content_hash": "a529d84579ffec312fb4d865decb8d1fd5c090c2e39707ce9a10b42e3daad818",
       "created_at": "2026-11-16T00:17:48.397Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiconStudio/Minimax-H3-VBVR Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liconstudio-minimax-h3-vbvr-research-knowledge-intelligence-liconstudio-minim.md",
+      "repository": "LiconStudio/Minimax-H3-VBVR",
+      "content_hash": "5fadc86815b6af1996565ac73b3c3254fc949330a6c8690d874bf85463f261e9",
+      "created_at": "2026-11-16T00:27:47.327Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: alexpasmantier/television Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alexpasmantier-television-technical-construction-intelligence-alexpasmantier-tel.md",
+      "repository": "alexpasmantier/television",
+      "content_hash": "8b8d7bc6220387236d8540e80b22ec0314a047e49d8ddad398be5e2584fdd71f",
+      "created_at": "2026-11-16T00:27:50.223Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: alexpasmantier-television-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alexpasmantier-television-learnings-technical-construction-intelligence-alexpasm.md",
+      "repository": "alexpasmantier-television-learnings",
+      "content_hash": "8a31b7ab4df59eaf419b1c430a32358f72a98ad138ad30f5583bdfb167407e1f",
+      "created_at": "2026-11-16T00:28:05.839Z"
+    },
+    "DOM-D-B67F40D8": {
+      "record_id": "DOM-D-B67F40D8",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiconStudio/Minimax-H3-VBVR",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiconStudio/Minimax-H3-VBVR](https://huggingface.co/LiconStudio/Minimax-H3-VBVR))  \n> **Source Version**: `hf-liconstud`  \n> **License**: Open-Sou",
+      "content_hash": "e0855e759eec909867156521b9bb4f0af43f7f929f7684c10538815775de3547",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-liconstudio-minimax-h3-vbvr/hf-liconstudio-minimax-h3-vbvr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T00:28:06.073Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liconstudio-minimax-h3-vbvr)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liconstudio-minimax-h3-vbvr"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T00:28:36.215Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liconstudio-minimax-h3-vbvr-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liconstudio-minimax-h3-vbvr-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liconstudio-minimax-h3-vbvr-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liconstudio-minimax-h3-vbvr-learnings-research-knowledge-intelligence-hf-lico.md",
+      "repository": "hf-liconstudio-minimax-h3-vbvr-learnings",
+      "content_hash": "5bed12a41f19ba5ab353ff4258a517aeb73ba6d18f0a22b50422f31cddd655ed",
+      "created_at": "2026-11-16T00:28:36.448Z"
+    },
+    "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-learnings-architecture-intelligence-rqlite-rqlite-learnings-core-i.md",
+      "repository": "rqlite-rqlite-learnings",
+      "content_hash": "65e8e3931810940a4d77b266737f19e043f6a7d860925f528fc8043d5cb20d8e",
+      "created_at": "2026-11-16T00:28:37.165Z"
     }
   }
 }

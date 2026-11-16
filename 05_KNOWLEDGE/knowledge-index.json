@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T00:17:48.491Z",
-  "total_verified_learnings": 8741,
+  "last_updated": "2026-11-16T00:28:37.302Z",
+  "total_verified_learnings": 8743,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18744,
+  "total_items": 18759,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -229350,14 +229350,19 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "87d2a416",
-      "content_hash": "4e963afd54f3c3e6e71d60513b113f87d8eb165f2a41193dd2125f77f8971239",
+      "source_version": "4e9a2e59",
+      "content_hash": "8ccc4d5cd3a5b5715d19037d9ae015d9014f88999a009946f803219ea83d541a",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
         {
           "number": 8494,
           "title": "Shorten Raft timeouts for system test nodes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8674,
+          "title": "Update CONTRIBUTING.md",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -229366,7 +229371,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:03:57.125Z",
+      "verified_at": "2026-11-16T00:28:02.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229408,10 +229413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "repository": "rqlite/rqlite",
-      "source_version": "87d2a416",
-      "content_hash": "43001af112ae1a01f86c2f3ffc98b76e2e6f219d6f719810cfe395d53ad2b1de",
+      "source_version": "4e9a2e59",
+      "content_hash": "3d1496fc77b1540bd0a2b8d9b227b08b96458d8af06d034a80b827c96d7e7154",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T15:03:57.452Z"
+      "persisted_at": "2026-11-16T00:28:02.546Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite",
@@ -229420,10 +229425,10 @@
       "relative_path": "08_VERIFICATION/rqlite-rqlite-verification-protocol-empirical-defect-shield-for-rqlite-rqlite.md",
       "title": "Verification Protocol: Empirical Defect Shield for rqlite/rqlite",
       "repository": "rqlite/rqlite",
-      "source_version": "87d2a416",
-      "content_hash": "df688eaee5bde878fcf175f7ef095d7d909347be1cfd72d8e53f27a699e2b565",
+      "source_version": "4e9a2e59",
+      "content_hash": "c26454fe041b3908497f8f67b40b0419c5a9d7deece032f63ee3a9c8ad9262f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:03:57.529Z"
+      "persisted_at": "2026-11-16T00:28:02.664Z"
     },
     "rule-8495": {
       "learning_id": "rule-8495",
@@ -248620,6 +248625,226 @@
       "content_hash": "83291dbba1fabfbab93e0cde6d7ea20f3fcf574696dfaf052df99db313bede40",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T00:17:48.491Z"
+    },
+    "learn-huggingface-liconstudio-minimax-h3-vbvr": {
+      "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiconStudio/Minimax-H3-VBVR",
+      "repository": "LiconStudio/Minimax-H3-VBVR",
+      "slug": "hf-liconstudio-minimax-h3-vbvr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+      "source_version": "hf-liconstudio-minimax-h3-vbvr",
+      "content_hash": "f8306002dc3903c896c6dfacd36d6d0bfc5608e66795207f52eb31680ce97be8",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T00:27:46.968Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liconstudio-minimax-h3-vbvr-research-knowledge-intelligence-liconstudio-minim.md",
+      "title": "Research & Knowledge Intelligence: LiconStudio/Minimax-H3-VBVR Core Invariants",
+      "repository": "LiconStudio/Minimax-H3-VBVR",
+      "source_version": "hf-liconstudio-minimax-h3-vbvr",
+      "content_hash": "5fadc86815b6af1996565ac73b3c3254fc949330a6c8690d874bf85463f261e9",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T00:27:47.327Z"
+    },
+    "learn-github-alexpasmantier-television": {
+      "learning_id": "learn-github-alexpasmantier-television",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "alexpasmantier/television",
+      "repository": "alexpasmantier/television",
+      "slug": "alexpasmantier-television",
+      "platform": "github",
+      "source_url": "https://github.com/alexpasmantier/television",
+      "source_version": "d91ab5b6",
+      "content_hash": "ae542bd20038045431932817c156ad656a93dce1d7cc215a6ce08eab5d1e8f6d",
+      "dossier_path": "07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8673,
+          "title": "pin bash for dirs channel preview and cd action",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T00:27:49.727Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8673": {
+      "learning_id": "rule-8673",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8673,
+      "title": "pin bash for dirs channel preview and cd action",
+      "source_url": "https://github.com/alexpasmantier/television",
+      "source_version": "d91ab5b6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T00:27:49.727Z"
+    },
+    "candidate_directive-pin-bash-for-dirs-channel-preview-and-cd-action": {
+      "item_id": "candidate_directive-pin-bash-for-dirs-channel-preview-and-cd-action",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YBAU-pin-bash-for-dirs-channel-preview-and-cd-action.md",
+      "title": "pin bash for dirs channel preview and cd action",
+      "repository": "alexpasmantier/television",
+      "source_version": "d91ab5b6",
+      "content_hash": "4b4bf636dd48cc9e1c2699403381689791e2743434cff269e8553b38b0d8303b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T00:27:50.075Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alexpasmantier-television-technical-construction-intelligence-alexpasmantier-tel.md",
+      "title": "Technical Construction Intelligence: alexpasmantier/television Core Invariants",
+      "repository": "alexpasmantier/television",
+      "source_version": "d91ab5b6",
+      "content_hash": "8b8d7bc6220387236d8540e80b22ec0314a047e49d8ddad398be5e2584fdd71f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T00:27:50.223Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-alexpasmantier-television": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-alexpasmantier-television",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/alexpasmantier-television-verification-protocol-empirical-defect-shield-for-alex.md",
+      "title": "Verification Protocol: Empirical Defect Shield for alexpasmantier/television",
+      "repository": "alexpasmantier/television",
+      "source_version": "d91ab5b6",
+      "content_hash": "cfe2f72f75aa7fa9e829940ce6ae6c51e3da9a23aa45918a9f54ff861d0c1d33",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T00:27:50.343Z"
+    },
+    "rule-8674": {
+      "learning_id": "rule-8674",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8674,
+      "title": "Update CONTRIBUTING.md",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "4e9a2e59",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T00:28:02.048Z"
+    },
+    "candidate_directive-update-contributing-md": {
+      "item_id": "candidate_directive-update-contributing-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZBJC-update-contributing-md.md",
+      "title": "Update CONTRIBUTING.md",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9ccf49606e4881e1c0008e0e1de805980563401954d859b5e2fe3e2f27ba7d83",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T00:28:37.046Z"
+    },
+    "candidate_directive-cable-pin-bash-for-dirs-channel-preview-and-cd-action": {
+      "item_id": "candidate_directive-cable-pin-bash-for-dirs-channel-preview-and-cd-action",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YNCI-cable-pin-bash-for-dirs-channel-preview-and-cd-action.md",
+      "title": "cable): pin bash for dirs channel preview and cd action",
+      "repository": "alexpasmantier-television-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ab754cdc0148af19a8e6f00b81587d46ad9e9e733ebe4f92331db3691b1aa6bd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T00:28:05.687Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-learnings-core-inv": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alexpasmantier-television-learnings-technical-construction-intelligence-alexpasm.md",
+      "title": "Technical Construction Intelligence: alexpasmantier-television-learnings Core Invariants",
+      "repository": "alexpasmantier-television-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8a31b7ab4df59eaf419b1c430a32358f72a98ad138ad30f5583bdfb167407e1f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T00:28:05.839Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-alexpasmantier-television-lear": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-alexpasmantier-television-lear",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/alexpasmantier-television-learnings-verification-protocol-empirical-defect-shiel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for alexpasmantier-television-learnings",
+      "repository": "alexpasmantier-television-learnings",
+      "source_version": "HEAD",
+      "content_hash": "458445aa67672f017d07c01b8332c63857245617cf0bfe7316e74659486977d7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T00:28:05.961Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liconstudio-minimax-h3-vbvr-learnings-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liconstudio-minimax-h3-vbvr-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liconstudio-minimax-h3-vbvr-learnings-research-knowledge-intelligence-hf-lico.md",
+      "title": "Research & Knowledge Intelligence: hf-liconstudio-minimax-h3-vbvr-learnings Core Invariants",
+      "repository": "hf-liconstudio-minimax-h3-vbvr-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5bed12a41f19ba5ab353ff4258a517aeb73ba6d18f0a22b50422f31cddd655ed",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T00:28:36.448Z"
+    },
+    "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-learnings-architecture-intelligence-rqlite-rqlite-learnings-core-i.md",
+      "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "65e8e3931810940a4d77b266737f19e043f6a7d860925f528fc8043d5cb20d8e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T00:28:37.165Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rqlite-rqlite-learnings-verification-protocol-empirical-defect-shield-for-rqlite.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rqlite-rqlite-learnings",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6b3ae02ca84c8acb88bfa3abd2f1b887adf10b3fa93409cbec5ce7f30942a161",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T00:28:37.302Z"
     }
   },
   "ai-builder-brain": {

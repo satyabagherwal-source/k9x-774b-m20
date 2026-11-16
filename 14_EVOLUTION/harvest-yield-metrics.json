@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:17:43.885Z",
-  "total_cycles_completed": 9789,
-  "total_learnings_persisted": 9789,
-  "total_rules_promoted": 9401,
+  "last_updated": "2026-11-16T00:28:02.255Z",
+  "total_cycles_completed": 9792,
+  "total_learnings_persisted": 9792,
+  "total_rules_promoted": 9403,
   "history": [
-    {
-      "timestamp": "2026-11-14T20:32:38.233Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T20:32:39.160Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T20:35:49.213Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T20:52:01.017Z",
       "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-16T00:17:43.885Z",
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:27:47.155Z",
+      "repository": "LiconStudio/Minimax-H3-VBVR",
+      "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:27:49.892Z",
+      "repository": "alexpasmantier/television",
+      "learningId": "learn-github-alexpasmantier-television",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:28:02.255Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

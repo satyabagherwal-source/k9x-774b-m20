@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T00:17:48.165Z",
+  "updated_at": "2026-11-16T00:28:36.834Z",
   "stats": {
-    "total_discovered": 4007,
-    "approved_pending_harvest": 3765,
+    "total_discovered": 4017,
+    "approved_pending_harvest": 3773,
     "harvested_count": 0,
-    "rejected_count": 242,
+    "rejected_count": 244,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3760,
+      "COMMUNITY_AND_EXPERT": 3770,
       "OFFICIAL_DOCUMENTATION": 132,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
@@ -86481,6 +86481,212 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
         "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-E44D21C22F52": {
+      "id": "SRC-E44D21C22F52",
+      "url": "https://github.com/alexpasmantier/television",
+      "title": "https://github.com/alexpasmantier/television",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:28:05.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
+        "fileName": "alexpasmantier-television-learnings.md"
+      }
+    },
+    "SRC-CBBBB00CE842": {
+      "id": "SRC-CBBBB00CE842",
+      "url": "https://raw.githubusercontent.com/alexpasmantier/television/refs/heads/main/.config/config.toml",
+      "title": "https://raw.githubusercontent.com/alexpasmantier/television/refs/heads/main/.config/config.toml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:28:05.489Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
+        "fileName": "alexpasmantier-television-learnings.md"
+      }
+    },
+    "SRC-0A3EF47953BB": {
+      "id": "SRC-0A3EF47953BB",
+      "url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+      "title": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:28:36.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
+        "fileName": "hf-liconstudio-minimax-h3-vbvr-learnings.md"
+      }
+    },
+    "SRC-4CDC9FC82941": {
+      "id": "SRC-4CDC9FC82941",
+      "url": "https://github.com/rqlite/rqlite",
+      "title": "https://github.com/rqlite/rqlite",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:28:36.651Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-46C8D4839D70": {
+      "id": "SRC-46C8D4839D70",
+      "url": "http://%s%s?queue",
+      "title": "http://%s%s?queue",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T00:28:36.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-B54A72AD142D": {
+      "id": "SRC-B54A72AD142D",
+      "url": "http://%s%s?queue&wait",
+      "title": "http://%s%s?queue&wait",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T00:28:36.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-AF66E886536F": {
+      "id": "SRC-AF66E886536F",
+      "url": "https://www.sqlite.org/fileformat.html",
+      "title": "https://www.sqlite.org/fileformat.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:28:36.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-7B2662A75E6B": {
+      "id": "SRC-7B2662A75E6B",
+      "url": "https://www.sqlite.org/fileformat2.html",
+      "title": "https://www.sqlite.org/fileformat2.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:28:36.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-295799D4CBC3": {
+      "id": "SRC-295799D4CBC3",
+      "url": "https://github.com/dotnwat/torx/issues/18",
+      "title": "https://github.com/dotnwat/torx/issues/18",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:28:36.806Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-06174F4C977B": {
+      "id": "SRC-06174F4C977B",
+      "url": "https://rqlite.io/docs/clustering/general-guidelines",
+      "title": "https://rqlite.io/docs/clustering/general-guidelines",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:28:36.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
       }
     }
   }

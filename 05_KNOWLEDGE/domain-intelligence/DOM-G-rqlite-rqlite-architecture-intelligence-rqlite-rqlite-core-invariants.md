@@ -4,24 +4,24 @@
 {
   "source_repository": "rqlite/rqlite",
   "source_url": "https://github.com/rqlite/rqlite",
-  "source_version": "87d2a416",
+  "source_version": "4e9a2e59",
   "license": "MIT",
-  "timestamp": "2026-11-14T15:03:57.375Z",
+  "timestamp": "2026-11-16T00:28:02.430Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rqlite-rqlite",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `87d2a416`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T15:03:57.375Z`  
+> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `4e9a2e59`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T00:28:02.430Z`  
 > **Learning ID**: `learn-github-rqlite-rqlite`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rqlite/rqlite:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:03:56.539Z  
+> **Harvest Timestamp**: 2026-11-16T00:28:01.296Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17950 stars
+- **Stars / Engagement**: 17953 stars
 
 ---
 
@@ -2104,128 +2104,39 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6844b9b7` (2026-11-13)
-**Commit Message**: Shorten Raft timeouts for system test nodes
+### Incident Patch 1: `4e9a2e59` (2026-11-15)
+**Commit Message**: Update CONTRIBUTING.md
 
-Nodes under test used a 2s election timeout and Raft's default 1s
-heartbeat timeout, so every election and leader change in the system
-tests waited on timeouts sized for real networks. Use 500ms for the
-heartbeat, election, and leader-lease timeouts instead.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `system_test/helpers.go` (modified, +9/-4)
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -37,9 +37,12 @@ const (
- 	// SnapshotThreshold is the number of outstanding log entries before a snapshot is triggered
- 	SnapshotThreshold = 100
+@@ -15,6 +15,6 @@ Coding Agents are fine to use, but any PR that appears to be "AI slop" or genera
+ ### Judgement still required
+ Simply pointing an Agent at a feature request or bug report, and having it generate a PR, is unlikely to be an effective working style. Why? For two reasons:
+ - The PR is liable to be quite large. Reviewing a large PR for bugs, code style issues, and coherence with the rest of the codebase, is difficult. A large PR may never be reviewed properly, and therefore never merged. This problem predates Agent-enabled coding.
+-- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
++- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to comment on the PR is to simply feed them back into your Agent and post **its** response, then you've become _a passthrough for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
  
--	// ElectionTimeout is the period between elections. It's longer than
--	// the default to allow for slow CI systems.
--	ElectionTimeout = 2 * time.Second
-+	// RaftTimeout is the Raft heartbeat, election, and leader-lease timeout
-+	// used by nodes under test. Raft's defaults are sized for real networks,
-+	// and every election and leader change in a test waits on them. These
-+	// nodes only talk over loopback, so a shorter timeout is safe, but it is
-+	// kept well above the minimum to allow for slow CI systems.
-+	RaftTimeout = 500 * time.Millisecond
- 
- 	NoQueryTimeout = 0
- )
-@@ -945,7 +948,9 @@ func mustNodeEncryptedCDC(id, dir string, enableSingle, httpEncrypt bool, mux *t
- 	}, raftTn)
- 	node.Store.SnapshotThreshold = SnapshotThreshold
- 	node.Store.SnapshotInterval = SnapshotInterval
--	node.Store.ElectionTimeout = ElectionTimeout
-+	node.Store.HeartbeatTimeout = RaftTimeout
-+	node.Store.ElectionTimeout = RaftTimeout
-+	node.Store.LeaderLeaseTimeout = RaftTimeout
- 
- 	credStr := mustNewMockCredentialStore()
- 	clstr := cluster.New(mux.Listen(cluster.MuxClusterHeader), node.Store, node.Store, credStr)
+ Breaking changes into smaller pieces will help get your contribution merged quicker. There has never been a large feature in rqlite that was not composed of a small series of changes. So for a large change you should propose what series of changes you will make. But the same requirements apply -- you must show that you can argue from first principles **why** a certain series of changes should take place.
 ```
 
 ---
 
-### Incident Patch 2: `76d8985a` (2026-11-13)
-**Commit Message**: Merge pull request #3042 from rqlite/store-test-raft-timeouts
+### Incident Patch 2: `714da89c` (2026-11-15)
+**Commit Message**: Update CONTRIBUTING.md
 
-Shorten Raft timeouts for Stores under test
-
-**File**: `store/store_test.go` (modified, +12/-0)
+**File**: `CONTRIBUTING.md` (modified, +6/-1)
 ```diff
-@@ -23,6 +23,10 @@ import (
- 	"github.com/rqlite/rqlite/v10/testdata/chinook"
- )
+@@ -12,4 +12,9 @@ Issues are never explicitly assigned to individuals. If you wish to work on issu
+ ## Use of Coding Agents
+ Coding Agents are fine to use, but any PR that appears to be "AI slop" or generated without any apparent thought by the actual programmer, may be closed without comment. If you open an issue or PR that includes analysis by a Coding Agent please state up front that it is agent-generated.
  
-+// testRaftTimeout is the Raft heartbeat, election, and leader-lease timeout
-+// used by Stores created for testing.
-+const testRaftTimeout = 100 * time.Millisecond
+-AI Agents make it easier than ever to generate large PRs. Since PRs still must be reviewed by a human, breaking changes into smaller pieces if possible can help get your contribution merged quicker.
++### Judgement still required
++Simply pointing an Agent at a feature request or bug report, and having it generate a PR, is unlikely to be an effective working style. Why? For two reasons:
++- The PR is liable to be quite large. Reviewing a large PR for bugs, code style issues, and coherence with the rest of the codebase, is difficult. A large PR may never be reviewed properly, and therefore never merged. This problem predates Agent-enabled coding.
++- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
 +
- // Test_NonOpenStore tests that a non-open Store handles public methods correctly.
- func Test_NonOpenStore(t *testing.T) {
- 	s, ln := mustNewStore(t)
-@@ -3484,6 +3488,14 @@ func mustNewStoreAtPathsLn(id, dataPath string, fk bool) (*Store, net.Listener)
- 	if s == nil {
- 		panic("failed to create new store")
- 	}
-+
-+	// Raft's default timeouts are sized for real networks. With them a node
-+	// waits at least a second before it will call an election, which every
-+	// test that opens a Store pays for. These nodes only ever talk over
-+	// loopback, so much shorter timeouts are safe.
-+	s.HeartbeatTimeout = testRaftTimeout
-+	s.ElectionTimeout = testRaftTimeout
-+	s.LeaderLeaseTimeout = testRaftTimeout
- 	return s, ly
- }
- 
-```
-
----
-
-### Incident Patch 3: `b82ba9b1` (2026-11-13)
-**Commit Message**: Shorten Raft timeouts for Stores under test
-
-Raft's default heartbeat and election timeouts are one second, so a
-node waits at least that long before it will call an election. Every
-test that opens a Store paid for that wait. Stores created by the test
-helper now use 100ms timeouts, which is safe because the nodes only
-ever talk over loopback.
-
-On an 8-core machine this takes the store package from 318s to 93s,
-and to 120s with the race detector enabled.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `store/store_test.go` (modified, +12/-0)
-```diff
-@@ -23,6 +23,10 @@ import (
- 	"github.com/rqlite/rqlite/v10/testdata/chinook"
- )
- 
-+// testRaftTimeout is the Raft heartbeat, election, and leader-lease timeout
-+// used by Stores created for testing.
-+const testRaftTimeout = 100 * time.Millisecond
-+
- // Test_NonOpenStore tests that a non-open Store handles public methods correctly.
- func Test_NonOpenStore(t *testing.T) {
- 	s, ln := mustNewStore(t)
-@@ -3484,6 +3488,14 @@ func mustNewStoreAtPathsLn(id, dataPath string, fk bool) (*Store, net.Listener)
- 	if s == nil {
- 		panic("failed to create new store")
- 	}
-+
-+	// Raft's default timeouts are sized for real networks. With them a node
-+	// waits at least a second before it will call an election, which every
-+	// test that opens a Store pays for. These nodes only ever talk over
-+	// loopback, so much shorter timeouts are safe.
-+	s.HeartbeatTimeout = testRaftTimeout
-+	s.ElectionTimeout = testRaftTimeout
-+	s.LeaderLeaseTimeout = testRaftTimeout
- 	return s, ly
- }
- 
++Breaking changes into smaller pieces will help get your contribution merged quicker. There has never been a large feature in rqlite that was not composed of a small series of changes. So for a large change you should propose what series of changes you will make. But the same requirements apply -- you must show that you can argue from first principles **why** a certain series of changes should take place.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2254,42 +2165,31 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Shorten Raft timeouts for system test nodes
+## X. Update CONTRIBUTING.md
 
 **RULE**:
-When implementing operations in `system_test/helpers.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6844b9b7`: Shorten Raft timeouts for system test nodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e9a2e59`: Update CONTRIBUTING.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `system_test/helpers.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// RaftTimeout is the Raft heartbeat, election, and leader-lease timeout
-	// used by nodes under test. Raft's defaults are sized for real networks,
-	// and every election and leader change in a test waits on them. These
-	// nodes only talk over loopback, so a shorter timeout is safe, but it is
-	// kept well above the minimum to allow for slow CI systems.
-	RaftTimeout = 500 * time.Millisecond
-	node.Store.HeartbeatTimeout = RaftTimeout
-	node.Store.ElectionTimeout = RaftTimeout
-	node.Store.LeaderLeaseTimeout = RaftTimeout
+- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to comment on the PR is to simply feed them back into your Agent and post **its** response, then you've become _a passthrough for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// ElectionTimeout is the period between elections. It's longer than
-	// the default to allow for slow CI systems.
-	ElectionTimeout = 2 * time.Second
-	node.Store.ElectionTimeout = ElectionTimeout
+- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6844b9b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e9a2e59` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

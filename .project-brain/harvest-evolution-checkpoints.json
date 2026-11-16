@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:17:48.576Z",
+  "last_updated": "2026-11-16T00:28:37.434Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T23:49:59.409Z",
@@ -128,9 +128,9 @@
       "staged_for_review": 1
     },
     "hf-liconstudio-minimax-h3-vbvr-learnings.md": {
-      "processed_at": "2026-11-11T10:09:35.585Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-16T00:28:36.242Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "rook-rook-learnings.md": {
       "processed_at": "2026-11-15T03:48:47.585Z",
@@ -3101,9 +3101,19 @@
       "processed_at": "2026-11-16T00:17:47.486Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "alexpasmantier-television-learnings.md": {
+      "processed_at": "2026-11-16T00:28:05.435Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rqlite-rqlite-learnings.md": {
+      "processed_at": "2026-11-16T00:28:36.624Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1179,
-  "total_canonical_promoted": 280,
-  "total_staged_for_review": 898
+  "total_dossiers_evaluated": 1182,
+  "total_canonical_promoted": 281,
+  "total_staged_for_review": 900
 }

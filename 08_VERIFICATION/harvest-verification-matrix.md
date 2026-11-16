@@ -10191,3 +10191,7 @@
 | `CYCLE-20261116-L1MX` | `2026-11-16T00:17:31.017Z` | `MetrolistGroup/Metrolist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8670` | Yes (`871933ee...`) |
 | `CYCLE-20261116-L5U7` | `2026-11-16T00:17:36.463Z` | `EhPanda-Team/EhPanda` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8671` | Yes (`cf9a0dfc...`) |
 | `CYCLE-20261116-LBK5` | `2026-11-16T00:17:43.877Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8672` | Yes (`43dce824...`) |
+| `CYCLE-20261116-Y91M` | `2026-11-16T00:27:47.146Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md` | Yes (`f8306002...`) |
+| `CYCLE-20261116-YB5N` | `2026-11-16T00:27:49.883Z` | `alexpasmantier/television` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8673` | Yes (`ae542bd2...`) |
+| `CYCLE-20261116-YKP2` | `2026-11-16T00:28:02.246Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8674` | Yes (`8ccc4d5c...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T00:28:36.241Z` | `hf-liconstudio-minimax-h3-vbvr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B67F40D8` [Domain D] | Yes (`e0855e75...`) |

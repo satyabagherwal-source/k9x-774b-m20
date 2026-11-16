@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "87d2a416",
+    "sourceVersion": "4e9a2e59",
     "license": "MIT",
-    "contentHash": "4e963afd54f3c3e6e71d60513b113f87d8eb165f2a41193dd2125f77f8971239",
-    "lastHarvestedAt": "2026-11-14T15:03:57.237Z",
+    "contentHash": "8ccc4d5cd3a5b5715d19037d9ae015d9014f88999a009946f803219ea83d541a",
+    "lastHarvestedAt": "2026-11-16T00:28:02.250Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -6583,10 +6583,10 @@
     "repository": "alexpasmantier/television",
     "platform": "github",
     "sourceUrl": "https://github.com/alexpasmantier/television",
-    "sourceVersion": "221ba5a5",
+    "sourceVersion": "d91ab5b6",
     "license": "MIT",
-    "contentHash": "323b7162d9ff8564e0256bb7bb6bd7198139c17ed86ee335b26ef5d2041adf02",
-    "lastHarvestedAt": "2026-11-04T17:59:23.883Z",
+    "contentHash": "ae542bd20038045431932817c156ad656a93dce1d7cc215a6ce08eab5d1e8f6d",
+    "lastHarvestedAt": "2026-11-16T00:27:49.887Z",
     "learningId": "learn-github-alexpasmantier-television"
   },
   "insertkoinio-koin": {
@@ -11525,8 +11525,8 @@
     "sourceUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
     "sourceVersion": "hf-liconstudio-minimax-h3-vbvr",
     "license": "Open-Source",
-    "contentHash": "b19d7edfd3df9a25d71c30d4b1f10c87c7e721e6c425c9ae3324622ef9bc3342",
-    "lastHarvestedAt": "2026-11-11T10:09:30.294Z",
+    "contentHash": "f8306002dc3903c896c6dfacd36d6d0bfc5608e66795207f52eb31680ce97be8",
+    "lastHarvestedAt": "2026-11-16T00:27:47.150Z",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr"
   },
   "yuezhiai-jonex": {

@@ -10224,3 +10224,7 @@ Every entry in this ledger must capture:
 | `learn-github-metrolistgroup-metrolist` | `https://github.com/MetrolistGroup/Metrolist` | `7172398f` | Multi-dimensional audit evidence | 2026-11-16T00:17:31.021Z |
 | `learn-github-ehpanda-team-ehpanda` | `https://github.com/EhPanda-Team/EhPanda` | `4d98daab` | Multi-dimensional audit evidence | 2026-11-16T00:17:36.466Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `78342a49` | Multi-dimensional audit evidence | 2026-11-16T00:17:43.880Z |
+| `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-16T00:27:47.150Z |
+| `learn-github-alexpasmantier-television` | `https://github.com/alexpasmantier/television` | `d91ab5b6` | Multi-dimensional audit evidence | 2026-11-16T00:27:49.887Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `4e9a2e59` | Multi-dimensional audit evidence | 2026-11-16T00:28:02.250Z |
+| `learn-dom-d-b67f40d8` | `project://hf-liconstudio-minimax-h3-vbvr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md` | 2026-11-16T00:28:36.241Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T00:17:43.888Z",
+  "last_updated": "2026-11-16T00:28:02.259Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "4e963afd54f3c3e6e71d60513b113f87d8eb165f2a41193dd2125f77f8971239",
-      "verified_at": "2026-11-14T15:03:57.244Z",
+      "content_hash": "8ccc4d5cd3a5b5715d19037d9ae015d9014f88999a009946f803219ea83d541a",
+      "verified_at": "2026-11-16T00:28:02.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:03:57.244Z"
+      "last_updated": "2026-11-16T00:28:02.258Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -9951,14 +9951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alexpasmantier-television",
-      "content_hash": "323b7162d9ff8564e0256bb7bb6bd7198139c17ed86ee335b26ef5d2041adf02",
-      "verified_at": "2026-11-04T17:59:23.890Z",
+      "content_hash": "ae542bd20038045431932817c156ad656a93dce1d7cc215a6ce08eab5d1e8f6d",
+      "verified_at": "2026-11-16T00:27:49.895Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:59:23.890Z"
+      "last_updated": "2026-11-16T00:27:49.895Z"
     },
     "InsertKoinIO/koin": {
       "repository": "InsertKoinIO/koin",
@@ -17331,14 +17331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "content_hash": "b19d7edfd3df9a25d71c30d4b1f10c87c7e721e6c425c9ae3324622ef9bc3342",
-      "verified_at": "2026-11-11T10:09:30.316Z",
+      "content_hash": "f8306002dc3903c896c6dfacd36d6d0bfc5608e66795207f52eb31680ce97be8",
+      "verified_at": "2026-11-16T00:27:47.159Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:09:30.316Z"
+      "last_updated": "2026-11-16T00:27:47.159Z"
     },
     "yuezhiai/jonex": {
       "repository": "yuezhiai/jonex",
