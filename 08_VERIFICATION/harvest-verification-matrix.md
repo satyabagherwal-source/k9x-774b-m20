@@ -10199,3 +10199,5 @@
 | `CYCLE-20261116-9XP2` | `2026-11-16T00:36:52.310Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8675` | Yes (`3b872964...`) |
 | `CYCLE-20261116-9ZP9` | `2026-11-16T00:36:54.909Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8676` | Yes (`85266eac...`) |
 | `CYCLE-20261116-KPRJ` | `2026-11-16T00:45:15.247Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8677` | Yes (`8cd413f8...`) |
+| `CYCLE-20261116-ZFVT` | `2026-11-16T00:56:42.281Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8678` | Yes (`ef3d6562...`) |
+| `CYCLE-20261116-ZN8B` | `2026-11-16T00:56:51.803Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8679` | Yes (`9d8fa97c...`) |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T00:45:22.033Z",
-  "total_records": 1177,
+  "last_updated": "2026-11-16T00:56:56.519Z",
+  "total_records": 1180,
   "domains": {
     "A": {
       "total": 7,
@@ -645,7 +645,7 @@
       ]
     },
     "G": {
-      "total": 206,
+      "total": 209,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -852,7 +852,10 @@
         "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants",
-        "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-clastix-kamaji-core-invariants",
+        "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6947,8 +6950,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "91832d755c3ed668de8443f8007383dfa004d81be720d5652feaa5dfbd7befcd",
-      "created_at": "2026-11-15T23:50:00.436Z"
+      "content_hash": "d18cda82fc880c2464cbac7ba6f8c7fd62540693f2d61641f2f84b7bef079d70",
+      "created_at": "2026-11-16T00:56:56.519Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -15435,8 +15438,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "8cc70c464222ea8141dd178881c607300aea58dc7fc6e9db7a6e51297accb3a1",
-      "created_at": "2026-11-14T15:49:43.862Z"
+      "content_hash": "01fa92c2892e290daacc9980268ed34bebe32e58d65f6e2de23fa7906194c0bd",
+      "created_at": "2026-11-16T00:56:42.584Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -22092,6 +22095,33 @@
       "repository": "rainbow-me-rainbow-learnings",
       "content_hash": "6e316608557c208a927945aa24efc7cae6af7712de8fb465c9566e0948343168",
       "created_at": "2026-11-16T00:45:20.894Z"
+    },
+    "domain_intelligence-architecture-intelligence-clastix-kamaji-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-clastix-kamaji-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: clastix/kamaji Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-architecture-intelligence-clastix-kamaji-core-invariants.md",
+      "repository": "clastix/kamaji",
+      "content_hash": "3164a80b593ee3a311ba4f6b4ddfb90fdef086a2d837db1b67ab07b6ff9fb89e",
+      "created_at": "2026-11-16T00:56:52.102Z"
+    },
+    "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: clastix-kamaji-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-learnings-architecture-intelligence-clastix-kamaji-learnings-core.md",
+      "repository": "clastix-kamaji-learnings",
+      "content_hash": "6f793c19e8f57d312907abbdec7f17bb662dde9cfe3e6da0045b30821a174898",
+      "created_at": "2026-11-16T00:56:55.361Z"
+    },
+    "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
+      "repository": "trinodb-trino-learnings",
+      "content_hash": "7781ab38622b6d4ae432e12614f2b6f1fd5a77af8e4b724375620e25f1625d3f",
+      "created_at": "2026-11-16T00:56:55.956Z"
     }
   }
 }

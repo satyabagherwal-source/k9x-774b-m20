@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `3e489c5f`  
+> **Source Version**: `60204b0c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T13:02:34.377Z  
+> **Timestamp**: 2026-11-16T00:56:50.880Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T13:02:34.368Z  
+> **Harvest Timestamp**: 2026-11-16T00:56:35.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2085 stars
+- **Stars / Engagement**: 2086 stars
 
 ---
 
@@ -744,350 +744,370 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d6e2f755` (2026-11-12)
-**Commit Message**: fix(metrics): list only certificate secrets (#1416)
+### Incident Patch 1: `60204b0c` (2026-11-15)
+**Commit Message**: feat(datastore): exclusive etcd DataStore (#1417)
 
-refreshCertificatesMetrics runs after every CertificateLifecycle
-reconciliation and once at start-up. It listed every Secret of the
-management cluster through the cached client, which deep-copies each
-object, and then discarded in the loop the ones lacking the Kamaji
-certificate labels.
+* feat(api): add exclusive field to DataStore
 
-On management clusters storing many unrelated Secrets (Helm release
-storage above all) each refresh copied all of them: with ~450 Secrets
-(~10 MB) and a single TenantControlPlane, the nine reconciliations at
-start-up allocated ~100 MB of short-lived garbage in a few seconds,
-which contributed to the manager being OOMKilled under the chart's
-default 100Mi limit.
+An exclusive DataStore is dedicated to a single Tenant Control Plane.
+Supported only with the etcd driver, and immutable.
 
-List with client.HasLabels on the control-plane and controller labels,
-which the loop requires: the cache applies the label selector before
-deep-copying, so unrelated Secrets are never copied. The gauges are
-unchanged.
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
 
-Signed-off-by: Alberto Estévez <[REDACTED_EMAIL]>
+* feat(datastore): grant etcd root when exclusive
 
-**File**: `controllers/certificate_lifecycle_controller.go` (modified, +2/-1)
+etcd rejects Compact unless the user has the root role: granting
+only the compact_rev_key key is not enough.
+
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+
+* feat(datastore): one tenant per exclusive store
+
+Reuse the NATS single-tenant check, so a second Tenant Control Plane
+referencing an exclusive DataStore fails to reconcile.
+
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+
+* feat(controlplane): let exclusive etcd compact
+
+On an exclusive DataStore, --etcd-compaction-interval is a safe default
+(5m) instead of a managed 0, so the API server compacts etcd and
+ListFromCacheSnapshot can expire continue tokens. A stale 0 from a
+previous shared DataStore is replaced.
+
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+
+* docs: document exclusive etcd DataStores
+
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+
+* refactor(datastore): use a case for exclusive DataStores
+
+
+**File**: `api/v1alpha1/datastore_types.go` (modified, +9/-0)
 ```diff
-@@ -247,8 +247,9 @@ func (s *CertificateLifecycle) refreshCertificatesMetrics(ctx context.Context) e
- 		countsByTenantControlPlane[namespacedName] = metrics.NewCertificateStatusCounts()
- 	}
- 
-+	// Filter in the cache to avoid deep-copying every Secret of the cluster.
- 	var secretList corev1.SecretList
--	if err := s.client.List(ctx, &secretList); err != nil {
-+	if err := s.client.List(ctx, &secretList, client.HasLabels{constants.ControlPlaneLabelKey, constants.ControllerLabelResource}); err != nil {
- 		return err
- 	}
- 
-```
-
-**File**: `controllers/certificate_lifecycle_controller_metrics_test.go` (modified, +106/-0)
-```diff
-@@ -4,20 +4,24 @@
- package controllers
- 
- import (
-+	"context"
- 	"crypto/rand"
- 	"crypto/rsa"
- 	"crypto/x509"
- 	"crypto/x509/pkix"
- 	"encoding/pem"
- 	"math/big"
-+	"slices"
- 	"testing"
- 	"time"
- 
- 	"github.com/prometheus/client_golang/prometheus"
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
- 
- 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
- 	"github.com/clastix/kamaji/internal/constants"
-@@ -110,6 +114,108 @@ func TestCertificateRefreshMetrics(t *testing.T) {
- 	}
+@@ -36,6 +36,8 @@ type Endpoints []string
+ // +kubebuilder:validation:XValidation:rule="(self.driver != \"etcd\" && has(self.basicAuth)) ? ((has(self.basicAuth.password.secretReference) || has(self.basicAuth.password.content))) : true", message="When driver is not etcd and basicAuth exists, password must have secretReference or content"
+ // +kubebuilder:validation:XValidation:rule="(self.driver != \"etcd\") ? (has(self.tlsConfig) || has(self.basicAuth)) : true", message="When driver is not etcd, either tlsConfig or basicAuth must be provided"
+ // +kubebuilder:validation:XValidation:rule="oldSelf == null || self.driver == oldSelf.driver", message="driver is immutable and cannot be changed after creation"
++// +kubebuilder:validation:XValidation:rule="!has(self.exclusive) || !self.exclusive || self.driver == \"etcd\"", message="exclusive is supported only with the etcd driver"
++// +kubebuilder:validation:XValidation:rule="oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)", message="exclusive is immutable and cannot be changed after creation"
+ type DataStoreSpec struct {
+ 	// The driver to use to connect to the shared datastore.
+ 	Driver Driver `json:"driver"`
+@@ -51,6 +53,13 @@ type DataStoreSpec struct {
+ 	// Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
+ 	// This value is optional.
+ 	Migration *DataStoreMigration `json:"migration,omitempty"`
++	// Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
++	// The tenant's etcd user is granted the root role, and Kamaji no longer forces
++	// --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
++	// (5m by default, overridable with the API server extra args).
++	// A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
++	// This value is immutable.
++	Exclusive bool `json:"exclusive,omitempty"`
  }
  
-+func TestCertificateRefreshMetricsListsOnlyLabelledSecrets(t *testing.T) {
-+	t.Parallel()
-+
-+	scheme := runtime.NewScheme()
-+	if err := kamajiv1alpha1.AddToScheme(scheme); err != nil {
-+		t.Fatalf("failed adding kamaji scheme: %v", err)
-+	}
-+	if err := corev1.AddToScheme(scheme); err != nil {
-+		t.Fatalf("failed adding corev1 scheme: %v", err)
-+	}
-+
-+	validCertPEM, err := testCertificatePEM(time.Now().Add(48 * time.Hour))
-+	if err != nil {
-+		t.Fatalf("failed generating valid cert: %v", err)
-+	}
-+
-+	var listedSecrets []string
-+
-+	reader := fake.NewClientBuilder().WithScheme(scheme).WithObjects(
-+		&kamajiv1alpha1.TenantControlPlane{ObjectMeta: metav1.ObjectMeta{Name: "tcp-a", Namespace: "default"}},
-+		&corev1.Secret{
-+			ObjectMeta: metav1.ObjectMeta{
-+				Name:      "cert-valid",
-+				Namespace: "default",
-+				Labels: map[string]string{
-+					constants.ControlPlaneLabelKey:    "tcp-a",
-+					constants.ControllerLabelResource: utilities.CertificateX509Label,
-+				},
-+			},
-+			Data: map[string][]byte{"tls.crt": validCertPEM},
-+		},
-+		// Both labels but an unsupported strategy: listed, then skipped by the loop.
-+		&corev1.Secret{
-+			ObjectMeta: metav1.ObjectMeta{
-+				Name:      "unsupported-strategy",
-+				Namespace: "default",
-+				Labels: map[string]string{
-+					constants.ControlPlaneLabelKey:    "tcp-a",
-+					constants.ControllerLabelResource: "unsupported",
-+				},
-+			},
-+		},
-+		// Secrets missing at least one of the labels, e.g. Helm release storage: not listed.
-+		&corev1.Secret{
-+			ObjectMeta: metav1.ObjectMeta{Name: "sh.helm.release.v1.app.v1", Namespace: "default"},
-+			Type:       "helm.sh/release.v1",
-+			Data:       map[string][]byte{"release": []byte("payload")},
-+		},
-+		&corev1.Secret{
-+			ObjectMeta: metav1.ObjectMeta{
-+				Name:      "only-tcp-label",
-+				Namespace: "default",
-+				Labels:    map[string]string{constants.ControlPlaneLabelKey: "tcp-a"},
-+			},
-+		},
-+		&corev1.Secret{
-+			ObjectMeta: metav1.ObjectMeta{
-+				Name:      "only-controller-label",
-+				Namespace: "other",
-+				Labels:    map[string]string{constants.ControllerLabelResource: utilities.CertificateX509Label},
-+			},
-+		},
-+	).WithInterceptorFuncs(interceptor.Funcs{
-+		List: func(ctx context.Context, c client.WithWatch, list client.ObjectList, opts ...client.ListOption) error {
-+			if err := c.List(ctx, list, opts...); err != nil {
-+				return err
-+			}
-+
-+			if secrets, ok := list.(*corev1.SecretList); ok {
-+				for _, secret := range secrets.Items {
-+					listedSecrets = append(listedSecrets, secret.Namespace+"/"+secret.Name)
-+				}
-+			}
-+
-+			return nil
-+		},
-+	}).Build()
-+
-+	registry := prometheus.NewRegistry()
-+
-+	s := &CertificateLifecycle{
-+		Deadline: 24 * time.Hour,
-+		client:   reader,
-+		Metrics:  metrics.NewRecorder(registry),
-+	}
-+
-+	if err := s.refreshCertificatesMetrics(t.Context()); err != nil {
-+		t.Fatalf("refreshCertificatesMetrics returned error: %v", err)
-+	}
-+
-+	expectedSecrets := []string{"default/cert-valid", "default/unsupported-strategy"}
-+	slices.Sort(listedSecrets)
-+	if !slices.Equal(listedSecrets, expectedSecrets) {
-+		t.Fatalf("expected %v to be listed, got %v", expectedSecrets, listedSecrets)
-+	}
-+
-+	family := mustMetricFamilyFromGatherer(t, registry, "kamaji_certificates_current")
-+	if got := gaugeValueByLabels(t, family, map[string]string{"tcp_namespace": "default", "tcp_name": "tcp-a", "status": metrics.CertificateStatusValid, "strategy": metrics.CertificateStrategyX509}); got != 1 {
-+		t.Fatalf("expected valid/x509 certificates gauge to be 1, got %v", got)
-+	}
-+}
-+
- func testCertificatePEM(notAfter time.Time) ([]byte, error) {
- 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
- 	if err != nil {
+ // DataStoreMigration contains the settings of the Job migrating a Tenant Control Plane to this data store.
 ```
 
----
-
-### Incident Patch 2: `3e489c5f` (2026-11-12)
-**Commit Message**: fix(kine): apply the default image to existing TenantControlPlanes (#1398)
-
-* fix(kine): apply the default image to existing TenantControlPlanes
-
-Since #1254 the kine container and its chmod init container only get
---kine-image when they have no image yet. That is the case for new
-Deployments only: existing ones keep the image they were created with,
-so bumping --kine-image no longer reaches any TenantControlPlane that
-already exists.
-
-The image is now always set from the manager flag, unless the
-TenantControlPlane names its own image through an additional container
-(or additional init container) with the same name, which keeps the
-per-tenant override from #1254.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_0174qW9TSZR5ddTVXvrm1TBL
-
-* fix(kine): keep the kine image of Recreate TenantControlPlanes
-
-A TenantControlPlane with the Recreate strategy loses its control plane
-while a rollout replaces its pods, so a changed --kine-image must not
-roll it. Its kine and chmod containers keep their current image; new
-Deployments still get the default.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/
-
-**File**: `internal/builders/controlplane/deployment.go` (modified, +19/-6)
+**File**: `api/v1alpha1/datastore_types_test.go` (modified, +76/-0)
 ```diff
-@@ -968,6 +968,23 @@ func (d Deployment) removeKineInitContainers(podSpec *corev1.PodSpec) {
- 	}
- }
+@@ -109,3 +109,79 @@ var _ = Describe("DataStore endpoints validation", func() {
+ 		Expect(got.Spec.Migration).To(Equal(migration))
+ 	})
+ })
++
++var _ = Describe("DataStore exclusive validation", func() {
++	var (
++		ctx context.Context
++		ds  *DataStore
++	)
++
++	BeforeEach(func() {
++		ctx = context.Background()
++		ds = &DataStore{
++			ObjectMeta: metav1.ObjectMeta{GenerateName: "ds-exclusive-"},
++			Spec: DataStoreSpec{
++				Driver:    EtcdDriver,
++				Endpoints: Endpoints{"etcd-0:2379"},
++				TLSConfig: &TLSConfig{
++					CertificateAuthority: CertKeyPair{
++						Certificate: ContentRef{Content: []byte("ca")},
++						PrivateKey:  &ContentRef{Content: []byte("ca-key")},
++					},
++					ClientCertificate: &ClientCertificate{
++						Certificate: ContentRef{Content: []byte("cert")},
++						PrivateKey:  ContentRef{Content: []byte("key")},
++					},
++				},
++			},
++		}
++	})
++
++	AfterEach(func() {
++		if ds.GetName() != "" {
++			if err := k8sClient.Delete(ctx, ds); err != nil && !apierrors.IsNotFound(err) {
++				Expect(err).NotTo(HaveOccurred())
++			}
++		}
++	})
++
++	It("accepts an exclusive etcd DataStore", func() {
++		ds.Spec.Exclusive = true
++		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
++	})
++
++	It("denies an exclusive DataStore with a driver other than etcd", func() {
++		ds.Spec = DataStoreSpec{
++			Driver:    KinePostgreSQLDriver,
++			Endpoints: Endpoints{"postgresql:5432"},
++			BasicAuth: &BasicAuth{
++				Username: ContentRef{Content: []byte("user")},
++				Password: ContentRef{Content: []byte("pass")},
++			},
++			Exclusive: true,
++		}
++
++		err := k8sClient.Create(ctx, ds)
++		Expect(err).To(HaveOccurred())
++		Expect(err.Error()).To(ContainSubstring("exclusive is supported only with the etcd driver"))
++	})
++
++	It("denies making a shared DataStore exclusive", func() {
++		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
++
++		ds.Spec.Exclusive = true
++		err := k8sClient.Update(ctx, ds)
++		Expect(err).To(HaveOccurred())
++		Expect(err.Error()).To(ContainSubstring("exclusive is immutable"))
++	})
++
++	It("denies making an exclusive DataStore shared", func() {
++		ds.Spec.Exclusive = true
++		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
++
++		ds.Spec.Exclusive = false
++		err := k8sClient.Update(ctx, ds)
++		Expect(err).To(HaveOccurred())
++		Expect(err.Error()).To(ContainSubstring("exclusive is immutable"))
++	})
++})
+```
+
+**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_datastores_spec.yaml` (modified, +13/-0)
+```diff
+@@ -131,6 +131,15 @@ versions:
+                 x-kubernetes-validations:
+                   - message: an IPv6 endpoint address must be bracketed, e.g. [2001:db8::1]:2379
+                     rule: self.all(e, e.startsWith('[') || e.split(':').size() <= 2)
++              exclusive:
++                description: |-
++                  Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
++                  The tenant's etcd user is granted the root role, and Kamaji no longer forces
++                  --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
++                  (5m by default, overridable with the API server extra args).
++                  A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
++                  This value is immutable.
++                type: boolean
+               migration:
+                 description: |-
+                   Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
+@@ -1626,6 +1635,10 @@ versions:
+                 rule: '(self.driver != "etcd") ? (has(self.tlsConfig) || has(self.basicAuth)) : true'
+               - message: driver is immutable and cannot be changed after creation
+                 rule: oldSelf == null || self.driver == oldSelf.driver
++              - message: exclusive is supported only with the etcd driver
++                rule: '!has(self.exclusive) || !self.exclusive || self.driver == "etcd"'
++              - message: exclusive is immutable and cannot be changed after creation
++                rule: oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)
+           status:
+             description: DataStoreStatus defines the observed state of DataStore.
+             properties:
+```
+
+**File**: `charts/kamaji/crds/kamaji.clastix.io_datastores.yaml` (modified, +13/-0)
+```diff
+@@ -140,6 +140,15 @@ spec:
+                   x-kubernetes-validations:
+                     - message: an IPv6 endpoint address must be bracketed, e.g. [2001:db8::1]:2379
+                       rule: self.all(e, e.startsWith('[') || e.split(':').size() <= 2)
++                exclusive:
++                  description: |-
++                    Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
++                    The tenant's etcd user is granted the root role, and Kamaji no longer forces
++                    --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
++                    (5m by default, overridable with the API server extra args).
++                    A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
++                    This value is immutable.
++                  type: boolean
+                 migration:
+                   description: |-
+                     Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
+@@ -1635,6 +1644,10 @@ spec:
+                   rule: '(self.driver != "etcd") ? (has(self.tlsConfig) || has(self.basicAuth)) : true'
+                 - message: driver is immutable and cannot be changed after creation
+                   rule: oldSelf == null || self.driver == oldSelf.driver
++                - message: exclusive is supported only with the etcd driver
++                  rule: '!has(self.exclusive) || !self.exclusive || self.driver == "etcd"'
++                - message: exclusive is immutable and cannot be changed after creation
++                  rule: oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)
+             status:
+               description: DataStoreStatus defines the observed state of DataStore.
+               properties:
+```
+
+**File**: `docs/content/concepts/datastore.md` (modified, +27/-0)
+```diff
+@@ -27,6 +27,33 @@ By default, Kamaji can persist all Tenant Clusters’ data in a single datastore
  
-+// kineImage returns the image of the user-space container with the given name, if any, and the
-+// manager's default kine image otherwise: the image of an existing Deployment must not be kept,
-+// or a new default would never reach the TenantControlPlanes created before it.
-+// TenantControlPlanes using the Recreate strategy keep their current image, since a rollout
-+// takes their control plane down until the new pods are ready.
-+func (d Deployment) kineImage(tcp kamajiv1alpha1.TenantControlPlane, current string, additional []corev1.Container, name string) string {
-+	if tcp.Spec.ControlPlane.Deployment.Strategy.Type == appsv1.RecreateDeploymentStrategyType && current != "" {
-+		return current
-+	}
+ Kamaji’s roadmap includes a datastore scheduler, which will automatically assign new Tenant Clusters to the most appropriate datastore in the pool, further reducing operational overhead.
+ 
++## Exclusive etcd Datastores
 +
-+	if found, index := utilities.HasNamedContainer(additional, name); found && additional[index].Image != "" {
-+		return additional[index].Image
-+	}
++On a shared etcd datastore, compaction applies to every Tenant Cluster at once, so Kamaji runs the Tenant Control Plane API servers with `--etcd-compaction-interval=0` and leaves compaction to etcd itself.
++Since Kubernetes v1.34, the API server serves paginated lists from its cache (the `ListFromCacheSnapshot` feature gate), and it only learns about compaction when it compacts etcd itself: with compaction disabled, continue tokens never expire.
 +
-+	return d.KineContainerImage
-+}
++An etcd `DataStore` can be dedicated to a single Tenant Control Plane by setting `exclusive: true`:
 +
- func (d Deployment) buildKine(podSpec *corev1.PodSpec, tcp kamajiv1alpha1.TenantControlPlane) {
- 	if d.DataStore.Spec.Driver == kamajiv1alpha1.EtcdDriver {
- 		d.removeKineContainers(podSpec)
-@@ -991,9 +1008,7 @@ func (d Deployment) buildKine(podSpec *corev1.PodSpec, tcp kamajiv1alpha1.Tenant
++```yaml
++apiVersion: kamaji.clastix.io/v1alpha1
++kind: DataStore
++metadata:
++  name: etcd-dedicated
++spec:
++  driver: etcd
++  exclusive: true
++  # endpoints and tlsConfig as for any etcd DataStore
++```
++
++For an exclusive `DataStore`, Kamaji grants the Tenant Control Plane's etcd user the `root` role, required by etcd to compact, and doesn't force the compaction interval anymore:
++the API server compacts every 5 minutes, unless `--etcd-compaction-interval` is set in the API server extra arguments.
++
++When a `TenantControlPlane` refers to an exclusive `DataStore` already used by another instance, its reconciliation fails and is blocked.
++The `exclusive` field is immutable: to move a Tenant Control Plane to an exclusive datastore, use the live migration.
++
++!!! info "etcd auto-compaction"
++    etcd's own auto-compaction (`--auto-compaction-retention`) can stay enabled, but the API server doesn't learn about the revisions it compacts.
++
+ ## Live Migration
+ 
+ Operational needs change over time, and Kamaji makes it easy to adapt. You can live-migrate a Tenant Cluster’s data from one datastore to another, as long as they use the same backend driver, without manual backup and restore steps. This feature simplifies Day 2 operations and helps you optimize your infrastructure as your requirements evolve.
+```
+
+**File**: `docs/content/reference/api.md` (modified, +12/-0)
+```diff
+@@ -29799,6 +29799,18 @@ No need for protocol, just bare IP/FQDN and port.<br/>
+ This value is optional.<br/>
+         </td>
+         <td>false</td>
++      </tr><tr>
++        <td><b>exclusive</b></td>
++        <td>boolean</td>
++        <td>
++          Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
++The tenant's etcd user is granted the root role, and Kamaji no longer forces
++--etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
++(5m by default, overridable with the API server extra args).
++A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
++This value is immutable.<br/>
++        </td>
++        <td>false</td>
+       </tr><tr>
+         <td><b><a href="#datastorespecmigration">migration</a></b></td>
+         <td>object</td>
+```
+
+**File**: `internal/builders/controlplane/deployment.go` (modified, +9/-1)
+```diff
+@@ -754,7 +754,15 @@ func (d Deployment) buildKubeAPIServerCommand(tenantControlPlane kamajiv1alpha1.
+ 			httpsEndpoints = append(httpsEndpoints, fmt.Sprintf("https://%s", ep))
  		}
  
- 		podSpec.InitContainers[index].Name = kineInitContainerName
--		if podSpec.InitContainers[index].Image == "" {
--			podSpec.InitContainers[index].Image = d.KineContainerImage
--		}
-+		podSpec.InitContainers[index].Image = d.kineImage(tcp, podSpec.InitContainers[index].Image, tcp.Spec.ControlPlane.Deployment.AdditionalInitContainers, kineInitContainerName)
- 		podSpec.InitContainers[index].Command = []string{"sh"}
- 
- 		podSpec.InitContainers[index].Args = []string{
-@@ -1052,9 +1067,7 @@ func (d Deployment) buildKine(podSpec *corev1.PodSpec, tcp kamajiv1alpha1.Tenant
- 	}
- 
- 	podSpec.Containers[index].Name = kineContainerName
--	if podSpec.Containers[index].Image == "" {
--		podSpec.Containers[index].Image = d.KineContainerImage
--	}
-+	podSpec.Containers[index].Image = d.kineImage(tcp, podSpec.Containers[index].Image, tcp.Spec.ControlPlane.Deployment.AdditionalContainers, kineContainerName)
- 	podSpec.Containers[index].Command = []string{"/bin/kine"}
- 	podSpec.Containers[index].Args = utilities.ArgsFromMapToSlice(args)
- 	podSpec.Containers[index].VolumeMounts = []corev1.VolumeMount{
+-		managed["--etcd-compaction-interval"] = "0"
++		// On a shared etcd, compaction is cluster-wide and a tenant must not run it.
++		// An exclusive DataStore lets the kube-apiserver compact, which ListFromCacheSnapshot
++		// needs to expire continue tokens: the upstream default applies unless set in ExtraArgs.
++		// As a safe default, a stale "0" from a previous shared DataStore is replaced.
++		if d.DataStore.Spec.Exclusive {
++			safeDefaults["--etcd-compaction-interval"] = "5m"
++		} else {
++			managed["--etcd-compaction-interval"] = "0"
++		}
+ 		managed["--etcd-prefix"] = fmt.Sprintf("/%s", tenantControlPlane.Status.Storage.Setup.Schema)
+ 		managed["--etcd-servers"] = strings.Join(httpsEndpoints, ",")
+ 		managed["--etcd-cafile"] = "/etc/kubernetes/pki/etcd/ca.crt"
 ```
 
-**File**: `internal/builders/controlplane/deployment_test.go` (modified, +69/-0)
+**File**: `internal/builders/controlplane/deployment_test.go` (modified, +51/-0)
 ```diff
-@@ -522,6 +522,75 @@ var _ = Describe("Controlplane Deployment", func() {
- 			Expect(found).To(BeTrue())
- 			Expect(podSpec.Containers[index].Image).To(Equal("custom-kine:latest"))
+@@ -272,6 +272,57 @@ var _ = Describe("Controlplane Deployment", func() {
  		})
-+
-+		It("should replace the kine image of an existing deployment when the default changes", func() {
-+			d.DataStore.Spec.TLSConfig = &kamajiv1alpha1.TLSConfig{}
-+			podSpec := &corev1.PodSpec{
-+				InitContainers: []corev1.Container{{Name: "chmod", Image: "rancher/kine:v0.10.0"}},
-+				Containers: []corev1.Container{
-+					{Name: "kube-apiserver"},
-+					{Name: "kine", Image: "rancher/kine:v0.10.0"},
-+				},
-+			}
-+
-+			d.setInitContainers(podSpec, tcp)
-+			d.setAdditionalContainers(podSpec, tcp)
-+			d.buildKine(podSpec, tcp)
-+
-+			found, index := utilities.HasNamedContainer(podSpec.Containers, "kine")
-+			Expect(found).To(BeTrue())
-+			Expect(podSpec.Containers[index].Image).To(Equal("rancher/kine:v0.11.0"))
-+			found, index = utilities.HasNamedContainer(podSpec.InitContainers, "chmod")
-+			Expect(found).To(BeTrue())
-+			Expect(podSpec.InitContainers[index].Image).To(Equal("rancher/kine:v0.11.0"))
-+		})
-+
-+		It("should keep the kine image of an existing deployment with the Recreate strategy", func() {
-+			d.DataStore.Spec.TLSConfig = &kamajiv1alpha1.TLSConfig{}
-+			tcp.Spec.ControlPlane.Deployment.Strategy.Type = appsv1.RecreateDeploymentStrategyType
-+			podSpec := &corev1.PodSpec{
-+				InitContainers: []corev1.Container{{Name: "chmod", Image: "rancher/kine:v0.10.0"}},
-+				Containers: []corev1.Container{
-+					{Name: "kube-apiserver"},
-+					{Name: "kine", Image: "rancher/kine:v0.10.0"},
-+				},
-+			}
-+
-+			d.setInitContainers(podSpec, tcp)
-+			d.setAdditionalContainers(podSpec, tcp)
-+			d.buildKine(podSpec, tcp)
-+
-+			found, index := utilities.HasNamedContainer(podSpec.Containers, "kine")
-+			Expect(found).To(BeTrue())
-+			Expect(podSpec.Containers[index].Image).To(Equal("rancher/kine:v0.10.0"))
-+			found, index = utilities.HasNamedContainer(podSpec.InitContainers, "chmod")
-+			Expect(found).To(BeTrue())
-+			Expect(podSpec.InitContainers[index].Image).To(Equal("rancher/kine:v0.10.0"))
-+		})
-+
-+		It("should keep the custom kine image of an existing deployment when the default changes", func() {
-+			d.DataStore.Spec.TLSConfig = &kamajiv1alpha1.TLSConfig{}
-+			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{
-+				{Name: "kine", Image: "custom-kine:latest"},
-+			}
-+			podSpec := &corev1.PodSpec{}
-+
-+			d.setInitContainers(podSpec, tcp)
-+			d.setAdditionalContainers(podSpec, tcp)
-+			d.buildKine(podSpec, tcp)
-+
-+			d.KineContainerImage = "rancher/kine:v0.12.0"
-+			d.setInitContainers(podSpec, tcp)
-+			d.setAdditionalContainers(podSpec, tcp)
-+			d.buildKine(podSpec, tcp)
-+
-+			found, index := utilities.HasNamedContainer(podSpec.Containers, "kine")
-+			Expect(found).To(BeTrue())
-+			Expect(podSpec.Containers[index].Image).To(Equal("custom-kine:latest"))
-+			found, index = utilities.HasNamedContainer(podSpec.InitContainers, "chmod")
-+			Expect(found).To(BeTrue())
-+			Expect(podSpec.InitContainers[index].Image).To(Equal("rancher/kine:v0.12.0"))
-+		})
  	})
  
- 	Describe("component network flags", func() {
++	Describe("etcd compaction interval flag", func() {
++		var tcp kamajiv1alpha1.TenantControlPlane
++
++		BeforeEach(func() {
++			tcp = kamajiv1alpha1.TenantControlPlane{}
++			d.DataStore.Spec.Driver = kamajiv1alpha1.EtcdDriver
++		})
++
++		It("forces 0 on a shared DataStore, ignoring user extraArgs", func() {
++			tcp.Spec.ControlPlane.Deployment.ExtraArgs = &kamajiv1alpha1.ControlPlaneExtraArgs{
++				APIServer: []string{"--etcd-compaction-interval=1m"},
++			}
++
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++
++			Expect(got).To(ContainElement("--etcd-compaction-interval=0"))
++			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=1m"))
++		})
++
++		It("defaults to 5m on an exclusive DataStore", func() {
++			d.DataStore.Spec.Exclusive = true
++
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++
++			Expect(got).To(ContainElement("--etcd-compaction-interval=5m"))
++		})
++
++		It("lets the user set the interval on an exclusive DataStore", func() {
++			d.DataStore.Spec.Exclusive = true
++			tcp.Spec.ControlPlane.Deployment.ExtraArgs = &kamajiv1alpha1.ControlPlaneExtraArgs{
++				APIServer: []string{"--etcd-compaction-interval=1m"},
++			}
++
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++
++			Expect(got).To(ContainElement("--etcd-compaction-interval=1m"))
++			Expect(got).NotTo(ContainElement(HavePrefix("--etcd-compaction-interval=0")))
++			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=5m"))
++		})
++
++		It("replaces the stale 0 after migrating to an exclusive DataStore", func() {
++			shared := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++
++			d.DataStore.Spec.Exclusive = true
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", shared)
++
++			Expect(got).To(ContainElement("--etcd-compaction-interval=5m"))
++			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=0"))
++		})
++	})
++
+ 	Describe("Konnectivity egress selector flag", func() {
+ 		var tcp kamajiv1alpha1.TenantControlPlane
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1417** (2026-11-15): feat(datastore): exclusive etcd DataStore (@NanduBolleddu)
 - **PR #1416** (2026-11-12): fix(metrics): list only certificate secrets (@albertoec)
 - **PR #1414** (2026-11-10): fix(datastore): allow rerunning the MySQL migration (@prometherion)
 - **PR #1413** (2026-11-11): fix(soot): cache only kube-system and kube-public (@pacharya-pf9)
 - **PR #1410** (2026-11-10): feat(deps): bump github.com/testcontainers/testcontainers-go from 0.44.0 to 0.45.0 (@dependabot[bot])
 - **PR #1409** (2026-11-09): feat(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
-- **PR #1408** (2026-11-09): feat(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
 
 ---
 
@@ -1107,29 +1127,36 @@ Claude-Session: https://claude.ai/code/
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. metrics): list only certificate secrets (#1416)
+## X. datastore): exclusive etcd DataStore
 
 **RULE**:
-When implementing operations in `controllers/certificate_lifecycle_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/v1alpha1/datastore_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d6e2f755`: metrics): list only certificate secrets (#1416). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60204b0c`: datastore): exclusive etcd DataStore. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/certificate_lifecycle_controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1alpha1/datastore_types.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Filter in the cache to avoid deep-copying every Secret of the cluster.
-	if err := s.client.List(ctx, &secretList, client.HasLabels{constants.ControlPlaneLabelKey, constants.ControllerLabelResource}); err != nil {
+// +kubebuilder:validation:XValidation:rule="!has(self.exclusive) || !self.exclusive || self.driver == \"etcd\"", message="exclusive is supported only with the etcd driver"
+// +kubebuilder:validation:XValidation:rule="oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)", message="exclusive is immutable and cannot be changed after creation"
+	// Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
+	// The tenant's etcd user is granted the root role, and Kamaji no longer forces
+	// --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
+	// (5m by default, overridable with the API server extra args).
+	// A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
+	// This value is immutable.
+	Exclusive bool `json:"exclusive,omitempty"`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	if err := s.client.List(ctx, &secretList); err != nil {
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d6e2f755` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60204b0c` are properly handled with clean fallback behavior.

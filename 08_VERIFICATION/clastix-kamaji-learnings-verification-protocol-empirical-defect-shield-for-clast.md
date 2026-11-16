@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:27.850Z",
+  "timestamp": "2026-11-16T00:56:55.126Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-clastix-kamaji-learnings",
+  "learning_id": "LEARN-EVO-clastix-kamaji-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clastix-kamaji-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:27.850Z`  
-> **Learning ID**: `LEARN-REEXTRACT-clastix-kamaji-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T00:56:55.126Z`  
+> **Learning ID**: `LEARN-EVO-clastix-kamaji-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `8edc639f`  
+> **Source Version**: `60204b0c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:54:13.190Z  
+> **Timestamp**: 2026-11-16T00:56:50.880Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:54:13.183Z  
+> **Harvest Timestamp**: 2026-11-16T00:56:35.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2083 stars
+- **Stars / Engagement**: 2086 stars
 
 ---
 
@@ -400,8 +400,9 @@ func (s *CertificateLifecycle) refreshCertificatesMetrics(ctx context.Context) e
 		countsByTenantControlPlane[namespacedName] = metrics.NewCertificateStatusCounts()
 	}
 
+	// Filter in the cache to avoid deep-copying every Secret of the cluster.
 	var secretList corev1.SecretList
-	if err := s.client.List(ctx, &secretList); err != nil {
+	if err := s.client.List(ctx, &secretList, client.HasLabels{constants.ControlPlaneLabelKey, constants.ControllerLabelResource}); err != nil {
 		return err
 	}
 
@@ -747,11 +748,11 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1415** (2026-11-12): **Certificate metrics refresh deep-copies every Secret of the management cluster on each reconciliation**
+  *Symptoms*: ## Summary  `CertificateLifecycle.refreshCertificatesMetrics` lists **every** Secret of the management cluster through the manager's cached client, and then discards in a loop the ones lacking the Kamaji certificate labels. The cached client deep-copies each listed object, so every refresh allocates a full copy of all the Secrets of the cluster only to keep a handful of them.  The refresh is deferred in `Reconcile`, so it runs after **every** `CertificateLifecycle` reconciliation, plus once at start-up from a Runnable. Each TenantControlPlane owns 9 certificate Secrets (5 x509 + 4 kubeconfig), all reconciled when the manager starts.  ### Where  `controllers/certificate_lifecycle_controller.go` (master @ 8edc639):  ```go func (s *CertificateLifecycle) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) { 	logger := log.FromContext(ctx) 	defer func(c context.Context) { 		// ... 		if err := s.refreshCertificatesMetrics(metricCtx); err != nil { ```  ```go 	var secretList corev1.SecretList 	if err := s.client.List(ctx, &secretList); err != nil { // no selector 		return err 	}  	for i := range secretList.Items { 		// ...skip Secrets without ControlPlaneLabelKey / ControllerLabelResource ```  Introduced with the certificate gauges in #1108, present since 26.4.3-edge.  ### Impact  - Memory: the cost of a refresh grows with the total size of the Secrets in the management cluster, which commonly hosts many unrelated ones (Helm release storage above all),
+
 - **Issue #1299** (2026-09-10): **kamaji_handler_time_seconds: two kubeconfig handler labels are never exported**
   *Symptoms*: ## What happens  `kamaji_handler_time_seconds` never exposes the label values `handler="controller-manager-kubeconfig"` and `handler="scheduler-kubeconfig"`. Their observations are attributed to `handler="admin-kubeconfig"` instead, so that label reports 4x the invocations of every other handler.  From a production Kamaji managing 735 ready TenantControlPlanes:  ```    122548  handler=admin-kubeconfig        <- 4 x     30673  handler=upgrade     30637  handler=konnectivity-kubeconfig     30637  handler=ca     30637  handler=kubeadmconfig     ... (controller-manager-kubeconfig and scheduler-kubeconfig: no series at all) ```  The effect is that the kubeconfig handlers cannot be told apart in dashboards or alerts, and `admin-kubeconfig` looks like it does four times the work it actually does. It cost me a wrong conclusion while investigating something else, which is why I chased it down.  ## Why  `controllers/resources.go` declares four `KubeconfigResource` instances with three distinct names:  ```go &resources.KubeconfigResource{Name: "admin-kubeconfig",              KubeConfigFileName: resources.AdminKubeConfigFileName}, &resources.KubeconfigResource{Name: "admin-kubeconfig",              KubeConfigFileName: resources.SuperAdminKubeConfigFileName}, &resources.KubeconfigResource{Name: "controller-manager-kubeconfig", KubeConfigFileName: resources.ControllerManagerKubeConfigFileName}, &resources.KubeconfigResource{Name: "scheduler-kubeconfig",          KubeConfigFileName: resour
-
-- **Issue #1294** (2026-09-09): **Allow configuring resources for the Konnectivity agent**
-  *Symptoms*: # Allow configuring resources for the Konnectivity agent  ## Summary  `KonnectivityServerSpec` exposes `Resources`, but `KonnectivityAgentSpec` does not. The agent container is therefore created with no requests and no limits, which places every agent Pod in the **BestEffort** QoS class with no supported way to change it.  On a busy cluster this makes the agent the first thing the kubelet starves of CPU and the first thing it evicts — degrading the tunnel that `kubectl exec`, `kubectl logs` and `kubectl port-forward` depend on, while the cluster otherwise looks healthy.  ## What we saw  On a 115-node GPU cluster (hosted control plane, agents in `DaemonSet` mode with `hostNetwork: true` and `tolerations: [{operator: Exists}]`), users began reporting:  ``` error: unable to upgrade connection: ... ```  on `kubectl exec`, intermittently and under load. Ordinary API reads were unaffected throughout, so nothing looked wrong from the outside.  What we found:  **1. konnectivity-server was shedding agent traffic.** Its log carried, across 16 distinct `agentID`s inside a 45-second window:  ``` server.go:841] "Receive channel from agent is full" agentID="..." ```  interleaved with streams being set up and torn down almost immediately:  ``` server.go:934] "Proxy connection established" ... dialAddress="<node>:10250" dialDuration="2.4ms" server.go:523] "Stream read from frontend cancelled" userAgent=["grpc-go/1.72.2"] server.go:990] "could not get frontend client for closing" agentID="...
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -768,940 +769,370 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2089911` (2026-11-10)
-**Commit Message**: feat(datastore): schedule and securitycontext migration jobs from the DataStore (#1403)
+### Incident Patch 1: `60204b0c` (2026-11-15)
+**Commit Message**: feat(datastore): exclusive etcd DataStore (#1417)
 
-* feat(datastore): add migration scheduling fields
+* feat(api): add exclusive field to DataStore
 
-Add spec.migration to DataStore, holding the nodeSelector, tolerations
-and affinity for the Job migrating a Tenant Control Plane to it.
-Generated files come from controller-gen v0.20.0, yq and crdoc.
+An exclusive DataStore is dedicated to a single Tenant Control Plane.
+Supported only with the etcd driver, and immutable.
 
-* feat(datastore): schedule the migration job
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
 
-Copy spec.migration of the target DataStore to the migration Job, so it
-can run on tainted nodes. Without it the Job is created as before.
+* feat(datastore): grant etcd root when exclusive
 
-* docs(datastore): describe migration scheduling
+etcd rejects Compact unless the user has the root role: granting
+only the compact_rev_key key is not enough.
 
-* feat(datastore): harden the migration job
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
 
-Run the migration Job with a fixed securityContext, so it is admitted
-under the restricted Pod Security Standard. The values come from #1240
-by Jakob3xD. The kine and konnectivity parts stay there.
+* feat(datastore): one tenant per exclusive store
 
-* feat(datastore): configure the migration security context
+Reuse the NATS single-tenant check, so a second Tenant Control Plane
+referencing an exclusive DataStore fails to reconcile.
 
-Add podSecurityContext and securityContext to spec.migration of the
-DataStore, used for the migration Job pod and its container. When unset,
-the restricted defaults from #1240 still apply.
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
 
-* fix(datastore): wait for the old migration pod
+* feat(controlplane): let exclusive etcd compact
 
-A Job whose template changes is deleted and created back, since Jobs
-are imm
+On an exclusive DataStore, --etcd-compaction-interval is a safe default
+(5m) instead of a managed 0, so the API server compacts etcd and
+ListFromCacheSnapshot can expire continue tokens. A stale 0 from a
+previous shared DataStore is replaced.
 
-**File**: `api/v1alpha1/datastore_types.go` (modified, +23/-0)
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+
+* docs: document exclusive etcd DataStores
+
+Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+
+* refactor(datastore): use a case for exclusive DataStores
+
+
+**File**: `api/v1alpha1/datastore_types.go` (modified, +9/-0)
 ```diff
-@@ -48,6 +48,29 @@ type DataStoreSpec struct {
- 	// Defines the TLS/SSL configuration required to connect to the data store in a secure way.
+@@ -36,6 +36,8 @@ type Endpoints []string
+ // +kubebuilder:validation:XValidation:rule="(self.driver != \"etcd\" && has(self.basicAuth)) ? ((has(self.basicAuth.password.secretReference) || has(self.basicAuth.password.content))) : true", message="When driver is not etcd and basicAuth exists, password must have secretReference or content"
+ // +kubebuilder:validation:XValidation:rule="(self.driver != \"etcd\") ? (has(self.tlsConfig) || has(self.basicAuth)) : true", message="When driver is not etcd, either tlsConfig or basicAuth must be provided"
+ // +kubebuilder:validation:XValidation:rule="oldSelf == null || self.driver == oldSelf.driver", message="driver is immutable and cannot be changed after creation"
++// +kubebuilder:validation:XValidation:rule="!has(self.exclusive) || !self.exclusive || self.driver == \"etcd\"", message="exclusive is supported only with the etcd driver"
++// +kubebuilder:validation:XValidation:rule="oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)", message="exclusive is immutable and cannot be changed after creation"
+ type DataStoreSpec struct {
+ 	// The driver to use to connect to the shared datastore.
+ 	Driver Driver `json:"driver"`
+@@ -51,6 +53,13 @@ type DataStoreSpec struct {
+ 	// Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
  	// This value is optional.
- 	TLSConfig *TLSConfig `json:"tlsConfig,omitempty"`
-+	// Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-+	// This value is optional.
-+	Migration *DataStoreMigration `json:"migration,omitempty"`
-+}
-+
-+// DataStoreMigration contains the settings of the Job migrating a Tenant Control Plane to this data store.
-+type DataStoreMigration struct {
-+	// NodeSelector is a selector which must be true for the migration Job pod to fit on a node.
-+	// Selector which must match a node's labels for the pod to be scheduled on that node.
-+	// More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
-+	// If specified, the migration Job pod's tolerations.
-+	// More info: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-+	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
-+	// If specified, the migration Job pod's scheduling constraints.
-+	// More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-+	Affinity *corev1.Affinity `json:"affinity,omitempty"`
-+	// PodSecurityContext allows to specify the security context for the migration Job pod.
-+	// If unset, the pod runs as non-root with the RuntimeDefault seccomp profile.
-+	PodSecurityContext *corev1.PodSecurityContext `json:"podSecurityContext,omitempty"`
-+	// SecurityContext allows to specify the security context for the migrate container.
-+	// If unset, privilege escalation is disallowed and all the capabilities are dropped.
-+	SecurityContext *corev1.SecurityContext `json:"securityContext,omitempty"`
+ 	Migration *DataStoreMigration `json:"migration,omitempty"`
++	// Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
++	// The tenant's etcd user is granted the root role, and Kamaji no longer forces
++	// --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
++	// (5m by default, overridable with the API server extra args).
++	// A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
++	// This value is immutable.
++	Exclusive bool `json:"exclusive,omitempty"`
  }
  
- // TLSConfig contains the information used to connect to the data store using a secured connection.
+ // DataStoreMigration contains the settings of the Job migrating a Tenant Control Plane to this data store.
 ```
 
-**File**: `api/v1alpha1/datastore_types_test.go` (modified, +45/-0)
+**File**: `api/v1alpha1/datastore_types_test.go` (modified, +76/-0)
 ```diff
-@@ -8,8 +8,11 @@ import (
- 
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/utils/ptr"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
- )
- 
- var _ = Describe("DataStore endpoints validation", func() {
-@@ -63,4 +66,46 @@ var _ = Describe("DataStore endpoints validation", func() {
- 		Expect(err).To(HaveOccurred())
- 		Expect(err.Error()).To(ContainSubstring("an IPv6 endpoint address must be bracketed"))
+@@ -109,3 +109,79 @@ var _ = Describe("DataStore endpoints validation", func() {
+ 		Expect(got.Spec.Migration).To(Equal(migration))
  	})
+ })
 +
-+	It("keeps the migration Job scheduling constraints and security contexts", func() {
-+		migration := &DataStoreMigration{
-+			NodeSelector: map[string]string{"node-role.kubernetes.io/control-plane": ""},
-+			Tolerations: []corev1.Toleration{{
-+				Key:      "node-role.kubernetes.io/control-plane",
-+				Operator: corev1.TolerationOpExists,
-+				Effect:   corev1.TaintEffectNoSchedule,
-+			}},
-+			Affinity: &corev1.Affinity{
-+				NodeAffinity: &corev1.NodeAffinity{
-+					RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
-+						NodeSelectorTerms: []corev1.NodeSelectorTerm{{
-+							MatchExpressions: []corev1.NodeSelectorRequirement{{
-+								Key:      "kubernetes.io/arch",
-+								Operator: corev1.NodeSelectorOpIn,
-+								Values:   []string{"amd64"},
-+							}},
-+						}},
++var _ = Describe("DataStore exclusive validation", func() {
++	var (
++		ctx context.Context
++		ds  *DataStore
++	)
++
++	BeforeEach(func() {
++		ctx = context.Background()
++		ds = &DataStore{
++			ObjectMeta: metav1.ObjectMeta{GenerateName: "ds-exclusive-"},
++			Spec: DataStoreSpec{
++				Driver:    EtcdDriver,
++				Endpoints: Endpoints{"etcd-0:2379"},
++				TLSConfig: &TLSConfig{
++					CertificateAuthority: CertKeyPair{
++						Certificate: ContentRef{Content: []byte("ca")},
++						PrivateKey:  &ContentRef{Content: []byte("ca-key")},
++					},
++					ClientCertificate: &ClientCertificate{
++						Certificate: ContentRef{Content: []byte("cert")},
++						PrivateKey:  ContentRef{Content: []byte("key")},
 +					},
 +				},
 +			},
-+			PodSecurityContext: &corev1.PodSecurityContext{
-+				RunAsNonRoot:   ptr.To(true),
-+				RunAsUser:      ptr.To[int64](1000),
-+				SeccompProfile: &corev1.SeccompProfile{Type: corev1.SeccompProfileTypeRuntimeDefault},
++		}
++	})
++
++	AfterEach(func() {
++		if ds.GetName() != "" {
++			if err := k8sClient.Delete(ctx, ds); err != nil && !apierrors.IsNotFound(err) {
++				Expect(err).NotTo(HaveOccurred())
++			}
++		}
++	})
++
++	It("accepts an exclusive etcd DataStore", func() {
++		ds.Spec.Exclusive = true
++		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
++	})
++
++	It("denies an exclusive DataStore with a driver other than etcd", func() {
++		ds.Spec = DataStoreSpec{
++			Driver:    KinePostgreSQLDriver,
++			Endpoints: Endpoints{"postgresql:5432"},
++			BasicAuth: &BasicAuth{
++				Username: ContentRef{Content: []byte("user")},
++				Password: ContentRef{Content: []byte("pass")},
 +			},
-+			SecurityContext: &corev1.SecurityContext{
-+				AllowPrivilegeEscalation: ptr.To(false),
-+				ReadOnlyRootFilesystem:   ptr.To(true),
-+				Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{"ALL"}},
-+			},
++			Exclusive: true,
 +		}
 +
-+		ds.Spec.Endpoints = Endpoints{"10.0.0.1:2379"}
-+		ds.Spec.Migration = migration
++		err := k8sClient.Create(ctx, ds)
++		Expect(err).To(HaveOccurred())
++		Expect(err.Error()).To(ContainSubstring("exclusive is supported only with the etcd driver"))
++	})
++
++	It("denies making a shared DataStore exclusive", func() {
 +		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
 +
-+		var got DataStore
-+		Expect(k8sClient.Get(ctx, client.ObjectKeyFromObject(ds), &got)).To(Succeed())
-+		Expect(got.Spec.Migration).To(Equal(migration))
++		ds.Spec.Exclusive = true
++		err := k8sClient.Update(ctx, ds)
++		Expect(err).To(HaveOccurred())
++		Expect(err.Error()).To(ContainSubstring("exclusive is immutable"))
 +	})
- })
++
++	It("denies making an exclusive DataStore shared", func() {
++		ds.Spec.Exclusive = true
++		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
++
++		ds.Spec.Exclusive = false
++		err := k8sClient.Update(ctx, ds)
++		Expect(err).To(HaveOccurred())
++		Expect(err.Error()).To(ContainSubstring("exclusive is immutable"))
++	})
++})
 ```
 
-**File**: `api/v1alpha1/zz_generated.deepcopy.go` (modified, +75/-26)
+**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_datastores_spec.yaml` (modified, +13/-0)
 ```diff
-@@ -8,9 +8,9 @@
- package v1alpha1
- 
- import (
--	corev1 "k8s.io/api/core/v1"
-+	"k8s.io/api/core/v1"
- 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
--	"k8s.io/apimachinery/pkg/apis/meta/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	apisv1 "sigs.k8s.io/gateway-api/apis/v1"
- )
-@@ -86,21 +86,21 @@ func (in *AdditionalVolumeMounts) DeepCopyInto(out *AdditionalVolumeMounts) {
- 	*out = *in
- 	if in.APIServer != nil {
- 		in, out := &in.APIServer, &out.APIServer
--		*out = make([]corev1.VolumeMount, len(*in))
-+		*out = make([]v1.VolumeMount, len(*in))
- 		for i := range *in {
- 			(*in)[i].DeepCopyInto(&(*out)[i])
- 		}
- 	}
- 	if in.ControllerManager != nil {
- 		in, out := &in.ControllerManager, &out.ControllerManager
--		*out = make([]corev1.VolumeMount, len(*in))
-+		*out = make([]v1.VolumeMount, len(*in))
- 		for i := range *in {
- 			(*in)[i].DeepCopyInto(&(*out)[i])
- 		}
- 	}
- 	if in.Scheduler != nil {
- 		in, out := &in.Scheduler, &out.Scheduler
--		*out = make([]corev1.VolumeMount, len(*in))
-+		*out = make([]v1.VolumeMount, len(*in))
- 		for i := range *in {
- 			(*in)[i].DeepCopyInto(&(*out)[i])
- 		}
-@@ -385,22 +385,22 @@ func (in *ControlPlaneComponentsResources) DeepCopyInto(out *ControlPlaneCompone
- 	*out = *in
- 	if in.APIServer != nil {
- 		in, out := &in.APIServer, &out.APIServer
--		*out = new(corev1.ResourceRequirements)
-+		*out = new(v1.ResourceRequirements)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.ControllerManager != nil {
- 		in, out := &in.ControllerManager, &out.ControllerManager
--		*out = new(corev1.ResourceRequirements)
-+		*out = new(v1.ResourceRequirements)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.Scheduler != nil {
- 		in, out := &in.Scheduler, &out.Scheduler
--		*out = new(corev1.ResourceRequirements)
-+		*out = new(v1.ResourceRequirements)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.Kine != nil {
- 		in, out := &in.Kine, &out.Kine
--		*out = new(corev1.ResourceRequirements)
-+		*out = new(v1.ResourceRequirements)
- 		(*in).DeepCopyInto(*out)
- 	}
- }
-@@ -420,17 +420,17 @@ func (in *ControlPlaneContainerSecurityContexts) DeepCopyInto(out *ControlPlaneC
- 	*out = *in
- 	if in.APIServer != nil {
- 		in, out := &in.APIServer, &out.APIServer
--		*out = new(corev1.SecurityContext)
-+		*out = new(v1.SecurityContext)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.ControllerManager != nil {
- 		in, out := &in.ControllerManager, &out.ControllerManager
--		*out = new(corev1.SecurityContext)
-+		*out = new(v1.SecurityContext)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.Scheduler != nil {
- 		in, out := &in.Scheduler, &out.Scheduler
--		*out = new(corev1.SecurityContext)
-+		*out = new(v1.SecurityContext)
- 		(*in).DeepCopyInto(*out)
- 	}
- }
-@@ -615,6 +615,50 @@ func (in *DataStoreList) DeepCopyObject() runtime.Object {
- 	return nil
- }
- 
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *DataStoreMigration) DeepCopyInto(out *DataStoreMigration) {
-+	*out = *in
-+	if in.NodeSelector != nil {
-+		in, out := &in.NodeSelector, &out.NodeSelector
-+		*out = make(map[string]string, len(*in))
-+		for key, val := range *in {
-+			(*out)[key] = val
-+		}
-+	}
-+	if in.Tolerations != nil {
-+		in, out := &in.Tolerations, &out.Tolerations
-+		*out = make([]v1.Toleration, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
-+	if in.Affinity != nil {
-+		in, out := &in.Affinity, &out.Affinity
-+		*out = new(v1.Affinity)
-+		(*in).DeepCopyInto(*out)
-+	}
-+	if in.PodSecurityContext != nil {
-+		in, out := &in.PodSecurityContext, &out.PodSecurityContext
-+		*out = new(v1.PodSecurityContext)
-+		(*in).DeepCopyInto(*out)
-+	}
-+	if in.SecurityContext != nil {
-+		in, out := &in.SecurityContext, &out.SecurityContext
-+		*out = new(v1.SecurityContext)
-+		(*in).DeepCopyInto(*out)
-+	}
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new DataStoreMigration.
-+func (in *DataStoreMigration) DeepCopy() *DataStoreMigration {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(DataStoreMigration)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
- func (in *DataStoreOverride) DeepCopyInto(out *DataStoreOverride) {
- 	*out = *in
-@@ -664,6 +708,11 @@ func (in *DataStoreSpec) DeepCopyInto(out *DataStoreSpec) {
- 		*out = new(TLSConfig)
- 		(*in).DeepCopyInto(*out)
- 	}
-+	if in.Migration != nil {
-+		in, out := &in.Migration, &out.Migration
-+		*out = new(DataStoreMigration)
-+		(*in).DeepCopyInto(*out)
-+	}
- }
- 
- // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new DataStoreSpec.
-@@ -686,7 +735,7 @@ func (in *DataStoreStatus) DeepCopyInto(out *DataStoreStatus) {
- 	}
- 	if in.Conditions != nil {
- 		in, out := &in.Conditions, &out.Conditions
--		*out = make([]v1.Condition, len(*in))
-+		*out = make([]metav1.Condition, len(*in))
- 		for i := range *in {
- 			(*in)[i].DeepCopyInto(
-```
-
-**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_datastores_spec.yaml` (modified, +1343/-0)
-```diff
-@@ -131,6 +131,1349 @@ versions:
+@@ -131,6 +131,15 @@ versions:
                  x-kubernetes-validations:
                    - message: an IPv6 endpoint address must be bracketed, e.g. [2001:db8::1]:2379
                      rule: self.all(e, e.startsWith('[') || e.split(':').size() <= 2)
-+              migration:
++              exclusive:
 +                description: |-
-+                  Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-+                  This value is optional.
-+                properties:
-+                  affinity:
-+                    description: |-
-+                      If specified, the migration Job pod's scheduling constraints.
-+                      More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-+                    properties:
-+                      nodeAffinity:
-+                        description: Describes node affinity scheduling rules for the pod.
-+                        properties:
-+                          preferredDuringSchedulingIgnoredDuringExecution:
-+                            description: |-
-+                              The scheduler will prefer to schedule pods to nodes that satisfy
-+                              the affinity expressions specified by this field, but it may choose
-+                              a node that violates one or more of the expressions. The node that is
-+                              most preferred is the one with the greatest sum of weights, i.e.
-+                              for each node that meets all of the scheduling requirements (resource
-+                              request, requiredDuringScheduling affinity expressions, etc.),
-+                              compute a sum by iterating through the elements of this field and adding
-+                              "weight" to the sum if the node matches the corresponding matchExpressions; the
-+                              node(s) with the highest sum are the most preferred.
-+                            items:
-+                              description: |-
-+                                An empty preferred scheduling term matches all objects with implicit weight 0
-+                                (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).
-+                              properties:
-+                                preference:
-+                                  description: A node selector term, associated with the corresponding weight.
-+                                  properties:
-+                                    matchExpressions:
-+                                      description: A list of node selector requirements by node's labels.
-+                                      items:
-+                                        description: |-
-+                                          A node selector requirement is a selector that contains values, a key, and an operator
-+                                          that relates the key and values.
-+                                        properties:
-+                                          key:
-+                                            description: The label key that the selector applies to.
-+                                            type: string
-+                                          operator:
-+                                            description: |-
-+                                              Represents a key's relationship to a set of values.
-+                                              Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
-+                                            type: string
-+                                          values:
-+                                            description: |-
-+                                              An array of string values. If the operator is In or NotIn,
-+                                              the values array must be non-empty. If the operator is Exists or DoesNotExist,
-+                                              the values array must be empty. If the operator is Gt or Lt, the values
-+                                              array must have a single element, which will be interpreted as an integer.
-+                                              This array is replaced during a strategic merge patch.
-+                                            items:
-+                                              type: string
-+                                            type: array
-+                                            x-kubernetes-list-type: atomic
-+                                        required:
-+                                          - key
-+                                          - operator
-+                                        type: object
-+                                      type: array
-+                                      x-kubernetes-list-type: atomic
-+                                    matchFields:
-+                   
++                  Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
++                  The tenant's etcd user is granted the root role, and Kamaji no longer forces
++                  --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
++                  (5m by default, overridable with the API server extra args).
++                  A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
++                  This value is immutable.
++                type: boolean
+               migration:
+                 description: |-
+                   Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
+@@ -1626,6 +1635,10 @@ versions:
+                 rule: '(self.driver != "etcd") ? (has(self.tlsConfig) || has(self.basicAuth)) : true'
+               - message: driver is immutable and cannot be changed after creation
+                 rule: oldSelf == null || self.driver == oldSelf.driver
++              - message: exclusive is supported only with the etcd driver
++                rule: '!has(self.exclusive) || !self.exclusive || self.driver == "etcd"'
++              - message: exclusive is immutable and cannot be changed after creation
++                rule: oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)
+           status:
+             description: DataStoreStatus defines the observed state of DataStore.
+             properties:
 ```
 
-**File**: `charts/kamaji/crds/kamaji.clastix.io_datastores.yaml` (modified, +1343/-0)
+**File**: `charts/kamaji/crds/kamaji.clastix.io_datastores.yaml` (modified, +13/-0)
 ```diff
-@@ -140,6 +140,1349 @@ spec:
+@@ -140,6 +140,15 @@ spec:
                    x-kubernetes-validations:
                      - message: an IPv6 endpoint address must be bracketed, e.g. [2001:db8::1]:2379
                        rule: self.all(e, e.startsWith('[') || e.split(':').size() <= 2)
-+                migration:
++                exclusive:
 +                  description: |-
-+                    Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-+                    This value is optional.
-+                  properties:
-+                    affinity:
-+                      description: |-
-+                        If specified, the migration Job pod's scheduling constraints.
-+                        More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-+                      properties:
-+                        nodeAffinity:
-+                          description: Describes node affinity scheduling rules for the pod.
-+                          properties:
-+                            preferredDuringSchedulingIgnoredDuringExecution:
-+                              description: |-
-+                                The scheduler will prefer to schedule pods to nodes that satisfy
-+                                the affinity expressions specified by this field, but it may choose
-+                                a node that violates one or more of the expressions. The node that is
-+                                most preferred is the one with the greatest sum of weights, i.e.
-+                                for each node that meets all of the scheduling requirements (resource
-+                                request, requiredDuringScheduling affinity expressions, etc.),
-+                                compute a sum by iterating through the elements of this field and adding
-+                                "weight" to the sum if the node matches the corresponding matchExpressions; the
-+                                node(s) with the highest sum are the most preferred.
-+                              items:
-+                                description: |-
-+                                  An empty preferred scheduling term matches all objects with implicit weight 0
-+                                  (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).
-+                                properties:
-+                                  preference:
-+                                    description: A node selector term, associated with the corresponding weight.
-+                                    properties:
-+                                      matchExpressions:
-+                                        description: A list of node selector requirements by node's labels.
-+                                        items:
-+                                          description: |-
-+                                            A node selector requirement is a selector that contains values, a key, and an operator
-+                                            that relates the key and values.
-+                                          properties:
-+                                            key:
-+                                              description: The label key that the selector applies to.
-+                                              type: string
-+                                            operator:
-+                                              description: |-
-+                                                Represents a key's relationship to a set of values.
-+                                                Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
-+                                              type: string
-+                                            values:
-+                                              description: |-
-+                                                An array of string values. If the operator is In or NotIn,
-+                                                the values array must be non-empty. If the operator is Exists or DoesNotExist,
-+                                                the values array must be empty. If the operator is Gt or Lt, the values
-+                                                array must have a single element, which will be interpreted as an integer.
-+                                                This array is replaced during a strategic merge patch.
-+                                              items:
-+                                                type: string
-+                                              type: array
-+                                              x-kubernetes-list-type: atomic
-+                                          required:
-+                                            - key
-+                                            - operator
-+                                          type: object
-+                                        type: array
-+           
++                    Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
++                    The tenant's etcd user is granted the root role, and Kamaji no longer forces
++                    --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
++                    (5m by default, overridable with the API server extra args).
++                    A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
++                    This value is immutable.
++                  type: boolean
+                 migration:
+                   description: |-
+                     Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
+@@ -1635,6 +1644,10 @@ spec:
+                   rule: '(self.driver != "etcd") ? (has(self.tlsConfig) || has(self.basicAuth)) : true'
+                 - message: driver is immutable and cannot be changed after creation
+                   rule: oldSelf == null || self.driver == oldSelf.driver
++                - message: exclusive is supported only with the etcd driver
++                  rule: '!has(self.exclusive) || !self.exclusive || self.driver == "etcd"'
++                - message: exclusive is immutable and cannot be changed after creation
++                  rule: oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)
+             status:
+               description: DataStoreStatus defines the observed state of DataStore.
+               properties:
 ```
 
-**File**: `docs/content/guides/datastore-migration.md` (modified, +59/-0)
+**File**: `docs/content/concepts/datastore.md` (modified, +27/-0)
 ```diff
-@@ -179,6 +179,40 @@ However, that timeout can be customized at the `TenantControlPlane` level with t
-     leading to unexpected results such as old data still available.
-     The annotation `kamaji.clastix.io/cleanup-prior-migration=true` allows to enforce the clean-up of the target `DataStore` schema in case of collision.
+@@ -27,6 +27,33 @@ By default, Kamaji can persist all Tenant Clusters’ data in a single datastore
  
-+## Scheduling the migration Job
-+The migration Job doesn't inherit the scheduling settings of the Tenant Control Plane, so it can stay `Pending` on a Management Cluster with tainted nodes.
-+Set them on the target `DataStore`, the one the Tenant Control Plane is moving to, using `spec.migration`:
+ Kamaji’s roadmap includes a datastore scheduler, which will automatically assign new Tenant Clusters to the most appropriate datastore in the pool, further reducing operational overhead.
+ 
++## Exclusive etcd Datastores
++
++On a shared etcd datastore, compaction applies to every Tenant Cluster at once, so Kamaji runs the Tenant Control Plane API servers with `--etcd-compaction-interval=0` and leaves compaction to etcd itself.
++Since Kubernetes v1.34, the API server serves paginated lists from its cache (the `ListFromCacheSnapshot` feature gate), and it only learns about compaction when it compacts etcd itself: with compaction disabled, continue tokens never expire.
++
++An etcd `DataStore` can be dedicated to a single Tenant Control Plane by setting `exclusive: true`:
 +
 +```yaml
 +apiVersion: kamaji.clastix.io/v1alpha1
 +kind: DataStore
 +metadata:
-+  name: dedicated
++  name: etcd-dedicated
 +spec:
 +  driver: etcd
-+  # ...
-+  migration:
-+    nodeSelector:
-+      node-role.kubernetes.io/control-plane: ""
-+    tolerations:
-+    - key: node-role.kubernetes.io/control-plane
-+      operator: Exists
-+      effect: NoSchedule
-+    affinity:
-+      nodeAffinity:
-+        requiredDuringSchedulingIgnoredDuringExecution:
-+          nodeSelectorTerms:
-+          - matchExpressions:
-+            - key: kubernetes.io/arch
-+              operator: In
-+              values:
-+              - amd64
++  exclusive: true
++  # endpoints and tlsConfig as for any etcd DataStore
 +```
 +
-+The fields `nodeSelector`, `tolerations` and `affinity` are all optional, and have the same meaning as in a Pod.
-+The security context of the Job can be set in the same struct, see [Migration Job Security Context](#migration-job-security-context).
-+Changing them during a migration deletes the Job, waits for its Pod to be removed, and creates it back with the new values, which also solves a Job stuck in `Pending`.
++For an exclusive `DataStore`, Kamaji grants the Tenant Control Plane's etcd user the `root` role, required by etcd to compact, and doesn't force the compaction interval anymore:
++the API server compacts every 5 minutes, unless `--etcd-compaction-interval` is set in the API server extra arguments.
 +
- ## Post migration
- After migrating data to the new datastore, complete the migration procedure by restarting the `kubelet.service` on all the tenant worker nodes.
++When a `TenantControlPlane` refers to an exclusive `DataStore` already used by another instance, its reconciliation fails and is blocked.
++The `exclusive` field is immutable: to move a Tenant Control Plane to an exclusive datastore, use the live migration.
++
++!!! info "etcd auto-compaction"
++    etcd's own auto-compaction (`--auto-compaction-retention`) can stay enabled, but the API server doesn't learn about the revisions it compacts.
++
+ ## Live Migration
  
-@@ -202,3 +236,28 @@ kubectl -n kamaji-system patch serviceaccount kamaji-controller-manager \
- 
- This command patches the kamaji-controller-manager service account to include your registry secret, allowing the migration job to pull images from the private registry successfully.
- 
-+### Migration Job Security Context
-+By default, the migration Job runs with a `securityContext` compliant with the `restricted` [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/): `runAsNonRoot: true` and the `RuntimeDefault` seccomp profile for the Pod, `allowPrivilegeEscalation: false` and all the capabilities dropped for the container.
-+
-+These defaults can be replaced on the target `DataStore` with `spec.migration.podSecurityContext` for the Pod, and `spec.migration.securityContext` for the container:
-+
-+```yaml
-+spec:
-+  migration:
-+    podSecurityContext:
-+      runAsNonRoot: true
-+      runAsUser: 1000
-+      seccompProfile:
-+        type: RuntimeDefault
-+    securityContext:
-+      allowPrivilegeEscalation: false
-+      readOnlyRootFilesystem: true
-+      capabilities:
-+        drop:
-+        - ALL
-+```
-+
-+A field that is set replaces its default as a whole, so repeat the default values you want to keep.
-+
-+No `runAsUser` is enforced by default, so the user of the image applies: the default image runs as UID `65532`. An image set with `--migrate-image` must declare a numeric non-root user as well, or `runAsUser` must be set in `podSecurityContext`, otherwise the kubelet refuses to start the container.
-+
+ Operational needs change over time, and Kamaji makes it easy to adapt. You can live-migrate a Tenant Cluster’s data from one datastore to another, as long as they use the same backend driver, without manual backup and restore steps. This feature simplifies Day 2 operations and helps you optimize your infrastructure as your requirements evolve.
 ```
 
-**File**: `docs/content/reference/api.md` (modified, +2471/-0)
+**File**: `docs/content/reference/api.md` (modified, +12/-0)
 ```diff
-@@ -29796,6 +29796,14 @@ No need for protocol, just bare IP/FQDN and port.<br/>
-         <td>object</td>
-         <td>
-           In case of authentication enabled for the given data store, specifies the username and password pair.
-+This value is optional.<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigration">migration</a></b></td>
-+        <td>object</td>
-+        <td>
-+          Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
+@@ -29799,6 +29799,18 @@ No need for protocol, just bare IP/FQDN and port.<br/>
  This value is optional.<br/>
          </td>
          <td>false</td>
-@@ -29994,6 +30002,2469 @@ This value is mandatory.<br/>
- </table>
- 
- 
-+<span id="datastorespecmigration">`DataStore.spec.migration`</span>
-+
-+
-+Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-+This value is optional.
-+
-+<table>
-+    <thead>
-+        <tr>
-+            <th>Name</th>
-+            <th>Type</th>
-+            <th>Description</th>
-+            <th>Required</th>
-+        </tr>
-+    </thead>
-+    <tbody><tr>
-+        <td><b><a href="#datastorespecmigrationaffinity">affinity</a></b></td>
-+        <td>object</td>
-+        <td>
-+          If specified, the migration Job pod's scheduling constraints.
-+More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/<br/>
-+        </td>
-+        <td>false</td>
 +      </tr><tr>
-+        <td><b>nodeSelector</b></td>
-+        <td>map[string]string</td>
++        <td><b>exclusive</b></td>
++        <td>boolean</td>
 +        <td>
-+          NodeSelector is a selector which must be true for the migration Job pod to fit on a node.
-+Selector which must match a node's labels for the pod to be scheduled on that node.
-+More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/<br/>
++          Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
++The tenant's etcd user is granted the root role, and Kamaji no longer forces
++--etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
++(5m by default, overridable with the API server extra args).
++A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
++This value is immutable.<br/>
 +        </td>
 +        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationpodsecuritycontext">podSecurityContext</a></b></td>
-+        <td>object</td>
-+        <td>
-+          PodSecurityContext allows to specify the security context for the migration Job pod.
-+If unset, the pod runs as non-root with the RuntimeDefault seccomp profile.<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationsecuritycontext">securityContext</a></b></td>
-+        <td>object</td>
-+        <td>
-+          SecurityContext allows to specify the security context for the migrate container.
-+If unset, privilege escalation is disallowed and all the capabilities are dropped.<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationtolerationsindex">tolerations</a></b></td>
-+        <td>[]object</td>
-+        <td>
-+          If specified, the migration Job pod's tolerations.
-+More info: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/<br/>
-+        </td>
-+        <td>false</td>
-+      </tr></tbody>
-+</table>
-+
-+
-+<span id="datastorespecmigrationaffinity">`DataStore.spec.migration.affinity`</span>
-+
-+
-+If specified, the migration Job pod's scheduling constraints.
-+More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-+
-+<table>
-+    <thead>
-+        <tr>
-+            <th>Name</th>
-+            <th>Type</th>
-+            <th>Description</th>
-+            <th>Required</th>
-+        </tr>
-+    </thead>
-+    <tbody><tr>
-+        <td><b><a href="#datastorespecmigrationaffinitynodeaffinity">nodeAffinity</a></b></td>
-+        <td>object</td>
-+        <td>
-+          Describes node affinity scheduling rules for the pod.<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationaffinitypodaffinity">podAffinity</a></b></td>
-+        <td>object</td>
-+        <td>
-+          Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationaffinitypodantiaffinity">podAntiAffinity</a></b></td>
-+        <td>object</td>
-+        <td>
-+          Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).<br/>
-+        </td>
-+        <td>false</td>
-+      </tr></tbody>
-+</table>
-+
-+
-+<span id="datastorespecmigrationaffinitynodeaffinity">`DataStore.spec.migration.affinity.nodeAffinity`</span>
-+
-+
-+Describes node affinity scheduling rules for the pod.
-+
-+<table>
-+    <thead>
-+        <tr>
-+            <th>Name</th>
-+            <th>Type</th>
-+            <th>Description</th>
-+            <th>Required</th>
-+        </tr>
-+    </thead>
-+    <tbody><tr>
-+        <td><b><a href="#datastorespecmigrationaffinitynodeaffinitypreferredduringschedulingignoredduringexecutionindex">preferredDuringSchedulingIgnoredDuringExecution</a></b></td>
-+        <td>[]object</td>
-+        <td>
-+          The scheduler will prefer to schedule pods to nodes
+       </tr><tr>
+         <td><b><a href="#datastorespecmigration">migration</a></b></td>
+         <td>object</td>
 ```
 
-**File**: `internal/resources/datastore/datastore_migrate.go` (modified, +53/-1)
+**File**: `internal/builders/controlplane/deployment.go` (modified, +9/-1)
 ```diff
-@@ -16,6 +16,7 @@ import (
- 	"k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/utils/ptr"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
- 
-@@ -108,6 +109,14 @@ func (d *Migrate) CreateOrUpdate(ctx context.Context, tenantControlPlane *kamaji
- 		return controllerutil.OperationResultNone, nil
- 	}
- 
-+	// A replaced Job is deleted in the foreground: wait for its Pods to be gone,
-+	// so the old and the new migration never run at the same time.
-+	if d.job.GetDeletionTimestamp() != nil {
-+		d.inProgress = true
-+
-+		return controllerutil.OperationResultNone, kamajierrors.MigrationInProcessError{}
-+	}
-+
- 	// The freeze webhook must be active in the tenant cluster before the migration Job is allowed
- 	// to start copying data: see ensureFreezeWebhook for why this has to be synchronous.
- 	if err := d.ensureFreezeWebhook(ctx, tenantControlPlane); err != nil {
-@@ -124,9 +133,11 @@ func (d *Migrate) CreateOrUpdate(ctx context.Context, tenantControlPlane *kamaji
- 		d.job.Spec.Template.ObjectMeta.Labels = utilities.MergeMaps(d.job.Spec.Template.ObjectMeta.Labels, d.job.Spec.Template.ObjectMeta.Labels)
- 		d.job.Spec.Template.Spec.ServiceAccountName = d.KamajiServiceAccount
- 		d.job.Spec.Template.Spec.RestartPolicy = corev1.RestartPolicyOnFailure
-+		d.setScheduling()
- 		if len(d.job.Spec.Template.Spec.Containers) == 0 {
- 			d.job.Spec.Template.Spec.Containers = append(d.job.Spec.Template.Spec.Containers, corev1.Container{})
+@@ -754,7 +754,15 @@ func (d Deployment) buildKubeAPIServerCommand(tenantControlPlane kamajiv1alpha1.
+ 			httpsEndpoints = append(httpsEndpoints, fmt.Sprintf("https://%s", ep))
  		}
-+		d.setSecurityContext()
- 		d.job.Spec.Template.Spec.Containers[0].Name = "migrate"
- 		d.job.Spec.Template.Spec.Containers[0].Image = d.MigrateImage
- 		d.job.Spec.Template.Spec.Containers[0].Args = []string{
-@@ -151,7 +162,9 @@ func (d *Migrate) CreateOrUpdate(ctx context.Context, tenantControlPlane *kamaji
- 		// these are useless for Kamaji, and we don't have proper RBAC.
- 		// If the Job has a UUID, it means it's an update, and we're expecting that error.
- 		if errors.IsForbidden(err) && d.job.UID != "" {
--			_ = d.Client.Delete(ctx, d.job)
-+			if dErr := d.deleteJob(ctx); dErr != nil {
-+				return controllerutil.OperationResultNone, dErr
-+			}
  
- 			return controllerutil.OperationResultNone, fmt.Errorf("migration job must be cretaed back due to immutable fields")
- 		}
-@@ -197,6 +210,45 @@ func (d *Migrate) UpdateTenantControlPlaneStatus(_ context.Context, tenantContro
- 	return nil
- }
- 
-+func (d *Migrate) deleteJob(ctx context.Context) error {
-+	if err := d.Client.Delete(ctx, d.job, client.PropagationPolicy(metav1.DeletePropagationForeground)); err != nil && !errors.IsNotFound(err) {
-+		return fmt.Errorf("unable to delete the migration job: %w", err)
-+	}
-+
-+	return nil
-+}
-+
-+// setScheduling copies the scheduling constraints of the target DataStore to the migration Job.
-+func (d *Migrate) setScheduling() {
-+	migration := ptr.Deref(d.desiredDatastore.Spec.Migration, kamajiv1alpha1.DataStoreMigration{})
-+
-+	d.job.Spec.Template.Spec.NodeSelector = migration.NodeSelector
-+	d.job.Spec.Template.Spec.Tolerations = migration.Tolerations
-+	d.job.Spec.Template.Spec.Affinity = migration.Affinity
-+}
-+
-+// setSecurityContext copies the security contexts of the target DataStore to the migration Job.
-+// When unset, the defaults keep the Job admissible under the "restricted" Pod Security Standard.
-+func (d *Migrate) setSecurityContext() {
-+	migration := ptr.Deref(d.desiredDatastore.Spec.Migration, kamajiv1alpha1.DataStoreMigration{})
-+
-+	d.job.Spec.Template.Spec.SecurityContext = migration.PodSecurityContext
-+	if d.job.Spec.Template.Spec.SecurityContext == nil {
-+		d.job.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
-+			RunAsNonRoot:   ptr.To(true),
-+			SeccompProfile: &corev1.SeccompProfile{Type: corev1.SeccompProfileTypeRuntimeDefault},
+-		managed["--etcd-compaction-interval"] = "0"
++		// On a shared etcd, compaction is cluster-wide and a tenant must not run it.
++		// An exclusive DataStore lets the kube-apiserver compact, which ListFromCacheSnapshot
++		// needs to expire continue tokens: the upstream default applies unless set in ExtraArgs.
++		// As a safe default, a stale "0" from a previous shared DataStore is replaced.
++		if d.DataStore.Spec.Exclusive {
++			safeDefaults["--etcd-compaction-interval"] = "5m"
++		} else {
++			managed["--etcd-compaction-interval"] = "0"
 +		}
-+	}
-+
-+	d.job.Spec.Template.Spec.Containers[0].SecurityContext = migration.SecurityContext
-+	if d.job.Spec.Template.Spec.Containers[0].SecurityContext == nil {
-+		d.job.Spec.Template.Spec.Containers[0].SecurityContext = &corev1.SecurityContext{
-+			AllowPrivilegeEscalation: ptr.To(false),
-+			Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{"ALL"}},
-+		}
-+	}
-+}
-+
- // ensureFreezeWebhook installs the tenant-side "kamaji-freeze" ValidatingWebhookConfiguration
- // and waits for it to be persisted before the caller is allowed to start the migration Job.
- //
+ 		managed["--etcd-prefix"] = fmt.Sprintf("/%s", tenantControlPlane.Status.Storage.Setup.Schema)
+ 		managed["--etcd-servers"] = strings.Join(httpsEndpoints, ",")
+ 		managed["--etcd-cafile"] = "/etc/kubernetes/pki/etcd/ca.crt"
 ```
 
----
-
-### Incident Patch 2: `f4294254` (2026-11-10)
-**Commit Message**: fix(datastore): allow rerunning the MySQL migration (#1414)
-
-The native copy introduced in #1339 dropped the DROP TABLE IF EXISTS that
-go-mysqldump emitted before each CREATE TABLE. A second run against the
-same target, after the migrate container is restarted or the migration
-Job is replaced, then failed on the CREATE TABLE and left the
-TenantControlPlane in Migrating.
-
-The table is now dropped on the target before being created, so a rerun
-starts over from the source like the PostgreSQL and etcd drivers do.
-
-Signed-off-by: Dario Tranchitella <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `internal/datastore/mysql.go` (modified, +8/-0)
+**File**: `internal/builders/controlplane/deployment_test.go` (modified, +51/-0)
 ```diff
-@@ -139,6 +139,14 @@ func migrateTable(ctx context.Context, tx *sql.Tx, targetDB *sql.DB, schema, tab
- 
- 	createTableStatement = strings.Replace(createTableStatement, "CREATE TABLE "+quoteMySQLIdentifier(table), "CREATE TABLE "+qualifiedTable, 1)
- 
-+	// The migration can run more than once against the same target: the container is
-+	// restarted on failure, and the Job is replaced when its template changes. Dropping
-+	// the table first discards what a previous run copied, as go-mysqldump's DROP TABLE
-+	// IF EXISTS did before, instead of failing on the CREATE TABLE below.
-+	if _, err := targetDB.ExecContext(ctx, "DROP TABLE IF EXISTS "+qualifiedTable); err != nil {
-+		return fmt.Errorf("unable to drop table on target: %w", err)
-+	}
-+
- 	if _, err := targetDB.ExecContext(ctx, createTableStatement); err != nil {
- 		return fmt.Errorf("unable to create table on target: %w", err)
- 	}
-```
-
-**File**: `internal/datastore/mysql_migrate_integration_test.go` (modified, +76/-0)
-```diff
-@@ -258,6 +258,82 @@ func TestMySQLMigrateDiscoversTables(t *testing.T) {
- 	}
- }
- 
-+// TestMySQLMigrateRerun checks that Migrate() can run again against a target that already
-+// holds a copy, complete or partial, as happens when the migration container is restarted or
-+// the migration Job is replaced while copying: the rerun must succeed and leave the target
-+// with exactly the rows of the source.
-+func TestMySQLMigrateRerun(t *testing.T) {
-+	if os.Getenv("KAMAJI_MYSQL_MIGRATE_IT") == "" {
-+		t.Skip("set KAMAJI_MYSQL_MIGRATE_IT=1 to run (spins up real MariaDB containers via Docker)")
-+	}
-+
-+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-+	defer cancel()
-+
-+	source := startMariaDB(ctx, t)
-+	target := startMariaDB(ctx, t)
-+
-+	const (
-+		schema   = "default_tenant00"
-+		rowCount = 10
-+	)
-+
-+	setupDB := openMariaDB(t, source, "")
-+	defer setupDB.Close()
-+
-+	mustExec(ctx, t, setupDB, fmt.Sprintf("CREATE DATABASE `%s`", schema))
-+	mustExec(ctx, t, setupDB, kineTableDDL(schema))
-+
-+	for i := 1; i <= rowCount; i++ {
-+		if _, err := setupDB.ExecContext(ctx, fmt.Sprintf("INSERT INTO `%s`.kine (id, name, value) VALUES (?, ?, ?)", schema), i, fmt.Sprintf("/registry/test/%d", i), []byte(fmt.Sprintf("value-%d", i))); err != nil {
-+			t.Fatalf("seed source row %d: %v", i, err)
-+		}
-+	}
-+
-+	// An interrupted previous run: the table is on the target with only some of the rows.
-+	targetSetupDB := openMariaDB(t, target, "")
-+	defer targetSetupDB.Close()
-+
-+	mustExec(ctx, t, targetSetupDB, fmt.Sprintf("CREATE DATABASE `%s`", schema))
-+	mustExec(ctx, t, targetSetupDB, kineTableDDL(schema))
-+	mustExec(ctx, t, targetSetupDB, fmt.Sprintf("INSERT INTO `%s`.kine (id, name, value) VALUES (1, '/registry/test/1', 'value-1')", schema))
-+
-+	sourceConn := mustMySQLConnection(t, source)
-+	targetConn := mustMySQLConnection(t, target)
-+
-+	tcp := kamajiv1alpha1.TenantControlPlane{ObjectMeta: metav1.ObjectMeta{UID: types.UID("test-migrate-uid")}}
-+	tcp.Status.Storage.Setup.Schema = schema
-+
-+	if err := sourceConn.Migrate(ctx, tcp, targetConn); err != nil {
-+		t.Fatalf("Migrate over a partial copy: %v", err)
-+	}
-+
-+	if err := sourceConn.Migrate(ctx, tcp, targetConn); err != nil {
-+		t.Fatalf("Migrate over a complete copy: %v", err)
-+	}
-+
-+	verifyDB := openMariaDB(t, target, schema)
-+	defer verifyDB.Close()
-+
-+	var count int
-+	if err := verifyDB.QueryRowContext(ctx, "SELECT COUNT(*) FROM kine").Scan(&count); err != nil {
-+		t.Fatalf("count migrated rows: %v", err)
-+	}
-+
-+	if count != rowCount {
-+		t.Fatalf("expected %d migrated rows, got %d", rowCount, count)
-+	}
-+
-+	var value []byte
-+	if err := verifyDB.QueryRowContext(ctx, "SELECT value FROM kine WHERE id = ?", rowCount).Scan(&value); err != nil {
-+		t.Fatalf("read back last row: %v", err)
-+	}
-+
-+	if want := fmt.Sprintf("value-%d", rowCount); string(value) != want {
-+		t.Fatalf("last row value = %q, want %q", value, want)
-+	}
-+}
-+
- // kineTableDDL returns a CREATE TABLE statement for a schema-qualified kine table shaped like
- // a real kine sidecar's (fewer indexes, Migrate() doesn't care about those).
- func kineTableDDL(schema string) string {
-```
-
----
-
-### Incident Patch 3: `8edc639f` (2026-11-11)
-**Commit Message**: fix(soot): cache only kube-system and kube-public (#1413)
-
-The soot manager was created with the default cache options, so every
-kind watched by the soot controllers (ConfigMap, Deployment, Service,
-ServiceAccount, DaemonSet, Role, RoleBinding) was listed and watched
-across all the namespaces of the tenant cluster.
-
-The soot controllers manage only objects living in kube-system, plus
-the cluster-info ConfigMap in kube-public: caching the remaining
-namespaces made the Kamaji memory footprint, and the watch traffic
-from the tenant API servers, grow with the tenant workloads.
-
-Restrict the default namespaces of the soot cache to kube-system and
-kube-public. Cluster-scoped kinds are not affected.
-
-Signed-off-by: Pushkar Acharya <[REDACTED_EMAIL]>
-Co-authored-by: Pushkar Acharya <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `controllers/soot/manager.go` (modified, +11/-0)
-```diff
-@@ -10,11 +10,13 @@ import (
- 	"time"
- 
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/rest"
- 	"k8s.io/client-go/util/retry"
- 	"k8s.io/utils/ptr"
- 	controllerruntime "sigs.k8s.io/controller-runtime"
- 	"sigs.k8s.io/controller-runtime/pkg/builder"
-+	"sigs.k8s.io/controller-runtime/pkg/cache"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/controller"
- 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-@@ -262,6 +264,15 @@ func (m *Manager) Reconcile(ctx context.Context, request reconcile.Request) (res
- 
- 			return client.New(config, opts)
- 		},
-+		// The soot controllers only manage namespaced objects in kube-system and kube-public:
-+		// caching every namespace would make memory grow with the tenant workloads.
-+		// A soot controller watching a namespaced object elsewhere must add its namespace here.
-+		Cache: cache.Options{
-+			DefaultNamespaces: map[string]cache.Config{
-+				metav1.NamespaceSystem: {},
-+				metav1.NamespacePublic: {},
-+			},
-+		},
+@@ -272,6 +272,57 @@ var _ = Describe("Controlplane Deployment", func() {
+ 		})
  	})
- 	if err != nil {
- 		return reconcile.Result{}, err
+ 
++	Describe("etcd compaction interval flag", func() {
++		var tcp kamajiv1alpha1.TenantControlPlane
++
++		BeforeEach(func() {
++			tcp = kamajiv1alpha1.TenantControlPlane{}
++			d.DataStore.Spec.Driver = kamajiv1alpha1.EtcdDriver
++		})
++
++		It("forces 0 on a shared DataStore, ignoring user extraArgs", func() {
++			tcp.Spec.ControlPlane.Deployment.ExtraArgs = &kamajiv1alpha1.ControlPlaneExtraArgs{
++				APIServer: []string{"--etcd-compaction-interval=1m"},
++			}
++
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++
++			Expect(got).To(ContainElement("--etcd-compaction-interval=0"))
++			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=1m"))
++		})
++
++		It("defaults to 5m on an exclusive DataStore", func() {
++			d.DataStore.Spec.Exclusive = true
++
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++
++			Expect(got).To(ContainElement("--etcd-compaction-interval=5m"))
++		})
++
++		It("lets the user set the interval on an exclusive DataStore", func() {
++			d.DataStore.Spec.Exclusive = true
++			tcp.Spec.ControlPlane.Deployment.ExtraArgs = &kamajiv1alpha1.ControlPlaneExtraArgs{
++				APIServer: []string{"--etcd-compaction-interval=1m"},
++			}
++
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++
++			Expect(got).To(ContainElement("--etcd-compaction-interval=1m"))
++			Expect(got).NotTo(ContainElement(HavePrefix("--etcd-compaction-interval=0")))
++			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=5m"))
++		})
++
++		It("replaces the stale 0 after migrating to an exclusive DataStore", func() {
++			shared := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++
++			d.DataStore.Spec.Exclusive = true
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", shared)
++
++			Expect(got).To(ContainElement("--etcd-compaction-interval=5m"))
++			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=0"))
++		})
++	})
++
+ 	Describe("Konnectivity egress selector flag", func() {
+ 		var tcp kamajiv1alpha1.TenantControlPlane
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1417** (2026-11-15): feat(datastore): exclusive etcd DataStore (@NanduBolleddu)
+- **PR #1416** (2026-11-12): fix(metrics): list only certificate secrets (@albertoec)
 - **PR #1414** (2026-11-10): fix(datastore): allow rerunning the MySQL migration (@prometherion)
 - **PR #1413** (2026-11-11): fix(soot): cache only kube-system and kube-public (@pacharya-pf9)
 - **PR #1410** (2026-11-10): feat(deps): bump github.com/testcontainers/testcontainers-go from 0.44.0 to 0.45.0 (@dependabot[bot])
 - **PR #1409** (2026-11-09): feat(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
-- **PR #1408** (2026-11-09): feat(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
-- **PR #1407** (2026-11-06): fix(konnectivity): keep additional Service ports (@themoriarti)
 
 ---
 
@@ -1721,13 +1152,13 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datastore): schedule and securitycontext migration jobs from the DataStore (#140
+## X. datastore): exclusive etcd DataStore
 
 **RULE**:
 When implementing operations in `api/v1alpha1/datastore_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d2089911`: datastore): schedule and securitycontext migration jobs from the DataStore (#1403). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60204b0c`: datastore): exclusive etcd DataStore. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1alpha1/datastore_types.go`.
@@ -1735,35 +1166,25 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-	// This value is optional.
-	Migration *DataStoreMigration `json:"migration,omitempty"`
-}
-
-// DataStoreMigration contains the settings of the Job migrating a Tenant Control Plane to this data store.
-type DataStoreMigration struct {
-	// NodeSelector is a selector which must be true for the migration Job pod to fit on a node.
-	// Selector which must match a node's labels for the pod to be scheduled on that node.
-	// More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
-	// If specified, the migration Job pod's tolerations.
-	// More info: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
-	// If specified, the migration Job pod's scheduling constraints.
-	// More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-	Affinity *corev1.Affinity `json:"affinity,omitempty"`
-	// PodSecurityContext allows to specify the security context for the migration Job pod.
-	// If unset, the
+// +kubebuilder:validation:XValidation:rule="!has(self.exclusive) || !self.exclusive || self.driver == \"etcd\"", message="exclusive is supported only with the etcd driver"
+// +kubebuilder:validation:XValidation:rule="oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)", message="exclusive is immutable and cannot be changed after creation"
+	// Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
+	// The tenant's etcd user is granted the root role, and Kamaji no longer forces
+	// --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
+	// (5m by default, overridable with the API server extra args).
+	// A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
+	// This value is immutable.
+	Exclusive bool `json:"exclusive,omitempty"`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2089911` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60204b0c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

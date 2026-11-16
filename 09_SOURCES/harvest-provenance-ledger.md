@@ -10232,3 +10232,5 @@ Every entry in this ledger must capture:
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `04c62ec9` | Multi-dimensional audit evidence | 2026-11-16T00:36:52.314Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `64e35701` | Multi-dimensional audit evidence | 2026-11-16T00:36:54.913Z |
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `f9797f7f` | Multi-dimensional audit evidence | 2026-11-16T00:45:15.251Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `9fe067c6` | Multi-dimensional audit evidence | 2026-11-16T00:56:42.284Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `60204b0c` | Multi-dimensional audit evidence | 2026-11-16T00:56:51.806Z |

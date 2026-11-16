@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-UPV8",
-    "timestamp": "2026-11-13T16:25:48.404Z",
-    "repository": "gauthierpiarrette/highball",
-    "learningId": "learn-github-gauthierpiarrette-highball",
-    "contentHash": "e1d817ecf77b9bc98cdc66450546e6dd2b642b5c16b4bc710fa52c97b7c93a90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-UQPX",
-    "timestamp": "2026-11-13T16:25:49.509Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "1ea04846b32a801ce89c901426062294b78aa5385a88f1657d97b079adc05916",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-UZST",
     "timestamp": "2026-11-13T16:26:01.277Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7490,6 +7460,36 @@
     "repository": "rainbow-me/rainbow",
     "learningId": "learn-github-rainbow-me-rainbow",
     "contentHash": "8cd413f82579552a67da1ae7a49015be1ab615599dfb26cdb9a44ef98dfc4cfb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-ZFVT",
+    "timestamp": "2026-11-16T00:56:42.281Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "ef3d6562acb3a7ee1898cdd9e3d43d1966c0658cbd3734e4508d6eabefda07c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-ZN8B",
+    "timestamp": "2026-11-16T00:56:51.803Z",
+    "repository": "clastix/kamaji",
+    "learningId": "learn-github-clastix-kamaji",
+    "contentHash": "9d8fa97c88ecf1149dabda8f5c662700425cf494fd0b8d2294f1427e2ae69ef5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

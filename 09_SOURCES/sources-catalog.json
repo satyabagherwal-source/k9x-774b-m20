@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "3e489c5f",
+    "sourceVersion": "60204b0c",
     "license": "Apache-2.0",
-    "contentHash": "96844938badb6f83c9974b9529223b504538e15d48e4d7c4a471451e86ecf6d1",
-    "lastHarvestedAt": "2026-11-13T13:02:47.231Z",
+    "contentHash": "9d8fa97c88ecf1149dabda8f5c662700425cf494fd0b8d2294f1427e2ae69ef5",
+    "lastHarvestedAt": "2026-11-16T00:56:51.806Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "9b4b9cfc",
+    "sourceVersion": "9fe067c6",
     "license": "Apache-2.0",
-    "contentHash": "9ff94f4e1c9ac67b995f02e82cfd78b595c0573910c10b438793041c9cc42b47",
-    "lastHarvestedAt": "2026-11-14T15:49:43.550Z",
+    "contentHash": "ef3d6562acb3a7ee1898cdd9e3d43d1966c0658cbd3734e4508d6eabefda07c7",
+    "lastHarvestedAt": "2026-11-16T00:56:42.284Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {

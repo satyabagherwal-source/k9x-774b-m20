@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:45:15.256Z",
-  "total_cycles_completed": 9796,
-  "total_learnings_persisted": 9796,
-  "total_rules_promoted": 9406,
+  "last_updated": "2026-11-16T00:56:51.812Z",
+  "total_cycles_completed": 9798,
+  "total_learnings_persisted": 9798,
+  "total_rules_promoted": 9408,
   "history": [
-    {
-      "timestamp": "2026-11-14T21:20:52.899Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T21:20:58.611Z",
-      "repository": "kotest/kotest",
-      "learningId": "learn-github-kotest-kotest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T21:21:02.319Z",
       "repository": "tailscale/tailscale",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T00:45:15.256Z",
       "repository": "rainbow-me/rainbow",
       "learningId": "learn-github-rainbow-me-rainbow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:56:42.289Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:56:51.812Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

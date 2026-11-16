@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:59.712Z",
+  "timestamp": "2026-11-16T00:56:55.749Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-trinodb-trino-learnings",
+  "learning_id": "LEARN-EVO-trinodb-trino-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [trinodb-trino-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:59.712Z`  
-> **Learning ID**: `LEARN-REEXTRACT-trinodb-trino-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T00:56:55.749Z`  
+> **Learning ID**: `LEARN-EVO-trinodb-trino-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `d1c0035f`  
+> **Source Version**: `9fe067c6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:30:46.373Z  
+> **Timestamp**: 2026-11-16T00:56:41.419Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:30:46.368Z  
+> **Harvest Timestamp**: 2026-11-16T00:56:41.280Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13504 stars
+- **Stars / Engagement**: 13513 stars
 
 ---
 
@@ -507,11 +507,15 @@ type StageNodeInfo = {
 }
 
 class StageStatistics extends React.Component<StageStatisticsProps, StageStatisticsState> {
-    static getStages(queryInfo: any): Map<string, StageNodeInfo> {
+    static getStages(queryInfo: any, queryPlan: QueryPlan): Map<string, StageNodeInfo> {
         const stages: Map<string, StageNodeInfo> = new Map()
         queryInfo.stages.stages.forEach(function (stageInfo) {
+            const planNodes = queryPlan[stageInfo.stageId]
+            if (!planNodes) {
+                return
+            }
             const nodes = new Map<any, PlanNodeProps>()
-            StageStatistics.flattenNode(stageInfo.plan.root, JSON.parse(stageInfo.plan.jsonRepresentation), nodes)
+            planNodes.forEach((node) => nodes.set(node.id, node))
             stages.set(stageInfo.plan.id, {
                 stageId: stageInfo.stageId,
                 id: stageInfo.plan.id,
@@ -523,20 +527,6 @@ class StageStatistics extends React.Component<StageStatisticsProps, StageStatist
             })
         })
         return stages
-    }
-
-    static flattenNode(rootNodeInfo: any, node: any, result: Map<any, PlanNodeProps>) {
-        result.set(node.id, {
-            id: node.id,
-            name: node['name'],
-            descriptor: node['descriptor'],
-            details: node['details'],
-            sources: node.children.map((node) => node.id),
-        })
-
-        node.children.forEach(function (child) {
-            StageStatistics.flattenNode(rootNodeInfo, child, result)
-        })
     }
 
     render(): any {
@@ -579,6 +569,8 @@ type PlanNodeProps = {
     details: string[],
     sources: string[],
 }
+// Plan nodes of each stage, keyed by the stage id
+type QueryPlan = { [stageId: string]: PlanNodeProps[] }
 type PlanNodeState = {}
 
 class PlanNode extends React.Component<PlanNodeProps, PlanNodeState> {
@@ -625,6 +617,7 @@ type LivePlanState = {
     ended: boolean,
 
     query: ?any,
+    queryPlan: QueryPlan,
 
     graph: any,
     svg: any,
@@ -633,6 +626,7 @@ type LivePlanState = {
 
 export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
     timeoutId: TimeoutID
+    queryPlanUnavailable: boolean = false
 
     constructor(props: LivePlanProps) {
         super(props)
@@ -641,6 +635,7 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
             ended: false,
 
             query: null,
+            queryPlan: {},
 
             graph: initializeGraph(),
             svg: null,
@@ -653,6 +648,12 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
         // stop refreshing when query finishes or fails
         if (this.state.query === null || !this.state.ended) {
             this.timeoutId = setTimeout(this.refreshLoop.bind(this), 1000)
+        } else if (!this.queryPlanUnavailable && !this.hasQueryPlan(this.state.query)) {
+            // the query does not change anymore, so only its plan is requested again
+            this.timeoutId = setTimeout(
+                () => this.refreshQueryPlan(this.state.query).then(() => this.resetTimer()),
+                1000
+            )
         }
     }
 
@@ -667,14 +668,42 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
                     initialized: true,
                     ended: query.finalQueryInfo,
                 })
-                this.resetTimer()
+                return this.refreshQueryPlan(query)
             })
+            .then(() => this.resetTimer())
             .catch(() => {
                 this.setState({
                     initialized: true,
                 })
                 this.resetTimer()
             })
+    }
+
+    // the plan of a stage does not change, so the plan is requested only when it does not cover all the stages
+    refreshQueryPlan(query: any): Promise<void> {
+        if (this.queryPlanUnavailable || this.hasQueryPlan(query)) {
+            return Promise.resolve()
+        }
+        return fetch('/ui/api/query/' + this.props.queryId + '/plan')
+            .then((response) => {
+                // asking again does not help when the query cannot be viewed or is gone
+                this.queryPlanUnavailable = response.status === 403 || response.status === 410
+                if (!response.ok) {
+                    throw new Error(response.statusText)
+                }
+                return response.json()
+            })
+            .then((queryPlan) => this.setState({ queryPlan: queryPlan }))
+            .catch(() => {
+                // the plan is requested again with the next refresh
+            })
+    }
+
+    hasQueryPlan(query: any): boolean {
+        const queryPlan = this.state.queryPlan
+        return (
+            !query.stages || query.stages.stages.every((stageInfo) => !stageInfo.plan || stageInfo.stageId in queryPlan)
+        )
     }
 
     static handleStageClick(stageCssId: string) {
@@ -731,44 +760,7 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
             if (sourceFragmentIds) {
                 var remoteSources = sourceFragmentIds.replace('[', '').replace(']', '').split(', ')
                 if (remoteSources.length > 0) {
-                    graph.setNode(nodeId, { label: '', shape: 'circle' })
-
-                    remoteSources.forEach((sourceId) => {
-                        const source = allStages.get(sourceId)
-                        if (source) {
-                            const sourceStats = source.stageStats
-                            graph.setEdge('stage-' + sourceId + '-root', nodeId, {
-                                class: 'plan-edge',
-                                style: 'stroke-width: 4px',
-                                arrowheadClass: 'plan-arrowhead',
-                                label:
-                                    parseAndFormatDataSize(sourceStats.outputDataSize) +
-                                    ' / ' +
-                                    formatRows(sourceStats.outputPositions),
-                                labelStyle: 'color: #fff; font-weight: bold; font-size: 24px;',
-                                labelType: 'html',
-                            })
-                        }
-                    })
-                }
-            }
-        })
-    }
-
-    updateD3Graph() {
-        if (!this.state.svg) {
-            this.setState({
-                svg: initializeSvg('#plan-canvas'),
-            })
-            return
-        }
-
-        if (!this.state.query) {
-            return
-        }
-
-        const graph = this.state.graph
-        const stages = StageStatistics.getSta
+     
 ```
 
 ### Core Architecture Module: `core/trino-web-ui/src/main/resources/webapp-legacy/src/components/PageTitle.jsx`
@@ -1887,386 +1879,169 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `336c2e0c` (2026-11-11)
-**Commit Message**: Fix short decimal cast overflow when increasing scale
+### Incident Patch 1: `9fe067c6` (2026-11-14)
+**Commit Message**: Fix IN with simple CASE in value list
 
-Casting a short decimal to a short decimal with a larger scale
-multiplied the value in a plain long. When the product wrapped, it
-could land within the target precision and pass the overflow check,
-returning a wrong value instead of failing.
+InCodeGenerator allocated its temp variables after generating the
+IN-list items, so a simple CASE (Match) item reused the same local slots
+for its operand and operand null flag. Evaluating the CASE clobbered the
+searched value and the null-tracking flag, returning wrong results.
 
-**File**: `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java` (modified, +15/-0)
+**File**: `core/trino-main/src/main/java/io/trino/sql/gen/InCodeGenerator.java` (modified, +10/-16)
 ```diff
-@@ -129,6 +129,21 @@ public void testShortDecimalToShortDecimalCasts()
-                 .binding("a", "DECIMAL '-12345.6'").evaluate())
-                 .hasMessage("Cannot cast DECIMAL(6, 1) '-12345.6' to DECIMAL(4, 2)")
-                 .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
+@@ -144,6 +144,12 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
+         MethodHandle hashCodeMethodHandle = generatorContext.getScalarFunctionImplementation(resolvedHashCodeFunction, simpleConvention(FAIL_ON_NULL, NEVER_NULL)).getMethodHandle();
+         MethodHandle indeterminateMethodHandle = generatorContext.getScalarFunctionImplementation(resolvedIsIndeterminate, simpleConvention(FAIL_ON_NULL, NEVER_NULL)).getMethodHandle();
+ 
++        // Allocate before generating the IN-list items: an item's code must not reuse these slots
++        Scope scope = generatorContext.getScope();
++        Variable value = scope.getOrCreateTempVariable(javaType);
++        Variable expression = scope.getOrCreateTempVariable(int.class);
++        Variable caseWasNull = scope.getOrCreateTempVariable(boolean.class);
 +
-+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
-+                .binding("a", "DECIMAL '175'").evaluate())
-+                .hasMessage("Cannot cast DECIMAL(3, 0) '175' to DECIMAL(18, 17)")
-+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-+
-+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
-+                .binding("a", "DECIMAL '-175'").evaluate())
-+                .hasMessage("Cannot cast DECIMAL(3, 0) '-175' to DECIMAL(18, 17)")
-+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-+
-+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 2))")
-+                .binding("a", "DECIMAL '184467440737095516'").evaluate())
-+                .hasMessage("Cannot cast DECIMAL(18, 0) '184467440737095516' to DECIMAL(18, 2)")
-+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-     }
+         ImmutableListMultimap.Builder<Integer, BytecodeNode> hashBucketsBuilder = ImmutableListMultimap.builder();
+         ImmutableList.Builder<BytecodeNode> defaultBucket = ImmutableList.builder();
+         ImmutableSet.Builder<Object> constantValuesBuilder = ImmutableSet.builder();
+@@ -181,11 +187,7 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
  
-     @Test
-```
-
-**File**: `core/trino-spi/src/main/java/io/trino/spi/type/DecimalConversions.java` (modified, +7/-1)
-```diff
-@@ -31,6 +31,7 @@
- import static java.lang.Math.abs;
- import static java.lang.Math.fma;
- import static java.lang.Math.min;
-+import static java.lang.Math.multiplyExact;
- import static java.lang.Math.nextDown;
- import static java.lang.Math.nextUp;
- import static java.lang.Math.rint;
-@@ -360,7 +361,12 @@ public static long shortToShortCast(
-     {
-         long returnValue;
-         if (resultScale >= sourceScale) {
--            returnValue = value * scalingFactor;
-+            try {
-+                returnValue = multiplyExact(value, scalingFactor);
-+            }
-+            catch (ArithmeticException _) {
-+                throw throwCastException(value, sourcePrecision, sourceScale, resultPrecision, resultScale);
-+            }
-         }
-         else {
-             returnValue = value / scalingFactor;
-```
-
----
-
-### Incident Patch 2: `f0dcb88c` (2026-11-11)
-**Commit Message**: Bump the web-ui-dependencies group
-
-Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 44 updates:
-
-| Package | From | To |
-| --- | --- | --- |
-| [@mui/x-charts](https://github.com/mui/mui-x/tree/HEAD/packages/x-charts) | `9.15.0` | `9.16.0` |
-| [@xyflow/react](https://github.com/xyflow/xyflow/tree/HEAD/packages/react) | `12.12.0` | `12.12.1` |
-| [sass](https://github.com/sass/dart-sass) | `1.105.2` | `1.106.0` |
-| [@typescript-eslint/eslint-plugin](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/eslint-plugin) | `8.71.2` | `8.72.0` |
-| [@typescript-eslint/parser](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/parser) | `8.71.2` | `8.72.0` |
-| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) | `8.71.2` | `8.72.0` |
-| [@babel/generator](https://github.com/babel/babel/tree/HEAD/packages/babel-generator) | `7.29.8` | `7.29.13` |
-| [@babel/traverse](https://github.com/babel/babel/tree/HEAD/packages/babel-traverse) | `7.29.10` | `7.29.13` |
-| [@base-ui/utils](https://github.com/mui/base-ui/tree/HEAD/packages/utils) | `0.4.0` | `0.5.0`
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +59/-51)
-```diff
-@@ -12,16 +12,16 @@
-         "@monaco-editor/react": "^4.7.0",
-         "@mui/icons-material": "^9.5.0",
-         "@mui/material": "^9.5.0",
--        "@mui/x-charts": "^9.15.0",
--        "@xyflow/react": "^12.12.0",
-+        "@mui/x-charts": "^9.16.0",
-+        "@xyflow/react": "^12.12.1",
-         "axios": "^1.20.0",
-         "lodash": "^4.18.1",
-         "monaco-editor": "^0.57.0",
-         "react": "^19.3.1",
-         "react-calendar-timeline": "^0.30.0-beta.4",
-         "react-dom": "^19.3.1",
-         "react-router-dom": "^7.18.5",
--        "sass": "^1.105.2",
-+        "sass": "^1.106.0",
-         "zustand": "^5.0.16",
-       },
-       "devDependencies": {
-@@ -30,8 +30,8 @@
-         "@types/lodash.merge": "^4.6.9",
-         "@types/react": "^19.3.0",
-         "@types/react-dom": "^19.3.0",
--        "@typescript-eslint/eslint-plugin": "^8.71.2",
--        "@typescript-eslint/parser": "^8.71.2",
-+        "@typescript-eslint/eslint-plugin": "^8.72.0",
-+        "@typescript-eslint/parser": "^8.72.0",
-         "@vitejs/plugin-react": "^5.2.0",
-         "eslint": "^9.39.5",
-         "eslint-plugin-react": "^7.37.5",
-@@ -40,7 +40,7 @@
-         "globals": "^16.5.0",
-         "prettier": "^3.9.10",
-         "typescript": "^6.0.3",
--        "typescript-eslint": "^8.71.2",
-+        "typescript-eslint": "^8.72.0",
-         "vite": "npm:rolldown-vite@^7.3.1",
-       },
-     },
-@@ -55,7 +55,7 @@
+         LabelNode defaultLabel = new LabelNode("default");
  
-     "@babel/core": ["@babel/core@7.29.7", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.7", "@babel/helper-compilation-targets": "^7.29.7", "@babel/helper-module-transforms": "^7.29.7", "@babel/helpers": "^7.29.7", "@babel/parser": "^7.29.7", "@babel/template": "^7.29.7", "@babel/traverse": "^7.29.7", "@babel/types": "^7.29.7", "@jridgewell/remapping": "^2.3.5", "convert-source-map": "^2.0.0", "debug": "^4.1.0", "gensync": "^1.0.0-beta.2", "json5": "^2.2.3", "semver": "^6.3.1" } }, "sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA=="],
+-        Scope scope = generatorContext.getScope();
+-        Variable value = scope.getOrCreateTempVariable(javaType);
+-
+         BytecodeNode switchBlock;
+-        Variable expression = scope.getOrCreateTempVariable(int.class);
+         SwitchBuilder switchBuilder = new SwitchBuilder().expression(expression);
  
--    "@babel/generator": ["@babel/generator@7.29.8", "", { "dependencies": { "@babel/parser": "^7.29.8", "@babel/types": "^7.29.8", "@jridgewell/gen-mapping": "^0.3.12", "@jridgewell/trace-mapping": "^0.3.28", "jsesc": "^3.0.2" } }, "sha512-gZbepsdh3WDtgZKWL+vTPh71LSBrm/Y4/QDZBVCcYfmeTEEuoOYwlSy+G1StfJg+/Zy550u/3TATbm7qDbbMtg=="],
-+    "@babel/generator": ["@babel/generator@7.29.13", "", { "dependencies": { "@babel/parser": "^7.29.13", "@babel/types": "^7.29.11", "@jridgewell/gen-mapping": "^0.3.12", "@jridgewell/trace-mapping": "^0.3.28", "jsesc": "^3.0.2" } }, "sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw=="],
- 
-     "@babel/helper-compilation-targets": ["@babel/helper-compilation-targets@7.29.7", "", { "dependencies": { "@babel/compat-data": "^7.29.7", "@babel/helper-validator-option": "^7.29.7", "browserslist": "^4.24.0", "lru-cache": "^5.1.1", "semver": "^6.3.1" } }, "sha512-wem6WaBj4NaVYVdNhLPPVacES6ZJ+KBBfSkTMD3YZxbP3rm3Di85tJU5ljaUNhaOynt+Aj0xruhYuzQBt8n71g=="],
- 
-@@ -85,11 +85,11 @@
- 
-     "@babel/template": ["@babel/template@7.29.7", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/parser": "^7.29.7", "@babel/types": "^7.29.7" } }, "sha512-puq+Gf35oI24FeN11LkoUQFqv9uwNeWpxXZi/Ji3rRIoKAzKnxRaZ+Gkj0vKS9ZCiTESfng1N9LyOyXvo+m+Gg=="],
- 
--    "@babel/traverse": ["@babel/traverse@7.29.10", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.8", "@babel/helper-globals": "^7.29.7", "@babel/parser": "^7.29.9", "@babel/template": "^7.29.7", "@babel/types": "^7.29.8", "debug": "^4.3.1" } }, "sha512-B3lYAs2nkKskbgQ1nfy8Ma9ao9Q1rntTAQHrzzyDuj+TSO+X3le6PfWwqDvodsb+OumE10eMFfuMCTQSQ5iuIQ=="],
-+    "@babel/traverse": ["@babel/traverse@7.29.13", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.13", "@babel/helper-globals": "^7.29.7", "@babel/parser": "^7.29.13", "@babel/template": "^7.29.7", "@babel/types": "^7.29.11", "debug": "^4.3.1" } }, "sha512-0ve0xMlFA73dgY1oyJRY6RoW+/bncdcOQqg6jjYcVfXBK90OdLXjm9R6lmRetdZVrPjXkKIoMVBqYFPjcAlZ4Q=="],
- 
-     "@babel/types": ["@babel/types@7.29.11", "", { "dependencies": { "@babel/helper-string-parser": "^7.29.11", "@babel/helper-validator-identifier": "^7.29.7" } }, "sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ=="],
- 
--    "@base-ui/utils": ["@base-ui/utils@0.4.0", "", { "dependencies": { "@babel/runtime": "^7.29.7", "@floating-ui/utils": "^0.2.12", "reselect": "^5.2.0", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-bO9fz25kKtPf+aZVyfQrC0PDmJdmVni31W2hCS5/Owb+inwdIL3XU26pCPRPlt4LSxZrBgLwubXQXQlKaFEZzw=="],
-+    "@base-ui/utils": ["@base-ui/utils@0.5.0", "", { "dependencies": { "@babel/runtime": "^7.29.7 || ^8.0.0", "@floating-ui/utils": "^0.2.1
-```
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +6/-6)
-```diff
-@@ -24,16 +24,16 @@
-     "@monaco-editor/react": "^4.7.0",
-     "@mui/icons-material": "^9.5.0",
-     "@mui/material": "^9.5.0",
--    "@mui/x-charts": "^9.15.0",
--    "@xyflow/react": "^12.12.0",
-+    "@mui/x-charts": "^9.16.0",
-+    "@xyflow/react": "^12.12.1",
-     "axios": "^1.20.0",
-     "lodash": "^4.18.1",
-     "monaco-editor": "^0.57.0",
-     "react": "^19.3.1",
-     "react-calendar-timeline": "^0.30.0-beta.4",
-     "react-dom": "^19.3.1",
-     "react-router-dom": "^7.18.5",
--    "sass": "^1.105.2",
-+    "sass": "^1.106.0",
-     "zustand": "^5.0.16"
-   },
-   "devDependencies": {
-@@ -42,8 +42,8 @@
-     "@types/lodash.merge": "^4.6.9",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
--    "@typescript-eslint/eslint-plugin": "^8.71.2",
--    "@typescript-eslint/parser": "^8.71.2",
-+    "@typescript-eslint/eslint-plugin": "^8.72.0",
-+    "@typescript-eslint/parser": "^8.72.0",
-     "@vitejs/plugin-react": "^5.2.0",
-     "eslint": "^9.39.5",
-     "eslint-plugin-react": "^7.37.5",
-@@ -52,7 +52,7 @@
-     "globals": "^16.5.0",
-     "prettier": "^3.9.10",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.71.2",
-+    "typescript-eslint": "^8.72.0",
-     "vite": "npm:rolldown-vite@^7.3.1"
-   },
-   "overrides": {
-```
-
----
-
-### Incident Patch 3: `d1c0035f` (2026-11-10)
-**Commit Message**: Fix path caching in Iceberg position delete reader
-
-A block returns a new `Slice` per position, so a cache keyed on it
-missed.
-
-Results of BenchmarkPositionDeleteReader, which reads a Parquet position
-delete file with 1000 deletes for each of 1000 data files, in ms/op:
-
-```
-                          before            after
-readPositionDeletes        6.426 ± 0.379     1.908 ± 0.040
-readAllPositionDeletes    47.670 ± 0.733    11.754 ± 0.085
-```
-
-**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/delete/PositionDeleteReader.java` (modified, +17/-41)
-```diff
-@@ -47,7 +47,6 @@
- import static io.trino.plugin.iceberg.IcebergUtil.getColumnHandle;
- import static io.trino.spi.type.BigintType.BIGINT;
- import static io.trino.spi.type.VarcharType.VARCHAR;
--import static java.util.Objects.requireNonNull;
- import static org.apache.iceberg.MetadataColumns.DELETE_FILE_PATH;
- import static org.apache.iceberg.MetadataColumns.DELETE_FILE_POS;
- 
-@@ -144,7 +143,6 @@ private static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
-         // Use a linear search since we expect most deletion files to only contain
-         // entries for a single path. The comparison cost is minimal if the
-         // path values are dictionary encoded, since we only do the comparison once.
--        CachingVarcharComparator comparator = new CachingVarcharComparator(targetPath);
-         while (!pageSource.isFinished()) {
-             getFutureValue(pageSource.isBlocked());
-             SourcePage page = pageSource.getNextSourcePage();
-@@ -156,8 +154,17 @@ private static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
-             Block block = page.getBlock(1);
- 
-             // TODO: add specialized code for RLE and dictionary blocks
-+            int lastPathPosition = -1;
-+            int result = 0;
-             for (int position = 0; position < page.getPositionCount(); position++) {
--                int result = comparator.compare(pathBlock, position);
-+                // The expected case is a dictionary block with many entries for the
-+                // same path. Only perform a comparison if the path has changed.
-+                int pathPosition = pathBlock.getUnderlyingValuePosition(position);
-+                if (lastPathPosition != pathPosition) {
-+                    checkArgument(!pathBlock.isNull(position), "position is null");
-+                    lastPathPosition = pathPosition;
-+                    result = VARCHAR.getSlice(pathBlock, position).compareTo(targetPath);
-+                }
-                 if (result > 0) {
-                     // deletion files are sorted by path, so we're done
-                     return;
-@@ -181,50 +188,19 @@ public static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
-             Block pathBlock = page.getBlock(0);
-             Block posBlock = page.getBlock(1);
- 
--            Slice lastPath = null;
-+            int lastPathPosition = -1;
-             String pathString = null;
-             for (int position = 0; position < page.getPositionCount(); position++) {
--                Slice path = VARCHAR.getSlice(pathBlock, position);
--                // We expect that paths are dictionary or RLE encoded, and thus getSlice()
--                // will return the same object for each delete position for a data file,
-+                // We expect that paths are dictionary or RLE encoded, and thus the delete
-+                // positions for a data file share the same underlying value position,
-                 // so this caches the conversion to string.
--                if (lastPath != path) {
--                    lastPath = path;
--                    pathString = path.toStringUtf8();
-+                int pathPosition = pathBlock.getUnderlyingValuePosition(position);
-+                if (lastPathPosition != pathPosition) {
-+                    lastPathPosition = pathPosition;
-+                    pathString = VARCHAR.getSlice(pathBlock, position).toStringUtf8();
+         switch (switchGenerationCase) {
+@@ -208,13 +210,13 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
+                     Collection<BytecodeNode> testValues = bucket.getValue();
+                     BytecodeBlock caseBlock = buildInCase(
+                             generatorContext,
+-                            scope,
+                             resolvedEqualsFunction,
+                             match,
+                             defaultLabel,
+                             value,
+                             testValues,
+                             false,
++                            caseWasNull,
+                             resolvedIsIndeterminate);
+                     switchBuilder.addCase(bucket.getKey(), caseBlock);
                  }
-                 filePositionConsumer.accept(pathString, BIGINT.getLong(posBlock, position));
-             }
+@@ -250,13 +252,13 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
+ 
+         BytecodeBlock defaultCaseBlock = buildInCase(
+                 generatorContext,
+-                scope,
+                 resolvedEqualsFunction,
+                 match,
+                 noMatch,
+                 value,
+                 defaultBucket.build(),
+                 true,
++                caseWasNull,
+                 resolvedIsIndeterminate)
+                 .setDescription("default");
+ 
+@@ -286,6 +288,7 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
+ 
+         block.visitLabel(end);
+ 
++        scope.releaseTempVariableForReuse(caseWasNull);
+         scope.releaseTempVariableForReuse(expression);
+         scope.releaseTempVariableForReuse(value);
+ 
+@@ -299,20 +302,15 @@ public static boolean isInteger(long value)
+ 
+     private static BytecodeBlock buildInCase(
+             BytecodeGeneratorContext generatorContext,
+-            Scope scope,
+             ResolvedFunction equals,
+             LabelNode matchLabel,
+             LabelNode noMatchLabel,
+             Variable value,
+             Collection<BytecodeNode> testValues,
+             boolean checkForNulls,
++            Variable caseWasNull, // with checkForNulls, set to true the first time a null in `testValues` is encountered
+             ResolvedFunction isIndeterminateFunction)
+     {
+-        Variable caseWasNull = null; // caseWasNull is set to true the first time a null in `testValues` is encountered
+-        if (checkForNulls) {
+-            caseWasNull = scope.getOrCreateTempVariable(boolean.class);
+-        }
+-
+         BytecodeBlock caseBlock = new BytecodeBlock();
+ 
+         if (checkForNulls) {
+@@ -371,10 +369,6 @@ private static BytecodeBlock buildInCase(
+             elseLabel = testLabel;
          }
+         caseBlock.append(elseNode);
+-
+-        if (checkForNulls) {
+-            scope.releaseTempVariableForReuse(caseWasNull);
+-        }
+         return caseBlock;
      }
--
--    private static final class CachingVarcharComparator
--    {
--        private final Slice reference;
--        private int result;
--        private Slice value;
--
--        public CachingVarcharComparator(Slice reference)
--        {
--            this.reference = requireNonNull(reference, "reference is null");
--        }
--
--        @SuppressWarnings({"ObjectEquality", "ReferenceEquality"})
--        public int compare(Block block, int position)
--        {
--            checkArgument(!block.isNull(position), "position is null");
--            Slice next = VARCHAR.getSlice(block, position);
--            return compare(next);
--        }
--
--        public int compare(Slice next)
--        {
--            // The expected case is a dictionary block with many entries for the
--            // same path. Only perform a comparison if the object has changed.
--            if (value != next) {
--                value = next;
--                result = value.compareTo(reference);
--            }
--            return result;
--        }
--    }
- }
+ 
 ```
 
-**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/delete/TestDeleteManager.java` (modified, +47/-0)
+**File**: `core/trino-main/src/test/java/io/trino/sql/query/TestExpressions.java` (modified, +37/-0)
 ```diff
-@@ -25,6 +25,7 @@
- import io.trino.spi.Page;
- import io.trino.spi.TrinoException;
- import io.trino.spi.block.BlockBuilder;
-+import io.trino.spi.block.DictionaryBlock;
- import io.trino.spi.block.LongArrayBlock;
- import io.trino.spi.connector.ConnectorPageSource;
- import io.trino.spi.connector.FixedPageSource;
-@@ -44,6 +45,7 @@
- 
- import java.io.IOException;
- import java.io.UncheckedIOException;
-+import java.util.ArrayList;
- import java.util.List;
- import java.util.Map;
- import java.util.Optional;
-@@ -1042,6 +1044,51 @@ private static List<Page> positionDeletePages(long... deletedPositions)
-         return ImmutableList.of(new Page(pathBuilder.build(), positionBuilder.build()));
+@@ -95,6 +95,43 @@ FROM UNNEST(ARRAY[NULL, 0, 1, 2, 3]) t(x)
+                         """);
      }
  
 +    @Test
-+    void testReadPositionDeletesAcrossDictionaries()
++    public void testInWithSimpleCaseInValueList()
 +    {
-+        List<Page> pages = ImmutableList.of(
-+                positionDeletePage(ImmutableList.of("a", "b"), new int[] {0, 1, 1}, 10, 11, 12),
-+                positionDeletePage(ImmutableList.of("b", "c"), new int[] {1, 1}, 13, 14));
-+        DeletionVector deletionVector = getFutureValue(PositionDeleteReader.readPositionDeletes(
-+                "b",
-+                ImmutableList.of(positionDeleteFile("delete-1", 1L)),
-+                OptionalLong.empty(),
-+                OptionalLong.empty(),
-+                (_, _, _) -> new FixedPageSource(pages, NO_LIMIT),
-+                TESTING_TYPE_MANAGER,
-+                directExecutor(),
-+                directExecutor(),
-+                NO_LIMIT)).orElseThrow();
-+        List<Long> deletedRows = new ArrayList<>();
-+        deletionVector.forEachDeletedRow(deletedRows::add);
-+        assertThat(deletedRows).containsExactly(11L, 12L);
++        assertThat(assertions.query(
++                """
++                SELECT
++                    x,
++                    1 IN (CASE x WHEN 0 THEN 2 ELSE 3 END, 4),
++                    6 IN (x, CASE x WHEN 0 THEN 2 ELSE 3 END),
++                    5 IN (x + 5, CASE x WHEN 0 THEN 2 ELSE 3 END)
++                FROM UNNEST(ARRAY[NULL, 0, 5]) t(x)
++                """))
++                .matches(
++                        """
++                        VALUES
++                            (NULL, false, NULL, NULL),
++                            (0, false, false, true),
++                            (5, false, false, false)
++                        """);
++
++        assertThat(assertions.query(
++                """
++                SELECT
++                    x,
++                    BIGINT '1' IN (CASE x WHEN 0 THEN BIGINT '2' ELSE BIGINT '3' END, BIGINT '4'),
++                    BIGINT '6' IN (x, CASE x WHEN 0 THEN BIGINT '2' ELSE BIGINT '3' END)
++                FROM UNNEST(ARRAY[NULL, BIGINT '0', BIGINT '5']) t(x)
++                """))
++                .matches(
++                        """
++                        VALUES
++                            (NULL, false, NULL),
++                            (BIGINT '0', false, false),
++                            (BIGINT '5', false, false)
++                        """);
 +    }
 +
-+    @Test
-+    void testReadMultiFilePositionDeletesAcrossDictionaries()
-+    {
-+        List<Page> pages = ImmutableList.of(
-+                positionDeletePage(ImmutableList.of("a", "b"), new int[] {0, 1}, 1, 2),
-+                positionDeletePage(ImmutableList.of("c", "d"), new int[] {1, 1}, 3, 4));
-+        List<String> deletes = new ArrayList<>();
-+        PositionDeleteReader.readMultiFilePositionDeletes(
-+                new FixedPageSource(pages, NO_LIMIT),
-+                (path, position) -> deletes.add(path + ":" + position));
-+        assertThat(deletes).containsExactly("a:1", "b:2", "d:3", "d:4");
-+    }
-+
-+    private static Page positionDeletePage(List<String> dictionary, int[] ids, long... positions)
-+    {
-+        BlockBuilder dictionaryBuilder = VARCHAR.createBlockBuilder(null, dictionary.size());
-+        for (String path : dictionary) {
-+            VARCHAR.writeSlice(dictionaryBuilder, utf8Slice(path));
-+        }
-+        return new Page(
-+                DictionaryBlock.create(ids.length, dictionaryBuilder.build(), ids),
-+                new LongArrayBlock(positions.length, Optional.empty(), positions));
-+    }
-+
-     private static int filterRowPositions(PageFilter pageFilter, long... rowPositions)
+     @Test
+     public void testInShortCircuit()
      {
-         BlockBuilder positionBuilder = BIGINT.createBlockBuilder(null, rowPositions.length);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32093** (2026-11-12): Fix short decimal cast overflow when increasing scale (@findepi)
-- **PR #32090** (closed): Reuse decompressors in Parquet reader (@wendigo)
-- **PR #32088** (2026-11-11): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 44 updates (@dependabot[bot])
-- **PR #32087** (2026-11-11): Bump net.minidev:json-smart from 2.6.0 to 2.6.1 (@dependabot[bot])
-- **PR #32086** (2026-11-11): Bump actions/setup-java from 6.1.0 to 6.2.0 in /.github/actions/setup (@dependabot[bot])
-- **PR #32085** (2026-11-11): Bump zizmorcore/zizmor-action from 0.8.0 to 0.8.1 (@dependabot[bot])
+- **PR #32151** (2026-11-14): Enable error-prone Finally check (@findepi)
+- **PR #32149** (2026-11-14): Fix IN with simple CASE in value list (@findepi)
+- **PR #32146** (closed): Fix temporary variable reuse in IN predicates (@ViktorBystrov72)
+- **PR #32139** (2026-11-13): Use signed year instead of year-of-era for hive dates (@JohnFitzpatrick44)
+- **PR #32135** (closed): Use signed year instead of year-of-era for Hive partition values (@chenjian2664)
+- **PR #32134** (2026-11-14): Remove JSON representation from PlanFragment (@wendigo)
 
 ---
 
@@ -2286,45 +2061,55 @@ readAllPositionDeletes    47.670 ± 0.733    11.754 ± 0.085
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. short decimal cast overflow when increasing scale
+## X. IN with simple CASE in value list
 
 **RULE**:
-When implementing operations in `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/main/java/io/trino/sql/gen/InCodeGenerator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `336c2e0c`: short decimal cast overflow when increasing scale. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9fe067c6`: IN with simple CASE in value list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/sql/gen/InCodeGenerator.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
+        // Allocate before generating the IN-list items: an item's code must not reuse these slots
+        Scope scope = generatorContext.getScope();
+        Variable value = scope.getOrCreateTempVariable(javaType);
+        Variable expression = scope.getOrCreateTempVariable(int.class);
+        Variable caseWasNull = scope.getOrCreateTempVariable(boolean.class);
 
-        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
-                .binding("a", "DECIMAL '175'").evaluate())
-                .hasMessage("Cannot cast DECIMAL(3, 0) '175' to DECIMAL(18, 17)")
-                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-
-        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
-                .binding("a", "DECIMAL '-175'").evaluate())
-                .hasMessage("Cannot cast DECIMAL(3, 0) '-175' to DECIMAL(18, 17)")
-                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-
-        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 2))")
-                .binding("a", "DECIMAL '184467440737095516'").evaluate())
-                .hasMessage("Cannot cast DECIMAL(18, 0) '184467440737095516' to DECIMAL(18, 2)")
-                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
+                            caseWasNull,
+                caseWasNull,
+        scope.releaseTempVariableForReuse(caseWasNull);
+            Variable caseWasNull, // with checkForNulls, set to true the first time a null in `testValues` is encountered
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+        Scope scope = generatorContext.getScope();
+        Variable value = scope.getOrCreateTempVariable(javaType);
+
+        Variable expression = scope.getOrCreateTempVariable(int.class);
+                            scope,
+                scope,
+            Scope scope,
+        Variable caseWasNull = null; // caseWasNull is set to true the first time a null in `testValues` is encountered
+        if (checkForNulls) {
+            caseWasNull = scope.getOrCreateTempVariable(boolean.class);
+        }
+
+
+        if (checkForNulls) {
+            scope.releaseTempVariableForReuse(caseWasNull);
+        }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `336c2e0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9fe067c6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

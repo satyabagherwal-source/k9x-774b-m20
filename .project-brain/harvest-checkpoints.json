@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T00:45:15.259Z",
+  "last_updated": "2026-11-16T00:56:51.816Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "96844938badb6f83c9974b9529223b504538e15d48e4d7c4a471451e86ecf6d1",
-      "verified_at": "2026-11-13T13:02:47.263Z",
+      "content_hash": "9d8fa97c88ecf1149dabda8f5c662700425cf494fd0b8d2294f1427e2ae69ef5",
+      "verified_at": "2026-11-16T00:56:51.815Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:02:47.263Z"
+      "last_updated": "2026-11-16T00:56:51.815Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "9ff94f4e1c9ac67b995f02e82cfd78b595c0573910c10b438793041c9cc42b47",
-      "verified_at": "2026-11-14T15:49:43.558Z",
+      "content_hash": "ef3d6562acb3a7ee1898cdd9e3d43d1966c0658cbd3734e4508d6eabefda07c7",
+      "verified_at": "2026-11-16T00:56:42.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:49:43.558Z"
+      "last_updated": "2026-11-16T00:56:42.292Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
