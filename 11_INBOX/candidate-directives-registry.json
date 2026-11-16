@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T20:21:13.101Z",
+  "last_updated": "2026-11-16T20:32:46.590Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-XBNO",
+      "id": "CD-ZUUO",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-XBNO-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZUUO-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-7X9B",
+      "id": "CD-ZV97",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7X9B-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZV97-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -17757,11 +17757,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-ANQG",
+      "id": "CD-ZVNI",
       "directive_title": "engine): detect uv run script shebangs",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ANQG-engine-detect-uv-run-script-shebangs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZVNI-engine-detect-uv-run-script-shebangs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -20085,6 +20085,33 @@
       "source_repo": "defguard-defguard",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5C7B04-update-to-readme-core-capabilities.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-BE55DE",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BE55DE-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-7D8350",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7D8350-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-5FCD5A",
+      "directive_title": "engine): detect uv run script shebangs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5FCD5A-engine-detect-uv-run-script-shebangs.md",
       "staged_date": "2026-11-16"
     }
   ]
