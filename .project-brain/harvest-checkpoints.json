@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T05:41:38.509Z",
+  "last_updated": "2026-11-16T06:17:44.743Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "cbd225d1a1d4c98ca21490c1936ec9d3c8e698f550443466f1dabf0d69d242ff",
-      "verified_at": "2026-11-14T22:11:32.977Z",
+      "content_hash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
+      "verified_at": "2026-11-16T06:17:44.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T22:11:32.977Z"
+      "last_updated": "2026-11-16T06:17:44.742Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -18516,14 +18516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yyjeqhc-webcodex",
-      "content_hash": "bf2e2e0040ab377dfd84c2ac137cdd55376fbd980f4f70410f8023836a9c87ef",
-      "verified_at": "2026-11-13T01:01:18.966Z",
+      "content_hash": "d8cd0526021646b1b2612b4682656dbe29c3765cf60d0a714ebca11f1ba98f42",
+      "verified_at": "2026-11-16T06:17:32.365Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T01:01:18.966Z"
+      "last_updated": "2026-11-16T06:17:32.365Z"
     },
     "MiniMaxAI/MiniMax-H3-Image": {
       "repository": "MiniMaxAI/MiniMax-H3-Image",

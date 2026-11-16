@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source**: github ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
-> **Source Version**: `3c141967`  
+> **Source Version**: `479efb9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T01:01:11.810Z  
+> **Timestamp**: 2026-11-16T06:17:31.460Z  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T01:01:11.613Z  
+> **Harvest Timestamp**: 2026-11-16T06:17:31.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2191,241 +2191,116 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c141967` (2026-11-11)
-**Commit Message**: fix(import): support opt-in loopback proxy for OpenAI host-file downloads (#1418)
+### Incident Patch 1: `9aef4ca0` (2026-11-15)
+**Commit Message**: test(ci): support Cargo 1.100 build-script output layout (#1421)
 
-**File**: `docs/MCP.md` (modified, +15/-0)
-```diff
-@@ -99,6 +99,21 @@ authorization; users should not copy or expose that credential. Independent/netw
- accessible Servers remain off by default and must not use this as a substitute for
- OAuth.
- 
-+
-+When a loopback-only Desktop Server is behind a local HTTP proxy and OpenAI
-+attachment domains resolve to a proxy-managed fake IP, direct TLS connections
-+may fail even after the trusted tunnel's fake-IP admission succeeds. Operators
-+may opt in to the **OpenAI host-file import only** proxy by setting
-+`WEBCODEX_OPENAI_FILE_IMPORT_PROXY=http://127.0.0.1:PORT` in the Server
-+environment and restarting the Server. IPv6 `http://[::1]:PORT` is also
-+accepted. The setting defaults to off and is ignored for ordinary trusted MCP
-+URLs and remote authenticated imports; it requires an explicitly trusted
-+loopback MCP source and an allowlisted OpenAI attachment hostname. TLS server
-+certificate verification and redirect rejection remain enabled. The HTTP
-+CONNECT proxy chooses the upstream address instead of WebCodex's directly
-+pinned DNS addresses, so use only a proxy you control and trust; no remote
-+proxy endpoints, credentials, or hostnames are accepted as proxy settings.
-+
- For a regular independent Windows Server + Runner reached through OpenAI Tunnel, or to troubleshoot a case where local MCP is healthy but ChatGPT Connector creation still fails, see the [Windows + OpenAI Secure MCP Tunnel deep dive](WINDOWS_OPENAI_TUNNEL.md). It is advanced setup/troubleshooting material, not required reading for a first-time user.
- 
- ## Result cards
-```
+Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
 
-**File**: `docs/MCP.zh-CN.md` (modified, +11/-0)
+**File**: `scripts/tests/test_build_identity.py` (modified, +51/-5)
 ```diff
-@@ -296,6 +296,17 @@ credential 认证的 ChatGPT host-file rewrite。WebCodex Desktop 自 v0.4.2 起
- 该 credential，并只把它注入原生 Tunnel 的固定本地 Authorization；用户不应复制或暴露该
- credential。独立/network-accessible Server 仍默认关闭，不应使用它替代 OAuth。
+@@ -12,6 +12,47 @@
+ BUILD_SCRIPT = Path(__file__).resolve().parents[2] / "crates/webcodex-build-info/build.rs"
  
-+
-+如果仅监听 loopback 的 Desktop Server 通过本地 HTTP 代理访问外网，并且 OpenAI
-+附件域名被代理 DNS 解析成 Fake-IP，可信 tunnel 已通过 Fake-IP 准入检查后，
-+直接建立 TLS 连接仍可能失败。运维者可以在 Server 环境中显式设置
-+`WEBCODEX_OPENAI_FILE_IMPORT_PROXY=http://127.0.0.1:PORT`，然后重启 Server；
-+也支持 `http://[::1]:PORT`。该配置默认关闭，只作用于可信本机 MCP 来源的
-+OpenAI 附件域名，不会代理普通 trusted MCP URL 或远程认证导入。
-+TLS 证书验证和禁止重定向仍然生效。不过，HTTP CONNECT 代理会自行选择上游地址，
-+不会使用 WebCodex 直连模式固定的 DNS 地址，因此只能配置自己控制且信任的本机代理。
-+配置不接受远程代理地址、带凭据的 URL 或主机名形式的代理端点。
-+
- 如果在 Windows 上使用普通独立 Server + Runner 并通过 OpenAI Tunnel 接入，或排查“本地 MCP 正常但 ChatGPT Connector 创建失败”的情况，见 [Windows + OpenAI Secure MCP Tunnel 深入实操](WINDOWS_OPENAI_TUNNEL.zh-CN.md)。它是深入配置/排障文档，不是普通用户第一次必须阅读的教程。
  
- ## 结果卡片
-```
-
-**File**: `src/mcp_tests/file_import.rs` (modified, +41/-0)
-```diff
-@@ -185,6 +185,47 @@ async fn start_mcp_import_mock_server(response: Vec<u8>) -> McpImportMockServer
-     }
- }
- 
-+#[tokio::test]
-+async fn mcp_import_loopback_proxy_sends_https_connect() {
-+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
++def run_fixture_build(package, env):
++    """Return the fixture's result and persisted build-script stdout path.
 +
-+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
-+        .await
-+        .expect("local test listener");
-+    let local_port = listener.local_addr().unwrap().port();
-+    let client = crate::tool_runtime::conversation_import::build_loopback_proxy_client_for_test(
-+        &format!("http://127.0.0.1:{local_port}"),
++    Cargo 1.100 changed the internal build cache layout. Resolve the run unit
++    from Cargo's build-script-executed OUT_DIR instead of matching a hardcoded
++    target/debug/build directory name.
++    """
++    completed = subprocess.run(
++        ["cargo", "run", "--offline", "--message-format=json"],
++        cwd=package, env=env, check=True, capture_output=True, text=True, timeout=60,
 +    )
-+    .expect("client must accept an explicit loopback proxy");
-+    let probe = tokio::spawn(async move {
-+        let (mut connection, _) = listener.accept().await.expect("CONNECT should arrive");
-+        let mut buf = [0u8; 2048];
-+        let count = connection
-+            .read(&mut buf)
-+            .await
-+            .expect("read CONNECT request");
-+        let request = String::from_utf8_lossy(&buf[..count]);
-+        assert!(
-+            request.starts_with("CONNECT files.oaiusercontent.com:443 HTTP/1.1"),
-+            "unexpected CONNECT target"
-+        );
-+        connection
-+            .write_all(b"HTTP/1.1 407 Proxy Authentication Required\r\nContent-Length: 0\r\n\r\n")
-+            .await
-+            .expect("reply to CONNECT");
-+    });
-+    let _ = tokio::time::timeout(
-+        std::time::Duration::from_secs(5),
-+        client.get("https://files.oaiusercontent.com/file").send(),
-+    )
-+    .await
-+    .expect("the mocked proxy must respond promptly");
-+    tokio::time::timeout(std::time::Duration::from_secs(5), probe)
-+        .await
-+        .expect("the local proxy was not contacted")
-+        .expect("proxy probe failed");
-+}
++    out_dirs = []
++    program_lines = []
++    for line in completed.stdout.splitlines():
++        if line.startswith("{"):
++            message = json.loads(line)
++            if message.get("reason") == "build-script-executed":
++                out_dirs.append(Path(message["out_dir"]))
++        elif line:
++            program_lines.append(line)
++    if len(out_dirs) != 1 or len(program_lines) != 1:
++        raise AssertionError(
++            f"expected one build script and one program result, "
++            f"got {len(out_dirs)} and {program_lines!r}"
++        )
++    # Cargo <=1.99 uses output; Cargo >=1.100 uses run/stdout.
++    script_outputs = [
++        path for path in (
++            out_dirs[0].parent / "output",
++            out_dirs[0].parent / "run" / "stdout",
++        )
++        if path.is_file()
++    ]
++    if len(script_outputs) != 1:
++        raise AssertionError(
++            f"expected one build-script stdout near {out_dirs[0]}, "
++            f"found {script_outputs!r}"
++        )
++    return program_lines[0], script_outputs[0]
 +
- fn mcp_import_config(trusted_client_ids: &[&str]) -> Arc<crate::Config> {
-     let mut config = (*test_config_oauth2(Some("secret"))).clone();
-     config.oauth2.trusted_mcp_file_client_ids = trusted_client_ids
-```
-
-**File**: `src/tool_runtime/conversation_import.rs` (modified, +180/-4)
-```diff
-@@ -392,13 +392,97 @@ async fn validate_trusted_mcp_download_url(
-     })
- }
++
+ class BuildIdentityTests(unittest.TestCase):
+     def test_packed_branch_without_reflog_refreshes_and_then_stays_cached(self):
+         for linked_worktree in (False, True):
+@@ -59,11 +100,14 @@ def run(cwd, *args):
+                 head_log = Path(run(repo, "git", "rev-parse", "--git-path", "logs/HEAD"))
+                 self.assertFalse((repo / head_log).exists())
  
-+const LOOPBACK_OPENAI_FILE_PROXY_ENV: &str = "WEBCODEX_OPENAI_FILE_IMPORT_PROXY";
++                outputs = []
 +
-+fn parse_loopback_openai_file_proxy(raw: &str) -> Result<reqwest::Url, String> {
-+    let proxy = reqwest::Url::parse(raw)
-+        .map_err(|_| "OpenAI file proxy must be a valid loopback HTTP URL".to_string())?;
-+    let loopback = match proxy.host() {
-+        Some(url::Host::Ipv4(ip)) => ip == Ipv4Addr::LOCALHOST,
-+        Some(url::Host::Ipv6(ip)) => ip == Ipv6Addr::LOCALHOST,
-+        _ => false,
-+    };
-+    // url::Url normalizes explicit HTTP :80 to no stored port, so inspect
-+    // the original authority to distinguish :80 from an omitted port.
-+    let explicit_port = raw
-+        .split_once("://")
-+        .and_then(|(_, rest)| rest.split(['/', '?', '#']).next())
-+        .and_then(|authority| authority.rsplit_once(':'))
-+        .and_then(|(_, port)| port.parse::<u16>().ok());
-+    if proxy.scheme() != "http"
-+        || !loopback
-+        || explicit_port.is_none()
-+        || !proxy.username().is_empty()
-+        || proxy.password().is_some()
-+        || proxy.path() != "/"
-+        || proxy.query().is_some()
-+        || proxy.fragment().is_some()
-+    {
-+        return Err(
-+            "OpenAI file proxy must be http://127.0.0.1:PORT or http://[::1]:PORT".to_string(),
-+        );
-+    }
-+    Ok(proxy)
-+}
-+
-+fn select_loopback_openai_file_proxy(
-+    target: &TrustedDownloadTarget,
-+    policy: ConversationImportDownloadPolicy,
-+    value: Option<&str>,
-+) -> Result<Option<reqwest::Url>, String> {
-+    if policy != ConversationImportDownloadPolicy::LoopbackTrustedMcpHostFile {
-+        return Ok(None);
-+    }
-+    let Some(value) = value.filter(|value| !value.is_empty()) else {
-+        return Ok(None);
-+    };
-+    if !target
-+        .resolver_host
-+        .as_deref()
-+        .is_some_and(is_openai_download_host)
-+    {
-+        // Preserve the normal direct-download path for unrelated trusted MCP
-+        // URLs even when the operator enables the OpenAI-specific proxy.
-+        return Ok(None);
-+    }
-+    Ok(Some(parse_loopback_openai_file_proxy(value)?))
-+}
-+
-+fn configured_loopback_openai_file_proxy(
-+    target: &TrustedDownloadTarget,
-+    policy: ConversationImportDownloadPolicy,
-+) -> Result<Option<reqwest::Url>, String> {
-+    // Never proxy arbitrary trusted-MCP URLs or remote OAuth imports. The
-+    // explicit local proxy is an opt-in trust boundary for OpenAI attachments
-+    // on the local Desktop/Secure-Tunnel session only.
-+    if policy != ConversationImportDownloadPolicy::LoopbackTrustedMcpHostFile {
-+        return Ok(None);
-+    }
-+    let value = match std::env::var(LOOPBACK_OPENAI_FILE_PROXY_ENV) {
-+        Ok(value) => value,
-+        Err(std::env::VarError::NotPresent) => return Ok(None),
-+        Err(_) => return Err("OpenAI file proxy setting is not valid UTF-8".to_string()),
-+    };
-+    select_loopback_openai_file_proxy(target, policy, Some(&value))
-+}
-+
- fn build_download_client(
-     trusted_target: Option<&TrustedDownloadTarget>,
-+    local_proxy: Option<&reqwest::Url>,
- ) -> Result<reqwest::Client, String> {
-     let mut builder = reqwest::Client::builder()
-         .no_proxy()
-         .redirect(reqwest::redirect::Policy::none());
--    if let Some(target) = trusted_target {
-+    if let Some(proxy) = local_proxy {
-+        // An HTTP CONNECT proxy cannot guarantee that the proxy-selected
-+        // upstream IP equals the prevalidated DNS answer. Restrict this opt-in
-+        // path to an explicit loopback proxy, authenticated local-session
-+        // provenance, and allowlisted OpenAI hosts; HTTPS verification remains
-+        // enabled. The default direct path retains DNS address pinning.
-+        let proxy = reqwest::Proxy::https(proxy.as_str())
-+            .map_err(|_| "failed to configure loopback OpenAI file proxy".to_string())?;
-+        builder = builder.proxy(proxy);
-+    } else if let Some(target) = trusted_target {
-         if let Some(host) = target.resolver_host.as_deref() {
-             builder = builder.resolve_to_addrs(host, &target.pinned_addrs);
-         }
-@@ -408,6 +492,14 @@ fn build_download_client(
-         .map_err(|_| "failed to build bounded import HTTP client".to_string())
- }
+                 def build():
+-                    return run(package, "cargo", "run", "--offline", "--quiet")
++                    result, script_output = run_fixture_build(package, env)
++                    outputs[:] = [script_output]
++                    return result
  
-+#[cfg(test)]
-+pub(crate) fn build_loopback_proxy_client_for_test(
-+    endpoint: &str,
-+) -> Result<reqwest::Client, String> {
-+    let proxy = parse_loopback_openai_file_proxy(endpoint)?;
-+    build_download_client(None, Some(&proxy))
-+}
+                 before = build()
+-                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
+                 self.assertEqual(len(outputs), 1)
+                 stamp = outputs[0].stat().st_mtime_ns
+                 self.assertEqual(build(), before)
+@@ -120,15 +164,18 @@ def run(cwd, *args):
+                     repo = checkout
+                     package = repo / "crates/fixture"
+ 
++                outputs = []
 +
- async fn prepare_download_request(
-     download_link: &str,
-     policy: ConversationImportDownloadPolicy,
-@@ -420,7 +512,7 @@ async fn prepare_download_request(
-                 TrustedMcpAddressPolicy::PublicOnly,
-             )
-             .await?;
--            let client = build_download_client(Some(&target))?;
-+            let client = build_download_client(Some(&target), None)?;
-             Ok((client, request_url_for_download(target.url)))
+                 def build():
+-                    return run(package, "cargo", "run", "--offline", "--quiet")
++                    result, script_output = run_fixture_build(package, env)
++                    outputs[:] = [script_output]
++                    return result
+ 
+                 head = run(repo, "git", "rev-parse", "HEAD")
+                 self.assertEqual(build(), "false")
+                 (repo / "tracked.txt").write_text("dirty\n", encoding="utf-8")
+                 self.assertEqual(run(repo, "git", "rev-parse", "HEAD"), head)
+                 self.assertEqual(build(), "true")
+-                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
+                 self.assertEqual(len(outputs), 1)
+                 dirty_stamp = outputs[0].stat().st_mtime_ns
+                 (repo / "other.txt").write_text("also dirty\n", encoding="utf-8")
+@@ -152,7 +199,6 @@ def build():
+ 
+                 env["WEBCODEX_GIT_DIRTY"] = "false"
+                 self.assertEqual(build(), "false")
+-                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
+                 self.assertEqual(len(outputs), 1)
+                 stamp = outputs[0].stat().st_mtime_ns
+                 (repo / "tracked.txt").write_text("dirty with pinned identity\n", encoding="utf-8")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1423** (2026-11-16): test(cli): use the canonical temp root in the tunnel provider mismatch test (@HarpeLm)
+- **PR #1422** (2026-11-16): test(environment): use the canonical temp root in update view tests (@HarpeLm)
+- **PR #1421** (2026-11-15): test(ci): support Cargo 1.100 build-script output layout (@swjnxyf)
 - **PR #1418** (2026-11-11): fix(import): support opt-in loopback proxy for OpenAI host-file downloads (@mo-lin-yuan)
 - **PR #1416** (2026-11-10): chore(desktop): remove dead code warnings on non-Windows builds (@HarpeLm)
 - **PR #1415** (2026-11-10): feat(runner): publish the project catalog before Git enrichment (@HarpeLm)
-- **PR #1414** (2026-11-10): Add optional managed worktree root policy (@HarpeLm)
-- **PR #1413** (2026-11-09): fix(admin): accept native Windows project paths (@swjnxyf)
-- **PR #1412** (closed): fix(tunnel): retry heartbeat status persistence (@HarpeLm)
 
 ---
 
@@ -2445,42 +2320,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. import): support opt-in loopback proxy for OpenAI host-file downloads (#1418)
+## X. test(ci): support Cargo 1.100 build-script output layout
 
 **RULE**:
-When implementing operations in `docs/MCP.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/tests/test_build_identity.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c141967`: import): support opt-in loopback proxy for OpenAI host-file downloads (#1418). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9aef4ca0`: test(ci): support Cargo 1.100 build-script output layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/MCP.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/tests/test_build_identity.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+def run_fixture_build(package, env):
+    """Return the fixture's result and persisted build-script stdout path.
 
-When a loopback-only Desktop Server is behind a local HTTP proxy and OpenAI
-attachment domains resolve to a proxy-managed fake IP, direct TLS connections
-may fail even after the trusted tunnel's fake-IP admission succeeds. Operators
-may opt in to the **OpenAI host-file import only** proxy by setting
-`WEBCODEX_OPENAI_FILE_IMPORT_PROXY=http://127.0.0.1:PORT` in the Server
-environment and restarting the Server. IPv6 `http://[::1]:PORT` is also
-accepted. The setting defaults to off and is ignored for ordinary trusted MCP
-URLs and remote authenticated imports; it requires an explicitly trusted
-loopback MCP source and an allowlisted OpenAI attachment hostname. TLS server
-certificate verification and redirect rejection remain enabled. The HTTP
-CONNECT proxy chooses the upstream address instead of WebCodex's directly
-pinned DNS addresses, so use only a proxy you control and trust; no remote
-proxy endpoints, credentials, or hostnames are accepted as proxy settings.
-
+    Cargo 1.100 changed the internal build cache layout. Resolve the run unit
+    from Cargo's build-script-executed OUT_DIR instead of matching a hardcoded
+    target/debug/build directory name.
+    """
+    completed = subprocess.run(
+        ["cargo", "run", "--offline", "--message-format=json"],
+        cwd=package, env=env, check=True, capture_output=True, text=True, timeout=60,
+    )
+    out_dirs = []
+    program_lines = []
+    for line in completed.stdout.splitlines():
+        if line.startswith("{"):
+            message = json.loads(line)
+            if message.get("reason") == "build-script-executed":
+                out_dirs.append(Path(message["out_dir"]))
+        elif line:
+            program_lines.append(line)
+    if len(out_dirs) != 1 or len(program_lines) != 1:
+        raise AssertionError(
+            f"expected one build script and one program result, "
+            f"got {len(out_dirs)} and {program_lines!r}"
+        )
+    # Cargo <=1.99 uses output; Cargo >=1.100 uses run/stdout.
+    script_outputs = [
+        path for path in (
+            out_dirs[0].
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+                    return run(package, "cargo", "run", "--offline", "--quiet")
+                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
+                    return run(package, "cargo", "run", "--offline", "--quiet")
+                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
+                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c141967` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9aef4ca0` are properly handled with clean fallback behavior.

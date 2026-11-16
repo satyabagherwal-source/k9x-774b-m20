@@ -10253,3 +10253,5 @@
 | `CYCLE-20261116-5QNO` | `2026-11-16T05:41:32.340Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8719` | Yes (`bfd31205...`) |
 | `CYCLE-20261116-5VER` | `2026-11-16T05:41:38.499Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8720` | Yes (`acee1c47...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T05:42:06.332Z` | `joreilly-confetti` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-925AEC0F` [Domain F] | Yes (`148b1764...`) |
+| `CYCLE-20261116-G1C0` | `2026-11-16T06:17:32.352Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8721` | Yes (`d8cd0526...`) |
+| `CYCLE-20261116-GAVV` | `2026-11-16T06:17:44.731Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8722` | Yes (`34a25854...`) |

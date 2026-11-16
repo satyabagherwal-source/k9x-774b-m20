@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `e6256de9`  
+> **Source Version**: `fdc4389b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T22:11:32.132Z  
+> **Timestamp**: 2026-11-16T06:17:43.926Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T22:11:31.992Z  
+> **Harvest Timestamp**: 2026-11-16T06:17:43.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50928 stars
+- **Stars / Engagement**: 50950 stars
 
 ---
 
@@ -1338,327 +1338,313 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4eb5bd00` (2026-11-14)
-**Commit Message**: Merge pull request #125616 from groeneai/fix-pr-insert-select-local-pipeline-select-settings
+### Incident Patch 1: `21700ab7` (2026-11-16)
+**Commit Message**: Merge pull request #131830 from groeneai/groeneai/build-profile-hook-skip-failed-build
 
-Fix a crash in parallel replicas INSERT SELECT when the SELECT's own SETTINGS rule out the local plan
+CI: do not collect the build profile of a failed build
 
-**File**: `src/Interpreters/ClusterProxy/executeQuery.cpp` (modified, +5/-1)
+**File**: `ci/jobs/scripts/job_hooks/build_profile_hook.py` (modified, +6/-3)
 ```diff
-@@ -1595,7 +1595,7 @@ bool isSuitableForInsertSelectWithParallelReplicas(const ASTPtr & select, const
- /// find and remove ReadFromParallelRemoteReplicasStep in query plan,
- /// also returns the parallel replicas coordinator, connection pools and local replica index
- /// stored in ReadFromParallelRemoteReplicasStep, so the remote-pool pass can reuse them.
--LocalPlanParallelReplicasInfo dropReadFromRemoteInPlan(QueryPlan & query_plan)
-+std::optional<LocalPlanParallelReplicasInfo> dropReadFromRemoteInPlan(QueryPlan & query_plan)
- {
-     struct Frame
-     {
-@@ -1618,6 +1618,10 @@ LocalPlanParallelReplicasInfo dropReadFromRemoteInPlan(QueryPlan & query_plan)
-             const auto * step = frame.node->step.get();
-             if (const auto * read_from_remote = typeid_cast<const ReadFromParallelRemoteReplicasStep *>(step))
-             {
-+                /// Without a local replica this step is the plan's only reading step.
-+                if (!read_from_remote->getExcludePoolIndex())
-+                    return {};
-+
-                 auto & children = frame.parent->children;
-                 for (auto it = begin(children); it != end(children); ++it)
-                 {
+@@ -257,6 +257,11 @@ def check():
+     if not _should_profile(build_type, is_pr=is_pr):
+         print(f"Build profile telemetry not collected for [{build_type}]")
+         return
++    # Post hooks also run after a failed build, which leaves no complete profile.
++    job_result = Result.from_fs(Info().job_name)
++    if not job_result.is_success():
++        print(f"Build [{build_type}] did not succeed, build profile not collected")
++        return
+     print("Prepare build profile data")
+     profiles_dir = Path("./ci/tmp") / "profiles_source"
+     profiles_dir.mkdir(parents=True, exist_ok=True)
+@@ -285,9 +290,7 @@ def check():
+                         profile_fd.write(ps_fd.read())
+         _verify_trace_extraction(build_dir, profile_data_file)
+         _verify_final_binary_coverage(build_dir, build_size_file, binary_symbol_file)
+-        check_start_time = Utils.timestamp_to_str(
+-            Result.from_fs(Info().job_name).start_time
+-        )
++        check_start_time = Utils.timestamp_to_str(job_result.start_time)
+         queries = LogClusterBuildProfileQueries(user=BUILD_PROFILE_USER)
+ 
+         def insert_profile_data(build_name, start_time, file):
 ```
 
-**File**: `src/Interpreters/ClusterProxy/executeQuery.h` (modified, +2/-1)
-```diff
-@@ -171,7 +171,8 @@ struct LocalPlanParallelReplicasInfo
- /// Predicate gating the local-plan branch of `executeQueryWithParallelReplicas`. Also evaluated
- /// on followers in `ReadFromMergeTree` so they take the same topology decision as the initiator.
- bool canUseLocalPlanForParallelReplicas(const ContextPtr & context);
--LocalPlanParallelReplicasInfo dropReadFromRemoteInPlan(QueryPlan & query_plan);
-+/// Returns nothing and leaves the plan intact unless the plan has both a local part and a remote reading step.
-+std::optional<LocalPlanParallelReplicasInfo> dropReadFromRemoteInPlan(QueryPlan & query_plan);
- 
- /// Execute a distributed query, creating a query plan, from which the query pipeline can be built.
- /// `stream_factory` object encapsulates the logic of creating plans for a different type of query
-```
+---
 
-**File**: `src/Interpreters/InterpreterInsertQuery.cpp` (modified, +20/-8)
+### Incident Patch 2: `e221bba8` (2026-11-16)
+**Commit Message**: Merge pull request #131636 from groeneai/fix-hello-settings-skip-invalid-values
+
+Skip a setting value from the server's Hello that this version rejects instead of failing the connection
+
+**File**: `src/Client/Connection.cpp` (modified, +2/-1)
 ```diff
-@@ -368,7 +368,8 @@ bool InterpreterInsertQuery::shouldAddSquashingForStorage(const StoragePtr & tab
-     return !(settings[Setting::distributed_foreground_insert] && table->isRemote());
- }
- 
--static std::pair<QueryPipelineBuilder, ClusterProxy::LocalPlanParallelReplicasInfo> getLocalSelectPipelineForInserSelectWithParallelReplicas(const ASTPtr & select, const ContextPtr & context)
-+static std::optional<std::pair<QueryPipelineBuilder, ClusterProxy::LocalPlanParallelReplicasInfo>>
-+getLocalSelectPipelineForInserSelectWithParallelReplicas(const ASTPtr & select, const ContextPtr & context)
- {
-     auto select_query_options = SelectQueryOptions(QueryProcessingStage::Complete, /*subquery_depth_=*/1);
- 
-@@ -382,7 +383,10 @@ static std::pair<QueryPipelineBuilder, ClusterProxy::LocalPlanParallelReplicasIn
-     /// The connection pools and local replica index decided here are returned too, so the remote pass
-     /// reuses the exact same replica set rather than recomputing liveness from a fresh snapshot.
-     auto parallel_replicas_info = ClusterProxy::dropReadFromRemoteInPlan(plan);
--    return {interpreter.buildQueryPipeline(), std::move(parallel_replicas_info)};
-+    if (!parallel_replicas_info)
-+        return {};
-+
-+    return std::make_pair(interpreter.buildQueryPipeline(), std::move(*parallel_replicas_info));
- }
- 
- 
-@@ -799,18 +803,22 @@ QueryPipeline InterpreterInsertQuery::buildInsertSelectPipeline(
- }
- 
- 
--std::pair<QueryPipeline, ClusterProxy::LocalPlanParallelReplicasInfo> InterpreterInsertQuery::buildLocalInsertSelectPipelineForParallelReplicas(
-+std::optional<std::pair<QueryPipeline, ClusterProxy::LocalPlanParallelReplicasInfo>>
-+InterpreterInsertQuery::buildLocalInsertSelectPipelineForParallelReplicas(
-     ASTInsertQuery & query, const StoragePtr & table, ContextPtr select_context)
- {
-     applyTrivialInsertSelectOptimization(query, table->prefersLargeBlocks(), max_insert_threads, select_context);
- 
--    auto [pipeline_builder, parallel_replicas_info]
--        = getLocalSelectPipelineForInserSelectWithParallelReplicas(query.select, select_context);
-+    auto local_select = getLocalSelectPipelineForInserSelectWithParallelReplicas(query.select, select_context);
-+    if (!local_select)
-+        return {};
-+
-+    auto & [pipeline_builder, parallel_replicas_info] = *local_select;
-     /// Parallel replicas builds its own local pipeline and never routes through the async insert queue,
-     /// so it hands over no lock and the caller keeps it for the whole pipeline.
-     auto local_pipeline = addInsertToSelectPipeline(
-         query, table, pipeline_builder, /* add_async_insert_queue_transform */ false, /* destination_lock */ nullptr);
--    return {std::move(local_pipeline), std::move(parallel_replicas_info)};
-+    return std::make_pair(std::move(local_pipeline), std::move(parallel_replicas_info));
- }
- 
- 
-@@ -918,9 +926,9 @@ std::optional<QueryPipeline> InterpreterInsertQuery::buildInsertSelectPipelinePa
-                 "initiator's: the local pipeline shares the initiator's query status and cannot use the leaf "
-                 "timeout separately");
-         }
--        else
-+        else if (auto local = buildLocalInsertSelectPipelineForParallelReplicas(query, table, context))
+@@ -735,7 +735,8 @@ void Connection::receiveHello()
+         if (server_revision >= DBMS_MIN_REVISION_WITH_SERVER_SETTINGS)
          {
--            auto [local_pipeline, parallel_replicas_info] = buildLocalInsertSelectPipelineForParallelReplicas(query, table, context);
-+            auto & [local_pipeline, parallel_replicas_info] = *local;
-             auto coordinator = parallel_replicas_info.coordinator;
-             auto local_replica_index = parallel_replicas_info.local_replica_index;
-             return ClusterProxy::executeInsertSelectWithParallelReplicas(
-@@ -931,6 +939,10 @@ std::optional<QueryPipeline> InterpreterInsertQuery::buildInsertSelectPipelinePa
-                 std::move(parallel_replicas_info.connection_pools),
-                 local_replica_index);
+             Settings settings;
+-            settings.read(*in);
++            /// A server of another version may send values that this version rejects.
++            settings.read(*in, /* skip_invalid_values= */ true);
+             settings_from_server = settings.changes();
          }
-+        else
-+        {
-+            LOG_TRACE(logger, "Not using the local insert select pipeline because the SELECT plan has no local part");
-+        }
+ 
+```
+
+**File**: `src/Core/BaseSettings.cpp` (modified, +10/-0)
+```diff
+@@ -1,4 +1,5 @@
+ #include <Core/BaseSettings.h>
++#include <Formats/ParseError.h>
+ #include <IO/ReadHelpers.h>
+ #include <IO/WriteHelpers.h>
+ #include <Common/FieldVisitorToString.h>
+@@ -146,6 +147,15 @@ void BaseSettingsHelpers::warningSettingNotFound(std::string_view name)
      }
+ }
  
-     return ClusterProxy::executeInsertSelectWithParallelReplicas(query, context);
++bool BaseSettingsHelpers::skipInvalidSettingValue(std::string_view name, const Exception & e)
++{
++    if (e.code() != ErrorCodes::BAD_ARGUMENTS && !isParseError(e.code()))
++        return false;
++
++    LOG_WARNING(getLogger("Settings"), "Cannot parse the value of setting `{}`, skipping it: {}", name, e.message());
++    return true;
++}
++
+ void BaseSettingsHelpers::flushWarnings()
+ {
+     unknown_settings.clear();
 ```
 
-**File**: `src/Interpreters/InterpreterInsertQuery.h` (modified, +1/-1)
+**File**: `src/Core/BaseSettings.h` (modified, +19/-3)
 ```diff
-@@ -143,7 +143,7 @@ class InterpreterInsertQuery : public IInterpreter, WithMutableContext
-     QueryPipeline buildInsertPipeline(ASTInsertQuery & query, StoragePtr table);
+@@ -61,6 +61,8 @@ struct BaseSettingsHelpers
+     [[noreturn]] static void throwValuelessSettingIsNotBool(std::string_view name);
+     [[noreturn]] static void throwValuelessSettingHasValue(std::string_view name);
+     static void warningSettingNotFound(std::string_view name);
++    /// Returns true (and logs a warning) if `e` is `BAD_ARGUMENTS` or a parse error (`isParseError`); other errors are not skipped.
++    static bool skipInvalidSettingValue(std::string_view name, const Exception & e);
+     static void flushWarnings();
  
-     std::optional<QueryPipeline> buildInsertSelectPipelineParallelReplicas(ASTInsertQuery & query, StoragePtr table);
--    std::pair<QueryPipeline, ClusterProxy::LocalPlanParallelReplicasInfo>
-+    std::optional<std::pair<QueryPipeline, ClusterProxy::LocalPlanParallelReplicasInfo>>
-     buildLocalInsertSelectPipelineForParallelReplicas(ASTInsertQuery & query, const StoragePtr & table, ContextPtr select_context);
+     /// The value as it is echoed in the "while setting '<name>' to value <value>" context of a rejected value.
+@@ -324,7 +326,8 @@ class BaseSettings : public TTraits::Data
+     void write(WriteBuffer & out) const;
  
-     // if applicable, build pipeline for replicated MergeTree from cluster storage
+     /// Read settings written by `write`.
+-    void read(ReadBuffer & in);
++    /// With `skip_invalid_values`, a non-important setting whose value is rejected keeps its default instead of failing the read.
++    void read(ReadBuffer & in, bool skip_invalid_values = false);
+ 
+     /// Write only changed settings in binary format.
+     /// Used for serialization of object storage settings (`S3Settings`, `DataLakeStorageSettings`),
+@@ -836,7 +839,7 @@ void BaseSettings<TTraits>::readBinary(ReadBuffer & in)
+ }
+ 
+ template <typename TTraits>
+-void BaseSettings<TTraits>::read(ReadBuffer & in)
++void BaseSettings<TTraits>::read(ReadBuffer & in, bool skip_invalid_values)
+ {
+     resetToDefault();
+     const auto & accessor = Traits::Accessor::instance();
+@@ -871,7 +874,20 @@ void BaseSettings<TTraits>::read(ReadBuffer & in)
+                 accessor.setValue(*this, index, static_cast<Field>(temp));
+             }
+             else
+-                accessor.setValueString(*this, index, BaseSettingsHelpers::readString(in));
++            {
++                String value = BaseSettingsHelpers::readString(in);
++                try
++                {
++                    accessor.setValueString(*this, index, value);
++                }
++                catch (const Exception & e)
++                {
++                    if (!skip_invalid_values || is_important || !BaseSettingsHelpers::skipInvalidSettingValue(name, e))
++                        throw;
++                    /// A failed parse may have assigned the field already.
++                    accessor.resetValueToDefault(*this, index);
++                }
++            }
+         }
+         else if (is_important)
+         {
 ```
 
-**File**: `tests/queries/0_stateless/05394_parallel_replicas_insert_select_select_level_settings.reference` (added, +12/-0)
+**File**: `src/Core/Settings.cpp` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,12 @@
-+-- parallel_replicas_local_plan = 0 in the SELECT
-+100000
-+-- parallel_replicas_prefer_local_replica = 0 in the SELECT
-+100000
-+-- max_execution_time_leaf = 0 in the INSERT, 100 in the SELECT
-+100000
-+-- agreeing settings use the local pipeline
-+100000
-+05394_control	3
-+05394_leaf_timeout	4
-+05394_local_plan	4
-+05394_prefer_local	4
+@@ -12803,9 +12803,9 @@ void Settings::write(WriteBuffer & out) const
+     impl->write(out);
+ }
+ 
+-void Settings::read(ReadBuffer & in)
++void Settings::read(ReadBuffer & in, bool skip_invalid_values)
+ {
+-    impl->read(in);
++    impl->read(in, skip_invalid_values);
+ }
+ 
+ void Settings::writeEmpty(WriteBuffer & out)
 ```
 
-**File**: `tests/queries/0_stateless/05394_parallel_replicas_insert_select_select_level_settings.sql` (added, +52/-0)
+**File**: `src/Core/Settings.h` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,52 @@
-+-- The SELECT's own SETTINGS can rule out the local plan that the INSERT-level settings allow (issue #122729).
-+SET enable_analyzer = 1; -- parallel distributed insert select for replicated tables works only with analyzer
-+SET parallel_distributed_insert_select = 2;
-+
-+DROP TABLE IF EXISTS t_mt_source;
-+DROP TABLE IF EXISTS t_rmt_target SYNC;
-+
-+CREATE TABLE t_mt_source (k UInt64, v String) ENGINE = MergeTree() ORDER BY k;
-+CREATE TABLE t_rmt_target (k UInt64, v String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_rmt_target', 'r1') ORDER BY ();
-+
-+INSERT INTO t_mt_source SELECT number AS k, toString(number) AS v FROM system.numbers LIMIT 1e5;
-+
-+SET enable_parallel_replicas = 1, cluster_for_parallel_replicas = 'test_cluster_one_shard_three_replicas_localhost', max_parallel_replicas = 3;
-+SET parallel_replicas_for_non_replicated_merge_tree = 1;
-+
-+SELECT '-- parallel_replicas_local_plan = 0 in the SELECT';
-+TRUNCATE TABLE t_rmt_target;
-+INSERT INTO t_rmt_target SETTINGS parallel_replicas_local_plan = 1, log_comment = '05394_local_plan'
-+SELECT * FROM t_mt_source SETTINGS parallel_replicas_local_plan = 0;
-+SELECT count() FROM t_rmt_target;
-+SELECT * FROM t_rmt_target EXCEPT SELECT * FROM t_mt_source;
-+
-+SELECT '-- parallel_replicas_prefer_local_replica = 0 in the SELECT';
-+TRUNCATE TABLE t_rmt_target;
-+INSERT INTO t_rmt_target SETTINGS parallel_replicas_local_plan = 1, parallel_replicas_prefer_local_replica = 1, log_comment = '05394_prefer_local'
-+SELECT * FROM t_mt_source SETTINGS parallel_replicas_prefer_local_replica = 0;
-+SELECT count() FROM t_rmt_target;
-+SELECT * FROM t_rmt_target EXCEPT SELECT * FROM t_mt_source;
-+
-+SELECT '-- max_execution_time_leaf = 0 in the INSERT, 100 in the SELECT';
-+TRUNCATE TABLE t_rmt_target;
-+INSERT INTO t_rmt_target SETTINGS parallel_replicas_local_plan = 1, max_execution_time = 300, max_execution_time_leaf = 0, log_comment = '05394_leaf_timeout'
-+SELECT * FROM t_mt_source SETTINGS max_execution_time_leaf = 100;
-+SELECT count() FROM t_rmt_target;
-+SELECT * FROM t_rmt_target EXCEPT SELECT * FROM t_mt_source;
-+
-+SELECT '-- agreeing settings use the local pipeline';
-+TRUNCATE TABLE t_rmt_target;
-+INSERT INTO t_rmt_target SETTINGS parallel_replicas_local_plan = 1, log_comment = '05394_control'
-+SELECT * FROM t_mt_source;
-+SELECT count() FROM t_rmt_target;
-+SELECT * FROM t_rmt_target EXCEPT SELECT * FROM t_mt_source;
-+
-+-- Executed INSERTs: the initiator plus one per remote replica, so 4 without the local pipeline and 3 with it.
-+SYSTEM FLUSH LOGS query_log;
-+SELECT log_comment, count() FROM system.query_log
-+WHERE (current_database = currentDatabase() OR has(databases, currentDatabase())) AND type = 'QueryFinish' AND query_kind = 'Insert'
-+    AND log_comment IN ('05394_local_plan', '05394_prefer_local', '05394_leaf_timeout', '05394_control') AND event_date >= yesterday() AND event_time >= now() - 600
-+GROUP BY log_comment ORDER BY log_comment;
-+
-+DROP TABLE t_mt_source;
-+DROP TABLE t_rmt_target SYNC;
+@@ -207,7 +207,7 @@ struct Settings
+     [[nodiscard]] FlatStringMap changedToFlatMap(bool show_secrets) const;
+ 
+     void write(WriteBuffer & out) const;
+-    void read(ReadBuffer & in);
++    void read(ReadBuffer & in, bool skip_invalid_values = false);
+     /// Equivalent to Settings().write(out) but faster.
+     static void writeEmpty(WriteBuffer & out);
+ 
 ```
 
----
-
-### Incident Patch 2: `daec22af` (2026-11-14)
-**Commit Message**: Merge pull request #131278 from raphplt/docs-add-qoredb-gui
-
-Docs: add QoreDB to third-party visual interfaces
-
-**File**: `docs/integrations/connectors/tools/gui.mdx` (modified, +15/-0)
+**File**: `src/Core/tests/gtest_settings.cpp` (modified, +60/-0)
 ```diff
-@@ -595,6 +595,21 @@ Features:
+@@ -16,6 +16,7 @@
  
- </Accordion>
+ #include <functional>
+ #include <limits>
++#include <tuple>
+ #include <vector>
  
-+<Accordion title="QoreDB">
-+
-+[QoreDB](https://github.com/QoreDB/QoreDB) is an open-core desktop database client built with Rust and Tauri, with native ClickHouse support.
-+
-+Features:
-+
-+- Connects over the HTTP (8123) and HTTPS (8443) interfaces.
-+- SQL editor with syntax highlighting, autocompletion and a virtualized result grid.
-+- Classifies statements before execution and asks for confirmation before destructive queries on production connections.
-+- Cancels running queries with `KILL QUERY`.
-+- Read-only mode per connection.
-+- Runs on macOS, Windows and Linux. The core is licensed under Apache 2.0.
-+
-+</Accordion>
-+
- ## Commercial {#commercial}
+ namespace DB::ErrorCodes
+@@ -26,6 +27,8 @@ namespace DB::ErrorCodes
+     extern const int BAD_ARGUMENTS;
+     extern const int CANNOT_CONVERT_TYPE;
+     extern const int ARGUMENT_OUT_OF_BOUND;
++    extern const int CANNOT_PARSE_BOOL;
++    extern const int UNKNOWN_LOAD_BALANCING;
+ }
  
- <Accordion title="ADQM Notebook">
-```
-
----
-
-### Incident Patch 3: `89b0921b` (2026-11-14)
-**Commit Message**: Merge pull request #131238 from groeneai/fix-131164-namespace-location-not-a-uri
-
-Treat a namespace location that is not a URI as no location in `DataLakeCatalog` `CREATE TABLE`
-
-**File**: `src/Databases/DataLake/DatabaseDataLake.cpp` (modified, +7/-0)
-```diff
-@@ -1009,6 +1009,13 @@ std::optional<DataLake::TableMetadata> DatabaseDataLake::tryGetNewTableMetadata(
-     if (!location)
-         return std::nullopt;
+ namespace
+@@ -324,6 +327,63 @@ GTEST_TEST(Settings, SecondsOnTheWireRejectNegativeAndOverflowingValues)
+     ASSERT_EQ(settings.get("max_execution_time"), Field(Float64(60)));
+ }
  
-+    /// A catalog can report a placeholder instead of a location, e.g. Databricks reports `not_used` for a schema of managed tables.
-+    if (!location->contains("://"))
++GTEST_TEST(Settings, SkipInvalidValuesKeepsTheDefaultsAndReadsTheRest)
++{
++    /// The settings a server of an older version sends in `Hello` may hold values this version rejects.
++    using Entry = std::tuple<std::string_view, BaseSettingsHelpers::Flags, std::string_view>;
++    auto wire = [](std::initializer_list<Entry> entries)
 +    {
-+        LOG_DEBUG(log, "Ignoring location {} reported by the catalog for new table {}: it is not a URI", *location, name);
-+        return std::nullopt;
-+    }
++        WriteBufferFromOwnString out;
++        for (const auto & [name, flags, value] : entries)
++        {
++            BaseSettingsHelpers::writeString(name, out);
++            BaseSettingsHelpers::writeFlags(flags, out);
++            BaseSettingsHelpers::writeString(value, out);
++        }
++        BaseSettingsHelpers::writeString("", out); /// end of settings
++        return out.str();
++    };
 +
-     LOG_DEBUG(log, "Location assigned by the catalog for new table {}: {}", name, *location);
- 
-     auto table_metadata = DataLake::TableMetadata().withLocation();
++    auto read_error_code = [](const String & bytes, bool skip_invalid_values)
++    {
++        ReadBufferFromString in(bytes);
++        Settings settings;
++        try
++        {
++            settings.read(in, skip_invalid_values);
++        }
++        catch (const Exception & e)
++        {
++            return e.code();
++        }
++        return 0;
++    };
++
++    const String bytes = wire({
++        {"max_execution_time", {}, "-1"},
++        {"max_block_size", {}, "0"}, /// `NonZeroUInt64` assigns the value before it rejects it.
++        {"log_queries", {}, "maybe"},
++        {"max_threads", {}, "4"},
++    });
++    ReadBufferFromString in(bytes);
++    Settings settings;
++    settings.read(in, /* skip_invalid_values= */ true);
++    const SettingsChanges changes = settings.changes();
++    ASSERT_EQ(changes.size(), 1u);
++    ASSERT_EQ(changes[0].name, "max_threads");
++    ASSERT_EQ(changes[0].value, Field(UInt64(4)));
++    ASSERT_FALSE(settings.isChanged("max_execution_time"));
++    ASSERT_FALSE(settings.isChanged("max_block_size"));
++    ASSERT_EQ(settings.get("max_block_size"), Settings().get("max_block_size"));
++    ASSERT_FALSE(settings.isChanged("log_queries"));
++
++    /// The default read stays strict; an important setting and other error codes are not skipped.
++    ASSERT_EQ(read_error_code(bytes, false), ErrorCodes::BAD_ARGUMENTS);
++    ASSERT_EQ(read_error_code(wire({{"log_queries", {}, "maybe"}}), false), ErrorCodes::CANNOT_PARSE_BOOL);
++    ASSERT_EQ(read_error_code(wire({{"max_execution_time", BaseSettingsHelpers::Flags::IMPORTANT, "-1"}}), true), ErrorCodes::BAD_ARGUMENTS);
++    ASSERT_EQ(read_error_code(wire({{"load_balancing", {}, "nonsense"}}), true), ErrorCodes::UNKNOWN_LOAD_BALANCING);
++}
++
+ GTEST_TEST(SettingsCompatibility, MarkChangedByCompatibilityAsUnchangedKeepsTheValues)
+ {
+     /// The client passes such a Settings object to `Connection::sendQuery`: the values that
 ```
 
-**File**: `tests/integration/test_database_iceberg/test.py` (modified, +39/-0)
+**File**: `tests/integration/test_backward_compatibility/test.py` (modified, +14/-0)
 ```diff
-@@ -1545,6 +1545,45 @@ def test_create_without_engine_arguments(started_cluster, engine_clause):
-     assert node.query(f"SELECT * FROM {CATALOG_NAME}.`{root_namespace}.{table_name}`") == "AAPL\n"
+@@ -41,3 +41,17 @@ def test_backward_compatability1(start_cluster):
+     node1.query("SYSTEM SYNC REPLICA t", timeout=10)
  
+     assert node1.query("SELECT count() FROM t") == "1\n"
++
++
++def test_new_client_and_initiator_with_negative_seconds_in_old_server_profile(start_cluster):
++    node1.query("DROP USER IF EXISTS u_negative_seconds")
++    node1.query("CREATE USER u_negative_seconds IDENTIFIED WITH no_password SETTINGS max_execution_time = -1")
++    node1.query("GRANT SELECT ON system.one TO u_negative_seconds")
++    try:
++        # `node1.query*` runs the tested client against the old server; the client warns about the value it skips.
++        out, err = node1.query_and_get_answer_with_error("SELECT 1", user="u_negative_seconds")
++        assert out == "1\n"
++        assert "Cannot parse the value of setting `max_execution_time`, skipping it" in err
++        assert node2.query("SELECT count() FROM remote('node1', system.one, 'u_negative_seconds', '')") == "1\n"
++    finally:
++        node1.query("DROP USER IF EXISTS u_negative_seconds")
+```
+
+---
+
+### Incident Patch 3: `06227801` (2026-11-16)
+**Commit Message**: Merge pull request #131873 from groeneai/fix-resource-soak-msan
+
+Fix flaky resource soak tests on MemorySanitizer builds
+
+**File**: `tests/integration/helpers/resource_soak.py` (modified, +4/-2)
+```diff
+@@ -104,6 +104,7 @@ def __init__(self, node, metrics: Iterable[str] = ()):
+         self.pid = node.get_process_pid("clickhouse")
+         assert self.pid is not None, "cannot find the server process"
+         self.asan = node.is_built_with_sanitizer("address")
++        self.msan = node.is_built_with_sanitizer("memory")
+         self.tsan = node.is_built_with_sanitizer("thread")
+         self.samples: List[Sample] = []
  
-+def test_create_without_engine_arguments_namespace_location_not_a_uri(started_cluster):
-+    # Databricks reports `not_used` as the location of a schema with managed tables.
-+    node = started_cluster.instances["node1"]
-+
-+    test_ref = f"test_create_namespace_location_not_a_uri_{uuid.uuid4()}"
-+    table_name = f"{test_ref}_table"
-+    root_namespace = f"{test_ref}_namespace"
-+    table_ref = f"{CATALOG_NAME}.`{root_namespace}.{table_name}`"
-+
-+    catalog = load_catalog_impl(started_cluster)
-+    catalog.create_namespace(root_namespace, properties={"location": "not_used"})
-+    assert catalog.load_namespace_properties(root_namespace)["location"] == "not_used"
-+
-+    create_clickhouse_iceberg_database(
-+        started_cluster, node, CATALOG_NAME, additional_settings={"storage_endpoint": "http://minio1:9001"}
-+    )
-+
-+    # Without a table engine nothing tells the storage type.
-+    error = node.query_and_get_error(
-+        f"CREATE TABLE {CATALOG_NAME}.`{root_namespace}.{table_name}_default` (x String)",
-+        settings={"allow_experimental_database_iceberg": 1},
-+    )
-+    assert "cannot tell where table" in error, error
-+
-+    node.query(
-+        f"CREATE TABLE {table_ref} (x String) ENGINE = IcebergS3",
-+        settings={"allow_experimental_database_iceberg": 1, "write_full_path_in_iceberg_metadata": 1},
-+    )
-+    node.query(
-+        f"INSERT INTO {table_ref} VALUES ('AAPL')",
-+        settings={"allow_insert_into_iceberg": 1, "write_full_path_in_iceberg_metadata": 1},
-+    )
-+    assert node.query(f"SELECT * FROM {table_ref}") == "AAPL\n"
-+
-+    # The catalog chose the location.
-+    metadata_location = catalog.load_table(f"{root_namespace}.{table_name}").metadata_location
-+    assert f"/{root_namespace}/{table_name}/metadata/" in metadata_location, metadata_location
-+
-+
- @pytest.mark.parametrize("namespace_exists", [False, True])
- def test_create_without_engine_arguments_storage_mismatch(started_cluster, namespace_exists):
-     node = started_cluster.instances["node1"]
+@@ -198,8 +199,9 @@ def assert_bounded(
+         )
+         # Resident memory also covers allocations that `MemoryTracking` does not see, such as those of the Rust Delta kernel. Only anonymous memory is compared: file-backed pages are those of the binary and of the files it reads, which the server faults in on first use (for example the debug info when it symbolizes a stack trace) and the kernel can evict, so they are not held by the server.
+         # The resident memory of a ThreadSanitizer build includes its shadow memory, which it discards all at once when its thread slots run out of epochs and then refills, at points unrelated to the iterations.
+-        if self.tsan:
+-            logging.info("anonymous resident memory: not compared on a ThreadSanitizer build")
++        # On a MemorySanitizer build, a freed small allocation keeps its shadow and origin memory resident, twice its own size, even after the allocator returns its pages to the system, so a transient peak of allocations, such as a merge of a system log table with many columns, raises the resident memory long after it ends.
++        if self.tsan or self.msan:
++            logging.info("anonymous resident memory: not compared on a %s build", "ThreadSanitizer" if self.tsan else "MemorySanitizer")
+         else:
+             assert_not_growing(
+                 "anonymous resident memory without caches",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #131682** (closed): Use flat hash maps for per-block and per-granule name lookups (@nickitat)
-- **PR #131666** (2026-11-14): Do not run 02810 with parallel replicas (@devcrafter)
-- **PR #131658** (2026-11-14): Backport #128005 to 26.10: Cast a column received from a shard only once when a distributed query selects it twice (@robot-ch-test-poll)
-- **PR #131657** (2026-11-14): Backport #129012 to 26.10: Fix `replaceRegexpAll` rewrite when pattern starts with `^(?)?` (@robot-ch-test-poll)
-- **PR #131656** (2026-11-14): Backport #129146 to 26.10: Fix `NOT_FOUND_COLUMN_IN_BLOCK` in `optimize_injective_functions_in_limit_by` when the `LIMIT BY` key carries an alias (@robot-ch-test-poll)
-- **PR #131650** (2026-11-14): Backport #130814 to 26.9: Fix `bloom_filter` index mistaking a column named `mapKeys(m)` for the `Map` index (@robot-clickhouse)
+- **PR #131891** (2026-11-16): Fix clang-tidy on master: mark `ParserTransactionControl::getDocumentation` `[[nodiscard]]` (@murphy-4o)
+- **PR #131888** (2026-11-16): Run the polymorphic_parts_l Buffer insert on 20 parts (@groeneai)
+- **PR #131886** (2026-11-16): Bound the parallel probes in `05768_statistics_probe_parallel_index_load` by loaded primary indexes, not cache misses (@groeneai)
+- **PR #131884** (2026-11-16): Backport #131366 to 26.10: Check the scale in `writeDecimalFractional` in release builds (@robot-ch-test-poll4)
+- **PR #131882** (2026-11-16): Backport #131366 to 26.9: Check the scale in `writeDecimalFractional` in release builds (@robot-ch-test-poll4)
+- **PR #131881** (2026-11-16): Backport #131366 to 26.8: Check the scale in `writeDecimalFractional` in release builds (@robot-ch-test-poll4)
 
 ---
 
@@ -1678,32 +1664,35 @@ Treat a namespace location that is not a URI as no location in `DataLakeCatalog`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in executeQuery.cpp
+## X. Empirical Invariant Guard in build_profile_hook.py
 
 **RULE**:
-When implementing operations in `src/Interpreters/ClusterProxy/executeQuery.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/jobs/scripts/job_hooks/build_profile_hook.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4eb5bd00`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21700ab7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Interpreters/ClusterProxy/executeQuery.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/jobs/scripts/job_hooks/build_profile_hook.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-std::optional<LocalPlanParallelReplicasInfo> dropReadFromRemoteInPlan(QueryPlan & query_plan)
-                /// Without a local replica this step is the plan's only reading step.
-                if (!read_from_remote->getExcludePoolIndex())
-                    return {};
-
+    # Post hooks also run after a failed build, which leaves no complete profile.
+    job_result = Result.from_fs(Info().job_name)
+    if not job_result.is_success():
+        print(f"Build [{build_type}] did not succeed, build profile not collected")
+        return
+        check_start_time = Utils.timestamp_to_str(job_result.start_time)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-LocalPlanParallelReplicasInfo dropReadFromRemoteInPlan(QueryPlan & query_plan)
+        check_start_time = Utils.timestamp_to_str(
+            Result.from_fs(Info().job_name).start_time
+        )
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4eb5bd00` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21700ab7` are properly handled with clean fallback behavior.

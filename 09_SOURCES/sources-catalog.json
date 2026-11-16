@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "e6256de9",
+    "sourceVersion": "fdc4389b",
     "license": "Apache-2.0",
-    "contentHash": "cbd225d1a1d4c98ca21490c1936ec9d3c8e698f550443466f1dabf0d69d242ff",
-    "lastHarvestedAt": "2026-11-14T22:11:32.969Z",
+    "contentHash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
+    "lastHarvestedAt": "2026-11-16T06:17:44.734Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -12303,10 +12303,10 @@
     "repository": "yyjeqhc/webcodex",
     "platform": "github",
     "sourceUrl": "https://github.com/yyjeqhc/webcodex",
-    "sourceVersion": "3c141967",
+    "sourceVersion": "479efb9a",
     "license": "Apache-2.0",
-    "contentHash": "bf2e2e0040ab377dfd84c2ac137cdd55376fbd980f4f70410f8023836a9c87ef",
-    "lastHarvestedAt": "2026-11-13T01:01:18.950Z",
+    "contentHash": "d8cd0526021646b1b2612b4682656dbe29c3765cf60d0a714ebca11f1ba98f42",
+    "lastHarvestedAt": "2026-11-16T06:17:32.356Z",
     "learningId": "learn-github-yyjeqhc-webcodex"
   },
   "hf-minimaxai-minimax-h3-image": {

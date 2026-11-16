@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T05:59:04.807Z",
+  "last_updated": "2026-11-16T06:17:49.579Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T05:59:03.881Z",
@@ -18,7 +18,7 @@
       "staged_for_review": 1
     },
     "yyjeqhc-webcodex-learnings.md": {
-      "processed_at": "2026-11-13T01:01:41.465Z",
+      "processed_at": "2026-11-16T06:17:47.865Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-16T05:59:03.289Z",
+      "processed_at": "2026-11-16T06:17:48.988Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -993,7 +993,7 @@
       "staged_for_review": 1
     },
     "clickhouse-clickhouse-learnings.md": {
-      "processed_at": "2026-11-14T22:16:49.557Z",
+      "processed_at": "2026-11-16T06:17:48.384Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3158,7 +3158,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1257,
+  "total_dossiers_evaluated": 1260,
   "total_canonical_promoted": 287,
-  "total_staged_for_review": 965
+  "total_staged_for_review": 968
 }

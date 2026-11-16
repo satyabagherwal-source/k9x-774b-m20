@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T05:59:04.723Z",
-  "total_verified_learnings": 8768,
+  "last_updated": "2026-11-16T06:17:49.484Z",
+  "total_verified_learnings": 8769,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18995,
+  "total_items": 19004,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112633,10 +112633,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "e6256de9",
-      "content_hash": "9af387edf0fd05a51e7986b5cd46663c25e33621d896fc9e1f8ea39c37a7b4d7",
+      "source_version": "fdc4389b",
+      "content_hash": "a3d7b0f738025bff29be4ed3dbbf3f00c1a3c2cac48c8ca5e1987dd69555f5cc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T22:11:33.233Z"
+      "persisted_at": "2026-11-16T06:17:45.020Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse",
@@ -112645,10 +112645,10 @@
       "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "e6256de9",
-      "content_hash": "c63569a2032fafd366c82e76b9654895115317892db1103fe829a8e99dbe6fee",
+      "source_version": "fdc4389b",
+      "content_hash": "f5f6627ec342a126402f092945ae9a2710412341a66f74a89300b901084f0245",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:11:33.337Z"
+      "persisted_at": "2026-11-16T06:17:45.133Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S9S2-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GEDW-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1db5fed3ceb2e97e48177f4f5440a58695d319a82e21cfaa7a39f90c13f16eae",
+      "content_hash": "758b463be4b27f5e460c3be1a1e3ca12fa2b4682991c691e301ee184bcd1f910",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T05:59:03.558Z"
+      "persisted_at": "2026-11-16T06:17:49.271Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ef462608aa2c4b3e29b94ddac8d899870d11bd0ec8aea701b8ccae8a2f27fcab",
+      "content_hash": "0b3884b046c6f93e0891cfd99c9b14bd93fe047e1c2f4c6e1aa8ac99389c740e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T05:59:03.681Z"
+      "persisted_at": "2026-11-16T06:17:49.377Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2b4b199b6bac78343e7463ab523bcb8fa424c9b7e19624b027121aacb8d720af",
+      "content_hash": "1b179768b4cacc97fc2ead8f3bc7bda494294e3ed380c27170fb693d02e7bc22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:59:03.772Z"
+      "persisted_at": "2026-11-16T06:17:49.484Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -235860,14 +235860,19 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "e6256de9",
-      "content_hash": "cbd225d1a1d4c98ca21490c1936ec9d3c8e698f550443466f1dabf0d69d242ff",
+      "source_version": "fdc4389b",
+      "content_hash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
         {
           "number": 8544,
           "title": "Empirical Invariant Guard in executeQuery.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8722,
+          "title": "Empirical Invariant Guard in build_profile_hook.py",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -235876,7 +235881,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T22:11:32.819Z",
+      "verified_at": "2026-11-16T06:17:44.585Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235970,9 +235975,9 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7ec640bc046c41ad276182b5d50d899515bbde73e3106382e04498cd96f7bd0",
+      "content_hash": "f02e193150c4b708f0787f152ff9db47c8ef091f656397997c86e988673c2c04",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T22:16:50.017Z"
+      "persisted_at": "2026-11-16T06:17:48.776Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning",
@@ -235982,9 +235987,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clickhouse-clickhouse-learnings",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "56dd8b34ae8362345b18773c4951123685d86ae3333c574697ef3342abb23a49",
+      "content_hash": "5d2e83fd7f52b123657d9393cd411fcdcee4d1a03a1bcfc2cd56e7b4554842b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:16:50.134Z"
+      "persisted_at": "2026-11-16T06:17:48.883Z"
     },
     "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
@@ -252404,6 +252409,139 @@
       "content_hash": "4b1d5ef711e7b5fa0430f97092300959b86c3cbbc0878030fe448716644b1ccf",
       "domain_letter": "H",
       "persisted_at": "2026-11-16T05:42:07.190Z"
+    },
+    "learn-github-yyjeqhc-webcodex": {
+      "learning_id": "learn-github-yyjeqhc-webcodex",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yyjeqhc/webcodex",
+      "repository": "yyjeqhc/webcodex",
+      "slug": "yyjeqhc-webcodex",
+      "platform": "github",
+      "source_url": "https://github.com/yyjeqhc/webcodex",
+      "source_version": "479efb9a",
+      "content_hash": "d8cd0526021646b1b2612b4682656dbe29c3765cf60d0a714ebca11f1ba98f42",
+      "dossier_path": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8721,
+          "title": "test(ci): support Cargo 1.100 build-script output layout",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T06:17:32.177Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8721": {
+      "learning_id": "rule-8721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8721,
+      "title": "test(ci): support Cargo 1.100 build-script output layout",
+      "source_url": "https://github.com/yyjeqhc/webcodex",
+      "source_version": "479efb9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T06:17:32.177Z"
+    },
+    "candidate_directive-test-ci-support-cargo-1-100-build-script-output-layout": {
+      "item_id": "candidate_directive-test-ci-support-cargo-1-100-build-script-output-layout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GDGA-test-ci-support-cargo-1-100-build-script-output-layout.md",
+      "title": "test(ci): support Cargo 1.100 build-script output layout",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06127321f590e0e2c994287e70c4364d831a24e46e84f4134ebaa978b0d48fbc",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T06:17:48.062Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
+      "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
+      "repository": "yyjeqhc/webcodex",
+      "source_version": "479efb9a",
+      "content_hash": "d812e8c8ddac9cbe506a6bec3f98d418688ff9583ed641bc54812fc6f99af466",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T06:17:32.650Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yyjeqhc-webcodex-verification-protocol-empirical-defect-shield-for-yyjeqhc-webco.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc/webcodex",
+      "repository": "yyjeqhc/webcodex",
+      "source_version": "479efb9a",
+      "content_hash": "db151860c05dd2e7f314195c68484670b0084f2617ec646cc44a48c2af1e364d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T06:17:32.755Z"
+    },
+    "rule-8722": {
+      "learning_id": "rule-8722",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8722,
+      "title": "Empirical Invariant Guard in build_profile_hook.py",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "fdc4389b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T06:17:44.585Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-build_profile_hook-py": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-build_profile_hook-py",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GDX6-empirical-invariant-guard-in-build_profile_hook-py.md",
+      "title": "Empirical Invariant Guard in build_profile_hook.py",
+      "repository": "clickhouse-clickhouse-learnings",
+      "source_version": "HEAD",
+      "content_hash": "46edb21ed17b25bfe949bdeed9c6dd5cc67ceda149edd5fc4171a5ecab7c388b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T06:17:48.666Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-learnings-technical-construction-intelligence-yyjeqhc-webcodex-.md",
+      "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c11ec00f6a1496b96a087675ed164863176e98188af5e60fbebc68fba9adb18",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T06:17:48.167Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yyjeqhc-webcodex-learnings-verification-protocol-empirical-defect-shield-for-yyj.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc-webcodex-learnings",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ffaf168928dafaa874ddc02f4644d46c64fa7061ed87530767870d7f8ab85b7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T06:17:48.276Z"
     }
   },
   "ai-builder-brain": {

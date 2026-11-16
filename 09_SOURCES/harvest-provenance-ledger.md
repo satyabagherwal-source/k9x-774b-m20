@@ -10286,3 +10286,5 @@ Every entry in this ledger must capture:
 | `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `d62b1aa3` | Multi-dimensional audit evidence | 2026-11-16T05:41:32.343Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `ce4df827` | Multi-dimensional audit evidence | 2026-11-16T05:41:38.502Z |
 | `learn-dom-f-925aec0f` | `project://joreilly-confetti` | `d62b1aa3` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md` | 2026-11-16T05:42:06.332Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `479efb9a` | Multi-dimensional audit evidence | 2026-11-16T06:17:32.356Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `fdc4389b` | Multi-dimensional audit evidence | 2026-11-16T06:17:44.734Z |
