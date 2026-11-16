@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T06:59:40.886Z",
+  "last_updated": "2026-11-16T07:19:48.969Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "257ca9b69ee726f0df831bb75727f76bc7ceb64499e67b7ea9ca6078aa81a881",
-      "verified_at": "2026-11-14T22:57:36.174Z",
+      "content_hash": "10f08cf6e988a2cc6c3eeb99b5b4098ab9db301b8f95cc98f8f0686f1022c857",
+      "verified_at": "2026-11-16T07:19:48.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T22:57:36.174Z"
+      "last_updated": "2026-11-16T07:19:48.968Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",

@@ -10289,3 +10289,4 @@ Every entry in this ledger must capture:
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `479efb9a` | Multi-dimensional audit evidence | 2026-11-16T06:17:32.356Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `fdc4389b` | Multi-dimensional audit evidence | 2026-11-16T06:17:44.734Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `323ddd36` | Multi-dimensional audit evidence | 2026-11-16T06:59:40.878Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `336cd8a4` | Multi-dimensional audit evidence | 2026-11-16T07:19:48.962Z |

@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "0f339089",
+    "sourceVersion": "336cd8a4",
     "license": "MIT",
-    "contentHash": "28bb300a30cac6c3b971f459488cc7c369060c7111c7b2305950edb01fe5c8d7",
-    "lastHarvestedAt": "2026-11-14T14:40:09.667Z",
+    "contentHash": "10f08cf6e988a2cc6c3eeb99b5b4098ab9db301b8f95cc98f8f0686f1022c857",
+    "lastHarvestedAt": "2026-11-16T07:19:48.962Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

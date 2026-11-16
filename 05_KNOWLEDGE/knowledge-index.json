@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T06:59:45.807Z",
+  "last_updated": "2026-11-16T07:20:00.020Z",
   "total_verified_learnings": 8769,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19008,
+  "total_items": 19012,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "55ff64b56f1bb925b330671ae1185ffaec095dcdf0604053d50bb625e6e7fded",
+      "content_hash": "ee2549af41b83b5a664c9b1bc6fed344199f5b911aa62a393aa5497d2e714490",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T05:59:04.119Z"
+      "persisted_at": "2026-11-16T07:19:59.926Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4b3d120c96e19ade38fb24db2a6f4190c818a7268637b922cd6f3e69d350a2d",
+      "content_hash": "d7504b274a33be3a53c836eab6971e1cffdda218655cad761ae25c0dd8c16f1d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:59:04.208Z"
+      "persisted_at": "2026-11-16T07:20:00.020Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3OSL-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OCL5-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "72d3009230baefc28c515dc9a250d9ac0849ea208bce37260e674ba47b8f0056",
+      "content_hash": "992ad3a53725558294c1bc702405255203b62455921bb576d5003d89804c93e5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:35:55.850Z"
+      "persisted_at": "2026-11-16T07:19:59.422Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "357fd99b12d66f9a845c063e3964a8a70c96f44e1f6c6a7ff2ea67c140e158f9",
+      "content_hash": "1769913b6f7c3899ca2b6e16d350cfa5a84426473d9398fc150eb11cb5766b83",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:35:55.986Z"
+      "persisted_at": "2026-11-16T07:19:59.505Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "886ec24c32681850efd372ea75093c979e42dc74b89dd3d19eb067757a2545f1",
+      "content_hash": "18d0730a5e8527f622180221459539d893c0e0bc6439db34e6750cac255d8112",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T06:35:56.130Z"
+      "persisted_at": "2026-11-16T07:19:59.595Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214845,13 +214845,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SA5F-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OCWQ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "16f0b16d81d20bbe9dc0629e67b80c52d2e0f1db7fd6a6c958722de215ead584",
+      "content_hash": "9787e59611e8aa9de91aa89abb5dbb152fbb4b944d47b639863762f7c9449544",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T05:59:04.036Z"
+      "persisted_at": "2026-11-16T07:19:59.838Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -229157,18 +229157,23 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "29e41070",
-      "content_hash": "257ca9b69ee726f0df831bb75727f76bc7ceb64499e67b7ea9ca6078aa81a881",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "336cd8a4",
+      "content_hash": "10f08cf6e988a2cc6c3eeb99b5b4098ab9db301b8f95cc98f8f0686f1022c857",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
           "title": "fill the dsh/broker llm arm on the Engine's own auxiliary model",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8724,
+          "title": "show exact, estimated, or unknown cost labels and update changelog",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229176,7 +229181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T22:57:35.967Z",
+      "verified_at": "2026-11-16T07:19:48.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229215,37 +229220,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "29e41070",
-      "content_hash": "29fcb39a3d7b7559da26b83b8728bb7f0d45ebab7e3748ea29318526540a2bdf",
+      "source_version": "336cd8a4",
+      "content_hash": "6e8baccd5fac4fd6776d478ba8803f1e53fb582b1b387b6a2d28625cf8fc6043",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:57:36.536Z"
+      "persisted_at": "2026-11-16T07:19:49.223Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "29e41070",
-      "content_hash": "981c478b89ac9160ea84213a15ef160d3c85e25752f4c4e0117b5f1db4bcbbec",
+      "source_version": "336cd8a4",
+      "content_hash": "5719e25c8db28cc0207921b162de91b11dd9450e236802542dfea546fcd58ad9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:57:36.788Z"
+      "persisted_at": "2026-11-16T07:19:49.393Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
+      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "29e41070",
-      "content_hash": "ea8651bf639bfd9ffdb6fe4dbdf0d664b3a745913e8315811001ceb63b8bae08",
+      "source_version": "336cd8a4",
+      "content_hash": "a8c69c228b253a0b10af9401af3c1a6618ba902c268cc3b0c55956120bbf0cb1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:57:36.909Z"
+      "persisted_at": "2026-11-16T07:19:49.476Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -229267,9 +229272,9 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "a95f5c45eb2f28a64a7f875c655b805d80511c728dcf86acc54bda692a34c4ab",
+      "content_hash": "e77794285e524c0a3ce0272c7087adfe3c5e24c9e311c56c34959b0c27c0e898",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T14:40:19.641Z"
+      "persisted_at": "2026-11-16T07:19:58.764Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona",
@@ -229279,9 +229284,9 @@
       "title": "Agent Contract: codewhale-hq-codewhale-learnings Autonomous Specialist Persona",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "339b482070af68588e4bcf941bf4a62004df026fd6fbaa2f1fa74ac8b0dd6d8c",
+      "content_hash": "31e35f684e93475cabe21f63cdc8578b77fbb082e0e528e6a5d23875f685a972",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T14:40:19.725Z"
+      "persisted_at": "2026-11-16T07:19:58.943Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin",
@@ -229291,9 +229296,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "0623cc3e66b4addb4c30e49b42bc2ab1386e8c4adb908e5707e0864d2c8e9ba7",
+      "content_hash": "0df9b948521967cd9360ff98de125aac36620d1d97256306c95867d46889fb75",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T14:40:19.803Z"
+      "persisted_at": "2026-11-16T07:19:59.024Z"
     },
     "learn-huggingface-bingsu-adetailer": {
       "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -236342,13 +236347,13 @@
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale",
       "artifact_type": "architecture_decision",
       "target_folder": "12_DECISIONS",
-      "relative_path": "12_DECISIONS/ADR-hmbown-codewhale-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codew.md",
+      "relative_path": "12_DECISIONS/ADR-codewhale-hq-codewhale-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "29e41070",
-      "content_hash": "f3fc6ef50a4f89fd8982e3edc6a92c2277085f13c6516f7b62599c38d795bcf8",
+      "source_version": "336cd8a4",
+      "content_hash": "fa191338dae29a42f220b8d03ae82b2d87e63d444c0f8a90bcddbd98c58fe773",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:57:36.667Z"
+      "persisted_at": "2026-11-16T07:19:49.311Z"
     },
     "learn-github-apollographql-apollo-kotlin": {
       "learning_id": "learn-github-apollographql-apollo-kotlin",
@@ -252597,6 +252602,56 @@
       "content_hash": "6db2a9e1af82fa42699e9a4ed0509980fea5b5485ba23fd89e7f87614119d1ee",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T06:59:44.538Z"
+    },
+    "rule-8724": {
+      "learning_id": "rule-8724",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8724,
+      "title": "show exact, estimated, or unknown cost labels and update changelog",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "336cd8a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T07:19:48.838Z"
+    },
+    "candidate_directive-show-exact-estimated-or-unknown-cost-labels-and-update-changelog": {
+      "item_id": "candidate_directive-show-exact-estimated-or-unknown-cost-labels-and-update-changelog",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O4MW-show-exact-estimated-or-unknown-cost-labels-and-update-changelog.md",
+      "title": "show exact, estimated, or unknown cost labels and update changelog",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "336cd8a4",
+      "content_hash": "fb7159a0176104de70fa9b2812373ad68f7e6f5008fe5804d26e4881b556cef4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T07:19:49.117Z"
+    },
+    "candidate_directive-tui-show-exact-estimated-or-unknown-cost-labels-and-update-changelog": {
+      "item_id": "candidate_directive-tui-show-exact-estimated-or-unknown-cost-labels-and-update-changelog",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OC0I-tui-show-exact-estimated-or-unknown-cost-labels-and-update-changelog.md",
+      "title": "tui: show exact, estimated, or unknown cost labels and update changelog",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8659b4b3d7dd4ccf4371497c09d90ffa5fa1aeb85116e5a582d73cb4e3a42aea",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T07:19:58.680Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-codewhale-hq-codewhale-learnings-adr-subsystem-boundary-modular-decoupling-in-co.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in codewhale-hq-codewhale-learnings",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "428c61c42aa44815277fe6b47e6c5e2784d2b031dbd384e94f86bcb3c38fe765",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T07:19:58.855Z"
     }
   },
   "ai-builder-brain": {
