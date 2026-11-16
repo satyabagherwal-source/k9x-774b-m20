@@ -10262,3 +10262,6 @@
 | `CYCLE-20261116-CFYM` | `2026-11-16T08:06:43.150Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8727` | Yes (`01b2d3ce...`) |
 | `CYCLE-20261116-IDB4` | `2026-11-16T08:11:19.648Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8728` | Yes (`b1d9abf3...`) |
 | `CYCLE-20261116-0KDW` | `2026-11-16T08:53:28.244Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8729` | Yes (`ab015b7e...`) |
+| `CYCLE-20261116-5C2E` | `2026-11-16T11:45:08.438Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8730` | Yes (`256d9291...`) |
+| `CYCLE-20261116-5DT8` | `2026-11-16T11:45:10.700Z` | `unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md` | Yes (`a588de79...`) |
+| `CYCLE-20261116-5IJI` | `2026-11-16T11:45:16.830Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8731` | Yes (`394a2961...`) |

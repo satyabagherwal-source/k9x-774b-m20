@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-AY8A",
-    "timestamp": "2026-11-13T19:54:23.050Z",
-    "repository": "telemt/telemt",
-    "learningId": "learn-github-telemt-telemt",
-    "contentHash": "0e72d7a54a886c3d6fa0f276d5666f8b6a2aeaf72a3d9422891b9deb01c0439c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-REHT",
-    "timestamp": "2026-11-13T20:07:10.625Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "06ed80162c5b7698e83953db7cd22b8062bb8f716047e5d73a514dc6a6efc68a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-RM0J",
-    "timestamp": "2026-11-13T20:07:20.371Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "e79d69eda2220ffd771870a5a744ec54e764e3b3eff65076a83fe5dadcefb6ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-ROTJ",
     "timestamp": "2026-11-13T20:07:24.007Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7445,51 @@
     "repository": "astral-sh/ruff",
     "learningId": "learn-github-astral-sh-ruff",
     "contentHash": "ab015b7e3db43d7971505f9feba23558e04d83fcf8bb543ad723e99feb341eed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-5C2E",
+    "timestamp": "2026-11-16T11:45:08.438Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "256d9291fe10b073350c0b6b8f00313cc7f1e34150641161b0c80d4d42ace40d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-5DT8",
+    "timestamp": "2026-11-16T11:45:10.700Z",
+    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+    "contentHash": "a588de79a3cd447f6de48ee37de30a32a34e6ed6e0236f5a78631ce76e073a0b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-5IJI",
+    "timestamp": "2026-11-16T11:45:16.830Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "394a29614c90bd6a5154b8dfea0f96410fc214d481c98394bc82a59e3cb4c6ed",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

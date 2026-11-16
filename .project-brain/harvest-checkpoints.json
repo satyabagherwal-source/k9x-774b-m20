@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T08:53:28.255Z",
+  "last_updated": "2026-11-16T11:45:16.842Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "884334c40d2bf3d1d63182489700e8d1d2bd96d7dea7508c2f11ffea30f487a2",
-      "verified_at": "2026-11-13T19:27:27.029Z",
+      "content_hash": "256d9291fe10b073350c0b6b8f00313cc7f1e34150641161b0c80d4d42ace40d",
+      "verified_at": "2026-11-16T11:45:08.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:27:27.029Z"
+      "last_updated": "2026-11-16T11:45:08.449Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
-      "verified_at": "2026-11-13T17:11:08.526Z",
+      "content_hash": "394a29614c90bd6a5154b8dfea0f96410fc214d481c98394bc82a59e3cb4c6ed",
+      "verified_at": "2026-11-16T11:45:16.841Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T17:11:08.526Z"
+      "last_updated": "2026-11-16T11:45:16.841Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -17766,14 +17766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-      "content_hash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
-      "verified_at": "2026-11-11T18:59:45.554Z",
+      "content_hash": "a588de79a3cd447f6de48ee37de30a32a34e6ed6e0236f5a78631ce76e073a0b",
+      "verified_at": "2026-11-16T11:45:10.712Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:59:45.554Z"
+      "last_updated": "2026-11-16T11:45:10.712Z"
     },
     "kortix-ai/CompanyOS": {
       "repository": "kortix-ai/CompanyOS",

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:55.363Z",
+  "timestamp": "2026-11-16T11:45:20.356Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-juicedata-juicefs-learnings",
+  "learning_id": "LEARN-EVO-juicedata-juicefs-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [juicedata-juicefs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:55.363Z`  
-> **Learning ID**: `LEARN-REEXTRACT-juicedata-juicefs-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T11:45:20.356Z`  
+> **Learning ID**: `LEARN-EVO-juicedata-juicefs-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `e7b31f31`  
+> **Source Version**: `331de6ea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:00:02.282Z  
+> **Timestamp**: 2026-11-16T11:45:07.555Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:00:02.276Z  
+> **Harvest Timestamp**: 2026-11-16T11:45:02.607Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14723 stars
+- **Stars / Engagement**: 14740 stars
 
 ---
 
@@ -1186,11 +1186,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7822** (2026-11-10): **cmd/mount: warn about ACLs on Linux kernels older than 4.9**
-  *Symptoms*: Mounting an ACL-enabled volume on Linux kernels older than 4.9 currently gives no warning that ACL permission checking requires newer kernel support. Log a warning with the detected kernel version and continue mounting. Skip non-Linux platforms and unknown kernel versions, and update the English and Chinese ACL documentation.  Validation: - Passed `go test ./cmd -run 'TestArgsOrder|TestHandleSysMountArgs|TestParseUIDGID' -count=1` on macOS arm64. - Passed `go fmt cmd/mount_unix.go` and `git diff --check`. - `make test.cmd` could not run because the sandbox does not permit `sudo`; the full integration suite and old-kernel behavior were not exercised locally.
+- **Issue #7857** (2026-11-16): **docs: clarify routing and concurrency for multiple gateways**
+  *Symptoms*: <!-- Keep the description proportional to the change. Small, self-explanatory fixes can be brief and do not need a separate issue. Remove optional sections that do not apply. Link existing discussions instead of repeating their full history. -->  ## Problem  Multi-gateway docs omit object routing recommendations and cross-instance concurrency limitations. Related to #7827.  ## Change  Update English and Chinese docs with object-based routing guidance and concurrency limitations.  ## Validation  <!-- List checks you actually ran and their results, including relevant versions or backends. For a bug fix, describe the before/after behavior and regression coverage. State what was not run and why; do not present suggested checks as completed. For documentation changes, describe the relevant content/link checks. -->  ## Risks and open questions (if applicable)  <!-- Note compatibility, persisted formats, mixed-version clients, backend parity, failure recovery, or performance tradeoffs only when relevant to this change. Identify decisions that need maintainer input and link user-facing doc updates. --> 
 
-- **Issue #7820** (2026-11-11): **utils: fix lost wakeups in Cond**
-  *Symptoms*: `Cond.Signal` uses a nonblocking send on an unbuffered channel. A signal sent after a waiter releases the lock but before it starts receiving is dropped, causing the waiter to wait unnecessarily until timeout.  Register each waiter under the lock before unlocking. Signal/Broadcast close registered waiter channels so notifications survive this gap; timed-out waiters are removed.  Regression tests force this timing window and cover single/multiple signals, broadcast, timeout cleanup, and notifications without waiters. The reproducer fails before the fix; Cond tests pass 10 runs with `-race`.  Local SDK WriteFile measurements:  | Workload | Before | After | | --- | ---: | ---: | | 4 KiB, SQLite, median of 3 runs | 1.968 ms/op, 508 IOPS | 0.254 ms/op, 3937 IOPS | | 1 MiB, Redis, mean of 8 runs | 1955 MB/s | 2141 MB/s |
+- **Issue #7855** (2026-11-16): **object/sharding: do not format the endpoint query**
+  *Symptoms*: ## Problem  With `--shards`, `NewSharded` uses the whole bucket as a `fmt` format string, so any percent-encoded query value is taken as a verb. E.g. `jfs%d?auth-url=https%3A%2F%2Fa.com%2Fv3` becomes `jfs0?auth-url=https%!A(MISSING)%!F(MISSING)...`. `format` also re-encodes the query when `tls-insecure-skip-verify` is set, which produces such values. And a bucket without `%d` outside the query (e.g. `mybucket?x=a%2Fb`) passes the placeholder check, so all shards share one bucket. This becomes more likely with Swift Keystone settings in the bucket query (juicedata/juicefs#7833).  ## Change  Only format the part before `?` and append the query verbatim. A literal `%` in the host or path is still not supported.  ## Validation  - Extended `TestSharding`: per-shard endpoints keep an encoded query intact, and a bucket whose only `%` is in the query is rejected. It fails before the fix and passes after. - `go test ./pkg/object` passes.  ## Risks and open questions (if applicable)  A `%d` placed only in the query is no longer substituted; existing endpoints with `%` in the query were already mangled before this change. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1207,303 +1207,54 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7b31f31` (2026-11-11)
-**Commit Message**: utils: fix lost wakeups in Cond (#7820)
+### Incident Patch 1: `6185d131` (2026-11-16)
+**Commit Message**: ci: fix CImodel expectations and TiUP bootstrap failures (#7852)
 
-Signed-off-by: miyang <[REDACTED_EMAIL]>
-
-**File**: `pkg/utils/cond.go` (modified, +25/-15)
+**File**: `.github/scripts/start_meta_engine.sh` (modified, +3/-2)
 ```diff
-@@ -17,38 +17,41 @@
- package utils
- 
- import (
-+	"container/list"
- 	"sync"
- 	"time"
- )
- 
- // Cond is similar to sync.Cond, but you can wait with a timeout.
- type Cond struct {
--	L      sync.Locker
--	signal chan struct{}
-+	L       sync.Locker
-+	waiters list.List
- }
- 
- // Signal wakes up a waiter.
- // It's required for the caller to hold L.
- func (c *Cond) Signal() {
--	select {
--	case c.signal <- struct{}{}:
--	default:
-+	if e := c.waiters.Front(); e != nil {
-+		c.waiters.Remove(e)
-+		close(e.Value.(chan struct{}))
+@@ -124,7 +124,8 @@ install_tikv(){
+     # Pin 8.5.7: the tiup mirror currently serves tikv/pd tarballs for 8.5.3-8.5.6
+     # that no longer match their (republished) manifest checksums, so playground
+     # aborts with "sha256 checksum mismatch". 8.5.7 is consistent.
+-    $tiup playground 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
++    # Pin playground to skip the background update check racing with root manifest updates.
++    $tiup playground:v1.17.1 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
+     pid=$!
+     timeout=60
+     count=0
+@@ -188,7 +189,7 @@ install_tidb(){
+     # manifest version instead of a pruned one, see https://github.com/pingcap/tiup/issues/2057
+     rm -f "$tiup_home/manifests/snapshot.json" "$tiup_home/manifests/timestamp.json"
+     # Pin 8.5.7, see the note in install_tikv (mirror checksum mismatch on 8.5.3-8.5.6).
+-    $tiup playground 8.5.7 > tidb.log 2>&1  &
++    $tiup playground:v1.17.1 8.5.7 > tidb.log 2>&1  &
+     pid=$!
+     timeout=60
+     count=0
+```
+
+**File**: `pkg/meta/random_test.go` (modified, +2/-2)
+```diff
+@@ -1922,8 +1922,8 @@ func (m *fsMachine) chown(inode Ino, flag uint16, uid, gid uint32) syscall.Errno
+ 	if n == nil {
+ 		return syscall.ENOENT
  	}
- }
- 
- // Broadcast wake up all the waiters.
- // It's required for the caller to hold L.
- func (c *Cond) Broadcast() {
--	close(c.signal)
--	c.signal = make(chan struct{})
-+	for c.waiters.Len() > 0 {
-+		c.Signal()
-+	}
- }
- 
- var timerPool = sync.Pool{}
- 
- // WaitWithTimeout wait for a signal or a period of timeout eclipsed.
- // returns true in case of timeout else false
- func (c *Cond) WaitWithTimeout(d time.Duration) bool {
--	ch := c.signal
-+	ch := make(chan struct{})
-+	waiter := c.waiters.PushBack(ch)
- 	c.L.Unlock()
- 	var t *time.Timer
- 	if e := timerPool.Get(); e == nil {
-@@ -57,22 +60,29 @@ func (c *Cond) WaitWithTimeout(d time.Duration) bool {
- 		t = e.(*time.Timer)
- 		t.Reset(d)
- 	}
--	defer func() {
--		timerPool.Put(t)
--		c.L.Lock()
--	}()
-+	timeout := false
- 	select {
- 	case <-ch:
- 		if !t.Stop() {
- 			<-t.C
+-	if flag&SetAttrUID != 0 && n.uid != uid {
+-		if m.ctx.Uid() != 0 {
++	if flag&SetAttrUID != 0 {
++		if m.ctx.Uid() != 0 && (m.ctx.Uid() != n.uid || uid != n.uid) {
+ 			return syscall.EPERM
  		}
--		return false
- 	case <-t.C:
--		return true
-+		timeout = true
-+	}
-+	timerPool.Put(t)
-+	c.L.Lock()
-+	if timeout {
-+		select {
-+		case <-ch:
-+			timeout = false // Signaled after timing out but before re-acquiring L.
-+		default:
-+			c.waiters.Remove(waiter)
-+		}
- 	}
-+	return timeout
- }
- 
- // NewCond creates a Cond.
- func NewCond(lock sync.Locker) *Cond {
--	return &Cond{lock, make(chan struct{})}
-+	return &Cond{L: lock}
- }
-```
-
-**File**: `pkg/utils/cond_test.go` (modified, +144/-0)
-```diff
-@@ -103,3 +103,147 @@ func TestCond(t *testing.T) {
- 		}
- 	}
- }
-+
-+// Hold waiters between releasing the lock and receiving their notification.
-+type condTestLocker struct {
-+	sync.Mutex
-+	unlocked  chan struct{}
-+	resume    chan struct{}
-+	relocking chan struct{}
-+}
-+
-+func (m *condTestLocker) Lock() {
-+	if m.relocking != nil {
-+		m.relocking <- struct{}{}
-+	}
-+	m.Mutex.Lock()
-+}
-+
-+func (m *condTestLocker) Unlock() {
-+	m.Mutex.Unlock()
-+	m.unlocked <- struct{}{}
-+	<-m.resume
-+}
-+
-+func TestCondNotificationBeforeReceive(t *testing.T) {
-+	for _, tc := range []struct {
-+		name      string
-+		waiters   int
-+		signals   int
-+		broadcast bool
-+		timeout   bool
-+	}{
-+		{name: "Signal", waiters: 1, signals: 1},
-+		{name: "MultipleSignals", waiters: 8, signals: 8},
-+		{name: "SignalOne", waiters: 8, signals: 1},
-+		{name: "Broadcast", waiters: 8, broadcast: true},
-+		{name: "SignalAfterTimeout", waiters: 1, signals: 1, timeout: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			m := &condTestLocker{
-+				unlocked: make(chan struct{}, tc.waiters),
-+				resume:   make(chan struct{}),
-+			}
-+			c := NewCond(m)
-+			if tc.timeout {
-+				close(m.resume)
-+				m.Lock()
-+				timedOut := c.WaitWithTimeout(0)
-+				m.Mutex.Unlock()
-+				if !timedOut {
-+					t.Fatal("wait without a notification should time out")
-+				}
-+				<-m.unlocked
-+				m.resume = make(chan struct{})
-+			}
-+			done := make(chan bool, tc.waiters)
-+			for i := 0; i < tc.waiters; i++ {
-+				go func() {
-+					m.Lock()
-+					timedOut := c.WaitWithTimeout(100 * time.Millisecond)
-+					m.Mutex.Unlock()
-+					done <- timedOut
-+				}()
-+			}
-+			for i := 0; i < tc.waiters; i++ {
-+				<-m.unlocked
-+			}
-+			m.Lock()
-+			for i := 0; i < tc.signals; i++ {
-+				c.Signal()
-+			}
-+			if tc.broadcast {
-+				c.Broadcast()
-+			}
-+			close(m.resume)
-+			m.Mutex.Unlock()
-+			var notified int
-+			for i := 0; i < tc.waiters; i++ {
-+				if !<-done {
-+					notified++
-+				}
-+			}
-+			want := tc.signals
-+			if tc.broadcast {
-+				want = tc.waiters
-+			}
-+			if notified != want {
-+				t.Fatalf("notified %d waiters, want %d", notified, want)
-+			}
-+		})
-+	}
-+}
-+
-+func TestCondNotificationAfterTimeoutBeforeRelock(t *testing.T) {
-+	for _, name := range []string{"Signal", "Broadcast", "Timeout"} {
-+		t.Run(name, func(t *testing.T) {
-+			m := &condTestLocker{
-+				unlocked:  make(chan struct{}),
-+				resume:    make(chan struct{}),
-+				relocking: make(chan struct{}),
-+			}
-+			c := NewCond(m)
-+			done := make(chan bool, 1)
-+			go func() {
-+				m.Mutex.Lock()
-+				timedOut := c.WaitWithTimeout(0)
-+				m.Mutex.Unlock()
-+				done <- timedOut
-+			}()
-+			<-m.unlocked
-+			m.Mutex.Lock()
-+			close(m.resume)
-+			// The waiter has selected the timeout branch but cannot re-acquire L yet.
-+			<-m.relocking
-+			switch name {
-+			case "Signal":
-+				c.Signal()
-+			case "Broadcast":
-+				c.Broadcast()
-+			}
-+			m.Mutex.Unlock()
-+			if timedOut := <-done; timedOut != (name == "Timeout") {
-+				t.Errorf("timedOut = %v, want %v", timedOut, name == "Timeout")
-+			}
-+			m.Mutex.Lock()
-+			defer m.Mutex.Unlock()
-+			if c.waiters.Len() != 0 {
-+				t.Fatalf("got %d remaining waiters, want 0", c.waiters.Len())
-+			}
-+		})
-+	}
-+}
-+
-+func TestCondNotificationWithoutWaiters(t *testing.T) {
-+	var m sync.Mutex
-+	c := NewCond(&m)
-+	m.Lock()
-+	defer m.Unlock()
-+	for _, notify := range []func(){c.Signal, c.Broadcast} {
-+		// A notification without waiters must not be saved for a future wait.
-+		notify()
-+		if !c.WaitWithTimeout(time.Millisecond) {
-+			t.Fatal("notification was delivered to a future waiter")
-+		}
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `46b443cd` (2026-11-10)
-**Commit Message**: cmd/mount: warn about ACLs on Linux kernels older than 4.9 (#7822)
-
-**File**: `cmd/mount_unix.go` (modified, +4/-0)
-```diff
-@@ -1130,6 +1130,10 @@ func mountMain(v *vfs.VFS, c *cli.Context) {
- 	conf.NegEntryTimeout = utils.Duration(c.String("negative-entry-cache"))
- 	conf.ReaddirCache = c.Bool("readdir-cache")
- 	major, minor := utils.GetKernelVersion()
-+	if runtime.GOOS == "linux" && conf.Format.EnableACL && major > 0 &&
-+		(major < 4 || (major == 4 && minor < 9)) {
-+		logger.Warnf("POSIX ACL permission checking requires Linux kernel 4.9 or higher, current version: %d.%d", major, minor)
-+	}
- 	if conf.ReaddirCache {
- 		if conf.AttrTimeout == 0 {
- 			logger.Warnf("readdir-cache is enabled without attr-cache, it's performance may be affected")
-```
-
-**File**: `docs/en/security/posix_acl.md` (modified, +1/-1)
-```diff
-@@ -54,5 +54,5 @@ For detailed rules, guidelines, and implementation of POSIX ACLs, see:
- 
- ## Notes
- 
--* ACL permission checks require [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) or later.
-+* ACL permission checks require [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) or later. With ACLs enabled, mounting on older kernels logs a warning and continues, but ACL permission checks may be incorrect.
- * Enabling ACLs may impact performance. However, due to memory cache optimization, most usage scenarios experience minimal performance degradation.
-```
-
-**File**: `docs/zh_cn/security/posix_acl.md` (modified, +1/-1)
-```diff
-@@ -63,5 +63,5 @@ setfacl -m u:alice:rw- /mnt/jfs/file
- 
- ## 注意事项
- 
--- ACL 权限检测需要 [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) 及以上版本；
-+- ACL 权限检测需要 [Linux kernel 4.9](https://lkml.iu.edu/hypermail/linux/kernel/1610.0/01531.html) 及以上版本；启用 ACL 后，在旧内核上挂载会输出警告并继续挂载，但 ACL 权限检测可能不正确。
- - 启用 ACL 会有额外的性能影响。但因为有内存缓存优化，大部分使用场景性能损耗都较低，可参考[压测结果](https://juicefs.com/zh-cn/blog/release-notes/juicefs-v12-beta-1-acl#03-%E6%80%A7%E8%83%BD)。
+ 		n.uid = uid
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7822** (2026-11-10): cmd/mount: warn about ACLs on Linux kernels older than 4.9 (@jiefenghuang)
-- **PR #7820** (2026-11-11): utils: fix lost wakeups in Cond (@myangitzh)
-- **PR #7819** (2026-11-09): docs: explain mount point naming and mount options for systemd.mount (@BornThisWay)
-- **PR #7817** (2026-11-09): sdk: expose session-timeout in the Java and Python SDKs (@pandacooming)
-- **PR #7810** (2026-11-05): meta: add --session-timeout to delay stale session cleanup (@jiefenghuang)
-- **PR #7809** (2026-11-06): deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (@JerryChaox)
+- **PR #7857** (2026-11-16): docs: clarify routing and concurrency for multiple gateways (@myangitzh)
+- **PR #7855** (2026-11-16): object/sharding: do not format the endpoint query (@jiefenghuang)
+- **PR #7854** (2026-11-16): CI: delete the per-run tier test bucket after tier.sh (@mt5225)
+- **PR #7853** (2026-11-16): deps: update minio to reject dot path components in object names (@jiefenghuang)
+- **PR #7852** (2026-11-16): ci: fix CImodel expectations and TiUP bootstrap failures (@zxh326)
+- **PR #7848** (closed): meta: prevent directory cycles within rename transactions (@adenzhou1350)
 
 ---
 
@@ -1523,69 +1274,34 @@ Signed-off-by: miyang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. utils: fix lost wakeups in Cond (#7820)
+## X. ci: fix CImodel expectations and TiUP bootstrap failures
 
 **RULE**:
-When implementing operations in `pkg/utils/cond.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/start_meta_engine.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7b31f31`: utils: fix lost wakeups in Cond (#7820). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6185d131`: ci: fix CImodel expectations and TiUP bootstrap failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/utils/cond.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/start_meta_engine.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"container/list"
-	L       sync.Locker
-	waiters list.List
-	if e := c.waiters.Front(); e != nil {
-		c.waiters.Remove(e)
-		close(e.Value.(chan struct{}))
-	for c.waiters.Len() > 0 {
-		c.Signal()
-	}
-	ch := make(chan struct{})
-	waiter := c.waiters.PushBack(ch)
-	timeout := false
-		timeout = true
-	}
-	timerPool.Put(t)
-	c.L.Lock()
-	if timeout {
-		select {
-		case <-ch:
-			timeout = false // Signaled after timing out but before re-acquiring L.
-		default:
-			c.waiters.Remove(waiter)
-		}
-	return timeout
-	return &Cond{L: lock}
+    # Pin playground to skip the background update check racing with root manifest updates.
+    $tiup playground:v1.17.1 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
+    $tiup playground:v1.17.1 8.5.7 > tidb.log 2>&1  &
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	L      sync.Locker
-	signal chan struct{}
-	select {
-	case c.signal <- struct{}{}:
-	default:
-	close(c.signal)
-	c.signal = make(chan struct{})
-	ch := c.signal
-	defer func() {
-		timerPool.Put(t)
-		c.L.Lock()
-	}()
-		return false
-		return true
-	return &Cond{lock, make(chan struct{})}
+// Induced defect failure mode:
+    $tiup playground 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
+    $tiup playground 8.5.7 > tidb.log 2>&1  &
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7b31f31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6185d131` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

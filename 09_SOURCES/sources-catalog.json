@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "f086a159",
+    "sourceVersion": "331de6ea",
     "license": "Apache-2.0",
-    "contentHash": "884334c40d2bf3d1d63182489700e8d1d2bd96d7dea7508c2f11ffea30f487a2",
-    "lastHarvestedAt": "2026-11-13T19:27:27.007Z",
+    "contentHash": "256d9291fe10b073350c0b6b8f00313cc7f1e34150641161b0c80d4d42ace40d",
+    "lastHarvestedAt": "2026-11-16T11:45:08.442Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "1b782653",
+    "sourceVersion": "cdd2e6a7",
     "license": "NOASSERTION",
-    "contentHash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
-    "lastHarvestedAt": "2026-11-13T17:11:08.509Z",
+    "contentHash": "394a29614c90bd6a5154b8dfea0f96410fc214d481c98394bc82a59e3cb4c6ed",
+    "lastHarvestedAt": "2026-11-16T11:45:16.834Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {
@@ -11805,8 +11805,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
     "sourceVersion": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
     "license": "Open-Source",
-    "contentHash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
-    "lastHarvestedAt": "2026-11-11T18:59:45.545Z",
+    "contentHash": "a588de79a3cd447f6de48ee37de30a32a34e6ed6e0236f5a78631ce76e073a0b",
+    "lastHarvestedAt": "2026-11-16T11:45:10.704Z",
     "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf"
   },
   "kortix-ai-companyos": {

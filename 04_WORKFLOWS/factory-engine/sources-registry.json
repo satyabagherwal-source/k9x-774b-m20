@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T08:53:31.250Z",
-    "lastVerified": "2026-11-16T08:53:31.250Z",
+    "lastChecked": "2026-11-16T11:45:19.847Z",
+    "lastVerified": "2026-11-16T11:45:19.847Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -238,22 +238,21 @@
     "lastVerified": "2026-11-16T05:41:30.847Z"
   },
   "meilisearch-meilisearch": {
-    "name": "meilisearch",
+    "name": "meilisearch/meilisearch",
     "officialUrl": "https://github.com/meilisearch/meilisearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T01:32:48.191Z",
-    "lastVerified": "2026-11-15T01:32:48.191Z",
+    "lastChecked": "2026-11-16T11:45:07.052Z",
+    "lastVerified": "2026-11-16T11:45:07.052Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
+    "contentHash": "394a29614c90bd6a5154b8dfea0f96410fc214d481c98394bc82a59e3cb4c6ed",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1b782653"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
     "name": "qsv",
@@ -373,8 +372,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T07:32:22.726Z",
-    "lastVerified": "2026-11-16T07:32:22.726Z",
+    "lastChecked": "2026-11-16T11:45:06.343Z",
+    "lastVerified": "2026-11-16T11:45:06.343Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1217,12 +1216,12 @@
     "revisionIdentifier": "e938178a"
   },
   "provablehq-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T01:45:21.352Z",
-    "lastVerified": "2026-11-16T01:45:21.352Z",
+    "lastChecked": "2026-11-16T11:45:01.366Z",
+    "lastVerified": "2026-11-16T11:45:01.366Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1231,7 +1230,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2299a19b"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -7198,22 +7198,21 @@
     "revisionIdentifier": "f0e3f479"
   },
   "juicedata-juicefs": {
-    "name": "juicefs",
+    "name": "juicedata/juicefs",
     "officialUrl": "https://github.com/juicedata/juicefs",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T03:34:25.363Z",
-    "lastVerified": "2026-11-15T03:34:25.363Z",
+    "lastChecked": "2026-11-16T11:45:02.607Z",
+    "lastVerified": "2026-11-16T11:45:02.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "884334c40d2bf3d1d63182489700e8d1d2bd96d7dea7508c2f11ffea30f487a2",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "256d9291fe10b073350c0b6b8f00313cc7f1e34150641161b0c80d4d42ace40d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f086a159"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
@@ -8936,12 +8935,12 @@
     "lastVerified": "2026-11-15T06:45:05.218Z"
   },
   "tokio-rs-tokio": {
-    "name": "tokio-rs/tokio",
+    "name": "tokio",
     "officialUrl": "https://github.com/tokio-rs/tokio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T16:38:23.295Z",
-    "lastVerified": "2026-11-14T16:38:23.295Z",
+    "lastChecked": "2026-11-16T11:44:51.345Z",
+    "lastVerified": "2026-11-16T11:44:51.345Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-tokio",
@@ -8950,7 +8949,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f3e855fa"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
     "name": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -11426,9 +11426,9 @@
   "krzysztofzablocki-inject": {
     "name": "Inject",
     "officialUrl": "https://github.com/krzysztofzablocki/Inject",
-    "lastChecked": "2026-11-13T01:38:52.499Z",
+    "lastChecked": "2026-11-16T11:44:56.334Z",
     "revisionIdentifier": "67e3ee9a",
-    "lastVerified": "2026-11-13T01:38:52.499Z"
+    "lastVerified": "2026-11-16T11:44:56.334Z"
   },
   "jina-ai-reader": {
     "name": "reader",
@@ -14228,12 +14228,12 @@
     "officialUrl": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-11T18:54:44.386Z",
-    "lastVerified": "2026-11-11T18:54:44.386Z",
+    "lastChecked": "2026-11-16T11:44:53.895Z",
+    "lastVerified": "2026-11-16T11:44:53.895Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-    "contentHash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
+    "contentHash": "a588de79a3cd447f6de48ee37de30a32a34e6ed6e0236f5a78631ce76e073a0b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

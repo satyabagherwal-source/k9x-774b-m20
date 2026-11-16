@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T17:11:58.874Z",
+  "timestamp": "2026-11-16T11:45:21.063Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-meilisearch-meilisearch-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meilisearch-meilisearch-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T17:11:58.874Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T11:45:21.063Z`  
 > **Learning ID**: `LEARN-EVO-meilisearch-meilisearch-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `1b782653`  
+> **Source Version**: `cdd2e6a7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T17:11:07.889Z  
+> **Timestamp**: 2026-11-16T11:45:15.950Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T17:11:07.882Z  
+> **Harvest Timestamp**: 2026-11-16T11:45:07.052Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59856 stars
+- **Stars / Engagement**: 59870 stars
 
 ---
 
@@ -2074,226 +2074,39 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1b782653` (2026-11-12)
-**Commit Message**: Merge pull request #6734 from meilisearch/switch-macos-runner
+### Incident Patch 1: `81c02a7a` (2026-11-16)
+**Commit Message**: Reinstate uuid as a dev feature of meili-snap
 
-Upgrade macos runner following removal by GH
-
-**File**: `.github/workflows/publish-release-assets.yml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -59,7 +59,7 @@ jobs:
-             asset_name: macos-amd64
-             extra-args: ""
-           - release: macos-aarch64
--            os: macos-14
-+            os: macos-15
-             binary_path: aarch64-apple-darwin/release/meilisearch
-             asset_name: macos-apple-silicon
-             extra-args: "--target aarch64-apple-darwin"
-```
-
----
-
-### Incident Patch 2: `e9ab8c7b` (2026-11-12)
-**Commit Message**: Merge pull request #6735 from meilisearch/update-version-v1.57.0
-
-Update version for the next release (v1.57.0) in Cargo.toml
-
-**File**: `Cargo.lock` (modified, +19/-19)
-```diff
-@@ -780,7 +780,7 @@ dependencies = [
- 
- [[package]]
- name = "build-info"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "anyhow",
-  "time",
-@@ -1959,7 +1959,7 @@ dependencies = [
- 
- [[package]]
- name = "dump"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "big_s",
-  "flate2",
-@@ -2217,7 +2217,7 @@ dependencies = [
- 
- [[package]]
- name = "file-store"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "tempfile",
-  "thiserror 2.0.20",
-@@ -2237,7 +2237,7 @@ dependencies = [
- 
- [[package]]
- name = "filter-parser"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "insta",
-  "itertools 0.14.0",
-@@ -2266,7 +2266,7 @@ dependencies = [
- 
- [[package]]
- name = "flatten-serde-json"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "criterion",
-  "serde_json",
-@@ -2450,7 +2450,7 @@ dependencies = [
- 
- [[package]]
- name = "fuzzers"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "arbitrary",
-  "bumpalo",
-@@ -3190,7 +3190,7 @@ dependencies = [
- 
- [[package]]
- name = "http-client"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "cidr",
-  "hyper-util",
-@@ -3510,7 +3510,7 @@ dependencies = [
- 
- [[package]]
- name = "index-scheduler"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "anyhow",
-  "backoff",
-@@ -3759,7 +3759,7 @@ dependencies = [
- 
- [[package]]
- name = "json-depth-checker"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "criterion",
-  "serde_json",
-@@ -4197,7 +4197,7 @@ checksum = "7ebb8d8732c6a6df3d8f032a82911cfc747e00efb95cc46e8d0acd5b5b88570c"
- 
- [[package]]
- name = "meili-snap"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
+@@ -4201,6 +4201,7 @@ dependencies = [
   "insta",
   "md5",
-@@ -4207,7 +4207,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "actix-cors",
-  "actix-http",
-@@ -4300,7 +4300,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch-auth"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "base64 0.22.1",
-  "enum-iterator",
-@@ -4319,7 +4319,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch-types"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "actix-web",
-  "anyhow",
-@@ -4358,7 +4358,7 @@ dependencies = [
- 
- [[package]]
- name = "meilitool"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -4392,7 +4392,7 @@ dependencies = [
- 
- [[package]]
- name = "milli"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "arroy",
-  "bbqueue",
-@@ -5020,7 +5020,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "permissive-json-pointer"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "big_s",
-  "serde_json",
-@@ -6072,7 +6072,7 @@ dependencies = [
- 
- [[package]]
- name = "routes"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "actix-web",
-  "routes-macros",
-@@ -6084,7 +6084,7 @@ dependencies = [
- 
- [[package]]
- name = "routes-macros"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "proc-macro2",
-  "proc-macro2-diagnostics",
-@@ -8640,7 +8640,7 @@ dependencies = [
- 
- [[package]]
- name = "xtask"
--version = "1.56.2"
-+version = "1.57.0"
- dependencies = [
-  "anyhow",
-  "build-info",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ members = [
+  "regex-lite",
++ "uuid",
  ]
  
- [workspace.package]
--version = "1.56.2"
-+version = "1.57.0"
- authors = [
-     "Quentin de Quelen <quentin@dequelen.me>",
-     "Clément Renault <clement@meilisearch.com>",
+ [[package]]
+```
+
+**File**: `crates/meili-snap/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -15,3 +15,6 @@ license.workspace = true
+ insta = { version = "=1.39.0", features = ["json", "redactions"] }
+ md5 = "0.8.1"
+ regex-lite = "0.1.9"
++
++[dev-dependencies]
++uuid = { version = "1.24.0", features = ["v4"] }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6739** (2026-11-16): Upgrade to Rust v1.100 (@dureuill)
 - **PR #6735** (2026-11-12): Update version for the next release (v1.57.0) in Cargo.toml (@meili-bot)
 - **PR #6734** (2026-11-12): Upgrade macos runner following removal by GH (@dureuill)
+- **PR #6732** (2026-11-16): Improve the licensing situation with the OpenLDAP license (@Kerollmops)
 - **PR #6731** (2026-11-12): Fix inter-index merge in federated search (@dureuill)
 - **PR #6726** (2026-11-09): Update version for the next release (v1.56.2) in Cargo.toml (@meili-bot)
-- **PR #6725** (2026-11-09): remove unwanted log + warn about future unwanted dbg (@dureuill)
-- **PR #6724** (closed): Fix #6723: Federated search ignores custom ranking rules placed after a relevancy r (@zaidrain06)
 
 ---
 
@@ -2313,31 +2126,31 @@ Update version for the next release (v1.57.0) in Cargo.toml
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6734 from meilisearch/switch-macos-runner
+## X. Reinstate uuid as a dev feature of meili-snap
 
 **RULE**:
-When implementing operations in `.github/workflows/publish-release-assets.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1b782653`: Merge pull request #6734 from meilisearch/switch-macos-runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `81c02a7a`: Reinstate uuid as a dev feature of meili-snap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-release-assets.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            os: macos-15
+ "uuid",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-            os: macos-14
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1b782653` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `81c02a7a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

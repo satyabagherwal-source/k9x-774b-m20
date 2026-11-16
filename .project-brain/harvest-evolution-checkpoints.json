@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T08:53:33.207Z",
+  "last_updated": "2026-11-16T11:45:21.486Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T08:53:32.721Z",
@@ -113,7 +113,7 @@
       "staged_for_review": 1
     },
     "juicedata-juicefs-learnings.md": {
-      "processed_at": "2026-11-12T21:10:54.577Z",
+      "processed_at": "2026-11-16T11:45:20.255Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -508,8 +508,8 @@
       "staged_for_review": 1
     },
     "hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md": {
-      "processed_at": "2026-11-11T19:00:03.100Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-16T11:45:19.966Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "higress-group-higress-learnings.md": {
@@ -2008,7 +2008,7 @@
       "staged_for_review": 0
     },
     "meilisearch-meilisearch-learnings.md": {
-      "processed_at": "2026-11-13T17:11:58.581Z",
+      "processed_at": "2026-11-16T11:45:20.888Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3163,7 +3163,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1281,
+  "total_dossiers_evaluated": 1284,
   "total_canonical_promoted": 287,
-  "total_staged_for_review": 989
+  "total_staged_for_review": 991
 }

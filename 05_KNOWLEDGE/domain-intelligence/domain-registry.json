@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T08:53:33.001Z",
-  "total_records": 1246,
+  "last_updated": "2026-11-16T11:45:21.272Z",
+  "total_records": 1249,
   "domains": {
     "A": {
       "total": 7,
@@ -40,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 576,
+      "total": 578,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -617,7 +617,9 @@
         "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-base-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
-        "domain_intelligence-research-knowledge-intelligence-ganymedenil-document-ai-learnings-core-invariant"
+        "domain_intelligence-research-knowledge-intelligence-ganymedenil-document-ai-learnings-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnin"
       ]
     },
     "E": {
@@ -660,7 +662,7 @@
       ]
     },
     "G": {
-      "total": 222,
+      "total": 223,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -883,7 +885,8 @@
         "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
         "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-juicedata-juicefs-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8006,8 +8009,8 @@
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "repository": "meilisearch/meilisearch",
-      "content_hash": "294c35ae61fd2a2f9c4e6cbf8a6e638fc26221ac18a78150e1f86b18b445183c",
-      "created_at": "2026-11-13T17:11:08.830Z"
+      "content_hash": "5d27303186aacbdc81f00da6c6503459724e12c7065770104fd551bb2edb5350",
+      "created_at": "2026-11-16T11:45:17.115Z"
     },
     "DOM-D-F5004225": {
       "record_id": "DOM-D-F5004225",
@@ -8075,8 +8078,8 @@
       "title": "Technical Construction Intelligence: meilisearch-meilisearch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-learnings-technical-construction-intelligence-meilisearc.md",
       "repository": "meilisearch-meilisearch-learnings",
-      "content_hash": "0c685c3ec70687ffbf705284b77bb2bd1726441f70915375089cd9d969b663d9",
-      "created_at": "2026-11-13T17:11:59.115Z"
+      "content_hash": "ba5b6b0babd0cf98d3b16d18d82cfb2c0930e9bf6325df99b4133b7888bea692",
+      "created_at": "2026-11-16T11:45:21.272Z"
     },
     "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant",
@@ -9014,8 +9017,8 @@
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "repository": "juicedata/juicefs",
-      "content_hash": "cd15cf9d4c8b1a492d26ea7bfb0325cf1c6bc4f0f386ab78675f8a2601c4ec7d",
-      "created_at": "2026-11-13T19:27:27.264Z"
+      "content_hash": "4b35f1665d6e346d812700a865620434e86c6d734037b4d73419ddb53a9483bd",
+      "created_at": "2026-11-16T11:45:08.725Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants",
@@ -22956,6 +22959,33 @@
       "repository": "astral-sh-ruff-learnings",
       "content_hash": "cba417e5569c26946c4b7ba1a638db606646e29f1c7564d79af40ef64552e283",
       "created_at": "2026-11-16T08:53:31.883Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: unsloth/DeepSeek-V4.1-Flash-1017-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-deepseek-v4-1-flash-1017-gguf-research-knowledge-intelligence-unsloth.md",
+      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "content_hash": "9abdf2df0473c04acc637b1d7c92d6093ece1fcf1f5ee78883748bc0da90f1dd",
+      "created_at": "2026-11-16T11:45:10.868Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnin": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnin",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnings-research-knowledge-intelligen.md",
+      "repository": "hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings",
+      "content_hash": "674ce8e29821dd185deb75021550e7c9b719041fefc7a3f04cc169e7ac2cd32a",
+      "created_at": "2026-11-16T11:45:20.127Z"
+    },
+    "domain_intelligence-architecture-intelligence-juicedata-juicefs-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-juicedata-juicefs-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-learnings-architecture-intelligence-juicedata-juicefs-learning.md",
+      "repository": "juicedata-juicefs-learnings",
+      "content_hash": "f76d1ddce46b7f4bbf726477cd81692fc58fb77134db6aee283adb8bc9447ce6",
+      "created_at": "2026-11-16T11:45:20.565Z"
     }
   }
 }

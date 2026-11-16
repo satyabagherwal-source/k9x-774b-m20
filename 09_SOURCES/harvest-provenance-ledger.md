@@ -10295,3 +10295,6 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `bfd935f4` | Multi-dimensional audit evidence | 2026-11-16T08:06:43.155Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `a57e2fdc` | Multi-dimensional audit evidence | 2026-11-16T08:11:19.652Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `36b92bb2` | Multi-dimensional audit evidence | 2026-11-16T08:53:28.247Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `331de6ea` | Multi-dimensional audit evidence | 2026-11-16T11:45:08.442Z |
+| `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-16T11:45:10.704Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `cdd2e6a7` | Multi-dimensional audit evidence | 2026-11-16T11:45:16.834Z |
