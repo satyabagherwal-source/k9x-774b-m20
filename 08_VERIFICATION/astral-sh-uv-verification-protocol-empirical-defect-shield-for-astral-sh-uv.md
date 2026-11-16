@@ -4,22 +4,22 @@
 {
   "source_repository": "astral-sh/uv",
   "source_url": "https://github.com/astral-sh/uv",
-  "source_version": "d5c3f174",
+  "source_version": "82adf363",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T17:24:46.474Z",
+  "timestamp": "2026-11-16T13:22:50.091Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-astral-sh-uv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `d5c3f174`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T17:24:46.474Z`  
+> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `82adf363`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T13:22:50.091Z`  
 > **Learning ID**: `learn-github-astral-sh-uv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `astral-sh/uv` (Commit: `d5c3f174`)
+- **Target Repository**: `astral-sh/uv` (Commit: `82adf363`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T17:24:45.701Z  
+> **Harvest Timestamp**: 2026-11-16T13:22:48.542Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91996 stars
+- **Stars / Engagement**: 92007 stars
 
 ---
 
@@ -1531,559 +1531,586 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a30eff72` (2026-11-13)
-**Commit Message**: Distinguish canonical artifact locations from fetch locations (#22774)
+### Incident Patch 1: `82adf363` (2026-11-16)
+**Commit Message**: Group HTTP request policies for package indexes (#22968)
 
-## Summary
+Callers currently use separate `IndexLocations` methods for HTTP status
+handling and cache-control headers. Each method finds the index by URL
+and derives the requested setting from its definition. This refactor
+replaces those methods with a shared lookup that returns an
+`IndexRequestPolicy` borrowing from the matching index, if any.
 
-Future proxy routing can rewrite an index's artifact URLs for downloads,
-while artifact identity and lockfiles need the original locations.
+With proxy indexes, the lockfile keeps the original index URL, but uv
+sends requests to the proxy. The shared lookup gives proxy routing one
+place to select the proxy’s error-handling and caching settings for
+those requests. [Proxy index
+support](https://github.com/astral-sh/uv/pull/20790)
 
-Distinguish index-supplied `VerbatimFile` values from canonical `File`
-values using a provenance marker on `FileLocation`. Index responses
-retain verbatim locations until the resolver marks them canonical.
-`File` defaults to a canonical location, and among these file and
-location types only the canonical forms implement `Identifier`. This
-prepares for proxy routing without enabling it. Marking a location
-canonical does not parse or rewrite its URL.
-
-## Test Plan
-
-Verified that old and new cached archives can be read in both directions
-and produce identical bytes for the tested records on macOS arm64.
-
----------
-
-Co-authored-by: Zanie Blue <[REDACTED_EMAIL]>
-
-**File**: `crates/uv-client/src/flat_index.rs` (modified, +9/-9)
+**File**: `crates/uv-client/src/registry_client.rs` (modified, +21/-9)
 ```diff
-@@ -6,7 +6,7 @@ use tracing::{Instrument, debug, info_span, warn};
- 
- use uv_cache::{Cache, CacheBucket};
- use uv_cache_key::cache_digest;
--use uv_distribution_types::{File, FileLocation, IndexEntryFilename, IndexUrl, UrlString};
-+use uv_distribution_types::{FileLocation, IndexEntryFilename, IndexUrl, UrlString, VerbatimFile};
- use uv_pypi_types::HashDigests;
- use uv_redacted::SafeUrl;
- use uv_small_str::SmallString;
-@@ -53,7 +53,7 @@ pub enum FindLinksDirectoryError {
- #[derive(Debug, Clone)]
- pub struct FlatIndexEntry {
-     filename: IndexEntryFilename,
--    file: File,
-+    file: VerbatimFile,
-     index: IndexUrl,
- }
- 
-@@ -64,7 +64,7 @@ impl FlatIndexEntry {
-     }
- 
-     /// Convert the entry into its component parts.
--    pub fn into_parts(self) -> (IndexEntryFilename, File, IndexUrl) {
-+    pub fn into_parts(self) -> (IndexEntryFilename, VerbatimFile, IndexUrl) {
-         (self.filename, self.file, self.index)
-     }
- }
-@@ -253,7 +253,7 @@ impl<'a> FlatIndexClient<'a> {
-         match response {
-             Ok(files) => {
-                 let files = files.iter().map(|file| {
--                    rkyv::deserialize::<File, rkyv::rancor::Error>(file)
-+                    rkyv::deserialize::<VerbatimFile, rkyv::rancor::Error>(file)
-                         .expect("archived version always deserializes")
-                 });
-                 Ok(Self::entries_from_files(files, flat_index))
-@@ -280,7 +280,7 @@ impl<'a> FlatIndexClient<'a> {
-     }
- 
-     /// Parse distributions from a flat HTML index.
--    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<File>, crate::html::Error> {
-+    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<VerbatimFile>, crate::html::Error> {
-         let SimpleDetailHTML {
-             project_status: _,
-             base,
-@@ -290,7 +290,7 @@ impl<'a> FlatIndexClient<'a> {
-         let base = SmallString::from(base.as_str());
-         Ok(files
-             .into_iter()
--            .filter_map(|file| match File::try_from_pypi(file, &base) {
-+            .filter_map(|file| match VerbatimFile::try_from_pypi(file, &base) {
-                 Ok(file) => Some(file),
-                 Err(err) => {
-                     // Ignore files with unparsable version specifiers.
-@@ -303,7 +303,7 @@ impl<'a> FlatIndexClient<'a> {
- 
-     /// Convert distribution files into entries for a flat index.
-     fn entries_from_files(
--        files: impl IntoIterator<Item = File>,
-+        files: impl IntoIterator<Item = VerbatimFile>,
-         flat_index: &IndexUrl,
-     ) -> FlatIndexEntries {
-         let entries = files
-@@ -362,14 +362,14 @@ impl<'a> FlatIndexClient<'a> {
-             // SAFETY: The index path is itself constructed from a URL.
-             let url = SafeUrl::from_file_path(entry.path()).unwrap();
- 
--            let file = File {
-+            let file = VerbatimFile {
-                 dist_info_metadata: None,
-                 filename: filename.into(),
-                 hashes: HashDigests::empty(),
-                 requires_python: None,
-                 size: None,
-                 upload_time_utc_ms: None,
--                url: FileLocation::AbsoluteUrl(UrlString::from(url)),
-+                location: FileLocation::absolute(UrlString::from(url)),
-                 yanked: None,
-             };
- 
-```
-
-**File**: `crates/uv-client/src/registry_client.rs` (modified, +30/-21)
-```diff
-@@ -24,9 +24,9 @@ use uv_configuration::IndexStrategy;
- use uv_configuration::KeyringProviderType;
- use uv_distribution_filename::{DistFilename, WheelFilename};
- use uv_distribution_types::{
--    BuiltDist, DirectUrlBuiltDist, File, FileLocation, IndexCapabilities, IndexEntryFilename,
-+    BuiltDist, DirectUrlBuiltDist, FileLocation, IndexCapabilities, IndexEntryFilename,
-     IndexFormat, IndexLocations, IndexMetadataRef, IndexStatusCodeDecision,
--    IndexStatusCodeStrategy, IndexUrl, Name, RegistryBuiltWheel, VariantsJsonContent,
-+    IndexStatusCodeStrategy, IndexUrl, Name, RegistryBuiltWheel, VariantsJsonContent, VerbatimFile,
- };
- use uv_extract::hash::Hasher;
- use uv_git::{GIT_LFS, GitError, GitHttpSettings, GitResolver, Reporter};
-@@ -948,10 +948,10 @@ impl RegistryClient {
-     pub async fn fetch_variants_json(
-         &self,
+@@ -393,14 +393,16 @@ impl RegistryClient {
+                     let _permit = download_concurrency.acquire().await;
+                     match index.format {
+                         IndexFormat::Simple => {
+-                            let status_code_strategy =
+-                                self.indexes.status_code_strategy_for(index.url);
++                            let status_code_strategy = self
++                                .indexes
++                                .request_policy(index.url)
++                                .status_code_strategy();
+                             match self
+                                 .simple_detail_single_index(
+                                     package_name,
+                                     index.url,
+                                     capabilities,
+-                                    &status_code_strategy,
++                                    status_code_strategy,
+                                 )
+                                 .await?
+                             {
+@@ -449,7 +451,7 @@ impl RegistryClient {
+                                         package_name,
+                                         index.url,
+                                         capabilities,
+-                                        &status_code_strategy,
++                                        status_code_strategy,
+                                     )
+                                     .await?
+                                 {
+@@ -564,7 +566,7 @@ impl RegistryClient {
          package_name: &PackageName,
--        file: &File,
-+        file: &VerbatimFile,
          index: &IndexUrl,
-     ) -> Result<Vec<u8>, Error> {
--        let url = file.url.to_url().map_err(ErrorKind::InvalidUrl)?;
-+        let url = file.location.to_url().map_err(ErrorKind::InvalidUrl)?;
- 
-         if url.scheme() == "file" {
-             let path = url
-@@ -1045,7 +1045,11 @@ impl RegistryClient {
- 
-                 let wheel = wheels.best_wheel();
- 
--                let url = wheel.file.url.to_url().map_err(ErrorKind::InvalidUrl)?;
-+                let url = wheel
-+                    .file
-+                    .location
-+                    .to_url()
-+                    .map_err(ErrorKind::InvalidUrl)?;
-                 let location = if url.scheme() == "file" {
-                     let path = url
-                         .to_file_path()
-@@ -1574,7 +1578,7 @@ pub struct VersionFiles {
- }
- 
- impl VersionFiles {
--    fn push(&mut self, filename: &IndexEntryFilename, file: File) {
-+    fn push(&mut self, filename: &IndexEntryFilename, file: VerbatimFile) {
-         let file = CachedFile::from(file);
-         match filename {
-             IndexEntryFilename::DistFilename(DistFilename::WheelFilename(_)) => {
-@@ -1587,12 +1591,15 @@ impl VersionFiles {
-         }
-     }
- 
--    pub fn all(self, package_name: &PackageName) -> impl Iterator<Item = (DistFilename, File)> {
-+    pub fn all(
-+        self,
-+        package_name: &PackageName,
-+    ) -> impl Iterator<Item = (DistFilename, VerbatimFile)> {
-         self.source_dists
-             .into_iter()
-             .chain(self.wheels)
-             .filter_map(|file| {
--                let file = File::from(file);
-+                let file = VerbatimFile::from(file);
-                 let filename = DistFilename::try_from_filename(&file.filename, package_name)?;
-                 Some((filename, file))
-             })
-@@ -1601,13 +1608,13 @@ impl VersionFiles {
-     pub fn all_entries(
-         self,
-         package_name: &PackageName,
--    ) -> impl Iterator<Item = (IndexEntryFilename, File)> {
-+    ) -> impl Iterator<Item = (IndexEntryFilename, VerbatimFile)> {
-         self.source_dists
-             .into_iter()
-             .chain(self.wheels)
-             .chain(self.variant_jsons)
-             .filter_map(|file| {
--                let file = File::from(file);
-+                let file = VerbatimFile::from(file);
-                 let filename = IndexEntryFilename::try_from_filename(&file.filename, package_name)?;
-                 Some((filename, file))
-             })
-@@ -1617,7 +1624,7 @@ impl VersionFiles {
- /// A compact, cache-local representation of a registry file from the Simple API.
- ///
- /// Filenames recoverable from the URL and false `yanked` markers are omitted, while optional
--/// scalar values use presence bits. Converting back to [`File`] restores equivalent Simple API
-+/// scalar values use presence bits. Converting back to [`VerbatimFile`] restores equivalent Simple API
- /// metadata.
- #[derive(Debug, rkyv::Archive, rkyv::Deserialize, rkyv::Serialize)]
- #[rkyv(derive(Debug))]
-@@ -1660,10 +1667,10 @@ impl CachedFile {
-     }
- }
- 
--impl From<File> for CachedFile {
--    fn from(file: File) -> Self {
--        let filename =
--            (file.url.raw_filename() != file.filename.as_ref()).then(|| Box::new(file.filename));
-+impl From<VerbatimFile> for CachedFile {
-+    fn from(file: VerbatimFile) -> Self {
-+        let filename = (file.location.raw_filename() != file.filename.as_ref())
-+            .then(|| Box::new(file.filename));
-         let has_size = file.size.is_some();
-         let has_upload_time = file.upload_time_utc_ms.is_some();
-         let dist_info_metadata = file.dist_info_metadata.is_some();
-@@ -1682,13 +1689,13 @@ impl From<File> for CachedFile {
-             upload_time_utc_ms: file.upload_time_utc_ms.unwrap_or_default(),
-             has_size,
-             has_upload_time,
--            url: file.url,
-+            url: file.location,
-             yanked: file.yanked.filter(|yanked| yanked.is_yanked()),
-         }
-     }
- }
- 
--impl From<CachedFile> for File {
-+impl From<CachedFile> for Verbat
+         capabilities: &IndexCapabilities,
+-        status_code_strategy: &IndexStatusCodeStrategy,
++        status_code_strategy: IndexStatusCodeStrategy<'_>,
+     ) -> Result<SimpleMetadataSearchOutcome, Error> {
+         // Format the URL for PyPI.
+         let mut url = index.url().clone();
+@@ -585,7 +587,10 @@ impl RegistryClient {
+         );
+         let cache_control = match self.connectivity {
+             Connectivity::Online
+-                if let Some(header) = self.indexes.simple_api_cache_control_for(index) =>
++                if let Some(header) = self
++                    .indexes
++                    .request_policy(index)
++                    .simple_api_cache_control() =>
+             {
+                 CacheControl::Override(header)
+             }
+@@ -840,7 +845,10 @@ impl RegistryClient {
+         );
+         let cache_control = match self.connectivity {
+             Connectivity::Online
+-                if let Some(header) = self.indexes.simple_api_cache_control_for(index) =>
++                if let Some(header) = self
++                    .indexes
++                    .request_policy(index)
++                    .simple_api_cache_control() =>
+             {
+                 CacheControl::Override(header)
+             }
+@@ -983,7 +991,10 @@ impl RegistryClient {
+         // TODO(konsti): Revisit cache freshness once variant metadata mutability is specified.
+         let cache_control = match self.connectivity {
+             Connectivity::Online
+-                if let Some(header) = self.indexes.configured_files_cache_control_for(index) =>
++                if let Some(header) = self
++                    .indexes
++                    .request_policy(index)
++                    .configured_files_cache_control() =>
+             {
+                 CacheControl::Override(header)
+             }
+@@ -1453,7 +1464,8 @@ impl RegistryClient {
+         Ok(match self.connectivity {
+             Connectivity::Online
+                 if let Some(index) = effective_index
+-                    && let Some(header) = self.indexes.artifact_cache_control_for(index) =>
++                    && let Some(header) =
++                        self.indexes.request_policy(index).artifact_cache_control() =>
+             {
+                 CacheControl::Override(header)
+             }
 ```
 
-**File**: `crates/uv-distribution-types/src/file.rs` (modified, +114/-21)
+**File**: `crates/uv-distribution-types/src/index.rs` (modified, +47/-37)
 ```diff
-@@ -1,9 +1,11 @@
- use std::borrow::Cow;
- use std::fmt::{self, Display, Formatter};
-+use std::marker::PhantomData;
- use std::str::FromStr;
- use std::sync::Arc;
+@@ -18,6 +18,50 @@ use crate::index_name::{IndexName, IndexNameError};
+ use crate::origin::Origin;
+ use crate::{IndexStatusCodeStrategy, IndexUrl, IndexUrlError, SerializableStatusCode};
  
- use jiff::Timestamp;
-+use rkyv::Archived;
- use serde::{Deserialize, Serialize};
- 
- use uv_pep440::{VersionSpecifiers, VersionSpecifiersParseError};
-@@ -12,17 +14,19 @@ use uv_pypi_types::{CoreMetadata, HashDigests, Yanked};
- use uv_redacted::{SafeUrl, SafeUrlError};
- use uv_small_str::SmallString;
- 
--/// Error converting [`uv_pypi_types::PypiFile`] to [`File`].
-+/// Error converting [`uv_pypi_types::PypiFile`] to [`VerbatimFile`].
- #[derive(Debug, thiserror::Error)]
- pub enum FileConversionError {
-     #[error("Failed to parse `requires-python`: `{0}`")]
-     RequiresPython(String, #[source] VersionSpecifiersParseError),
- }
- 
--/// Internal analog to [`uv_pypi_types::PypiFile`].
-+/// Internal analog to [`uv_pypi_types::PypiFile`], with a canonical location by default.
-+///
-+/// Use [`VerbatimFile`] for locations as supplied by an index.
- #[derive(Debug, Clone, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Deserialize, rkyv::Serialize)]
--#[rkyv(derive(Debug))]
--pub struct File {
-+#[rkyv(archive_bounds(Location::Archived: core::fmt::Debug), derive(Debug))]
-+pub struct File<Location = CanonicalFileLocation> {
-     /// Hashes for separately available metadata, or an empty list when no hashes were provided.
-     pub dist_info_metadata: Option<HashDigests>,
-     pub filename: SmallString,
-@@ -34,11 +38,11 @@ pub struct File {
-     // comparisons in testing, we just store it as a UTC timestamp in
-     // milliseconds.
-     pub upload_time_utc_ms: Option<i64>,
--    pub url: FileLocation,
-+    pub location: Location,
-     pub yanked: Option<Box<Yanked>>,
- }
- 
--impl File {
-+impl VerbatimFile {
-     /// `TryFrom` instead of `From` to filter out files with invalid requires python version specifiers
-     pub fn try_from_pypi(
-         file: uv_pypi_types::PypiFile,
-@@ -54,11 +58,24 @@ impl File {
-                 .map_err(|err| FileConversionError::RequiresPython(err.line().clone(), err))?,
-             size: file.size,
-             upload_time_utc_ms: file.upload_time.map(Timestamp::as_millisecond),
--            url: FileLocation::new(file.url, base),
-+            location: FileLocation::new(file.url, base),
-             yanked: file.yanked,
-         })
-     }
- 
-+    /// Assume the location advertised for this file is its canonical location.
-+    ///
-+    /// Use this when the location came directly from the index uv would record in the lockfile.
-+    /// A proxy for that index may advertise a different URL for the same file.
-+    pub fn assume_canonical(self) -> File {
-+        self.map_location(|location| match location {
-+            FileLocation::RelativeUrl(base, path, _) => CanonicalFileLocation::relative(base, path),
-+            FileLocation::AbsoluteUrl(url, _) => {
-+                CanonicalFileLocation::AbsoluteUrl(url, PhantomData)
-+            }
-+        })
-+    }
++/// HTTP status and cache policies borrowed from a package index.
++#[derive(Debug, Clone, Copy, Default)]
++pub struct IndexRequestPolicy<'a> {
++    index: Option<&'a Index>,
++}
 +
-     fn dist_info_metadata(metadata: Option<CoreMetadata>) -> Option<HashDigests> {
-         match metadata? {
-             CoreMetadata::Bool(false) => None,
-@@ -68,14 +85,78 @@ impl File {
-     }
- }
- 
--/// While a registry file is generally a remote URL, it can also be a file if it comes from a directory flat indexes.
-+impl<Location> File<Location> {
-+    /// Replace the file location while preserving the artifact metadata.
-+    fn map_location<Mapped>(self, map: impl FnOnce(Location) -> Mapped) -> File<Mapped> {
-+        File {
-+            dist_info_metadata: self.dist_info_metadata,
-+            filename: self.filename,
-+            hashes: self.hashes,
-+            requires_python: self.requires_python,
-+            size: self.size,
-+            upload_time_utc_ms: self.upload_time_utc_ms,
-+            location: map(self.location),
-+            yanked: self.yanked,
++impl<'a> IndexRequestPolicy<'a> {
++    /// Return the status codes that let a search continue to the next index.
++    pub fn status_code_strategy(&self) -> IndexStatusCodeStrategy<'a> {
++        let Some(index) = self.index else {
++            return IndexStatusCodeStrategy::Default;
++        };
++        match index.ignore_error_codes.as_deref() {
++            Some(status_codes) => {
++                IndexStatusCodeStrategy::IgnoreConfiguredErrorCodes { status_codes }
++            }
++            None => IndexStatusCodeStrategy::from_index_url(index.raw_url()),
 +        }
 +    }
++
++    /// Return whether this status code is explicitly ignored, excluding built-in defaults.
++    pub fn ignores_error_code(&self, status_code: StatusCode) -> bool {
++        self.status_code_strategy()
++            .explicitly_ignores_error_code(status_code)
++    }
++
++    /// Return the cache control header for Simple API requests.
++    pub fn simple_api_cache_control(&self) -> Option<HeaderValue> {
++        self.index?.cache_control.as_ref()?.api.clone()
++    }
++
++    /// Return the cache control header for artifact downloads, including index-specific defaults.
++    pub fn artifact_cache_control(&self) -> Option<HeaderValue> {
++        let index = self.index?;
++        self.configured_files_cache_control()
++            .or_else(|| IndexCacheControl::artifact_cache_control(index.raw_url()))
++    }
++
++    /// Return the file cache control header only when the user configured it.
++    pub fn configured_files_cache_control(&self) -> Option<HeaderValue> {
++        self.index?.cache_control.as_ref()?.files.clone()
++    }
 +}
 +
-+/// Provenance markers for [`FileLocation`].
-+pub mod provenance {
-+    /// The location an index returns for downloading an artifact.
-+    ///
-+    /// A proxy index may return a different location from the one the canonical index reports.
-+    /// A verbatim location must not be used for artifact identity.
-+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-+    pub struct Verbatim;
-+
-+    /// An artifact's original location, suitable for artifact identity and lockfiles.
-+    ///
-+    /// This location is independent of any proxy URL rewriting used for downloads.
-+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-+    pub struct Canonical;
-+}
-+
-+/// An artifact location suitable for identity and lockfiles.
-+///
-+/// This is the artifact's original location, independent of any proxy URL rewriting used to fetch it.
-+/// Marking a [`FileLocation`] as canonical does not parse, normalize, or rewrite its URL.
-+pub type CanonicalFileLocation = FileLocation<provenance::Canonical>;
-+
-+impl FileLocation<provenance::Canonical> {
-+    /// Use the canonical artifact URL recorded in a lockfile.
-+    pub
+ /// Cache control configuration for an index.
+ #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd, Default)]
+ #[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
+@@ -31,11 +75,6 @@ pub struct IndexCacheControl {
+ }
+ 
+ impl IndexCacheControl {
+-    /// Return the default Simple API cache control headers for the given index URL, if applicable.
+-    fn simple_api_cache_control(_url: &SafeUrl) -> Option<HeaderValue> {
+-        None
+-    }
+-
+     /// Return the default files cache control headers for the given index URL, if applicable.
+     fn artifact_cache_control(url: &SafeUrl) -> Option<HeaderValue> {
+         let dominated_by_pytorch_or_nvidia = url.host_str().is_some_and(|host| {
+@@ -593,38 +632,9 @@ impl Index {
+         Ok(self)
+     }
+ 
+-    /// Return the [`IndexStatusCodeStrategy`] for this index.
+-    pub(crate) fn status_code_strategy(&self) -> IndexStatusCodeStrategy {
+-        if let Some(ignore_error_codes) = &self.ignore_error_codes {
+-            IndexStatusCodeStrategy::from_ignored_error_codes(ignore_error_codes)
+-        } else {
+-            IndexStatusCodeStrategy::from_index_url(self.url.url())
+-        }
+-    }
+-
+-    /// Return whether the given status code is explicitly ignored for this index.
+-    pub(crate) fn ignores_error_code(&self, status_code: StatusCode) -> bool {
+-        self.ignore_error_codes.as_ref().is_some_and(|codes| {
+-            codes
+-                .iter()
+-                .any(|ignored_status_code| **ignored_status_code == status_code)
+-        })
+-    }
+-
+-    /// Return the cache control header for file requests to this index, if any.
+-    pub(crate) fn artifact_cache_control(&self) -> Option<HeaderValue> {
+-        self.cache_control
+-            .as_ref()
+-            .and_then(|cache_control| cache_control.files.clone())
+-            .or_else(|| IndexCacheControl::artifact_cache_control(self.url.url()))
+-    }
+-
+-    /// Return the cache control header for API requests to this index, if any.
+-    pub(crate) fn simple_api_cache_control(&self) -> Option<HeaderValue> {
+-        self.cache_control
+-            .as_ref()
+-            .and_then(|cache_control| cache_control.api.clone())
+-            .or_else(|| IndexCacheControl::simple_api_cache_control(self.url.url()))
++    /// Borrow the HTTP request policy for this index.
++    pub(crate) fn request_policy(&self) -> IndexRequestPolicy<'_> {
++        IndexRequestPolicy { index: Some(self) }
+     }
+ 
+     /// Return the package-specific cutoff for this index, falling back to its default cutoff.
 ```
 
-**File**: `crates/uv-distribution-types/src/lib.rs` (modified, +8/-8)
+**File**: `crates/uv-distribution-types/src/index_url.rs` (modified, +111/-162)
 ```diff
-@@ -1202,7 +1202,7 @@ impl DistributionMetadata for Dist {
+@@ -5,7 +5,6 @@ use std::path::Path;
+ use std::str::FromStr;
+ use std::sync::{Arc, LazyLock, RwLock};
+ 
+-use http::StatusCode;
+ use itertools::Either;
+ use rustc_hash::{FxHashMap, FxHashSet};
+ use thiserror::Error;
+@@ -19,7 +18,7 @@ use uv_redacted::SafeUrl;
+ use uv_redacted::policy::{SerializationPolicy, Stripped};
+ use uv_warnings::warn_user;
+ 
+-use crate::{ExcludeNewerOverride, Index, IndexStatusCodeStrategy, Verbatim};
++use crate::{ExcludeNewerOverride, Index, IndexRequestPolicy, Verbatim};
+ 
+ pub static PYPI_URL: LazyLock<SafeUrl> =
+     LazyLock::new(|| SafeUrl::parse("https://pypi.org/simple").unwrap());
+@@ -477,44 +476,18 @@ impl<'a> IndexLocations {
+         Either::Right(non_default.into_iter().chain(default))
      }
+ 
+-    /// Return the configured index matching the given URL.
++    /// Return the first configured index matching the given URL.
+     fn index_for_url(&self, url: &IndexUrl) -> Option<&Index> {
+         self.indexes
+             .iter()
+             .find(|index| is_same_index(index.url(), url))
+     }
+ 
+-    /// Return the [`IndexStatusCodeStrategy`] for an [`IndexUrl`].
+-    pub fn status_code_strategy_for(&self, url: &IndexUrl) -> IndexStatusCodeStrategy {
+-        self.index_for_url(url).map_or(
+-            IndexStatusCodeStrategy::Default,
+-            Index::status_code_strategy,
+-        )
+-    }
+-
+-    /// Return whether the given status code is explicitly ignored for an [`IndexUrl`].
+-    pub fn ignores_error_code_for(&self, url: &IndexUrl, status_code: StatusCode) -> bool {
+-        self.index_for_url(url)
+-            .is_some_and(|index| index.ignores_error_code(status_code))
+-    }
+-
+-    /// Return the Simple API cache control header for an [`IndexUrl`], if configured.
+-    pub fn simple_api_cache_control_for(&self, url: &IndexUrl) -> Option<http::HeaderValue> {
++    /// Return the HTTP request policy for an index, or the default for an unconfigured URL.
++    pub fn request_policy(&self, url: &IndexUrl) -> IndexRequestPolicy<'_> {
+         self.index_for_url(url)
+-            .and_then(Index::simple_api_cache_control)
+-    }
+-
+-    /// Return the artifact cache control header for an [`IndexUrl`], if configured.
+-    pub fn artifact_cache_control_for(&self, url: &IndexUrl) -> Option<http::HeaderValue> {
+-        self.index_for_url(url)
+-            .and_then(Index::artifact_cache_control)
+-    }
+-
+-    /// Return the explicitly configured file cache control header for an [`IndexUrl`].
+-    pub fn configured_files_cache_control_for(&self, url: &IndexUrl) -> Option<http::HeaderValue> {
+-        self.index_for_url(url)
+-            .and_then(|index| index.cache_control.as_ref())
+-            .and_then(|cache_control| cache_control.files.clone())
++            .map(Index::request_policy)
++            .unwrap_or_default()
+     }
+ 
+     /// Return the hash algorithm required for distributions resolved from a given index.
+@@ -634,12 +607,11 @@ impl IndexCapabilities {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use std::collections::BTreeMap;
+     use std::error::Error;
+ 
+     use super::*;
+-    use crate::{IndexCacheControl, IndexFormat, IndexName};
+-    use http::HeaderValue;
++    use crate::{IndexCacheControl, IndexName, IndexStatusCodeDecision, IndexStatusCodeStrategy};
++    use http::{HeaderValue, StatusCode};
+ 
+     fn index_urls<'a>(indexes: impl IntoIterator<Item = &'a Index>) -> Vec<&'a str> {
+         indexes
+@@ -798,172 +770,149 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn test_cache_control_lookup() {
+-        use std::str::FromStr;
+-
+-        use crate::IndexFormat;
+-        use crate::index_name::IndexName;
+-
+-        let indexes = vec![
+-            Index {
+-                name: Some(IndexName::from_str("index1").unwrap()),
+-                url: IndexUrl::from_str("https://index1.example.com/simple").unwrap(),
+-                cache_control: Some(crate::IndexCacheControl {
+-                    api: Some(HeaderValue::from_static("max-age=300")),
+-                    files: Some(HeaderValue::from_static("max-age=1800")),
+-                }),
+-                explicit: false,
+-                default: false,
+-                origin: None,
+-                format: IndexFormat::Simple,
+-                publish_url: None,
+-                authenticate: uv_auth::AuthPolicy::default(),
+-                ignore_error_codes: None,
+-                hash_algorithm: None,
+-                exclude_newer: None,
+-                exclude_newer_package: BTreeMap::new(),
+-            },
+-            Index {
+-                name: Some(IndexName::from_str("index2").unwrap()),
+-                url: IndexUrl::from_str("https://index2.example.com/simple").unwrap(),
+-                cache_control: None,
+-                explicit: false,
+-                default: false,
+-                origin: None,
+-                format: IndexFormat::Simple,
+-                publish_url: None,
+-                authenticate: uv_auth::AuthPolicy::default(),
+-                ignore_error_codes: None,
+-           
+```
+
+**File**: `crates/uv-distribution-types/src/status_code_strategy.rs` (modified, +53/-61)
+```diff
+@@ -3,22 +3,24 @@ use std::borrow::Cow;
+ use std::ops::Deref;
+ 
+ use http::StatusCode;
+-use rustc_hash::FxHashSet;
+ use serde::{Deserialize, Deserializer, Serialize, Serializer};
+ use uv_redacted::SafeUrl;
+ 
+ use crate::{IndexCapabilities, IndexUrl};
+ 
+ #[derive(Debug, Clone, Default, Eq, PartialEq)]
+-pub enum IndexStatusCodeStrategy {
++pub enum IndexStatusCodeStrategy<'a> {
+     #[default]
+     Default,
+-    IgnoreErrorCodes {
+-        status_codes: FxHashSet<StatusCode>,
++    IgnoreBuiltinErrorCodes {
++        status_codes: &'a [SerializableStatusCode],
++    },
++    IgnoreConfiguredErrorCodes {
++        status_codes: &'a [SerializableStatusCode],
+     },
  }
  
--impl RemoteSource for File {
-+impl<Url> RemoteSource for File<Url> {
-     fn filename(&self) -> Result<Cow<'_, str>, Error> {
-         Ok(Cow::Borrowed(&self.filename))
-     }
-@@ -1468,15 +1468,15 @@ impl Identifier for File {
-             .first()
-             .cloned()
-             .map(DistributionId::Digest)
--            .unwrap_or_else(|| self.url.distribution_id())
-+            .unwrap_or_else(|| self.location.distribution_id())
-     }
- 
-     fn resource_id(&self) -> ResourceId {
-         self.hashes
-             .first()
-             .cloned()
-             .map(ResourceId::Digest)
--            .unwrap_or_else(|| self.url.resource_id())
-+            .unwrap_or_else(|| self.location.resource_id())
-     }
- }
- 
-@@ -1490,22 +1490,22 @@ impl Identifier for Path {
-     }
- }
- 
--impl Identifier for FileLocation {
-+impl Identifier for CanonicalFileLocation {
-     fn distribution_id(&self) -> DistributionId {
-         match self {
--            Self::RelativeUrl(base, url) => {
-+            Self::RelativeUrl(base, url, _) => {
-                 DistributionId::RelativeUrl(base.to_string(), url.to_string())
+-impl IndexStatusCodeStrategy {
++impl IndexStatusCodeStrategy<'_> {
+     /// Derive a strategy from an index URL. We special-case PyTorch. Otherwise,
+     /// we follow the default strategy.
+     pub(crate) fn from_index_url(url: &SafeUrl) -> Self {
+@@ -28,34 +30,33 @@ impl IndexStatusCodeStrategy {
+         {
+             // The PyTorch registry returns a 403 when a package is not found, so
+             // we ignore them when deciding whether to search other indexes.
+-            Self::IgnoreErrorCodes {
+-                status_codes: FxHashSet::from_iter([StatusCode::FORBIDDEN]),
++            Self::IgnoreBuiltinErrorCodes {
++                status_codes: &[SerializableStatusCode(StatusCode::FORBIDDEN)],
              }
--            Self::AbsoluteUrl(url) => DistributionId::AbsoluteUrl(url.to_string()),
-+            Self::AbsoluteUrl(url, _) => DistributionId::AbsoluteUrl(url.to_string()),
+         } else {
+             Self::Default
          }
      }
  
-     fn resource_id(&self) -> ResourceId {
-         match self {
--            Self::RelativeUrl(base, url) => {
-+            Self::RelativeUrl(base, url, _) => {
-                 ResourceId::RelativeUrl(base.to_string(), url.to_string())
-             }
--            Self::AbsoluteUrl(url) => ResourceId::AbsoluteUrl(url.to_string()),
-+            Self::AbsoluteUrl(url, _) => ResourceId::AbsoluteUrl(url.to_string()),
+-    /// Derive a strategy from a list of status codes to ignore.
+-    pub(crate) fn from_ignored_error_codes(status_codes: &[SerializableStatusCode]) -> Self {
+-        Self::IgnoreErrorCodes {
+-            status_codes: status_codes
+-                .iter()
+-                .map(SerializableStatusCode::deref)
+-                .copied()
+-                .collect::<FxHashSet<_>>(),
++    /// Derive a strategy for ignoring authentication error codes.
++    pub fn ignore_authentication_error_codes() -> Self {
++        Self::IgnoreBuiltinErrorCodes {
++            status_codes: &[
++                SerializableStatusCode(StatusCode::UNAUTHORIZED),
++                SerializableStatusCode(StatusCode::FORBIDDEN),
++                SerializableStatusCode(StatusCode::NETWORK_AUTHENTICATION_REQUIRED),
++                SerializableStatusCode(StatusCode::PROXY_AUTHENTICATION_REQUIRED),
++            ],
          }
      }
- }
-```
-
-**File**: `crates/uv-distribution/src/distribution_database.rs` (modified, +1/-1)
-```diff
-@@ -348,7 +348,7 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
-         match dist {
-             BuiltDist::Registry(wheels) => {
-                 let wheel = wheels.best_wheel();
--                let url = wheel.file.url.to_url()?;
-+                let url = wheel.file.location.to_url()?;
-                 let size = wheel.file.size;
  
-                 // Create a cache entry for the wheel.
-```
-
-**File**: `crates/uv-distribution/src/source/mod.rs` (modified, +2/-2)
-```diff
-@@ -298,7 +298,7 @@ impl<'a, T: BuildContext> SourceDistributionBuilder<'a, T> {
-                         .join(dist.version.to_string()),
-                 );
- 
--                let url = dist.file.url.to_url()?;
-+                let url = dist.file.location.to_url()?;
- 
-                 // If the URL is a file URL, use the local path directly.
-                 if url.scheme() == "file" {
-@@ -461,7 +461,7 @@ impl<'a, T: BuildContext> SourceDistributionBuilder<'a, T> {
-                         .join(dist.version.to_string()),
-                 );
- 
--                let url = dist.file.url.to_url()?;
-+                let url = dist.file.location.to_url()?;
- 
-                 // If the URL is a file URL, use the local path directly.
-                 if url.scheme() == "file" {
-```
-
-**File**: `crates/uv-installer/src/preparer.rs` (modified, +1/-1)
-```diff
-@@ -107,7 +107,7 @@ impl<'a, Context: BuildContext> Preparer<'a, Context> {
-         Ok(wheels)
+-    /// Derive a strategy for ignoring authentication error codes.
+-    pub fn ignore_authentication_error_codes() -> Self {
+-        Self::IgnoreErrorCodes {
+-            status_codes: FxHashSet::from_iter([
+-                StatusCode::UNAUTHORIZED,
+-                StatusCode::FORBIDDEN,
+-                StatusCode::NETWORK_AUTHENTICATION_REQUIRED,
+-                StatusCode::PROXY_AUTHENTICATION_REQUIRED,
+-            ]),
++    /// Return whether the status code is in the configured list of ignored codes.
++    pub(crate) fn explicitly_ignores_error_code(&self, status_code: StatusCode) -> bool {
++        match self {
++            Self::Default | Self::IgnoreBuiltinErrorCodes { .. } => false,
++            Self::IgnoreConfiguredErrorCodes { status_codes } => {
++                status_codes.contains(&SerializableStatusCode(status_code))
++            }
+         }
      }
-     /// Download, build, and unzip a single wheel.
--    #[instrument(skip_all, fields(name = % dist, size = ? dist.size(), url = dist.file().map(| file | file.url.to_string()).unwrap_or_default()))]
-+    #[instrument(skip_all, fields(name = % dist, size = ? dist.size(), url = dist.file().map(| file | file.location.to_string()).unwrap_or_default()))]
-     async fn get_wheel(
-         &self,
-         dist: Dist,
+ 
+@@ -67,26 +68,28 @@ impl IndexStatusCodeStrategy {
+         index_url: &IndexUrl,
+         capabilities: &IndexCapabilities,
+     ) -> IndexStatusCodeDecision {
+-        match self {
+-            Self::Default => match status_code {
+-                StatusCode::NOT_FOUND => IndexStatusCodeDecision::Ignore,
+-                StatusCode::UNAUTHORIZED => {
+-                    capabilities.set_unauthorized(index_url.clone());
+-                    IndexStatusCodeDecision::Fail(status_code)
+-                }
+-                StatusCode::FORBIDDEN => {
+-                    capabilities.set_forbidden(index_url.clone());
+-                    IndexStatusCodeDecision::Fail(status_code)
+-                }
+-                _ => IndexStatusCodeDecision::Fail(status_code),
+-            },
+-            Self::IgnoreErrorCodes { status_codes } => {
+-                if status_codes.contains(&status_code) {
+-                    IndexStatusCodeDecision::Ignore
+-                } else {
+-                    Self::Default.handle_status_code(status_code, index_url, capabilities)
+-                }
++        let ignored = match self {
++            Self::Default => false,
++            Self::IgnoreBuiltinErrorCodes { status_codes }
++            | Self::IgnoreConfiguredErrorCodes { status_codes } => {
++                status_codes.contains(&SerializableStatusCode(status_code))
+             }
++        };
++        if ignored {
++            return IndexStatusCodeDecision::Ignore;
++        }
++
++        match status_code {
++            StatusCode::NOT_FOUND => IndexStatusCodeDecision::Ignore,
++            StatusCode::UNAUTHORIZED => {
++                capabilities.set_unauthorized(index_url.clone());
++                IndexStatusCodeDe
 ```
 
-**File**: `crates/uv-lock/src/lock/export/pylock_toml.rs` (modified, +14/-10)
+**File**: `crates/uv-distribution/src/distribution_database.rs` (modified, +4/-2)
 ```diff
-@@ -24,8 +24,8 @@ use uv_distribution_filename::{
-     SourceDistFilenameError, WheelFilename, WheelFilenameError,
- };
- use uv_distribution_types::{
--    BuiltDist, DirectUrlBuiltDist, DirectUrlSourceDist, DirectorySourceDist, Dist, Edge,
--    FileLocation, FirstParty, GitDirectorySourceDist, IndexUrl, Name, Node, PathBuiltDist,
-+    BuiltDist, CanonicalFileLocation, DirectUrlBuiltDist, DirectUrlSourceDist, DirectorySourceDist,
-+    Dist, Edge, FirstParty, GitDirectorySourceDist, IndexUrl, Name, Node, PathBuiltDist,
-     PathSourceDist, RegistryBuiltDist, RegistryBuiltWheel, RegistrySourceDist, RemoteSource,
-     RequiresPython, Resolution, ResolvedDist, SourceDist, ToUrlError, UrlString,
- };
-@@ -567,7 +567,7 @@ impl<'lock> PylockToml {
-                         if let Some(sdist) = dist.sdist.as_ref() {
-                             let url = sdist
-                                 .file
--                                .url
-+                                .location
-                                 .to_url()
-                                 .map_err(PylockTomlErrorKind::ToUrl)?;
-                             package.sdist = Some(PylockTomlSdist {
-@@ -663,7 +663,11 @@ impl<'lock> PylockToml {
-                     let no_build = build_options.no_build_package(&dist.name);
+@@ -942,7 +942,8 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+                 if let Some(header) = index.and_then(|index| {
+                     self.build_context
+                         .locations()
+-                        .artifact_cache_control_for(index)
++                        .request_policy(index)
++                        .artifact_cache_control()
+                 }) =>
+             {
+                 CacheControl::Override(header)
+@@ -1070,7 +1071,8 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+                 if let Some(header) = index.and_then(|index| {
+                     self.build_context
+                         .locations()
+-                        .artifact_cache_control_for(index)
++                        .request_policy(index)
++                        .artifact_cache_control()
+                 }) =>
+             {
+                 CacheControl::Override(header)
+```
+
+**File**: `crates/uv-distribution/src/index/registry_wheel_index.rs` (modified, +3/-3)
+```diff
+@@ -121,7 +121,7 @@ impl<'a> RegistryWheelIndex<'a> {
+         no_binary: bool,
+     ) -> Option<&CachedRegistryDist> {
+         let wheel = distribution.best_wheel();
+-        let required = self
++        let hash_policy = self
+             .hasher
+             .archive_policy_for_package(&wheel.filename.name, &wheel.filename.version);
+         self.matching(&wheel.filename.name, |entry| {
+@@ -148,15 +148,15 @@ impl<'a> RegistryWheelIndex<'a> {
+                     .map_or(&[][..], |source| source.file.hashes.as_slice());
+                 if source_hashes.is_empty()
+                     && !wheel.file.hashes.is_empty()
+-                    && !required.requires_validation()
++                    && !hash_policy.requires_validation()
+                 {
+                     return false;
+                 }
+                 source_hashes
+             } else {
+                 wheel.file.hashes.as_slice()
+             };
+-            ArtifactHashPolicy::required(required).can_reuse(&entry.dist, index_hashes)
++            ArtifactHashPolicy::required(hash_policy).can_reuse(&entry.dist, index_hashes)
+         })
+         .next()
+         .map(IndexEntry::dist)
+```
+
+**File**: `crates/uv-distribution/src/source/mod.rs` (modified, +4/-2)
+```diff
+@@ -965,7 +965,8 @@ impl<'a, T: BuildContext> SourceDistributionBuilder<'a, T> {
+                 if let Some(header) = index.and_then(|index| {
+                     self.build_context
+                         .locations()
+-                        .artifact_cache_control_for(index)
++                        .request_policy(index)
++                        .artifact_cache_control()
+                 }) =>
+             {
+                 CacheControl::Override(header)
+@@ -2763,7 +2764,8 @@ impl<'a, T: BuildContext> SourceDistributionBuilder<'a, T> {
+                 if let Some(header) = index.and_then(|index| {
+                     self.build_context
+                         .locations()
+-                        .artifact_cache_control_for(index)
++                        .request_policy(index)
++                        .artifact_cache_control()
+                 }) =>
+             {
+                 CacheControl::Override(header)
+```
+
+**File**: `crates/uv-resolver/src/resolver/provider.rs` (modified, +5/-1)
+```diff
+@@ -167,7 +167,11 @@ impl<'a, Context: BuildContext> DefaultResolverProvider<'a, Context> {
+     ) -> Result<MetadataUnavailable, uv_client::Error> {
+         if let uv_client::ErrorKind::WrappedReqwestError(_, http) = error.kind()
+             && let Some(status) = http.status()
+-            && index.is_some_and(|index| self.index_locations.ignores_error_code_for(index, status))
++            && index.is_some_and(|index| {
++                self.index_locations
++                    .request_policy(index)
++                    .ignores_error_code(status)
++            })
+         {
+             return Ok(MetadataUnavailable::Network(status));
+         }
+```
+
+---
+
+### Incident Patch 2: `cf9bace0` (2026-11-16)
+**Commit Message**: Update Rust crate libc to v0.2.190 (#23046)
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -2653,9 +2653,9 @@ dependencies = [
  
-                     if !no_build {
--                        let url = dist.file.url.to_url().map_err(PylockTomlErrorKind::ToUrl)?;
-+                        let url = dist
-+                            .file
-+                            .location
-+                            .to_url()
-+                            .map_err(PylockTomlErrorKind::ToUrl)?;
-                         package.sdist = Some(PylockTomlSdist {
-                             // Optional "when the last component of path/ url would be the same value".
-                             name: if url
-@@ -748,7 +752,7 @@ impl<'lock> PylockToml {
-             .map(|wheel| {
-                 let url = wheel
-                     .file
--                    .url
-+                    .location
-                     .to_url()
-                     .map_err(PylockTomlErrorKind::ToUrl)?;
-                 Ok(PylockTomlWheel {
-@@ -769,7 +773,7 @@ impl<'lock> PylockToml {
-                     url: Some(
-                         wheel
-                             .file
--                            .url
-+                            .location
-                             .to_url()
-                             .map_err(PylockTomlErrorKind::ToUrl)?
-                             .with_policy(Raw),
-@@ -851,7 +855,7 @@ impl<'lock> PylockToml {
-                             .map(|wheel| {
-                                 let url = wheel
-                                     .file
--                                    .url
-+                                    .location
-                                     .to_url()
-                                     .map_err(PylockTomlErrorKind::ToUrl)?;
-                                 Ok(PylockTomlWheel {
-@@ -1006,7 +1010,7 @@ impl<'lock> PylockToml {
-                 Some(SourceDist::Registry(sdist)) => {
-                     let url = sdist
-                         .file
--                        .url
-+                        .location
-                         .to_url()
-                         .map_err(PylockTomlErrorKind::ToUrl)?;
-                     Some(PylockTomlSdist {
-@@ -1712,7 +1716,7 @@ impl PylockTomlWheel {
-             requires_python: None,
-             size: self.size,
-             upload_time_utc_ms: self.upload_time.map(Timestamp::as_millisecond),
--            url: FileLocation::AbsoluteUrl(file_url),
-+            location: CanonicalFileLocation::from_lockfile(file_url),
-             yanked: None,
-         });
+ [[package]]
+ name = "libc"
+-version = "0.2.189"
++version = "0.2.191"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
++checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
  
-@@ -1872,7 +1876,7 @@ impl PylockTomlSdist {
-             requires_python: None,
-             size: self.size,
-             upload_time_utc_ms: self.upload_time.map(Timestamp::as_millisecond),
--            url: FileLocation::AbsoluteUrl(file_url),
-+            location: CanonicalFileLocation::from_lockfile(file_url),
-             yanked: None,
-         });
- 
+ [[package]]
+ name = "libm"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2112,47 +2139,59 @@ Co-authored-by: Zanie Blue <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Distinguish canonical artifact locations from fetch locations
+## X. Group HTTP request policies for package indexes
 
 **RULE**:
-When implementing operations in `crates/uv-client/src/flat_index.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv-client/src/registry_client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a30eff72`: Distinguish canonical artifact locations from fetch locations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `82adf363`: Group HTTP request policies for package indexes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-client/src/flat_index.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-client/src/registry_client.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use uv_distribution_types::{FileLocation, IndexEntryFilename, IndexUrl, UrlString, VerbatimFile};
-    file: VerbatimFile,
-    pub fn into_parts(self) -> (IndexEntryFilename, VerbatimFile, IndexUrl) {
-                    rkyv::deserialize::<VerbatimFile, rkyv::rancor::Error>(file)
-    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<VerbatimFile>, crate::html::Error> {
-            .filter_map(|file| match VerbatimFile::try_from_pypi(file, &base) {
-        files: impl IntoIterator<Item = VerbatimFile>,
-            let file = VerbatimFile {
-                location: FileLocation::absolute(UrlString::from(url)),
+                            let status_code_strategy = self
+                                .indexes
+                                .request_policy(index.url)
+                                .status_code_strategy();
+                                    status_code_strategy,
+                                        status_code_strategy,
+        status_code_strategy: IndexStatusCodeStrategy<'_>,
+                if let Some(header) = self
+                    .indexes
+                    .request_policy(index)
+                    .simple_api_cache_control() =>
+                if let Some(header) = self
+                    .indexes
+                    .request_policy(index)
+                    .simple_api_cache_control() =>
+                if let Some(header) = self
+                    .indexes
+                    .request_policy(index)
+                    .configured_files_cache_control() =>
+                    && let Some(header) =
+                        self.indexes.request_policy(index).artifact_cache_control() =>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use uv_distribution_types::{File, FileLocation, IndexEntryFilename, IndexUrl, UrlString};
-    file: File,
-    pub fn into_parts(self) -> (IndexEntryFilename, File, IndexUrl) {
-                    rkyv::deserialize::<File, rkyv::rancor::Error>(file)
-    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<File>, crate::html::Error> {
-            .filter_map(|file| match File::try_from_pypi(file, &base) {
-        files: impl IntoIterator<Item = File>,
-            let file = File {
-                url: FileLocation::AbsoluteUrl(UrlString::from(url)),
+                            let status_code_strategy =
+                                self.indexes.status_code_strategy_for(index.url);
+                                    &status_code_strategy,
+                                        &status_code_strategy,
+        status_code_strategy: &IndexStatusCodeStrategy,
+                if let Some(header) = self.indexes.simple_api_cache_control_for(index) =>
+                if let Some(header) = self.indexes.simple_api_cache_control_for(index) =>
+                if let Some(header) = self.indexes.configured_files_cache_control_for(index) =>
+                    && let Some(header) = self.indexes.artifact_cache_control_for(index) =>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a30eff72` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `82adf363` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

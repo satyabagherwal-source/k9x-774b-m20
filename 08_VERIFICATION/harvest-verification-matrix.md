@@ -10270,3 +10270,5 @@
 | `CYCLE-20261116-EJEQ` | `2026-11-16T12:48:17.090Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8733` | Yes (`b0f7eaca...`) |
 | `CYCLE-20261116-EN4Q` | `2026-11-16T12:48:21.914Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8734` | Yes (`c5b0b2bb...`) |
 | `CYCLE-20261116-KT2K` | `2026-11-16T12:53:09.548Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8735` | Yes (`db4aade0...`) |
+| `CYCLE-20261116-MYR3` | `2026-11-16T13:22:49.839Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8736` | Yes (`b3d76c42...`) |
+| `CYCLE-20261116-N26Y` | `2026-11-16T13:22:54.298Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8737` | Yes (`d7f4ffa8...`) |

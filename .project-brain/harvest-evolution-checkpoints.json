@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T12:53:14.385Z",
+  "last_updated": "2026-11-16T13:23:00.654Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T08:53:32.721Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-16T06:35:54.781Z",
+      "processed_at": "2026-11-16T13:22:59.998Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -93,7 +93,7 @@
       "staged_for_review": 1
     },
     "astral-sh-uv-learnings.md": {
-      "processed_at": "2026-11-14T17:25:02.475Z",
+      "processed_at": "2026-11-16T13:22:58.013Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -533,7 +533,7 @@
       "staged_for_review": 1
     },
     "scrapy-scrapy-learnings.md": {
-      "processed_at": "2026-11-11T19:28:51.215Z",
+      "processed_at": "2026-11-16T13:22:59.046Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3163,7 +3163,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1287,
+  "total_dossiers_evaluated": 1290,
   "total_canonical_promoted": 287,
-  "total_staged_for_review": 993
+  "total_staged_for_review": 996
 }

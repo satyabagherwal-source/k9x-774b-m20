@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T12:53:14.091Z",
-  "total_records": 1251,
+  "last_updated": "2026-11-16T13:23:00.373Z",
+  "total_records": 1253,
   "domains": {
     "A": {
       "total": 7,
@@ -892,7 +892,7 @@
       ]
     },
     "H": {
-      "total": 265,
+      "total": 267,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1158,7 +1158,9 @@
         "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants",
         "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10642,8 +10644,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "12372a9bcb112cd5de6c1a8e1c3b99531c87f5d6d072502336ff2ed032424fe2",
-      "created_at": "2026-11-16T06:35:55.170Z"
+      "content_hash": "64ed158012e491f387e69523b9a7e1d1786da627f3162d9e4e7b5b0dbee85484",
+      "created_at": "2026-11-16T13:23:00.373Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -16028,8 +16030,8 @@
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "repository": "astral-sh/uv",
-      "content_hash": "0bb37cb608ee6ce96bc4e2032fec94800247893fd067c154480f3b0a0d36563c",
-      "created_at": "2026-11-14T17:24:46.552Z"
+      "content_hash": "4df6999fb96865f42512046307801df1e888dfcd6009813866b2ab6ef1d04b13",
+      "created_at": "2026-11-16T13:22:50.231Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
@@ -16055,8 +16057,8 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-learnings-architecture-intelligence-astral-sh-uv-learnings-core-inv.md",
       "repository": "astral-sh-uv-learnings",
-      "content_hash": "8515f93cdfd305c23020f3f9f32f7f871adc7a08339f073df3b0f2d8e65d5aed",
-      "created_at": "2026-11-14T17:25:02.752Z"
+      "content_hash": "292f9aafae8fa25754af268b66006cbbd64ef1545c5f9efe294945c07880a01e",
+      "created_at": "2026-11-16T13:22:58.619Z"
     },
     "DOM-D-CCF89F8A": {
       "record_id": "DOM-D-CCF89F8A",
@@ -23006,6 +23008,24 @@
       "repository": "hf-pika-labs-pika-h3-flex-learnings",
       "content_hash": "de05d8604fc79ce59870241d89074810f58672d06d82aca62bb1653a04e4ca5c",
       "created_at": "2026-11-16T12:53:13.605Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: scrapy/scrapy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-technical-construction-intelligence-scrapy-scrapy-core-invariants.md",
+      "repository": "scrapy/scrapy",
+      "content_hash": "e32166bd80406c403fa0f4b5ba4ba022852fd4417c909f2682491de7ee0ef214",
+      "created_at": "2026-11-16T13:22:54.658Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: scrapy-scrapy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-learnings-technical-construction-intelligence-scrapy-scrapy-learni.md",
+      "repository": "scrapy-scrapy-learnings",
+      "content_hash": "24331f9f14b3f33818046e07d59ceba519418fb8d5364ddef4a316a8d577d807",
+      "created_at": "2026-11-16T13:22:59.710Z"
     }
   }
 }

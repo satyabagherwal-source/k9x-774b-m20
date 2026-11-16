@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T12:53:13.829Z",
+  "updated_at": "2026-11-16T13:22:59.291Z",
   "stats": {
-    "total_discovered": 4191,
-    "approved_pending_harvest": 3938,
+    "total_discovered": 4199,
+    "approved_pending_harvest": 3946,
     "harvested_count": 0,
     "rejected_count": 253,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3939,
+      "COMMUNITY_AND_EXPERT": 3947,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -90452,6 +90452,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
         "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-D21EA813A8CF": {
+      "id": "SRC-D21EA813A8CF",
+      "url": "https://github.com/astral-sh/uv/pull/20790",
+      "title": "https://github.com/astral-sh/uv/pull/20790",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T13:22:58.148Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-B8A939B610B7": {
+      "id": "SRC-B8A939B610B7",
+      "url": "https://index1.example.com/simple",
+      "title": "https://index1.example.com/simple",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T13:22:58.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-FA4A14697CC6": {
+      "id": "SRC-FA4A14697CC6",
+      "url": "https://index2.example.com/simple",
+      "title": "https://index2.example.com/simple",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T13:22:58.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-EF05E5FED3BA": {
+      "id": "SRC-EF05E5FED3BA",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/pull/8489?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/pull/8489?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T13:22:59.135Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-D894D01FDF04": {
+      "id": "SRC-D894D01FDF04",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/commit/0d4b674ed976a9bead536d3039cb29e57bf2753e?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/commit/0d4b674ed976a9bead536d3039cb29e57bf2753e?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T13:22:59.169Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-8655D023AC51": {
+      "id": "SRC-8655D023AC51",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/commit/c181bead61c7d3ac428b47d5a413ec8b0fc7e983?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/commit/c181bead61c7d3ac428b47d5a413ec8b0fc7e983?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T13:22:59.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-8BA228FEE454": {
+      "id": "SRC-8BA228FEE454",
+      "url": "https://app.codspeed.io/scrapy/scrapy/branches/wRAR%3Amedia-failed-scope?q=has%3Asignificant_sys_time",
+      "title": "https://app.codspeed.io/scrapy/scrapy/branches/wRAR%3Amedia-failed-scope?q=has%3Asignificant_sys_time",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T13:22:59.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-8EECF451F637": {
+      "id": "SRC-8EECF451F637",
+      "url": "https://app.codspeed.io/scrapy/scrapy/bra",
+      "title": "https://app.codspeed.io/scrapy/scrapy/bra",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T13:22:59.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
       }
     }
   }

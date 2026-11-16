@@ -10303,3 +10303,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `bce01abd` | Multi-dimensional audit evidence | 2026-11-16T12:48:17.094Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2e5f2516` | Multi-dimensional audit evidence | 2026-11-16T12:48:21.917Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `237bba51` | Multi-dimensional audit evidence | 2026-11-16T12:53:09.552Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `82adf363` | Multi-dimensional audit evidence | 2026-11-16T13:22:49.844Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `953a7f42` | Multi-dimensional audit evidence | 2026-11-16T13:22:54.303Z |

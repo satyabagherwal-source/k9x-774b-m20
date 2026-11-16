@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-H2JU",
-    "timestamp": "2026-11-13T20:27:08.202Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "a337642afd83803f42cf912750ac56b85dbb36129808d1871f63dba8aeeb3018",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-H2MW",
-    "timestamp": "2026-11-13T20:27:08.312Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "a21edee86d890d7d55e2c6f02320468d81a3bdab177b3d9ea6ddd0e6671e0e6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-TEUS",
     "timestamp": "2026-11-13T20:36:44.020Z",
     "repository": "Cloudflare/clef-flash",
@@ -7490,6 +7460,36 @@
     "repository": "oven-sh/bun",
     "learningId": "learn-github-oven-sh-bun",
     "contentHash": "db4aade0cc15a77c184a3fb84da21e063ea7d790630278ac7277d67eb652eba5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-MYR3",
+    "timestamp": "2026-11-16T13:22:49.839Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "b3d76c426cd06712b30fab6b6563fb948d2fbdf4f62eac186f9a6c5d7ac8e9a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-N26Y",
+    "timestamp": "2026-11-16T13:22:54.298Z",
+    "repository": "scrapy/scrapy",
+    "learningId": "learn-github-scrapy-scrapy",
+    "contentHash": "d7f4ffa83df09fdcefa3706bf74e41392558d17c5d4e04bee9576bd33ef3af3a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

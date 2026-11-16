@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "d5c3f174",
+    "sourceVersion": "82adf363",
     "license": "Apache-2.0",
-    "contentHash": "7a148fe4bbf963965d0cd44f9a882710eeb75b20cb17034a385b8f80d915b9e3",
-    "lastHarvestedAt": "2026-11-14T17:24:46.334Z",
+    "contentHash": "b3d76c426cd06712b30fab6b6563fb948d2fbdf4f62eac186f9a6c5d7ac8e9a1",
+    "lastHarvestedAt": "2026-11-16T13:22:49.844Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "f7b1fd3f",
+    "sourceVersion": "953a7f42",
     "license": "BSD-3-Clause",
-    "contentHash": "7e0fac2a1484cb00ff99d3ed66df3097c090bd7c3f0cabc950cf48b3a0784f06",
-    "lastHarvestedAt": "2026-11-11T19:28:34.380Z",
+    "contentHash": "d7f4ffa83df09fdcefa3706bf74e41392558d17c5d4e04bee9576bd33ef3af3a",
+    "lastHarvestedAt": "2026-11-16T13:22:54.303Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {

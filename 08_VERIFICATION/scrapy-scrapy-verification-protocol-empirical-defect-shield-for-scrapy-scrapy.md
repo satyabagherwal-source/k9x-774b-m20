@@ -4,45 +4,31 @@
 {
   "source_repository": "scrapy/scrapy",
   "source_url": "https://github.com/scrapy/scrapy",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "953a7f42",
+  "license": "BSD-3-Clause",
+  "timestamp": "2026-11-16T13:22:54.519Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-scrapy-scrapy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [scrapy/scrapy](https://github.com/scrapy/scrapy) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [scrapy/scrapy](https://github.com/scrapy/scrapy) (Revision: `953a7f42`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-16T13:22:54.519Z`  
+> **Learning ID**: `learn-github-scrapy-scrapy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `scrapy/scrapy` (Commit: `historical`)
+- **Target Repository**: `scrapy/scrapy` (Commit: `953a7f42`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
-> **Source**: github ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
-> **Source Version**: `f7b1fd3f`  
-> **License**: BSD-3-Clause  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T19:28:19.508Z  
-> **Learning ID**: `learn-github-scrapy-scrapy`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): scrapy/scrapy
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T19:28:19.298Z  
+> **Harvest Timestamp**: 2026-11-16T13:22:53.224Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Scrapy, a fast high-level web crawling & scraping framework for Python.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 65328 stars
+- **Stars / Engagement**: 65429 stars
 
 ---
 
@@ -298,7 +284,7 @@ from h2.events import (
     UnknownFrameReceived,
     WindowUpdated,
 )
-from h2.exceptions import FrameTooLargeError, H2Error
+from h2.exceptions import DenialOfServiceError, FrameTooLargeError, H2Error
 from h2.settings import SettingCodes
 from twisted.internet.interfaces import (
     IAddress,
@@ -311,8 +297,9 @@ from twisted.protocols.policies import TimeoutMixin
 from zope.interface import implementer
 
 from scrapy.core._http2.stream import Stream, StreamCloseReason
-from scrapy.exceptions import DownloadTimeoutError
+from scrapy.exceptions import DownloadTimeoutError, ResponseHeadersTooLargeError
 from scrapy.http import Request, Response
+from scrapy.utils._download_handlers import get_headers_maxsize_msg
 from scrapy.utils._ssl import _log_ssl_conn_debug_info
 from scrapy.utils.deprecate import warn_on_deprecated_spider_attribute
 
@@ -390,6 +377,26 @@ class H2ClientProtocol(Protocol, TimeoutMixin):
 
         config = H2Configuration(client_side=True)
         self.conn = H2Connection(config=config)
+
+        # Unlike HTTP/1.1, where we count the bytes of the response head as
+        # they come from the wire, HTTP/2 uses the accounting that RFC 9113
+        # §6.5.2 defines for SETTINGS_MAX_HEADER_LIST_SIZE: the uncompressed
+        # size of every header field plus 32 bytes of overhead each. Web
+        # browsers use the same limit for both protocols despite that
+        # difference, so we do the same.
+        self._headers_maxsize: int = crawler.settings.getint("DOWNLOAD_HEADERS_MAXSIZE")
+        # SETTINGS values are 32-bit, so the maximum stands for "no limit".
+        max_header_list_size = self._headers_maxsize or 2**32 - 1
+        # local_settings is what we advertise to the remote peer, while the
+        # decoder is what enforces the limit on the headers we do receive.
+        self.conn.local_settings.max_header_list_size = max_header_list_size
+        # Setting a value only queues it; acknowledging it here, before the
+        # connection is initiated, makes the initial SETTINGS frame carry it.
+        self.conn.local_settings.acknowledge()
+        self.conn.decoder.max_header_list_size = max_header_list_size
+        self.headers_warnsize: int = crawler.settings.getint(
+            "DOWNLOAD_HEADERS_WARNSIZE"
+        )
 
         # ID of the next request stream
         # Following the convention - 'Streams initiated by a client MUST
@@ -501,42 +508,7 @@ class H2ClientProtocol(Protocol, TimeoutMixin):
         self.streams[stream.stream_id] = stream
         return stream
 
-    def _write_to_transport(self) -> None:
-        """Write data to the underlying transport connection
-        from the HTTP2 connection instance if any
-        """
-        assert self.transport is not None  # typing
-        # Reset the idle timeout as connection is still actively sending data
-        self.resetTimeout()  # type: ignore[no-untyped-call]
-
-        data = self.conn.data_to_send()
-        self.transport.write(data)
-
-    def request(self, request: Request, spider: Spider) -> Deferred[Response]:
-        if not isinstance(request, Request):
-            raise TypeError(
-                f"Expected scrapy.http.Request, received {request.__class__.__qualname__}"
-            )
-
-        stream = self._new_stream(request, spider)
-        d: Deferred[Response] = stream.get_response()
-
-        # Add the stream to the request pool
-        self._pending_request_stream_pool.append(stream)
-
-        # If we receive a request when connection is idle
-        # We need to initiate pending requests
-        self._send_pending_requests()
-        return d
-
-    def connectionMade(self) -> None:
-        """Called by Twisted when the connection is established. We can start
-        sending some data now: we should open with the connection preamble.
-        """
-        # Initialize the timeout
-        self.setTimeout(self._idle_timeout or None)  # type: ignore[no-untyped-call]
-
-        assert self.
+    def _write_to_transport(se
 ```
 
 ### Core Architecture Module: `scrapy/core/_http2/stream.py`
@@ -564,6 +536,7 @@ from scrapy.exceptions import (
 from scrapy.http.headers import Headers
 from scrapy.utils._download_handlers import (
     check_stop_download,
+    get_headers_warnsize_msg,
     get_maxsize_msg,
     get_warnsize,
     get_warnsize_msg,
@@ -813,8 +786,7 @@ class Stream:
         if self.check_request_url():
             headers = self._get_request_headers()
             self._protocol.conn.send_headers(self.stream_id, headers, end_stream=False)
-            self.metadata["request_sent"] = True
-       
+            self.metadata[
 ```
 
 ### Core Architecture Module: `scrapy/core/downloader/__init__.py`
@@ -1786,7 +1758,7 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
                 f"{type(self).__name__} does not support disabling FTP_PASSIVE_MODE."
             )
         self._user: str = crawler.settings["FTP_USER"]
-        self._password: str = crawler.settings["FTP_PASSWORD"]
+        self._password: str = crawler.settings.getsecret("FTP_PASSWORD") or ""
         self._ssl_context: ssl.SSLContext = _make_ssl_context(crawler.settings)
 
     @asynccontextmanager
@@ -1897,9 +1869,9 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
         return super()._get_body(buffer, response, request)
 
     async def _read_response(
-        self, response: _AioftpResponse, request: Request
+        self, response: _AioftpResponse, request: Request, deadline: float
     ) -> Response:
-        result = await super()._read_response(response, request)
+        result = await super()._read_response(response, request, deadline)
         if response.data is not None:
             self._add_ftp_headers(result, response, request)
         return result
@@ -1946,8 +1918,7 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
         # raises StatusCodeError if the server reports a failed transfer
         await response.data.finish()
 
-    @staticmethod
-    def _is_dataloss_exception(exc: Exc
+    @staticmet
 ```
 
 
@@ -1956,15 +1927,16 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8489** (2026-11-13): **Stop passing media_downloaded() errors to media_failed().**
+  *Symptoms*: Broken after `addCallbacks()` to `addCallback()`+`addErrback()` to `try/finally` rewrites.  - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/scrapy/scrapy/pull/8489?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 100.00%. Comparing base ([`0d4b674`](https://app.codecov.io/gh/scrapy/scrapy/commit/0d4b674ed976a9bead536d3039cb29e57bf2753e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)) to head ([`c181bea`](https://app.codecov.io/gh/scrapy/scrapy/commit/c181bead61c7d3ac428b47d5a413ec8b0fc7e983?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)). :warning: Report is 1 commits behind head on master. :white_check_mark: All tests successful. No failed tests found.  <details><summary>Additional details and impacted files</summary>    ```diff @@
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **5 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/scrapy/scrapy/branches/wRAR%3Amedia-failed-scope?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 44` untouched benchmarks   `⏩ 9` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>wRAR:media-failed-scope</code> (c181bea) with <code>master</code> (0d4b674)</sub>  <a href="https://app.codspeed.io/scrapy/scrapy/bra
+
 - **Issue #8423** (2026-10-28): **Fix deprecations in fixtures for pytest 9.2.0.**
   *Symptoms*:   - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/scrapy/scrapy/pull/8423?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 100.00%. Comparing base ([`00ca2a9`](https://app.codecov.io/gh/scrapy/scrapy/commit/00ca2a9c07ba3c0423fb95daa46c077de555c595?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)) to head ([`5f39c58`](https://app.codecov.io/gh/scrapy/scrapy/commit/5f39c589a53719dfc53d7d1785bf7029a81ff2f1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)). :white_check_mark: All tests successful. No failed tests found.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff             @@ ##         
-
-- **Issue #8404** (2026-10-26): **Fix some async docs examples.**
-  *Symptoms*:  - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/scrapy/scrapy/pull/8404?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 100.00%. Comparing base ([`171ccbe`](https://app.codecov.io/gh/scrapy/scrapy/commit/171ccbedb734c988fd86708fd5e0803029b6c730?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)) to head ([`30043f7`](https://app.codecov.io/gh/scrapy/scrapy/commit/30043f7036efedafcccc6f9db118f25e6ac30063?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)). :white_check_mark: All tests successful. No failed tests found.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff            @@ ##           
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1981,634 +1953,486 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f7b1fd3f` (2026-11-10)
-**Commit Message**: Support coros in schedulers and dupefilters. (#8479)
+### Incident Patch 1: `aeaec6a5` (2026-11-12)
+**Commit Message**: Force download timeouts in BaseStreamingDownloadHandler. (#8481)
 
-**File**: `docs/topics/coroutines.rst` (modified, +10/-18)
+**File**: `docs/topics/settings.rst` (modified, +4/-1)
 ```diff
-@@ -105,6 +105,16 @@ hence use coroutine syntax (e.g. ``await``, ``async for``, ``async with``):
+@@ -1248,9 +1248,12 @@ Default: ``180``
  
-       .. versionadded:: 2.20.0
+ The amount of time (in secs) that the downloader will wait before timing out.
  
-+-   The ``open()`` and ``close()`` methods of :ref:`custom schedulers
-+    <topics-scheduler>` (see :setting:`SCHEDULER`).
++A value of ``0`` or ``None`` doesn't mean a timeout of 0 or infinity: a
++non-zero handler-specific value will be used instead.
 +
-+    .. versionadded:: VERSION
-+
-+-   The ``open()`` and ``close()`` methods of custom dupefilters (see
-+    :setting:`DUPEFILTER_CLASS`).
-+
-+    .. versionadded:: VERSION
-+
- Most callables above may also :ref:`await a request <inline-requests>` to send
- it and get its response.
+ .. note::
  
-@@ -144,29 +154,11 @@ return coroutines are listed in :ref:`coroutine-support`):
+-    This timeout can be per-request using the :reqmeta:`download_timeout`
++    This timeout can be set per-request using the :reqmeta:`download_timeout`
+     :attr:`.Request.meta` key.
  
-     - ``fetch()``
- 
---   Custom scheduler implementations (see :setting:`SCHEDULER`):
--
--    - :meth:`~scrapy.core.scheduler.BaseScheduler.open`
--
--    - :meth:`~scrapy.core.scheduler.BaseScheduler.close`
--
---   Custom dupefilters (see :setting:`DUPEFILTER_CLASS`):
--
--    - ``open()``
--
--    - ``close()``
--
- In most cases, you can use these APIs in code that otherwise uses coroutines by
- wrapping a :class:`~twisted.internet.defer.Deferred` object into a
- :class:`~asyncio.Future` object or vice versa. See :ref:`asyncio-await-dfd` for
- more information about this.
- 
--For example: a custom scheduler needs to define an ``open()`` method that can
--return a :class:`~twisted.internet.defer.Deferred` object. You can write a
--method that works with Deferreds and returns one directly, or you can write a
--coroutine and convert it into a function that returns a Deferred with
--:func:`~scrapy.utils.defer.deferred_f_from_coro_f`.
--
- 
- General usage
- =============
+ .. note::
 ```
 
-**File**: `docs/topics/settings.rst` (modified, +2/-2)
+**File**: `scrapy/core/downloader/handlers/_aioftp.py` (modified, +2/-2)
 ```diff
-@@ -1430,11 +1430,11 @@ interface:
-             return False
+@@ -218,9 +218,9 @@ def _get_body(
+         return super()._get_body(buffer, response, request)
  
-         def open(self):
--            """Called before the spider opens. It may return a deferred."""
-+            """Called before the spider opens. It may be a coroutine function."""
-             pass
- 
-         def close(self, reason):
--            """Called before the spider closes. It may return a deferred."""
-+            """Called before the spider closes. It may be a coroutine function."""
-             pass
- 
-         def log(self, request, spider):
+     async def _read_response(
+-        self, response: _AioftpResponse, request: Request
++        self, response: _AioftpResponse, request: Request, deadline: float
+     ) -> Response:
+-        result = await super()._read_response(response, request)
++        result = await super()._read_response(response, request, deadline)
+         if response.data is not None:
+             self._add_ftp_headers(result, response, request)
+         return result
 ```
 
-**File**: `scrapy/core/engine.py` (modified, +9/-6)
+**File**: `scrapy/core/downloader/handlers/_base_streaming.py` (modified, +56/-35)
 ```diff
-@@ -791,10 +791,11 @@ async def open_spider_async(self, *, close_if_idle: bool = True) -> None:
-             # is open.
-             try:
-                 self._start = await self.scraper.spidermw.process_start()
--                if hasattr(scheduler, "open") and (
--                    d := scheduler.open(self.crawler.spider)
--                ):
--                    await maybe_deferred_to_future(d)
-+                if hasattr(scheduler, "open"):
-+                    await ensure_awaitable(
-+                        scheduler.open(self.crawler.spider),
-+                        _warn=global_object_name(scheduler.open),
-+                    )
-                 await self.scraper.open_spider_async()
-             except CloseSpider as exc:
-                 await self.close_spider_async(reason=exc.reason, error=exc.error)
-@@ -1009,8 +1010,10 @@ async def close_spider_async(  # noqa: PLR0912, PLR0915
- 
-         if hasattr(self._slot.scheduler, "close"):
-             try:
--                if (d := self._slot.scheduler.close(reason)) is not None:
--                    await maybe_deferred_to_future(d)
-+                await ensure_awaitable(
-+                    self._slot.scheduler.close(reason),
-+                    _warn=global_object_name(self._slot.scheduler.close),
-+                )
-             except Exception:
-                 logger.exception("Scheduler close failure", extra={"spider": spider})
- 
-```
-
-**File**: `scrapy/core/scheduler.py` (modified, +45/-9)
-```diff
-@@ -4,16 +4,19 @@
- import logging
- from abc import abstractmethod
- from pathlib import Path
--from typing import TYPE_CHECKING, Any, Self, cast
-+from typing import TYPE_CHECKING, Any, ParamSpec, Self, cast
- 
--# working around https://github.com/sphinx-doc/sphinx/issues/10400
--from twisted.internet.defer import Deferred  # noqa: TC002
-+from twisted.internet.defer import Deferred
- 
- from scrapy.spiders import Spider  # noqa: TC001
- from scrapy.utils.conf import _job_dir
-+from scrapy.utils.defer import ensure_awaitable
- from scrapy.utils.misc import build_from_crawler, load_object
-+from scrapy.utils.python import global_object_name
- 
- if TYPE_CHECKING:
-+    from collections.abc import Callable, Coroutine
-+
-     from queuelib.queue import BaseQueue
- 
-     from scrapy.crawler import Crawler
-@@ -25,6 +28,33 @@
- 
- logger = logging.getLogger(__name__)
- 
-+_P = ParamSpec("_P")
-+
-+
-+def _call_dupefilter(
-+    f: Callable[_P, Coroutine[Any, Any, None] | Deferred[None] | None],
-+    *args: _P.args,
-+    **kwargs: _P.kwargs,
-+) -> Coroutine[Any, Any, None] | None:
-+    """Call a method of a custom dupefilter from the default scheduler,
-+    warning the correct amount of times."""
-+    result = f(*args, **kwargs)
-+    if not isinstance(result, Deferred):
-+        # happy path
-+        return result
-+
-+    awaitable = ensure_awaitable(result, _warn=global_object_name(f))
-+
-+    # This wrapping is needed so that we don't return a deferred directly
-+    # (on non-asyncio reactors). Otherwise there will be a second warning from
-+    # an ensure_awaitable() call in ExecutionEngine (and that call is needed
-+    # for non-default schedulers).
-+
-+    async def wait() -> None:
-+        await awaitable
-+
-+    return wait()
-+
- 
- class BaseSchedulerMeta(type):
-     """
-@@ -78,20 +108,26 @@ def from_crawler(cls, crawler: Crawler) -> Self:
-         """
-         return cls()
- 
--    def open(self, spider: Spider) -> Deferred[None] | None:
-+    def open(self, spider: Spider) -> Coroutine[Any, Any, None] | Deferred[None] | None:
-         """
-         Called when the spider is opened by the engine. It receives the spider
-         instance as argument and it's useful to execute initialization code.
- 
-+        .. versionchanged:: VERSION
-+           This method may now be a coroutine function (``async def``).
-+
-         :param spider: the spider object for the current crawl
-         :type spider: :class:`~scrapy.spiders.Spider`
-         """
- 
--    def close(self, reason: str) -> Deferred[None] | None:
-+    def close(self, reason: str) -> Coroutine[Any, Any, None] | Deferred[None] | None:
-         """
-         Called when the spider is closed by the engine. It receives the reason why the crawl
-         finished as argument and it's useful to execute cleaning code.
- 
-+        .. versionchanged:: VERSION
-+           This method may now be a coroutine function (``async def``).
-+
-         :param reason: a string which describes the reason why the spider was closed
-         :type reason: :class:`str`
-         """
-@@ -361,7 +397,7 @@ def _get_start_queue_cls(
-     def has_pending_requests(self) -> bool:
-         return len(self) > 0
- 
--    def open(self, spider: Spider) -> Deferred[None] | None:
-+    def open(self, spider: Spider) -> Coroutine[Any, Any, None] | None:
-         """
-         (1) initialize the memory queue
-         (2) initialize the disk queue if the ``jobdir`` argument wasn't empty
-@@ -372,9 +408,9 @@ def open(self, spider: Spider) -> Deferred[None] | None:
-         self.dqs: PriorityQueueProtocol | None = self._dq() if self.dqdir else None
-         self._dqs_changes = 0
-         self._sync_dqs_state()
--        return self.df.open()
-+        return _call_dupefilter(self.df.open)
- 
--    def close(self, reason: str) -> Deferred[None] | None:
-+    def close(self, reason: str) -> Coroutine[Any, Any, None] | None:
-         """
-         (1) dump pending requests to disk if there is a disk queue
-         (2) return the result of the dupefilter's ``close`` method
-@@ -383,7 +419,7 @@ def close(self, reason: str) -> Deferred[None] | None:
-             state = self.dqs.close()
-             assert isinstance(self.dqdir, str)
-             self._write_dqs_state(self.dqdir, state)
--        return self.df.close(reason)
-+        return _call_dupefilter(self.df.close, reason)
- 
-     def enqueue_request(self, request: Request) -> bool:
-         """
-```
-
-**File**: `scrapy/dupefilters.py` (modified, +4/-4)
-```diff
-@@ -5,7 +5,7 @@
- from pathlib import Path
- from shutil import rmtree
- from tempfile import mkdtemp
--from typing import TYPE_CHECKING, Self
-+from typing import TYPE_CHECKING, Any, Self
- from warnings import warn
- 
- from scrapy.exceptions import ScrapyDeprecationWarning
-@@ -18,7 +18,7 @@
- )
- 
- if TYPE_CHECKING:
--    from collections.abc import Iterator
-+    from collections.abc import Coroutine, Iterator
- 
-     from twisted.internet.defer import Deferred
- 
-@@ -54,10 +54,10 @@ def from_crawler(cls, crawler: Crawler) -> Self:
-     def request_seen(self, request: Request) -> bool:
-         return False
- 
--    def open(self) -> Deferred[None] | None:
-+    def open(self) -> Coroutine[Any, Any, None] | Deferred[None] | None:
-         pass
- 
--    def close(self, reason: str) -> Deferred[None] | None:
-+    def close(self, reason: str) -> Coroutine[Any, Any, None] | Deferred[None] | None:
-         pass
- 
-     def log(self, request: Request, spider: Spider) -> None:
-```
-
-**File**: `tests/test_engine_lifecycle.py` (modified, +2/-2)
-```diff
-@@ -83,9 +83,9 @@ def enqueue_request(self, request: Any) -> bool:
-     def next_request(self) -> Any:
-         return None
- 
--    def close(self, reason: str) -> Deferred[None]:
-+    async def close(self, reason: str) -> None:
-         self.entered_close.callback(None)
--        return self.unblock_close
-+        await maybe_deferred_to_future(self.unblock_close)
- 
- 
- class ClosingPipeline:
-```
-
-**File**: `tests/test_scheduler_base.py` (modified, +123/-10)
-```diff
-@@ -1,21 +1,26 @@
+@@ -1,9 +1,11 @@
  from __future__ import annotations
  
++import asyncio
+ import base64
  import logging
--from typing import TYPE_CHECKING, Any
-+from typing import TYPE_CHECKING, Any, Self
- from urllib.parse import urljoin
+ import time
+ from abc import abstractmethod
++from contextlib import AsyncExitStack
+ from io import BytesIO
+ from pathlib import Path
+ from typing import (
+@@ -24,6 +26,7 @@
+ from scrapy import Request, signals
+ from scrapy.exceptions import (
+     DownloadCancelledError,
++    DownloadTimeoutError,
+     NotConfigured,
+     ResponseDataLossError,
+ )
+@@ -72,13 +75,12 @@ class BaseStreamingDownloadHandler(BaseHttpDownloadHandler, Generic[_ResponseT])
  
- import pytest
- from twisted.internet import defer
+     _DEFAULT_CONNECT_TIMEOUT: ClassVar[float] = 10
+     experimental: ClassVar[bool] = False
+-    requires_asyncio: ClassVar[bool] = True
+     # require subclasses to disable proxies explicitly with an explanation
+     supports_proxies: ClassVar[bool] = True
+     supports_per_request_bindaddress: ClassVar[bool] = False
  
- from scrapy.core.scheduler import BaseScheduler
-+from scrapy.dupefilters import BaseDupeFilter
-+from scrapy.exceptions import ScrapyDeprecationWarning
- from scrapy.http import Request
- from scrapy.spiders import Spider
- from scrapy.utils.httpobj import urlparse_cached
-+from scrapy.utils.python import global_object_name
- from scrapy.utils.request import fingerprint
-+from scrapy.utils.spider import DefaultSpider
- from scrapy.utils.test import get_crawler
--from tests.utils.decorators import coroutine_test, inline_callbacks_test
-+from tests.utils.decorators import coroutine_test
+     def __init__(self, crawler: Crawler):
+-        if self.requires_asyncio and not is_asyncio_available():  # pragma: no cover
++        if not is_asyncio_available():  # pragma: no cover
+             raise NotConfigured(f"{type(self).__name__} requires the asyncio support.")
+         self._check_deps_installed()
+         super().__init__(crawler)
+@@ -167,15 +169,27 @@ async def download_request(self, request: Request) -> Response:
+                 f"The 'bindaddress' request meta key is not supported by"
+                 f" {type(self).__name__} and will be ignored."
+             )
+-        timeout: float = request.meta.get(
+-            "download_timeout", self._DEFAULT_CONNECT_TIMEOUT
++        timeout: float = (
++            request.meta.get("download_timeout") or self._DEFAULT_CONNECT_TIMEOUT
+         )
++        deadline = asyncio.get_running_loop().time() + timeout
+         start_time = time.monotonic()
+-        async with self._make_request(request, timeout) as response:
+-            request.meta["download_latency"] = time.monotonic() - start_time
+-            return await self._read_response(response, request)
+-
+-    async def _read_response(self, response: _ResponseT, request: Request) -> Response:
++        try:
++            async with AsyncExitStack() as stack:
++                async with asyncio.timeout_at(deadline):
++                    response = await stack.enter_async_context(
++                        self._make_request(request, timeout)
++                    )
++                request.meta["download_latency"] = time.monotonic() - start_time
++                return await self._read_response(response, request, deadline)
++        except TimeoutError as e:
++            raise DownloadTimeoutError(
++                f"Getting {request.url} took longer than {timeout} seconds."
++            ) from e
++
++    async def _read_response(
++        self, response: _ResponseT, request: Request, deadline: float
++    ) -> Response:
+         maxsize: int = request.meta.get("download_maxsize", self._default_maxsize)
+         warnsize = get_warnsize(request.meta, self._default_warnsize)
  
- if TYPE_CHECKING:
-+    from scrapy.crawler import Crawler
-     from tests.mockserver.http import MockServer
+@@ -215,32 +229,37 @@ async def _read_response(self, response: _ResponseT, request: Request) -> Respon
  
- PATHS = ["/a", "/b", "/c"]
-@@ -44,11 +49,11 @@ def next_request(self) -> Request | None:
+             bytes_received = 0
+             try:
+-                async for chunk in self._iter_body_chunks(response):
+-                    response_body.write(chunk)
+-                    bytes_received += len(chunk)
+-
+-                    if stop_download := check_stop_download(
+-                        signals.bytes_received, self.crawler, request, data=chunk
+-                    ):
+-                        return make_response(
+-                            **make_response_base_args,
+-                            body=self._get_body(response_body, response, request),
+-                            stop_download=stop_download,
+-                        )
+-
+-                    if maxsize and bytes_received > maxsize:
+-                        response_body.truncate(0)
+-                        self._cancel_maxsize(
+-                            bytes_received, maxsize, request, expected=False
+-                        )
+-
+-                    if warnsize and bytes_received > warnsize and not reached_warnsize:
+-                        reached_warnsize = True
+-                        logger.warning(
+-                            get_warnsize_msg(
+-                                bytes_received, warnsize, request, expected=False
++                async with asyncio.timeout_at(deadline):
++                    async for chunk in self._iter_body_chunks(response):
++                        response_body.write(chunk)
++                        bytes_received += len(chunk)
++
++                        if stop_download := check_stop_download(
++                            signals.bytes_received, self.crawler, request, data=chunk
++                        ):
++                            return make_response(
++                                **make_response_base_args,
++                                body=self._get_body(response_body, response, request),
++                                stop_
+```
+
+**File**: `scrapy/core/downloader/handlers/_httpx.py` (modified, +3/-1)
+```diff
+@@ -202,7 +202,9 @@ async def _make_request(
+                 timeout=timeout,
+             ) as response:
+                 yield response
+-        except httpx.TimeoutException as e:
++        except httpx.TimeoutException as e:  # pragma: no cover
++            # this can only fire with a low-res loop clock, as the timer starts
++            # later than the BaseStreamingDownloadHandler one
+             raise DownloadTimeoutError(
+                 f"Getting {request.url} took longer than {timeout} seconds."
+             ) from e
+```
+
+**File**: `tests/mockserver/http.py` (modified, +2/-0)
+```diff
+@@ -45,6 +45,7 @@
+     ResponseHeadersResource,
+     SetCookie,
+     Status,
++    Trickle,
+     UriResource,
+     put_child,
+ )
+@@ -97,6 +98,7 @@ def __init__(self) -> None:
+         put_child(self, b"numbers", Data(b"".join(numbers), "text/plain"))
+         put_child(self, b"wait", ForeverTakingResource())
+         put_child(self, b"hang-after-headers", ForeverTakingResource(write=True))
++        put_child(self, b"trickle", Trickle())
+         put_child(self, b"host", HostHeaderResource())
+         put_child(self, b"client-ip", ClientIPResource())
+         put_child(self, b"broken", BrokenDownloadResource())
+```
+
+**File**: `tests/mockserver/http_resources.py` (modified, +20/-0)
+```diff
+@@ -211,6 +211,26 @@ def _delayedRender(self, request: Request, n: float) -> None:
+         request.finish()
  
  
- class SimpleScheduler(MinimalScheduler):
--    def open(self, spider: Spider) -> defer.Deferred[str]:
--        return defer.succeed("open")
-+    async def open(self, spider: Spider) -> str:
-+        return "open"
++class Trickle(LeafResource):
++    """Send a body of *n* bytes one byte at a time, one every *interval*
++    seconds."""
++
++    def render_GET(self, request: Request) -> int:
++        n = getarg(request, b"n", 10, type_=int)
++        interval = getarg(request, b"interval", 0.1, type_=float)
++        self._write(request, n, interval)
++        return NOT_DONE_YET
++
++    def _write(self, request: Request, remaining: int, interval: float) -> None:
++        request.write(b"x")
++        if remaining == 1:
++            request.finish()
++            return
++        self.deferRequest(
++            request, interval, self._write, request, remaining - 1, interval
++        )
++
++
+ class Status(LeafResource):
+     def render_GET(self, request: Request) -> bytes:
+         n = getarg(request, b"n", 200, type_=int)
+```
+
+**File**: `tests/test_downloader_handler_aioftp.py` (modified, +31/-3)
+```diff
+@@ -231,12 +231,28 @@ async def test_connection_lost() -> None:
+             await _download(Request(url))
  
--    def close(self, reason: str) -> defer.Deferred[str]:
--        return defer.succeed("close")
-+    async def close(self, reason: str) -> str:
-+        return "close"
  
-     def __len__(self) -> int:
-         return len(self.requests)
-@@ -123,9 +128,9 @@ class TestSimpleScheduler(InterfaceCheckMixin):
-     def setup_method(self):
-         self.scheduler = SimpleScheduler()
++async def _write_slowly(
++    writer: asyncio.StreamWriter, data: bytes, interval: float
++) -> None:
++    """Write *data* one byte every *interval* seconds, until *writer* is
++    closed."""
++    for i in range(len(data)):
++        if writer.is_closing():
++            return
++        writer.write(data[i : i + 1])
++        await asyncio.sleep(interval)
++
++
+ def _fake_ftp(
+-    retr_reply: bytes | None, data: bytes = b""
++    retr_reply: bytes | None, data: bytes = b"", interval: float = 0
+ ) -> Callable[[asyncio.StreamReader, asyncio.StreamWriter], Any]:
+     """Return a minimal FTP server connection handler that sends *data*, if
+     any, and then answers RETR with *retr_reply*, or hangs if *retr_reply* is
+-    ``None``."""
++    ``None``.
++
++    If *interval* is set, *data* is sent one byte every *interval* seconds,
++    until the client closes the data connection.
++    """
  
--    @inline_callbacks_test
--    def test_enqueue_dequeue(self):
--        open_result = yield self.scheduler.open(Spider("foo"))
+     async def handle(
+         reader: asyncio.StreamReader, writer: asyncio.StreamWriter
+@@ -267,7 +283,10 @@ def on_data_connection(
+                 w = await data_writer
+                 if data:
+                     writer.write(b"150 Sending\r\n")
+-                    w.write(data)
++                    if interval:
++                        await _write_slowly(w, data, interval)
++                    else:
++                        w.write(data)
+                 if retr_reply is None:
+                     await reader.read()
+                 w.close()
+@@ -334,6 +353,15 @@ async def test_timeout_partial_response() -> None:
+     assert response.flags == ["dataloss"]
+ 
+ 
++@coroutine_test
++async def test_timeout_slow_transfer() -> None:
++    # the server sends data bytes well within the timeout of each other, but
++    # the whole transfer takes longer than the timeout
++    async with _serve(_fake_ftp(b"226 Done\r\n", b"x" * 20, interval=0.1)) as url:
++        with pytest.raises(DownloadTimeoutError):
++            await _download(Request(url, meta={"download_timeout": 0.5}))
++
++
+ @coroutine_test
+ async def test_local_filename(ftp_server: MockFTPServer, tmp_path: Path) -> None:
+     local_filename = str(tmp_path / "file.txt").encode()
+```
+
+**File**: `tests/utils/bases/download_handlers_http.py` (modified, +32/-0)
+```diff
+@@ -638,6 +638,38 @@ async def test_timeout_download_from_spider_server_hangs_partial_response(
+         assert response.body == b"some bytes"
+         assert response.flags == ["dataloss"]
+ 
 +    @coroutine_test
-+    async def test_enqueue_dequeue(self):
-+        open_result = await self.scheduler.open(Spider("foo"))
-         assert open_result == "open"
-         assert not self.scheduler.has_pending_requests()
- 
-@@ -145,7 +150,7 @@ def test_enqueue_dequeue(self):
-         assert not self.scheduler.has_pending_requests()
-         assert len(self.scheduler) == 0
- 
--        close_result = yield self.scheduler.close("")
-+        close_result = await self.scheduler.close("")
-         assert close_result == "close"
- 
- 
-@@ -169,3 +174,111 @@ async def test_crawl(
- 
- class TestSimpleSchedulerCrawl(TestMinimalSchedulerCrawl):
-     scheduler_cls = SimpleScheduler
++    async def test_timeout_download_from_spider_slow_body(
++        self, mockserver: MockServer
++    ) -> None:
++        # the server sends body bytes well within the timeout of each other,
++        # but the whole body takes longer than the timeout
++        meta = {"download_timeout": 0.5}
++        request = Request(
++            mockserver.url("/trickle?n=20&interval=0.1", is_secure=self.is_secure),
++            meta=meta,
++        )
++        async with self.get_dh() as download_handler:
++            with pytest.raises(DownloadTimeoutError):
++                await download_handler.download_request(request)
 +
-+
-+class CallsSpider(DefaultSpider):
-+    def __init__(self, *args: Any, **kwargs: Any):
-+        super().__init__(*args, **kwargs)
-+        self.calls: list[str] = []
-+
-+
-+class CoroutineScheduler(MinimalScheduler):
-+    async def open(self, spider: Spider) -> None:
-+        assert isinstance(spider, CallsSpider)
-+        self.spider = spider
-+        spider.calls.append("open")
-+
-+    async def close(self, reason: str) -> None:
-+        self.spider.calls.append("close")
-+
-+
-+class DeferredScheduler(MinimalScheduler):
-+    def open(self, spider: Spider) -> defer.Deferred[None]:
-+        assert isinstance(spider, CallsSpider)
-+        self.spider = spider
-+        spider.calls.append("open")
-+        return defer.succeed(None)
-+
-+    def close(self, reason: str) -> defer.Deferred[None]:
-+        self.spider.calls.append("close")
-+        return defer.succeed(None)
-+
-+
-+class RecordingDupeFilter(BaseDupeFilter):
-+    def __init__(self, crawler: Crawler):
-+        self.crawler = crawler
-+
-+    @classmethod
-+    def from_crawler(cls, crawler: Crawler) -> Self:
-+        return cls(crawler)
-+
-+    def record(self, call: str) -> None:
-+        assert isinstance(self.crawler.spider, CallsSpider)
-+        self.crawler.spider.calls.append(call)
-+
-+
-+class CoroutineDupeFilter(RecordingDupeFilter):
-+    async def open(self) -> None:
-+        self.record("open")
-+
-+    async def close(self, reason: str) -> None:
-+        self.record("close")
-+
-+
-+class DeferredDupeFilter(RecordingDupeFilter):
-+    def open(self) -> defer.Deferred[None]:
-+        self.record("open")
-+        return defer.succeed(None)
-+
-+    def close(self, reason: str) -> defer.Deferred[None]:
-+        self.record("close")
-+        return defer.succeed(None)
-+
-+
-+class TestOpenClose:
-+    """Scheduler and dupefilter open() and close() are awaited, and returning
-+    a Deferred from them is deprecated."""
-+
-+    @staticmethod
-+    async def crawl(settings: dict[str, Any]) -> list[str]:
-+        crawler = get_crawler(CallsSpider, settings)
-+        await crawler.crawl_async()
-+        assert isinstance(crawler.spider, CallsSpider)
-+        return crawler.spider.calls
-+
-+    @pytest.mark.parametrize(
-+        "settings",
-+        [
-+            {"SCHEDULER": CoroutineScheduler},
-+            {"DUPEFILTER_CLASS": CoroutineDupeFilter},
-+        ],
-+    )
 +    @coroutine_test
-+    async def test_coroutine(self, settings: dict[str, Any]) -> None:
-+        assert await self.crawl(settings) == ["open", "close"]
++    async def test_timeout_download_from_spider_slow_body_partial_response(
++        self, mockserver: MockServer
++    ) -> None:
++        if not self.handler_supports_partial_response_on_timeout:
++            pytest.skip("This handler doesn't support partial responses on timeout")
++        meta = {"download_timeout": 0.5, "download_fail_on_dataloss": False}
++        request = Request(
++            mockserver.url("/trickle?n=20&interval=0.1", is_secure=self.is_secure),
++            meta=meta,
++        )
++        async with self.get_dh() as download_handler:
++            response = await download_handler.download_request(request)
++        assert response.status == 200
++        assert 0 < len(response.body) < 20
++        assert response.flags == ["dataloss"]
 +
-+    @pytest.mark.parametrize(
-+        ("setting", "cls"),
+     @pytest.mark.parametrize("send_header", [True, False])
+     @coroutine_test
+     async def test_host_header(self, send_header: bool, mockserver: MockServer) -> None:
 ```
 
 ---
 
-### Incident Patch 2: `ad817afb` (2026-11-10)
-**Commit Message**: Remove remnants of w3lib < 2.6 support. (#8474)
+### Incident Patch 2: `953a7f42` (2026-11-16)
+**Commit Message**: Fix a merge error. (#8495)
 
-**File**: `scrapy/core/downloader/handlers/_base_streaming.py` (modified, +3/-2)
+**File**: `scrapy/spiders/sitemap.py` (modified, +1/-0)
 ```diff
-@@ -19,6 +19,8 @@
+@@ -20,6 +20,7 @@
+     gzip_magic_number,
  )
- from urllib.parse import quote, urlsplit
+ from scrapy.utils._sitemap import Sitemap, sitemap_urls_from_robots
++from scrapy.utils.httpobj import urlparse_cached
+ from scrapy.utils.url import _origin
  
-+from w3lib.url import add_http_if_no_scheme
+ if TYPE_CHECKING:
+```
+
+**File**: `tests/test_spider_sitemap.py` (modified, +1/-1)
+```diff
+@@ -1066,7 +1066,7 @@ def test_sitemap_schemes_robots_parsed_signal(self):
+         crawler = get_crawler(self.spider_class, settings_dict={"ROBOTSTXT_OBEY": True})
+         spider = self.spider_class.from_crawler(crawler, "example.com")
+         crawler.engine = mock.MagicMock()
+-        spider._signal_only_netlocs.add("www.example.com")
++        spider._signal_only_origins.add(("http", "www.example.com"))
+ 
+         class FakeRobotParser:
+             def sitemaps(self):
+```
+
+---
+
+### Incident Patch 3: `0eb447b3` (2026-11-16)
+**Commit Message**: Return True from is_asyncio_available() before a reactor or loop exists. (#8494)
+
+**File**: `scrapy/extensions/remote_control.py` (modified, +1/-4)
+```diff
+@@ -99,10 +99,7 @@ class RemoteControl:
+     def __init__(self, crawler: Crawler):
+         if not crawler.settings.getbool("REMOTE_CONTROL_ENABLED"):
+             raise NotConfigured
+-        if (
+-            crawler.settings.getbool("TWISTED_REACTOR_ENABLED")
+-            and not is_asyncio_available()
+-        ):
++        if not is_asyncio_available():
+             raise NotConfigured(
+                 f"{type(self).__name__} requires the asyncio support."
+                 f" You can set the REMOTE_CONTROL_ENABLED setting to False to remove this warning."
+```
+
+**File**: `scrapy/utils/asyncio.py` (modified, +19/-20)
+```diff
+@@ -57,40 +57,39 @@ def is_asyncio_available() -> bool:
+ 
+     .. versionadded:: 2.14
+ 
++    .. versionchanged:: 2.15.0
++        This function now also returns ``True`` if there is a running asyncio
++        loop, even if no Twisted reactor is installed.
 +
- from scrapy import Request, signals
- from scrapy.exceptions import (
-     DownloadCancelledError,
-@@ -35,7 +37,6 @@
-     normalize_bind_address,
- )
- from scrapy.utils.asyncio import is_asyncio_available
--from scrapy.utils.url import _add_http_if_no_scheme
++    .. versionchanged:: VERSION
++        This function now returns ``True`` instead of raising
++        :exc:`RuntimeError` if there is neither a running asyncio loop nor an
++        installed Twisted reactor.
++
+     This function returns ``True`` if there is a running asyncio event loop. If
+     there is no such loop, it returns ``True`` if the Twisted reactor that is
+     installed is
+-    :class:`~twisted.internet.asyncioreactor.AsyncioSelectorReactor`, returns
+-    ``False`` if a different reactor is installed, and raises a
+-    :exc:`RuntimeError` if no reactor is installed.
++    :class:`~twisted.internet.asyncioreactor.AsyncioSelectorReactor` or if no
++    reactor is installed, and ``False`` if a different reactor is installed.
  
- from ._base_http import BaseHttpDownloadHandler
- 
-@@ -349,7 +350,7 @@ def _extract_proxy(request: Request) -> tuple[str | None, str | None]:
-         proxy: str | None = request.meta.get("proxy")
-         if not proxy:
-             return None, None
--        proxy = _add_http_if_no_scheme(proxy)
-+        proxy = add_http_if_no_scheme(proxy)
-         auth_header: bytes | None = request.headers.get(b"Proxy-Authorization")
-         return proxy, auth_header.decode("ascii") if auth_header else None
- 
-```
-
-**File**: `scrapy/core/downloader/handlers/http11.py` (modified, +2/-2)
-```diff
-@@ -41,6 +41,7 @@
- from twisted.web.http import PotentialDataLoss, _DataLoss
- from twisted.web.http_headers import Headers as TxHeaders
- from twisted.web.iweb import UNKNOWN_LENGTH, IBodyProducer, IResponse
-+from w3lib.url import add_http_if_no_scheme
- from zope.interface import implementer
- 
- from scrapy import Request, signals
-@@ -69,7 +70,6 @@
- from scrapy.utils.defer import maybe_deferred_to_future
- from scrapy.utils.deprecate import warn_on_deprecated_spider_attribute
- from scrapy.utils.httpobj import urlparse_cached
--from scrapy.utils.url import _add_http_if_no_scheme
- 
- from ._base_http import BaseHttpDownloadHandler
- 
-@@ -802,7 +802,7 @@ def _get_agent(self, request: Request, timeout: float) -> Agent:
-         bindaddress = normalize_bind_address(bindaddress)
-         proxy = request.meta.get("proxy")
-         if proxy:
--            proxy = _add_http_if_no_scheme(proxy)
-+            proxy = add_http_if_no_scheme(proxy)
-             proxy_parsed = urlparse_cached(proxy)
-             proxy_host = proxy_parsed.hostname
-             proxy_port = proxy_parsed.port
-```
-
-**File**: `scrapy/utils/_deps_compat.py` (modified, +0/-6)
-```diff
-@@ -5,7 +5,6 @@
- from parsel import __version__ as PARSEL_VERSION_STRING
- from twisted import version as TWISTED_VERSION
- from twisted.python.versions import Version as TxVersion
--from w3lib import __version__ as W3LIB_VERSION_STRING
- 
- # improved urllib.robotparser, https://github.com/python/cpython/pull/149374
- STDLIB_IMPROVED_ROBOTFILEPARSER = sys.version_info >= (3, 14, 5) or (
-@@ -25,8 +24,3 @@
- PYOPENSSL_VERSION = Version(PYOPENSSL_VERSION_STRING)
- # SSL.Context.set_cipher_list() creates a temporary connection, making the context immutable
- PYOPENSSL_SET_CIPHER_LIST_TMP_CONN = PYOPENSSL_VERSION < Version("25.2.0")
+     The case when this function returns ``False`` is deprecated, and in a
+     future Scrapy version this function will always return ``True``. Use it
+     only if you need to support non-asyncio reactors or if you want to provide
+     a better error message on those.
 -
--W3LIB_VERSION = Version(W3LIB_VERSION_STRING)
--# safe_url_string() drops the brackets of an IPv6 address literal in the
--# netloc, https://github.com/scrapy/w3lib/pull/253
--W3LIB_STRIPS_IPV6_BRACKETS = Version("2.0.0") <= W3LIB_VERSION < Version("2.4.1")
-```
-
-**File**: `scrapy/utils/url.py` (modified, +8/-16)
-```diff
-@@ -72,23 +72,15 @@ def url_has_any_extension(
-     return any(lowercase_path.endswith(ext) for ext in extensions)
- 
- 
--def _add_http_if_no_scheme(url: str) -> str:
--    if not re.match(r"^\w+://", url, flags=re.IGNORECASE):
--        scheme = "http:" if urlparse_cached(url).netloc else "http://"
--        url = scheme + url
--    return url
+-    .. note:: As this function uses :func:`asyncio.get_running_loop()`, it will
+-        only detect the event loop if called in the same thread and from the
+-        code that runs inside that loop (this shouldn't be a problem when
+-        calling it from code such as spiders and Scrapy components, if Scrapy
+-        is run using one of the supported ways).
 -
--
- def add_http_if_no_scheme(url: str) -> str:
-     """Add http as the default scheme if it is missing from the url."""
--    if hasattr(w3lib.url, "add_http_if_no_scheme"):
--        warnings.warn(
--            "scrapy.utils.url.add_http_if_no_scheme() is deprecated, use "
--            "w3lib.url.add_http_if_no_scheme() instead.",
--            ScrapyDeprecationWarning,
--            stacklevel=2,
+-    .. versionchanged:: 2.15.0
+-        This function now also returns ``True`` if there is a running asyncio
+-        loop, even if no Twisted reactor is installed.
+     """
+ 
+-    if _has_running_loop():
++    # (not _has_running_loop() and not is_reactor_installed()) means that
++    # either this is very early code (before the reactor/loop are set up) or a
++    # different thread of a reactorless crawl. In either case, returning False
++    # here is only wrong if a non-asyncio reactor will installed later, which
++    # is deprecated.
++    # Doing this is a trade-off, see #7812.
++
++    if _has_running_loop() or not is_reactor_installed():
+         return True
+ 
+     # Check if there is an installed asyncio reactor (it doesn't need to be
+     # running).
+-    if not is_reactor_installed():
+-        raise RuntimeError(
+-            "is_asyncio_available() called without an installed reactor"
+-            " or running asyncio loop."
 -        )
--    return _add_http_if_no_scheme(url)
-+    warnings.warn(
-+        "scrapy.utils.url.add_http_if_no_scheme() is deprecated, use "
-+        "w3lib.url.add_http_if_no_scheme() instead.",
-+        ScrapyDeprecationWarning,
-+        stacklevel=2,
-+    )
-+    return w3lib.url.add_http_if_no_scheme(url)
+-
+     return _is_asyncio_reactor_installed()
  
  
- def _is_posix_path(string: str) -> bool:
-@@ -138,7 +130,7 @@ def guess_scheme(url: str) -> str:
-     http:// otherwise."""
-     if _is_filesystem_path(url):
-         return any_to_uri(url)
--    return _add_http_if_no_scheme(url)
-+    return w3lib.url.add_http_if_no_scheme(url)
- 
- 
- def strip_url(
 ```
 
-**File**: `tests/AsyncCrawlerProcess/caching_hostname_resolver_ipv6.py` (modified, +1/-2)
+**File**: `tests/CrawlerProcess/asyncio_enabled_reactor.py` (modified, +2/-6)
 ```diff
-@@ -10,8 +10,7 @@ class CachingHostnameResolverSpider(scrapy.Spider):
-     name = "caching_hostname_resolver_spider"
+@@ -19,12 +19,8 @@
+ else:
+     raise RuntimeError("_is_asyncio_reactor_installed() did not raise RuntimeError.")
  
-     async def start(self):
--        # w3lib older than 2.4.1 strips the brackets, making the URL invalid.
--        yield scrapy.Request("http://[::1]", meta={"verbatim_url": True})
-+        yield scrapy.Request("http://[::1]")
+-try:
+-    is_asyncio_available()
+-except RuntimeError:
+-    pass
+-else:
+-    raise RuntimeError("is_asyncio_available() did not raise RuntimeError.")
++if not is_asyncio_available():
++    raise RuntimeError("is_asyncio_available() returned False without a reactor.")
  
- 
- if __name__ == "__main__":
+ if is_reactor_installed():
+     raise RuntimeError(
 ```
 
-**File**: `tests/AsyncCrawlerProcess/default_name_resolver.py` (modified, +1/-2)
+**File**: `tests/test_utils_asyncio.py` (modified, +5/-0)
 ```diff
-@@ -11,8 +11,7 @@ class IPv6Spider(scrapy.Spider):
-     name = "ipv6_spider"
- 
-     async def start(self):
--        # w3lib older than 2.4.1 strips the brackets, making the URL invalid.
--        yield scrapy.Request("http://[::1]", meta={"verbatim_url": True})
-+        yield scrapy.Request("http://[::1]")
+@@ -32,6 +32,11 @@ async def test_is_asyncio_available(reactor_pytest: str) -> None:
+     assert is_asyncio_available() == (reactor_pytest != "default")
  
  
- if __name__ == "__main__":
-```
-
-**File**: `tests/CrawlerProcess/caching_hostname_resolver_ipv6.py` (modified, +1/-2)
-```diff
-@@ -10,8 +10,7 @@ class CachingHostnameResolverSpider(scrapy.Spider):
-     name = "caching_hostname_resolver_spider"
- 
-     async def start(self):
--        # w3lib older than 2.4.1 strips the brackets, making the URL invalid.
--        yield scrapy.Request("http://[::1]", meta={"verbatim_url": True})
-+        yield scrapy.Request("http://[::1]")
- 
- 
- if __name__ == "__main__":
-```
-
-**File**: `tests/CrawlerProcess/default_name_resolver.py` (modified, +1/-2)
-```diff
-@@ -11,8 +11,7 @@ class IPv6Spider(scrapy.Spider):
-     name = "ipv6_spider"
- 
-     async def start(self):
--        # w3lib older than 2.4.1 strips the brackets, making the URL invalid.
--        yield scrapy.Request("http://[::1]", meta={"verbatim_url": True})
-+        yield scrapy.Request("http://[::1]")
- 
- 
- if __name__ == "__main__":
++def test_is_asyncio_available_without_running_loop(reactor_pytest: str) -> None:
++    # with --reactor=none there is neither a reactor nor a running loop here
++    assert is_asyncio_available() == (reactor_pytest != "default")
++
++
+ _context_var: contextvars.ContextVar[str | None] = contextvars.ContextVar(
+     "_context_var", default=None
+ )
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8484** (closed): Fix deflate responses losing their last bytes (@WaqarAnwar)
-- **PR #8483** (closed): Support more curl options in Request.from_curl() (@motasimfuad)
-- **PR #8480** (closed): Use native coroutines for FTP file storage (@BrownieCoder)
-- **PR #8479** (2026-11-10): Support coros in schedulers and dupefilters. (@wRAR)
-- **PR #8478** (closed): Avoid scanning every slot on each DownloaderAwarePriorityQueue pop (@patrick-immometrica)
-- **PR #8477** (closed): Look up allow_domains and deny_domains in a set in LxmlLinkExtractor (@patrick-immometrica)
+- **PR #8507** (closed): Restore the urlparse_cached import in SitemapSpider (@poojithparchuri-iiitk)
+- **PR #8506** (closed): Fix JsonRequest.replace ignoring replacement dumps_kwargs (@EnesKartal)
+- **PR #8505** (closed): Add a contract_failed signal (@DeviousCardi)
+- **PR #8504** (closed): Support common curl options in Request.from_curl (-A, -e, -x, -G, --data-binary, --json) (@tony1233200)
+- **PR #8503** (closed): Stream file contents when persisting to filesystem and GCS stores (@tony1233200)
+- **PR #8502** (closed): Encode JSON feeds consistently (@sanidhyasaluja)
 
 ---
 
@@ -2628,57 +2452,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Support coros in schedulers and dupefilters. (#8479)
+## X. Force download timeouts in BaseStreamingDownloadHandler.
 
 **RULE**:
-When implementing operations in `docs/topics/coroutines.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/topics/settings.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f7b1fd3f`: Support coros in schedulers and dupefilters. (#8479). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aeaec6a5`: Force download timeouts in BaseStreamingDownloadHandler.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/topics/coroutines.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/topics/settings.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
--   The ``open()`` and ``close()`` methods of :ref:`custom schedulers
-    <topics-scheduler>` (see :setting:`SCHEDULER`).
+A value of ``0`` or ``None`` doesn't mean a timeout of 0 or infinity: a
+non-zero handler-specific value will be used instead.
 
-    .. versionadded:: VERSION
-
--   The ``open()`` and ``close()`` methods of custom dupefilters (see
-    :setting:`DUPEFILTER_CLASS`).
-
-    .. versionadded:: VERSION
-
+    This timeout can be set per-request using the :reqmeta:`download_timeout`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
--   Custom scheduler implementations (see :setting:`SCHEDULER`):
-
-    - :meth:`~scrapy.core.scheduler.BaseScheduler.open`
-
-    - :meth:`~scrapy.core.scheduler.BaseScheduler.close`
-
--   Custom dupefilters (see :setting:`DUPEFILTER_CLASS`):
-
-    - ``open()``
-
-    - ``close()``
-
-For example: a custom scheduler needs to define an ``open()`` method that can
-return a :class:`~twisted.internet.defer.Deferred` object. You can write a
-method that works with Deferreds and returns one directly, or you can write a
-coroutine and convert it into a function that returns a Deferred with
-:func:`~scrapy.utils.defer.deferred_f_from_coro_f`.
-
+// Induced defect failure mode:
+    This timeout can be per-request using the :reqmeta:`download_timeout`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f7b1fd3f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aeaec6a5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

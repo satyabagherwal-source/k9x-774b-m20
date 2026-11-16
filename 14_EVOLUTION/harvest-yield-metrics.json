@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T12:53:09.556Z",
-  "total_cycles_completed": 9861,
-  "total_learnings_persisted": 9861,
-  "total_rules_promoted": 9467,
+  "last_updated": "2026-11-16T13:22:54.309Z",
+  "total_cycles_completed": 9863,
+  "total_learnings_persisted": 9863,
+  "total_rules_promoted": 9469,
   "history": [
-    {
-      "timestamp": "2026-11-15T04:19:24.555Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T04:43:50.119Z",
-      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T04:43:56.245Z",
       "repository": "microsoft/react-native-windows",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T12:53:09.556Z",
       "repository": "oven-sh/bun",
       "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T13:22:49.852Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T13:22:54.309Z",
+      "repository": "scrapy/scrapy",
+      "learningId": "learn-github-scrapy-scrapy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

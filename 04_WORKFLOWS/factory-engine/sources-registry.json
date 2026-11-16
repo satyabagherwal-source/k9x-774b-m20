@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T12:53:12.633Z",
-    "lastVerified": "2026-11-16T12:53:12.633Z",
+    "lastChecked": "2026-11-16T13:22:57.881Z",
+    "lastVerified": "2026-11-16T13:22:57.881Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -157,8 +157,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-16T08:01:25.931Z",
-    "lastVerified": "2026-11-16T08:01:25.931Z",
+    "lastChecked": "2026-11-16T13:22:57.869Z",
+    "lastVerified": "2026-11-16T13:22:57.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -453,12 +453,12 @@
     "revisionIdentifier": "f2c7dcf6"
   },
   "run-llama-llama_index": {
-    "name": "run-llama/llama_index",
+    "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T02:15:09.432Z",
-    "lastVerified": "2026-11-15T02:15:09.432Z",
+    "lastChecked": "2026-11-16T13:22:55.834Z",
+    "lastVerified": "2026-11-16T13:22:55.834Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-run-llama-llama_index",
@@ -467,7 +467,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "99d7433f"
   },
   "nucleoidai-nucleoid": {
     "name": "NucleoidAI/Nucleoid",
@@ -1418,8 +1419,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T02:06:16.173Z",
-    "lastVerified": "2026-11-16T02:06:16.173Z",
+    "lastChecked": "2026-11-16T13:22:52.960Z",
+    "lastVerified": "2026-11-16T13:22:52.960Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -7352,9 +7353,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-11-15T04:04:57.574Z",
+    "lastChecked": "2026-11-16T13:22:50.490Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-11-15T04:04:57.574Z"
+    "lastVerified": "2026-11-16T13:22:50.490Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -9032,14 +9033,14 @@
     "officialUrl": "https://github.com/astral-sh/uv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T17:24:45.701Z",
-    "lastVerified": "2026-11-14T17:24:45.701Z",
+    "lastChecked": "2026-11-16T13:22:48.542Z",
+    "lastVerified": "2026-11-16T13:22:48.542Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "7a148fe4bbf963965d0cd44f9a882710eeb75b20cb17034a385b8f80d915b9e3",
+    "contentHash": "b3d76c426cd06712b30fab6b6563fb948d2fbdf4f62eac186f9a6c5d7ac8e9a1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11290,14 +11291,14 @@
     "officialUrl": "https://github.com/scrapy/scrapy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T19:28:19.298Z",
-    "lastVerified": "2026-11-11T19:28:19.298Z",
+    "lastChecked": "2026-11-16T13:22:53.224Z",
+    "lastVerified": "2026-11-16T13:22:53.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "7e0fac2a1484cb00ff99d3ed66df3097c090bd7c3f0cabc950cf48b3a0784f06",
+    "contentHash": "d7f4ffa83df09fdcefa3706bf74e41392558d17c5d4e04bee9576bd33ef3af3a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11464,9 +11465,9 @@
   "johnbean393-sidekick": {
     "name": "Sidekick",
     "officialUrl": "https://github.com/johnbean393/Sidekick",
-    "lastChecked": "2026-11-13T02:05:36.717Z",
+    "lastChecked": "2026-11-16T13:22:47.819Z",
     "revisionIdentifier": "83b3e6e0",
-    "lastVerified": "2026-11-13T02:05:36.717Z"
+    "lastVerified": "2026-11-16T13:22:47.819Z"
   },
   "webrecorder-browsertrix-crawler": {
     "name": "webrecorder/browsertrix-crawler",

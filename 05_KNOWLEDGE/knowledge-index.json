@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T12:53:14.290Z",
-  "total_verified_learnings": 8772,
+  "last_updated": "2026-11-16T13:23:00.520Z",
+  "total_verified_learnings": 8773,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19054,
+  "total_items": 19065,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217973,13 +217973,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3O5O-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-N6RT-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4f1d09c9aafe0ebaeb13789735773b56cae77fc48d6fc38d7f924c0dce4487d",
+      "content_hash": "e6bb14ae9dddde277b6b677bd1485d08236a555d28133595e473fc9cea4e2c76",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:35:55.021Z"
+      "persisted_at": "2026-11-16T13:23:00.234Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -217989,9 +217989,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "12372a9bcb112cd5de6c1a8e1c3b99531c87f5d6d072502336ff2ed032424fe2",
+      "content_hash": "64ed158012e491f387e69523b9a7e1d1786da627f3162d9e4e7b5b0dbee85484",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:35:55.170Z"
+      "persisted_at": "2026-11-16T13:23:00.373Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218001,9 +218001,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "50482029e1b69082a478dd231adc92156e6172f0ec2cc2fda65868951995c95b",
+      "content_hash": "34c358179cd13549e51651d3f5fd0a458479e17be86ea7ab8a4d4fcb754dca85",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T06:35:55.314Z"
+      "persisted_at": "2026-11-16T13:23:00.520Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -231532,14 +231532,19 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "d5c3f174",
-      "content_hash": "7a148fe4bbf963965d0cd44f9a882710eeb75b20cb17034a385b8f80d915b9e3",
+      "source_version": "82adf363",
+      "content_hash": "b3d76c426cd06712b30fab6b6563fb948d2fbdf4f62eac186f9a6c5d7ac8e9a1",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
         {
           "number": 8509,
           "title": "Distinguish canonical artifact locations from fetch locations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8736,
+          "title": "Group HTTP request policies for package indexes",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -231548,7 +231553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:24:46.232Z",
+      "verified_at": "2026-11-16T13:22:49.635Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231590,10 +231595,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "repository": "astral-sh/uv",
-      "source_version": "d5c3f174",
-      "content_hash": "0bb37cb608ee6ce96bc4e2032fec94800247893fd067c154480f3b0a0d36563c",
+      "source_version": "82adf363",
+      "content_hash": "4df6999fb96865f42512046307801df1e888dfcd6009813866b2ab6ef1d04b13",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T17:24:46.552Z"
+      "persisted_at": "2026-11-16T13:22:50.231Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv",
@@ -231602,10 +231607,10 @@
       "relative_path": "08_VERIFICATION/astral-sh-uv-verification-protocol-empirical-defect-shield-for-astral-sh-uv.md",
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh/uv",
       "repository": "astral-sh/uv",
-      "source_version": "d5c3f174",
-      "content_hash": "931fd50a0024c9afbb8d2feade567ea1580bf483f552b37ef2d4f9f55d50538a",
+      "source_version": "82adf363",
+      "content_hash": "b3cf9bb46e40852cdb0d4a331f84910536689b7cdc765dfc2df3923356eaaee3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:24:46.644Z"
+      "persisted_at": "2026-11-16T13:22:50.518Z"
     },
     "learn-github-callstack-agent-device": {
       "learning_id": "learn-github-callstack-agent-device",
@@ -231793,9 +231798,9 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "8515f93cdfd305c23020f3f9f32f7f871adc7a08339f073df3b0f2d8e65d5aed",
+      "content_hash": "292f9aafae8fa25754af268b66006cbbd64ef1545c5f9efe294945c07880a01e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T17:25:02.752Z"
+      "persisted_at": "2026-11-16T13:22:58.619Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings",
@@ -231805,9 +231810,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh-uv-learnings",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ed1423834dd22d257f4686371ca7079870be3208b8bfba89af447a65c4f5cb4",
+      "content_hash": "ed692a69fae9afb542dd957d5247deb7bab362dc319148ed843c6e9ba56183e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:25:02.857Z"
+      "persisted_at": "2026-11-16T13:22:58.899Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari",
@@ -253282,6 +253287,163 @@
       "content_hash": "de05d8604fc79ce59870241d89074810f58672d06d82aca62bb1653a04e4ca5c",
       "domain_letter": "D",
       "persisted_at": "2026-11-16T12:53:13.605Z"
+    },
+    "rule-8736": {
+      "learning_id": "rule-8736",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8736,
+      "title": "Group HTTP request policies for package indexes",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "82adf363",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T13:22:49.635Z"
+    },
+    "candidate_directive-group-http-request-policies-for-package-indexes": {
+      "item_id": "candidate_directive-group-http-request-policies-for-package-indexes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N5EY-group-http-request-policies-for-package-indexes.md",
+      "title": "Group HTTP request policies for package indexes",
+      "repository": "astral-sh-uv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "18fad0eff221109fb19ef8ed356fbb31b222376b7dff00c4d311a99bf12c9ce6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T13:22:58.480Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-astral-sh-uv-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in astral-sh/uv",
+      "repository": "astral-sh/uv",
+      "source_version": "82adf363",
+      "content_hash": "96b53e1789b49af495cc382609ac71e67d37c90495088b15912f5fdd05eae3ca",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T13:22:50.377Z"
+    },
+    "learn-github-scrapy-scrapy": {
+      "learning_id": "learn-github-scrapy-scrapy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapy/scrapy",
+      "repository": "scrapy/scrapy",
+      "slug": "scrapy-scrapy",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "953a7f42",
+      "content_hash": "d7f4ffa83df09fdcefa3706bf74e41392558d17c5d4e04bee9576bd33ef3af3a",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8737,
+          "title": "Force download timeouts in BaseStreamingDownloadHandler.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T13:22:54.110Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8737": {
+      "learning_id": "rule-8737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8737,
+      "title": "Force download timeouts in BaseStreamingDownloadHandler.",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "953a7f42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T13:22:54.110Z"
+    },
+    "candidate_directive-force-download-timeouts-in-basestreamingdownloadhandler": {
+      "item_id": "candidate_directive-force-download-timeouts-in-basestreamingdownloadhandler",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N69C-force-download-timeouts-in-basestreamingdownloadhandler.md",
+      "title": "Force download timeouts in BaseStreamingDownloadHandler.",
+      "repository": "scrapy-scrapy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e289807b43eabf99aa5053e6246f2951e98cef1175be75401bc51d364bd457a1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T13:22:59.574Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-technical-construction-intelligence-scrapy-scrapy-core-invariants.md",
+      "title": "Technical Construction Intelligence: scrapy/scrapy Core Invariants",
+      "repository": "scrapy/scrapy",
+      "source_version": "953a7f42",
+      "content_hash": "e32166bd80406c403fa0f4b5ba4ba022852fd4417c909f2682491de7ee0ef214",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T13:22:54.658Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/scrapy-scrapy-verification-protocol-empirical-defect-shield-for-scrapy-scrapy.md",
+      "title": "Verification Protocol: Empirical Defect Shield for scrapy/scrapy",
+      "repository": "scrapy/scrapy",
+      "source_version": "953a7f42",
+      "content_hash": "ba2747fddeac0f947395920fe54a2a5381d0906e1bce634461add653867e3223",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T13:22:54.814Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-astral-sh-uv-learnings-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in astral-sh-uv-learnings",
+      "repository": "astral-sh-uv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3cde90128d521d76ca3c11af8ec120300eb69e33bd0049f648ffcdcca2ac7ce6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T13:22:58.764Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-learnings-technical-construction-intelligence-scrapy-scrapy-learni.md",
+      "title": "Technical Construction Intelligence: scrapy-scrapy-learnings Core Invariants",
+      "repository": "scrapy-scrapy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "24331f9f14b3f33818046e07d59ceba519418fb8d5364ddef4a316a8d577d807",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T13:22:59.710Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/scrapy-scrapy-learnings-verification-protocol-empirical-defect-shield-for-scrapy.md",
+      "title": "Verification Protocol: Empirical Defect Shield for scrapy-scrapy-learnings",
+      "repository": "scrapy-scrapy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "85b0511400556823368a4162ccad164874026e7dbf51168ae677c59aa231cd23",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T13:22:59.856Z"
     }
   },
   "ai-builder-brain": {
