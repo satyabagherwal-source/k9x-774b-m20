@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T02:26:04.309Z",
+  "timestamp": "2026-11-16T02:44:36.949Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zvec-ai-zvec-grep-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zvec-ai-zvec-grep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T02:26:04.309Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T02:44:36.949Z`  
 > **Learning ID**: `LEARN-EVO-zvec-ai-zvec-grep-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `2825dcfa`  
+> **Source Version**: `38cb1af6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T06:23:34.954Z  
+> **Timestamp**: 2026-11-16T02:44:24.777Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T06:23:34.808Z  
+> **Harvest Timestamp**: 2026-11-16T02:44:24.616Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4312 stars
+- **Stars / Engagement**: 4326 stars
 
 ---
 
@@ -1143,644 +1143,260 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `63433cc6` (2026-11-13)
-**Commit Message**: fix(watcher): filter access events before queueing (#396)
+### Incident Patch 1: `38cb1af6` (2026-11-15)
+**Commit Message**: fix(engine): detect uv run script shebangs (#405)
 
-Prevent directory enumeration from overflowing the raw event queue and triggering repeated rescans. Preserve backend errors and explicit rescan flags, with queue and Linux watcher regression coverage.
-
-Fixes #375
-
-**File**: `rust/crates/zg-host-native/src/watcher.rs` (modified, +92/-8)
+**File**: `rust/crates/zg-engine/src/domain/source/format/sniff.rs` (modified, +53/-3)
 ```diff
-@@ -597,10 +597,7 @@ fn create_watcher(
-     let overflowed = Arc::clone(overflowed);
-     let overflow_notify = Arc::clone(overflow_notify);
-     let handler = move |event| {
--        if sender.try_send(event).is_err() {
--            overflowed.store(true, Ordering::Release);
--            overflow_notify.notify_one();
--        }
-+        enqueue_event(event, &sender, &overflowed, &overflow_notify);
-     };
-     let backend = if let Some(interval) = poll_interval {
-         WatchBackend::Poll(
-@@ -630,6 +627,24 @@ fn create_watcher(
-     Ok(watcher)
+@@ -1,3 +1,5 @@
++use std::str::SplitAsciiWhitespace;
++
+ use crate::utils::decode_text;
+ 
+ use super::FileFormat;
+@@ -28,20 +30,68 @@ fn shebang(text: &str, complete: bool) -> Option<FileFormat> {
+     let mut words = line.strip_prefix("#!")?.split_ascii_whitespace();
+     let executable = words.next()?.rsplit('/').next()?;
+     if executable != "env" {
+-        return interpreter(executable);
++        return command_format(executable, words);
+     }
+     while let Some(word) = words.next() {
+         match word {
+-            "--" => return interpreter(words.next()?.rsplit('/').next()?),
++            "--" => return command_format(words.next()?, words),
+             "-S" | "--split-string" | "-i" | "--ignore-environment" => {}
+             word if word.contains('=') && !word.starts_with('-') => {}
+             word if word.starts_with('-') => return None,
+-            command => return interpreter(command.rsplit('/').next()?),
++            command => return command_format(command, words),
+         }
+     }
+     None
  }
  
-+fn enqueue_event(
-+    event: notify::Result<Event>,
-+    sender: &mpsc::Sender<notify::Result<Event>>,
-+    overflowed: &AtomicBool,
-+    overflow_notify: &Notify,
-+) {
-+    // Directory enumeration itself produces access events on Linux. Drop them
-+    // before they can overflow the queue and trigger another enumeration.
-+    if matches!(&event, Ok(event) if matches!(event.kind, EventKind::Access(_)) && !event.need_rescan())
-+    {
-+        return;
-+    }
-+    if sender.try_send(event).is_err() {
-+        overflowed.store(true, Ordering::Release);
-+        overflow_notify.notify_one();
++fn command_format(name: &str, words: SplitAsciiWhitespace<'_>) -> Option<FileFormat> {
++    match name.rsplit('/').next()? {
++        "uv" => uv_script(words),
++        name => interpreter(name),
 +    }
 +}
 +
- fn watcher_error(error: impl std::fmt::Display) -> HostError {
-     HostError::storage_failure("native-watcher", error.to_string())
- }
-@@ -1081,15 +1096,15 @@ fn normalize_event(
-     event: &Event,
- ) -> Result<NormalizedEvent, HostError> {
-     let mut normalized = NormalizedEvent::default();
--    if matches!(event.kind, EventKind::Access(_)) {
--        return Ok(normalized);
--    }
-     if event.need_rescan() || matches!(event.kind, EventKind::Any | EventKind::Other) {
-         root.policy.invalidate()?;
-         normalized.changes.push(WorkspaceChange::Rescan);
-         normalized.refresh_registration = true;
-         return Ok(normalized);
-     }
-+    if matches!(event.kind, EventKind::Access(_)) {
-+        return Ok(normalized);
++fn uv_script(mut words: SplitAsciiWhitespace<'_>) -> Option<FileFormat> {
++    // uv can also run non-Python commands; require explicit script execution.
++    if words.next()? != "run" {
++        return None;
 +    }
-     let topology_event = is_topology_event(event.kind);
-     let control_paths = root.policy.control_paths();
-     for (index, path) in event.paths.iter().enumerate() {
-@@ -1295,9 +1310,78 @@ fn lock_task(
- mod tests {
-     use super::*;
-     use crate::PathPolicy;
--    use notify::event::CreateKind;
-+    use notify::event::{AccessKind, AccessMode, CreateKind, Flag};
-     use std::sync::atomic::AtomicUsize;
- 
-+    #[test]
-+    fn access_events_do_not_displace_changes_or_report_overflow() {
-+        let (sender, mut receiver) = mpsc::channel(1);
-+        let overflowed = AtomicBool::new(false);
-+        let overflow_notify = Notify::new();
-+        for kind in [
-+            AccessKind::Read,
-+            AccessKind::Open(AccessMode::Any),
-+            AccessKind::Close(AccessMode::Read),
-+            AccessKind::Close(AccessMode::Write),
-+        ] {
-+            for _ in 0..DEFAULT_RAW_EVENT_CAPACITY {
-+                enqueue_event(
-+                    Ok(Event::new(EventKind::Access(kind))),
-+                    &sender,
-+                    &overflowed,
-+                    &overflow_notify,
-+                );
++    let mut script = false;
++    while let Some(word) = words.next() {
++        let (option, inline_value) = word
++            .split_once('=')
++            .map_or((word, None), |(option, value)| (option, Some(value)));
++        match option {
++            "--script" | "-s" if inline_value.is_none() => script = true,
++            "--no-project" | "--isolated" | "--no-sync" | "--locked" | "--frozen" | "--offline"
++            | "--no-config" | "--no-cache" | "-n" | "--quiet" | "-q" | "--verbose" | "-v"
++                if inline_value.is_none() => {}
++            "--project"
++            | "--directory"
++            | "--cache-dir"
++            | "--python"
++            | "-p"
++            | "--with"
++            | "--with-requirements"
++            | "--with-editable" => {
++                // Consume values rather than mistaking them for script flags.
++                let value = inline_value.or_else(|| words.next())?;
++                if value.is_empty() || value.starts_with('-') {
++                    return None;
++                }
 +            }
++            "--" if inline_value.is_none() => {
++                if words.next().is_some() {
++                    return None;
++                }
++                break;
++            }
++            _ => return None,
 +        }
-+        let change =
-+            Event::new(EventKind::Create(CreateKind::File)).add_path(PathBuf::from("tracked.rs"));
-+        enqueue_event(Ok(change.clone()), &sender, &overflowed, &overflow_notify);
-+        assert!(!overflowed.load(Ordering::Acquire));
-+        assert_eq!(receiver.try_recv().expect("change").expect("event"), change);
-+        assert!(receiver.try_recv().is_err());
 +    }
-+
-+    #[test]
-+    fn raw_queue_preserves_rescan_flags_and_backend_errors() {
-+        let (sender, mut receiver) = mpsc::channel(2);
-+        let overflowed = AtomicBool::new(false);
-+        let overflow_notify = Notify::new();
-+        let event =
-+            Event::new(EventKind::Access(AccessKind::Open(AccessMode::Any))).set_flag(Flag::Rescan);
-+        enqueue_event(Ok(event.clone()), &sender, &overflowed, &overflow_notify);
-+        enqueue_event(
-+            Err(notify::Error::generic("watcher interrupted")),
-+            &sender,
-+            &overflowed,
-+            &overflow_notify,
-+        );
-+        assert_eq!(receiver.try_recv().expect("rescan").expect("event"), event);
-+        assert!(receiver.try_recv().expect("backend error").is_err());
-+        assert!(!overflowed.load(Ordering::Acquire));
-+
-+        let temporary = tempfile::tempdir().expect("fixture");
-+        let root = test_root(temporary.path(), temporary.path().join(".rules"));
-+        let normalized = normalize_event(&root, false, &event).expect("rescan event");
-+        assert_eq!(normalized.changes, vec![WorkspaceChange::Rescan]);
-+        assert!(normalized.refresh_registration);
-+    }
-+
-+    #[test]
-+    fn actionable_events_still_report_raw_queue_overflow() {
-+        let (sender, _receiver) = mpsc::channel(1);
-+        let overflowed = AtomicBool::new(false);
-+        let overflow_notify = Notify::new();
-+        for _ in 0..2 {
-+            enqueue_event(
-+                Ok(Event::new(EventKind::Crea
-```
-
-**File**: `rust/crates/zg-host-native/tests/watcher_compat.rs` (modified, +34/-0)
-```diff
-@@ -15,6 +15,40 @@ use zg_host_native::{
- 
- type TestResult<T = ()> = Result<T, Box<dyn Error>>;
- 
-+#[cfg(target_os = "linux")]
-+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn directory_reads_do_not_starve_watcher_reconciliation() -> TestResult {
-+    let temporary = tempfile::tempdir()?;
-+    let root = temporary.path().canonicalize()?;
-+    for number in 0..128 {
-+        fs::create_dir(root.join(format!("directory-{number}")))?;
-+    }
-+    let factory = NativeWatcherFactory::default().with_config(NativeWatcherConfig {
-+        // Registration reads generate more IN_OPEN events than this queue holds.
-+        raw_event_capacity: 64,
-+        reconcile_interval: None,
-+        resume_check_interval: None,
-+        ..NativeWatcherConfig::default()
-+    });
-+    let control = TaskControl::new(CancellationToken::new());
-+    let session = factory
-+        .watch(
-+            &WatchRequest {
-+                root: RootSpec::new(root, Arc::new(AllowAllPaths)),
-+            },
-+            &control,
-+        )
-+        .await?;
-+    let result = tokio::time::timeout(Duration::from_secs(5), async {
-+        session.flush().await?;
-+        session.next_changes(&control).await
-+    })
-+    .await;
-+    session.close().await?;
-+    assert!(result??.changes.contains(&WorkspaceChange::Rescan));
-+    Ok(())
++    script.then_some(FileFormat::Python)
 +}
 +
- #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
- async fn watcher_debounces_changes_and_obeys_injected_selection_policy() -> TestResult {
-     let temporary = tempdir_in(std::env::current_dir()?)?;
+ fn interpreter(name: &str) -> Option<FileFormat> {
+     let format = match name {
+         "sh" => FileFormat::Shell,
 ```
 
----
-
-### Incident Patch 2: `2825dcfa` (2026-11-13)
-**Commit Message**: fix(engine): preserve v2 indexes and validate workspace recovery (#407)
-
-**File**: `rust/crates/zg-engine/src/api/info.rs` (modified, +1/-1)
+**File**: `rust/crates/zg-engine/src/domain/source/format/tests.rs` (modified, +101/-0)
 ```diff
-@@ -261,7 +261,7 @@ impl result::WorkspaceIndexInfo {
-                 .index()
-                 .descriptor()
-                 .map(|index| (&index.fts()).into()),
--            index_version: workspace.index_version(),
-+            index_version: Some(workspace.index_version()),
-             created_epoch_ms: workspace.created_epoch_ms(),
-             updated_epoch_ms: workspace.updated_epoch_ms(),
-         }
-```
-
-**File**: `rust/crates/zg-engine/src/authorization.rs` (modified, +1/-1)
-```diff
-@@ -1222,7 +1222,7 @@ mod tests {
-             &source_root,
-             layout,
-             crate::domain::ScanRules::default(),
--            Some(crate::workspace::CURRENT_INDEX_VERSION),
-+            crate::workspace::CURRENT_INDEX_VERSION,
-             Some(uuid::Uuid::new_v4().to_string()),
-             1,
-             1,
-```
-
-**File**: `rust/crates/zg-engine/src/domain/index.rs` (modified, +13/-3)
-```diff
-@@ -61,6 +61,8 @@ impl<'de> Deserialize<'de> for IndexDescriptor {
-             embedding_routes: BTreeMap<ContentKind, EmbeddingModelInfo>,
-             #[serde(default, deserialize_with = "deserialize_unique_map")]
-             embedding_configs: BTreeMap<String, ModelConfig<EncryptedApiKey>>,
-+            // Released v2 indexes predate the optional code graph.
-+            #[serde(default)]
-             graph_indexing: bool,
-         }
- 
-@@ -368,16 +370,24 @@ mod tests {
-     }
- 
-     #[test]
--    fn descriptor_requires_the_graph_setting() {
-+    fn legacy_descriptor_defaults_to_indexing_without_a_graph() {
-         let encoded =
-             serde_json::to_string(&IndexState::Enabled(Box::new(descriptor()))).expect("encode");
-         assert!(encoded.contains("\"graphIndexing\":false"));
- 
-         let incomplete = encoded.replace(",\"graphIndexing\":false", "");
-         assert_ne!(incomplete, encoded);
-+        let restored = serde_json::from_str::<IndexState>(&incomplete).expect("v2 descriptor");
-+        let restored = restored.descriptor().expect("enabled index");
-+        assert!(!restored.graph_indexing());
-+        restored
-+            .ensure_index_compatible(&descriptor())
-+            .expect("existing v2 index remains compatible");
-         assert!(
--            serde_json::from_str::<IndexState>(&incomplete).is_err(),
--            "a descriptor must state whether the build carries a graph"
-+            serde_json::from_str::<IndexState>(
-+                &encoded.replace("\"graphIndexing\":false", "\"graphIndexing\":null")
-+            )
-+            .is_err()
-         );
-     }
- 
-```
-
-**File**: `rust/crates/zg-engine/src/domain/workspace.rs` (modified, +8/-14)
-```diff
-@@ -16,8 +16,8 @@ pub(crate) struct Workspace {
-     #[serde(skip)]
-     layout: WorkspaceLayout,
-     scan: ScanRules,
--    /// Storage format version used by the index.
--    index_version: Option<u32>,
-+    /// Compatibility version of the persisted index metadata and storage.
-+    index_version: u32,
-     /// Identifies an index build for publication, recovery, and caching.
-     storage_generation: Option<String>,
-     #[serde(rename = "createdTime")]
-@@ -33,7 +33,7 @@ impl Workspace {
-         source_root: &Path,
-         layout: WorkspaceLayout,
-         scan: ScanRules,
--        index_version: Option<u32>,
-+        index_version: u32,
-         storage_generation: Option<String>,
-         created_epoch_ms: u64,
-         updated_epoch_ms: u64,
-@@ -59,7 +59,7 @@ impl Workspace {
-         source_root: SourceRoot,
-         layout: WorkspaceLayout,
-         scan: ScanRules,
--        index_version: Option<u32>,
-+        index_version: u32,
-         storage_generation: Option<String>,
-         created_epoch_ms: u64,
-         updated_epoch_ms: u64,
-@@ -91,12 +91,6 @@ impl Workspace {
-             )));
-         }
-         if self.index_enabled() {
--            if self.index_version.is_none() {
--                return Err(EngineError::invalid_argument(format!(
--                    "workspace {}: index is enabled but indexVersion is missing",
--                    self.source_root().display(),
--                )));
--            }
-             let generation = self.storage_generation.as_deref().ok_or_else(|| {
-                 EngineError::invalid_argument(format!(
-                     "workspace {}: index is enabled but storageGeneration is missing",
-@@ -109,9 +103,9 @@ impl Workspace {
-                     self.source_root().display(),
-                 ))
-             })?;
--        } else if self.index_version.is_some() || self.storage_generation.is_some() {
-+        } else if self.storage_generation.is_some() {
-             return Err(EngineError::invalid_argument(format!(
--                "workspace {}: an unbuilt index cannot have indexVersion or storageGeneration",
-+                "workspace {}: an unbuilt index cannot have storageGeneration",
-                 self.source_root().display(),
-             )));
-         }
-@@ -130,7 +124,7 @@ impl Workspace {
-         &self.scan
-     }
- 
--    pub(crate) fn index_version(&self) -> Option<u32> {
-+    pub(crate) fn index_version(&self) -> u32 {
-         self.index_version
-     }
- 
-@@ -559,7 +553,7 @@ mod tests {
-             root,
-             WorkspaceLayout::new(root.join(".zvec-grep")).expect("layout"),
-             scan,
--            Some(2),
-+            crate::workspace::CURRENT_INDEX_VERSION,
-             Some(uuid::Uuid::new_v4().to_string()),
-             10,
-             20,
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/context.rs` (modified, +1/-1)
-```diff
-@@ -915,7 +915,7 @@ mod tests {
-                 root,
-                 WorkspaceLayout::new(root.join(".zvec-grep")).expect("layout"),
-                 crate::domain::ScanRules::default(),
--                Some(crate::workspace::CURRENT_INDEX_VERSION),
-+                crate::workspace::CURRENT_INDEX_VERSION,
-                 Some(generation.clone()),
-                 0,
-                 0,
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/indexing/pipeline.rs` (modified, +2/-8)
-```diff
-@@ -3252,7 +3252,7 @@ mod tests {
-             root,
-             crate::domain::WorkspaceLayout::new(root.join(".zvec-grep")).expect("layout"),
-             crate::domain::ScanRules::default(),
--            Some(crate::workspace::CURRENT_INDEX_VERSION),
-+            crate::workspace::CURRENT_INDEX_VERSION,
-             Some(uuid::Uuid::new_v4().to_string()),
-             1,
-             1,
-@@ -3930,13 +3930,7 @@ mod tests {
-                     workspace.source_root(),
-                     workspace.layout().clone(),
-                     workspace.scan().clone(),
--                    if matches!(index, crate::domain::IndexState::Enabled(_)) {
--                        workspace
--                            .index_version()
--                            .or(Some(crate::workspace::CURRENT_INDEX_VERSION))
--                    } else {
--                        None
--                    },
-+                    workspace.index_version(),
-                     if matches!(index, crate::domain::IndexState::Enabled(_)) {
-                         workspace.storage_generation().map(str::to_owned)
-                     } else {
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/indexing/service.rs` (modified, +44/-21)
-```diff
-@@ -156,7 +156,11 @@ impl WorkspaceIndexService {
-             previous
-                 .ensure_index_compatible(&descriptor)
-                 .map_err(|error| {
--                    error.with_help("Rebuild the index with `zg --index --rebuild`.")
-+                    error.with_help(if descriptor.graph_indexing() {
-+                        "Rebuild the index with `zg --index --rebuild --graph`."
-+                    } else {
-+                        "Rebuild the index with `zg --index --rebuild`."
-+                    })
-                 })?;
-         }
-         let mut workspace = index_workspace_state(
-@@ -223,6 +227,16 @@ impl WorkspaceIndexService {
-                 .is_some_and(IndexDescriptor::graph_indexing),
-             storage_path: storage_path.to_path_buf(),
-             embeddings: models.iter().map(|model| model.info().clone()).collect(),
-+        })
-+        .map_err(|mut error| {
-+            if let Some(help) = error.help() {
-+                let help = format!(
-+                    "{help} Run this command in workspace '{}'.",
-+                    workspace.source_root().display()
-+                );
-+                error = error.with_help(help);
-+            }
-+            error.with_workspace_root(workspace.source_root())
-         })?;
-         let writer = self.writers.register(
-             crate::pipelines::indexed_search::writer::WriterSession::new(
-@@ -567,7 +581,7 @@ fn index_workspace_state(
-         source_root,
-         layout.clone(),
-         scan,
--        Some(CURRENT_INDEX_VERSION),
-+        CURRENT_INDEX_VERSION,
-         Some(generation),
-         active.map_or(now, Workspace::created_epoch_ms),
-         now,
-@@ -1072,7 +1086,7 @@ mod tests {
-             previous.source_root(),
-             previous.layout().clone(),
-             previous.scan().clone(),
--            Some(super::CURRENT_INDEX_VERSION - 1),
-+            super::CURRENT_INDEX_VERSION - 1,
-             previous.storage_generation().map(str::to_owned),
-             previous.created_epoch_ms(),
-             previous.updated_epoch_ms(),
-@@ -1163,14 +1177,17 @@ mod tests {
- 
-     #[test]
-     fn rejects_incompatible_index_versions() {
--        crate::workspace::manifest::require_current_index_version(Some(
--            super::CURRENT_INDEX_VERSION,
--        ))
--        .expect("current index");
--        for version in [None, Some(0), Some(1), Some(2), Some(5), Some(u32::MAX)] {
-+        crate::workspace::manifest::require_current_index_version(super::CURRENT_INDEX_VERSION)
-+            .expect("current index");
-+        for version in [
-+            0,
-+            super::CURRENT_INDEX_VERSION - 1,
-+            super::CURRENT_INDEX_VERSION + 1,
-+            u32::MAX,
-+        ] {
-             assert_ne!(
-                 version,
--                Some(super::CURRENT_INDEX_VERSION),
-+                super::CURRENT_INDEX_VERSION,
-                 "samples must stay incompatible with the current version"
-             );
-             let error = crate::workspace::manifest::require_current_index_version(version)
-@@ -1199,7 +1216,7 @@ mod tests {
-             }
-             .apply(&crate::domain::ScanRules::default())
-             .expect("scan rules"),
--            None,
-+            super::CURRENT_INDEX_VERSION,
-             None,
-             0,
-             0,
-@@ -1984,11 +2001,16 @@ mod tests {
-                         )
-                         .await;
-                     if graph_enabled {
--                        assert!(result.expect("enabled graph read").matches.is_empty());
-+                        let result = result.expect("enabled graph read");
-+                        assert!(result.matches.is_empty());
-+                        assert!(result.suggestions.is_empty());
-                     } else {
--                        assert_eq!(
--                            result.expect_err("disabled graph read").code(),
--                            crate::EngineError::UNSUPPORTED
-+                        let error = result.expect_err("disabled graph read");
-+                        assert_eq!(error.code(), crate::EngineError::UNSUPPORTED);
-+                        assert!(
-+                            error
-+                                .help()
-+                                .is_some_and(|help| help.contains("zg --index --rebuild --graph"))
-                         );
-                     }
-                 }
-@@ -2461,12 +2483,9 @@ mod tests {
-             "{}",
-             error.message()
-         );
--        assert!(
--            error
--                .help()
--                .is_some_and(|help| help.contains("zg --index --rebuild")),
--            "{:?}",
--            error.help()
-+        assert_eq!(
-+            error.help(),
-+            Some("Rebuild the index with `zg --index --rebuild --graph`.")
-         );
-         let rejected = published(&layout);
-         assert!(
-@@ -2518,6 +2537,10 @@ mod tests {
-             "{}",
-             error.message()
-         );
-+        assert_eq!(
-+          
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/path_search.rs` (modified, +1/-1)
-```diff
-@@ -307,7 +307,7 @@ mod tests {
-             &root,
-             layout,
-             scan,
--            None,
-+            crate::workspace::CURRENT_INDEX_VERSION,
-             None,
-             0,
-             0,
-```
-
----
-
-### Incident Patch 3: `0bf9e4e3` (2026-11-13)
-**Commit Message**: fix(models): add Bekko ModelScope download fallback (#388)
-
-**File**: `rust/README.md` (modified, +4/-8)
-```diff
-@@ -7,13 +7,10 @@ everyday use. This page covers implementation behavior, native builds, and
- packaging. The repository root retains the legacy TypeScript implementation and
- its separate checks.
- 
--The Rust catalog includes `local/bekko-256-int8`, using the pinned
--[Bekko static ONNX weights](https://huggingface.co/hotchpotch/bekko-static-embedding-v1/tree/c18167b8f244c1bc6de21ce9b710bac8a29c4615/onnx).
-+The Rust catalog includes `local/bekko-256-int8`.
- Select it with `zg --index --embedding local/bekko-256-int8 --device cpu`.
--It downloads 52,000,965 bytes of INT8 weights plus a 5,104,874-byte tokenizer,
--verified by SHA-256. Mean pooling and the 256-dimensional normalized output
--remain FP32. Queries and documents have no prefix or special tokens, with a
--32,768-token limit. Only Hugging Face is configured for this model.
-+Mean pooling and the 256-dimensional normalized output remain FP32.
-+Queries and documents have no prefix or special tokens, with a 32,768-token limit.
- The Rust Bekko backend (`bekko`) reads the quantized table and per-token scales
- directly from the pinned ONNX file; inference runs on the shared CPU pool
- without an ONNX session or padded batches. It retains unknown tokens and
-@@ -262,8 +259,7 @@ cargo test --locked -p zg-engine --lib models::artifacts::downloader::tests::liv
- Each suite dynamically enumerates every local catalog model and fully downloads
- its pinned artifacts when configured for the selected source (Hugging Face or
- ModelScope), using a fresh temporary cache for every model/source pair and
--verifying artifact integrity. Remote API models are excluded. Bekko is checked
--only from Hugging Face because it has no configured ModelScope mirror.
-+verifying artifact integrity. Remote API models are excluded.
- The suites require live network access, never fall back to the other source, and
- do not run inference. They emit a catalog manifest and a JSON result for every
- configured model/source pair. The normal Linux CPU CI job runs both suites using
-```
-
-**File**: `rust/crates/zg-engine/src/models/artifacts/downloader/tests/live_sources.rs` (modified, +16/-14)
-```diff
-@@ -334,28 +334,30 @@ fn live_sources_follow_each_models_configured_sources() {
-         if model == "local/bekko-256-int8" {
-             assert_eq!(
-                 request.sources.len(),
--                1,
--                "Bekko only has a Hugging Face source"
-+                2,
-+                "Bekko includes a ModelScope fallback"
-             );
--            assert!(!supports_source(download, ArtifactSourceKind::ModelScope));
-+            assert!(supports_source(download, ArtifactSourceKind::ModelScope));
-         }
-         assert_eq!(std::fs::read_dir(root.path()).expect("cache").count(), 0);
+@@ -423,6 +423,107 @@ fn unmatched_paths_detect_readable_text_and_extensionless_shebang_scripts() {
      }
  }
  
- #[tokio::test]
- async fn unconfigured_source_is_rejected_before_downloading() {
--    let (model, download) = local_models()
--        .into_iter()
--        .find(|(model, _)| *model == "local/bekko-256-int8")
--        .expect("Bekko is included in the live-source catalog");
--    let error = download_local_model_from(model, download, ArtifactSourceKind::ModelScope)
--        .await
--        .expect_err("Bekko has no ModelScope mirror");
--    assert_eq!(
--        error,
--        "modelscope is not configured for local/bekko-256-int8"
--    );
-+    const HF_ONLY_DOWNLOAD: ArtifactDownloadConfig = ArtifactDownloadConfig {
-+        hugging_face: super::HF,
-+        model_scope: None,
-+        artifacts: super::ARTIFACTS,
-+    };
-+    let error = download_local_model_from(
-+        "local/test-model",
-+        &HF_ONLY_DOWNLOAD,
-+        ArtifactSourceKind::ModelScope,
-+    )
-+    .await
-+    .expect_err("unconfigured ModelScope source must be rejected");
-+    assert_eq!(error, "modelscope is not configured for local/test-model");
- }
++#[test]
++fn uv_script_shebangs_detect_python() {
++    let directory = tempdir().expect("temporary directory");
++    let path = directory.path().join("uvscript");
++    for header in [
++        "#!/usr/bin/env -S uv run --script",
++        "#!/usr/bin/env --split-string uv run --script",
++        "#!/usr/bin/env -i UV_OFFLINE=1 -S uv run --script",
++        "#!/usr/bin/env -S -- /usr/local/bin/uv run --script",
++        "#!/usr/local/bin/uv run --script",
++        "#!/usr/bin/env -S uv run -s",
++        "#!/usr/bin/env -S uv run --no-project --python 3.12 --with requests --script",
++        "#!/usr/bin/env -S uv run --script --project ./project --python=3.12 --with=requests",
++        "#!/usr/bin/env -S uv run --with requests --with rich -p 3.12 -s",
++        "#!/usr/bin/env -S uv run --with-requirements requirements.txt --with-editable ./lib --script",
++        "#!/usr/bin/env -S uv run --directory ./project --cache-dir ./cache --offline --script",
++        "#!/usr/bin/env -S uv run --isolated --no-sync --locked --frozen --no-config --script",
++        "#!/usr/bin/env -S uv run -q --verbose --no-cache --script",
++        "#!/usr/bin/env -S uv run --script --",
++    ] {
++        let source = format!(
++            "{header}\n# /// script\n# requires-python = \">=3.12\"\n# dependencies = []\n# ///\nprint('hi')\n"
++        );
++        fs::write(&path, source).expect("write uv script");
++        assert_eq!(
++            FileFormat::from_path(&path).expect("content hint"),
++            [Python],
++            "{header}"
++        );
++    }
++}
++
++#[test]
++fn uv_launchers_require_unambiguous_script_mode() {
++    let directory = tempdir().expect("temporary directory");
++    let path = directory.path().join("uvscript");
++    for command in [
++        "uv",
++        "uv run",
++        "uv run python",
++        "uv run bash",
++        "uv run bash --script",
++        "uv run -- python --script",
++        "uv run --script -- other-script",
++        "uv tool run --script",
++        "uv pip --script",
++        "uvx run --script",
++        "pipx run --script",
++        "poetry run --script",
++        "uv run --with --script",
++        "uv run --with=--script",
++        "uv run --project --script",
++        "uv run --python --script",
++        "uv run --script --with",
++        "uv run --script --with=",
++        "uv run --script --unknown value",
++        "uv run --script --module module",
++        "uv run --script --help",
++        "uv run --script=false",
++        "uv run --no-project=true --script",
++    ] {
++        let source = format!("#!/usr/bin/env -S {command}\nprint('hi')\n");
++        fs::write(&path, source).expect("write launcher sample");
++        assert_eq!(
++            FileFormat::from_path(&path).expect("content hint"),
++            [Text],
++            "{command}"
++        );
++    }
++}
++
++#[test]
++fn uv_script_detection_preserves_content_probe_boundaries() {
++    let directory = tempdir().expect("temporary directory");
++    let header = "#!/usr/bin/env -S uv run --script";
++    for (name, source, expected) in [
++        ("script", header.to_owned(), Python),
++        (
++            "script",
++            format!("\u{feff}{header}\r\nprint('hi')\r\n"),
++            Python,
++        ),
++        ("script.custom", format!("{header}\nprint('hi')\n"), Text),
++        ("script.sh", format!("{header}\nprint('hi')\n"), Shell),
++        ("script", format!("text\n{header}\nprint('hi')\n"), Text),
++        (
++            "script",
++            format!("{header}{}\nprint('hi')\n", " ".repeat(HEADER_BYTES)),
++            Text,
++        ),
++    ] {
++        let path = directory.path().join(name);
++        fs::write(&path, source).expect("write uv script sample");
++        assert_eq!(
++            FileFormat::from_path(&path).expect("content hint"),
++            [expected],
++            "{name}"
++        );
++    }
++}
++
+ #[test]
+ fn catalog_ambiguity_does_not_probe_content() {
+     let directory = tempdir().expect("temporary directory");
+```
+
+**File**: `rust/crates/zg-engine/tests/engine_storage.rs` (modified, +17/-4)
+```diff
+@@ -210,16 +210,24 @@ async fn extensionless_scripts_preserve_outline_language_across_reopen() -> Test
+             "node-tool",
+             "#!/usr/bin/env node\nclass Probe {\n    outline_probe() { return stored_call(); }\n}\n",
+         ),
++        (
++            "uv-tool",
++            "#!/usr/bin/env -S uv run --script\n# /// script\n# requires-python = \">=3.12\"\n# dependencies = []\n# ///\nclass Probe:\n    def outline_probe(self):\n        return stored_call()\n",
++        ),
++        (
++            "uv-options-tool",
++            "#!/usr/bin/env -S uv run --no-project --python 3.12 --with requests --script\nclass Probe:\n    def outline_probe(self):\n        return stored_call()\n",
++        ),
+     ] {
+         fs::write(root.join("bin").join(name), source)?;
+     }
+     let engine = ZvecGrep::new();
+     let indexed = engine.index(index_options(root)).await?;
+-    assert_eq!((indexed.files_added, indexed.files_failed), (2, 0));
++    assert_eq!((indexed.files_added, indexed.files_failed), (4, 0));
+     engine.close();
  
- fn has_extension(path: &str, extension: &str) -> bool {
-```
-
-**File**: `rust/crates/zg-engine/src/models/backends/bekko/model/tests.rs` (modified, +7/-1)
-```diff
-@@ -104,7 +104,13 @@ fn bekko_catalog_preserves_pinned_assets_and_public_limits() {
-         entry.download.hugging_face.revision,
-         "c18167b8f244c1bc6de21ce9b710bac8a29c4615"
-     );
--    assert!(entry.download.model_scope.is_none());
-+    assert_eq!(
-+        entry.download.model_scope,
-+        Some(ArtifactSourceConfig {
-+            repo: "egolearner/bekko-static-embedding-v1",
-+            revision: "cf6eaf4c1e7483e73cf331cd42593e6a698fb3f5",
-+        })
-+    );
-     let model =
-         BekkoEmbeddingModel::new(entry, ModelConfig::default(), ModelComputeRuntime::shared());
-     assert_eq!(model.concurrency_defaults().initial, 1);
-```
-
-**File**: `rust/crates/zg-engine/src/models/catalog/entries.rs` (modified, +4/-1)
-```diff
-@@ -569,7 +569,10 @@ const CATALOG: [EmbeddingCatalogEntry; 15] = [
-                 repo: "hotchpotch/bekko-static-embedding-v1",
-                 revision: "c18167b8f244c1bc6de21ce9b710bac8a29c4615",
-             },
--            model_scope: None,
-+            model_scope: Some(ArtifactSourceConfig {
-+                repo: "egolearner/bekko-static-embedding-v1",
-+                revision: "cf6eaf4c1e7483e73cf331cd42593e6a698fb3f5",
-+            }),
-             artifacts: BEKKO_256_INT8_ARTIFACTS,
-         },
-         model_file: "onnx/model_int8_dim256.onnx",
+     // Both language and outline must describe stored source, not current files.
+-    for name in ["python-tool", "node-tool"] {
++    for name in ["python-tool", "node-tool", "uv-tool", "uv-options-tool"] {
+         fs::write(root.join("bin").join(name), "#!/bin/sh\necho changed\n")?;
+     }
+     let engine = ZvecGrep::new();
+@@ -232,11 +240,16 @@ async fn extensionless_scripts_preserve_outline_language_across_reopen() -> Test
+             }],
+             auto_update: false,
+             allow_remote: true,
+-            limit: Some(10),
++            limit: Some(20),
+             ..ContextOptions::default()
+         })
+         .await?;
+-    for (name, language) in [("python-tool", "python"), ("node-tool", "javascript")] {
++    for (name, language) in [
++        ("python-tool", "python"),
++        ("node-tool", "javascript"),
++        ("uv-tool", "python"),
++        ("uv-options-tool", "python"),
++    ] {
+         for (kind, symbol, summary) in [
+             (SymbolType::Function, "outline_probe", "calls: stored_call"),
+             (SymbolType::Class, "Probe", "members:"),
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #407** (2026-11-13): fix(engine): preserve v2 indexes and validate workspace recovery (@zhourrr)
+- **PR #405** (2026-11-15): fix(engine): recognize uv run script shebangs (@egolearner)
 - **PR #404** (2026-11-13): perf(engine): reduce graph resolution sweep overhead (@luoxiaojian)
 - **PR #402** (2026-11-13): fix(mcp): scope compact Rust guidance to Claude Code (@egolearner)
 - **PR #401** (2026-11-13): docs: add Japanese README (@eltociear)
 - **PR #400** (2026-11-12): fix(docs): avoid private links in GraphEdgeKind rustdoc (@liulx20)
-- **PR #396** (2026-11-13): fix(watcher): prevent access events from triggering rescan loops (@egolearner)
 
 ---
 
@@ -1800,70 +1416,61 @@ Fixes #375
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. watcher): filter access events before queueing
+## X. engine): detect uv run script shebangs
 
 **RULE**:
-When implementing operations in `rust/crates/zg-host-native/src/watcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-engine/src/domain/source/format/sniff.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `63433cc6`: watcher): filter access events before queueing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38cb1af6`: engine): detect uv run script shebangs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-host-native/src/watcher.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-engine/src/domain/source/format/sniff.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        enqueue_event(event, &sender, &overflowed, &overflow_notify);
-fn enqueue_event(
-    event: notify::Result<Event>,
-    sender: &mpsc::Sender<notify::Result<Event>>,
-    overflowed: &AtomicBool,
-    overflow_notify: &Notify,
-) {
-    // Directory enumeration itself produces access events on Linux. Drop them
-    // before they can overflow the queue and trigger another enumeration.
-    if matches!(&event, Ok(event) if matches!(event.kind, EventKind::Access(_)) && !event.need_rescan())
-    {
-        return;
-    }
-    if sender.try_send(event).is_err() {
-        overflowed.store(true, Ordering::Release);
-        overflow_notify.notify_one();
+use std::str::SplitAsciiWhitespace;
+
+        return command_format(executable, words);
+            "--" => return command_format(words.next()?, words),
+            command => return command_format(command, words),
+fn command_format(name: &str, words: SplitAsciiWhitespace<'_>) -> Option<FileFormat> {
+    match name.rsplit('/').next()? {
+        "uv" => uv_script(words),
+        name => interpreter(name),
     }
 }
 
-    if matches!(event.kind, EventKind::Access(_)) {
-        return Ok(normalized);
+fn uv_script(mut words: SplitAsciiWhitespace<'_>) -> Option<FileFormat> {
+    // uv can also run non-Python commands; require explicit script execution.
+    if words.next()? != "run" {
+        return None;
     }
-    use notify::event::{AccessKind, AccessMode, CreateKind, Flag};
-    #[test]
-    fn access_events_do_not_displace_changes_or_report_overflow() {
-        let (sender, mut receiver) = mpsc::channel(1);
-        let overflowed = AtomicBool::new(false);
-        let overflow_notify = Notify::new();
-        for kind in [
-            AccessKind::Read,
-            AccessKind::Open(AccessMode::Any),
-            AccessKind::Close(AccessMode::Read),
-      
+    let mut script = false;
+    while let Some(word) = words.next() {
+        let (option, inline_value) = word
+            .split_once('=')
+            .map_or((word, None), |(option, value)| (option, Some(value)));
+        match option {
+            "--script" | "-s" if inline_value.is_none() => script = true,
+            "--no-project" | "--isolated" | "--no-sync" | "--locked" | "--frozen" | "--offline"
+            | "--no-config" | "--no-cache" | "-n" | "--quiet" | "-q" | "--verbose" | "-v"
+                if inline_value.is_none() => {}
+            "--project"
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        if sender.try_send(event).is_err() {
-            overflowed.store(true, Ordering::Release);
-            overflow_notify.notify_one();
-        }
-    if matches!(event.kind, EventKind::Access(_)) {
-        return Ok(normalized);
-    }
-    use notify::event::CreateKind;
+        return interpreter(executable);
+            "--" => return interpreter(words.next()?.rsplit('/').next()?),
+            command => return interpreter(command.rsplit('/').next()?),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `63433cc6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38cb1af6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

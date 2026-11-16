@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "2825dcfa",
+    "sourceVersion": "38cb1af6",
     "license": "Apache-2.0",
-    "contentHash": "c794c8f710d4e8893b167bb6627fc6e2836018fb018f60c672632e486b5c189b",
-    "lastHarvestedAt": "2026-11-14T06:23:35.964Z",
+    "contentHash": "0c7ef5a355d715f6d383f4e045063df8a425ee0a9f358765ac5b1ab2c6501071",
+    "lastHarvestedAt": "2026-11-16T02:44:25.821Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {

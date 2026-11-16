@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T02:26:00.137Z",
-  "total_cycles_completed": 9815,
-  "total_learnings_persisted": 9815,
-  "total_rules_promoted": 9422,
+  "last_updated": "2026-11-16T02:44:25.827Z",
+  "total_cycles_completed": 9816,
+  "total_learnings_persisted": 9816,
+  "total_rules_promoted": 9423,
   "history": [
-    {
-      "timestamp": "2026-11-14T22:57:32.230Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T22:57:36.169Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1403,6 +1396,13 @@
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T02:44:25.827Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

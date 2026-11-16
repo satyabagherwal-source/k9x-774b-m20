@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T02:26:04.670Z",
+  "last_updated": "2026-11-16T02:44:38.851Z",
   "total_verified_learnings": 8754,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18857,
+  "total_items": 18862,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e8d61135108694b3cad26ab87047ad70f793b46d1d5bd3757e686678bec97c53",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-16T02:26:04.584Z"
+      "content_hash": "69245ef97305455ba7fe3fa52d30176905cbe58890a5926f38aac2c892cf250a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T02:44:37.364Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "05f010417b350b1f4720cc0e471c8bbf2dee81e1a43a37bee1db42631a45a809",
+      "content_hash": "98f9ecd2f320a9678559439343ad1186d7f96a41442124c62330ef5914220579",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:26:04.670Z"
+      "persisted_at": "2026-11-16T02:44:37.495Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -217942,13 +217942,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BOJ6-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-U904-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "6008ab344eace5f7a5d8d8c9adc246c50b6a50420ba723c37afc8da60218ac78",
+      "content_hash": "50031f214c7fc3c41fd9d5a0a968aa2535bfcd6c00c257d04b53eb0555a7d121",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T00:10:14.131Z"
+      "persisted_at": "2026-11-16T02:44:38.548Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -217958,9 +217958,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd68767442aa71c220f08f9210e524a1c5f882d35131e8f7dde8b7046291ad5d",
+      "content_hash": "9c3487d601099bf8746967f8ffd0edfcb0b44b2091f8abdeec62b70b2a7f14e3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T00:10:14.239Z"
+      "persisted_at": "2026-11-16T02:44:38.702Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -217970,9 +217970,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c95efeee3db1ccb8f3183c073a8732845ceba3e22872bf98def2654889947af1",
+      "content_hash": "f60e99cbd4c22b1c97b9c5c31e666108be28c852f6a93fec10f5738e535b6f6b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:10:14.350Z"
+      "persisted_at": "2026-11-16T02:44:38.851Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -224370,14 +224370,19 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "2825dcfa",
-      "content_hash": "c794c8f710d4e8893b167bb6627fc6e2836018fb018f60c672632e486b5c189b",
+      "source_version": "38cb1af6",
+      "content_hash": "0c7ef5a355d715f6d383f4e045063df8a425ee0a9f358765ac5b1ab2c6501071",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
         {
           "number": 8457,
           "title": "filter access events before queueing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8694,
+          "title": "detect uv run script shebangs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -224386,7 +224391,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T06:23:35.801Z",
+      "verified_at": "2026-11-16T02:44:25.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224440,10 +224445,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/zvec-ai-zvec-grep-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona.md",
       "title": "Agent Contract: zvec-ai/zvec-grep Autonomous Specialist Persona",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "2825dcfa",
-      "content_hash": "3774ba396c4ceebf4b9defb41459bd6681fc84161deeb84c6c63b78084cd27c9",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-14T06:23:36.410Z"
+      "source_version": "38cb1af6",
+      "content_hash": "7708d7a90752252f53d8262388f94214c285766d1f9a6ebe8ae9e04c007da596",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T02:44:26.318Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep",
@@ -224452,10 +224457,10 @@
       "relative_path": "08_VERIFICATION/zvec-ai-zvec-grep-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai/zvec-grep",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "2825dcfa",
-      "content_hash": "03aef6e9f67e4c94d22077a7c1c59c36c7b48081681f14430b6a8d58afa9a73c",
+      "source_version": "38cb1af6",
+      "content_hash": "60d13f0ba6d163d71b0e1b6e22dd7ff669cb75ec227e86436bbcbf9b4f18b38a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T06:23:36.522Z"
+      "persisted_at": "2026-11-16T02:44:26.464Z"
     },
     "learn-huggingface-openbmb-minicpm-ocr-1-0": {
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
@@ -226652,13 +226657,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BO5A-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-U8IF-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd285744a1ffc24f3108c1e86d5a3676c040e2ce4909b2ef96f4557ea2fc3100",
+      "content_hash": "cd7b91961159da4c0acebcccd2666881154405a735060ecbc7afc3c614441f6a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T00:10:13.631Z"
+      "persisted_at": "2026-11-16T02:44:37.912Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226668,9 +226673,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "83a430c8067e1998fdeef2bf8002104475734755a5a79159a878367ccada416f",
+      "content_hash": "d4f3d9974de2c0ebb0531a50132eb9b95c73a7b112c4f4384317bb8e72de9c8f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T00:10:13.741Z"
+      "persisted_at": "2026-11-16T02:44:38.050Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226680,9 +226685,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "a3bad10e5e3feaacd8a18263cf58fe9d9ef85177ce77ac8b1cb75a214c89add4",
+      "content_hash": "02f688bc550e14387845056f5d8145ee02a4315d6aa9b63a2f5a6b090a97f2bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:10:13.855Z"
+      "persisted_at": "2026-11-16T02:44:38.193Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -250327,6 +250332,68 @@
       "content_hash": "fe0d641e49b632d1585976f5822be4d58f1e9142d2b92ef5b27f4476861ffaad",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T02:26:03.660Z"
+    },
+    "rule-8694": {
+      "learning_id": "rule-8694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8694,
+      "title": "detect uv run script shebangs",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "38cb1af6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T02:44:25.633Z"
+    },
+    "candidate_directive-detect-uv-run-script-shebangs": {
+      "item_id": "candidate_directive-detect-uv-run-script-shebangs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZCC-detect-uv-run-script-shebangs.md",
+      "title": "detect uv run script shebangs",
+      "repository": "zvec-ai/zvec-grep",
+      "source_version": "38cb1af6",
+      "content_hash": "2705d57a9eff2cb8b6630fdb9e5a83ae5c2615d08723423068248e5ed481a6c0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T02:44:26.029Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invaria.md",
+      "title": "Research & Knowledge Intelligence: zvec-ai/zvec-grep Core Invariants",
+      "repository": "zvec-ai/zvec-grep",
+      "source_version": "38cb1af6",
+      "content_hash": "f4b88e6fb4202eb1df20e0e397615bf0efeb4794b2a4924bf5a142478abaf455",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T02:44:26.166Z"
+    },
+    "candidate_directive-engine-detect-uv-run-script-shebangs": {
+      "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U7V5-engine-detect-uv-run-script-shebangs.md",
+      "title": "engine): detect uv run script shebangs",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d1f3cba1abb931e25d1096d27401c8cf85c177dfe83635ceda1ce6232fb4f711",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T02:44:37.074Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
+      "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ab31d2fe90c4b97f9f7ac9acd92109af4d70ffd3882178c583ca89f82d2a319c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T02:44:37.222Z"
     }
   },
   "ai-builder-brain": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T02:26:03.113Z",
-    "lastVerified": "2026-11-16T02:26:03.113Z",
+    "lastChecked": "2026-11-16T02:44:36.660Z",
+    "lastVerified": "2026-11-16T02:44:36.660Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-16T01:52:49.395Z",
-    "lastVerified": "2026-11-16T01:52:49.395Z",
+    "lastChecked": "2026-11-16T02:44:36.648Z",
+    "lastVerified": "2026-11-16T02:44:36.648Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1677,9 +1677,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-15T21:41:44.482Z",
+    "lastChecked": "2026-11-16T02:44:31.649Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-15T21:41:44.482Z"
+    "lastVerified": "2026-11-16T02:44:31.649Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -5669,8 +5669,8 @@
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T19:59:32.387Z",
-    "lastVerified": "2026-11-14T19:59:32.387Z",
+    "lastChecked": "2026-11-16T02:44:29.168Z",
+    "lastVerified": "2026-11-16T02:44:29.168Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
@@ -6942,9 +6942,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-14T18:26:29.290Z",
+    "lastChecked": "2026-11-16T02:44:34.162Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-14T18:26:29.290Z"
+    "lastVerified": "2026-11-16T02:44:34.162Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -8038,14 +8038,14 @@
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T06:23:34.808Z",
-    "lastVerified": "2026-11-14T06:23:34.808Z",
+    "lastChecked": "2026-11-16T02:44:24.616Z",
+    "lastVerified": "2026-11-16T02:44:24.616Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "c794c8f710d4e8893b167bb6627fc6e2836018fb018f60c672632e486b5c189b",
+    "contentHash": "0c7ef5a355d715f6d383f4e045063df8a425ee0a9f358765ac5b1ab2c6501071",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10833,9 +10833,9 @@
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",
     "officialUrl": "https://github.com/aliarifsoydas/sitemap-checker",
-    "lastChecked": "2026-11-11T12:41:12.736Z",
+    "lastChecked": "2026-11-16T02:44:24.165Z",
     "revisionIdentifier": "8eef8767",
-    "lastVerified": "2026-11-11T12:41:12.736Z"
+    "lastVerified": "2026-11-16T02:44:24.165Z"
   },
   "android-kotlin-multiplatform-samples": {
     "name": "kotlin-multiplatform-samples",
@@ -10917,9 +10917,9 @@
   "michaelbull-kotlin-result": {
     "name": "kotlin-result",
     "officialUrl": "https://github.com/michaelbull/kotlin-result",
-    "lastChecked": "2026-11-12T21:30:35.194Z",
+    "lastChecked": "2026-11-16T02:44:26.997Z",
     "revisionIdentifier": "aed7438b",
-    "lastVerified": "2026-11-12T21:30:35.194Z"
+    "lastVerified": "2026-11-16T02:44:26.997Z"
   },
   "reason-machines-reason-network": {
     "name": "reason-machines/reason-network",
