@@ -10397,3 +10397,6 @@ Every entry in this ledger must capture:
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `22c832f6` | Multi-dimensional audit evidence | 2026-11-16T23:03:38.602Z |
 | `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `ebaa1858` | Multi-dimensional audit evidence | 2026-11-16T23:03:44.029Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `7059b8d2` | Multi-dimensional audit evidence | 2026-11-16T23:03:47.272Z |
+| `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `d9f9b0ad` | Multi-dimensional audit evidence | 2026-11-16T23:14:45.099Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `330b0bab` | Multi-dimensional audit evidence | 2026-11-16T23:14:51.758Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `171fb44a` | Multi-dimensional audit evidence | 2026-11-16T23:14:56.192Z |

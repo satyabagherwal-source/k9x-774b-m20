@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "faa20a23",
+    "sourceVersion": "171fb44a",
     "license": "NOASSERTION",
-    "contentHash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
-    "lastHarvestedAt": "2026-11-16T13:38:34.096Z",
+    "contentHash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
+    "lastHarvestedAt": "2026-11-16T23:14:56.192Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "6181e756",
+    "sourceVersion": "330b0bab",
     "license": "Apache-2.0",
-    "contentHash": "570227c119d9b6dbbe72ad2b63d68792ae5b201a4f5f3c0389563d93a305f5e3",
-    "lastHarvestedAt": "2026-11-12T21:02:24.037Z",
+    "contentHash": "b48d6dd2de5357c2d3a1d7c98cadd337494fbc408867a42c1cca3db96dd83aa3",
+    "lastHarvestedAt": "2026-11-16T23:14:51.758Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -9633,10 +9633,10 @@
     "repository": "urllib3/urllib3",
     "platform": "github",
     "sourceUrl": "https://github.com/urllib3/urllib3",
-    "sourceVersion": "6da1f821",
+    "sourceVersion": "d9f9b0ad",
     "license": "MIT",
-    "contentHash": "fff051ed7e74cce05151125c11a1260bfe45d4cfa9a4086e76ec3501581f0366",
-    "lastHarvestedAt": "2026-11-12T05:57:19.113Z",
+    "contentHash": "d2e8fee056a0eaa2d9ee9bc718907eb1d06debe426bb66883835e72fdcd0a678",
+    "lastHarvestedAt": "2026-11-16T23:14:45.099Z",
     "learningId": "learn-github-urllib3-urllib3"
   },
   "simibac-confettiswiftui": {

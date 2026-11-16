@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:03:47.279Z",
-  "total_cycles_completed": 9951,
-  "total_learnings_persisted": 9951,
-  "total_rules_promoted": 9545,
+  "last_updated": "2026-11-16T23:14:56.208Z",
+  "total_cycles_completed": 9954,
+  "total_learnings_persisted": 9954,
+  "total_rules_promoted": 9547,
   "history": [
-    {
-      "timestamp": "2026-11-15T19:45:45.260Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T20:22:37.212Z",
-      "repository": "VideoRebirthAI/hyperflow-h3-flash",
-      "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T20:22:43.983Z",
-      "repository": "nsh07/Tomato",
-      "learningId": "learn-github-nsh07-tomato",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T20:41:53.080Z",
       "repository": "NVIDIA/cuda-rust",
@@ -1403,6 +1382,27 @@
       "repository": "higress-group/higress",
       "learningId": "learn-github-higress-group-higress",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:14:45.104Z",
+      "repository": "urllib3/urllib3",
+      "learningId": "learn-github-urllib3-urllib3",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:14:51.763Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:14:56.208Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

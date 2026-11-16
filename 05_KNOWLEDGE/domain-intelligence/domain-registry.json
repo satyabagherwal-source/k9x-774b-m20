@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T23:03:52.300Z",
-  "total_records": 1350,
+  "last_updated": "2026-11-16T23:15:01.611Z",
+  "total_records": 1354,
   "domains": {
     "A": {
       "total": 9,
@@ -940,7 +940,7 @@
       ]
     },
     "H": {
-      "total": 298,
+      "total": 300,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1239,11 +1239,13 @@
         "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants"
       ]
     },
     "I": {
-      "total": 62,
+      "total": 64,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1306,7 +1308,9 @@
         "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants",
-        "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-sigstore-cosign-core-invariants",
+        "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants"
       ]
     },
     "J": {
@@ -11407,8 +11411,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "02076f1268305de7d25f7cbe3473943f4aa68d1b8955e95c0d0eb260af0ffbcc",
-      "created_at": "2026-11-16T13:38:34.386Z"
+      "content_hash": "0ed3667d8375f7c25c594ca0cd27b169ae01358e3f2c25a21c3300286beec144",
+      "created_at": "2026-11-16T23:14:56.515Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11476,8 +11480,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "44b5f84aaafb01434ad0a93e1099c9ffed62ad1211b7564eb385bfbe79061b47",
-      "created_at": "2026-11-16T00:36:59.368Z"
+      "content_hash": "e5ad199a00dbf25f05093fd21d9e90f8fcbab7b202f0b1d02b097b3fb108329c",
+      "created_at": "2026-11-16T23:15:01.611Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -24120,6 +24124,42 @@
       "repository": "sozercan-kaset-learnings",
       "content_hash": "1d844bec0af834777a51c3f0848503cb6dd73381f7b6e00ccbf53f6a62760a81",
       "created_at": "2026-11-16T23:03:52.300Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: urllib3/urllib3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-urllib3-urllib3-technical-construction-intelligence-urllib3-urllib3-core-invaria.md",
+      "repository": "urllib3/urllib3",
+      "content_hash": "ea51ca3482e1772018df51b8fcede903099305588909a48b52dc694b0f864b14",
+      "created_at": "2026-11-16T23:14:45.394Z"
+    },
+    "domain_intelligence-content-information-intelligence-sigstore-cosign-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-sigstore-cosign-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
+      "repository": "sigstore/cosign",
+      "content_hash": "9cecfd7617814c705a764d11e285e2e66f4a2bab9cf562e866fef5f644f4f57b",
+      "created_at": "2026-11-16T23:14:52.056Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: urllib3-urllib3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-urllib3-urllib3-learnings-technical-construction-intelligence-urllib3-urllib3-le.md",
+      "repository": "urllib3-urllib3-learnings",
+      "content_hash": "8a7d4454192d08e093add9418819ab74f875c18204c6cd90d600a3f73671d373",
+      "created_at": "2026-11-16T23:14:59.837Z"
+    },
+    "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
+      "repository": "sigstore-cosign-learnings",
+      "content_hash": "0cf57eaa94081f663e1d5c328a867bc26d57c1a8d0bf2a3bc042db66d4e3bc5a",
+      "created_at": "2026-11-16T23:15:00.461Z"
     }
   }
 }

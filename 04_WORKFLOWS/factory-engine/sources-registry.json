@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T23:03:50.519Z",
-    "lastVerified": "2026-11-16T23:03:50.519Z",
+    "lastChecked": "2026-11-16T23:14:59.267Z",
+    "lastVerified": "2026-11-16T23:14:59.267Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -251,22 +251,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T22:34:19.793Z",
-    "lastVerified": "2026-11-16T22:34:19.793Z",
+    "lastChecked": "2026-11-16T23:14:55.780Z",
+    "lastVerified": "2026-11-16T23:14:55.780Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "faa20a23"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1933,22 +1932,21 @@
     "revisionIdentifier": "3a0085b6"
   },
   "sigstore-cosign": {
-    "name": "cosign",
+    "name": "sigstore/cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-16T15:33:16.795Z",
-    "lastVerified": "2026-11-16T15:33:16.795Z",
+    "lastChecked": "2026-11-16T23:14:50.839Z",
+    "lastVerified": "2026-11-16T23:14:50.839Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "570227c119d9b6dbbe72ad2b63d68792ae5b201a4f5f3c0389563d93a305f5e3",
+    "contentHash": "b48d6dd2de5357c2d3a1d7c98cadd337494fbc408867a42c1cca3db96dd83aa3",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6181e756"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -2334,8 +2332,8 @@
     "officialUrl": "https://github.com/fission/fission",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T16:30:42.230Z",
-    "lastVerified": "2026-11-15T16:30:42.230Z",
+    "lastChecked": "2026-11-16T23:14:43.892Z",
+    "lastVerified": "2026-11-16T23:14:43.892Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fission-fission",
@@ -2374,9 +2372,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-15T03:13:23.296Z",
+    "lastChecked": "2026-11-16T23:14:36.402Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-11-15T03:13:23.296Z"
+    "lastVerified": "2026-11-16T23:14:36.402Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -3264,8 +3262,8 @@
     "officialUrl": "https://github.com/pingcap/autoflow",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-15T14:25:52.703Z",
-    "lastVerified": "2026-11-15T14:25:52.703Z",
+    "lastChecked": "2026-11-16T23:14:48.879Z",
+    "lastVerified": "2026-11-16T23:14:48.879Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-autoflow",
@@ -11964,14 +11962,14 @@
     "officialUrl": "https://github.com/urllib3/urllib3",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T05:57:07.201Z",
-    "lastVerified": "2026-11-12T05:57:07.201Z",
+    "lastChecked": "2026-11-16T23:14:43.973Z",
+    "lastVerified": "2026-11-16T23:14:43.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-urllib3-urllib3",
-    "contentHash": "fff051ed7e74cce05151125c11a1260bfe45d4cfa9a4086e76ec3501581f0366",
+    "contentHash": "d2e8fee056a0eaa2d9ee9bc718907eb1d06debe426bb66883835e72fdcd0a678",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12275,9 +12273,9 @@
   "aheze-popovers": {
     "name": "Popovers",
     "officialUrl": "https://github.com/aheze/Popovers",
-    "lastChecked": "2026-11-13T09:17:04.479Z",
+    "lastChecked": "2026-11-16T23:14:41.386Z",
     "revisionIdentifier": "576b4d3e",
-    "lastVerified": "2026-11-13T09:17:04.479Z"
+    "lastVerified": "2026-11-16T23:14:41.386Z"
   },
   "miso-belica-justext": {
     "name": "justext",

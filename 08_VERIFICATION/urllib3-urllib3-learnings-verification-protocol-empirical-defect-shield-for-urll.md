@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:16.485Z",
+  "timestamp": "2026-11-16T23:14:59.614Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-urllib3-urllib3-learnings",
+  "learning_id": "LEARN-EVO-urllib3-urllib3-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [urllib3-urllib3-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:16.485Z`  
-> **Learning ID**: `LEARN-REEXTRACT-urllib3-urllib3-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T23:14:59.614Z`  
+> **Learning ID**: `LEARN-EVO-urllib3-urllib3-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source**: github ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
-> **Source Version**: `6da1f821`  
+> **Source Version**: `d9f9b0ad`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T05:57:07.376Z  
+> **Timestamp**: 2026-11-16T23:14:44.214Z  
 > **Learning ID**: `learn-github-urllib3-urllib3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T05:57:07.201Z  
+> **Harvest Timestamp**: 2026-11-16T23:14:43.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: urllib3 is a user-friendly HTTP client library for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4081 stars
+- **Stars / Engagement**: 4084 stars
 
 ---
 
@@ -1820,11 +1820,11 @@ class SSLTransport:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5376** (2026-11-13): **Bump Ubuntu and macOS versions in CI and Read the Docs**
+  *Symptoms*: 
+
 - **Issue #5372** (2026-11-11): **Run dummyserver tests over both HTTP and HTTPS**
   *Symptoms*: Many existing connection pool, retry, and pool manager tests run only over HTTP. This change runs the applicable tests over HTTPS too, using shared fixtures.  These fixtures also prepare the tests for HTTP/2 coverage in #5278. That PR can add protocol selection to the shared configuration:  ```python @pytest.fixture def connection_pool_kw(     server_scheme: str, http_version: str ) -> dict[str, typing.Any]:     options: dict[str, typing.Any] = {         "http1": http_version == "h11",         "http2": http_version == "h2",     }     if server_scheme == "https":         options["ca_certs"] = DEFAULT_CA     return options ```  Tests using the pool factories can then cover both protocols without changing their bodies.
-
-- **Issue #5360** (2026-11-11): **Upgrade dev dependencies to fix alerts**
-  *Symptoms*: Bumped all dev dependencies with `uv lock --upgrade --upgrade-package mypy==1.20.2` to fix alerts on https://github.com/urllib3/urllib3/security/dependabot mainly. mypy was skipped because newer versions require changes to a few annotations. Also, bumped uv.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1841,171 +1841,265 @@ class SSLTransport:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a35bf900` (2026-11-11)
-**Commit Message**: Upgrade dev dependencies to fix alerts (#5360)
+### Incident Patch 1: `d9f9b0ad` (2026-11-14)
+**Commit Message**: Reject decoding mode switches before consuming response data (#5344)
 
-* Upgrade all dev dependencies except mypy
-
-* Fix upload parameter typing for newer Quart versions
-dummyserver/app.py:82: error: Argument 1 to "getlist" of "MultiDict" has incompatible type "Any | None"; expected "str"  [arg-type]
-
-* Set asyncio fixture loop scope for Emscripten tests
-
-* Bump uv to a version unaffected by eMudhra certs
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+**File**: `changelog/5344.bugfix.rst` (added, +1/-0)
 ```diff
-@@ -120,7 +120,7 @@ jobs:
-       - name: "Install uv"
-         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
-         with:
--          version: "0.12.22"
-+          version: "0.13.7"
- 
-       - name: "Install Chrome"
-         uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
-@@ -195,7 +195,7 @@ jobs:
-       - name: "Install uv"
-         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
-         with:
--          version: "0.12.22"
-+          version: "0.13.7"
- 
-       - name: "Install coverage"
-         # Install the same version of coverage as in the lock file.
-```
-
-**File**: `.github/workflows/downstream.yml` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ jobs:
-       - name: "Install uv"
-         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e  # v10.3.2
-         with:
--          version: "0.12.22"
-+          version: "0.13.7"
- 
-       - name: "Run downstream tests"
-         run: uvx nox -s downstream_${{ matrix.downstream }}
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-       - name: "Install uv"
-         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
-         with:
--          version: "0.12.22"
-+          version: "0.13.7"
- 
-       - name: "Lint code"
-         run: uvx nox -s lint
-```
-
-**File**: `dummyserver/app.py` (modified, +1/-1)
-```diff
-@@ -76,7 +76,7 @@ async def upload() -> ResponseReturnValue:
-     "Confirm that the uploaded file conforms to specification"
-     await request.get_data(parse_form_data=True)
-     params = await request.form
--    param = params.get("upload_param")
-+    param = params["upload_param"]
-     filename_param = params.get("upload_filename")
-     size = int(params.get("upload_size", "0"))
-     files_ = (await request.files).getlist(param)
-```
-
-**File**: `noxfile.py` (modified, +3/-0)
-```diff
-@@ -320,6 +320,9 @@ def emscripten(session: nox.Session, runner: str) -> None:
-         session,
-         extras="",
-         pytest_extra_args=[
-+            # pytest-pyodide brings in pytest-asyncio, which warns if this is unset.
-+            "-o",
-+            "asyncio_default_fixture_loop_scope=function",
-             "--runtime",
-             f"{runner}-no-host",
-             "--dist-dir",
-```
-
----
-
-### Incident Patch 2: `fdbc9b70` (2026-11-11)
-**Commit Message**: Fix gzip multi-member decoding after a bounded read (#5315)
-
-When read(amt) stopped exactly at the end of a gzip member, the decoder
-kept the finished decompressor and fed the remaining data to it again.
-zlib appended that data to unused_data a second time, so the next member
-came back repeatedly and read() never reached EOF. Create the new
-decompressor before the max_length stop.
-
-**File**: `changelog/5315.bugfix.rst` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+Fixed ``HTTPResponse.read(amt)``, ``read1(amt)`` and ``stream(amt)`` returning
-+the last member of a multi-member gzip response repeatedly when a read ended
-+exactly at the end of a member.
+@@ -0,0 +1 @@
++Fixed rejected decoding-mode switches in ``HTTPResponse.read()`` consuming or returning response data before raising ``RuntimeError``.
 ```
 
 **File**: `src/urllib3/response.py` (modified, +6/-5)
 ```diff
-@@ -200,16 +200,17 @@ def decompress(self, data: bytes, max_length: int = -1) -> bytes:
-             self._unconsumed_tail = data = (
-                 self._obj.unconsumed_tail or self._obj.unused_data
-             )
-+            # When the end of a gzip member is reached, a new decompressor
-+            # must be created for unused (possibly future) data.
-+            if data and self._obj.eof:
-+                self._state = GzipDecoderState.OTHER_MEMBERS
-+                self._obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
+@@ -1130,6 +1130,12 @@ def read(
+         if decode_content is None:
+             decode_content = self.decode_content
+ 
++        if amt != 0 and not decode_content and self._has_decoded_content:
++            raise RuntimeError(
++                "Calling read(decode_content=False) is not supported after "
++                "read(decode_content=True) was called."
++            )
 +
-             if max_length > 0 and len(ret) >= max_length:
-                 break
+         if amt and amt < 0:
+             # Negative numbers and `None` should be treated the same.
+             amt = None
+@@ -1178,11 +1184,6 @@ def read(
+         else:
+             # do not waste memory on buffer when not decoding
+             if not decode_content:
+-                if self._has_decoded_content:
+-                    raise RuntimeError(
+-                        "Calling read(decode_content=False) is not supported after "
+-                        "read(decode_content=True) was called."
+-                    )
+                 return data
  
-             if not data:
-                 return ret if isinstance(ret, bytes) else bytes(ret)
--            # When the end of a gzip member is reached, a new decompressor
--            # must be created for unused (possibly future) data.
--            if self._obj.eof:
--                self._state = GzipDecoderState.OTHER_MEMBERS
--                self._obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
+             decoded_data = self._decode(
+```
+
+**File**: `test/test_response.py` (modified, +66/-11)
+```diff
+@@ -1419,16 +1419,26 @@ def test_io_not_autoclose_textiowrapper(self) -> None:
+         with pytest.raises(ValueError, match="I/O operation on closed file.?"):
+             next(reader)
  
-         return ret if isinstance(ret, bytes) else bytes(ret)
+-    def test_read_with_illegal_mix_decode_toggle(self) -> None:
+-        data = zlib.compress(b"foo")
++    @pytest.mark.parametrize("amt", [None, 1, -1])
++    @pytest.mark.parametrize(
++        "encoding,compress", [("gzip", gzip.compress), ("deflate", zlib.compress)]
++    )
++    def test_read_with_illegal_mix_decode_toggle(
++        self,
++        amt: int | None,
++        encoding: str,
++        compress: typing.Callable[[bytes], bytes],
++    ) -> None:
++        data = compress(b"foo")
+ 
+         fp = BytesIO(data)
+ 
+         resp = HTTPResponse(
+-            fp, headers={"content-encoding": "deflate"}, preload_content=False
++            fp, headers={"content-encoding": encoding}, preload_content=False
+         )
+ 
+         assert resp.read(1) == b"f"
++        position = fp.tell()
+ 
+         with pytest.raises(
+             RuntimeError,
+@@ -1437,16 +1447,44 @@ def test_read_with_illegal_mix_decode_toggle(self) -> None:
+                 r"read\(decode_content=True\) was called"
+             ),
+         ):
++            resp.read(amt, decode_content=False)
++
++        assert fp.tell() == position
++        assert resp.read() == b"oo"
++
++    @pytest.mark.parametrize(
++        "encoding,compress", [("gzip", gzip.compress), ("deflate", zlib.compress)]
++    )
++    def test_read_zero_with_decode_disabled_after_decoded_read(
++        self, encoding: str, compress: typing.Callable[[bytes], bytes]
++    ) -> None:
++        fp = BytesIO(compress(b"foo"))
++        resp = HTTPResponse(
++            fp, headers={"content-encoding": encoding}, preload_content=False
++        )
++        assert resp.read(1) == b"f"
++        position = fp.tell()
++
++        assert resp.read(0, decode_content=False) == b""
++        assert fp.tell() == position
++        assert resp.read() == b"oo"
++
++    def test_read_with_illegal_mix_decode_toggle_and_buffered_data(self) -> None:
++        fp = BytesIO(zlib.compress(b"foobarbaz"))
++        resp = HTTPResponse(
++            fp, headers={"content-encoding": "deflate"}, preload_content=False
++        )
++        assert resp.read(3) == b"foo"
++        decoded = resp._decode(
++            resp._raw_read(), decode_content=True, flush_decoder=False, max_length=3
++        )
++        assert decoded == b"bar"
++        resp._decoded_buffer.put(decoded)
++
++        with pytest.raises(RuntimeError, match="decode_content=False"):
+             resp.read(1, decode_content=False)
+ 
+-        with pytest.raises(
+-            RuntimeError,
+-            match=(
+-                r"Calling read\(decode_content=False\) is not supported after "
+-                r"read\(decode_content=True\) was called"
+-            ),
+-        ):
+-            resp.read(decode_content=False)
++        assert resp.read() == b"barbaz"
+ 
+     def test_read1_with_illegal_mix_decode_toggle(self) -> None:
+         data = zlib.compress(b"foo")
+@@ -1477,6 +1515,23 @@ def test_read1_with_illegal_mix_decode_toggle(self) -> None:
+         ):
+             resp.read1(decode_content=False)
+ 
++    def test_read_chunked_with_illegal_mix_decode_toggle(self) -> None:
++        fp = MockChunkedEncodingResponse([zlib.compress(b"foo")])
++        raw = httplib.HTTPResponse(MockSock)  # type: ignore[arg-type]
++        raw.fp = fp  # type: ignore[assignment]
++        resp = HTTPResponse(
++            raw,
++            headers={"transfer-encoding": "chunked", "content-encoding": "deflate"},
++            preload_content=False,
++        )
++        decoded = resp.read_chunked(1, decode_content=True)
++        assert next(decoded) == b"f"
++
++        with pytest.raises(RuntimeError, match="decode_content=False"):
++            next(resp.read_chunked(1, decode_content=False))
++
++        decoded.close()
++
+     def test_read_with_mix_decode_toggle(self) -> None:
+         data = zlib.compress(b"foo")
  
 ```
 
-**File**: `test/test_response.py` (modified, +14/-0)
+---
+
+### Incident Patch 2: `01f386e3` (2026-11-13)
+**Commit Message**: Bump Ubuntu and macOS versions in CI and Read the Docs (#5376)
+
+Co-authored-by: Quentin Pradet <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci.yml` (modified, +12/-12)
 ```diff
-@@ -470,6 +470,20 @@ def test_decode_gzip_multi_member(self) -> None:
+@@ -46,58 +46,58 @@ jobs:
+       matrix:
+         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.14t", "3.15"]
+         os:
+-          - macos-15
++          - macos-26
+           - windows-latest
+-          - ubuntu-24.04
++          - ubuntu-26.04
+         nox-session: ['']
+         container: ['']
+         include:
+           - experimental: false
+           - python-version: "3.12"
+-            os: ubuntu-24.04
++            os: ubuntu-26.04
+             experimental: false
+             nox-session: test_integration
+           # Test with 3.12.2 for https://github.com/urllib3/urllib3/pull/3620 patch
+           - python-version: "3.12.2"
+-            os: ubuntu-24.04
++            os: ubuntu-24.04 # setup-python has no 26.04 build for 3.12.2.
+             experimental: false
+             nox-session: test-3.12
+           # pypy
+           - python-version: "pypy-3.11"
+-            os: ubuntu-24.04
++            os: ubuntu-26.04
+             experimental: false
+             nox-session: test-pypy3.11
+           # Test with the minimum supported pyOpenSSL for OpenSSL 1.1.1.
+           # Debian Bullseye was the last release with OpenSSL 1.1.1, and
+           # 3.13-bullsey was the last published image.
+           - python-version: "3.13"
+-            os: ubuntu-24.04
++            os: ubuntu-26.04
+             container: python:3.13-bullseye
+             experimental: false
+             nox-session: test_min_pyopenssl
+           - python-version: "3.x"
+           # brotli
+-            os: ubuntu-24.04
++            os: ubuntu-26.04
+             experimental: false
+             nox-session: test_brotlipy
+           - python-version: "3.12"
+-            os: ubuntu-24.04
++            os: ubuntu-26.04
+             nox-session: emscripten(node)
+             experimental: true
+           - python-version: "3.12"
+-            os: ubuntu-24.04
++            os: ubuntu-26.04
+             nox-session: emscripten(firefox)
+             experimental: true
+           - python-version: "3.12"
+-            os: ubuntu-24.04
++            os: ubuntu-26.04
+             nox-session: emscripten(chrome)
+             experimental: true
+           - python-version: "3.15"
+             experimental: true
  
-         assert r.data == b"foofoofoo"
+     runs-on: ${{ matrix.os }}
+     container: ${{ matrix.container }}
+-    name: ${{ fromJson('{"macos-15":"macOS","windows-latest":"Windows","ubuntu-24.04":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }} ${{ matrix.nox-session}}
++    name: ${{ fromJson('{"macos-26":"macOS","windows-latest":"Windows","ubuntu-24.04":"Ubuntu","ubuntu-26.04":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }} ${{ matrix.nox-session}}
+     continue-on-error: ${{ matrix.experimental }}
+     timeout-minutes: 10
+     steps:
+@@ -179,7 +179,7 @@ jobs:
  
-+    @pytest.mark.parametrize("read_method", ("read", "read1"))
-+    def test_decode_gzip_multi_member_with_max_length(self, read_method: str) -> None:
-+        data = gzip.compress(b"x" * 1024) + gzip.compress(b"y" * 1024)
-+
-+        fp = BytesIO(data)
-+        r = HTTPResponse(
-+            fp, headers={"content-encoding": "gzip"}, preload_content=False
-+        )
-+        read = getattr(r, read_method)
-+
-+        assert read(1024) == b"x" * 1024
-+        assert read(1024) == b"y" * 1024
-+        assert read() == b""
-+
-     def test_decode_gzip_error(self) -> None:
-         fp = BytesIO(b"foo")
-         with pytest.raises(DecodeError):
+   coverage:
+     if: always()
+-    runs-on: "ubuntu-24.04"
++    runs-on: "ubuntu-26.04"
+     needs: test
+     steps:
+       - name: "Checkout repository"
+```
+
+**File**: `.readthedocs.yml` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ version: 2
+ 
+ build:
+-  os: ubuntu-24.04
++  os: ubuntu-26.04
+   tools:
+     python: "3.13"
+   jobs:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5376** (2026-11-13): Bump Ubuntu and macOS versions in CI and Read the Docs (@illia-v)
 - **PR #5372** (2026-11-11): Run dummyserver tests over both HTTP and HTTPS (@illia-v)
+- **PR #5364** (closed): Handle JsNull and null response body in Emscripten streaming (@yashpatadiya1724-cmyk)
 - **PR #5360** (2026-11-11): Upgrade dev dependencies to fix alerts (@illia-v)
-- **PR #5357** (closed): Treat empty allowed_methods as no retries (@DawnofGenX)
-- **PR #5353** (2026-11-02): Bump the github-actions group with 10 updates (@dependabot[bot])
-- **PR #5349** (closed): Fix HTTPConnectionPool._prepare_proxy to set up CONNECT tunnel (#2730) (@faresrafat3)
-- **PR #5348** (closed): fix(poolmanager): rewind seekable file-like body on body-preserving redirects (#5181) (@voidstackloop)
+- **PR #5359** (closed): Accept bytes in request header type annotations and normalize lookups (@HarsH-1877)
+- **PR #5358** (closed): Support bytes values in HTTPHeaderDict without normalization loss (@HarsH-1877)
 
 ---
 
@@ -2025,33 +2119,31 @@ decompressor before the max_length stop.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Upgrade dev dependencies to fix alerts (#5360)
+## X. Reject decoding mode switches before consuming response data
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/5344.bugfix.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a35bf900`: Upgrade dev dependencies to fix alerts (#5360). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9f9b0ad`: Reject decoding mode switches before consuming response data. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5344.bugfix.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-          version: "0.13.7"
-          version: "0.13.7"
+Fixed rejected decoding-mode switches in ``HTTPResponse.read()`` consuming or returning response data before raising ``RuntimeError``.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-          version: "0.12.22"
-          version: "0.12.22"
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a35bf900` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9f9b0ad` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

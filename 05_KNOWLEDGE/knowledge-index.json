@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T23:03:52.456Z",
-  "total_verified_learnings": 8810,
+  "last_updated": "2026-11-16T23:15:01.731Z",
+  "total_verified_learnings": 8812,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19432,
+  "total_items": 19447,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112117,10 +112117,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "faa20a23",
-      "content_hash": "c978223272c5b6fc36940fbf7905f8308ad0c2882a7cdb68522f463f20971815",
+      "source_version": "171fb44a",
+      "content_hash": "98b87c3d012f4f9a5afc4378a8c5a5dbc3a26976ea1e3c621bd764d4bf9716dd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T13:38:34.500Z"
+      "persisted_at": "2026-11-16T23:14:56.638Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112154,9 +112154,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9e4b433dd0e069ac73aca44c9782508cf9cb0e45dcd261be04ae4e44953bcbc",
+      "content_hash": "26c642075be5815a2caf888622ae7da85336907c7f512369ee6a78e31a64b3b7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:36:59.482Z"
+      "persisted_at": "2026-11-16T23:15:01.731Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -218931,8 +218931,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "faa20a23",
-      "content_hash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
+      "source_version": "171fb44a",
+      "content_hash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219017,7 +219017,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T13:38:33.941Z",
+      "verified_at": "2026-11-16T23:14:56.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219877,10 +219877,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "faa20a23",
-      "content_hash": "02076f1268305de7d25f7cbe3473943f4aa68d1b8955e95c0d0eb260af0ffbcc",
+      "source_version": "171fb44a",
+      "content_hash": "0ed3667d8375f7c25c594ca0cd27b169ae01358e3f2c25a21c3300286beec144",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T13:38:34.386Z"
+      "persisted_at": "2026-11-16T23:14:56.515Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -219950,9 +219950,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "44b5f84aaafb01434ad0a93e1099c9ffed62ad1211b7564eb385bfbe79061b47",
+      "content_hash": "e5ad199a00dbf25f05093fd21d9e90f8fcbab7b202f0b1d02b097b3fb108329c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:36:59.368Z"
+      "persisted_at": "2026-11-16T23:15:01.611Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -258936,6 +258936,232 @@
       "content_hash": "23d8ac5fdace5a85cf48c5babe1f3604d7e39b34e1aebefa6cd179bc31534de2",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T23:03:52.456Z"
+    },
+    "learn-github-urllib3-urllib3": {
+      "learning_id": "learn-github-urllib3-urllib3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "urllib3/urllib3",
+      "repository": "urllib3/urllib3",
+      "slug": "urllib3-urllib3",
+      "platform": "github",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "d9f9b0ad",
+      "content_hash": "d2e8fee056a0eaa2d9ee9bc718907eb1d06debe426bb66883835e72fdcd0a678",
+      "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8809,
+          "title": "Reject decoding mode switches before consuming response data",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:14:44.936Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8809": {
+      "learning_id": "rule-8809",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8809,
+      "title": "Reject decoding mode switches before consuming response data",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "d9f9b0ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:14:44.936Z"
+    },
+    "candidate_directive-reject-decoding-mode-switches-before-consuming-response-data": {
+      "item_id": "candidate_directive-reject-decoding-mode-switches-before-consuming-response-data",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SHS4-reject-decoding-mode-switches-before-consuming-response-data.md",
+      "title": "Reject decoding mode switches before consuming response data",
+      "repository": "urllib3-urllib3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e33b594cbc1fc497dd18f15869ac94086c5f82ab5ed224df82d4a09b3b5816a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T23:14:59.719Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-urllib3-urllib3-technical-construction-intelligence-urllib3-urllib3-core-invaria.md",
+      "title": "Technical Construction Intelligence: urllib3/urllib3 Core Invariants",
+      "repository": "urllib3/urllib3",
+      "source_version": "d9f9b0ad",
+      "content_hash": "ea51ca3482e1772018df51b8fcede903099305588909a48b52dc694b0f864b14",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T23:14:45.394Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-urllib3-urllib3": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-urllib3-urllib3",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/urllib3-urllib3-verification-protocol-empirical-defect-shield-for-urllib3-urllib.md",
+      "title": "Verification Protocol: Empirical Defect Shield for urllib3/urllib3",
+      "repository": "urllib3/urllib3",
+      "source_version": "d9f9b0ad",
+      "content_hash": "7d41317996a767c955a68b3290b9a4bbbbf4c1ee6b4318a8a7bf59eef0f7dee5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:14:45.508Z"
+    },
+    "learn-github-sigstore-cosign": {
+      "learning_id": "learn-github-sigstore-cosign",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sigstore/cosign",
+      "repository": "sigstore/cosign",
+      "slug": "sigstore-cosign",
+      "platform": "github",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "330b0bab",
+      "content_hash": "b48d6dd2de5357c2d3a1d7c98cadd337494fbc408867a42c1cca3db96dd83aa3",
+      "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8810,
+          "title": "Verify blob attestations exclusively via sigstore-go",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:14:51.595Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8810": {
+      "learning_id": "rule-8810",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8810,
+      "title": "Verify blob attestations exclusively via sigstore-go",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "330b0bab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:14:51.595Z"
+    },
+    "candidate_directive-verify-blob-attestations-exclusively-via-sigstore-go": {
+      "item_id": "candidate_directive-verify-blob-attestations-exclusively-via-sigstore-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SI9H-verify-blob-attestations-exclusively-via-sigstore-go.md",
+      "title": "Verify blob attestations exclusively via sigstore-go",
+      "repository": "sigstore-cosign-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2aa76a35b1e3f1eb4a07de95170a25434cedd6251bf43852f64411f39f0ff105",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:15:00.343Z"
+    },
+    "domain_intelligence-content-information-intelligence-sigstore-cosign-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-sigstore-cosign-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
+      "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
+      "repository": "sigstore/cosign",
+      "source_version": "330b0bab",
+      "content_hash": "9cecfd7617814c705a764d11e285e2e66f4a2bab9cf562e866fef5f644f4f57b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:14:52.056Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sigstore-cosign-verification-protocol-empirical-defect-shield-for-sigstore-cosig.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sigstore/cosign",
+      "repository": "sigstore/cosign",
+      "source_version": "330b0bab",
+      "content_hash": "e135719786743173a0bb8fbca936c95af35c5ee752b240ed38ea82c669c63942",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:14:52.173Z"
+    },
+    "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized": {
+      "item_id": "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SJ5G-docs-synthesize-warn-that-synthetic-output-is-not-anonymized.md",
+      "title": "docs(synthesize): warn that synthetic output is not anonymized",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1e2c98fc1ee98c683aa99a24e562b4577c42a9fc0361a76a90b2ea7bef9bb03a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T23:15:01.495Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-urllib3-urllib3-learnings-technical-construction-intelligence-urllib3-urllib3-le.md",
+      "title": "Technical Construction Intelligence: urllib3-urllib3-learnings Core Invariants",
+      "repository": "urllib3-urllib3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8a7d4454192d08e093add9418819ab74f875c18204c6cd90d600a3f73671d373",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T23:14:59.837Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-urllib3-urllib3-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-urllib3-urllib3-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/urllib3-urllib3-learnings-verification-protocol-empirical-defect-shield-for-urll.md",
+      "title": "Verification Protocol: Empirical Defect Shield for urllib3-urllib3-learnings",
+      "repository": "urllib3-urllib3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e84d00ee8af26841ee63709dbc8230bed8a0eef41a5849d6b946f579cbfb264",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:14:59.960Z"
+    },
+    "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
+      "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
+      "repository": "sigstore-cosign-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0cf57eaa94081f663e1d5c328a867bc26d57c1a8d0bf2a3bc042db66d4e3bc5a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:15:00.461Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sigstore-cosign-learnings-verification-protocol-empirical-defect-shield-for-sigs.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sigstore-cosign-learnings",
+      "repository": "sigstore-cosign-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2230fd9e271baf853b63a798672613e11db35f2229aca9d470feee42cc39cc7d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:15:00.586Z"
     }
   },
   "ai-builder-brain": {

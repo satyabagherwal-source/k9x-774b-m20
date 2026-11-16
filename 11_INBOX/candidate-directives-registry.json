@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:03:52.155Z",
+  "last_updated": "2026-11-16T23:15:01.495Z",
   "directives": [
     {
       "id": "CD-001",
@@ -20614,6 +20614,66 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-SHS4",
+      "directive_title": "Reject decoding mode switches before consuming response data",
+      "source_repo": "urllib3-urllib3-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SHS4-reject-decoding-mode-switches-before-consuming-response-data.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-SI9H",
+      "directive_title": "Verify blob attestations exclusively via sigstore-go",
+      "source_repo": "sigstore-cosign-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SI9H-verify-blob-attestations-exclusively-via-sigstore-go.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-SJ5G",
+      "directive_title": "docs(synthesize): warn that synthetic output is not anonymized",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SJ5G-docs-synthesize-warn-that-synthetic-output-is-not-anonymized.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-E9107E",
+      "directive_title": "Reject decoding mode switches before consuming response data",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "urllib3-urllib3",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E9107E-reject-decoding-mode-switches-before-con.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-6AD89C",
+      "directive_title": "Verify blob attestations exclusively via sigstore-go",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sigstore-cosign",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6AD89C-verify-blob-attestations-exclusively-via.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-7EB2E8",
+      "directive_title": "docs(synthesize): warn that synthetic output is not anonymized",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7EB2E8-docs-synthesize-warn-that-synthetic-outp.md",
+      "staged_date": "2026-11-16"
     }
   ]
 }

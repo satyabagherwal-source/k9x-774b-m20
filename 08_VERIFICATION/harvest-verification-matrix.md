@@ -10364,3 +10364,6 @@
 | `CYCLE-20261116-DW86` | `2026-11-16T23:03:38.598Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`05d48b2c...`) |
 | `CYCLE-20261116-E0EW` | `2026-11-16T23:03:44.024Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8807` | Yes (`4d721833...`) |
 | `CYCLE-20261116-E2WZ` | `2026-11-16T23:03:47.267Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8808` | Yes (`20a4ea81...`) |
+| `CYCLE-20261116-S6HZ` | `2026-11-16T23:14:45.095Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8809` | Yes (`d2e8fee0...`) |
+| `CYCLE-20261116-SBMY` | `2026-11-16T23:14:51.754Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8810` | Yes (`b48d6dd2...`) |
+| `CYCLE-20261116-SF24` | `2026-11-16T23:14:56.188Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`6e580b3c...`) |

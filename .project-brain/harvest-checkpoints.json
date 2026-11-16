@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T23:03:47.284Z",
+  "last_updated": "2026-11-16T23:14:56.212Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
-      "verified_at": "2026-11-16T13:38:34.104Z",
+      "content_hash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
+      "verified_at": "2026-11-16T23:14:56.211Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T13:38:34.104Z"
+      "last_updated": "2026-11-16T23:14:56.211Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "570227c119d9b6dbbe72ad2b63d68792ae5b201a4f5f3c0389563d93a305f5e3",
-      "verified_at": "2026-11-12T21:02:24.060Z",
+      "content_hash": "b48d6dd2de5357c2d3a1d7c98cadd337494fbc408867a42c1cca3db96dd83aa3",
+      "verified_at": "2026-11-16T23:14:51.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:02:24.060Z"
+      "last_updated": "2026-11-16T23:14:51.766Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -14496,14 +14496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-urllib3-urllib3",
-      "content_hash": "fff051ed7e74cce05151125c11a1260bfe45d4cfa9a4086e76ec3501581f0366",
-      "verified_at": "2026-11-12T05:57:19.125Z",
+      "content_hash": "d2e8fee056a0eaa2d9ee9bc718907eb1d06debe426bb66883835e72fdcd0a678",
+      "verified_at": "2026-11-16T23:14:45.107Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T05:57:19.125Z"
+      "last_updated": "2026-11-16T23:14:45.107Z"
     },
     "simibac/ConfettiSwiftUI": {
       "repository": "simibac/ConfettiSwiftUI",

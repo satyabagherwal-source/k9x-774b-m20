@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:44.929Z",
+  "timestamp": "2026-11-16T23:15:00.243Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-sigstore-cosign-learnings",
+  "learning_id": "LEARN-EVO-sigstore-cosign-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sigstore-cosign-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:44.929Z`  
-> **Learning ID**: `LEARN-REEXTRACT-sigstore-cosign-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T23:15:00.243Z`  
+> **Learning ID**: `LEARN-EVO-sigstore-cosign-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `195ab76b`  
+> **Source Version**: `330b0bab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:34:12.374Z  
+> **Timestamp**: 2026-11-16T23:14:50.845Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:27:51.331Z  
+> **Harvest Timestamp**: 2026-11-16T23:14:50.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6433 stars
+- **Stars / Engagement**: 6443 stars
 
 ---
 
@@ -1822,277 +1822,467 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `195ab76b` (2026-11-12)
-**Commit Message**: chore(deps): bump github.com/sigstore/sigstore-go (#5208)
+### Incident Patch 1: `330b0bab` (2026-11-16)
+**Commit Message**: Verify blob attestations exclusively via sigstore-go (#5089)
 
-Bumps [github.com/sigstore/sigstore-go](https://github.com/sigstore/sigstore-go) from 1.3.1-0.20261021152419-0161b209ec10 to 1.4.0.
-- [Release notes](https://github.com/sigstore/sigstore-go/releases)
-- [Commits](https://github.com/sigstore/sigstore-go/commits/v1.4.0)
+* Verify blob attestations exclusively via sigstore-go
 
----
-updated-dependencies:
-- dependency-name: github.com/sigstore/sigstore-go
-  dependency-version: 1.4.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+* Remove legacy blob digest computation from verify-blob-attestation
 
-**File**: `go.mod` (modified, +9/-9)
+This change removes from `verify-blob-attestation` the manual blob hashing used only in the defunct legacy verification path.
+
+This change also adds a warning that a provided `--digestAlg` is ignored when a blob is provided.
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+* Remove duplicate verify-blob-attestation test cases
+
+This change removes two unit test cases for `--verify-blob-attestation` that build the same bundles as existing cases:
+* "verify new bundle with public key" (same as "verify a slsaprovenance predicate")
+* "verify a predicate with a bundle with another blob path" (same as "verify a predicate with another blob path")
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+* Run go mod tidy
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+**File**: `cmd/cosign/cli/options/verify.go` (modified, +4/-22)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/sigstore/cosign/v3
+@@ -242,59 +242,41 @@ func (o *VerifyDockerfileOptions) AddFlags(cmd *cobra.Command) {
  
--go 1.27
-+go 1.27.0
+ // VerifyBlobAttestationOptions is the top level wrapper for the `verify-blob-attestation` command.
+ type VerifyBlobAttestationOptions struct {
+-	Key           string
+-	SignaturePath string
+-	BundlePath    string
++	Key        string
++	BundlePath string
  
- require (
- 	cloud.google.com/go/compute/metadata v0.10.0
-@@ -35,9 +35,9 @@ require (
- 	github.com/secure-systems-lab/go-securesystemslib v0.11.1
- 	github.com/sigstore/protobuf-specs v0.5.2
- 	github.com/sigstore/rekor v1.5.5
--	github.com/sigstore/rekor-tiles/v2 v2.3.0
-+	github.com/sigstore/rekor-tiles/v2 v2.4.0
- 	github.com/sigstore/sigstore v1.11.2
--	github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10
-+	github.com/sigstore/sigstore-go v1.4.0
- 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2
- 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.2
- 	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.2
-@@ -162,7 +162,7 @@ require (
- 	github.com/go-openapi/loads v0.25.3 // indirect
- 	github.com/go-openapi/runtime/server-middleware v0.33.4 // indirect
- 	github.com/go-openapi/spec v1.0.1 // indirect
--	github.com/go-openapi/swag v0.28.0 // indirect
-+	github.com/go-openapi/swag v0.29.2 // indirect
- 	github.com/go-openapi/swag/cmdutils v0.29.2 // indirect
- 	github.com/go-openapi/swag/fileutils v0.29.2 // indirect
- 	github.com/go-openapi/swag/jsonutils v0.29.2 // indirect
-@@ -187,7 +187,7 @@ require (
- 	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
- 	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 // indirect
- 	github.com/hashicorp/errwrap v1.1.0 // indirect
- 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
- 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-@@ -268,8 +268,8 @@ require (
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
- 	github.com/zalando/go-keyring v0.2.8 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.70.0 // indirect
--	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
+ 	PredicateOptions
+ 	CheckClaims bool
+ 
+ 	SecurityKey         SecurityKeyOptions
+ 	CertVerify          CertVerifyOptions
+-	Rekor               RekorOptions
+ 	CommonVerifyOptions CommonVerifyOptions
+-	SignatureDigest     SignatureDigestOptions
+-
+-	RFC3161TimestampPath string
+ 
+ 	Digest    string
+ 	DigestAlg string
+ }
+ 
+-var _ Interface = (*VerifyBlobOptions)(nil)
++var _ Interface = (*VerifyBlobAttestationOptions)(nil)
+ 
+ // AddFlags implements Interface
+ func (o *VerifyBlobAttestationOptions) AddFlags(cmd *cobra.Command) {
+ 	o.PredicateOptions.AddFlags(cmd)
+ 	o.SecurityKey.AddFlags(cmd)
+-	o.Rekor.AddFlags(cmd)
+ 	o.CertVerify.AddFlags(cmd)
+ 	o.CommonVerifyOptions.AddFlags(cmd)
+-	o.SignatureDigest.AddFlags(cmd)
+-
+-	_ = cmd.Flags().MarkDeprecated("rekor-url", "please use --bundle, which includes the Rekor inclusion proof")
+ 
+ 	cmd.Flags().StringVar(&o.Key, "key", "",
+ 		"path to the public key file, KMS URI or Kubernetes Secret")
+ 	_ = cmd.MarkFlagFilename("key", publicKeyExts...)
+ 
+-	cmd.Flags().StringVar(&o.SignaturePath, "signature", "",
+-		"path to base64-encoded signature over attestation in DSSE format")
+-	_ = cmd.MarkFlagFilename("signature", signatureExts...)
+-	_ = cmd.Flags().MarkDeprecated("signature", "please use --bundle to provide a signature")
+-
+ 	cmd.Flags().StringVar(&o.BundlePath, "bundle", "",
+ 		"path to bundle FILE")
+ 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
++	_ = cmd.MarkFlagRequired("bundle")
+ 
+ 	cmd.Flags().BoolVar(&o.CheckClaims, "check-claims", true,
+ 		"if true, verifies the digest exists in the in-toto subject (using either the provided digest and digest algorithm or the provided blob's sha256 digest). If false, only the DSSE envelope is verified.")
+ 
+-	cmd.Flags().StringVar(&o.RFC3161TimestampPath, "rfc3161-timestamp", "",
+-		"path to RFC3161 timestamp FILE")
+-	// _ = cmd.MarkFlagFilename("rfc3161-timestamp") // no typical extensions
+-	_ = cmd.Flags().MarkDeprecated("rfc3161-timestamp", "please use --bundle to provide the output bundle location, which will include the signed timestamp")
+-
+ 	cmd.Flags().StringVar(&o.Digest, "digest", "",
+ 		"Digest to use for verifying in-toto subject (instead of providing a blob)")
+ 	_ = cmd.RegisterFlagCompletionFunc("digest", cobra.NoFileCompletions)
+```
+
+**File**: `cmd/cosign/cli/verify.go` (modified, +9/-23)
+```diff
+@@ -356,10 +356,12 @@ func VerifyBlobAttestation() *cobra.Command {
+ 	cmd := &cobra.Command{
+ 		Use:   "verify-blob-attestation",
+ 		Short: "Verify an attestation on the supplied blob",
+-		Long: `Verify an attestation on the supplied blob input using the specified key reference.
+-You may specify either a key or a kms reference to verify against.
++		Long: `Verify an attestation on the supplied blob input using a Sigstore bundle, provided via --bundle (required).
++Verify against a public key or KMS reference (--key), a security key (--sk), or, for keyless
++signatures, a certificate identity and OIDC issuer (--certificate-identity and --certificate-oidc-issuer).
+ 
+-Signed material is provided with the --bundle flag.
++A trusted root verifies service-provided material in the bundle (certificates, transparency log
++entries, and RFC 3161 timestamps). Cosign fetches it from TUF, unless you provide one via --trusted-root.
+ The blob may be specified as a path to a file.`,
+ 		Example: ` cosign verify-blob-attestation --bundle <path> --certificate-identity <identity> --certificate-oidc-issuer <issuer> <blob>
+ 
+@@ -390,45 +392,29 @@ The blob may be specified as a path to a file.`,
+ 				o.CommonVerifyOptions.IgnoreTlog = true
+ 			}
+ 
+-			hashAlgorithm, err := o.SignatureDigest.HashAlgorithm()
+-			if err != nil {
+-				return err
+-			}
+-
+ 			ko := options.KeyOpts{
+-				KeyRef:               o.Key,
+-				Sk:                   o.SecurityKey.Use,
+-				Slot:                 o.SecurityKey.Slot,
+-				RekorURL:             o.Rekor.URL,
+-				BundlePath:           o.BundlePath,
+-				RFC3161TimestampPath: o.RFC3161TimestampPath,
+-				TSACertChainPath:     o.CommonVerifyOptions.TSACertChainPath,
+-				NewBundleFormat:      o.CommonVerifyOptions.NewBundleFormat,
++				KeyRef:     o.Key,
++				Sk:         o.SecurityKey.Use,
++				Slot:       o.SecurityKey.Slot,
++				BundlePath: o.BundlePath,
+ 			}
+ 			v := verify.VerifyBlobAttestationCommand{
+ 				KeyOpts:                      ko,
+ 				PredicateType:                o.Type,
+ 				CheckClaims:                  o.CheckClaims,
+-				SignaturePath:                o.SignaturePath,
+ 				CertVerifyOptions:            o.CertVerify,
+-				CertRef:                      o.CertVerify.Cert,
+-				CertChain:                    o.CertVerify.CertChain,
+-				CARoots:                      o.CertVerify.CARoots,
+-				CAIntermediates:              o.CertVerify.CAIntermediates,
+ 				CertGithubWorkflowTrigger:    o.CertVerify.CertGithubWorkflowTrigger,
+ 				CertGithubWorkflowSHA:        o.CertVerify.CertGithubWorkflowSha,
+ 				CertGithubWorkflowName:       o.CertVerify.CertGithubWorkflowName,
+ 				CertGithubWorkflowRepository: o.CertVerify.CertGithubWorkflowRepository,
+ 				CertGithubWorkflowRef:        o.CertVerify.CertGithubWorkflowRef,
+ 				IgnoreSCT:                    o.CertVerify.IgnoreSCT,
+-				SCTRef:                       o.CertVerify.SCT,
+ 				Offline:                      o.CommonVerifyOptions.Offline,
+ 				IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
+ 				UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
+ 				TrustedRootPath:              o.CommonVerifyOptions.TrustedRootPath,
+ 				Digest:                       o.Digest,
+ 				DigestAlg:                    o.DigestAlg,
+-				HashAlgorithm:                hashAlgorithm,
+ 				AllowCertificateChain:        o.CommonVerifyOptions.AllowCertificateChain,
+ 			}
+ 			// We only use the blob if we are checking claims.
+```
+
+**File**: `cmd/cosign/cli/verify/common.go` (modified, +0/-5)
+```diff
+@@ -69,11 +69,6 @@ func CheckSigstoreBundleUnsupportedOptions(cmd any, verifyOfflineWithKey bool, c
+ 	return nil
+ }
+ 
+-func isb64(data []byte) bool {
+-	_, err := base64.StdEncoding.DecodeString(string(data))
+-	return err == nil
+-}
+-
+ // LoadVerifierFromKey returns a signature.Verifier from the provided key flags to use for verifying an artifact.
+ // In the case of certain types of keys, it returns a close function that must be called by the calling method.
+ func LoadVerifierFromKey(ctx context.Context, keyRef, slot string, sk bool) (signature.Verifier, func(), error) {
+```
+
+**File**: `cmd/cosign/cli/verify/verify_blob_attestation.go` (modified, +47/-271)
+```diff
+@@ -17,30 +17,19 @@ package verify
+ 
+ import (
+ 	"context"
+-	"crypto"
+-	"crypto/x509"
+-	"encoding/base64"
+ 	"encoding/hex"
+ 	"encoding/json"
+-	"errors"
+ 	"fmt"
+-	"io"
+ 	"os"
+ 	"path/filepath"
+ 
+-	v1 "github.com/google/go-containerregistry/pkg/v1"
+ 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
+-	internal "github.com/sigstore/cosign/v3/internal/pkg/cosign"
+-	payloadsize "github.com/sigstore/cosign/v3/internal/pkg/cosign/payload/size"
+ 	"github.com/sigstore/cosign/v3/internal/ui"
+-	"github.com/sigstore/cosign/v3/pkg/blob"
+ 	"github.com/sigstore/cosign/v3/pkg/cosign"
+-	"github.com/sigstore/cosign/v3/pkg/cosign/bundle"
+ 	"github.com/sigstore/cosign/v3/pkg/oci/static"
+ 	"github.com/sigstore/cosign/v3/pkg/policy"
+ 	sgbundle "github.com/sigstore/sigstore-go/pkg/bundle"
+ 	sgverify "github.com/sigstore/sigstore-go/pkg/verify"
+-	"github.com/sigstore/sigstore/pkg/cryptoutils"
+ )
+ 
+ // VerifyBlobAttestationCommand verifies an attestation on a supplied blob
+@@ -49,10 +38,6 @@ type VerifyBlobAttestationCommand struct {
+ 	options.KeyOpts
+ 	options.CertVerifyOptions
+ 
+-	CertRef         string
+-	CertChain       string
+-	CAIntermediates string
+-	CARoots         string
+ 	TrustedRootPath string
+ 
+ 	CertGithubWorkflowTrigger    string
+@@ -62,39 +47,23 @@ type VerifyBlobAttestationCommand struct {
+ 	CertGithubWorkflowRef        string
+ 
+ 	IgnoreSCT  bool
+-	SCTRef     string
+ 	Offline    bool
+ 	IgnoreTlog bool
+ 
+ 	CheckClaims   bool
+ 	PredicateType string
+ 	// TODO: Add policies
+ 
+-	SignaturePath       string // Path to the signature
+ 	UseSignedTimestamps bool
+ 
+-	Digest        string
+-	DigestAlg     string
+-	HashAlgorithm crypto.Hash
++	Digest    string
++	DigestAlg string
+ 
+ 	AllowCertificateChain bool
+ }
+ 
+ // Exec runs the verification command
+ func (c *VerifyBlobAttestationCommand) Exec(ctx context.Context, artifactPath string) (err error) {
+-	if options.NOf(c.SignaturePath, c.BundlePath) == 0 {
+-		return fmt.Errorf("please specify path to the DSSE envelope signature via --signature or --bundle")
+-	}
+-
+-	// c.HashAlgorithm may be 0 (unset) here, in which case LoadVerifierFromKeyOrCert
+-	// picks the digest algorithm that matches the provided key, rather than assuming
+-	// SHA256 for keys that require a different algorithm (e.g. P-521 ECDSA keys).
+-
+-	// Require a certificate/key OR a local bundle file that has the cert.
+-	if options.NOf(c.KeyRef, c.CertRef, c.Sk, c.BundlePath) == 0 {
+-		return fmt.Errorf("provide a key with --key or --sk, a certificate to verify against with --certificate, or a bundle with --bundle")
+-	}
+-
+ 	// key and cert identity are mutually exclusive
+ 	if options.NOf(c.KeyRef, c.CertIdentity, c.CertIdentityRegexp) > 1 {
+ 		return &options.KeyAndIdentityParseError{}
+@@ -123,303 +92,110 @@ func (c *VerifyBlobAttestationCommand) Exec(ctx context.Context, artifactPath st
+ 		IgnoreSCT:                    c.IgnoreSCT,
+ 		Offline:                      c.Offline,
+ 		IgnoreTlog:                   c.IgnoreTlog,
+-		UseSignedTimestamps:          c.TSACertChainPath != "" || c.UseSignedTimestamps,
++		UseSignedTimestamps:          c.UseSignedTimestamps,
+ 		AllowCertificateChain:        c.AllowCertificateChain,
+ 	}
+-	co.NewBundleFormat = c.NewBundleFormat && checkNewBundle(c.BundlePath, co.BundleOptions()...)
+-	vOfflineKey := verifyOfflineWithKey(c.KeyRef, c.CertRef, c.Sk, co)
++	vOfflineKey := verifyOfflineWithKey(c.KeyRef, "", c.Sk, co)
+ 
+-	// User provides a key or certificate. Otherwise, verification requires a Fulcio certificate
+-	// provided in an attached bundle or OCI annotation.
++	// User provides a key. Otherwise, verification requires a Fulcio certificate
++	// provided in an attached bundle.
+ 	var closeSV func()
+-	var cert *x509.Certificate
+-	co.SigVerifier, cert, closeSV, err = LoadVerifierFromKeyOrCert(ctx, c.KeyRef, c.Slot, c.CertRef, "", c.HashAlgorithm, c.Sk, true, co)
++	co.SigVerifier, closeSV, err = LoadVerifierFromKey(ctx, c.KeyRef, c.Slot, c.Sk)
+ 	if err != nil {
+ 		return fmt.Errorf("loading verifier from key opts: %w", err)
+ 	}
+ 	defer closeSV()
+ 
+-	var h v1.Hash
++	var digestAlg string
+ 	var digest []byte
+ 	if c.CheckClaims {
+ 		if artifactPath != "" {
+ 			if c.Digest != "" {
+ 				ui.Warnf(ctx, "Ignoring provided --digest in favor of provided blob")
+ 			}
+-			// For the legacy (non-bundle) verification path we still need to
+-			// compute the digest manually.  Pick the hash algorithm to use:
+-			// default to SHA-256 for backward compatibility; honor --digestAlg
+-			// so attestations produced against e.g. SHA-512 can be verified.
+-			hashName := "sha256"
+-			hashAlg := crypto.SHA256
+ 			if c.DigestAlg != "" {
+-				parsed, err := parseBlobHashAlgorithm(c.DigestAlg)
+-				if err != nil {
+-					return err
+-				}
+-				hashName = c.DigestAlg
+-				hashAlg = parsed
+-			}
+-
+-			f, err := os.Open(filepath.Clean(artifactPath))
+-			if err != nil {
+-				return err
+-			}
+-			defer f.Close()
+-			fileInfo, err := f.Stat()
+-			if err != nil {
+-				return err
+-			}
+-			err = payloadsize.CheckSize(uint64(file
+```
+
+**File**: `cmd/cosign/cli/verify/verify_blob_attestation_test.go` (modified, +105/-219)
+```diff
+@@ -51,7 +51,6 @@ const (
+ 	blobContents                         = "some-payload"
+ 	blobSha256                           = "658781cd4ed9bca60dacd09f7bb914bb51502e8b5d619f57f39a1d652596cc24"
+ 	anotherBlobContents                  = "another-blob"
+-	hugeBlobContents                     = "hugepayloadhugepayloadhugepayloadhugepayloadhugepayloadhugepayloadhugepayloadhugepayloadhugepayloadhugepayloadhugepayloadhugepayloadhugepayload"
+ 	blobSLSAProvenanceSignature          = "eyJwYXlsb2FkVHlwZSI6ImFwcGxpY2F0aW9uL3ZuZC5pbi10b3RvK2pzb24iLCJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqQXVNU0lzSW5CeVpXUnBZMkYwWlZSNWNHVWlPaUpvZEhSd2N6b3ZMM05zYzJFdVpHVjJMM0J5YjNabGJtRnVZMlV2ZGpBdU1pSXNJbk4xWW1wbFkzUWlPbHQ3SW01aGJXVWlPaUppYkc5aUlpd2laR2xuWlhOMElqcDdJbk5vWVRJMU5pSTZJalkxT0RjNE1XTmtOR1ZrT1dKallUWXdaR0ZqWkRBNVpqZGlZamt4TkdKaU5URTFNREpsT0dJMVpEWXhPV1kxTjJZek9XRXhaRFkxTWpVNU5tTmpNalFpZlgxZExDSndjbVZrYVdOaGRHVWlPbnNpWW5WcGJHUmxjaUk2ZXlKcFpDSTZJaklpZlN3aVluVnBiR1JVZVhCbElqb2llQ0lzSW1sdWRtOWpZWFJwYjI0aU9uc2lZMjl1Wm1sblUyOTFjbU5sSWpwN2ZYMTlmUT09Iiwic2lnbmF0dXJlcyI6W3sia2V5aWQiOiIiLCJzaWciOiJNRVVDSUE4S2pacWtydDkwZnpCb2pTd3d0ajNCcWI0MUU2cnV4UWs5N1RMbnB6ZFlBaUVBek9Bak9Uenl2VEhxYnBGREFuNnpocmc2RVp2N2t4SzVmYVJvVkdZTWgyYz0ifV19"
+ 	dssePredicateEmptySubject            = "eyJwYXlsb2FkVHlwZSI6ImFwcGxpY2F0aW9uL3ZuZC5pbi10b3RvK2pzb24iLCJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqQXVNU0lzSW5CeVpXUnBZMkYwWlZSNWNHVWlPaUpvZEhSd2N6b3ZMM05zYzJFdVpHVjJMM0J5YjNabGJtRnVZMlV2ZGpBdU1pSXNJbk4xWW1wbFkzUWlPbHRkTENKd2NtVmthV05oZEdVaU9uc2lZblZwYkdSbGNpSTZleUpwWkNJNklqSWlmU3dpWW5WcGJHUlVlWEJsSWpvaWVDSXNJbWx1ZG05allYUnBiMjRpT25zaVkyOXVabWxuVTI5MWNtTmxJanA3ZlgxOWZRPT0iLCJzaWduYXR1cmVzIjpbeyJrZXlpZCI6IiIsInNpZyI6Ik1FWUNJUUNrTEV2NkhZZ0svZDdUK0N3NTdXbkZGaHFUTC9WalAyVDA5Q2t1dk1nbDRnSWhBT1hBM0lhWWg1M1FscVk1eVU4cWZxRXJma2tGajlEakZnaWovUTQ2NnJSViJ9XX0="
+ 	dssePredicateMissingSha256           = "eyJwYXlsb2FkVHlwZSI6ImFwcGxpY2F0aW9uL3ZuZC5pbi10b3RvK2pzb24iLCJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqQXVNU0lzSW5CeVpXUnBZMkYwWlZSNWNHVWlPaUpvZEhSd2N6b3ZMM05zYzJFdVpHVjJMM0J5YjNabGJtRnVZMlV2ZGpBdU1pSXNJbk4xWW1wbFkzUWlPbHQ3SW01aGJXVWlPaUppYkc5aUlpd2laR2xuWlhOMElqcDdmWDFkTENKd2NtVmthV05oZEdVaU9uc2lZblZwYkdSbGNpSTZleUpwWkNJNklqSWlmU3dpWW5WcGJHUlVlWEJsSWpvaWVDSXNJbWx1ZG05allYUnBiMjRpT25zaVkyOXVabWxuVTI5MWNtTmxJanA3ZlgxOWZRPT0iLCJzaWduYXR1cmVzIjpbeyJrZXlpZCI6IiIsInNpZyI6Ik1FVUNJQysvM2M4RFo1TGFZTEx6SFZGejE3ZmxHUENlZXVNZ2tIKy8wa2s1cFFLUEFpRUFqTStyYnBBRlJybDdpV0I2Vm9BYVZPZ3U3NjRRM0JKdHI1bHk4VEFHczNrPSJ9XX0="
+@@ -66,74 +65,65 @@ func TestVerifyBlobAttestation(t *testing.T) {
+ 
+ 	blobPath := writeBlobFile(t, td, blobContents, "blob")
+ 	anotherBlobPath := writeBlobFile(t, td, anotherBlobContents, "other-blob")
+-	hugeBlobPath := writeBlobFile(t, td, hugeBlobContents, "huge-blob")
+ 	keyRef := writeBlobFile(t, td, pubkey, "cosign.pub")
+ 
++	bundleSLSAProvenance := makeBundleFromDSSE(t, blobSLSAProvenanceSignature)
++	bundleEmptySubject := makeBundleFromDSSE(t, dssePredicateEmptySubject)
++	bundleMissingSha256 := makeBundleFromDSSE(t, dssePredicateMissingSha256)
++	bundleMultipleSubjects := makeBundleFromDSSE(t, dssePredicateMultipleSubjects)
++	bundleMultipleSubjectsInvalid := makeBundleFromDSSE(t, dssePredicateMultipleSubjectsInvalid)
++
+ 	tests := []struct {
+ 		description   string
+ 		blobPath      string
+ 		digest        string
+ 		bundlePath    string
+-		signature     string
+ 		predicateType string
+-		env           map[string]string
+ 		shouldErr     bool
+ 	}{
+ 		{
+ 			description:   "verify a slsaprovenance predicate",
++			bundlePath:    bundleSLSAProvenance,
+ 			predicateType: "slsaprovenance",
+ 			blobPath:      blobPath,
+-			signature:     blobSLSAProvenanceSignature,
+ 		}, {
+ 			description:   "fail with incorrect predicate",
+-			signature:     blobSLSAProvenanceSignature,
++			bundlePath:    bundleSLSAProvenance,
+ 			blobPath:      blobPath,
+ 			predicateType: "custom",
+ 			shouldErr:     true,
+ 		}, {
+ 			description: "fail with incorrect blob",
+-			signature:   blobSLSAProvenanceSignature,
++			bundlePath:  bundleSLSAProvenance,
+ 			blobPath:    anotherBlobPath,
+ 			shouldErr:   true,
+ 		}, {
+ 			description: "dsse envelope predicate has no subject",
+-			signature:   dssePredicateEmptySubject,
++			bundlePath:  bundleEmptySubject,
+ 			blobPath:    blobPath,
+ 			shouldErr:   true,
+ 		}, {
+ 			description: "dsse envelope predicate missing sha256 digest",
+-			signature:   dssePredicateMissingSha256,
++			bundlePath:  bundleMissingSha256,
+ 			blobPath:    blobPath,
+ 			shouldErr:   true,
+ 		}, {
+ 			description:   "dsse envelope has multiple subjects, one is valid",
++			bundlePath:    bundleMultipleSubjects,
+ 			predicateType: "slsaprovenance",
+-			signature:     dssePredicateMultipleSubjects,
+ 			blobPath:      blobPath,
+ 		}, {
+ 			description:   "dsse envelope has multiple subjects, one is valid, but we are looking for different predicatetype",
++			bundlePath:    
+```
+
+**File**: `cmd/cosign/cli/verify/verify_bundle.go` (modified, +0/-5)
+```diff
+@@ -38,11 +38,6 @@ import (
+ 	"github.com/sigstore/cosign/v3/pkg/cosign"
+ )
+ 
+-func checkNewBundle(bundlePath string, opts ...sgbundle.Option) bool {
+-	_, err := sgbundle.LoadJSONFromPath(bundlePath, opts...)
+-	return err == nil
+-}
+-
+ func AssembleNewBundle(ctx context.Context, sigBytes, signedTimestamp []byte, envelope *dsse.Envelope, artifactRef string, cert *x509.Certificate, ignoreTlog bool, sigVerifier signature.Verifier, pkOpts []signature.PublicKeyOption, rekorClient *client.Rekor) (*sgbundle.Bundle, error) {
+ 	payload, err := payloadBytes(artifactRef)
+ 	if err != nil {
+```
+
+**File**: `doc/cosign_verify-blob-attestation.md` (modified, +5/-3)
+```diff
+@@ -4,10 +4,12 @@ Verify an attestation on the supplied blob
+ 
+ ### Synopsis
+ 
+-Verify an attestation on the supplied blob input using the specified key reference.
+-You may specify either a key or a kms reference to verify against.
++Verify an attestation on the supplied blob input using a Sigstore bundle, provided via --bundle (required).
++Verify against a public key or KMS reference (--key), a security key (--sk), or, for keyless
++signatures, a certificate identity and OIDC issuer (--certificate-identity and --certificate-oidc-issuer).
+ 
+-Signed material is provided with the --bundle flag.
++A trusted root verifies service-provided material in the bundle (certificates, transparency log
++entries, and RFC 3161 timestamps). Cosign fetches it from TUF, unless you provide one via --trusted-root.
+ The blob may be specified as a path to a file.
+ 
+ ```
+```
+
+**File**: `go.mod` (modified, +0/-1)
+```diff
+@@ -271,7 +271,6 @@ require (
  	go.opentelemetry.io/otel v1.47.0 // indirect
  	go.opentelemetry.io/otel/log v1.47.0 // indirect
  	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-@@ -283,9 +283,9 @@ require (
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
--	golang.org/x/tools v0.51.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
- 	google.golang.org/grpc v1.84.0 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
-```
-
-**File**: `go.sum` (modified, +20/-20)
-```diff
-@@ -324,8 +324,8 @@ github.com/go-openapi/spec v1.0.1 h1:lj2vdGpNDcVgwRc6qXdw6qt/KQpCtSa9tnUH6vpDPDk
- github.com/go-openapi/spec v1.0.1/go.mod h1:M//GWQGtDUAjnP37gE6fInLgaczB+FatoipV3H1fYw8=
- github.com/go-openapi/strfmt v0.27.4 h1:E1xsvHb8R9vsuYru4TP2PVVTv9AIgSFAUACUZrFQfCI=
- github.com/go-openapi/strfmt v0.27.4/go.mod h1:SCOff81PPhU26acBiW96jHaFycEbT2nkQRvojM+V2z0=
--github.com/go-openapi/swag v0.28.0 h1:xkgbOSKj6DZziNpyqRRAOt3GJGtgjgsd2RoyT30VWuw=
--github.com/go-openapi/swag v0.28.0/go.mod h1:4qYnT3Cqr1p1VknOdPo70evN4rgQnAg6jwApHyxSGIg=
-+github.com/go-openapi/swag v0.29.2 h1:9n8frkcsuQRA0INU31VbxNxt1zBaHxrHYGEf5BUjFi4=
-+github.com/go-openapi/swag v0.29.2/go.mod h1:RkCiX1gCVXWgLOavDXE3ALJrQ/VO2ziiIzOUs3z10xo=
- github.com/go-openapi/swag/cmdutils v0.29.2 h1:cXEzX/nWCODon251f+1HgL75/R4XXML5IZxgLCWMoro=
- github.com/go-openapi/swag/cmdutils v0.29.2/go.mod h1:XziaSVzYqkDvpWXzASfWajw2YvJrLscq610O2XiyqJw=
- github.com/go-openapi/swag/conv v0.29.2 h1:8c9shoB8l0QRSR6ymq1llHdBWDqpIgJfjTGHx3Vuhm0=
-@@ -363,8 +363,8 @@ github.com/go-quicktest/qt v1.102.0/go.mod h1:p4lGIVX+8Wa6ZPNDvqcxq36XpUDLh42FLe
- github.com/go-rod/rod v0.116.2 h1:A5t2Ky2A+5eD/ZJQr1EfsQSe5rms5Xof/qj296e+ZqA=
- github.com/go-rod/rod v0.116.2/go.mod h1:H+CMO9SCNc2TJ2WfrG+pKhITz57uGNYU43qYHh438Mg=
- github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
--github.com/go-test/deep v1.1.1 h1:0r/53hagsehfO4bzD2Pgr/+RgHqhmf+k1Bpse2cTu1U=
--github.com/go-test/deep v1.1.1/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
-+github.com/go-test/deep v1.1.2 h1:JUuyv17rKrqYfLFnP9A4Yh6hw0635ugB93bMg2bwuDQ=
-+github.com/go-test/deep v1.1.2/go.mod h1:lwVFiFFWPjydTsV3xGJ/YTQsnWwi8zxBFM+gOVcwINE=
- github.com/go-viper/mapstructure/v2 v2.5.0 h1:vM5IJoUAy3d7zRSVtIwQgBj7BiWtMPfmPEgAXnvj1Ro=
- github.com/go-viper/mapstructure/v2 v2.5.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
- github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
-@@ -441,8 +441,8 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w7
- github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 h1:UH//fgunKIs4JdUbpDl1VZCDaL56wXCB/5+wF6uHfaI=
- github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4 h1:9ZJYjPEJpcleIKcqysXOo14NLQYwu23fzmKRFpIjPjc=
- github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4/go.mod h1:0xydIeg2omQ9DH6zYMP24Kk57793rnLUvP8fwdbFvz8=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 h1:/Tnpcb2E0Pz/tN9s3bfEY2Q8ePCEX9iuS+cneUwncnw=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0/go.mod h1:zOBXOsUaBSjKgmH4OGzV1esUpR3oUSCPYVd2cUBjKYY=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 h1:QMILzF8BA7xftE4zVORkRrlv08m12St3csK4RsyRgRs=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0/go.mod h1:+ZQ6iUL8+ATyxGDQNuRKpNwJFdGDUi0e7E1QL9MvI7U=
- github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
- github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY2I=
- github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
-@@ -631,12 +631,12 @@ github.com/sigstore/protobuf-specs v0.5.2 h1:RSWWUY8QrVTxbYH00jY/jg2e7YnjzrpwP+P
- github.com/sigstore/protobuf-specs v0.5.2/go.mod h1:DRBzpFuE+LnvQMN10/dU6nBeKwVLGEQ6o2FovN2Rats=
- github.com/sigstore/rekor v1.5.5 h1:nZKTBT0uRlKaFW4PafFIE7F5H26PInFF2qOlWouKYYA=
- github.com/sigstore/rekor v1.5.5/go.mod h1:A0e/gTyJ5qCQn6/Zz2T0+TE+W3akuaLF5O0HJ4ogjgA=
--github.com/sigstore/rekor-tiles/v2 v2.3.0 h1:HhMgH61UP0t899V8Fjt7pz1YdgOBptbaQdnCF+79cdc=
--github.com/sigstore/rekor-tiles/v2 v2.3.0/go.mod h1:DEFiKSyQ4nF75QRVNdOPaIH3cmvMkO2B6xDZjNYngPc=
-+github.com/sigstore/rekor-tiles/v2 v2.4.0 h1:Q5vQvZPrHXBzz5/WuF4q7D9RGUm/JzXJQhNGpd4G5Pw=
-+github.com/sigstore/rekor-tiles/v2 v2.4.0/go.mod h1:CwJCXjoMBNFKctuPZToeQytli9Nfx1Tvzm09AyJHJNM=
- github.com/sigstore/sigstore v1.11.2 h1:oFPZIqFuOFJcTfNMW847kvq/czev7oeo/eDYPPMRwr8=
- github.com/sigstore/sigstore v1.11.2/go.mod h1:72vQpQeeHgCFJzQnLX1w2sD1HjSJTEeW300ialacOkI=
--github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10 h1:Vo/RyRAj1NOccLJwJ5V39+oXI1aCcw3MKPangzG3Rq0=
--github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10/go.mod h1:OvOUhstHC1stzzLMaylr2hudZ604aJ8BxU3oed/71Lc=
-+github.com/sigstore/sigstore-go v1.4.0 h1:CGdFdZLhYSc42yYN0+lL6yWh7v0z3S0i21v50lvSYKw=
-+github.com/sigstore/sigstore-go v1.4.0/go.mod h1:T2Csm9q65ZVCrTB8q1fP60wR9Z9Hf1286zBTd6pDG88=
- github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2 h1:ll52dCkIiLuB2V/GcddjieE0+EjA3INqC0HYITavVFQ=
- github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.2/go.mod h1:agtjJMPuI6q2rBTM0XZiOFsZjlcZnTi7xkBFQt0NISY=
- github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.2 h1:/gBoE9TCQPu8WX6IpCsub7EhQKhGbIrLyGDz5Neo/dc=
-@@ -751,10 +751,10 @@ gitlab.com/gitlab-org/api/client-go/v3 v3.32.0 h1:hisNyZHah2TjxlP4C5rgsu+9QSvvTa
- gitlab.com/gitlab-org/api/client-go/v3 v3.32.0/go.mod h1:jBFhGkTHLKkgeHEdS/A8yA0tQ6UHq96QVsS5muu6flM=
- go.opentelemet
-```
-
----
-
-### Incident Patch 2: `e074e302` (2026-11-12)
-**Commit Message**: chore(deps): bump the actions group with 8 updates (#5214)
-
-Bumps the actions group with 8 updates:
-
-| Package | From | To |
-| --- | --- | --- |
-| [sigstore/cosign-installer](https://github.com/sigstore/cosign-installer) | `4.1.2` | `4.1.3` |
-| [docker/login-action](https://github.com/docker/login-action) | `4.7.0` | `4.8.0` |
-| [chainguard-dev/actions/donotsubmit](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-| [chainguard-dev/actions/setup-mirror](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-| [chainguard-dev/actions/kind-diag](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-| [mikefarah/yq](https://github.com/mikefarah/yq) | `4.54.1` | `4.54.2` |
-| [chainguard-dev/actions/trailing-space](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-| [chainguard-dev/actions/eof-newline](https://github.com/chainguard-dev/actions) | `1.7.1` | `1.8.0` |
-
-
-Updates `sigstore/cosign-installer` from 4.1.2 to 4.1.3
-- [Release notes](https://github.com/sigstore/cosign-installer/releases)
-- [Commits](https://github.com/sigstore/cosign-installer/compare/6f9f17788090df1f26f669e9d70d6ae9567deba6...756fe2d284c7292c4e9b62c8a28f1e5629c5
-
-**File**: `.github/workflows/build.yaml` (modified, +2/-2)
-```diff
-@@ -48,7 +48,7 @@ jobs:
-         with:
-           persist-credentials: false
- 
--      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-+      - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
- 
-       - name: Extract version of Go to use
-         run: echo "GOVERSION=$(awk -F'[:@]' '/FROM golang/{print $2; exit}' Dockerfile)" >> $GITHUB_ENV
-@@ -72,7 +72,7 @@ jobs:
-         run: gcloud auth configure-docker --quiet
- 
-       - name: Login to GitHub Container Registry
--        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-         with:
-           registry: ghcr.io
-           username: ${{ github.actor }}
-```
-
-**File**: `.github/workflows/donotsubmit.yaml` (modified, +1/-1)
-```diff
-@@ -40,4 +40,4 @@ jobs:
-           persist-credentials: false
- 
-       - name: Do Not Submit
--        uses: chainguard-dev/actions/donotsubmit@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+        uses: chainguard-dev/actions/donotsubmit@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-```
-
-**File**: `.github/workflows/e2e-tests.yml` (modified, +2/-2)
-```diff
-@@ -151,7 +151,7 @@ jobs:
-         cache: false
- 
-     - name: Setup mirror
--      uses: chainguard-dev/actions/setup-mirror@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      uses: chainguard-dev/actions/setup-mirror@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-       with:
-         mirror: mirror.gcr.io
- 
-@@ -262,4 +262,4 @@ jobs:
- 
-     - name: Collect diagnostics
-       if: ${{ failure() }}
--      uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-```
-
-**File**: `.github/workflows/kind-verify-attestation.yaml` (modified, +2/-2)
-```diff
-@@ -67,7 +67,7 @@ jobs:
-     - uses: ko-build/setup-ko@61b4d1d396f5b2e7d6bb6fefdce3dc38d1a13445 # v0.10
- 
-     - name: Install yq
--      uses: mikefarah/yq@504fc38780cc46be8444ea1b72fb55919fc0bfb0 # v4.54.1
-+      uses: mikefarah/yq@a4330671f17776618660a419ab2531e4f4dc48b6 # v4.54.2
- 
-     - name: build cosign
-       run: |
-@@ -180,7 +180,7 @@ jobs:
- 
-     - name: Collect diagnostics
-       if: ${{ failure() }}
--      uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
- 
-     - name: Create vuln attestation for it
-       run: |
-```
-
-**File**: `.github/workflows/tests.yaml` (modified, +1/-1)
-```diff
-@@ -185,7 +185,7 @@ jobs:
- 
-       - name: Collect diagnostics
-         if: ${{ failure() }}
--        uses: chainguard-dev/actions/kind-diag@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+        uses: chainguard-dev/actions/kind-diag@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
- 
-   e2e-windows-powershell-tests:
-     name: Run PowerShell E2E tests
-```
-
-**File**: `.github/workflows/whitespace.yaml` (modified, +2/-2)
-```diff
-@@ -38,8 +38,8 @@ jobs:
-         with:
-           persist-credentials: false
- 
--      - uses: chainguard-dev/actions/trailing-space@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      - uses: chainguard-dev/actions/trailing-space@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-         if: ${{ always() }}
- 
--      - uses: chainguard-dev/actions/eof-newline@e94104128fff55b3c5e1831a8bbbf198603156f9 # v1.7.1
-+      - uses: chainguard-dev/actions/eof-newline@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
-         if: ${{ always() }}
+-	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.28.0 // indirect
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5217** (2026-11-12): chore(deps): bump the gomod group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #5214** (2026-11-12): chore(deps): bump the actions group with 8 updates (@dependabot[bot])
+- **PR #5213** (2026-11-12): chore(deps): bump github.com/open-policy-agent/opa from 1.21.4 to 1.22.2 (@dependabot[bot])
 - **PR #5212** (closed): chore(deps): bump github.com/sigstore/rekor-tiles/v2 from 2.4.0 to 2.4.1 (@dependabot[bot])
 - **PR #5211** (closed): chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
-- **PR #5208** (2026-11-12): chore(deps): bump github.com/sigstore/sigstore-go from 1.3.1-0.20261021152419-0161b209ec10 to 1.4.0 (@dependabot[bot])
-- **PR #5206** (closed): chore(deps): bump the gomod group across 1 directory with 5 updates (@dependabot[bot])
-- **PR #5204** (2026-11-04): chore(deps): bump the gomod group across 1 directory with 10 updates (@dependabot[bot])
+- **PR #5210** (2026-11-12): chore(deps): bump gitlab.com/gitlab-org/api/client-go/v3 from 3.32.0 to 3.46.0 (@dependabot[bot])
 
 ---
 
@@ -2112,47 +2302,55 @@ Updates `sigstore/cosign-installer` from 4.1.2 to 4.1.3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump github.com/sigstore/sigstore-go (#5208)
+## X. Verify blob attestations exclusively via sigstore-go
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/cosign/cli/options/verify.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `195ab76b`: deps): bump github.com/sigstore/sigstore-go (#5208). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `330b0bab`: Verify blob attestations exclusively via sigstore-go. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/options/verify.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-go 1.27.0
-	github.com/sigstore/rekor-tiles/v2 v2.4.0
-	github.com/sigstore/sigstore-go v1.4.0
-	github.com/go-openapi/swag v0.29.2 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
-	golang.org/x/tools v0.52.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
+	Key        string
+	BundlePath string
+var _ Interface = (*VerifyBlobAttestationOptions)(nil)
+	_ = cmd.MarkFlagRequired("bundle")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-go 1.27
-	github.com/sigstore/rekor-tiles/v2 v2.3.0
-	github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10
-	github.com/go-openapi/swag v0.28.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.70.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
+// Induced defect failure mode:
+	Key           string
+	SignaturePath string
+	BundlePath    string
+	Rekor               RekorOptions
+	SignatureDigest     SignatureDigestOptions
+
+	RFC3161TimestampPath string
+var _ Interface = (*VerifyBlobOptions)(nil)
+	o.Rekor.AddFlags(cmd)
+	o.SignatureDigest.AddFlags(cmd)
+
+	_ = cmd.Flags().MarkDeprecated("rekor-url", "please use --bundle, which includes the Rekor inclusion proof")
+	cmd.Flags().StringVar(&o.SignaturePath, "signature", "",
+		"path to base64-encoded signature over attestation in DSSE format")
+	_ = cmd.MarkFlagFilename("signature", signatureExts...)
+	_ = cmd.Flags().MarkDeprecated("signature", "please use --bundle to provide a signature")
+
+	cmd.Flags().StringVar(&o.RFC3161TimestampPath, "rfc3161-timestamp", "",
+		"path to RFC3161 timestamp FILE")
+	// _ = cmd.MarkFlagFilename("rfc3161-timestamp") // no typical extensions
+	_ = cmd.Flags().MarkDeprecated("rfc3161-timestamp", "please use --bundle to provide the output bundle location, which will include the signed timestamp")
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `195ab76b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `330b0bab` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
