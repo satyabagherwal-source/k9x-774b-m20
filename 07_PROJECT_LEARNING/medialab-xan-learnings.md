@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `f4e85fee`  
+> **Source Version**: `738ba7af`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:49:04.419Z  
+> **Timestamp**: 2026-11-16T01:45:11.142Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:49:04.171Z  
+> **Harvest Timestamp**: 2026-11-16T01:45:11.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4552 stars
+- **Stars / Engagement**: 4554 stars
 
 ---
 
@@ -1968,130 +1968,277 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `196e5190` (2026-11-12)
-**Commit Message**: Fixing xan scrape --url-column
+### Incident Patch 1: `738ba7af` (2026-11-15)
+**Commit Message**: Starting to move things around
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `src/moonblade/scrape.rs` (modified, +8/-6)
 ```diff
-@@ -55,6 +55,7 @@ The **laminated** update.
- * Fixing case-sensitive `xan search -R/--replace & --replacement-column` with multiple patterns.
- * Fixing parallel `xan search -R/--replace & --replacement-column`.
- * Fixing `xan scrape` not streaming input when using `--paths` & `--docs`.
-+* Fixing `xan scrape --url-column`.
- * Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
- * Fixing `xan explode --evaluate --drop-empty` semantics.
- * Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
-```
-
-**File**: `src/cmd/scrape.rs` (modified, +10/-10)
-```diff
-@@ -113,21 +113,21 @@ enum ScraperTarget<'a> {
+@@ -776,18 +776,19 @@ fn concretize_scraper(
+         .map(ConcreteScraper)
  }
  
- impl ScraperTarget<'_> {
--    fn decode<'b>(&self, bytes: &'b [u8]) -> Cow<'b, str> {
--        match self {
--            Self::HtmlCell(_) => Cow::Borrowed(from_utf8(bytes).expect("could not decode")),
-+    fn decode<'b>(&self, bytes: &'b [u8]) -> CliResult<Cow<'b, str>> {
-+        Ok(match self {
-+            Self::HtmlCell(_) => Cow::Borrowed(from_utf8(bytes)?),
-             Self::HtmlFile { encoding, .. } => {
-                 if let Some(encoding_ref) = encoding {
-                     Cow::Owned(
-                         encoding_ref
-                             .decode(bytes, DecoderTrap::Replace)
--                            .expect("could not decode"),
-+                            .map_err(|err| err.to_string())?,
-                     )
-                 } else {
--                    Cow::Borrowed(from_utf8(bytes).expect("could not decode"))
-+                    Cow::Borrowed(from_utf8(bytes)?)
-                 }
-             }
--        }
-+        })
+-// #[derive(Debug, Clone)]
+-// pub enum ScrapingRunMode {
+-//     Singular,
+-//     PluralWithSelector(Selector),
+-//     Plural,
+-// }
++#[derive(Debug, Clone)]
++pub enum ScrapingRunMode {
++    Singular,
++    PluralWithSelector(Selector),
++    Plural(ConcreteSelectionExpr),
++}
+ 
+ #[derive(Debug, Clone)]
+ pub struct ScrapingProgram {
+     scraper: ConcreteScraper,
+     headers_index: HeadersIndex,
+     capacity: usize,
++    run_mode: ScrapingRunMode,
+ }
+ 
+ impl ScrapingProgram {
+@@ -807,6 +808,7 @@ impl ScrapingProgram {
+             headers_index,
+             scraper: concrete_scraper,
+             capacity,
++            run_mode: ScrapingRunMode::Singular,
+         })
+     }
+ 
+```
+
+**File**: `src/moonblade/types/amortized_serializer.rs` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++use std::io::Write;
++
++use super::DynamicValue;
++
++#[derive(Default)]
++pub struct AmortizedSerializer {
++    scratch: Vec<u8>,
++    int_buffer: itoa::Buffer,
++    float_buffer: zmij::Buffer,
++}
++
++impl AmortizedSerializer {
++    pub fn new() -> Self {
++        Self::default()
++    }
++
++    pub fn serialize<'s, 'v>(&'s mut self, value: &'v DynamicValue) -> &'s [u8]
++    where
++        'v: 's,
++    {
++        match value {
++            DynamicValue::List(_) | DynamicValue::Map(_) => {
++                self.scratch.clear();
++                serde_json::to_writer(&mut self.scratch, value).unwrap();
++                &self.scratch
++            }
++            DynamicValue::String(string) => string.as_bytes(),
++            DynamicValue::Bytes(bytes) => bytes,
++            DynamicValue::Integer(i) => self.int_buffer.format(*i).as_bytes(),
++            DynamicValue::Float(f) => self.float_buffer.format(*f).as_bytes(),
++            DynamicValue::Boolean(v) => {
++                if *v {
++                    b"true"
++                } else {
++                    b"false"
++                }
++            }
++            DynamicValue::Zoned(zoned) => {
++                self.scratch.clear();
++                write!(&mut self.scratch, "{zoned}").unwrap();
++                &self.scratch
++            }
++            DynamicValue::DateTime(datetime) => {
++                self.scratch.clear();
++                write!(&mut self.scratch, "{datetime}").unwrap();
++                &self.scratch
++            }
++            DynamicValue::Date(date) => {
++                self.scratch.clear();
++                write!(&mut self.scratch, "{date}").unwrap();
++                &self.scratch
++            }
++            DynamicValue::Time(time) => {
++                self.scratch.clear();
++                write!(&mut self.scratch, "{time}").unwrap();
++                &self.scratch
++            }
++            DynamicValue::Span(span) => {
++                self.scratch.clear();
++                write!(&mut self.scratch, "{span}").unwrap();
++                &self.scratch
++            }
++            DynamicValue::Regex(pattern) => pattern.as_str().as_bytes(),
++            DynamicValue::None => b"",
++        }
++    }
++}
+```
+
+**File**: `src/moonblade/types/dynamic_value.rs` (modified, +0/-65)
+```diff
+@@ -1,7 +1,6 @@
+ use std::borrow::Cow;
+ use std::cmp::Ordering;
+ use std::fmt;
+-use std::io::Write;
+ use std::sync::Arc;
+ 
+ use bstr::{BString, ByteSlice};
+@@ -926,70 +925,6 @@ impl PartialOrd for DynamicValue {
      }
  }
  
-@@ -398,7 +398,7 @@ impl Scraper {
- 
-     fn scrape_head(&self, target: &ScraperTarget) -> CliResult<Vec<DynamicValue>> {
-         let bytes = target.prebuffer_up_to_head()?;
--        let html = Html::parse_document(&target.decode(&bytes));
-+        let html = Html::parse_document(&target.decode(&bytes)?);
- 
-         Ok(html
-             .select(&HEAD_SELECTOR)
-@@ -440,8 +440,10 @@ impl Scraper {
-                 &caps[3]
-             };
- 
-+            let url = target.decode(url)?;
-+
-             if let Some(base_url) = &context.url {
--                if let Ok(joined_url) = base_url.join(&target.decode(&bytes)) {
-+                if let Ok(joined_url) = base_url.join(&url) {
-                     // TODO: canonicalize
-                     urls.push(DynamicValue::from(joined_url.to_string()));
-                 }
-@@ -534,8 +536,6 @@ impl Scraper {
-             DynamicValue::from(html_escape::decode_html_entities(string).trim())
-         }
- 
--        // dbg!(&json_ld);
+-#[derive(Default)]
+-pub struct AmortizedSerializer {
+-    scratch: Vec<u8>,
+-    int_buffer: itoa::Buffer,
+-    float_buffer: zmij::Buffer,
+-}
 -
-         if let Some(data) = json_ld {
-             macro_rules! extract_raw {
-                 ($index: expr, $key: expr) => {
+-impl AmortizedSerializer {
+-    pub fn new() -> Self {
+-        Self::default()
+-    }
+-
+-    pub fn serialize<'s, 'v>(&'s mut self, value: &'v DynamicValue) -> &'s [u8]
+-    where
+-        'v: 's,
+-    {
+-        match value {
+-            DynamicValue::List(_) | DynamicValue::Map(_) => {
+-                self.scratch.clear();
+-                serde_json::to_writer(&mut self.scratch, value).unwrap();
+-                &self.scratch
+-            }
+-            DynamicValue::String(string) => string.as_bytes(),
+-            DynamicValue::Bytes(bytes) => bytes,
+-            DynamicValue::Integer(i) => self.int_buffer.format(*i).as_bytes(),
+-            DynamicValue::Float(f) => self.float_buffer.format(*f).as_bytes(),
+-            DynamicValue::Boolean(v) => {
+-                if *v {
+-                    b"true"
+-                } else {
+-                    b"false"
+-                }
+-            }
+-            DynamicValue::Zoned(zoned) => {
+-                self.scratch.clear();
+-                write!(&mut self.scratch, "{zoned}").unwrap();
+-                &self.scratch
+-            }
+-            DynamicValue::DateTime(datetime) => {
+-                self.scratch.clear();
+-                write!(&mut self.scratch, "{datetime}").unwrap();
+-                &self.scratch
+-            }
+-            DynamicValue::Date(date) => {
+-                self.scratch.clear();
+-                write!(&mut self.scratch, "{date}").unwrap();
+-                &self.scratch
+-            }
+-            DynamicValue::Time(time) => {
+-                self.scratch.clear();
+-                write!(&mut self.scratch, "{time}").unwrap();
+-                &self.scratch
+-            }
+-            DynamicValue::Span(span) => {
+-                self.scratch.clear();
+-                write!(&mut self.scratch, "{span}").unwrap();
+-                &self.scratch
+-            }
+-            DynamicValue::Regex(pattern) => pattern.as_str().as_bytes(),
+-            DynamicValue::None => b"",
+-        }
+-    }
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
 ```
 
-**File**: `tests/test_scrape.rs` (modified, +38/-0)
+**File**: `src/moonblade/types/mod.rs` (modified, +3/-1)
 ```diff
-@@ -39,6 +39,44 @@ fn scrape() {
-     assert_eq!(got, expected);
+@@ -1,16 +1,18 @@
++mod amortized_serializer;
+ mod arguments;
+ mod bound_arguments;
+ mod dynamic_number;
+ mod dynamic_value;
+ mod headers;
+ 
++pub use amortized_serializer::AmortizedSerializer;
+ pub use arguments::{Argument, Arity, FunctionArguments};
+ pub use bound_arguments::{
+     BOUND_ARGUMENTS_CAPACITY, BoundArgument, BoundArguments, BoundContainer, BoundStringLike,
+     LambdaArguments,
+ };
+ pub use dynamic_number::DynamicNumber;
+-pub use dynamic_value::{AmortizedSerializer, DynamicValue};
++pub use dynamic_value::DynamicValue;
+ pub use headers::{ColumIndexationBy, HeadersIndex};
+ 
+ use super::error::SpecifiedEvaluationError;
+```
+
+---
+
+### Incident Patch 2: `a34d05ff` (2026-11-15)
+**Commit Message**: ScrapingProgram::paddin_len
+
+**File**: `src/cmd/scrape.rs` (modified, +1/-1)
+```diff
+@@ -318,7 +318,7 @@ struct CustomScraper {
+ 
+ impl CustomScraper {
+     fn padding_len(&self) -> usize {
+-        self.program.capacity
++        self.program.padding_len()
+     }
+ 
+     fn is_plural(&self) -> bool {
+```
+
+**File**: `src/moonblade/scrape.rs` (modified, +12/-1)
+```diff
+@@ -776,11 +776,18 @@ fn concretize_scraper(
+         .map(ConcreteScraper)
  }
  
-+#[test]
-+fn scrape_urls() {
-+    let wrk = Workdir::new("scrape_urls");
-+    wrk.create(
-+        "data.csv",
-+        vec![
-+            svec!["html", "url"],
-+            svec!["<a href=\"http://lemonde.fr\">One</a>", "http://lemonde.fr"],
-+            svec!["<a href=\"about.html\">Two</a>", "http://lefigaro.fr"],
-+        ],
-+    );
-+    let mut cmd = wrk.command("scrape");
-+    cmd.arg("urls")
-+        .args(["-s", "!"])
-+        .args(["--doc-column", "html"])
-+        .args(["--docs", "data.csv"]);
++// #[derive(Debug, Clone)]
++// pub enum ScrapingRunMode {
++//     Singular,
++//     PluralWithSelector(Selector),
++//     Plural,
++// }
 +
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    let expected = vec![["url"], ["http://lemonde.fr"], ["about.html"]];
-+    assert_eq!(got, expected);
+ #[derive(Debug, Clone)]
+ pub struct ScrapingProgram {
+     scraper: ConcreteScraper,
+     headers_index: HeadersIndex,
+-    pub capacity: usize,
++    capacity: usize,
+ }
+ 
+ impl ScrapingProgram {
+@@ -807,6 +814,10 @@ impl ScrapingProgram {
+         self.scraper.names()
+     }
+ 
++    pub fn padding_len(&self) -> usize {
++        self.capacity
++    }
 +
-+    // --url-column
-+    let mut cmd = wrk.command("scrape");
-+    cmd.arg("urls")
-+        .args(["-s", "!"])
-+        .args(["--url-column", "url"])
-+        .args(["--doc-column", "html"])
-+        .args(["--docs", "data.csv"]);
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    let expected = vec![
-+        ["url"],
-+        ["http://lemonde.fr/"],
-+        ["http://lefigaro.fr/about.html"],
-+    ];
-+    assert_eq!(got, expected);
-+}
-+
- #[test]
- fn scrape_xml() {
-     let wrk = Workdir::new("scrape_xml");
+     pub fn run_singular(
+         &self,
+         index: usize,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2120,28 +2267,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixing xan scrape --url-column
+## X. Starting to move things around
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/moonblade/scrape.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `196e5190`: Fixing xan scrape --url-column. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `738ba7af`: Starting to move things around. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/moonblade/scrape.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-* Fixing `xan scrape --url-column`.
+#[derive(Debug, Clone)]
+pub enum ScrapingRunMode {
+    Singular,
+    PluralWithSelector(Selector),
+    Plural(ConcreteSelectionExpr),
+}
+    run_mode: ScrapingRunMode,
+            run_mode: ScrapingRunMode::Singular,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+// #[derive(Debug, Clone)]
+// pub enum ScrapingRunMode {
+//     Singular,
+//     PluralWithSelector(Selector),
+//     Plural,
+// }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `196e5190` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `738ba7af` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T01:33:02.401Z",
-  "total_records": 1184,
+  "last_updated": "2026-11-16T01:45:26.411Z",
+  "total_records": 1190,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 568,
+      "total": 570,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -606,7 +606,9 @@
         "DOM-D-B67F40D8",
         "domain_intelligence-research-knowledge-intelligence-hf-liconstudio-minimax-h3-vbvr-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor"
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor",
+        "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants"
       ]
     },
     "E": {
@@ -645,7 +647,7 @@
       ]
     },
     "G": {
-      "total": 211,
+      "total": 213,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -857,11 +859,13 @@
         "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-core-invariants",
-        "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants",
+        "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-learnings-core-invari"
       ]
     },
     "H": {
-      "total": 242,
+      "total": 244,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1104,7 +1108,9 @@
         "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants",
         "DOM-H-20A56733",
         "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-medialab-xan-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-medialab-xan-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7290,8 +7296,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "374343aa8d8ce8343913f8452ece2f68947e8520e607678d6d6b48ef4c3ac62a",
-      "created_at": "2026-11-14T00:08:12.375Z"
+      "content_hash": "0b80ea4ef92ad8359bc2234c6b4ae3db73e962286e370c0e60ab1b936b768c19",
+      "created_at": "2026-11-16T01:45:22.458Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -22162,6 +22168,60 @@
       "repository": "topgrade-rs-topgrade-learnings",
       "content_hash": "de92f29c09c742003a85022e0a3c47442b62fa3bd8c6a5978e990ecba69cf48c",
       "created_at": "2026-11-16T01:33:01.217Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/RelayVSR Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-relayvsr-research-knowledge-intelligence-comfy-org-relayvsr-core-in.md",
+      "repository": "Comfy-Org/RelayVSR",
+      "content_hash": "393cc5d359dd0ea0f62c16b7376fd77ffe3689c8c83c4e7cf687bbbb1192cb17",
+      "created_at": "2026-11-16T01:45:09.719Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-medialab-xan-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-medialab-xan-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: medialab/xan Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-technical-construction-intelligence-medialab-xan-core-invariants.md",
+      "repository": "medialab/xan",
+      "content_hash": "22b9836460e27aaa2c30c001f6bfc196d8bb588dba1558d4b32a6bf2a4e1f290",
+      "created_at": "2026-11-16T01:45:12.262Z"
+    },
+    "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rickclephas/KMP-NativeCoroutines Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rickclephas-kmp-nativecoroutines-architecture-intelligence-rickclephas-kmp-nativ.md",
+      "repository": "rickclephas/KMP-NativeCoroutines",
+      "content_hash": "e8800ff22925cf7fb5729ad91e7e145f87c472e4be9fd20d50e8fd4b8441fe6a",
+      "created_at": "2026-11-16T01:45:16.990Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-medialab-xan-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-medialab-xan-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: medialab-xan-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-learnings-technical-construction-intelligence-medialab-xan-learning.md",
+      "repository": "medialab-xan-learnings",
+      "content_hash": "6cc6d982ffdc3467a258c66b6958020ac3743d65283f8003a3bc5fe548b7c95c",
+      "created_at": "2026-11-16T01:45:25.575Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-relayvsr-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-relayvsr-learnings-research-knowledge-intelligence-hf-comfy-org-rel.md",
+      "repository": "hf-comfy-org-relayvsr-learnings",
+      "content_hash": "1044860af4ae0fbfd00e22d023ae4818dad1751189fa60c10824032df26e9354",
+      "created_at": "2026-11-16T01:45:25.939Z"
+    },
+    "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-learnings-core-invari": {
+      "record_id": "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-learnings-core-invari",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rickclephas-kmp-nativecoroutines-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rickclephas-kmp-nativecoroutines-learnings-architecture-intelligence-rickclephas.md",
+      "repository": "rickclephas-kmp-nativecoroutines-learnings",
+      "content_hash": "4893ea1757182d1ff27503466f7a76e0465a2258af8d644b7a6864980e79491a",
+      "created_at": "2026-11-16T01:45:26.411Z"
     }
   }
 }

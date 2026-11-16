@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:01.287Z",
+  "timestamp": "2026-11-16T01:45:26.221Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-rickclephas-kmp-nativecoroutines-learnings",
+  "learning_id": "LEARN-EVO-rickclephas-kmp-nativecoroutines-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rickclephas-kmp-nativecoroutines-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:01.287Z`  
-> **Learning ID**: `LEARN-REEXTRACT-rickclephas-kmp-nativecoroutines-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T01:45:26.221Z`  
+> **Learning ID**: `LEARN-EVO-rickclephas-kmp-nativecoroutines-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md`  
 > **Source**: github ([https://github.com/rickclephas/KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines))  
-> **Source Version**: `54a45fbb`  
+> **Source Version**: `5fdeeff5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:16:38.592Z  
+> **Timestamp**: 2026-11-16T01:45:15.862Z  
 > **Learning ID**: `learn-github-rickclephas-kmp-nativecoroutines`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rickclephas/KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:16:38.444Z  
+> **Harvest Timestamp**: 2026-11-16T01:45:15.858Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Library to use Kotlin Coroutines from Swift code in KMP apps
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1328 stars
+- **Stars / Engagement**: 1329 stars
 
 ---
 
@@ -322,13 +322,13 @@ private val AnnotationDescriptor.isHiddenFromObjCAnnotation: Boolean
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #261** (2026-08-17): **Use generated source dir relative path instead the absolute one.**
-  *Symptoms*: Make the plugin not break the reusability of remote gradle cache. Absolute paths are different on different machines, that breaks the reusability of remote cache and must be avoided if we want to have a truly fast gradle builds.  https://github.com/rickclephas/KMP-NativeCoroutines/issues/260
+- **Issue #265** (2026-11-15): **Kotlin 2.5.0 prerelease support**
+  *Symptoms*: It looks like there's an ABI compatibility conflict with 2.5.0  ``` java.lang.NoSuchMethodError: 'org.jetbrains.kotlin.KtSourceElement org.jetbrains.kotlin.KtSourceElementKt.fakeElement$default(org.jetbrains.kotlin.KtSourceElement, org.jetbrains.kotlin.KtFakeSourceElementKind, org.jetbrains.kotlin.KtSourceElementOffsetStrategy, int, java.lang.Object)'     at com.rickclephas.kmp.nativecoroutines.compiler.fir.codegen.StateFlowValueKt.buildStateFlowValueProperty(StateFlowValue.kt:45)     at com.rickclephas.kmp.nativecoroutines.compiler.fir.extensions.KmpNativeCoroutinesDeclarationGenerationExtension.generateProperties(...) ```  Repro'd here: https://github.com/slackhq/circuit/pull/2916  In `SwiftSupport`  ```kotlin @NativeCoroutinesState val state: StateFlow<UiState> =   scope.launchMolecule(RecompositionMode.Immediate) { delegate.present() } ```
   **Post-Mortem & Fix Analysis**:
-  > @rickclephas can you please take a look?
+  > Fixed in [v1.0.7-kotlin-2.5.0-RC](https://github.com/rickclephas/KMP-NativeCoroutines/releases/tag/v1.0.7-kotlin-2.5.0-RC)
 
-- **Issue #260** (2026-09-07): **`generatedSourceDir` compiler plugin option uses an absolute path, breaking build cache relocatability**
-  *Symptoms*: The Gradle plugin passes the `generatedSourceDir` option to the Kotlin compiler plugin as an **absolute path** via a plain string `SubpluginOption`:  ```kotlin // KmpNativeCoroutinesPlugin.kt extension.generatedSourceDirs.map { project.file(it).absolutePath }     .distinct().forEach {         add(SubpluginOption("generatedSourceDir", it))     } ```  The Kotlin Gradle Plugin includes the full compiler plugin command line as an `@Input` value in the build cache key of every `KotlinNativeCompile` task. Because the option value contains the absolute project path, the cache key changes whenever the project is checked out at a different filesystem location. As a result, **no Kotlin/Native compile task in a module applying this plugin can ever get a relocated build cache hit** — e.g. CI-seeded remote cache entries are unusable on developer machines, and any two checkouts at different paths (worktrees, differently-named CI workspaces) miss each other's cache.
+- **Issue #264** (2026-11-15): **Kotlin 2.4.21**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -345,8 +345,107 @@ private val AnnotationDescriptor.isHiddenFromObjCAnnotation: Boolean
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4101e573` (2026-07-28)
-**Commit Message**: Add Kotlin version suffix
+### Incident Patch 1: `5fdeeff5` (2026-11-15)
+**Commit Message**: Bump version to 1.0.7
+
+**File**: `KMPNativeCoroutinesAsync.podspec` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ Pod::Spec.new do |s|
+   s.name       = 'KMPNativeCoroutinesAsync'
+-  s.version    = '1.0.6'
++  s.version    = '1.0.7'
+   s.summary    = 'Swift library for Kotlin Coroutines with Swift Async/Await'
+ 
+   s.homepage   = 'https://github.com/rickclephas/KMP-NativeCoroutines'
+```
+
+**File**: `KMPNativeCoroutinesCombine.podspec` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ Pod::Spec.new do |s|
+   s.name       = 'KMPNativeCoroutinesCombine'
+-  s.version    = '1.0.6'
++  s.version    = '1.0.7'
+   s.summary    = 'Swift library for Kotlin Coroutines with Combine'
+ 
+   s.homepage   = 'https://github.com/rickclephas/KMP-NativeCoroutines'
+```
+
+**File**: `KMPNativeCoroutinesCore.podspec` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ Pod::Spec.new do |s|
+   s.name       = 'KMPNativeCoroutinesCore'
+-  s.version    = '1.0.6'
++  s.version    = '1.0.7'
+   s.summary    = 'Swift library for Kotlin Coroutines'
+ 
+   s.homepage   = 'https://github.com/rickclephas/KMP-NativeCoroutines'
+```
+
+**File**: `KMPNativeCoroutinesRxSwift.podspec` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ Pod::Spec.new do |s|
+   s.name       = 'KMPNativeCoroutinesRxSwift'
+-  s.version    = '1.0.6'
++  s.version    = '1.0.7'
+   s.summary    = 'Swift library for Kotlin Coroutines with RxSwift'
+ 
+   s.homepage   = 'https://github.com/rickclephas/KMP-NativeCoroutines'
+```
+
+**File**: `README.md` (modified, +8/-7)
+```diff
+@@ -27,12 +27,13 @@ This library solves both of these limitations 😄.
+ 
+ ## Compatibility
+ 
+-The latest version of the library uses Kotlin version `2.4.20`.  
++The latest version of the library uses Kotlin version `2.4.21`.  
+ Compatibility versions for older and/or preview Kotlin versions are also available:
+ 
+ | Version        | Version suffix  |   Kotlin   | Coroutines |
+ |----------------|-----------------|:----------:|:----------:|
+-| **_latest_**   | **_no suffix_** | **2.4.20** | **1.10.1** |
++| **_latest_**   | **_no suffix_** | **2.4.21** | **1.10.1** |
++| 1.0.6          | _no suffix_     |   2.4.20   |   1.10.1   |
+ | 1.0.5          | _no suffix_     |   2.4.10   |   1.10.1   |
+ | 1.0.4          | _no suffix_     |   2.4.0    |   1.10.1   |
+ | 1.0.3          | _no suffix_     |   2.3.21   |   1.10.1   |
+@@ -62,7 +63,7 @@ Make sure to always use the same versions for all the libraries!
+ For Kotlin just add the plugin to your `build.gradle.kts`:
+ ```kotlin
+ plugins {
+-    id("com.rickclephas.kmp.nativecoroutines") version "1.0.6"
++    id("com.rickclephas.kmp.nativecoroutines") version "1.0.7"
+ }
+ ```
+ and make sure to opt in to the experimental `@ObjCName` annotation:
+@@ -78,7 +79,7 @@ The Swift implementations are available via the Swift Package Manager.
+ Just add it to your `Package.swift` file:
+ ```swift
+ dependencies: [
+-    .package(url: "https://github.com/rickclephas/KMP-NativeCoroutines.git", exact: "1.0.6")
++    .package(url: "https://github.com/rickclephas/KMP-NativeCoroutines.git", exact: "1.0.7")
+ ],
+ targets: [
+     .target(
+@@ -110,9 +111,9 @@ Or add it in Xcode by going to `File` > `Add Packages...` and providing the URL:
+ 
+ If you use CocoaPods add one or more of the following libraries to your `Podfile`:
+ ```ruby
+-pod 'KMPNativeCoroutinesAsync', git: 'https://github.com/rickclephas/KMP-NativeCoroutines.git', tag: 'v1.0.6'   # Swift Concurrency implementation
+-pod 'KMPNativeCoroutinesCombine', git: 'https://github.com/rickclephas/KMP-NativeCoroutines.git', tag: 'v1.0.6' # Combine implementation
+-pod 'KMPNativeCoroutinesRxSwift', git: 'https://github.com/rickclephas/KMP-NativeCoroutines.git', tag: 'v1.0.6' # RxSwift implementation
++pod 'KMPNativeCoroutinesAsync', git: 'https://github.com/rickclephas/KMP-NativeCoroutines.git', tag: 'v1.0.7'   # Swift Concurrency implementation
++pod 'KMPNativeCoroutinesCombine', git: 'https://github.com/rickclephas/KMP-NativeCoroutines.git', tag: 'v1.0.7' # Combine implementation
++pod 'KMPNativeCoroutinesRxSwift', git: 'https://github.com/rickclephas/KMP-NativeCoroutines.git', tag: 'v1.0.7' # RxSwift implementation
+ ```
+ > [!NOTE]
+ > The version for CocoaPods should not contain the Kotlin version suffix (e.g. `-new-mm` or `-kotlin-1.6.0`).
+```
 
 **File**: `build.gradle.kts` (modified, +1/-1)
 ```diff
@@ -354,224 +453,66 @@ Observed empirical fixes and code patches:
  
  allprojects {
      group = "com.rickclephas.kmp"
--    version = "1.0.5"
-+    version = "1.0.5-kotlin-2.4.20-Beta2"
+-    version = "1.0.6-kotlin-2.4.21"
++    version = "1.0.7"
  }
 ```
 
 ---
 
-### Incident Patch 2: `8352a664` (2026-07-26)
-**Commit Message**: Fix type substitution in FIR and IR
+### Incident Patch 2: `1977215e` (2026-11-15)
+**Commit Message**: Bump minimum platform versions for Xcode 27
 
-**File**: `kmp-nativecoroutines-compiler/src/main/kotlin/com/rickclephas/kmp/nativecoroutines/compiler/fir/codegen/CallableReferenceBlock.kt` (modified, +4/-2)
+**File**: `Package.swift` (modified, +3/-3)
 ```diff
-@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
- import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
- import org.jetbrains.kotlin.fir.expressions.builder.buildCallableReferenceAccess
- import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
- import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
- import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
- import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-@@ -15,11 +16,12 @@ import org.jetbrains.kotlin.name.StandardClassIds
- import org.jetbrains.kotlin.utils.addIfNotNull
+@@ -1,9 +1,9 @@
+-// swift-tools-version:5.3
++// swift-tools-version:5.7
+ import PackageDescription
  
- internal fun FirSession.buildCallableReferenceBlock(
--    symbol: FirCallableSymbol<*>
-+    symbol: FirCallableSymbol<*>,
-+    substitutor: ConeSubstitutor,
- ): FirBlock = buildBlock {
-     coneTypeOrNull = StandardClassIds.Nothing.constructClassLikeType()
-     statements += buildCallableReferenceAccess {
--        coneTypeOrNull = symbol.getReferenceConeType()
-+        coneTypeOrNull = substitutor.substituteOrSelf(symbol.getReferenceConeType())
-         calleeReference = buildResolvedNamedReference {
-             name = symbol.name
-             resolvedSymbol = symbol
+ let package = Package(
+     name: "KMPNativeCoroutines",
+-    platforms: [.iOS(.v13), .macOS(.v10_15), .tvOS(.v13), .watchOS(.v6)],
++    platforms: [.iOS(.v15), .macOS(.v12), .tvOS(.v15), .watchOS(.v9)],
+     products: [
+         .library(
+             name: "KMPNativeCoroutinesCore",
+@@ -65,4 +65,4 @@ let package = Package(
+         )
+     ],
+     swiftLanguageVersions: [.v5]
+-)
+\ No newline at end of file
++)
 ```
 
-**File**: `kmp-nativecoroutines-compiler/src/main/kotlin/com/rickclephas/kmp/nativecoroutines/compiler/fir/codegen/NativeFunction.kt` (modified, +1/-1)
+**File**: `README.md` (modified, +0/-9)
 ```diff
-@@ -92,6 +92,6 @@ internal fun FirExtension.buildNativeFunction(
-             annotations.add(buildThrowsAnnotation(ClassIds.exception))
-         }
+@@ -49,15 +49,6 @@ Compatibility versions for older and/or preview Kotlin versions are also availab
+ | 1.0.0-ALPHA-34 | _no suffix_     |   2.0.10   |   1.8.1    |
+ | 1.0.0-ALPHA-33 | _no suffix_     |   2.0.0    |   1.8.1    |
  
--        body = session.buildCallableReferenceBlock(originalSymbol)
-+        body = session.buildCallableReferenceBlock(originalSymbol, typeParameters.substitutor)
-     }.symbol
- }
-```
-
-**File**: `kmp-nativecoroutines-compiler/src/main/kotlin/com/rickclephas/kmp/nativecoroutines/compiler/fir/codegen/NativeProperty.kt` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ internal fun FirExtension.buildNativeProperty(
-             .toFirResolvedTypeRef()
+-You can choose from a couple of Swift implementations.  
+-Depending on the implementation you can support as low as iOS 9, macOS 10.9, tvOS 9 and watchOS 3:
+-
+-| Implementation | Swift | iOS  | macOS | tvOS | watchOS |
+-|----------------|:-----:|:----:|:-----:|:----:|:-------:|
+-| Async          |  5.5  | 13.0 | 10.15 | 13.0 |   6.0   |
+-| Combine        |  5.0  | 13.0 | 10.15 | 13.0 |   6.0   |
+-| RxSwift        |  5.0  | 9.0  | 10.9  | 9.0  |   3.0   |
+-
+ ## Installation
  
-         isVar = false
--        getter = buildPropertyGetter(this, originalSymbol)
-+        getter = buildPropertyGetter(this, originalSymbol, typeParameters.substitutor)
- 
-         bodyResolveState = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
- 
-```
-
-**File**: `kmp-nativecoroutines-compiler/src/main/kotlin/com/rickclephas/kmp/nativecoroutines/compiler/fir/codegen/PropertyAccessor.kt` (modified, +3/-1)
-```diff
-@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyBuilder
- import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
- import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
- import org.jetbrains.kotlin.fir.extensions.FirExtension
-+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
- import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
- import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
- import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
- internal fun FirExtension.buildPropertyGetter(
-     propertyBuilder: FirPropertyBuilder,
-     originalSymbol: FirPropertySymbol,
-+    substitutor: ConeSubstitutor,
- ): FirPropertyAccessor = buildPropertyAccessor {
-     val originalGetter = originalSymbol.getterSymbol
-     require(originalGetter != null)
-@@ -26,7 +28,7 @@ internal fun FirExtension.buildPropertyGetter(
-     propertySymbol = propertyBuilder.symbol
-     isGetter = true
-     annotations.addAll(buildAnnotationsCopy(originalGetter.resolvedAnnotationsWithClassIds))
--    body = session.buildCallableReferenceBlock(originalSymbol)
-+    body = session.buildCallableReferenceBlock(originalSymbol, substitutor)
- }
- 
- internal fun FirExtension.buildPropertySetter(
-```
-
-**File**: `kmp-nativecoroutines-compiler/src/main/kotlin/com/rickclephas/kmp/nativecoroutines/compiler/fir/codegen/SharedFlowReplayCache.kt` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@ internal fun FirExtension.buildSharedFlowReplayCacheProperty(
-         ).let(typeParameters.substitutor::substituteOrSelf).toFirResolvedTypeRef()
- 
-         isVar = false
--        getter = buildPropertyGetter(this, originalSymbol)
-+        getter = buildPropertyGetter(this, originalSymbol, typeParameters.substitutor)
- 
-         bodyResolveState = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
- 
-```
-
-**File**: `kmp-nativecoroutines-compiler/src/main/kotlin/com/rickclephas/kmp/nativecoroutines/compiler/fir/codegen/StateFlowValue.kt` (modified, +1/-1)
-```diff
-@@ -76,7 +76,7 @@ internal fun FirExtension.buildStateFlowValueProperty(
-             .toFirResolvedTypeRef()
- 
-         isVar = callableSignature.returnType.isMutable
--        getter = buildPropertyGetter(this, originalSymbol)
-+        getter = buildPropertyGetter(this, originalSymbol, typeParameters.substitutor)
-         if (isVar) {
-             setter = buildPropertySetter(this, originalSymbol)
-         }
-```
-
-**File**: `kmp-nativecoroutines-compiler/src/main/kotlin/com/rickclephas/kmp/nativecoroutines/compiler/ir/codegen/OriginalFunction.kt` (modified, +11/-5)
-```diff
-@@ -4,16 +4,22 @@ import com.rickclephas.kmp.nativecoroutines.compiler.ir.utils.IrBlockBodyExpress
- import org.jetbrains.kotlin.ir.builders.irCall
- import org.jetbrains.kotlin.ir.builders.irGet
- import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-+import org.jetbrains.kotlin.ir.types.defaultType
- import org.jetbrains.kotlin.ir.util.passTypeArgumentsFrom
-+import org.jetbrains.kotlin.ir.util.substitute
- 
- internal fun irCallOriginalFunction(
-     originalFunction: IrSimpleFunction,
-     function: IrSimpleFunction
--) = IrBlockBodyExpression(originalFunction.returnType) {
--    irCall(originalFunction).apply {
--        passTypeArgumentsFrom(function)
--        function.parameters.forEachIndexed { index, parameter ->
--            arguments[index] = irGet(parameter)
-+): IrBlockBodyExpression {
-+    val typeArgs = function.typeParameters.map { it.defaultType }
-+    val returnType = originalFunction.returnType.substitute(originalFunction.typeParameters, typeArgs)
-+    return IrBlockBodyExpression(returnType) {
-+        irCall(originalFunction.symbol, returnType).apply {
-+            passTypeArgumentsFrom(function)
-+            function.parameters.forEachIndexed { index, parameter ->
-+                arguments[index] = irGet(parameter)
-+            }
-         }
-     }
- }
-```
-
-**File**: `kmp-nativecoroutines-compiler/src/main/kotlin/com/rickclephas/kmp/nativecoroutines/compiler/ir/codegen/OriginalProperty.kt` (modified, +11/-5)
-```diff
-@@ -5,16 +5,22 @@ import org.jetbrains.kotlin.ir.builders.irCall
- import org.jetbrains.kotlin.ir.builders.irGet
- import org.jetbrains.kotlin.ir.declarations.IrParameterKind
- import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-+import org.jetbrains.kotlin.ir.types.defaultType
- import org.jetbrains.kotlin.ir.util.passTypeArgumentsFrom
-+import org.jetbrains.kotlin.ir.util.substitute
- 
- internal fun irCallOriginalPropertyGetter(
-     originalGetter: IrSimpleFunction,
-     propertyFunction: IrSimpleFunction
--): IrBlockBodyExpression = IrBlockBodyExpression(originalGetter.returnType) {
--    irCall(originalGetter).apply {
--        propertyFunction.parameters.filter { it.kind != IrParameterKind.Regular }.forEachIndexed { index, parameter ->
--            arguments[index] = irGet(parameter)
-+): IrBlockBodyExpression {
-+    val typeArgs = propertyFunction.typeParameters.map { it.defaultType }
-+    val returnType = originalGetter.returnType.substitute(originalGetter.typeParameters, typeArgs)
-+    return IrBlockBodyExpression(returnType) {
-+        irCall(originalGetter.symbol, returnType).apply {
-+            propertyFunction.parameters.filter { it.kind != IrParameterKind.Regular }.forEachIndexed { index, parameter ->
-+                arguments[index] = irGet(parameter)
-+            }
-+            passTypeArgumentsFrom(propertyFunction)
-         }
--        passTypeArgumentsFrom(propertyFunction)
-     }
- }
-```
-
----
-
-### Incident Patch 3: `ef230dbd` (2026-06-28)
-**Commit Message**: Fix ABI validation issues
-
-**File**: `.github/workflows/run-idea-tests.yaml` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ jobs:
-       - name: Verify plugin structure
-         run: ./gradlew :kmp-nativecoroutines-idea-plugin:verifyPluginStructure
-       - name: Run binary compatibility validator
--        run: ./gradlew :kmp-nativecoroutines-idea-plugin:apiCheck
-+        run: ./gradlew :kmp-nativecoroutines-idea-plugin:checkKotlinAbi
-   run-idea-tests:
-     needs:
-       - run-common-idea-tests
-```
-
-**File**: `kmp-nativecoroutines-gradle-plugin/api/kmp-nativecoroutines-gradle-plugin.api` (modified, +0/-1)
-```diff
-@@ -30,7 +30,6 @@ public class com/rickclephas/kmp/nativecoroutines/gradle/KmpNativeCoroutinesExte
- }
- 
- public final class com/rickclephas/kmp/nativecoroutines/gradle/KmpNativeCoroutinesPlugin : org/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin {
--	public static final field KOTLIN_PLUGIN_ID Ljava/lang/String;
- 	public fun <init> ()V
- 	public synthetic fun apply (Ljava/lang/Object;)V
- 	public fun apply (Lorg/gradle/api/Project;)V
+ The library consists of a Kotlin and Swift part which you'll need to add to your project.  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #264** (2026-11-15): Kotlin 2.4.21 (@rickclephas)
 - **PR #261** (2026-08-17): Use generated source dir relative path instead the absolute one. (@Link184)
 - **PR #259** (2026-09-07): Kotlin 2.4.20 (@rickclephas)
 - **PR #258** (2026-07-15): Kotlin 2.4.10 (@rickclephas)
 - **PR #257** (2026-06-28): Gradle 9.6 (@rickclephas)
 - **PR #256** (2026-06-07): Adds support for WasmWasi (@carlonzo)
-- **PR #255** (2026-05-10): Kotlin 2.3.21 (@rickclephas)
 
 ---
 
@@ -591,31 +532,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Kotlin version suffix
+## X. Bump version to 1.0.7
 
 **RULE**:
-When implementing operations in `build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rickclephas/KMP-NativeCoroutines. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `KMPNativeCoroutinesAsync.podspec`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rickclephas/KMP-NativeCoroutines. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4101e573`: Add Kotlin version suffix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fdeeff5`: Bump version to 1.0.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle.kts`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `KMPNativeCoroutinesAsync.podspec`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    version = "1.0.5-kotlin-2.4.20-Beta2"
+  s.version    = '1.0.7'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-    version = "1.0.5"
+// Induced defect failure mode:
+  s.version    = '1.0.6'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4101e573` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fdeeff5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

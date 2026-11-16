@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T01:33:02.015Z",
+  "last_updated": "2026-11-16T01:45:26.309Z",
   "directives": [
     {
       "id": "CD-001",
@@ -17488,6 +17488,57 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9164F7-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-Q3FL",
+      "directive_title": "Starting to move things around",
+      "source_repo": "medialab-xan-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q3FL-starting-to-move-things-around.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-Q42T",
+      "directive_title": "Bump version to 1.0.7",
+      "source_repo": "rickclephas-kmp-nativecoroutines-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q42T-bump-version-to-1-0-7.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-Q10U",
+      "directive_title": "Empirical Invariant Guard in decrypt.rs",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "2299a19b",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q10U-empirical-invariant-guard-in-decrypt-rs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-D345C7",
+      "directive_title": "Starting to move things around",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "medialab-xan",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D345C7-starting-to-move-things-around.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-02099C",
+      "directive_title": "Bump version to 1.0.7",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rickclephas-kmp-nativecoroutines",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-02099C-bump-version-to-1-0-7.md",
       "staged_date": "2026-11-16"
     }
   ]

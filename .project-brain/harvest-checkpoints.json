@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T01:32:57.905Z",
+  "last_updated": "2026-11-16T01:45:22.189Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "b37b0b840dbec9eb452838a83acd8b9a2b75d5d2407bef62fe4b6b5bf13667be",
-      "verified_at": "2026-11-14T00:08:12.057Z",
+      "content_hash": "123f1b4873a59e75bc18a7657b3cc8ecd560698e26b58e6b185d1c04e9f83b62",
+      "verified_at": "2026-11-16T01:45:22.188Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T00:08:12.057Z"
+      "last_updated": "2026-11-16T01:45:22.188Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "65b550e47a164dcf0b4c44acd7451a77b8e66bab5e9c43d457aac1847ef64962",
-      "verified_at": "2026-11-12T21:49:16.215Z",
+      "content_hash": "8b29a3da1c224a6a60e213db7bcb154f5b27430bb0212e7b663698373c262f68",
+      "verified_at": "2026-11-16T01:45:11.998Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:49:16.215Z"
+      "last_updated": "2026-11-16T01:45:11.998Z"
     },
     "onejs/one": {
       "repository": "onejs/one",
@@ -12906,14 +12906,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
-      "content_hash": "d6bb2304accded2fcfd519fb46ebce09f78752ebfbee0d5a5d026bb514edcd0a",
-      "verified_at": "2026-10-19T18:16:38.842Z",
+      "content_hash": "d3f37df4319689395e332587b56b37907a47bb95646fb87aacf5c1720eb82e19",
+      "verified_at": "2026-11-16T01:45:16.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:16:38.842Z"
+      "last_updated": "2026-11-16T01:45:16.737Z"
     },
     "LifeSciForge/seo-auditor": {
       "repository": "LifeSciForge/seo-auditor",
@@ -18606,14 +18606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-relayvsr",
-      "content_hash": "1fd9414f960dba44905ee7d3858978a365aefafa33ae5ed47db757b932511f81",
-      "verified_at": "2026-11-11T11:10:17.010Z",
+      "content_hash": "60782fc62b931b3b445bf33778ac152aa3c7acb04744e9451d91728d97ce0aca",
+      "verified_at": "2026-11-16T01:45:09.570Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T11:10:17.010Z"
+      "last_updated": "2026-11-16T01:45:09.570Z"
     },
     "Zyphra/ZONOS3-Mini": {
       "repository": "Zyphra/ZONOS3-Mini",

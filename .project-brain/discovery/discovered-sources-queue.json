@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T01:21:24.706Z",
+  "updated_at": "2026-11-16T01:45:26.166Z",
   "stats": {
-    "total_discovered": 4027,
-    "approved_pending_harvest": 3783,
+    "total_discovered": 4033,
+    "approved_pending_harvest": 3789,
     "harvested_count": 0,
     "rejected_count": 244,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3780,
+      "COMMUNITY_AND_EXPERT": 3786,
       "OFFICIAL_DOCUMENTATION": 132,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
@@ -86907,6 +86907,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/adobe-structured-data-validator-learnings.md",
         "fileName": "adobe-structured-data-validator-learnings.md"
+      }
+    },
+    "SRC-7A37EDA9CECD": {
+      "id": "SRC-7A37EDA9CECD",
+      "url": "https://huggingface.co/Comfy-Org/RelayVSR",
+      "title": "https://huggingface.co/Comfy-Org/RelayVSR",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:45:25.792Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md",
+        "fileName": "hf-comfy-org-relayvsr-learnings.md"
+      }
+    },
+    "SRC-918008E942B4": {
+      "id": "SRC-918008E942B4",
+      "url": "https://github.com/rickclephas/KMP-NativeCoroutines",
+      "title": "https://github.com/rickclephas/KMP-NativeCoroutines",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:45:26.069Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md",
+        "fileName": "rickclephas-kmp-nativecoroutines-learnings.md"
+      }
+    },
+    "SRC-F8F038C353A2": {
+      "id": "SRC-F8F038C353A2",
+      "url": "https://github.com/JetBrains/kotlin/blob/fef7e06fe2603d0a2f53994247a4cbd1467457a5/compiler/frontend/src/org/jetbrains/kotlin/resolve/checkers/ExplicitApiDeclarationChecker.kt",
+      "title": "https://github.com/JetBrains/kotlin/blob/fef7e06fe2603d0a2f53994247a4cbd1467457a5/compiler/frontend/src/org/jetbrains/kotlin/resolve/checkers/ExplicitApiDeclarationChecker.kt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:45:26.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md",
+        "fileName": "rickclephas-kmp-nativecoroutines-learnings.md"
+      }
+    },
+    "SRC-0A37A47DBD24": {
+      "id": "SRC-0A37A47DBD24",
+      "url": "https://github.com/slackhq/circuit/pull/2916",
+      "title": "https://github.com/slackhq/circuit/pull/2916",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:45:26.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md",
+        "fileName": "rickclephas-kmp-nativecoroutines-learnings.md"
+      }
+    },
+    "SRC-9F674682D870": {
+      "id": "SRC-9F674682D870",
+      "url": "https://github.com/rickclephas/KMP-NativeCoroutines/releases/tag/v1.0.7-kotlin-2.5.0-RC",
+      "title": "https://github.com/rickclephas/KMP-NativeCoroutines/releases/tag/v1.0.7-kotlin-2.5.0-RC",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:45:26.141Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md",
+        "fileName": "rickclephas-kmp-nativecoroutines-learnings.md"
+      }
+    },
+    "SRC-609133B310E9": {
+      "id": "SRC-609133B310E9",
+      "url": "https://github.com/rickclephas/KMP-NativeCoroutines.git",
+      "title": "https://github.com/rickclephas/KMP-NativeCoroutines.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T01:45:26.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md",
+        "fileName": "rickclephas-kmp-nativecoroutines-learnings.md"
       }
     }
   }

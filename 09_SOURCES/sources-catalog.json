@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "1f0ceab5",
+    "sourceVersion": "2299a19b",
     "license": "Apache-2.0",
-    "contentHash": "b37b0b840dbec9eb452838a83acd8b9a2b75d5d2407bef62fe4b6b5bf13667be",
-    "lastHarvestedAt": "2026-11-14T00:08:12.047Z",
+    "contentHash": "123f1b4873a59e75bc18a7657b3cc8ecd560698e26b58e6b185d1c04e9f83b62",
+    "lastHarvestedAt": "2026-11-16T01:45:22.181Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "f4e85fee",
+    "sourceVersion": "738ba7af",
     "license": "Unlicense",
-    "contentHash": "65b550e47a164dcf0b4c44acd7451a77b8e66bab5e9c43d457aac1847ef64962",
-    "lastHarvestedAt": "2026-11-12T21:49:16.194Z",
+    "contentHash": "8b29a3da1c224a6a60e213db7bcb154f5b27430bb0212e7b663698373c262f68",
+    "lastHarvestedAt": "2026-11-16T01:45:11.990Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -8573,10 +8573,10 @@
     "repository": "rickclephas/KMP-NativeCoroutines",
     "platform": "github",
     "sourceUrl": "https://github.com/rickclephas/KMP-NativeCoroutines",
-    "sourceVersion": "54a45fbb",
+    "sourceVersion": "5fdeeff5",
     "license": "MIT",
-    "contentHash": "d6bb2304accded2fcfd519fb46ebce09f78752ebfbee0d5a5d026bb514edcd0a",
-    "lastHarvestedAt": "2026-10-19T18:16:38.836Z",
+    "contentHash": "d3f37df4319689395e332587b56b37907a47bb95646fb87aacf5c1720eb82e19",
+    "lastHarvestedAt": "2026-11-16T01:45:16.730Z",
     "learningId": "learn-github-rickclephas-kmp-nativecoroutines"
   },
   "lifesciforge-seo-auditor": {
@@ -12365,8 +12365,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/RelayVSR",
     "sourceVersion": "hf-comfy-org-relayvsr",
     "license": "Open-Source",
-    "contentHash": "1fd9414f960dba44905ee7d3858978a365aefafa33ae5ed47db757b932511f81",
-    "lastHarvestedAt": "2026-11-11T11:10:17.001Z",
+    "contentHash": "60782fc62b931b3b445bf33778ac152aa3c7acb04744e9451d91728d97ce0aca",
+    "lastHarvestedAt": "2026-11-16T01:45:09.563Z",
     "learningId": "learn-huggingface-comfy-org-relayvsr"
   },
   "hf-zyphra-zonos3-mini": {

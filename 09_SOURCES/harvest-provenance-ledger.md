@@ -10237,3 +10237,7 @@ Every entry in this ledger must capture:
 | `learn-github-adobe-structured-data-validator` | `https://github.com/adobe/structured-data-validator` | `6918b526` | Multi-dimensional audit evidence | 2026-11-16T01:21:20.730Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `9aab6ffc` | Multi-dimensional audit evidence | 2026-11-16T01:32:44.580Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `6895756f` | Multi-dimensional audit evidence | 2026-11-16T01:32:57.898Z |
+| `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-16T01:45:09.563Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `738ba7af` | Multi-dimensional audit evidence | 2026-11-16T01:45:11.990Z |
+| `learn-github-rickclephas-kmp-nativecoroutines` | `https://github.com/rickclephas/KMP-NativeCoroutines` | `5fdeeff5` | Multi-dimensional audit evidence | 2026-11-16T01:45:16.730Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `2299a19b` | Multi-dimensional audit evidence | 2026-11-16T01:45:22.181Z |

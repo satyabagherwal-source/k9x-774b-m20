@@ -10204,3 +10204,7 @@
 | `CYCLE-20261116-V4NQ` | `2026-11-16T01:21:20.726Z` | `adobe/structured-data-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8680` | Yes (`2db818dc...`) |
 | `CYCLE-20261116-9SBJ` | `2026-11-16T01:32:44.575Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8681` | Yes (`729d4e13...`) |
 | `CYCLE-20261116-A2LJ` | `2026-11-16T01:32:57.895Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8682` | Yes (`8ed6e559...`) |
+| `CYCLE-20261116-PR5J` | `2026-11-16T01:45:09.559Z` | `Comfy-Org/RelayVSR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | Yes (`60782fc6...`) |
+| `CYCLE-20261116-PT0Z` | `2026-11-16T01:45:11.987Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8683` | Yes (`8b29a3da...`) |
+| `CYCLE-20261116-PWON` | `2026-11-16T01:45:16.727Z` | `rickclephas/KMP-NativeCoroutines` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8684` | Yes (`d3f37df4...`) |
+| `CYCLE-20261116-Q0W2` | `2026-11-16T01:45:22.178Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8685` | Yes (`123f1b48...`) |
