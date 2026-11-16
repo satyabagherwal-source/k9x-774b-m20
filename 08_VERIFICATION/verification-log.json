@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-AW29",
-    "timestamp": "2026-11-13T19:54:20.241Z",
-    "repository": "PrunaAI/P-H3-Image-Comfy",
-    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-    "contentHash": "ca3f8aabf280e7ff3d31d66c30494c62ed1d3fd9b3909646f0fe82eaca14177a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-AY8A",
     "timestamp": "2026-11-13T19:54:23.050Z",
     "repository": "telemt/telemt",
@@ -7490,6 +7475,21 @@
     "repository": "zed-industries/zed",
     "learningId": "learn-github-zed-industries-zed",
     "contentHash": "b1d9abf3e5bbda3730582bf8ebeee6786e9ca44054f38093f3bf88134b05d9e5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-0KDW",
+    "timestamp": "2026-11-16T08:53:28.244Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "ab015b7e3db43d7971505f9feba23558e04d83fcf8bb543ad723e99feb341eed",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

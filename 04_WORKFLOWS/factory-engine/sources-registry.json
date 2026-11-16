@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T08:11:22.876Z",
-    "lastVerified": "2026-11-16T08:11:22.876Z",
+    "lastChecked": "2026-11-16T08:53:31.250Z",
+    "lastVerified": "2026-11-16T08:53:31.250Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -135,12 +135,12 @@
     "revisionIdentifier": "ccc98823"
   },
   "mintplex-labs-anything-llm": {
-    "name": "Mintplex-Labs/anything-llm",
+    "name": "anything-llm",
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-15T01:03:34.210Z",
-    "lastVerified": "2026-11-15T01:03:34.210Z",
+    "lastChecked": "2026-11-16T08:48:27.542Z",
+    "lastVerified": "2026-11-16T08:48:27.542Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
@@ -149,7 +149,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4d09fa5f"
   },
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
@@ -259,8 +260,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T07:19:58.404Z",
-    "lastVerified": "2026-11-16T07:19:58.404Z",
+    "lastChecked": "2026-11-16T08:48:30.048Z",
+    "lastVerified": "2026-11-16T08:48:30.048Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1134,9 +1135,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-16T01:32:49.332Z",
+    "lastChecked": "2026-11-16T08:48:25.081Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-16T01:32:49.332Z"
+    "lastVerified": "2026-11-16T08:48:25.081Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -7110,12 +7111,12 @@
     "revisionIdentifier": "d486a5e8"
   },
   "argoproj-argo-workflows": {
-    "name": "argoproj/argo-workflows",
+    "name": "argo-workflows",
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T03:13:35.188Z",
-    "lastVerified": "2026-11-15T03:13:35.188Z",
+    "lastChecked": "2026-11-16T08:48:22.595Z",
+    "lastVerified": "2026-11-16T08:48:22.595Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
@@ -7124,7 +7125,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5ecc44fc"
   },
   "ytsaurus-ytsaurus": {
     "name": "ytsaurus/ytsaurus",
@@ -8897,14 +8899,14 @@
     "officialUrl": "https://github.com/astral-sh/ruff",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T16:22:49.587Z",
-    "lastVerified": "2026-11-14T16:22:49.587Z",
+    "lastChecked": "2026-11-16T08:48:20.162Z",
+    "lastVerified": "2026-11-16T08:48:20.162Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "2d3d83990f4b3d7704110ed0d30ab49135649d6274218a90992f5ec66ade1193",
+    "contentHash": "ab015b7e3db43d7971505f9feba23558e04d83fcf8bb543ad723e99feb341eed",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11262,9 +11264,9 @@
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",
     "officialUrl": "https://github.com/santifer/santifer-irepair",
-    "lastChecked": "2026-11-11T18:35:30.599Z",
+    "lastChecked": "2026-11-16T08:48:17.587Z",
     "revisionIdentifier": "5c1ce0b2",
-    "lastVerified": "2026-11-11T18:35:30.599Z"
+    "lastVerified": "2026-11-16T08:48:17.587Z"
   },
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",
@@ -11399,9 +11401,9 @@
   "shubham0812-swiftui-animations": {
     "name": "SwiftUI-Animations",
     "officialUrl": "https://github.com/Shubham0812/SwiftUI-Animations",
-    "lastChecked": "2026-11-13T01:31:20.012Z",
+    "lastChecked": "2026-11-16T08:48:20.054Z",
     "revisionIdentifier": "494a3635",
-    "lastVerified": "2026-11-13T01:31:20.012Z"
+    "lastVerified": "2026-11-16T08:48:20.054Z"
   },
   "scrapy-plugins-scrapy-zyte-api": {
     "name": "scrapy-zyte-api",

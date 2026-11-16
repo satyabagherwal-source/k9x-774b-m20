@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T08:11:24.065Z",
+  "updated_at": "2026-11-16T08:53:31.602Z",
   "stats": {
-    "total_discovered": 4182,
-    "approved_pending_harvest": 3929,
+    "total_discovered": 4188,
+    "approved_pending_harvest": 3935,
     "harvested_count": 0,
     "rejected_count": 253,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3930,
+      "COMMUNITY_AND_EXPERT": 3936,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -90254,6 +90254,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
         "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-1DB69BF4F0D8": {
+      "id": "SRC-1DB69BF4F0D8",
+      "url": "https://github.com/astral-sh/ruff/commit/6bf61927fd328ff83b36ea6484a86dfedc53c340",
+      "title": "https://github.com/astral-sh/ruff/commit/6bf61927fd328ff83b36ea6484a86dfedc53c340",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:53:31.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-4D8F220E822F": {
+      "id": "SRC-4D8F220E822F",
+      "url": "https://github.com/astral-sh/ruff/commit/dda61822347385a7a4e4d3d1cb0634079a0ed9d6",
+      "title": "https://github.com/astral-sh/ruff/commit/dda61822347385a7a4e4d3d1cb0634079a0ed9d6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:53:31.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-ECA38E947BAC": {
+      "id": "SRC-ECA38E947BAC",
+      "url": "https://github.com/psf/black/tree/55996d1fb8342725c8a19b6023cd9439c3c1d6f7",
+      "title": "https://github.com/psf/black/tree/55996d1fb8342725c8a19b6023cd9439c3c1d6f7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:53:31.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-020DB3FE7BAE": {
+      "id": "SRC-020DB3FE7BAE",
+      "url": "https://github.com/Rapptz/discord.py/tree/65232c38702be5844cf2ce865a4777eb1928b5d0",
+      "title": "https://github.com/Rapptz/discord.py/tree/65232c38702be5844cf2ce865a4777eb1928b5d0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:53:31.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-9C8A35EA3C9C": {
+      "id": "SRC-9C8A35EA3C9C",
+      "url": "https://github.com/django/django/tree/b501b8493f31cf8cba31211d59b3b78642b8cb02",
+      "title": "https://github.com/django/django/tree/b501b8493f31cf8cba31211d59b3b78642b8cb02",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:53:31.578Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-620D9FB61A33": {
+      "id": "SRC-620D9FB61A33",
+      "url": "https://github.com/astral-sh/ruff/commit/5e990b50038313b3823b163c92e5b185d84ae8f1",
+      "title": "https://github.com/astral-sh/ruff/commit/5e990b50038313b3823b163c92e5b185d84ae8f1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T08:53:31.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
       }
     }
   }

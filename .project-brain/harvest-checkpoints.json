@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T08:11:19.666Z",
+  "last_updated": "2026-11-16T08:53:28.255Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "2d3d83990f4b3d7704110ed0d30ab49135649d6274218a90992f5ec66ade1193",
-      "verified_at": "2026-11-14T16:22:50.216Z",
+      "content_hash": "ab015b7e3db43d7971505f9feba23558e04d83fcf8bb543ad723e99feb341eed",
+      "verified_at": "2026-11-16T08:53:28.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T16:22:50.216Z"
+      "last_updated": "2026-11-16T08:53:28.255Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",

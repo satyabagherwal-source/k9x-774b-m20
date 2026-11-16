@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T08:11:19.661Z",
-  "total_cycles_completed": 9852,
-  "total_learnings_persisted": 9852,
-  "total_rules_promoted": 9460,
+  "last_updated": "2026-11-16T08:53:28.252Z",
+  "total_cycles_completed": 9853,
+  "total_learnings_persisted": 9853,
+  "total_rules_promoted": 9461,
   "history": [
-    {
-      "timestamp": "2026-11-15T03:34:20.802Z",
-      "repository": "pyannote/speaker-diarization-community-1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T03:34:23.906Z",
       "repository": "flox/flox",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T08:11:19.661Z",
       "repository": "zed-industries/zed",
       "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T08:53:28.252Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

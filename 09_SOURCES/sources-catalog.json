@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "a3a3ebb5",
+    "sourceVersion": "36b92bb2",
     "license": "MIT",
-    "contentHash": "2d3d83990f4b3d7704110ed0d30ab49135649d6274218a90992f5ec66ade1193",
-    "lastHarvestedAt": "2026-11-14T16:22:50.210Z",
+    "contentHash": "ab015b7e3db43d7971505f9feba23558e04d83fcf8bb543ad723e99feb341eed",
+    "lastHarvestedAt": "2026-11-16T08:53:28.247Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

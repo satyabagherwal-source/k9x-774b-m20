@@ -10294,3 +10294,4 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `e61ca3a1` | Multi-dimensional audit evidence | 2026-11-16T07:45:01.712Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `bfd935f4` | Multi-dimensional audit evidence | 2026-11-16T08:06:43.155Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `a57e2fdc` | Multi-dimensional audit evidence | 2026-11-16T08:11:19.652Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `36b92bb2` | Multi-dimensional audit evidence | 2026-11-16T08:53:28.247Z |

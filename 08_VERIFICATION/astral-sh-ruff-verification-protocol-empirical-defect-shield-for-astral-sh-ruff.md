@@ -4,22 +4,22 @@
 {
   "source_repository": "astral-sh/ruff",
   "source_url": "https://github.com/astral-sh/ruff",
-  "source_version": "a3a3ebb5",
+  "source_version": "36b92bb2",
   "license": "MIT",
-  "timestamp": "2026-11-14T16:22:50.340Z",
+  "timestamp": "2026-11-16T08:53:28.413Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-astral-sh-ruff",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [astral-sh/ruff](https://github.com/astral-sh/ruff) (Revision: `a3a3ebb5`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T16:22:50.340Z`  
+> **Provenance**: Harvested from [astral-sh/ruff](https://github.com/astral-sh/ruff) (Revision: `36b92bb2`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T08:53:28.413Z`  
 > **Learning ID**: `learn-github-astral-sh-ruff`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `astral-sh/ruff` (Commit: `a3a3ebb5`)
+- **Target Repository**: `astral-sh/ruff` (Commit: `36b92bb2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T16:22:49.587Z  
+> **Harvest Timestamp**: 2026-11-16T08:48:20.162Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51232 stars
+- **Stars / Engagement**: 51269 stars
 
 ---
 
@@ -2151,738 +2151,137 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1267effe` (2026-11-13)
-**Commit Message**: Use the shared diagnostic rendering order in Ruff (#30291)
-
-Summary
---
-
-This is another supporting change for #30269. Diagnostic sorting is the
-last place where we `expect` to have a Ruff file. This PR swaps out the
-`ruff_start_ordering` helper for the `rendering_sort_key` version used
-in ty. We previously opted not to make this change
-(https://github.com/astral-sh/ruff/pull/19179#discussion_r2190586209)
-because it changes the sort order of diagnostics (obviously) in a way
-that looks a bit bad when rule codes are displayed. I think this is
-probably more palatable, and actually preferable, now that
-human-readable names are in preview. It also changes the sort order of
-panic diagnostics added in
-https://github.com/astral-sh/ruff/pull/20258#discussion_r2349077788, but
-I think that's okay as it also matches ty.
-
-The second commit has the snapshot changes to make it a little easier to
-isolate the code changes.
-
-Test Plan
---
-
-New and updated tests
-
-**File**: `crates/mdtest/src/matcher.rs` (modified, +1/-1)
-```diff
-@@ -196,7 +196,7 @@ pub fn match_file(
-     if failures.is_empty() {
-         // We need to re-sort the diagnostics because matching uses `swap_remove` internally, which can change ordering.
-         snapshot_diagnostics
--            .sort_unstable_by(|a, b| a.rendering_sort_key(db).cmp(&b.rendering_sort_key(db)));
-+            .sort_unstable_by(|a, b| a.rendering_sort_key(&db).cmp(&b.rendering_sort_key(&db)));
-         Ok(snapshot_diagnostics)
-     } else {
-         Err(failures)
-```
-
-**File**: `crates/ruff/src/commands/check.rs` (modified, +6/-5)
-```diff
-@@ -9,11 +9,10 @@ use ignore::Error;
- use log::{debug, warn};
- #[cfg(not(target_family = "wasm"))]
- use rayon::prelude::*;
--use ruff_linter::message::create_panic_diagnostic;
-+use ruff_linter::message::{RenderContext, create_panic_diagnostic};
- use ruff_python_ast::{SourceType, TomlSourceType};
- use rustc_hash::FxHashMap;
- 
--use ruff_db::diagnostic::Diagnostic;
- use ruff_db::panic::catch_unwind;
- use ruff_linter::package::PackageRoot;
- use ruff_linter::registry::Rule;
-@@ -177,9 +176,11 @@ pub(crate) fn check(
-             |a, b| (a.0 + b.0, a.1 + b.1),
-         );
- 
--    all_diagnostics
--        .inner
--        .sort_by(Diagnostic::ruff_start_ordering);
-+    let context = RenderContext::new(&all_diagnostics.notebook_indexes);
-+    all_diagnostics.inner.sort_by(|a, b| {
-+        a.rendering_sort_key(&context)
-+            .cmp(&b.rendering_sort_key(&context))
-+    });
- 
-     // Store the caches.
-     caches.persist()?;
-```
-
-**File**: `crates/ruff/src/commands/check_stdin.rs` (modified, +6/-4)
-```diff
-@@ -1,7 +1,7 @@
- use std::path::Path;
- 
- use anyhow::Result;
--use ruff_db::diagnostic::Diagnostic;
-+use ruff_linter::message::RenderContext;
- use ruff_linter::package::PackageRoot;
- use ruff_linter::packaging;
- use ruff_linter::settings::flags;
-@@ -53,8 +53,10 @@ pub(crate) fn check_stdin(
-         noqa,
-         fix_mode,
-     )?;
--    diagnostics
--        .inner
--        .sort_unstable_by(Diagnostic::ruff_start_ordering);
-+    let context = RenderContext::new(&diagnostics.notebook_indexes);
-+    diagnostics.inner.sort_unstable_by(|a, b| {
-+        a.rendering_sort_key(&context)
-+            .cmp(&b.rendering_sort_key(&context))
-+    });
-     Ok(diagnostics)
- }
-```
-
-**File**: `crates/ruff/src/commands/format.rs` (modified, +16/-13)
-```diff
-@@ -591,14 +591,17 @@ impl<'a> FormatResults<'a> {
-                 }
-             })
-             .collect();
--        let diagnostics: Vec<_> = errors
-+        let mut diagnostics: Vec<_> = errors
-             .iter()
-             .map(Diagnostic::from)
-             .chain(self.to_diagnostics(&mut notebook_index))
--            .sorted_unstable_by(Diagnostic::ruff_start_ordering)
-             .collect();
- 
-         let context = RenderContext::new(&notebook_index);
-+        diagnostics.sort_unstable_by(|a, b| {
-+            a.rendering_sort_key(&context)
-+                .cmp(&b.rendering_sort_key(&context))
-+        });
-         let config = DisplayDiagnosticConfig::new("ruff")
-             .hide_severity(true)
-             .color(!cfg!(test) && colored::control::SHOULD_COLORIZE.should_colorize());
-@@ -1345,19 +1348,19 @@ mod tests {
-         let _s = settings.bind_to_scope();
- 
-         assert_snapshot!(str::from_utf8(&buf)?, @"
--        io: test.py: Permission denied
--        --> test.py:1:1
--
--        io: File not found
-+        panic: Panicked at <location> when checking `test.py`: `Test panic for FormatCommandError`
-         --> test.py:1:1
-+        info: This indicates a bug in Ruff.
-+        info: If you could open an issue at https://github.com/astral-sh/ruff/issues/new?title=%5Bpanic%5D, we'd be very appreciative!
-+        info: run with `RUST_BACKTRACE=1` environment variable to show the full backtrace information
- 
--        internal-error: Expected index or slice expression
-+        io: Cannot write to file
-         --> test.py:1:1
- 
--        io: Cannot write to file
-+        io: File not found
-         --> test.py:1:1
- 
--        invalid-cli-option: Range formatting is only supported for Python files.
-+        io: test.py: Permission denied
-         --> test.py:1:1
- 
-         invalid-syntax: Unexpected indentation
-@@ -1366,11 +1369,11 @@ mod tests {
-         1 | 1
-           | ^
- 
--        panic: Panicked at <location> when checking `test.py`: `Test panic for FormatCommandError`
-+        invalid-cli-option: Range formatting is only supported for Python files.
-+        --> test.py:1:1
-+
-+        internal-error: Expected index or slice expression
-         --> test.py:1:1
--        info: This indicates a bug in Ruff.
--        info: If you could open an issue at https://github.com/astral-sh/ruff/issues/new?title=%5Bpanic%5D, we'd be very appreciative!
--        info: run with `RUST_BACKTRACE=1` environment variable to show the full backtrace information
-         ");
- 
-         Ok(())
-```
-
-**File**: `crates/ruff/src/lib.rs` (modified, +3/-4)
-```diff
-@@ -480,10 +480,9 @@ pub fn check(args: CheckCommand, global_options: GlobalConfigArgs) -> Result<Exi
-             .unwrap_or(Severity::Info);
-         if max_severity.is_fatal() {
-             // When a panic/fatal error is reported, prompt the user to open an issue on github.
--            // Diagnostics with severity `fatal` will be sorted to the bottom, and printing the
--            // message here instead of attaching it to the diagnostic ensures that we only print
--            // it once instead of repeating it for each diagnostic. Prints to stderr to prevent
--            // the message from being captured by tools parsing the normal output.
-+            // Printing the message here instead of attaching it to the diagnostic ensures that we
-+            // only print it once instead of repeating it for each diagnostic. Prints to stderr to
-+            // prevent the message from being captured by tools parsing the normal output.
-             let message = "Panic during linting indicates a bug in Ruff. If you could open an issue at:
- 
- https://github.com/astral-sh/ruff/issues/new?title=%5BLinter%20panic%5D
-```
-
-**File**: `crates/ruff/tests/cli/lint.rs` (modified, +17/-17)
-```diff
-@@ -4794,12 +4794,12 @@ fn rule_panic_mixed_results_concise() -> Result<()> {
-     success: false
-     exit_code: 2
-     ----- stdout -----
-+    normal.py:1:1: preview-test-rule: Hey this is a preview test rule.
-+    normal.py:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     normal.py:1:1: stable-test-rule: Hey this is a stable test rule.
-+    normal.py:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     normal.py:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     normal.py:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
--    normal.py:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
--    normal.py:1:1: preview-test-rule: Hey this is a preview test rule.
--    normal.py:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     panic.py: panic: Panicked at <location> when checking `[TMP]/panic.py`: `This is a fake panic for testing.`
-     Found 7 errors.
-     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
-@@ -4829,23 +4829,14 @@ fn rule_panic_mixed_results_full() -> Result<()> {
-     success: false
-     exit_code: 2
-     ----- stdout -----
--    stable-test-rule: Hey this is a stable test rule.
-+    preview-test-rule: Hey this is a preview test rule.
-     --> normal.py:1:1
- 
--    stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-+    redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     --> normal.py:1:1
--      |
--    1 + # fix from stable-test-rule-safe-fix
--    2 | import os
--      |
- 
--    stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
-+    stable-test-rule: Hey this is a stable test rule.
-     --> normal.py:1:1
--      |
--    1 + # fix from stable-test-rule-unsafe-fix
--    2 | import os
--      |
--    note: This is an unsafe fix and may change runtime behavior
- 
-     stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     --> normal.py:1:1
-@@ -4855,11 +4846,20 @@ fn rule_panic_mixed_results_full() -> Result<()> {
-       |
-     note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
- 
--    preview-test-rule: Hey this is a preview test rule.
-+    stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     --> normal.py:1:1
-+      |
-+    1 + # fix from stable-test-rule-safe-fix
-+    2 | import os
-+      |
- 
--    redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-+    stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
-     --> normal.py:1:1
-+      |
-+    1 + # fix from stable-test-rule-unsafe-fix
-+    2 | import os
-+      |
-+    note: This is an unsafe fix and may change runtime behavior
- 
-     panic: Panicked at <location> when checking `[TMP]/panic.py`: `This is a fake panic for testing.`
-     --> panic.py:1:1
-```
-
-**File**: `crates/ruff/tests/integration_test.rs` (modified, +23/-23)
-```diff
-@@ -1308,12 +1308,12 @@ fn preview_enabled_prefix() {
-     success: false
-     exit_code: 1
-     ----- stdout -----
-+    -:1:1: preview-test-rule: Hey this is a preview test rule.
-+    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     -:1:1: stable-test-rule: Hey this is a stable test rule.
-+    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
--    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
--    -:1:1: preview-test-rule: Hey this is a preview test rule.
--    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     Found 6 errors.
-     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
- 
-@@ -1330,14 +1330,14 @@ fn preview_enabled_all() {
-     success: false
-     exit_code: 1
-     ----- stdout -----
--    -:1:1: undocumented-public-module: Missing docstring in public module
-     -:1:1: missing-copyright-notice: Missing copyright notice at top of file
-+    -:1:1: preview-test-rule: Hey this is a preview test rule.
-+    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     -:1:1: stable-test-rule: Hey this is a stable test rule.
-+    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
--    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
--    -:1:1: preview-test-rule: Hey this is a preview test rule.
--    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-+    -:1:1: undocumented-public-module: Missing docstring in public module
-     Found 8 errors.
-     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
- 
-@@ -1470,12 +1470,12 @@ fn preview_enabled_group_ignore() {
-     success: false
-     exit_code: 1
-     ----- stdout -----
-+    -:1:1: preview-test-rule: Hey this is a preview test rule.
-+    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     -:1:1: stable-test-rule: Hey this is a stable test rule.
-+    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
-     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
-     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
--    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
--    -:1:1: preview-test-rule: Hey this is a preview test rule.
--    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
-     Found 6 errors.
-     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
- 
-@@ -1677,10 +1677,10 @@ fn deprecated_multiple_direct() {
-     success: false
-     exit_code: 1
-     ----- stdout -----
--    RUF920 Hey this is a deprecated test rule.
-+    RUF921 Hey this is another deprecated test rule.
-     --> -:1:1
- 
--    RUF921 Hey this is another deprecated test rule.
-+    RUF920 Hey this is a deprecated test rule.
-     --> -:1:1
- 
-     Found 2 errors.
-@@ -2461,34 +2461,34 @@ extend-safe-fixes = ["RUF9"]
-     success: false
-     exit_code: 1
-     ----- stdout -----
-+    RUF950 Hey this is a test rule that was redirected from another.
-+    --> -:1:1
-+
-     RUF900 Hey this is a stable test rule.
-     --> -:1:1
- 
--    RUF901 Hey this is a stable test rule with a safe fix.
-+    RUF903 Hey this is a stable test rule with a display only fix.
-     --> -:1:1
-       |
--    1 + # fix from stable-test-rule-safe-fix
-+    1 + # fix from stable-test-rule-display-only-fix
-     2 | x = {'a': 1, 'a': 1}
-       |
--    note: This is an unsafe fix and may change runtime behavior
-+    note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
- 
--    RUF902 [*] Hey this is a stable test rule with an unsafe fix.
-+    RUF901 Hey this is a stable test rule with a safe fix.
-     --> -:1:1
-       |
--    1 + # fix from stable-test-rule-unsafe-fix
-+    1 + # fix from stable-test-rule-safe-fix
-     2 | x = {'a': 1, 'a': 1}
-       |
-+    note: This is an unsafe fix and may change runtime behavior
- 
--    RUF903 Hey this is a stable test rule with a display only fix.
-+    RUF902 [*] Hey this is a stable test rule with an unsafe fix.
-     --> -:1:1
-       |
--    1 + # fix from stable-test-rule-display-only-fix
-+    1 + # fix from stable-test-rule-unsafe-fix
-     2 | x = {'a': 1, 'a': 1}
-       |
--  
-```
-
-**File**: `crates/ruff_db/src/diagnostic/mod.rs` (modified, +7/-39)
-```diff
-@@ -13,7 +13,7 @@ pub use self::render::{DummyFileResolver, FileResolver, Input};
- use self::render::{FullRenderer, Renderer};
- pub use self::stylesheet::{DiagnosticStylesheet, fmt_with_hyperlink};
- use crate::cancellation::CancellationToken;
--use crate::{Db, files::File};
-+use crate::files::File;
- 
- pub mod render;
- mod stylesheet;
-@@ -342,19 +342,16 @@ impl Diagnostic {
- 
-     /// Returns the "primary" span of this diagnostic, panicking if it does not exist.
-     ///
--    /// This should typically only be used when working with diagnostics in Ruff, where diagnostics
--    /// are currently required to have a primary span.
--    ///
-     /// See [`Diagnostic::primary_span`] for more details.
-     pub fn expect_primary_span(&self) -> Span {
-         self.primary_span().expect("Expected a primary span")
-     }
- 
-     /// Returns a key that can be used to sort two diagnostics into the canonical order
-     /// in which they should appear when rendered.
--    pub fn rendering_sort_key<'a>(&'a self, db: &'a dyn Db) -> impl Ord + 'a {
-+    pub fn rendering_sort_key<'a>(&'a self, resolver: &'a dyn FileResolver) -> impl Ord + 'a {
-         RenderingSortKey {
--            db,
-+            resolver,
-             diagnostic: self,
-         }
-     }
-@@ -487,42 +484,11 @@ impl Diagnostic {
-             .map(|sub| sub.inner.message.as_str())
-     }
- 
--    /// Returns the [`SourceFile`] which the message belongs to.
--    fn ruff_source_file(&self) -> Option<&SourceFile> {
--        self.primary_span_ref()?.as_ruff_file()
--    }
--
--    /// Returns the [`SourceFile`] which the message belongs to.
--    ///
--    /// Panics if the diagnostic has no primary span, or if its file is not a `SourceFile`.
--    fn expect_ruff_source_file(&self) -> &SourceFile {
--        self.ruff_source_file()
--            .expect("Expected a ruff source file")
--    }
--
-     /// Returns the [`TextRange`] for the diagnostic.
-     pub fn range(&self) -> Option<TextRange> {
-         self.primary_span()?.range()
-     }
- 
--    /// Returns the ordering of diagnostics based on the start of their ranges, if they have any.
--    ///
--    /// Panics if either diagnostic has no primary span, or if its file is not a `SourceFile`.
--    pub fn ruff_start_ordering(&self, other: &Self) -> std::cmp::Ordering {
--        let a = (
--            self.severity().is_fatal(),
--            self.expect_ruff_source_file(),
--            self.range().map(|r| r.start()),
--        );
--        let b = (
--            other.severity().is_fatal(),
--            other.expect_ruff_source_file(),
--            other.range().map(|r| r.start()),
--        );
--
--        a.cmp(&b)
--    }
--
-     /// Add an offset for aligning the header sigil with the line number separators in a diff.
-     pub fn set_header_offset(&mut self, offset: usize) {
-         Arc::make_mut(&mut self.inner).header_offset = offset;
-@@ -546,7 +512,7 @@ struct DiagnosticInner {
- }
- 
- struct RenderingSortKey<'a> {
--    db: &'a dyn Db,
-+    resolver: &'a dyn FileResolver,
-     diagnostic: &'a Diagnostic,
- }
- 
-@@ -565,7 +531,9 @@ impl Ord for RenderingSortKey<'_> {
-             let left_file = left_span.file();
-             let right_file = right_span.file();
-             if left_file != right_file {
--                let order = left_file.path(&self.db).cmp(right_file.path(&self.db));
-+                let order = left_file
-+                    .path(self.resolver)
-+                    .cmp(right_file.path(self.resolver));
-                 if order.is_ne() {
-                     return order;
-                 }
-```
-
----
-
-### Incident Patch 2: `837da15e` (2026-11-13)
-**Commit Message**: [ty] Fix a panic checking class decorators with inferred return types (#30399)
-
-ty could panic when checking a decorated class if it inferred the return
-type of an inner decorator and an outer decorator returned a class from
-another module. During cycle recovery, ty could use that replacement
-class's scope to look up names in the file that defined the original
-class.
-
-Preserve the original class before applying decorators and use it for
-class-definition checks. The decorated name still takes the type
-returned by the outer decorator.
-
-Fixes astral-sh/ty#5021.
-
-## Test plan
-
-Checked the reported `EnumCheck` example with return type inference
-enabled. Before this change it panicked. With the fix, ty reports the
-invalid argument to `@d2` and finishes checking the file.
-
-**File**: `crates/ty_python_semantic/resources/mdtest/function/return_type_inference.md` (modified, +22/-0)
-```diff
-@@ -453,6 +453,28 @@ def returns_4_but_will_be_replaced():
- reveal_type(returns_4_but_will_be_replaced())  # revealed: Literal["a"]
- ```
- 
-+## Decorated classes
-+
-+When the inner decorator's return type is inferred, we still check the original class body. The
-+decorated name takes the type returned by the outer decorator.
-+
-+```py
-+from typing import Final
-+
-+def identity(cls: type):
-+    return cls
-+
-+def replace(cls: type) -> type[bool]:
-+    return bool
-+
-+@replace
-+@identity
-+class C:
-+    value: Final[int]  # error: [final-without-value]
-+
-+reveal_type(C)  # revealed: <class 'bool'>
-+```
-+
- ## Methods
- 
- ### Overrides
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +5/-7)
-```diff
-@@ -1295,16 +1295,14 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-                             definition,
-                             &class_node.node(self.module()).decorator_list,
-                         );
--                        let original_ty = match self.region {
--                            InferenceRegion::Definition(current) if current == definition => {
--                                self.undecorated_type
--                            }
--                            _ => original_class_type(self.db(), definition).map(Type::ClassLiteral),
-+                        let Some(ClassLiteral::Static(class)) =
-+                            original_class_type(self.db(), definition)
-+                        else {
-+                            continue;
-                         };
--                        let ty = original_ty.unwrap_or(ty);
-                         post_inference::static_class::check_static_class_definitions(
-                             &self.context,
--                            ty,
-+                            class,
-                             class_node.node(self.module()),
-                             self.index,
-                             &|expr| self.file_expression_type(expr),
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/builder/class.rs` (modified, +5/-9)
-```diff
-@@ -337,20 +337,18 @@ impl<'db> TypeInferenceBuilder<'db, '_> {
-             ));
-         }
- 
--        let mut inferred_ty = infer_original_class_ty(
-+        let original_class_ty = infer_original_class_ty(
-             deprecated,
-             type_check_only,
-             dataclass_params,
-             dataclass_transformer_params,
-             total_ordering,
-         );
- 
--        let original_class_ty = inferred_ty;
--        let mut undecorated_ty = None;
--
-         // In the second pass, apply class decorators from inner to outer and use their return types
-         // to update the public binding. `original_class_ty` remains the class object whose body and
-         // metadata were inferred above.
-+        let mut inferred_ty = original_class_ty;
-         for (decorator_ty, decorator_node, application) in decorators_to_apply {
-             let precomputed_result = match application {
-                 ClassDecoratorApplication::Ordinary(precomputed_result) => precomputed_result,
-@@ -425,15 +423,13 @@ impl<'db> TypeInferenceBuilder<'db, '_> {
-                     decorated_ty,
-                 )
-             } else {
--                // Only record an undecorated type once a decorator actually replaces the public
--                // binding. If all decorators preserve the class, there is no alternate class type
--                // to expose.
--                undecorated_ty.get_or_insert(inferred_ty);
-                 decorated_ty
-             };
-         }
- 
--        self.undecorated_type = undecorated_ty;
-+        // An intermediate decorator result can contain a cycle marker. Class-body checks need
-+        // the original class even while the public binding is still being inferred.
-+        self.undecorated_type = (inferred_ty != original_class_ty).then_some(original_class_ty);
- 
-         // A decorator can replace a nested class with a writable value, including another class.
-         let qualifiers = if self.scope().scope(db).kind().is_class()
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/builder/post_inference/static_class.rs` (modified, +1/-5)
-```diff
-@@ -143,17 +143,13 @@ fn check_class_slots<'db>(
- /// [metaclass]: https://docs.python.org/3/reference/datamodel.html#metaclasses
- pub(crate) fn check_static_class_definitions<'db>(
-     context: &InferContext<'db, '_>,
--    ty: Type<'db>,
-+    class: StaticClassLiteral<'db>,
-     class_node: &ast::StmtClassDef,
-     index: &SemanticIndex<'db>,
-     file_expression_type: &impl Fn(&ast::Expr) -> Type<'db>,
- ) {
-     let db = context.db();
- 
--    let Type::ClassLiteral(ClassLiteral::Static(class)) = ty else {
--        return;
--    };
--
-     // Check that the class does not have a cyclic definition
-     if let Some(inheritance_cycle) = class.inheritance_cycle(context.db()) {
-         if inheritance_cycle.is_participant()
-```
-
----
-
-### Incident Patch 3: `f11d1825` (2026-11-13)
-**Commit Message**: [ty] Fix completion after an alias in a parenthesized import (#30394)
+### Incident Patch 1: `36b92bb2` (2026-11-15)
+**Commit Message**: [ty] Check protocol member names before specializing the source interface (#30445)
 
 ## Summary
 
-With the cursor after `timede` in the import below, accepting the
-`timedelta` suggestion now changes that line to `timedelta`. Previously,
-ty offered to auto-import `timedelta`, which could leave `timede` in
-place and add a separate entry to the import list.
+When comparing generic protocols, ty specializes the source’s members
+before discovering that a required member is missing. We now check the
+first required name that `object` doesn’t provide. If the source and its
+base classes lack that name, we can reject the comparison immediately.
 
-```python
-from datetime import (
-    date as _date,
-    timede
-)
+The larger NumPy check saved 0.15% of instructions. A successful
+49-member protocol stress case used 0.36% more.
+
+| Project | [Base
+instructions](https://github.com/astral-sh/ruff/commit/6bf61927fd328ff83b36ea6484a86dfedc53c340)
+| [PR
+instructions](https://github.com/astral-sh/ruff/commit/dda61822347385a7a4e4d3d1cb0634079a0ed9d6)
+| Change | Paired range |
+| :--- | ---: | ---: | ---: | :--- |
+|
+[Black](https://github.com/psf/black/tree/55996d1fb8342725c8a19b6023cd9439c3c1d6f7)
+| 3,189,153,694 | 3,195,522,185 | +0.20% | +0.13% to +0.27% |
+|
+[discord.py](https://github.com/Rapptz/discord.py/tree/65232c38702be5844cf2ce865a4777eb1928b5d0)
+| 8,271,324,202.5 | 8,287,035,400 | +0.19% | +0.15% to +0.23% |
+|
+[Django](https://github.com/django/django/tree/b501b8493f31cf8cba31211d59b3b78642b8cb02)
+| 14,008,171,426 | 14
+
+**File**: `crates/ty_python_semantic/src/types/protocol_class.rs` (modified, +27/-0)
+```diff
+@@ -3833,6 +3833,33 @@ pub(super) fn has_all_protocol_members_defined<'db>(
+ 
+     match ty {
+         Type::ProtocolInstance(source_protocol) => {
++            // Specializing a generic protocol's interface computes the types of all its members.
++            // A missing name can rule out compatibility before we need any of those types.
++            if let Some(class) = source_protocol.class_origin(db)
++                && matches!(*class, ClassType::Generic(_))
++            {
++                let program = class.class_literal(db).program_file(db).program(db);
++                let object_names = object_member_names(db, program);
++                // Probe at most one name: if the protocols are compatible, scanning every
++                // member here would duplicate work in the full interface comparison below.
++                if let Some(member) = target_interface
++                    .members(db)
++                    .find(|member| !object_names.contains(member.name()))
++                    && !class
++                        .iter_mro(db)
++                        .filter_map(ClassBase::into_class)
++                        .any(|base| {
++                            base.static_class_literal(db).is_some_and(|(base, _)| {
++                                place_table(db, base.body_scope(db))
++                                    .symbol_id(member.name())
++                                    .is_some()
++                            })
++                        })
++                {
++                    return false;
++                }
++            }
++
+             let source_interface = source_protocol.interface(db);
+ 
+             (source_interface.member_count(db) >= target_interface.member_count(db)
 ```
 
-Fixes https://github.com/astral-sh/ty/issues/5018.
+---
 
-## Approach
+### Incident Patch 2: `9523a9c4` (2026-11-15)
+**Commit Message**: [ty] Avoid definition lookups in recursive TypedDict comparisons (#30444)
 
-`ImportStatement::detect` scans tokens backward from the cursor to
-identify the import statement and determine which module to suggest
-names from. In the example above, the scan used to stop at the opening
-parenthesis after reading `date as _date`. It now continues through the
-parenthesis to find `from datetime import` and suggest members of
-`datetime`. The `completing_alias` guard limits that transition to cases
-where the cursor is outside the alias name.
+## Summary
 
-## Test Plan
+When ty compares two `TypedDict`s, it checks whether it has already seen
+the same recursive comparison. Just ruling out a match used to require
+looking up both class definitions in the semantic index. On Pydantic,
+this was hot even when comparing unrelated classes.
 
-See included tests.
+We now compare the class body scopes directly. Each static class has its
+own body scope, even if decorators change the inferred class. The cycle
+detector still confirms a possible match as before. No new cache is
+needed.
 
-**File**: `crates/ty_ide/src/completion.rs` (modified, +39/-1)
+| Project | [Base
+instructions](https://github.com/astral-sh/ruff/commit/6bf61927fd328ff83b36ea6484a86dfedc53c340)
+| [PR
+instructions](https://github.com/astral-sh/ruff/commit/5e990b50038313b3823b163c92e5b185d84ae8f1)
+| Change | Paired range |
+| --- | ---: | ---: | ---: | ---: |
+|
+[Black](https://github.com/psf/black/tree/55996d1fb8342725c8a19b6023cd9439c3c1d6f7)
+| 3,190,053,839.5 | 3,188,241,010.5 | -0.06% | -0.25% to +0.14% |
+|
+[discord.py](https://github.com/Rapptz/discord.py/tree/65232c38702be5844cf2ce865a4777eb1928b5d0)
+| 8,259,374,385 | 8,273,184,860.5 | +0.17% | +0.13% to +0.21% |
+|
+[Django](https://github.com
+
+**File**: `crates/ty_python_semantic/src/types/cyclic.rs` (modified, +13/-1)
 ```diff
-@@ -2830,6 +2830,8 @@ impl<'a> ImportStatement<'a> {
-         // Usually either `from foo imp<CURSOR>`
-         // or `import foo a<CURSOR>`.
-         let mut incomplete_as_or_import = false;
-+        // Whether the cursor is at the name being defined by `as`.
-+        let mut completing_alias = false;
-         for token in cursor.tokens_before.iter().rev().take(Self::LIMIT) {
-             if token.kind().is_trivia() {
-                 continue;
-@@ -2854,7 +2856,10 @@ impl<'a> ImportStatement<'a> {
-                 (S::Start | S::FirstName | S::AdjacentName, TK::Comma) => S::NameList,
-                 (S::Start | S::FirstName | S::AdjacentName, TK::Dot) => S::InitialDot,
-                 (S::Start | S::FirstName | S::AdjacentName, TK::Ellipsis) => S::FromEllipsisName,
--                (S::Start | S::FirstName, TK::As) => S::As,
-+                (S::Start | S::FirstName, TK::As) => {
-+                    completing_alias = true;
-+                    S::As
-+                }
-                 (S::Start | S::AdjacentName, TK::From) => S::From,
-                 (S::FirstName, TK::From) => S::From,
-                 (S::FirstName, TK::Identifier) => S::AdjacentName,
-@@ -2903,6 +2908,7 @@ impl<'a> ImportStatement<'a> {
-                 (S::AsName, TK::Dot) => S::AsDottedNameDot,
-                 (S::AsName, TK::Import) => S::Import,
-                 (S::AsName, TK::Comma) => S::NameList,
-+                (S::AsName, TK::Lpar) if !completing_alias => S::FromLpar,
- 
-                 // This is the mini state machine for handling
-                 // `dotted_as_names`. We enter it when we see
-@@ -3423,6 +3429,7 @@ mod tests {
-     use ruff_python_ast::helpers::is_dunder;
-     use ruff_python_ast::token::{TokenKind, Tokens};
-     use ruff_python_parser::{Mode, ParseOptions};
-+    use ruff_python_trivia::textwrap::dedent;
-     use ty_module_resolver::ModuleName;
- 
-     use crate::CompletionCapabilities;
-@@ -6727,6 +6734,37 @@ from sys import (
-         builder.build().contains("getsizeof");
-     }
- 
-+    #[test]
-+    fn parenthesized_import_after_alias_completes_without_import_edit() {
-+        let builder = completion_test_builder(&dedent(
-+            "
-+            from datetime import (
-+                date as _date,
-+                timede<CURSOR>
-+            )
-+            ",
-+        ))
-+        .imports()
-+        .filter(|completion| completion.name == "timedelta");
-+
-+        assert_snapshot!(builder.build().snapshot(), @"timedelta :: <no import edit>");
-+    }
-+
-+    #[test]
-+    fn parenthesized_import_alias_on_next_line_does_not_complete_members() {
-+        let builder = completion_test_builder(&dedent(
-+            "
-+            from datetime import (
-+                date as
-+                timede<CURSOR>
-+            )
-+            ",
-+        ))
-+        .skip_auto_import();
-+
-+        builder.build().not_contains("timedelta");
-+    }
-+
-     #[test]
-     fn from_import_with_bare_annotation() {
-         let builder = CursorTest::builder()
+@@ -76,7 +76,19 @@ impl<'db> Type<'db> {
+                 a.definition(db) == b.definition(db)
+             }
+             (Type::TypeAlias(a), Type::TypeAlias(b)) => a.definition(db) == b.definition(db),
+-            (Type::TypedDict(a), Type::TypedDict(b)) => a.definition(db) == b.definition(db),
++            (
++                Type::TypedDict(TypedDictType::Class(a)),
++                Type::TypedDict(TypedDictType::Class(b)),
++            ) => {
++                // Different specializations of the same recursive TypedDict can form a cycle.
++                // Each class statement has a unique body scope, so comparing scopes tells us
++                // whether the types came from the same class, even after decorators.
++                // Other TypedDicts can only match by exact equality, which we checked above.
++                matches!(
++                    (a.class_literal(db).as_static(), b.class_literal(db).as_static()),
++                    (Some(a), Some(b)) if a.body_scope(db) == b.body_scope(db)
++                )
++            }
+             (Type::Recursive(a), Type::Recursive(b)) => a.definition(db) == b.definition(db),
+             _ => false,
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30431** (closed): [ty] Avoid rechecking whether a statement call's callee is reachable (@charliermarsh)
-- **PR #30429** (2026-11-14): [ty] Skip union comparisons for unrelated nominal classes (@charliermarsh)
-- **PR #30426** (closed): [ty] Measure ecosystem impact of removing solver declared-type preference (@carljm)
-- **PR #30417** (closed): fix(flake8-simplify): omit redundant bool wrapper in double-negation fix (SIM208) (@GautamKumarOffical)
-- **PR #30409** (2026-11-13): Update dependency soupsieve to v4 (@renovate[bot])
-- **PR #30408** (closed): [UP030] Fix touching format specifiers leaving numeric index (#30345) (@viliamgonda)
+- **PR #30447** (closed): Fix incorrect docs example for ruff and black formatting a multiline string (@apathydevil)
+- **PR #30445** (2026-11-15): [ty] Check protocol member names before specializing the source interface (@charliermarsh)
+- **PR #30444** (2026-11-15): [ty] Avoid definition lookups in recursive TypedDict comparisons (@charliermarsh)
+- **PR #30440** (closed): [`pyupgrade`] Remove all indices when format fields are adjacent (`UP030`) (@Faxulous)
+- **PR #30439** (closed): [`pyflakes`] Report reads before assignment when a name is assigned more than once (`F823`) (@Faxulous)
+- **PR #30438** (2026-11-14): [ty] Avoid tracking ordinary instances twice in type searches (@charliermarsh)
 
 ---
 
@@ -2902,31 +2301,49 @@ See included tests.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use the shared diagnostic rendering order in Ruff
+## X. [ty] Check protocol member names before specializing the source interface
 
 **RULE**:
-When implementing operations in `crates/mdtest/src/matcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_semantic/src/types/protocol_class.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1267effe`: Use the shared diagnostic rendering order in Ruff. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36b92bb2`: [ty] Check protocol member names before specializing the source interface. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/mdtest/src/matcher.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/src/types/protocol_class.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .sort_unstable_by(|a, b| a.rendering_sort_key(&db).cmp(&b.rendering_sort_key(&db)));
+            // Specializing a generic protocol's interface computes the types of all its members.
+            // A missing name can rule out compatibility before we need any of those types.
+            if let Some(class) = source_protocol.class_origin(db)
+                && matches!(*class, ClassType::Generic(_))
+            {
+                let program = class.class_literal(db).program_file(db).program(db);
+                let object_names = object_member_names(db, program);
+                // Probe at most one name: if the protocols are compatible, scanning every
+                // member here would duplicate work in the full interface comparison below.
+                if let Some(member) = target_interface
+                    .members(db)
+                    .find(|member| !object_names.contains(member.name()))
+                    && !class
+                        .iter_mro(db)
+                        .filter_map(ClassBase::into_class)
+                        .any(|base| {
+                            base.static_class_literal(db).is_some_and(|(base, _)| {
+                                place_table(db, base.body_scope(db))
+                                    .symbol_id(member.n
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            .sort_unstable_by(|a, b| a.rendering_sort_key(db).cmp(&b.rendering_sort_key(db)));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1267effe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36b92bb2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
