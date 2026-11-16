@@ -2,21 +2,22 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-16T03:06:56.743Z",
+  "updated_at": "2026-11-16T03:48:41.982Z",
   "statistics": {
-    "total_nodes": 279,
+    "total_nodes": 281,
     "total_edges": 145,
     "domain_distribution": {
       "D": 217,
       "M": 1,
       "H": 27,
-      "J": 10,
+      "J": 11,
       "K": 12,
       "L": 3,
       "G": 1,
       "F": 6,
       "B": 1,
-      "E": 1
+      "E": 1,
+      "I": 1
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 144,
@@ -6261,6 +6262,50 @@
       ],
       "created_at": "2026-11-16T03:06:56.743Z",
       "updated_at": "2026-11-16T03:06:56.743Z"
+    },
+    "DOM-J-D8ADF367": {
+      "id": "DOM-J-D8ADF367",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Dangling Symlinks on Global GitHub-Sourced NPM Installs (BUG-NPM10-SYMLINK-01)",
+      "summary": "npm 10 altered the lifecycle sequence for git-sourced dependencies: directory symlinking occurs prior to running post-install or prepublish  -> CLI utilities distributed outside the npm registry cannot rely on git shorthand URLs on npm 10+. Binary distributions must point to pre-pack",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://crawlcove-crawlcove-sitemap-validator/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T03:47:48.803Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-sitemap-validator)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-16T03:48:11.532Z",
+      "updated_at": "2026-11-16T03:48:11.532Z"
+    },
+    "DOM-I-5993B15B": {
+      "id": "DOM-I-5993B15B",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Processing Instruction Hijacking Root XML Tag Resolution (BUG-XML-ROOT-02)",
+      "summary": "Unfiltered key introspection over dynamic XML ASTs. -> Parsing data models derived from multi-format standards requires structural filtering of directive/metadata elements before interrogating sc",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://crawlcove-crawlcove-sitemap-validator/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T03:47:48.803Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-sitemap-validator)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence"
+      ],
+      "created_at": "2026-11-16T03:48:41.982Z",
+      "updated_at": "2026-11-16T03:48:41.982Z"
     }
   },
   "edges": [

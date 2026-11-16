@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T03:37:30.845Z",
+  "last_updated": "2026-11-16T03:48:44.120Z",
   "directives": [
     {
       "id": "CD-001",
@@ -17757,11 +17757,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-U7V5",
+      "id": "CD-4O9J",
       "directive_title": "engine): detect uv run script shebangs",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-U7V5-engine-detect-uv-run-script-shebangs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-4O9J-engine-detect-uv-run-script-shebangs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -17925,6 +17925,81 @@
       "source_repo": "ytsaurus-ytsaurus",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1485DA-test-replication-card-migration-class-ti.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-4NME",
+      "directive_title": "Side-Effect Free Macro Boundary Evaluation",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4NME-side-effect-free-macro-boundary-evaluation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-4NMF",
+      "directive_title": "Progressive Degradation Execution Harness for Container Triage",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4NMF-progressive-degradation-execution-harness-for-container-triage.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-4N36",
+      "directive_title": "Magic-Byte Content Sniffing Over Transport Headers for Compressed Streams",
+      "source_repo": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4N36-magic-byte-content-sniffing-over-transport-headers-for-compressed-streams.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-4N37",
+      "directive_title": "Strict RFC Canonical Host Normalization for Cross-Origin Ingestion",
+      "source_repo": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4N37-strict-rfc-canonical-host-normalization-for-cross-origin-ingestion.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-3F7L",
+      "directive_title": "Strict RFC Canonical Host Normalization for Cross-Origin Ingestion",
+      "source_repo": "CrawlCove/xml-sitemap-validator",
+      "source_commit": "e6b51cd7",
+      "staged_file": "11_INBOX/candidate-directives/CD-3F7L-strict-rfc-canonical-host-normalization-for-cross-origin-ingestion.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-4NME",
+      "directive_title": "In-Kernel Union Type Alignment & Unaligned Copy Invariant",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4NME-in-kernel-union-type-alignment-unaligned-copy-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-6D5861",
+      "directive_title": "engine): detect uv run script shebangs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6D5861-engine-detect-uv-run-script-shebangs.md",
       "staged_date": "2026-11-16"
     }
   ]

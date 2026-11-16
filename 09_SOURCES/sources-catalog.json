@@ -1853,10 +1853,10 @@
     "repository": "CrawlCove/xml-sitemap-validator",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-    "sourceVersion": "8aeca12b",
+    "sourceVersion": "e6b51cd7",
     "license": "MIT",
-    "contentHash": "b62e6a50ba48954690fda691764b76d585b0684fa746aead186cc31ab78f7187",
-    "lastHarvestedAt": "2026-10-28T00:33:34.434Z",
+    "contentHash": "bb2da102333e735bbc91e810424cf8a3ba57368ec4078784aa9f9ec75fba3baa",
+    "lastHarvestedAt": "2026-11-16T03:47:45.596Z",
     "learningId": "learn-github-crawlcove-xml-sitemap-validator"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "ba8940f6",
+    "sourceVersion": "d3bfd511",
     "license": "Apache-2.0",
-    "contentHash": "6a34b8686faf0e45dd4f28c7438fe437ed027905ae2288f0fb5163ee006a3f65",
-    "lastHarvestedAt": "2026-11-15T05:31:52.428Z",
+    "contentHash": "1066cef6500a06b45da95fb8a68f2a4793b34373c4344ecfefe7369b630bf411",
+    "lastHarvestedAt": "2026-11-16T03:45:49.215Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

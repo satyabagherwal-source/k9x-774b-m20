@@ -2,17 +2,17 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T03:37:30.673Z",
+  "updated_at": "2026-11-16T03:48:42.417Z",
   "stats": {
-    "total_discovered": 4074,
-    "approved_pending_harvest": 3828,
+    "total_discovered": 4089,
+    "approved_pending_harvest": 3841,
     "harvested_count": 0,
-    "rejected_count": 246,
+    "rejected_count": 248,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3825,
+      "COMMUNITY_AND_EXPERT": 3838,
       "OFFICIAL_DOCUMENTATION": 134,
-      "STANDARDS_AND_SPECIFICATIONS": 93,
-      "ENGINEERING_BLOGS": 2,
+      "STANDARDS_AND_SPECIFICATIONS": 94,
+      "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 15,
       "LEGAL_AND_REGULATORY": 1,
       "RESEARCH_AND_ACADEMIA": 4
@@ -87927,6 +87927,322 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
         "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-B2710A2EBA36": {
+      "id": "SRC-B2710A2EBA36",
+      "url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "title": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-FF0B13DC24E1": {
+      "id": "SRC-FF0B13DC24E1",
+      "url": "http://www.sitemaps.org/schemas/sitemap/0.9%60",
+      "title": "http://www.sitemaps.org/schemas/sitemap/0.9%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T03:48:42.041Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-4C3671310802": {
+      "id": "SRC-4C3671310802",
+      "url": "https://other.com/page%60",
+      "title": "https://other.com/page%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-4AEE3B21FD38": {
+      "id": "SRC-4AEE3B21FD38",
+      "url": "http://www.sitemaps.org/schemas/sitemap/0.9",
+      "title": "http://www.sitemaps.org/schemas/sitemap/0.9",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-16T03:48:42.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-3CE6FC20DEED": {
+      "id": "SRC-3CE6FC20DEED",
+      "url": "https://example.com/sitemap.xml%60",
+      "title": "https://example.com/sitemap.xml%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-6D133CF408BA": {
+      "id": "SRC-6D133CF408BA",
+      "url": "https://subdomain.example.com/%60",
+      "title": "https://subdomain.example.com/%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.170Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-6898BAA07747": {
+      "id": "SRC-6898BAA07747",
+      "url": "https://example.com.attacker.org/",
+      "title": "https://example.com.attacker.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.205Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-A0D15C72BBA0": {
+      "id": "SRC-A0D15C72BBA0",
+      "url": "https://www.example.com/item",
+      "title": "https://www.example.com/item",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.225Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-C609A09C25BB": {
+      "id": "SRC-C609A09C25BB",
+      "url": "https://example.com.evil.com/",
+      "title": "https://example.com.evil.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.244Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-BC04E972E6B5": {
+      "id": "SRC-BC04E972E6B5",
+      "url": "https://www.example.com/page",
+      "title": "https://www.example.com/page",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-00C8249885F7": {
+      "id": "SRC-00C8249885F7",
+      "url": "https://www.example.com/sitemap.xml",
+      "title": "https://www.example.com/sitemap.xml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-542B59FCEEA3": {
+      "id": "SRC-542B59FCEEA3",
+      "url": "https://blog.example.com/page",
+      "title": "https://blog.example.com/page",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "ENGINEERING_BLOGS",
+      "authorityTier": "ENGINEERING_PEER",
+      "trustScore": 0.85,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.338Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-D6C48FADF17B": {
+      "id": "SRC-D6C48FADF17B",
+      "url": "https://example.com.attacker.com/page",
+      "title": "https://example.com.attacker.com/page",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.373Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-308262B5DE1F": {
+      "id": "SRC-308262B5DE1F",
+      "url": "https://github.com/CrawlCove/xml-sitemap-validator/archive/refs/tags/v1.0.0.tar.gz",
+      "title": "https://github.com/CrawlCove/xml-sitemap-validator/archive/refs/tags/v1.0.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.394Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-4C90033AC534": {
+      "id": "SRC-4C90033AC534",
+      "url": "https://www.rfc-editor.org/rfc/rfc1952",
+      "title": "IETF RFC 1952",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T03:48:42.417Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
       }
     }
   }

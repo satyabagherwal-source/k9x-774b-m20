@@ -10261,3 +10261,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baidu-ernie-5-5-flash-base` | `https://huggingface.co/baidu/ERNIE-5.5-Flash-Base` | `hf-baidu-e` | Multi-dimensional audit evidence | 2026-11-16T03:37:02.115Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `424dd96c` | Multi-dimensional audit evidence | 2026-11-16T03:37:13.801Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `ffcd9432` | Multi-dimensional audit evidence | 2026-11-16T03:37:26.623Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `d3bfd511` | Multi-dimensional audit evidence | 2026-11-16T03:45:49.215Z |
+| `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `e6b51cd7` | Multi-dimensional audit evidence | 2026-11-16T03:47:45.596Z |
+| `learn-dom-j-d8adf367` | `project://crawlcove-crawlcove-sitemap-validator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md` | 2026-11-16T03:48:11.534Z |
+| `learn-dom-i-5993b15b` | `project://crawlcove-crawlcove-sitemap-validator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md` | 2026-11-16T03:48:41.984Z |

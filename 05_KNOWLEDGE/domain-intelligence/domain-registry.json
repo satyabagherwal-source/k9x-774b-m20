@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T03:37:30.954Z",
-  "total_records": 1211,
+  "last_updated": "2026-11-16T03:48:44.226Z",
+  "total_records": 1217,
   "domains": {
     "A": {
       "total": 7,
@@ -654,7 +654,7 @@
       ]
     },
     "G": {
-      "total": 215,
+      "total": 217,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -870,11 +870,13 @@
         "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants",
         "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-learnings-core-invari",
         "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants",
-        "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",
+        "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 252,
+      "total": 254,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1127,11 +1129,13 @@
         "DOM-H-78B796D1",
         "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-crawlcove-xml-sitemap-validator-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni"
       ]
     },
     "I": {
-      "total": 49,
+      "total": 50,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1181,11 +1185,12 @@
         "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants",
         "domain_intelligence-content-information-intelligence-etcd-io-etcd-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
-        "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-learnings-core-"
+        "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-learnings-core-",
+        "DOM-I-5993B15B"
       ]
     },
     "J": {
-      "total": 18,
+      "total": 19,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1204,7 +1209,8 @@
         "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
         "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-crawlcove-robots-txt-tester-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings"
+        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings",
+        "DOM-J-D8ADF367"
       ]
     },
     "K": {
@@ -22382,8 +22388,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ab31d2fe90c4b97f9f7ac9acd92109af4d70ffd3882178c583ca89f82d2a319c",
-      "created_at": "2026-11-16T02:44:37.222Z"
+      "content_hash": "6dc702b74d94956fa4af8a78b03156a8e589434f3830bbabe031c6b35efef26d",
+      "created_at": "2026-11-16T03:48:44.226Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -22490,6 +22496,110 @@
       "repository": "ytsaurus-ytsaurus-learnings",
       "content_hash": "cdd5526a3bdf628054243bbfbf1bba5c4da7e70e435fefb35d77621e3d2ba51b",
       "created_at": "2026-11-16T03:37:30.954Z"
+    },
+    "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: cilium/cilium Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cilium-cilium-architecture-intelligence-cilium-cilium-core-invariants.md",
+      "repository": "cilium/cilium",
+      "content_hash": "8a48b268dd359b5c752dc08818bffb5c3457a237a7e2caa72c04232bf28a034e",
+      "created_at": "2026-11-16T03:45:49.614Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-xml-sitemap-validator-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-crawlcove-xml-sitemap-validator-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: CrawlCove/xml-sitemap-validator Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-sitemap-validator-technical-construction-intelligence-crawlc.md",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "content_hash": "0a56942f3e041066c926aa9f78954ed42df2c5e8ab79a55c466de800902f2759",
+      "created_at": "2026-11-16T03:47:46.009Z"
+    },
+    "DOM-J-D8ADF367": {
+      "record_id": "DOM-J-D8ADF367",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Dangling Symlinks on Global GitHub-Sourced NPM Installs (BUG-NPM10-SYMLINK-01)",
+      "content": "CLI utilities distributed outside the npm registry cannot rely on git shorthand URLs on npm 10+. Binary distributions must point to pre-packaged release archive tarballs containing committed or pre-compiled build artifacts.",
+      "content_hash": "f9d2d7f9787b2d93a062d3d4a1233495c25f2e7af96b8d53d73d7ed57da1327a",
+      "summary": "npm 10 altered the lifecycle sequence for git-sourced dependencies: directory symlinking occurs prior to running post-install or prepublish  -> CLI utilities distributed outside the npm registry cannot rely on git shorthand URLs on npm 10+. Binary distributions must point to pre-pack",
+      "provenance": {
+        "source_uri": "project://crawlcove-crawlcove-sitemap-validator/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T03:47:48.803Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-sitemap-validator)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `e6b51cd7` and `README.md`:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T03:48:11.522Z"
+    },
+    "DOM-I-5993B15B": {
+      "record_id": "DOM-I-5993B15B",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "Processing Instruction Hijacking Root XML Tag Resolution (BUG-XML-ROOT-02)",
+      "content": "Parsing data models derived from multi-format standards requires structural filtering of directive/metadata elements before interrogating schema payloads.",
+      "content_hash": "9fb03b968c212c0fb78ce9c4c7679ec1c76783a1fe17d4b58563d618061db3f4",
+      "summary": "Unfiltered key introspection over dynamic XML ASTs. -> Parsing data models derived from multi-format standards requires structural filtering of directive/metadata elements before interrogating sc",
+      "provenance": {
+        "source_uri": "project://crawlcove-crawlcove-sitemap-validator/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T03:47:48.803Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-sitemap-validator)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Source code comment and logic in `src/validate.ts`:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T03:48:41.972Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: crawlcove-crawlcove-sitemap-validator-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-sitemap-validator-learnings-technical-construction-intellige.md",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "content_hash": "df3bade1e530b08abb8a0972babcc49234d9b9f686806a05da5c74dc5431b544",
+      "created_at": "2026-11-16T03:48:42.912Z"
+    },
+    "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: cilium-cilium-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cilium-cilium-learnings-architecture-intelligence-cilium-cilium-learnings-core-i.md",
+      "repository": "cilium-cilium-learnings",
+      "content_hash": "5cabd07594cb6b38f76d1698a63b7afa3081c7a861f5fb55047b4ddb9cdcc487",
+      "created_at": "2026-11-16T03:48:43.600Z"
     }
   }
 }

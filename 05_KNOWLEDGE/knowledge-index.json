@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T03:37:31.063Z",
-  "total_verified_learnings": 8758,
+  "last_updated": "2026-11-16T03:48:44.434Z",
+  "total_verified_learnings": 8759,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18892,
+  "total_items": 18913,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111985,10 +111985,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "ba8940f6",
-      "content_hash": "a3053d179c26bc21558d11d42547f4a1a6e7ee348dcdfec8394137c47ba1b2ca",
+      "source_version": "d3bfd511",
+      "content_hash": "9b747dcdda7164241905f576c9b25d51bd09cf5aa55bc165c35aa0b5a75944d0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T05:31:52.907Z"
+      "persisted_at": "2026-11-16T03:45:49.776Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112022,9 +112022,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "f50ad447a11eb3fc4b638baeb4feaaccd865e95565f588e32d501d74a0bf7a26",
+      "content_hash": "7fb9a98832e5723b10b1bc84839b7b12aa73e216c8b71c09c230f016f5a22503",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T05:37:24.211Z"
+      "persisted_at": "2026-11-16T03:48:43.807Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "69245ef97305455ba7fe3fa52d30176905cbe58890a5926f38aac2c892cf250a",
+      "content_hash": "2eda7ab0de472832c89b64062cefe16f67bb76227289da4c1922743a8fb57b2f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T02:44:37.364Z"
+      "persisted_at": "2026-11-16T03:48:44.334Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "98f9ecd2f320a9678559439343ad1186d7f96a41442124c62330ef5914220579",
+      "content_hash": "67df857c80a6db570cd48e84b833d16bcc7cbfa053146143ffed375fcb6c9ef9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:44:37.495Z"
+      "persisted_at": "2026-11-16T03:48:44.434Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -213919,8 +213919,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "ba8940f6",
-      "content_hash": "6a34b8686faf0e45dd4f28c7438fe437ed027905ae2288f0fb5163ee006a3f65",
+      "source_version": "d3bfd511",
+      "content_hash": "1066cef6500a06b45da95fb8a68f2a4793b34373c4344ecfefe7369b630bf411",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -213933,6 +213933,21 @@
           "number": "EXISTING",
           "title": "update all go dependencies main",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8701,
+          "title": "In-Kernel Union Type Alignment & Unaligned Copy Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8702,
+          "title": "Side-Effect Free Macro Boundary Evaluation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8703,
+          "title": "Progressive Degradation Execution Harness for Container Triage",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213940,7 +213955,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T05:31:52.246Z",
+      "verified_at": "2026-11-16T03:45:49.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250400,13 +250415,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U7V5-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4O9J-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d1f3cba1abb931e25d1096d27401c8cf85c177dfe83635ceda1ce6232fb4f711",
+      "content_hash": "5ecf974374e4d9a718797350a412b2cd149bbc4584a18df52160e07628020d72",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T02:44:37.074Z"
+      "persisted_at": "2026-11-16T03:48:44.120Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -250416,9 +250431,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab31d2fe90c4b97f9f7ac9acd92109af4d70ffd3882178c583ca89f82d2a319c",
+      "content_hash": "6dc702b74d94956fa4af8a78b03156a8e589434f3830bbabe031c6b35efef26d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T02:44:37.222Z"
+      "persisted_at": "2026-11-16T03:48:44.226Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -250869,6 +250884,301 @@
       "content_hash": "cdd5526a3bdf628054243bbfbf1bba5c4da7e70e435fefb35d77621e3d2ba51b",
       "domain_letter": "H",
       "persisted_at": "2026-11-16T03:37:30.954Z"
+    },
+    "rule-8701": {
+      "learning_id": "rule-8701",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8701,
+      "title": "In-Kernel Union Type Alignment & Unaligned Copy Invariant",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "d3bfd511",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:45:49.049Z"
+    },
+    "rule-8702": {
+      "learning_id": "rule-8702",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8702,
+      "title": "Side-Effect Free Macro Boundary Evaluation",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "d3bfd511",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:45:49.049Z"
+    },
+    "rule-8703": {
+      "learning_id": "rule-8703",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8703,
+      "title": "Progressive Degradation Execution Harness for Container Triage",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "d3bfd511",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:45:49.049Z"
+    },
+    "candidate_directive-in-kernel-union-type-alignment-unaligned-copy-invariant": {
+      "item_id": "candidate_directive-in-kernel-union-type-alignment-unaligned-copy-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4NME-in-kernel-union-type-alignment-unaligned-copy-invariant.md",
+      "title": "In-Kernel Union Type Alignment & Unaligned Copy Invariant",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ea0d953b39e03124ecf61dc85504ace138a9a4bc20986f73a6d9c3006d4aa424",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T03:48:43.287Z"
+    },
+    "candidate_directive-side-effect-free-macro-boundary-evaluation": {
+      "item_id": "candidate_directive-side-effect-free-macro-boundary-evaluation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4NME-side-effect-free-macro-boundary-evaluation.md",
+      "title": "Side-Effect Free Macro Boundary Evaluation",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8696965cfe0c8ae4b2bc858bec23798c65797f2e0574e9c01c70590f22cac738",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:48:43.391Z"
+    },
+    "candidate_directive-progressive-degradation-execution-harness-for-container-triage": {
+      "item_id": "candidate_directive-progressive-degradation-execution-harness-for-container-triage",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4NMF-progressive-degradation-execution-harness-for-container-triage.md",
+      "title": "Progressive Degradation Execution Harness for Container Triage",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f8dd8c65475165d1ffd3d373c829b795e0dadf590d437bf3bf90763037d320e6",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-16T03:48:43.495Z"
+    },
+    "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cilium-cilium-architecture-intelligence-cilium-cilium-core-invariants.md",
+      "title": "Architecture Intelligence: cilium/cilium Core Invariants",
+      "repository": "cilium/cilium",
+      "source_version": "d3bfd511",
+      "content_hash": "8a48b268dd359b5c752dc08818bffb5c3457a237a7e2caa72c04232bf28a034e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:45:49.614Z"
+    },
+    "agent_contract-agent-contract-cilium-cilium-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-cilium-cilium-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/cilium-cilium-agent-contract-cilium-cilium-autonomous-specialist-persona.md",
+      "title": "Agent Contract: cilium/cilium Autonomous Specialist Persona",
+      "repository": "cilium/cilium",
+      "source_version": "d3bfd511",
+      "content_hash": "1b0c09b93b1f71410546503c6754ebb8d84a34469b96753580ee33ce624e22ce",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:45:49.699Z"
+    },
+    "learn-github-crawlcove-xml-sitemap-validator": {
+      "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "CrawlCove/xml-sitemap-validator",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "slug": "crawlcove-crawlcove-sitemap-validator",
+      "platform": "github",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "e6b51cd7",
+      "content_hash": "bb2da102333e735bbc91e810424cf8a3ba57368ec4078784aa9f9ec75fba3baa",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8704,
+          "title": "Magic-Byte Content Sniffing Over Transport Headers for Compressed Streams",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8705,
+          "title": "Processing-Instruction-Resilient XML Root Resolution",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8706,
+          "title": "Strict RFC Canonical Host Normalization for Cross-Origin Ingestion",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T03:47:45.440Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8704": {
+      "learning_id": "rule-8704",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8704,
+      "title": "Magic-Byte Content Sniffing Over Transport Headers for Compressed Streams",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "e6b51cd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:47:45.440Z"
+    },
+    "rule-8705": {
+      "learning_id": "rule-8705",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8705,
+      "title": "Processing-Instruction-Resilient XML Root Resolution",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "e6b51cd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:47:45.440Z"
+    },
+    "rule-8706": {
+      "learning_id": "rule-8706",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8706,
+      "title": "Strict RFC Canonical Host Normalization for Cross-Origin Ingestion",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "e6b51cd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T03:47:45.440Z"
+    },
+    "candidate_directive-magic-byte-content-sniffing-over-transport-headers-for-compressed-streams": {
+      "item_id": "candidate_directive-magic-byte-content-sniffing-over-transport-headers-for-compressed-streams",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4N36-magic-byte-content-sniffing-over-transport-headers-for-compressed-streams.md",
+      "title": "Magic-Byte Content Sniffing Over Transport Headers for Compressed Streams",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "source_version": "HEAD",
+      "content_hash": "58705c01cadb2462081f15fb6f8d71f1f8898814c7ab9facde71babfb941001b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T03:48:42.596Z"
+    },
+    "candidate_directive-processing-instruction-resilient-xml-root-resolution": {
+      "item_id": "candidate_directive-processing-instruction-resilient-xml-root-resolution",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4N37-processing-instruction-resilient-xml-root-resolution.md",
+      "title": "Processing-Instruction-Resilient XML Root Resolution",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8ce4c57ece9024406461051d0fd3549289e6fb942c8fed9d2a9719acfe093118",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T03:48:42.704Z"
+    },
+    "candidate_directive-strict-rfc-canonical-host-normalization-for-cross-origin-ingestion": {
+      "item_id": "candidate_directive-strict-rfc-canonical-host-normalization-for-cross-origin-ingestion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4N37-strict-rfc-canonical-host-normalization-for-cross-origin-ingestion.md",
+      "title": "Strict RFC Canonical Host Normalization for Cross-Origin Ingestion",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "source_version": "HEAD",
+      "content_hash": "428528eaa6986e16a594e97401e0fa121d0fa84a71808ecbc01cbe08ef154185",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T03:48:42.808Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-xml-sitemap-validator-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-xml-sitemap-validator-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-sitemap-validator-technical-construction-intelligence-crawlc.md",
+      "title": "Technical Construction Intelligence: CrawlCove/xml-sitemap-validator Core Invariants",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "source_version": "e6b51cd7",
+      "content_hash": "0a56942f3e041066c926aa9f78954ed42df2c5e8ab79a55c466de800902f2759",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T03:47:46.009Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-xml-sitemap-validato": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-xml-sitemap-validato",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crawlcove-crawlcove-sitemap-validator-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for CrawlCove/xml-sitemap-validator",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "source_version": "e6b51cd7",
+      "content_hash": "d46d821624e148afc54e8aa693094d13122c6b6867cfec183fe2ccd5e42ee826",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:47:46.093Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-sitemap-validator-learnings-technical-construction-intellige.md",
+      "title": "Technical Construction Intelligence: crawlcove-crawlcove-sitemap-validator-learnings Core Invariants",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df3bade1e530b08abb8a0972babcc49234d9b9f686806a05da5c74dc5431b544",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T03:48:42.912Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-crawlcove-sitemap-va": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crawlcove-crawlcove-sitemap-va",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crawlcove-crawlcove-sitemap-validator-learnings-verification-protocol-empirical-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crawlcove-crawlcove-sitemap-validator-learnings",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9c076d6a9cd1365c6eb9d8ae828ff0bf2fd39ee956baf3a6aab0b38c9723fb26",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T03:48:43.020Z"
+    },
+    "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cilium-cilium-learnings-architecture-intelligence-cilium-cilium-learnings-core-i.md",
+      "title": "Architecture Intelligence: cilium-cilium-learnings Core Invariants",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5cabd07594cb6b38f76d1698a63b7afa3081c7a861f5fb55047b4ddb9cdcc487",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:48:43.600Z"
+    },
+    "agent_contract-agent-contract-cilium-cilium-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-cilium-cilium-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/cilium-cilium-learnings-agent-contract-cilium-cilium-learnings-autonomous-specia.md",
+      "title": "Agent Contract: cilium-cilium-learnings Autonomous Specialist Persona",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f790cd2498f62b27720b8fe44b384656c9a9d612389d8f863f699587c106614e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T03:48:43.707Z"
     }
   },
   "ai-builder-brain": {

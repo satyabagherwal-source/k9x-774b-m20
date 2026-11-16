@@ -10228,3 +10228,7 @@
 | `CYCLE-20261116-PMLB` | `2026-11-16T03:37:02.111Z` | `baidu/ERNIE-5.5-Flash-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | Yes (`989f221e...`) |
 | `CYCLE-20261116-PVLX` | `2026-11-16T03:37:13.797Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8699` | Yes (`f7644d78...`) |
 | `CYCLE-20261116-Q5I3` | `2026-11-16T03:37:26.619Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8700` | Yes (`71005b99...`) |
+| `CYCLE-20261116-0XB0` | `2026-11-16T03:45:49.212Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8701, Rule 8702, Rule 8703` | Yes (`1066cef6...`) |
+| `CYCLE-20261116-3F3T` | `2026-11-16T03:47:45.593Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8704, Rule 8705, Rule 8706` | Yes (`bb2da102...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T03:48:11.534Z` | `crawlcove-crawlcove-sitemap-validator` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-D8ADF367` [Domain J] | Yes (`f9d2d7f9...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T03:48:41.984Z` | `crawlcove-crawlcove-sitemap-validator` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-5993B15B` [Domain I] | Yes (`9fb03b96...`) |

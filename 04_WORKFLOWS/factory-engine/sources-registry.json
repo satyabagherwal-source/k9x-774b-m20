@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T03:37:29.640Z",
-    "lastVerified": "2026-11-16T03:37:29.640Z",
+    "lastChecked": "2026-11-16T03:47:48.711Z",
+    "lastVerified": "2026-11-16T03:47:48.711Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-16T02:44:36.648Z",
-    "lastVerified": "2026-11-16T02:44:36.648Z",
+    "lastChecked": "2026-11-16T03:44:18.580Z",
+    "lastVerified": "2026-11-16T03:44:18.580Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2054,22 +2054,21 @@
     "revisionIdentifier": "ba4a88b6"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T22:24:44.622Z",
-    "lastVerified": "2026-11-15T22:24:44.622Z",
+    "lastChecked": "2026-11-16T03:44:20.525Z",
+    "lastVerified": "2026-11-16T03:44:20.525Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "6a34b8686faf0e45dd4f28c7438fe437ed027905ae2288f0fb5163ee006a3f65",
-    "promotedRulesCount": 1,
+    "contentHash": "1066cef6500a06b45da95fb8a68f2a4793b34373c4344ecfefe7369b630bf411",
+    "promotedRulesCount": 3,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ba8940f6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j",
@@ -5943,8 +5942,8 @@
     "officialUrl": "https://github.com/bridgecrewio/checkov",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-14T21:20:54.943Z",
-    "lastVerified": "2026-11-14T21:20:54.943Z",
+    "lastChecked": "2026-11-16T03:44:11.267Z",
+    "lastVerified": "2026-11-16T03:44:11.267Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bridgecrewio-checkov",
@@ -7219,8 +7218,8 @@
     "officialUrl": "https://github.com/apache/incubator-pegasus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-14T19:33:47.938Z",
-    "lastVerified": "2026-11-14T19:33:47.938Z",
+    "lastChecked": "2026-11-16T03:44:16.161Z",
+    "lastVerified": "2026-11-16T03:44:16.161Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-incubator-pegasus",
@@ -8221,9 +8220,9 @@
   "str4d-rage": {
     "name": "rage",
     "officialUrl": "https://github.com/str4d/rage",
-    "lastChecked": "2026-11-14T08:05:18.572Z",
+    "lastChecked": "2026-11-16T03:44:03.596Z",
     "revisionIdentifier": "b5b68c4f",
-    "lastVerified": "2026-11-14T08:05:18.572Z"
+    "lastVerified": "2026-11-16T03:44:03.596Z"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
     "name": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -10892,11 +10891,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "crawlcove-crawlcove-sitemap-validator": {
-    "name": "crawlcove-sitemap-validator",
+    "name": "CrawlCove/xml-sitemap-validator",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-    "lastChecked": "2026-11-11T13:52:08.631Z",
-    "revisionIdentifier": "8aeca12b",
-    "lastVerified": "2026-11-11T13:52:08.631Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-16T03:44:12.144Z",
+    "lastVerified": "2026-11-16T03:44:12.144Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
+    "contentHash": "bb2da102333e735bbc91e810424cf8a3ba57368ec4078784aa9f9ec75fba3baa",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "simonschubert-kai": {
     "name": "Kai",
@@ -11020,9 +11029,9 @@
   "seabdulbasit-musicapp-kmp": {
     "name": "MusicApp-KMP",
     "officialUrl": "https://github.com/SEAbdulbasit/MusicApp-KMP",
-    "lastChecked": "2026-11-12T22:05:00.787Z",
+    "lastChecked": "2026-11-16T03:44:08.538Z",
     "revisionIdentifier": "3048f024",
-    "lastVerified": "2026-11-12T22:05:00.787Z"
+    "lastVerified": "2026-11-16T03:44:08.538Z"
   },
   "ugolbck-seofordev": {
     "name": "seofordev",
