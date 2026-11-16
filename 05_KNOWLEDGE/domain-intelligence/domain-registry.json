@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T00:36:59.368Z",
-  "total_records": 1175,
+  "last_updated": "2026-11-16T00:45:22.033Z",
+  "total_records": 1177,
   "domains": {
     "A": {
       "total": 7,
@@ -645,7 +645,7 @@
       ]
     },
     "G": {
-      "total": 204,
+      "total": 206,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -850,7 +850,9 @@
         "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants",
         "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants",
+        "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6990,8 +6992,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "1865a7f9d00354e8320ada08131cfd8b07b28af68d545bc584092b6a55ce2170",
-      "created_at": "2026-11-15T23:49:59.771Z"
+      "content_hash": "ba9076936c740fa8aa159458355f542b6e9a4a4c4ad71760164b49cfcea31bd0",
+      "created_at": "2026-11-16T00:45:22.033Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7908,8 +7910,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0ad0edc88be9c026d4393dc87aceefab64cd2be9a254e512c48bc722d04e5f6a",
-      "created_at": "2026-11-15T23:49:59.124Z"
+      "content_hash": "245874c67de83427404b96bb2ddedff0ec99988f1508d34977fb489c20b03d32",
+      "created_at": "2026-11-16T00:45:21.521Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -22072,6 +22074,24 @@
       "repository": "hf-unsloth-qwen3.8-flash-next-gguf-learnings",
       "content_hash": "c2c3d109e43e575c83ea11f96848edd3a7b2d952ef9d0e24c85270c0c7eeb0cb",
       "created_at": "2026-11-16T00:36:58.229Z"
+    },
+    "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rainbow-me/rainbow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rainbow-me-rainbow-architecture-intelligence-rainbow-me-rainbow-core-invariants.md",
+      "repository": "rainbow-me/rainbow",
+      "content_hash": "1acbbda45f9c9d15f455d61bd91355cb1e5d6dce87e2188b77e9a7d4db6accdf",
+      "created_at": "2026-11-16T00:45:15.545Z"
+    },
+    "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rainbow-me-rainbow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rainbow-me-rainbow-learnings-architecture-intelligence-rainbow-me-rainbow-learni.md",
+      "repository": "rainbow-me-rainbow-learnings",
+      "content_hash": "6e316608557c208a927945aa24efc7cae6af7712de8fb465c9566e0948343168",
+      "created_at": "2026-11-16T00:45:20.894Z"
     }
   }
 }

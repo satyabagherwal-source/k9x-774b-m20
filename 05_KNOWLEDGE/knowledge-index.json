@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T00:36:59.482Z",
-  "total_verified_learnings": 8744,
+  "last_updated": "2026-11-16T00:45:22.140Z",
+  "total_verified_learnings": 8745,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18766,
+  "total_items": 18774,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1865a7f9d00354e8320ada08131cfd8b07b28af68d545bc584092b6a55ce2170",
+      "content_hash": "ba9076936c740fa8aa159458355f542b6e9a4a4c4ad71760164b49cfcea31bd0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T23:49:59.771Z"
+      "persisted_at": "2026-11-16T00:45:22.033Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9bdb092c8dd5f7cee972e2ee02ea30cbd36e9e66b83cbaf963d27b1db056092",
+      "content_hash": "080c4bd468e3a2ef9dcb5e89eaffa5ee8244853691ac42fec73c4596fa4ddc24",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:49:59.912Z"
+      "persisted_at": "2026-11-16T00:45:22.140Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-LMX4-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KUIQ-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "afcfdafa41af7fbac539aba39caed78d8af2f602a7c92a2012bacef4a5dec7ee",
+      "content_hash": "09eca7d2600e533951138a4e792078f8f5087c758f35cfca67cfacbf452cc7d1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T23:49:58.989Z"
+      "persisted_at": "2026-11-16T00:45:21.413Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ad0edc88be9c026d4393dc87aceefab64cd2be9a254e512c48bc722d04e5f6a",
+      "content_hash": "245874c67de83427404b96bb2ddedff0ec99988f1508d34977fb489c20b03d32",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T23:49:59.124Z"
+      "persisted_at": "2026-11-16T00:45:21.521Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f23be3f9b9e5ed8b29105f722eac8705e6b74075070a71fc253980caac69b9fc",
+      "content_hash": "ce500f43a49eaaa6f0429d53d5de21e26d4b0b10442b16f43e5720bf115edf9d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:49:59.266Z"
+      "persisted_at": "2026-11-16T00:45:21.632Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214825,13 +214825,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-LNF5-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KUWU-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f0312c5b832dbb07b4d27c5d17f9e252350a9164e2a4f8e5086f6d1da339971",
+      "content_hash": "4a9ff21975606b2b19ada43057730fa7c5766309d2dd6ba15fa4f81aa7d27628",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T23:49:59.638Z"
+      "persisted_at": "2026-11-16T00:45:21.918Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -248958,6 +248958,125 @@
       "content_hash": "c2c3d109e43e575c83ea11f96848edd3a7b2d952ef9d0e24c85270c0c7eeb0cb",
       "domain_letter": "D",
       "persisted_at": "2026-11-16T00:36:58.229Z"
+    },
+    "learn-github-rainbow-me-rainbow": {
+      "learning_id": "learn-github-rainbow-me-rainbow",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rainbow-me/rainbow",
+      "repository": "rainbow-me/rainbow",
+      "slug": "rainbow-me-rainbow",
+      "platform": "github",
+      "source_url": "https://github.com/rainbow-me/rainbow",
+      "source_version": "f9797f7f",
+      "content_hash": "8cd413f82579552a67da1ae7a49015be1ab615599dfb26cdb9a44ef98dfc4cfb",
+      "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8677,
+          "title": "read the exit fee in its own store",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T00:45:15.078Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8677": {
+      "learning_id": "rule-8677",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8677,
+      "title": "read the exit fee in its own store",
+      "source_url": "https://github.com/rainbow-me/rainbow",
+      "source_version": "f9797f7f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T00:45:15.078Z"
+    },
+    "candidate_directive-read-the-exit-fee-in-its-own-store": {
+      "item_id": "candidate_directive-read-the-exit-fee-in-its-own-store",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KPWN-read-the-exit-fee-in-its-own-store.md",
+      "title": "read the exit fee in its own store",
+      "repository": "rainbow-me/rainbow",
+      "source_version": "f9797f7f",
+      "content_hash": "e2ec9723328e129f228c858d28cada389e3032d674790ca5d61d4bddccaaa31b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T00:45:15.432Z"
+    },
+    "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rainbow-me-rainbow-architecture-intelligence-rainbow-me-rainbow-core-invariants.md",
+      "title": "Architecture Intelligence: rainbow-me/rainbow Core Invariants",
+      "repository": "rainbow-me/rainbow",
+      "source_version": "f9797f7f",
+      "content_hash": "1acbbda45f9c9d15f455d61bd91355cb1e5d6dce87e2188b77e9a7d4db6accdf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T00:45:15.545Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rainbow-me-rainbow": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rainbow-me-rainbow",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rainbow-me-rainbow-verification-protocol-empirical-defect-shield-for-rainbow-me-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rainbow-me/rainbow",
+      "repository": "rainbow-me/rainbow",
+      "source_version": "f9797f7f",
+      "content_hash": "c94b3e2883d73746db726d11d9e2d3cfc3b582628fe955fe80e41ba2b89c53b5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T00:45:15.663Z"
+    },
+    "candidate_directive-rnbw-staking-read-the-exit-fee-in-its-own-store": {
+      "item_id": "candidate_directive-rnbw-staking-read-the-exit-fee-in-its-own-store",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KU1B-rnbw-staking-read-the-exit-fee-in-its-own-store.md",
+      "title": "rnbw-staking): read the exit fee in its own store",
+      "repository": "rainbow-me-rainbow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d39b3a28a89d772a3a7f5380a995ffbfa2957270c109e80779d4ab8feb795aef",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T00:45:20.784Z"
+    },
+    "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rainbow-me-rainbow-learnings-architecture-intelligence-rainbow-me-rainbow-learni.md",
+      "title": "Architecture Intelligence: rainbow-me-rainbow-learnings Core Invariants",
+      "repository": "rainbow-me-rainbow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e316608557c208a927945aa24efc7cae6af7712de8fb465c9566e0948343168",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T00:45:20.894Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rainbow-me-rainbow-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rainbow-me-rainbow-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rainbow-me-rainbow-learnings-verification-protocol-empirical-defect-shield-for-r.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rainbow-me-rainbow-learnings",
+      "repository": "rainbow-me-rainbow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "734fd1be43fb2782c290c5309c40d62ac74294653c899896708d61dbf6503d2f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T00:45:21.010Z"
     }
   },
   "ai-builder-brain": {

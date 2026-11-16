@@ -10231,3 +10231,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen3-8-flash-next-gguf` | `https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-16T00:36:38.290Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `04c62ec9` | Multi-dimensional audit evidence | 2026-11-16T00:36:52.314Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `64e35701` | Multi-dimensional audit evidence | 2026-11-16T00:36:54.913Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `f9797f7f` | Multi-dimensional audit evidence | 2026-11-16T00:45:15.251Z |

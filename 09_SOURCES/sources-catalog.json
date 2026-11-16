@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "898ea993",
+    "sourceVersion": "f9797f7f",
     "license": "GPL-3.0",
-    "contentHash": "b411170aa1ffe065cd850988006c401b273780813a8de921297bef81a72d76a6",
-    "lastHarvestedAt": "2026-11-12T14:24:02.670Z",
+    "contentHash": "8cd413f82579552a67da1ae7a49015be1ab615599dfb26cdb9a44ef98dfc4cfb",
+    "lastHarvestedAt": "2026-11-16T00:45:15.251Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {

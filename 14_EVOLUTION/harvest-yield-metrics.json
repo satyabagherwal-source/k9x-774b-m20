@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:36:54.918Z",
-  "total_cycles_completed": 9795,
-  "total_learnings_persisted": 9795,
-  "total_rules_promoted": 9405,
+  "last_updated": "2026-11-16T00:45:15.256Z",
+  "total_cycles_completed": 9796,
+  "total_learnings_persisted": 9796,
+  "total_rules_promoted": 9406,
   "history": [
-    {
-      "timestamp": "2026-11-14T21:20:50.494Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T21:20:52.899Z",
       "repository": "Automattic/harper",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T00:36:54.918Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:45:15.256Z",
+      "repository": "rainbow-me/rainbow",
+      "learningId": "learn-github-rainbow-me-rainbow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

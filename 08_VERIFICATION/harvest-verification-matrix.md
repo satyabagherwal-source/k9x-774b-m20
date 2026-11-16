@@ -10198,3 +10198,4 @@
 | `CYCLE-20261116-9MVI` | `2026-11-16T00:36:38.286Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | Yes (`55c1c95b...`) |
 | `CYCLE-20261116-9XP2` | `2026-11-16T00:36:52.310Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8675` | Yes (`3b872964...`) |
 | `CYCLE-20261116-9ZP9` | `2026-11-16T00:36:54.909Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8676` | Yes (`85266eac...`) |
+| `CYCLE-20261116-KPRJ` | `2026-11-16T00:45:15.247Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8677` | Yes (`8cd413f8...`) |

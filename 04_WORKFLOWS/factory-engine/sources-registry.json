@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T00:36:57.941Z",
-    "lastVerified": "2026-11-16T00:36:57.941Z",
+    "lastChecked": "2026-11-16T00:45:20.481Z",
+    "lastVerified": "2026-11-16T00:45:20.481Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -371,8 +371,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T00:10:12.753Z",
-    "lastVerified": "2026-11-16T00:10:12.753Z",
+    "lastChecked": "2026-11-16T00:45:20.472Z",
+    "lastVerified": "2026-11-16T00:45:20.472Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -756,9 +756,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-15T19:12:07.463Z",
+    "lastChecked": "2026-11-16T00:45:15.561Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-15T19:12:07.463Z"
+    "lastVerified": "2026-11-16T00:45:15.561Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -4996,9 +4996,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-14T17:24:48.892Z",
+    "lastChecked": "2026-11-16T00:45:12.968Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-14T17:24:48.892Z"
+    "lastVerified": "2026-11-16T00:45:12.968Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -6294,12 +6294,12 @@
     "lastVerified": "2026-11-14T22:39:21.300Z"
   },
   "arangodb-arangodb": {
-    "name": "arangodb/arangodb",
+    "name": "arangodb",
     "officialUrl": "https://github.com/arangodb/arangodb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-14T15:34:43.729Z",
-    "lastVerified": "2026-11-14T15:34:43.729Z",
+    "lastChecked": "2026-11-16T00:45:18.088Z",
+    "lastVerified": "2026-11-16T00:45:18.088Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arangodb-arangodb",
@@ -6308,7 +6308,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7d980299"
   },
   "nezhahq-nezha": {
     "name": "nezha",
@@ -7321,9 +7322,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-14T03:10:21.428Z",
+    "lastChecked": "2026-11-16T00:45:05.452Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-14T03:10:21.428Z"
+    "lastVerified": "2026-11-16T00:45:05.452Z"
   },
   "hf-google-gemma-4-31b-it": {
     "name": "google/gemma-4-31B-it",
@@ -10590,9 +10591,9 @@
   "melbahja-seo": {
     "name": "seo",
     "officialUrl": "https://github.com/melbahja/seo",
-    "lastChecked": "2026-11-11T10:26:26.265Z",
+    "lastChecked": "2026-11-16T00:45:07.966Z",
     "revisionIdentifier": "cd4e4122",
-    "lastVerified": "2026-11-11T10:26:26.265Z"
+    "lastVerified": "2026-11-16T00:45:07.966Z"
   },
   "ehpanda-team-ehpanda": {
     "name": "EhPanda-Team/EhPanda",
@@ -10707,14 +10708,14 @@
     "officialUrl": "https://github.com/rainbow-me/rainbow",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T14:23:44.325Z",
-    "lastVerified": "2026-11-12T14:23:44.325Z",
+    "lastChecked": "2026-11-16T00:45:14.240Z",
+    "lastVerified": "2026-11-16T00:45:14.240Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rainbow-me-rainbow",
-    "contentHash": "b411170aa1ffe065cd850988006c401b273780813a8de921297bef81a72d76a6",
+    "contentHash": "8cd413f82579552a67da1ae7a49015be1ab615599dfb26cdb9a44ef98dfc4cfb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
