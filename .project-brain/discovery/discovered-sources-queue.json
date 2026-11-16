@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T11:45:20.290Z",
+  "updated_at": "2026-11-16T12:53:13.829Z",
   "stats": {
-    "total_discovered": 4189,
-    "approved_pending_harvest": 3936,
+    "total_discovered": 4191,
+    "approved_pending_harvest": 3938,
     "harvested_count": 0,
     "rejected_count": 253,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3937,
+      "COMMUNITY_AND_EXPERT": 3939,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -90408,6 +90408,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
         "fileName": "juicedata-juicefs-learnings.md"
+      }
+    },
+    "SRC-A2D122D519E2": {
+      "id": "SRC-A2D122D519E2",
+      "url": "https://bun.com/docs/compiler/aot",
+      "title": "https://bun.com/docs/compiler/aot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T12:53:12.843Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-3D5B442E785A": {
+      "id": "SRC-3D5B442E785A",
+      "url": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.46.0...v1.47.0",
+      "title": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.46.0...v1.47.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T12:53:13.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
       }
     }
   }

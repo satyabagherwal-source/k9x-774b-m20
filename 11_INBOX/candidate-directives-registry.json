@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T11:45:21.164Z",
+  "last_updated": "2026-11-16T12:53:13.987Z",
   "directives": [
     {
       "id": "CD-001",
@@ -18787,6 +18787,70 @@
       "source_repo": "meilisearch-meilisearch",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3E143C-reinstate-uuid-as-a-dev-feature-of-meili.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-KWHT",
+      "directive_title": "build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0",
+      "source_repo": "rook-rook-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KWHT-build-deps-bump-go-opentelemetry-io-otel-trace-from-1-46-0-to-1-47-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-EJJQ",
+      "directive_title": "count local QUIC path closes by reason; leave dark paths with UDP to",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "bce01abd",
+      "staged_file": "11_INBOX/candidate-directives/CD-EJJQ-count-local-quic-path-closes-by-reason-leave-dark-paths-with-udp-to.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-EN9C",
+      "directive_title": "Share ARC object generation logic",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "2e5f2516",
+      "staged_file": "11_INBOX/candidate-directives/CD-EN9C-share-arc-object-generation-logic.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-KT78",
+      "directive_title": "event loop keep-alives and VM handle references have owners",
+      "source_repo": "oven-sh/bun",
+      "source_commit": "237bba51",
+      "staged_file": "11_INBOX/candidate-directives/CD-KT78-event-loop-keep-alives-and-vm-handle-references-have-owners.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-KVRD",
+      "directive_title": "jsc: event loop keep-alives and VM handle references have owners",
+      "source_repo": "oven-sh-bun-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KVRD-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-B28535",
+      "directive_title": "build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rook-rook",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B28535-build-deps-bump-go-opentelemetry-io-otel.md",
       "staged_date": "2026-11-16"
     }
   ]

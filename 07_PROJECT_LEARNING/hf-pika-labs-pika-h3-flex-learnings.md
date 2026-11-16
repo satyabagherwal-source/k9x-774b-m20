@@ -3,7 +3,7 @@
 > **Source Version**: `hf-pika-labs`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T19:15:03.313Z  
+> **Timestamp**: 2026-11-16T12:48:12.609Z  
 > **Learning ID**: `learn-huggingface-pika-labs-pika-h3-flex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Pika-Labs/Pika-H3-Flex](https://huggingface.co/Pika-Labs/Pika-H3-Flex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T19:15:03.148Z  
+> **Harvest Timestamp**: 2026-11-16T12:48:04.580Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 138840 downloads | 562 likes
+- **Stars / Engagement**: 158388 downloads | 714 likes
 
 ---
 

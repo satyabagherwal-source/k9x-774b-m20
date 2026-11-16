@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T11:45:16.842Z",
+  "last_updated": "2026-11-16T12:53:09.560Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "5a444e051d43c0e5d9fc1f3cb214374ca33bbf45bf56c412b99268a17b11d215",
-      "verified_at": "2026-11-15T14:36:40.968Z",
+      "content_hash": "c5b0b2bbfe924a1e49169ea3def219016b7b1c1d247efbe754286185c114ef2f",
+      "verified_at": "2026-11-16T12:48:21.924Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T14:36:40.968Z"
+      "last_updated": "2026-11-16T12:48:21.924Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "4d0a93b31a41f9e3c284230bd52f542506f684a20de864af74911cffb9c7c33f",
-      "verified_at": "2026-11-16T01:52:49.648Z",
+      "content_hash": "b0f7eaca0fe91ebf402b239e60de5172bcdbb1209923eb557250944526aba0c7",
+      "verified_at": "2026-11-16T12:48:17.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T01:52:49.648Z"
+      "last_updated": "2026-11-16T12:48:17.101Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "76eb2a292bd1ebd5b7d82b95ab933822e28bd885176e080796a81aff4a1f0477",
-      "verified_at": "2026-11-15T03:48:13.044Z",
+      "content_hash": "6489991492451957bbec16c35696b015d53f6df3abf822fdd2f7007bec8f96ff",
+      "verified_at": "2026-11-16T12:48:14.211Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T03:48:13.044Z"
+      "last_updated": "2026-11-16T12:48:14.211Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "4109c8eec9e1dae92523781da57457f52c2d30477d0e515d0555fe9d1715ff69",
-      "verified_at": "2026-11-14T17:03:05.942Z",
+      "content_hash": "db4aade0cc15a77c184a3fb84da21e063ea7d790630278ac7277d67eb652eba5",
+      "verified_at": "2026-11-16T12:53:09.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T17:03:05.942Z"
+      "last_updated": "2026-11-16T12:53:09.559Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -17376,14 +17376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
-      "content_hash": "5f5708b3f45948bd3dba06a1a48f55751bd249527c5b654dcc65903522538e92",
-      "verified_at": "2026-11-11T19:15:03.658Z",
+      "content_hash": "9fc43344e8984e465d41021b42dcc9fe805ccf9117c7b6a0621ca7b7a8c23dd2",
+      "verified_at": "2026-11-16T12:48:12.971Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T19:15:03.658Z"
+      "last_updated": "2026-11-16T12:48:12.971Z"
     },
     "LiquidAI/LFM3-Audio-2B": {
       "repository": "LiquidAI/LFM3-Audio-2B",

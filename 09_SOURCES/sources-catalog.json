@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "d594b14b",
+    "sourceVersion": "2e5f2516",
     "license": "Apache-2.0",
-    "contentHash": "5a444e051d43c0e5d9fc1f3cb214374ca33bbf45bf56c412b99268a17b11d215",
-    "lastHarvestedAt": "2026-11-15T14:36:40.961Z",
+    "contentHash": "c5b0b2bbfe924a1e49169ea3def219016b7b1c1d247efbe754286185c114ef2f",
+    "lastHarvestedAt": "2026-11-16T12:48:21.917Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "effd674b",
+    "sourceVersion": "bce01abd",
     "license": "NOASSERTION",
-    "contentHash": "4d0a93b31a41f9e3c284230bd52f542506f684a20de864af74911cffb9c7c33f",
-    "lastHarvestedAt": "2026-11-16T01:52:49.640Z",
+    "contentHash": "b0f7eaca0fe91ebf402b239e60de5172bcdbb1209923eb557250944526aba0c7",
+    "lastHarvestedAt": "2026-11-16T12:48:17.094Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "5301ca41",
+    "sourceVersion": "5f0de5f5",
     "license": "Apache-2.0",
-    "contentHash": "76eb2a292bd1ebd5b7d82b95ab933822e28bd885176e080796a81aff4a1f0477",
-    "lastHarvestedAt": "2026-11-15T03:48:13.035Z",
+    "contentHash": "6489991492451957bbec16c35696b015d53f6df3abf822fdd2f7007bec8f96ff",
+    "lastHarvestedAt": "2026-11-16T12:48:14.203Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "9098897a",
+    "sourceVersion": "237bba51",
     "license": "NOASSERTION",
-    "contentHash": "4109c8eec9e1dae92523781da57457f52c2d30477d0e515d0555fe9d1715ff69",
-    "lastHarvestedAt": "2026-11-14T17:03:05.934Z",
+    "contentHash": "db4aade0cc15a77c184a3fb84da21e063ea7d790630278ac7277d67eb652eba5",
+    "lastHarvestedAt": "2026-11-16T12:53:09.552Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -11555,8 +11555,8 @@
     "sourceUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
     "sourceVersion": "hf-pika-labs-pika-h3-flex",
     "license": "Open-Source",
-    "contentHash": "5f5708b3f45948bd3dba06a1a48f55751bd249527c5b654dcc65903522538e92",
-    "lastHarvestedAt": "2026-11-11T19:15:03.648Z",
+    "contentHash": "9fc43344e8984e465d41021b42dcc9fe805ccf9117c7b6a0621ca7b7a8c23dd2",
+    "lastHarvestedAt": "2026-11-16T12:48:12.964Z",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
   },
   "hf-liquidai-lfm3-audio-2b": {

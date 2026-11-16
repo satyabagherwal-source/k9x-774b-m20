@@ -10298,3 +10298,8 @@ Every entry in this ledger must capture:
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `331de6ea` | Multi-dimensional audit evidence | 2026-11-16T11:45:08.442Z |
 | `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-16T11:45:10.704Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `cdd2e6a7` | Multi-dimensional audit evidence | 2026-11-16T11:45:16.834Z |
+| `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-11-16T12:48:12.964Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `5f0de5f5` | Multi-dimensional audit evidence | 2026-11-16T12:48:14.203Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `bce01abd` | Multi-dimensional audit evidence | 2026-11-16T12:48:17.094Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2e5f2516` | Multi-dimensional audit evidence | 2026-11-16T12:48:21.917Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `237bba51` | Multi-dimensional audit evidence | 2026-11-16T12:53:09.552Z |

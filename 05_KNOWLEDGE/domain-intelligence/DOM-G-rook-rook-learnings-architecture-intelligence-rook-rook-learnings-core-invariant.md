@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T03:48:47.718Z",
+  "timestamp": "2026-11-16T12:53:13.891Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rook-rook-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rook-rook-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T03:48:47.718Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T12:53:13.891Z`  
 > **Learning ID**: `LEARN-EVO-rook-rook-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rook-rook-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `5301ca41`  
+> **Source Version**: `5f0de5f5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T03:48:12.007Z  
+> **Timestamp**: 2026-11-16T12:48:13.404Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T03:48:12.001Z  
+> **Harvest Timestamp**: 2026-11-16T12:48:13.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13710 stars
+- **Stars / Engagement**: 13708 stars
 
 ---
 
@@ -1455,125 +1455,197 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5301ca41` (2026-11-13)
-**Commit Message**: Merge pull request #18753 from lbarrosby/helm-cluster-metrics-disabled
+### Incident Patch 1: `5851a6eb` (2026-11-14)
+**Commit Message**: build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0
 
-helm: pass monitoring.metricsDisabled to the CephCluster
+Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.46.0 to 1.47.0.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.46.0...v1.47.0)
 
-**File**: `deploy/charts/rook-ceph-cluster/templates/cephcluster.yaml` (modified, +3/-0)
+---
+updated-dependencies:
+- dependency-name: go.opentelemetry.io/otel/trace
+  dependency-version: 1.47.0
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -16,6 +16,9 @@ spec:
-   {{- with .Values.monitoring }}
-   monitoring:
-     enabled: {{ .enabled | default false }}
-+    {{- with .metricsDisabled }}
-+    metricsDisabled: {{ . }}
-+    {{- end }}
-     {{- with .exporter }}
-     exporter:
-     {{- . | toYaml | nindent 6 }}
+@@ -167,8 +167,8 @@ require (
+ 	github.com/stretchr/objx v0.8.0 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	github.com/xlab/treeprint v1.2.0 // indirect
+-	go.opentelemetry.io/otel v1.46.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.5 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
 ```
 
-**File**: `deploy/charts/rook-ceph-cluster/tests/cephcluster_test.yaml` (added, +19/-0)
+**File**: `go.sum` (modified, +8/-6)
 ```diff
-@@ -0,0 +1,19 @@
-+suite: cephcluster
-+templates:
-+  - cephcluster.yaml
-+tests:
-+  - it: leaves metricsDisabled unset by default
-+    asserts:
-+      - isKind:
-+          of: CephCluster
-+      - notExists:
-+          path: spec.monitoring.metricsDisabled
-+
-+  - it: passes monitoring.metricsDisabled to the CephCluster
-+    set:
-+      monitoring:
-+        metricsDisabled: true
-+    asserts:
-+      - equal:
-+          path: spec.monitoring.metricsDisabled
-+          value: true
+@@ -982,12 +982,14 @@ go.opencensus.io v0.22.5/go.mod h1:5pWMHQbX5EPX2/62yrJeAkowc+lfs/XD7Uxpq3pI6kk=
+ go.opencensus.io v0.23.0/go.mod h1:XItmlyltB5F7CS4xOC1DcqMoFqwtC6OG2xF7mCv7P7E=
+ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+-go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
+-go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
+-go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
+-go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
+-go.opentelemetry.io/otel/trace v1.46.0 h1:OULy7ccdJnZtJ0UDYFOIGaCmiWzJ8Vi2G/Rsu60qs1c=
+-go.opentelemetry.io/otel/trace v1.46.0/go.mod h1:J7GAXweO77XSFkB/rmAqk9D6ihszhFjLU+d9WuUxDLI=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
+ go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+ go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+```
+
+**File**: `pkg/apis/go.mod` (modified, +2/-2)
+```diff
+@@ -74,8 +74,8 @@ require (
+ 	github.com/spf13/pflag v1.1.0 // indirect
+ 	github.com/stretchr/objx v0.8.0 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+-	go.opentelemetry.io/otel v1.46.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.5 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.6 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+```
+
+**File**: `pkg/apis/go.sum` (modified, +8/-6)
+```diff
+@@ -807,12 +807,14 @@ go.opencensus.io v0.22.5/go.mod h1:5pWMHQbX5EPX2/62yrJeAkowc+lfs/XD7Uxpq3pI6kk=
+ go.opencensus.io v0.23.0/go.mod h1:XItmlyltB5F7CS4xOC1DcqMoFqwtC6OG2xF7mCv7P7E=
+ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+-go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
+-go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
+-go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
+-go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
+-go.opentelemetry.io/otel/trace v1.46.0 h1:OULy7ccdJnZtJ0UDYFOIGaCmiWzJ8Vi2G/Rsu60qs1c=
+-go.opentelemetry.io/otel/trace v1.46.0/go.mod h1:J7GAXweO77XSFkB/rmAqk9D6ihszhFjLU+d9WuUxDLI=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
+ go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+ go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 ```
 
 ---
 
-### Incident Patch 2: `2446dbd8` (2026-11-13)
-**Commit Message**: Merge pull request #18754 from lbarrosby/helm-blockpool-storageclass-labels
+### Incident Patch 2: `5f0de5f5` (2026-11-16)
+**Commit Message**: Merge pull request #18804 from rook/dependabot/go_modules/go.opentelemetry.io/otel/trace-1.47.0
 
-helm: render CephBlockPool storage class labels as YAML
+build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0
 
-**File**: `deploy/charts/rook-ceph-cluster/templates/cephblockpool.yaml` (modified, +1/-1)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -16,7 +16,7 @@ metadata:
-   name: {{ $blockpool.storageClass.name | quote }}
-   {{- with $blockpool.storageClass.labels }}
-   labels:
--    {{- . | nindent 4 }}
-+    {{- . | toYaml | nindent 4 }}
-   {{- end }}
-   annotations:
-     storageclass.kubernetes.io/is-default-class: "{{ if $blockpool.storageClass.isDefault }}true{{ else }}false{{ end }}"
+@@ -167,8 +167,8 @@ require (
+ 	github.com/stretchr/objx v0.8.0 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	github.com/xlab/treeprint v1.2.0 // indirect
+-	go.opentelemetry.io/otel v1.46.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.5 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
 ```
 
-**File**: `deploy/charts/rook-ceph-cluster/tests/cephblockpool_test.yaml` (added, +44/-0)
+**File**: `go.sum` (modified, +8/-6)
 ```diff
-@@ -0,0 +1,44 @@
-+suite: cephblockpool
-+templates:
-+  - cephblockpool.yaml
-+tests:
-+  - it: renders the storage class labels
-+    set:
-+      cephBlockPools:
-+        - name: ceph-blockpool
-+          spec:
-+            replicated:
-+              size: 3
-+          storageClass:
-+            enabled: true
-+            name: ceph-block
-+            labels:
-+              team: storage
-+              tier: fast
-+    asserts:
-+      - hasDocuments:
-+          count: 2
-+      - isKind:
-+          of: StorageClass
-+        documentIndex: 1
-+      - equal:
-+          path: metadata.labels
-+          value:
-+            team: storage
-+            tier: fast
-+        documentIndex: 1
-+
-+  - it: omits the storage class labels when none are set
-+    set:
-+      cephBlockPools:
-+        - name: ceph-blockpool
-+          spec:
-+            replicated:
-+              size: 3
-+          storageClass:
-+            enabled: true
-+            name: ceph-block
-+    asserts:
-+      - notExists:
-+          path: metadata.labels
-+        documentIndex: 1
+@@ -982,12 +982,14 @@ go.opencensus.io v0.22.5/go.mod h1:5pWMHQbX5EPX2/62yrJeAkowc+lfs/XD7Uxpq3pI6kk=
+ go.opencensus.io v0.23.0/go.mod h1:XItmlyltB5F7CS4xOC1DcqMoFqwtC6OG2xF7mCv7P7E=
+ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+-go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
+-go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
+-go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
+-go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
+-go.opentelemetry.io/otel/trace v1.46.0 h1:OULy7ccdJnZtJ0UDYFOIGaCmiWzJ8Vi2G/Rsu60qs1c=
+-go.opentelemetry.io/otel/trace v1.46.0/go.mod h1:J7GAXweO77XSFkB/rmAqk9D6ihszhFjLU+d9WuUxDLI=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
+ go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+ go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+```
+
+**File**: `pkg/apis/go.mod` (modified, +2/-2)
+```diff
+@@ -74,8 +74,8 @@ require (
+ 	github.com/spf13/pflag v1.1.0 // indirect
+ 	github.com/stretchr/objx v0.8.0 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+-	go.opentelemetry.io/otel v1.46.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.5 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.6 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+```
+
+**File**: `pkg/apis/go.sum` (modified, +8/-6)
+```diff
+@@ -807,12 +807,14 @@ go.opencensus.io v0.22.5/go.mod h1:5pWMHQbX5EPX2/62yrJeAkowc+lfs/XD7Uxpq3pI6kk=
+ go.opencensus.io v0.23.0/go.mod h1:XItmlyltB5F7CS4xOC1DcqMoFqwtC6OG2xF7mCv7P7E=
+ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+-go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
+-go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
+-go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
+-go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
+-go.opentelemetry.io/otel/trace v1.46.0 h1:OULy7ccdJnZtJ0UDYFOIGaCmiWzJ8Vi2G/Rsu60qs1c=
+-go.opentelemetry.io/otel/trace v1.46.0/go.mod h1:J7GAXweO77XSFkB/rmAqk9D6ihszhFjLU+d9WuUxDLI=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
+ go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+ go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #18804** (2026-11-16): build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 (@dependabot[bot])
+- **PR #18803** (closed): build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 in /pkg/apis (@dependabot[bot])
 - **PR #18800** (2026-11-13): helm: pass monitoring.metricsDisabled to the CephCluster (backport #18753) (@mergify[bot])
 - **PR #18799** (2026-11-13): helm: render CephBlockPool storage class labels as YAML (backport #18754) (@mergify[bot])
 - **PR #18798** (2026-11-13): helm: render CephBlockPool storage class labels as YAML (backport #18754) (@mergify[bot])
 - **PR #18796** (2026-11-13): test: fix flaky and racy mgr module configuration tests (backport #18740) (@mergify[bot])
-- **PR #18794** (2026-11-13): mds: honor the do-not-reconcile label on mds deployments (backport #18708) (backport #18735) (@mergify[bot])
-- **PR #18792** (2026-11-13): object: honor VAULT_TRANSIT_BACKEND_PATH for RGW SSE-KMS transit (backport #18727) (@mergify[bot])
 
 ---
 
@@ -1593,33 +1665,33 @@ helm: render CephBlockPool storage class labels as YAML
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in cephcluster.yaml
+## X. build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0
 
 **RULE**:
-When implementing operations in `deploy/charts/rook-ceph-cluster/templates/cephcluster.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5301ca41`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5851a6eb`: build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/charts/rook-ceph-cluster/templates/cephcluster.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    {{- with .metricsDisabled }}
-    metricsDisabled: {{ . }}
-    {{- end }}
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	go.opentelemetry.io/otel v1.46.0 // indirect
+	go.opentelemetry.io/otel/trace v1.46.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5301ca41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5851a6eb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

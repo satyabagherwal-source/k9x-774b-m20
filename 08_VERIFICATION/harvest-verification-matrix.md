@@ -10265,3 +10265,8 @@
 | `CYCLE-20261116-5C2E` | `2026-11-16T11:45:08.438Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8730` | Yes (`256d9291...`) |
 | `CYCLE-20261116-5DT8` | `2026-11-16T11:45:10.700Z` | `unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md` | Yes (`a588de79...`) |
 | `CYCLE-20261116-5IJI` | `2026-11-16T11:45:16.830Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8731` | Yes (`394a2961...`) |
+| `CYCLE-20261116-EG80` | `2026-11-16T12:48:12.960Z` | `Pika-Labs/Pika-H3-Flex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md` | Yes (`9fc43344...`) |
+| `CYCLE-20261116-EH6G` | `2026-11-16T12:48:14.200Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8732` | Yes (`64899914...`) |
+| `CYCLE-20261116-EJEQ` | `2026-11-16T12:48:17.090Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8733` | Yes (`b0f7eaca...`) |
+| `CYCLE-20261116-EN4Q` | `2026-11-16T12:48:21.914Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8734` | Yes (`c5b0b2bb...`) |
+| `CYCLE-20261116-KT2K` | `2026-11-16T12:53:09.548Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8735` | Yes (`db4aade0...`) |

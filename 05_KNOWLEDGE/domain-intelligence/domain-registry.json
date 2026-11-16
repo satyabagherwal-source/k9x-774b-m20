@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T11:45:21.272Z",
-  "total_records": 1249,
+  "last_updated": "2026-11-16T12:53:14.091Z",
+  "total_records": 1251,
   "domains": {
     "A": {
       "total": 7,
@@ -40,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 578,
+      "total": 580,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -619,7 +619,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-ganymedenil-document-ai-learnings-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
-        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnin"
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnin",
+        "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria"
       ]
     },
     "E": {
@@ -8615,8 +8617,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "c49b7f88e1c70a3aaa31a251ac51e5f2afc1d97041addda26dd5b432f1cfa886",
-      "created_at": "2026-11-16T01:52:49.922Z"
+      "content_hash": "7d08a15f7964810f8d178d4299994ab06b7db562caf9947bc64a1e52ac89173e",
+      "created_at": "2026-11-16T12:48:17.379Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9089,8 +9091,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "6fff9d7f3d955e4cc1e6ed837103539388956c548fa491a8375a05f9d9cd4610",
-      "created_at": "2026-11-15T03:48:13.367Z"
+      "content_hash": "2fd176a94fbae028c2b236ca3e4dcedeb78ea5e0e72c335d04c6411b42ca1a25",
+      "created_at": "2026-11-16T12:48:14.501Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -14328,8 +14330,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "a5174099c0fd6d0fda5e30ba972e30c6e8cd33182719d089fdfe5dbc5031ccc9",
-      "created_at": "2026-11-15T14:36:41.235Z"
+      "content_hash": "c41186fed72f05cdf7cbd8ced9f47631b8bafe9e745b96d419ccb59644dd3a57",
+      "created_at": "2026-11-16T12:48:22.186Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15897,8 +15899,8 @@
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "repository": "oven-sh/bun",
-      "content_hash": "cf9ef111dbd4cdb5dab954f9bebda643111668a29b59c55662a0e51f0e16ef82",
-      "created_at": "2026-11-14T17:03:06.103Z"
+      "content_hash": "0662b0da4c10928febd41798eb69d9d833dad4e8acb8da09a853593a9c4bfb1d",
+      "created_at": "2026-11-16T12:53:09.819Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
@@ -15957,8 +15959,8 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
       "repository": "oven-sh-bun-learnings",
-      "content_hash": "d11e3ca2c133c044e800947814a451a22ed8fb874a63b3881580dd0194e3ea07",
-      "created_at": "2026-11-14T17:03:54.240Z"
+      "content_hash": "d20461e21e77b5df3de5cd021460b7c14fea6193a0525cee1db03389e949664a",
+      "created_at": "2026-11-16T12:53:13.142Z"
     },
     "DOM-D-02DACB51": {
       "record_id": "DOM-D-02DACB51",
@@ -18670,8 +18672,8 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
       "repository": "rook-rook-learnings",
-      "content_hash": "68a826073a6dfa9ed3682ccce44a561f8f65769c44290801904f7a314196f426",
-      "created_at": "2026-11-15T03:48:47.962Z"
+      "content_hash": "8c824356422d6575b1863c187e395f20a86506bbbdc66f101c7ce0b625daf227",
+      "created_at": "2026-11-16T12:53:14.091Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
@@ -22986,6 +22988,24 @@
       "repository": "juicedata-juicefs-learnings",
       "content_hash": "f76d1ddce46b7f4bbf726477cd81692fc58fb77134db6aee283adb8bc9447ce6",
       "created_at": "2026-11-16T11:45:20.565Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Pika-Labs/Pika-H3-Flex Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pika-labs-pika-h3-flex-research-knowledge-intelligence-pika-labs-pika-h3-flex.md",
+      "repository": "Pika-Labs/Pika-H3-Flex",
+      "content_hash": "827db7a42afa30c11c507904b2867868f70dd35a3f0094940bdb3458f73331d7",
+      "created_at": "2026-11-16T12:48:13.124Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-pika-labs-pika-h3-flex-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pika-labs-pika-h3-flex-learnings-research-knowledge-intelligence-hf-pika-labs.md",
+      "repository": "hf-pika-labs-pika-h3-flex-learnings",
+      "content_hash": "de05d8604fc79ce59870241d89074810f58672d06d82aca62bb1653a04e4ca5c",
+      "created_at": "2026-11-16T12:53:13.605Z"
     }
   }
 }

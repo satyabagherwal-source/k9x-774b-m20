@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "d594b14b",
+  "source_version": "2e5f2516",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T14:36:41.129Z",
+  "timestamp": "2026-11-16T12:48:22.083Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `d594b14b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T14:36:41.129Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `2e5f2516`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T12:48:22.083Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `d594b14b`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `2e5f2516`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T14:36:40.104Z  
+> **Harvest Timestamp**: 2026-11-16T12:48:21.089Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1158,6 +1158,7 @@ import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
 import * as milestone from "./lib/milestone.ts";
 import * as Matrix from "./lib/Matrix.ts";
+import object from "./object.ts";
 
 export async function declarations({
   puzzle_id,
@@ -1375,96 +1376,89 @@ async function evaluate(train_dataset, input_matrix, implementation: string) {
   );
 }
 
-export async function value({
-  puzzle_id,
-  only_puzzle_dataset,
-  train_dataset,
-  input_matrix,
-  instance,
-}) {
+export async function value({ train_dataset, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name: instance.instance_name });
 
   const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
 
-  const { orientation } = await llm.generate({
-    puzzle_id,
-    only_puzzle_dataset,
-    few_shot: (train_dataset) =>
-      train_dataset.dataset
-        .flat()
-        .flatMap(({ instances }) => instances)
-        .map(({ input_instance_matrix, input_value }) => ({
-          matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
-          orientation: input_value.orientation,
-        })),
-    messages: [
-      {
-        role: "assistant",
-        content: `
-          current:
-          ${JSON.stringify(
-            train_dataset.dataset
-              .flat()
-              .filter(({ instances }) => instances)
-              .flatMap(({ instances }) => instances)
-              .filter(({ input_value }) => input_value)
-              .map(({ input_instance_matrix, input_value }) => ({
-                matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
-                orientation: input_value.orientation,
-              }))
-          )}
-        `,
-      },
-      {
-        role: "user",
-        content: `
-          query:
-          ${JSON.stringify({
-            matrix: Matrix.silhouette(
-              Matrix.crop(instance.input_instance_matrix)
-            ),
-            orientation: "<ORIENTATION>",
-          })}
-          json_format:
-          {
-            "orientation": <ORIENTATION>,
-          }
-        `,
-      },
-    ],
+  const orientation = await object.orientation({ train_dataset, instance });
+
+  const implementation = await object.implementation({
+    train_dataset,
+    instance,
+    x,
+    y,
+    width,
+    height,
+    orientation,
   });
 
-  const { implementation } = await llm.generate({
-    puzzle_id,
-    only_puzzle_dataset,
-    few_shot: (train_dataset) => ({
-      ...train_dataset,
-      declarations: train_dataset.declarations[0],
-      dataset: train_dataset.dataset.map(({ instances }) => ({
-        instances: instances.map((instance) => ({
-          ...instance,
-          input_instance_matrix: Matrix.crop(instance.input_instance_matrix),
-          output_instance_matrix: Matrix.crop(instance.output_instance_matrix),
-        })),
-      })),
-    }),
-    messages: [
-      {
-        role: "assistant",
-        content: `
-          current:
-          ${JSON.stringify({
-            ...train_dataset,
-            declarations: train_dataset.declarations[0],
-            dataset: train_dataset.dataset
-              .filter(({ instances }) => instances)
-              .map(({ instances }) => ({
-                instances: instances
-                  .filter(({ implementation }) => implementation)
-                  .map((instance) => ({
-                    ...instance,
-                    input_matrix: Matrix.crop(instance.input_instance_matrix),
-                    output_matrix: Matrix.crop(instan
+  milestone.evaluating_rules({ instance_name: instance.instance_name });
+
+  const input_value = await evaluate(
+    train_dataset,
+    input_matrix,
+    implementation
+  );
+
+  milestone.instance_constructed({
+    instance_name: instance.instance_name,
+    input_instance_matrix: instance.input_instance_matrix,
+    output_instance_matrix: instance.output_instance_matrix,
+    implementation,
+    input_value,
+  });
+
+  return { implementation, input_value };
+}
+
+// The orientation of a shape turned clockwise by the rotation, as the datasets
+// label orientation by shape: a shape that the turn leaves unchanged, such as a
+// square, keeps its orientation, a shape that a half turn leaves
+// unchanged, such as a bar, counts it modulo 180 degrees, and any other shape
+// counts it modulo 360 degrees.
+function turned_orientation(matrix, orientation: number, rotation: number) {
+  const shape = Matrix.crop(matrix);
+  const unchanged = (degrees: number): boolean =>
+    JSON.stringify(Matrix.rotate(shape, degrees)) === JSON.stringify(shape);
+  if (unchanged(rotation)) {
+    return orientation;
+  }
+
+  const period: number = unchanged(180) ? 180 : 360;
+  return (((orientation + rotation) % period) + period) % period;
+}
+
+// Sets the constructor argument that an implementation gives once as an
+// integer, such as x=5, to the value computed from its old one.
+function set_argument(
+  implementation: string,
+  name: string,
+  value: (old: number) => number,
+  instance_name: string
+): string {
+  const argument = new RegExp(`\\b${name}\\s*=\\s*(-?\\d+)`, "g");
+  const count: number = [...implementation.matchAll(argument)].length;
+  if (count !== 1) {
+    throw new Error(
+      `Implementation of ${instance_name} gives ${name} ${count} times, not once`
+    );
+  }
+
+  return implementation.replace(
+    argument,
+    (_, old: string) => `${name}=${value(Number(old))}`
+  );
+}
+
+// A synthesized instance's implementation, written from its source's without
+// an LLM call: the source's implementation under the instance's name, with the
+// position and size of the instance's input object and the source's
+// orientation turned with it. Every other argument, such as a color, carries
+// over unchanged.
+function synthesized_implementation(source, instance): string {
+  if (!source.implementation.includes(source.instance_name)) {
+   
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1739,261 +1733,439 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d594b14b` (2026-11-15)
-**Commit Message**: Simplify ARC model response formats
+### Incident Patch 1: `2e5f2516` (2026-11-16)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
-Flatten segmentation, implementation, and output matrix responses and update their prompt examples. Log model responses and change the default puzzle to d631b094.
 
-**File**: `arc/src/analyzer.ts` (modified, +10/-16)
+
+---
+
+### Incident Patch 2: `81b89d18` (2026-11-16)
+**Commit Message**: Share ARC object generation logic
+
+Extract orientation and implementation generation into a shared object module used by the analyzer and visualizer. Default LLM calls to puzzle 3aa6fb7a and include all datasets unless specified otherwise.
+
+**File**: `arc/src/analyzer.ts` (modified, +11/-114)
 ```diff
-@@ -43,7 +43,7 @@ export async function instances({
- }) {
-   milestone.segmenting_training_objects();
+@@ -2,6 +2,7 @@ import * as nucleoid from "./lib/nucleoid";
+ import * as llm from "./lib/llm";
+ import * as milestone from "./lib/milestone.ts";
+ import * as Matrix from "./lib/Matrix.ts";
++import object from "./object.ts";
  
--  const { dataset } = await llm.generate({
-+  const { instances } = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
-     messages: [
-@@ -65,21 +65,19 @@ export async function instances({
-           })}
-           json_format:
-           {
--            "dataset": [{
--              "instances": [{
--                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
--                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
--              }]
-+            "instances": [{
-+              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-+              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-             }]
-           }
-         `,
-       },
-     ],
-   });
- 
--  milestone.training_objects_segmented({ instances: dataset[0].instances });
-+  milestone.training_objects_segmented({ instances });
- 
--  return { instances: dataset[0].instances };
-+  return { instances };
+ export async function declarations({
+   puzzle_id,
+@@ -219,125 +220,21 @@ async function evaluate(train_dataset, input_matrix, implementation: string) {
+   );
  }
  
- // Each synthesis turns the extracted instances of a training pair clockwise by
-@@ -269,6 +267,7 @@ export async function value({
-             matrix: Matrix.silhouette(
-               Matrix.crop(instance.input_instance_matrix)
-             ),
-+            orientation: "<ORIENTATION>",
-           })}
-           json_format:
-           {
-@@ -279,7 +278,7 @@ export async function value({
-     ],
+-export async function value({
+-  puzzle_id,
+-  only_puzzle_dataset,
+-  train_dataset,
+-  input_matrix,
+-  instance,
+-}) {
++export async function value({ train_dataset, input_matrix, instance }) {
+   milestone.constructing_instance({ instance_name: instance.instance_name });
+ 
+   const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
+ 
+-  const { orientation } = await llm.generate({
+-    puzzle_id,
+-    only_puzzle_dataset,
+-    few_shot: (train_dataset) =>
+-      train_dataset.dataset
+-        .flat()
+-        .flatMap(({ instances }) => instances)
+-        .map(({ input_instance_matrix, input_value }) => ({
+-          matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+-          orientation: input_value.orientation,
+-        })),
+-    messages: [
+-      {
+-        role: "assistant",
+-        content: `
+-          current:
+-          ${JSON.stringify(
+-            train_dataset.dataset
+-              .flat()
+-              .filter(({ instances }) => instances)
+-              .flatMap(({ instances }) => instances)
+-              .filter(({ input_value }) => input_value)
+-              .map(({ input_instance_matrix, input_value }) => ({
+-                matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+-                orientation: input_value.orientation,
+-              }))
+-          )}
+-        `,
+-      },
+-      {
+-        role: "user",
+-        content: `
+-          query:
+-          ${JSON.stringify({
+-            matrix: Matrix.silhouette(
+-              Matrix.crop(instance.input_instance_matrix)
+-            ),
+-            orientation: "<ORIENTATION>",
+-          })}
+-          json_format:
+-          {
+-            "orientation": <ORIENTATION>,
+-          }
+-        `,
+-      },
+-    ],
+-  });
++  const orientation = await object.orientation({ train_dataset, instance });
+ 
+-  const { implementation } = await llm.generate({
+-    puzzle_id,
+-    only_puzzle_dataset,
+-    few_shot: (train_dataset) => ({
+-      ...train_dataset,
+-      declarations: train_dataset.declarations[0],
+-      dataset: train_dataset.dataset.map(({ instances }) => ({
+-        instances: instances.map((instance) => ({
+-          ...instance,
+-          input_instance_matrix: Matrix.crop(instance.input_instance_matrix),
+-          output_instance_matrix: Matrix.crop(instance.output_instance_matrix),
+-        })),
+-      })),
+-    }),
+-    messages: [
+-      {
+-        role: "assistant",
+-        content: `
+-          current:
+-          ${JSON.stringify({
+-            ...train_dataset,
+-            declarations: train_dataset.declarations[0],
+-            dataset: train_dataset.dataset
+-              .filter(({ instances }) => instances)
+-              .map(({ instances }) => ({
+-                instances: instances
+-                  .filter(({ implementation }) => implementation)
+-                  .map((instance) => ({
+-                    ...instance,
+-                    input_matrix: Matrix.crop(instance.input_instance_matrix),
+-                    output_matrix: Matrix.crop(instance.output_instance_matrix),
+-                  })),
+-              })),
+-          })}
+-        `,
+-      },
+-      {
+-        role: "user",
+-        content: `
+-          query:
+-          ${JSON.stringify({
+-            dataset: [
+-              {
+-                instances: [instance],
+-                implementation: "<IMPLEMENTATION>",
+-              },
+-            ],
+-          })}
+-          input_x: ${x}
+-          input_y: ${y}
+-          input_width: ${width}
+-          input_height: ${height}
+-          orientation: ${orientation}
+-          json_format:
+-          {
+-            "implementation": <IMPLEMENTATION>
+-          }  
+-        `,
+-      },
+-    ],
++  const implementation = await object.implementation({
++    train_dataset,
++    instance,
++    x,
++    y,
++    width,
++    height,
++    orientation,
    });
  
--  const { dataset } = await llm.generate({
-+  const { implementation } = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
-     few_shot: (train_dataset) => ({
-@@ -323,6 +322,7 @@ export async function value({
-             dataset: [
-               {
-                 instances: [instance],
-+                implementation: "<IMPLEMENTATION>",
-               },
-             ],
-           })}
-@@ -333,19 +333,13 @@ export async function value({
-           orientation: ${orientation}
-           json_format:
-           {
--            "dataset": [{
--              "instances": [{
--                "implementation": <IMPLEMENTATION>
--              }]
--            }]
-+            "implementation": <IMPLEMENTATION>
-           }  
-         `,
-       },
-     ],
-   });
- 
--  const implementation = dataset[0].instances[0].implementation;
--
    milestone.evaluating_rules({ instance_name: instance.instance_name });
- 
-   const input_value = await evaluate(
 ```
 
-**File**: `arc/src/app.ts` (modified, +1/-1)
+**File**: `arc/src/lib/llm.ts` (modified, +2/-2)
 ```diff
-@@ -8,7 +8,7 @@ import fs from "node:fs/promises";
+@@ -5,8 +5,8 @@ import * as dataset from "../dataset";
+ import * as openrouter from "./openrouter";
  
- // Genesis puzzle_id: 3aa6fb7a
- export async function start(
--  puzzle_id: string = "3aa6fb7a",
-+  puzzle_id: string = "d631b094",
-   only_puzzle_dataset: boolean = false
- ) {
-   const { arc_train, test_input_matrix, test_output_matrix } =
+ export async function generate({
+-  puzzle_id,
+-  only_puzzle_dataset,
++  puzzle_id = "3aa6fb7a",
++  only_puzzle_dataset = false,
+   reasoning = false,
+   few_shot = (file) => file,
+   messages = [],
 ```
 
-**File**: `arc/src/lib/openrouter.ts` (modified, +1/-0)
+**File**: `arc/src/object.ts` (added, +128/-0)
 ```diff
-@@ -79,6 +79,7 @@ export async function generate({ reasoning = false, messages = [] }) {
-   let jsonContent;
- 
-   try {
-+    console.debug(content);
-     jsonContent = JSON.parse(content);
-   } catch (error) {
-     throw new Error(
-```
-
-**File**: `arc/src/visualizer.ts` (modified, +22/-26)
-```diff
-@@ -11,7 +11,7 @@ export async function instances({
- }) {
-   milestone.segmenting_test_input({ test_input_matrix });
- 
--  const { dataset } = await llm.generate({
-+  let { instances } = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
-     few_shot: null,
-@@ -41,30 +41,34 @@ export async function instances({
-           query:
-           ${JSON.stringify({
-             declarations: train_dataset.declarations[0],
--            dataset: {
--              instance_matrix: test_input_matrix,
--            },
+@@ -0,0 +1,128 @@
++import * as llm from "./lib/llm.ts";
++import * as Matrix from "./lib/Matrix.ts";
++
++async function orientation({ train_dataset, instance }) {
++  const { orientation } = await llm.generate({
++    few_shot: (train_dataset) =>
++      train_dataset.dataset
++        .flat()
++        .flatMap(({ instances }) => instances)
++        .map(({ input_instance_matrix, input_value }) => ({
++          matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
++          orientation: input_value.orientation,
++        })),
++    messages: [
++      {
++        role: "assistant",
++        content: `
++          current:
++          ${JSON.stringify(
++            train_dataset.dataset
++              .flat()
++              .filter(({ instances }) => instances)
++              .flatMap(({ instances }) => instances)
++              .filter(({ input_value }) => input_value)
++              .map(({ input_instance_matrix, input_value }) => ({
++                matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
++                orientation: input_value.orientation,
++              }))
++          )}
++        `,
++      },
++      {
++        role: "user",
++        content: `
++          query:
++          ${JSON.stringify({
++            matrix: Matrix.silhouette(
++              Matrix.crop(instance.input_instance_matrix)
++            ),
++            orientation: "<ORIENTATION>",
++          })}
++          json_format:
++          {
++            "orientation": <ORIENTATION>,
++          }
++        `,
++      },
++    ],
++  });
++
++  return orientation;
++}
++
++async function implementation({
++  few_shot = true,
++  train_dataset,
++  instance,
++  x,
++  y,
++  width,
++  height,
++  orientation,
++}) {
++  const few_shot_function = (train_dataset) => ({
++    ...train_dataset,
++    declarations: train_dataset.declarations[0],
++    dataset: train_dataset.dataset.map(({ instances }) => ({
++      instances: instances.map((instance) => ({
++        ...instance,
++        input_instance_matrix: Matrix.crop(instance.input_instance_matrix),
++        output_instance_matrix: Matrix.crop(instance.output_instance_matrix),
++      })),
++    })),
++  });
++  const { implementation } = await llm.generate({
++    few_shot: few_shot && few_shot_function,
++    messages: [
++      {
++        role: "assistant",
++        content: `
++          current:
++          ${JSON.stringify({
++            ...train_dataset,
++            declarations: train_dataset.declarations[0],
++            dataset: train_dataset.dataset
++              .filter(({ instances }) => instances)
++              .map(({ instances }) => ({
++                instances: instances
++                  .filter(({ implementation }) => implementation)
++                  .map((instance) => ({
++                    ...instance,
++                    input_matrix: Matrix.crop(instance.input_instance_matrix),
++                    output_matrix: Matrix.crop(instance.output_instance_matrix),
++                  })),
++              })),
++          })}
++        `,
++      },
++      {
++        role: "user",
++        content: `
++          query:
++          ${JSON.stringify({
 +            dataset: [
 +              {
-+                instance_matrix: test_input_matrix,
-+                instances: [
-+                  {
-+                    instance_matrix: "<INSTANCE_MATRIX>",
-+                  },
-+                ],
++                instances: [instance],
++                implementation: "<IMPLEMENTATION>",
 +              },
 +            ],
-           })}
-           json_format:
-           {
--            dataset: [{
--              "instances": [{
--                "instance_matrix": <INSTANCE_MATRIX>
--              }]
-+            "instances": [{
-+              "instance_matrix": <INSTANCE_MATRIX>
-             }]
-           }
-         `,
-       },
-     ],
-   });
- 
--  dataset[0].instances = dataset[0].instances.map((instance) => ({
-+  instances = instances.map((instance) => ({
-     ...instance,
-     input_instance_matrix: instance.instance_matrix,
-+    instance_matrix: undefined,
-   }));
- 
--  const instances = dataset[0].instances;
--
-   milestone.test_input_segmented({ instances });
- 
-   return { instances };
-@@ -124,6 +128,7 @@ export async function value({
-             matrix: Matrix.silhouette(
-               Matrix.crop(instance.input_instance_matrix)
-             ),
-+            orientation: "<ORIENTATION>",
-           })}
-           json_format:
-           {
-@@ -134,7 +139,7 @@ export async function value({
-     ],
-   });
- 
--  const { dataset } = await llm.generate({
-+  const { implementation } = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
-     few_shot: null,
-@@ -168,6 +173,7 @@ export async function value({
-             dataset: [
-               {
-                 instances: [instance],
-+                implementation: "<IMPLEMENTATION>",
-               },
-             ],
-           })}
-@@ -178,19 +184,13 @@ export async function value({
-           orientation: ${orientation}
-           json_format:
-           {
--            "dataset": [{
--              "instances": [{
--                "implementation": <IMPLEMENTATION>
--              }]
--            }]
++          })}
++          input_x: ${x}
++          input_y: ${y}
++          input_width: ${width}
++          input_height: ${height}
++          orientation: ${orientation}
++          json_format:
++          {
 +            "implementation": <IMPLEMENTATION>
-           }  
-         `,
-       },
-     ],
++          }  
++        `,
++      },
++    ],
++  });
++
++  return implementation;
++}
++
++export default { orientation, implementation };
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +11/-97)
+```diff
+@@ -2,6 +2,7 @@ import * as nucleoid from "./lib/nucleoid";
+ import * as Matrix from "./lib/Matrix";
+ import * as llm from "./lib/llm";
+ import * as milestone from "./lib/milestone.ts";
++import object from "./object.ts";
+ 
+ export async function instances({
+   puzzle_id,
+@@ -91,104 +92,17 @@ export async function value({
+ 
+   const { x, y, width, height } = Matrix.locate(input_instance_matrix);
+ 
+-  const { orientation } = await llm.generate({
+-    puzzle_id,
+-    only_puzzle_dataset,
+-    few_shot: (train_dataset) =>
+-      train_dataset.dataset
+-        .flat()
+-        .flatMap(({ instances }) => instances)
+-        .map(({ input_instance_matrix, input_value }) => ({
+-          matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+-          orientation: input_value.orientation,
+-        })),
+-    messages: [
+-      {
+-        role: "assistant",
+-        content: `
+-          current:
+-          ${JSON.stringify(
+-            train_dataset.dataset
+-              .flat()
+-              .filter(({ instances }) => instances)
+-              .flatMap(({ instances }) => instances)
+-              .filter(({ input_value }) => input_value)
+-              .map(({ input_instance_matrix, input_value }) => ({
+-                matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+-                orientation: input_value.orientation,
+-              }))
+-          )}
+-        `,
+-      },
+-      {
+-        role: "user",
+-        content: `
+-          query:
+-          ${JSON.stringify({
+-            matrix: Matrix.silhouette(
+-              Matrix.crop(instance.input_instance_matrix)
+-            ),
+-            orientation: "<ORIENTATION>",
+-          })}
+-          json_format:
+-          {
+-            "orientation": <ORIENTATION>,
+-          }
+-        `,
+-      },
+-    ],
+-  });
++  const orientation = await object.orientation({ train_dataset, instance });
+ 
+-  const { implementation } = await llm.generate({
+-    puzzle_id,
+-    only_puzzle_dataset,
+-    few_shot: null,
+-    messages: [
+-      {
+-        role: "assistant",
+-        content: `
+-          current:
+-          ${JSON.stringify({
+-            ...train_dataset,
+-            declarations: train_dataset.declarations[0],
+-            dataset: train_dataset.dataset
+-              .filter(({ instances }) => instances)
+-              .map(({ instances }) => ({
+-                instances: instances
+-                  .filter(({ implementation }) => implementation)
+-                  .map((instance) => ({
+-                    ...instance,
+-                    input_matrix: Matrix.crop(instance.input_instance_matrix),
+-                    output_matrix: Matrix.crop(instance.output_instance_matrix),
+-                  })),
+-              })),
+-          })}
+-        `,
+-      },
+-      {
+-        role: "user",
+-        content: `
+-          query:
+-          ${JSON.stringify({
+-            dataset: [
+-              {
+-                instances: [instance],
+-                implementation: "<IMPLEMENTATION>",
+-              },
+-            ],
+-          })}
+-          input_x: ${x}
+-          input_y: ${y}
+-          input_width: ${width}
+-          input_height: ${height}
+-          orientation: ${orientation}
+-          json_format:
+-          {
+-            "implementation": <IMPLEMENTATION>
+-          }  
+-        `,
+-      },
+-    ],
++  const implementation = await object.implementation({
++    few_shot: false,
++    train_dataset,
++    instance,
++    x,
++    y,
++    width,
++    height,
++    orientation,
    });
  
--  const implementation = dataset[0].instances[0].implementation;
--
    milestone.instance_synthesized({
-     instance_name,
-     input_instance_matrix,
-@@ -225,7 +225,7 @@ export async function output_instance_matrix({
- 
-   milestone.composing_output({ instance_name: instance.instance_name });
- 
--  const { dataset } = await llm.generate({
-+  const { output_instance_matrix } = await llm.generate({
-     puzzle_id,
-     only_puzzle_dataset,
-     few_shot: null,
-@@ -263,25 +263,21 @@ export async function output_instance_matrix({
-                     input_instance_matrix: Matrix.crop(
-                       instance.input_instance_matrix
-                     ),
-+                    output_instance_matrix: "<OUTPUT_INSTANCE_MATRIX>",
-                   },
-                 ],
-               },
-             ],
-           })}
-           json_format:
-           {
--            "dataset": [{
--              "instances": [{
--                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
--              }]
--            }]
-+            "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-           }
-         `,
-       },
-     ],
-   });
- 
--  const output_instance_matrix = dataset[0].instances[0].output_instance_matrix;
-   instance.output_instance_matrix = output_instance_matrix;
- 
-   milestone.output_composed(instance);
 ```
 
 #### Recent Merged Pull Requests:
@@ -2022,13 +2194,13 @@ Flatten segmentation, implementation, and output matrix responses and update the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Simplify ARC model response formats
+## X. Share ARC object generation logic
 
 **RULE**:
 When implementing operations in `arc/src/analyzer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d594b14b`: Simplify ARC model response formats. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `81b89d18`: Share ARC object generation logic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/analyzer.ts`.
@@ -2036,41 +2208,68 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  const { instances } = await llm.generate({
-            "instances": [{
-              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-  milestone.training_objects_segmented({ instances });
-  return { instances };
-            orientation: "<ORIENTATION>",
-  const { implementation } = await llm.generate({
-                implementation: "<IMPLEMENTATION>",
-            "implementation": <IMPLEMENTATION>
+import object from "./object.ts";
+export async function value({ train_dataset, input_matrix, instance }) {
+  const orientation = await object.orientation({ train_dataset, instance });
+  const implementation = await object.implementation({
+    train_dataset,
+    instance,
+    x,
+    y,
+    width,
+    height,
+    orientation,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  const { dataset } = await llm.generate({
-            "dataset": [{
-              "instances": [{
-                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-              }]
-  milestone.training_objects_segmented({ instances: dataset[0].instances });
-  return { instances: dataset[0].instances };
-  const { dataset } = await llm.generate({
-            "dataset": [{
-              "instances": [{
-                "implementation": <IMPLEMENTATION>
-              }]
-            }]
-  const implementation = dataset[0].instances[0].implementation;
+export async function value({
+  puzzle_id,
+  only_puzzle_dataset,
+  train_dataset,
+  input_matrix,
+  instance,
+}) {
+  const { orientation } = await llm.generate({
+    puzzle_id,
+    only_puzzle_dataset,
+    few_shot: (train_dataset) =>
+      train_dataset.dataset
+        .flat()
+        .flatMap(({ instances }) => instances)
+        .map(({ input_instance_matrix, input_value }) => ({
+          matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+          orientation: input_value.orientation,
+        })),
+    messages: [
+      {
+        role: "assistant",
+        content: `
+          current:
+          ${JSON.stringify(
+            train_dataset.dataset
+              .flat()
+              .filter(({ instances }) => instances)
+              .flatMap(({ instances }) => instances)
+              .filter(({ input_value }) => input_value)
+              .map(({ input_instance_matrix, input_value }) => ({
+                matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+                orientation: input_value.orientation,
+              }))
+          )}
+        `,
+      },
+      {
+        role: "user",
+        content: `
+          query:
+          ${JSON.stringify({
 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d594b14b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `81b89d18` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
