@@ -4,22 +4,22 @@
 {
   "source_repository": "topoteretes/cognee",
   "source_url": "https://github.com/topoteretes/cognee",
-  "source_version": "4053f6cc",
+  "source_version": "5870f15d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T18:34:59.976Z",
+  "timestamp": "2026-11-16T15:10:08.678Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-topoteretes-cognee",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `4053f6cc`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T18:34:59.976Z`  
+> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `5870f15d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T15:10:08.678Z`  
 > **Learning ID**: `learn-github-topoteretes-cognee`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `topoteretes/cognee` (Commit: `4053f6cc`)
+- **Target Repository**: `topoteretes/cognee` (Commit: `5870f15d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:34:59.086Z  
+> **Harvest Timestamp**: 2026-11-16T15:10:07.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33293 stars
+- **Stars / Engagement**: 33347 stars
 
 ---
 
@@ -1536,699 +1536,1008 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc10f9f3` (2026-11-12)
-**Commit Message**: fix(update): Remove stored files no document points at (SDK-1541) (#6674)
-
-Stacked on #6667, which is stacked on #5350. #6667 now has `dev` merged
-in, so these two commits sit on current `dev` plus the ledger changes.
-It was first opened against `dev`, where the full CI ran on the same two
-commits.
-
-`forget()` removes the files a `Data` row points at. A stored file that
-no row points at stays under the data root for good, with the content of
-a document the user updated or deleted. This PR removes those files at
-the points where they lose their row.
-
-## What was left behind on `dev`
-
-Files under the data root after `forget()` (mock LLM, one document):
-
-| Input | Two chunk-level updates | Two full rebuilds | Unchanged update
-| Failed update |
-|---|---|---|---|---|
-| Raw text | 2 | 0 | 0 | 1 |
-| Upload | 4 | 2 | 1 | 2 |
-| File path | 2 | 2 | not run | not run |
-
-With this PR every cell is 0. Re-adding the same upload under another
-filename also leaves 1 file, on `dev` and still here; see below.
-
-## Causes and fixes
-
-- **Chunk-level update.** It pointed the row at the new files and never
-removed the ones it pointed at, so every update kept the previous
-version on disk. `_run_incrementa
-
-**File**: `.env.template` (modified, +18/-2)
-```diff
-@@ -803,9 +803,25 @@ WEB_SCRAPER_MAX_DELAY=10.0
- # Which pipeline run / task wrote each graph node, stamped as source_* fields
- # on the node itself. lightweight (default) | deep | disabled.
- #COGNEE_PROVENANCE_MODE=lightweight
--# Audit ledger: append-only, hash-chained provenance_entries table written by
--# an opt-in cognify task. For compliance/lineage history, not retrieval.
-+# Audit ledger: append-only, hash-chained provenance_entries table with one
-+# row per data item (ids and the content hash, nothing the item produced). It
-+# is written at the add_data_points storage seam, gets a new version when an
-+# update changes the content, and a tombstone when the item is deleted
-+# (written once its row is gone; dropping only its memory writes none). For
-+# compliance history, not retrieval. With it on, a ledger write that fails
-+# fails the ingestion, the update or the delete. With it off (the default)
-+# the ledger is neither written nor read: deletes do not touch it, and the
-+# routes and CLI below answer that it is off. Read it with
-+# `cognee-cli provenance ...` or /api/v1/provenance.
- #PROVENANCE_TRACKING=false
-+# External anchoring of the ledger's hash chain. With a key set,
-+# `cognee-cli provenance anchor` (or POST /api/v1/provenance/anchor) signs the
-+# chain head with HMAC-SHA256 and appends it to the anchor file; `provenance
-+# verify --anchors` then detects a ledger that was rewritten AND re-chained.
-+# Keep the key out of the database host; point the path somewhere it cannot
-+# write. Default path: {SYSTEM_ROOT_DIRECTORY}/provenance_anchors.jsonl
-+#PROVENANCE_ANCHOR_KEY=
-+#PROVENANCE_ANCHOR_PATH=
- # Edge evidence: which document chunk supports each graph edge, stored in
- # provenance_edge_evidence and returned as citations when include_references
- # is on. Captured only for edges extracted from document chunks.
-```
-
-**File**: `CLAUDE.md` (modified, +6/-3)
-```diff
-@@ -276,7 +276,7 @@ The stages below are the Low level operations these call underneath.
- #### ADD: Data Ingestion
- `add()` → `resolve_data_directories` → `ingest_data` → `save_data_item_to_storage` → Create Dataset + Data records in relational DB
- 
--Re-adding a document that already exists (same `data_id`, through `add()`, `remember()` or `update()`'s full rebuild) follows the PATCH rule described under UPDATE below: `node_set` and a `DataItem`'s `label`, `external_metadata` and `node_set` keep their stored values when not passed, clear on an explicit empty value, and are replaced by a value. Content-derived metadata always refreshes; `_cognee.source_uri` takes the new content's location, and new content without one (an upload, raw text) drops the old one. Connector document rows state their full node sets, so a row with none reports `[]` and clears the stored ones on re-sync.
-+Re-adding a document that already exists (same `data_id`, through `add()`, `remember()` or `update()`'s full rebuild) follows the PATCH rule described under UPDATE below: `node_set` and a `DataItem`'s `label`, `external_metadata` and `node_set` keep their stored values when not passed, clear on an explicit empty value, and are replaced by a value. Content-derived metadata always refreshes; `_cognee.source_uri` takes the new content's location, and new content without one (an upload, raw text) drops the old one. Connector document rows state their full node sets, so a row with none reports `[]` and clears the stored ones on re-sync. A re-ingested row that points at new stored files releases the ones it pointed at, the original and the text derived from it: `forget()` removes the files a row points at, so a file no row points at would otherwise stay on disk.
- 
- Key files: `cognee/api/v1/add/add.py`, `cognee/tasks/ingestion/ingest_data.py`
- 
-@@ -299,7 +299,7 @@ A document-mode row (Notion today) may carry a `cognee_structure` json column, `
- A stored connection syncs on a schedule when a sync policy covers it (`cognee/modules/integrations/sync_policy/`, worker opt-in with `INTEGRATIONS_SYNC_SCHEDULER_ENABLED`). Run the API that enables it as one process per database: a slot starts once across processes, but two runs of one connection are kept apart only in-process (`ingestion.exclusive_sync`), so more processes can run a connection twice over one dlt working directory and cursor. Full guide: `docs/integration-sync-schedule.md`.
- 
- #### UPDATE: Chunk-Level Incremental Updates
--`update(data_id, data, dataset_id)` diffs the new content against the stored processed text (`Data.raw_data_location`) and replaces only the chunks the edits touched: a paragraph-anchored multi-region diff (near-linear for any change shape, including repeated-line-heavy content) finds every disjoint changed span (so edits at the top, middle, and end of a document are three small regions, not one giant one), each span is expanded to chunk boundaries and re-chunked with the standard TextChunker (same boundary semantics as pipeline chunks, cut against the token budget recorded on the chunks it replaces — every chunk stores `max_chunk_tokens`, so documents stay self-consistent across config changes; legacy chunks without the field fall back to the current config; only a region's last chunk may be under-filled), replaced chunks (plus their summaries, chunk-orphaned entities, and legacy triplet embeddings) are deleted, and only the new chunks run through LLM extraction. Chunks between regions are kept without being re-chunked, so their boundaries and ids cannot drift. Unaffected chunks keep their node ids, entities, summaries, and embeddings; surviving chunks are renumbered so `chunk_index` stays contiguous. Chunk identity is content-derived (`uuid5(doc : sha256(text) : occurrence)`, see `cognee/modules/chunking/chunk_id.py`), so unchanged content keeps its identity across edits. Both incremental and full fallback paths preserve `data_id`.
-+`update(data_id, data, dataset_id)` diffs the new content against the stored processed text (`Data.raw_data_location`) and replaces only the chunks the edits touched: a paragraph-anchored multi-region diff (near-linear for any change shape, including repeated-line-heavy content) finds every disjoint changed span (so edits at the top, middle, and end of a document are three small regions, not one giant one), each span is expanded to chunk boundaries and re-chunked with the standard TextChunker (same boundary semantics as pipeline chunks, cut against the token budget recorded on the chunks it replaces — every chunk stores `max_chunk_tokens`, so documents stay self-consistent across config changes; legacy chunks without the field fall back to the current config; only a region's last chunk may be under-filled), replaced chunks (plus their summaries, chunk-orphaned entities, and legacy triplet embeddings) are deleted, and only the new chunks run through LLM extraction. Chunks between regions are kept without being re-chunked, so their bou
-```
-
-**File**: `cognee/api/client.py` (modified, +3/-0)
-```diff
-@@ -45,6 +45,7 @@
- from cognee.api.v1.ontologies.routers.get_ontology_router import get_ontology_router
- from cognee.api.v1.permissions.routers import get_permissions_router
- from cognee.api.v1.proposals.routers import get_proposals_router
-+from cognee.api.v1.provenance.routers import get_provenance_router
- from cognee.api.v1.recall.routers import get_recall_router
- from cognee.api.v1.remember.routers import get_remember_router
- from cognee.api.v1.responses.routers import get_responses_router
-@@ -425,6 +426,8 @@ async def exception_handler(request: Request, exc: CogneeApiError) -> JSONRespon
- 
- app.include_router(get_schema_router(), prefix="/api/v1/schema", tags=["schema"])
- 
-+app.include_router(get_provenance_router(), prefix="/api/v1/provenance", tags=["provenance"])
-+
- app.include_router(get_skills_router(), prefix="/api/v1/skills", tags=["skills"])
- app.include_router(get_proposals_router(), prefix="/api/v1/proposals", tags=["skills"])
- 
-```
-
-**File**: `cognee/api/v1/cognify/cognify.py` (modified, +2/-7)
-```diff
-@@ -54,7 +54,6 @@
- )
- from cognee.tasks.graph.extract_graph_and_summarize import extract_graph_and_summarize
- from cognee.tasks.ingestion.document_structure import reconcile_document_structure
--from cognee.tasks.provenance import record_provenance
- from cognee.tasks.storage import add_data_points, find_indexed_chunks, index_chunks_for_search
- 
- logger = get_logger("cognify")
-@@ -692,7 +691,6 @@ async def get_default_tasks(  # TODO: Find out a better way to do this (Boris's
- ) -> list[Task]:
-     cognify_config = get_cognify_config()
-     summary_method = summary_method or cognify_config.summary_method
--    track_provenance = cognify_config.provenance_tracking
-     if early_chunk_indexing is None:
-         early_chunk_indexing = cognify_config.early_chunk_indexing
-     chunks_per_batch = resolve_chunks_per_batch(chunks_per_batch)
-@@ -734,11 +732,8 @@ async def get_default_tasks(  # TODO: Find out a better way to do this (Boris's
-             needs_llm=False,
-         ),
-     ]
--
--    if track_provenance:
--        tasks.append(
--            Task(record_provenance, task_config={"batch_size": chunks_per_batch}, needs_llm=False)
--        )
-+    # The audit ledger (PROVENANCE_TRACKING) is not a task here: add_data_points
-+    # records it at the storage seam, so every writer is covered, not just cognify.
- 
-     return tasks
- 
-```
-
-**File**: `cognee/api/v1/datasets/datasets.py` (modified, +22/-4)
-```diff
-@@ -31,6 +31,7 @@
-     get_pipeline_progress,
-     get_pipeline_status,
- )
-+from cognee.modules.provenance.tombstones import tombstone_data_item, tombstone_dataset
- from cognee.modules.users.exceptions import PermissionDeniedError
- from cognee.modules.users.methods import get_default_user
- from cognee.modules.users.models import User
-@@ -125,12 +126,12 @@ async def _retire_forgotten_decisions(
-     )
- 
- 
--async def _delete_dataset_if_empty(dataset, requested: bool) -> bool:
-+async def _delete_dataset_if_empty(dataset, requested: bool, user: User) -> bool:
-     """Drop ``dataset`` when the caller asked for it and no Data row is left.
- 
-     One count query, never a listing: the receipt only needs to know whether
-     the dataset went away. As in ``empty_dataset``, the dataset's search
--    history goes first, then the dataset.
-+    history goes first, then the dataset, then its audit-ledger tombstones.
-     """
-     if not requested or await has_dataset_data(dataset.id):
-         return False
-@@ -139,6 +140,7 @@ async def _delete_dataset_if_empty(dataset, requested: bool) -> bool:
- 
-     await delete_dataset_search_history(dataset.id)
-     await delete_dataset(dataset)
-+    await tombstone_dataset(dataset.id, user=user)
-     return True
- 
- 
-@@ -451,6 +453,11 @@ async def empty_dataset(dataset_id: UUID, user: User | None = None):
-             # (files refcounted by raw_data_location) with the record.
-             result = await delete_dataset(dataset)
- 
-+            # Last, once the rows are gone: the audit ledger retracts every
-+            # data item of the dataset (a no-op unless PROVENANCE_TRACKING
-+            # recorded them). It raises when the tombstones cannot be written.
-+            await tombstone_dataset(dataset.id, user=user)
-+
-         return result
- 
-     @staticmethod
-@@ -543,8 +550,13 @@ async def delete_data(
-                             await _invalidate_sessions_for_deleted_data_nonfatal(
-                                 dataset.id, invalidated, user.id
-                             )
-+                        # No Data row, so the document is gone. A ledger row
-+                        # still live for the id (a delete whose tombstone
-+                        # could not be written, or an id that only ever owned
-+                        # graph elements) is retracted here.
-+                        await tombstone_data_item(dataset_id, data_id, user=user)
-                         dataset_deleted = await _delete_dataset_if_empty(
--                            dataset, delete_dataset_if_empty
-+                            dataset, delete_dataset_if_empty, user
-                         )
- 
-                     return _delete_data_receipt(
-@@ -601,9 +613,15 @@ async def delete_data(
-                     # the delete must never come back as a success receipt.
-                     if await has_data(dataset.id, data_id):
-                         raise DataDeletionIncompleteError(data_id, dataset.id)
-+                    # The row is checked to be gone, so the audit ledger can
-+                    # say so (a no-op unless PROVENANCE_TRACKING recorded the
-+                    # item). Written last: a delete that failed above leaves
-+                    # the ledger row live. It raises when it cannot be written,
-+                    # and deleting the same id again writes it.
-+                    await tombstone_data_item(dataset_id, data_id, user=user)
-                     # Search history first, then the dataset (see the helper).
-                     dataset_deleted = await _delete_dataset_if_empty(
--                        dataset, delete_dataset_if_empty
-+                        dataset, delete_dataset_if_empty, user
-                     )
- 
-                 # A dataset's code repositories are extracted together, so the
-```
-
-**File**: `cognee/api/v1/provenance/routers/__init__.py` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+from .get_provenance_router import get_provenance_router
-+
-+__all__ = ["get_provenance_router"]
-```
-
-**File**: `cognee/api/v1/provenance/routers/get_provenance_router.py` (added, +201/-0)
-```diff
-@@ -0,0 +1,201 @@
-+"""Read surface of the audit-grade provenance ledger.
-+
-+Every endpoint is read-only — the ledger is written by ingestion and by the
-+delete paths (tombstones), never through HTTP. Access control follows the
-+dataset namespace baked into every ledger key
-+(``{dataset_id}:data_item:{data_id}``): a per-entity lookup is allowed when the caller can
-+read the dataset the key belongs to, and the ledger-wide walks (verify,
-+statistics, export) require a ``dataset_id`` unless the caller is a
-+superuser. Keys without a dataset prefix (custom pipelines that bypass the
-+writer's namespacing) are superuser-only for the same reason. The rule itself
-+lives in ``cognee.modules.provenance.access`` and is shared with the CLI.
-+
-+The ledger is off by default (``PROVENANCE_TRACKING``). While it is off every
-+route but ``/status`` answers 409 with that reason, instead of reading a
-+ledger nobody is writing: "valid, 0 rows" would look like a verified ledger.
-+"""
-+
-+import json
-+from collections.abc import Awaitable
-+from typing import Any
-+from uuid import UUID
-+
-+from fastapi import APIRouter, Depends, HTTPException, Query
-+from fastapi import Path as PathParam
-+from fastapi.responses import JSONResponse, StreamingResponse
-+
-+from cognee.modules.provenance import get_provenance_manager
-+from cognee.modules.provenance.access import (
-+    authorize_anchoring,
-+    authorize_ledger_key,
-+    authorize_ledger_scope,
-+)
-+from cognee.modules.provenance.tracking import (
-+    ProvenanceTrackingDisabledError,
-+    provenance_tracking_enabled,
-+    require_provenance_tracking,
-+)
-+from cognee.modules.users.exceptions import PermissionDeniedError
-+from cognee.modules.users.methods import get_authenticated_user
-+from cognee.modules.users.models import User
-+from cognee.shared.logging_utils import get_logger
-+from cognee.shared.usage_logger import log_usage
-+
-+logger = get_logger()
-+
-+
-+async def _authorize(check: Awaitable[None]) -> None:
-+    """Run one ledger access check (``cognee.modules.provenance.access``); a denial is a 403."""
-+    try:
-+        await check
-+    except PermissionDeniedError as error:
-+        raise HTTPException(status_code=403, detail=error.message) from error
-+
-+
-+def _require_ledger_on() -> None:
-+    """Answer 409 with the reason while the ledger is off (see the module docstring)."""
-+    try:
-+        require_provenance_tracking()
-+    except ProvenanceTrackingDisabledError as error:
-+        raise HTTPException(status_code=409, detail=str(error)) from error
-+
-+
-+def get_provenance_router() -> APIRouter:
-+    router = APIRouter(
-+        responses={
-+            409: {
-+                "description": "The audit ledger is off: set `PROVENANCE_TRACKING=true` "
-+                "(it is off by default). On the anchor routes, also returned when "
-+                "anchoring is not configured."
-+            }
-+        }
-+    )
-+
-+    @router.get("/entry/{entity_id:path}", summary="Current ledger row of one entity")
-+    @log_usage(function_name="GET /v1/provenance/entry", log_type="api_endpoint")
-+    async def get_entry(
-+        entity_id: str = PathParam(
-+            ..., description="Ledger key, e.g. `{dataset_id}:data_item:{data_id}`"
-+        ),
-+        user: User = Depends(get_authenticated_user),
-+    ) -> dict[str, Any]:
-+        """The live row (or current tombstone) for a ledger key; 404 if never tracked."""
-+        _require_ledger_on()
-+        await _authorize(authorize_ledger_key(user, entity_id))
-+        entry = await get_provenance_manager().get_provenance(entity_id)
-+        if entry is None:
-+            raise HTTPException(status_code=404, detail="Entity is not in the ledger.")
-+        return entry
-+
-+    @router.get("/history/{entity_id:path}", summary="Version history of one entity")
-+    @log_usage(function_name="GET /v1/provenance/history", log_type="api_endpoint")
-+    async def get_history(
-+        entity_id: str = PathParam(..., description="Ledger key"),
-+        user: User = Depends(get_authenticated_user),
-+    ) -> list[dict[str, Any]]:
-+        """Oldest-first versions; tombstone versions carry `invalidated_by` /
-+        `invalidation_reason`, so a row reads "asserted by A, retracted by B"."""
-+        _require_ledger_on()
-+        await _authorize(authorize_ledger_key(user, entity_id))
-+        history = await get_provenance_manager().revision_history(entity_id)
-+        if not history:
-+            raise HTTPException(status_code=404, detail="Entity is not in the ledger.")
-+        return history
-+
-+    @router.get("/verify", summary="Verify checksums and the hash chain")
-+    @log_usage(function_name="GET /v1/provenance/verify", log_type="api_endpoint")
-+    async def verify(
-+        dataset_id: UUID | None = Query(default=None),
-+        user: User = Depends(get_authenticated_user),
-+    ) -> dict[str, Any]:
-+        """Tamper evidence. Without `dataset_id` (superusers) the whole chain is
-+        walked; with it, each of the dataset's rows is checked
-```
-
-**File**: `cognee/api/v1/update/incremental.py` (modified, +225/-121)
-```diff
-@@ -58,6 +58,7 @@
- from cognee.infrastructure.databases.provenance import make_chunk_source_ref_key
- from cognee.infrastructure.databases.provenance.markers import stores_provenance_in_graph
- from cognee.infrastructure.databases.vector import get_vector_engine_async
-+from cognee.infrastructure.files.stored_file_claims import holding_stored_files
- from cognee.infrastructure.files.utils.get_data_file_path import get_data_file_path
- from cognee.infrastructure.files.utils.open_data_file import open_data_file
- from cognee.infrastructure.llm.utils import get_max_chunk_tokens
-@@ -89,6 +90,7 @@
-     publish_updated_data,
- )
- from cognee.modules.data.methods.get_dataset_data import get_dataset_data
-+from cognee.modules.data.methods.remove_unreferenced_files import remove_unreferenced_files
- from cognee.modules.data.models import Data
- from cognee.modules.data.processing.document_types.Document import Document
- from cognee.modules.engine.utils.temporal_hints import document_temporal_hints
-@@ -122,6 +124,7 @@
- from cognee.tasks.ingestion.data_item import DataItem
- from cognee.tasks.ingestion.data_item_to_text_file import data_item_to_text_file
- from cognee.tasks.ingestion.save_data_item_to_storage import save_data_item_to_storage
-+from cognee.tasks.provenance.record_provenance import record_data_item_content
- from cognee.tasks.storage.add_data_points import add_data_points
- 
- logger = get_logger("incremental_update")
-@@ -532,6 +535,31 @@ async def _restore_repositioned_chunks(chunks: list[DocumentChunk], _context) ->
-     )
- 
- 
-+UPDATE_APPLIED = "The update was applied: the document holds its new content."
-+UPDATE_NOT_APPLIED = "The update was not applied: the document keeps its previous content."
-+
-+
-+async def _remove_unreferenced_files(*versions: Data | StagedContent, update_applied: bool) -> None:
-+    """Remove the stored files of ``versions`` that no ``Data`` row points at.
-+
-+    A version is a row as it was, or content that was staged: both name a
-+    processed text file and an original (see ``remove_unreferenced_files``).
-+
-+    A file that cannot be removed raises ``StoredFileNotRemovedError``, and no
-+    caller catches it: a stored file cognee cannot delete is never an
-+    acceptable outcome. ``update_applied`` is what that error tells the caller
-+    first, because by then the update may already be in effect.
-+    """
-+    await remove_unreferenced_files(
-+        [
-+            location
-+            for version in versions
-+            for location in (version.raw_data_location, version.original_data_location)
-+        ],
-+        UPDATE_APPLIED if update_applied else UPDATE_NOT_APPLIED,
-+    )
-+
-+
- async def _stage_new_content(data, preferred_loaders) -> StagedContent:
-     """Run the input through ingestion's loader machinery without row writes.
- 
-@@ -766,20 +794,41 @@ async def incremental_update(
-                 "the selected graph does not store ownership provenance in-graph",
-                 RefusalReason.UNSUPPORTED_BACKEND,
-             )
--        return await _run_incremental_update(
--            data_id,
--            data,
--            dataset,
--            user,
--            old_data,
--            node_set,
--            preferred_loaders,
--            graph_model,
--            custom_prompt,
--            chunker,
--            policy,
--            extractor,
--        )
-+        # The staged files are stored long before the row points at them (the
-+        # publish comes after extraction): claimed until the update is over, so
-+        # no removal in another dataset takes them. The update's own cleanup
-+        # still removes the ones it did not use.
-+        async with holding_stored_files():
-+            return await _run_incremental_update(
-+                data_id,
-+                data,
-+                dataset,
-+                user,
-+                old_data,
-+                node_set,
-+                preferred_loaders,
-+                graph_model,
-+                custom_prompt,
-+                chunker,
-+                policy,
-+                extractor,
-+            )
-+
-+
-+async def _record_content_in_ledger(
-+    content_hash: str, bundle: dict, dataset, user: User, pipeline_run_id: UUID | None = None
-+) -> None:
-+    """Tell the audit ledger which content the document holds (a no-op when it is off)."""
-+    await record_data_item_content(
-+        PipelineContext(
-+            user=user,
-+            data_item=bundle["data_item"],
-+            dataset=dataset,
-+            pipeline_run_id=pipeline_run_id,
-+            pipeline_name=PIPELINE_NAME,
-+        ),
-+        content_hash,
-+    )
- 
- 
- async def _run_incremental_update(
-@@ -806,59 +855,101 @@ async def _run_incremental_update(
-     bundle = await _stage_and_plan(
-         data_id, data, dataset, user, node_set, preferred_loaders, chunker, policy
-     )
--
--    # A no-op with nothing to repair is the only path that writes nothing, and
--    # so the only one that records no run.
--    if bundle.get("status") == "unchanged
-```
-
----
-
-### Incident Patch 2: `eab0d282` (2026-11-12)
-**Commit Message**: fix(update): Remove released files 16 at a time
-
-The previous commit started every removal at once. A re-sync that changes
-5,000 documents releases about 10,000 files, and their storage calls all
-queue on the process's shared thread pool: measured on a local S3 server
-with 30 ms added per call, a no-op submitted to that pool by another
-request waited up to 38 s while the release ran. On local storage the
-removals never wait, so the event loop ran all of them in one go and
-stalled for 1.5 s (the one-after-another loop before it did the same).
-
-The removals now run in slices of 16. Nothing queues behind them on the
-thread pool (0.00 s wait in the same measurement), and awaiting each
-slice gives the event loop its turn (0.02 s longest stall on local
-storage). The 10,000 files take 80 s on S3 instead of 60 s all at once.
-The width only spaces the work out: every file is still removed, and
-every failure still reported.
-
-**File**: `cognee/modules/data/methods/remove_unreferenced_files.py` (modified, +21/-6)
-```diff
-@@ -11,16 +11,23 @@
- 
- logger = get_logger("remove_unreferenced_files")
- 
-+# How many removals run at once. Their storage calls run on the process's shared
-+# thread pool, and local storage does them on the event loop itself, so the
-+# files of a large re-sync started all together make every other request in the
-+# worker wait behind them. A width, not a cutoff: every file is still removed.
-+_REMOVALS_AT_ONCE = 16
-+
- 
- async def remove_unreferenced_files(locations: Iterable[str | None], outcome: str) -> None:
-     """Remove each stored file in ``locations`` that no ``Data`` row points at.
- 
-     For the files a document leaves behind when its row moves on, or that were
-     staged for a row that never took them. A file a row still uses stays, and
-     so does a file outside the data root (the user's own). The references of
--    all the files are read in one query, and the removals run at the same
--    time: each is a few storage round trips, and a re-sync can release two
--    files per changed document while it holds the dataset lock.
-+    all the files are read in one query, and the removals run
-+    ``_REMOVALS_AT_ONCE`` at a time: each is a few storage round trips, and a
-+    re-sync can release two files per changed document while it holds the
-+    dataset lock.
- 
-     Every file is tried. The ones that could not be removed are then raised
-     together as one ``StoredFileNotRemovedError``, each with its own error, and
-@@ -46,9 +53,17 @@ async def remove_unreferenced_files(locations: Iterable[str | None], outcome: st
-         raise StoredFileNotRemovedError(dict.fromkeys(candidates, reason), outcome) from error
- 
-     unreferenced = [location for location in candidates if location not in referenced]
--    errors = await asyncio.gather(
--        *(_remove_data_file(db_engine, location) for location in unreferenced)
--    )
-+    errors: list[Exception | None] = []
-+    # One slice after another, not a sliding window: awaiting each slice is what
-+    # gives the event loop its turn when the removals themselves never wait
-+    # (local storage).
-+    for start in range(0, len(unreferenced), _REMOVALS_AT_ONCE):
-+        errors += await asyncio.gather(
-+            *(
-+                _remove_data_file(db_engine, location)
-+                for location in unreferenced[start : start + _REMOVALS_AT_ONCE]
-+            )
-+        )
-     not_removed = {
-         location: f"{type(error).__name__}: {error}"
-         for location, error in zip(unreferenced, errors)
-```
-
-**File**: `cognee/tests/unit/modules/data/test_remove_unreferenced_files.py` (modified, +50/-0)
-```diff
-@@ -89,6 +89,56 @@ async def remove_data_file(location):
-     assert most_in_flight == 3
- 
- 
-+@pytest.mark.asyncio
-+async def test_a_large_release_runs_a_few_at_a_time_and_removes_every_file(monkeypatch):
-+    engine = _engine(monkeypatch)
-+    monkeypatch.setattr(removal, "_REMOVALS_AT_ONCE", 4)
-+    in_flight = 0
-+    most_in_flight = 0
-+
-+    async def remove_data_file(location):
-+        nonlocal in_flight, most_in_flight
-+        in_flight += 1
-+        most_in_flight = max(most_in_flight, in_flight)
-+        await asyncio.sleep(0)
-+        in_flight -= 1
-+        engine.removed.append(location)
-+
-+    engine.remove_data_file = remove_data_file
-+    locations = [f"/data/{index}" for index in range(10)]
-+
-+    await removal.remove_unreferenced_files(locations, OUTCOME)
-+
-+    # Never more than the width in flight, and the width drops no file.
-+    assert most_in_flight == 4
-+    assert engine.removed == locations
-+
-+
-+@pytest.mark.asyncio
-+async def test_removals_that_never_wait_still_give_other_work_its_turn(monkeypatch):
-+    """Local storage removes a file without awaiting anything."""
-+    engine = _engine(monkeypatch)
-+    monkeypatch.setattr(removal, "_REMOVALS_AT_ONCE", 4)
-+    turns = 0
-+
-+    async def other_request():
-+        nonlocal turns
-+        while True:
-+            turns += 1
-+            await asyncio.sleep(0)
-+
-+    other = asyncio.create_task(other_request())
-+    try:
-+        await removal.remove_unreferenced_files([f"/data/{index}" for index in range(40)], OUTCOME)
-+    finally:
-+        other.cancel()
-+
-+    # Ten slices of four: the other request runs between them, not only once the
-+    # last file is gone.
-+    assert len(engine.removed) == 40
-+    assert turns >= 10
-+
-+
- @pytest.mark.asyncio
- async def test_a_reference_check_that_fails_reports_every_file(monkeypatch):
-     engine = _engine(monkeypatch)
-```
-
----
-
-### Incident Patch 3: `44e9180f` (2026-11-12)
-**Commit Message**: fix(ci): Run weekly proposals without a shell (SDK-1548) (#6695)
+### Incident Patch 1: `5870f15d` (2026-11-16)
+**Commit Message**: feat(hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489) (#6650)
 
 <!-- .github/pull_request_template.md -->
 
 ## Description
 
-The weekly ticket proposals workflow runs Claude Code over a digest of
-docs-assistant chats. That digest is text typed by anonymous users, so
-the Claude steps should not be able to run commands or change what the
-job runs next.
+Moves the Hermes Agent memory plugin (`cognee-integration-hermes-agent`)
+from topoteretes/cognee-integrations into
+`cognee-integrations/integrations/hermes-agent`, the first of the agent
+plugins to move into this repository. The shared conformance case tables
+come along as `cognee-integrations/integrations/conformance/`.
 
-- Both Claude steps (Variant A and Variant B) drop
-`--dangerously-skip-permissions` and run with `--restricted`, `--tools
-"Read,Grep,Glob,Write"`, `--allowedTools
-"Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)"` and
-`--permission-prompts none`. Claude has no shell and no web access,
-reads only inside the checkout, and can write only its two output files.
-- The write limit matters because the next step runs
-`scripts/weekly_tickets/issue_body.py` from the same checkout. With a
-general write permission Claude could have changed that script.
-- The Variant B install line names only `cognee`. `cognee-cli` is a
-command of that package, not a package of its own.
+- **Code:** the plugin is the released `hermes-agent-v1.4.3`
+(cognee-integrations@3b2a19b6), byte for byte, except the README (new
+location and release flow), a CHANGELOG note and preamble, `[tool.uv]`
+in its pyproject plus the re-lock, the conformance README's "Copy" note
+and a header comment in `cognee-integrations/pyproject.toml`. Neither
+the cognee sdist nor the wheel includes `cognee-integrations/`.
+- **CI:** `test_integrations.yml` finds plugins by their folders, so a
+moved plugin needs no workflow edit. On a PR it lints, lock-checks and
+tests the changed plugins, and `integrations-tests` is its gate job.
+When dispatched with `live`, it runs each plugin's live round trip
+against a real cognee server and LLM. That tier 
 
-This targets `main` because the weekly schedule runs the copy of the
-workflow on the default branch. It needs a back-merge to `dev`.
-
-Linear: SDK-1548
-
-## Accepta
-
-**File**: `.github/workflows/weekly-ticket-proposals.yml` (modified, +16/-3)
+**File**: `.github/workflows/nightly_scheduler.yml` (modified, +75/-0)
 ```diff
-@@ -60,9 +60,15 @@ jobs:
-       - name: Analyze and propose tickets
-         env:
-           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-+        # digest.md is text typed by anonymous docs users: Claude gets no shell
-+        # and no web access, reads only inside the checkout, and can write only
-+        # its two output files, so it cannot change the script the next step runs.
-         run: |
-           claude -p "$(cat scripts/weekly_tickets/prompt.md)" \
--            --dangerously-skip-permissions \
-+            --restricted \
-+            --tools "Read,Grep,Glob,Write" \
-+            --allowedTools "Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)" \
-+            --permission-prompts none \
-             --output-format text
-       - name: Shape issue section (tables, length cap)
-         env:
-@@ -96,7 +102,8 @@ jobs:
-       - name: Install Claude Code and cognee
-         run: |
-           npm install -g @anthropic-ai/claude-code
--          pip install cognee cognee-cli
-+          # cognee-cli is a command of the cognee package, not a package of its own.
-+          pip install cognee
-       - name: Install the cognee memory plugin
-         # Adjust the marketplace/plugin name if it differs in your setup.
-         run: |
-@@ -111,6 +118,9 @@ jobs:
-         env:
-           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-+        # digest.md is text typed by anonymous docs users: Claude gets no shell
-+        # and no web access, reads only inside the checkout, and can write only
-+        # its two output files, so it cannot change the script the next step runs.
-         run: |
-           {
-             cat scripts/weekly_tickets/prompt.md
-@@ -124,7 +134,10 @@ jobs:
-             echo "answer."
-           } > /tmp/prompt-cognee.md
-           claude -p "$(cat /tmp/prompt-cognee.md)" \
--            --dangerously-skip-permissions \
-+            --restricted \
-+            --tools "Read,Grep,Glob,Write" \
-+            --allowedTools "Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)" \
-+            --permission-prompts none \
-             --output-format text
-       - name: Shape issue section (tables, length cap)
-         env:
+@@ -156,3 +156,78 @@ jobs:
+           payload: |
+             channel: ${{ secrets.SLACK_NIGHTLY_CHANNEL_ID }}
+             text: "Nightly Scheduler failed to dispatch Nightly Tests at `${{ steps.pick.outputs.ref }}` — tonight's nightly will not run and will post nothing. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
++
++  # The integrations' live round trip (test_integrations.yml, `live`), every
++  # evening against dev: plugin fixes land on dev, and main only moves at core
++  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
++  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
++  # which would run it a second time that day.
++  dispatch-integrations:
++    name: Dispatch the integrations live tier
++    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
++    runs-on: ubuntu-latest
++    timeout-minutes: 10
++    permissions:
++      contents: read
++      actions: write
++    steps:
++      - name: Note the newest existing integrations run
++        id: baseline
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          GH_REPO: ${{ github.repository }}
++        run: |
++          set -euo pipefail
++          # Before dispatching, so the confirm step below cannot match an older run.
++          id="$(gh run list --workflow test_integrations.yml --branch dev \
++                  --event workflow_dispatch --limit 1 \
++                  --json databaseId --jq '.[0].databaseId // 0')"
++          echo "id=$id" >> "$GITHUB_OUTPUT"
++          echo "baseline run id: $id"
++
++      - name: Dispatch test_integrations.yml at dev with live
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          GH_REPO: ${{ github.repository }}
++        run: |
++          set -euo pipefail
++          # Input values as strings, as the dispatch API documents them; a
++          # boolean input still arrives as a boolean `inputs.live`.
++          jq -nc '{ref: "dev", inputs: {live: "true"}}' \
++          | gh api -X POST \
++              "repos/$GH_REPO/actions/workflows/test_integrations.yml/dispatches" \
++              --input -
++
++      - name: Confirm a NEW run was created
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          GH_REPO: ${{ github.repository }}
++          BASELINE: ${{ steps.baseline.outputs.id }}
++        run: |
++          set -euo pipefail
++          # The dispatch endpoint answers 204 with no body, so a lost dispatch
++          # looks like success, and a live tier that never starts posts nothing.
++          for _ in $(seq 1 12); do
++            read -r id url <<<"$(gh run list --workflow test_integrations.yml \
++                  --branch dev --event workflow_dispatch --limit 1 \
++                  --json databaseId,url --jq '.[0] | "\(.databaseId) \(.url)"' \
++                  2>/dev/null || echo "0 -")"
++            if [ "${id:-0}" != "0" ] && [ "${id}" != "${BASELINE}" ]; then
++              echo "dispatched: $url"
++              echo "Integrations live tier dispatched at \`dev\`: $url" >> "$GITHUB_STEP_SUMMARY"
++              exit 0
++            fi
++            sleep 5
++          done
++          echo "::error::no NEW test_integrations.yml run appeared for dev within 60s"
++          exit 1
++
++      - name: Alert Slack if the dispatch failed
++        if: ${{ failure() }}
++        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d  # v4.0.0
++        with:
++          method: chat.postMessage
++          token: ${{ secrets.SLACK_BOT_TOKEN }}
++          payload: |
++            channel: ${{ secrets.SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID }}
++            text: "Nightly Scheduler failed to dispatch the integrations live tier at `dev` — tonight's live tier will not run and will post nothing. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+```
+
+**File**: `.github/workflows/pre_test.yml` (modified, +6/-1)
+```diff
+@@ -34,6 +34,11 @@ jobs:
+         if: ${{ !cancelled() }}
+         run: uv sync --extra dev
+ 
++      # The Hermes plugin is excluded: it came from topoteretes/cognee-integrations,
++      # where these rules did not apply, and catches broad exceptions on purpose so
++      # a memory failure never crashes the host agent. Each plugin that moves here
++      # is excluded by its own entry, not by a rule covering all of them.
++      #
+       # Exception-handling rules are enforced without escape hatch: `--ignore-noqa`
+       # makes a `# noqa` comment on these rules count as a finding, so a silent
+       # `except Exception` has to be fixed (log with traceback, re-raise, or narrow
+@@ -42,7 +47,7 @@ jobs:
+       # Exception raise.
+       - name: Ruff exception-handling rules (strict, noqa ignored)
+         if: ${{ !cancelled() }}
+-        run: uv run ruff check . --select BLE001,S110,S112,G201,TRY201,TRY002 --ignore-noqa
++        run: uv run ruff check . --select BLE001,S110,S112,G201,TRY201,TRY002 --ignore-noqa --extend-exclude cognee-integrations/integrations/hermes-agent
+ 
+       - name: Ty type check
+         if: ${{ !cancelled() }}
+```
+
+**File**: `.github/workflows/release_hermes_plugin.yml` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++name: release_hermes_plugin.yml
++# Publish the Hermes Agent memory plugin (cognee-integrations/integrations/hermes-agent) to
++# PyPI as cognee-integration-hermes-agent.
++#
++# The plugin versions independently of the cognee library, so, like cognee-mcp,
++# it has its own workflow and its own tag namespace (hermes-agent-v*). The tag
++# names are the same as when the plugin lived in topoteretes/cognee-integrations.
++#
++# Release flow:
++#   1. Bump the version in pyproject.toml, plugin.yaml,
++#      cognee_integration_hermes/_plugin_root/plugin.yaml and the hermes-agent
++#      entry of cognee-integrations/integrations/inventory.yml (the tests and
++#      the inventory check verify they match), re-lock, and add a CHANGELOG.md
++#      section. Merge that to main.
++#   2. Run this workflow from main. It tests, builds, attests, publishes and
++#      then tags the released commit hermes-agent-v<version>.
++#
++# Auth: PyPI Trusted Publishing only. A PyPI owner of
++# cognee-integration-hermes-agent has to add a publisher with
++#   Repository owner: topoteretes
++#   Repository name:  cognee
++#   Workflow name:    release_hermes_plugin.yml
++#   Environment:      (leave blank)
++# The publisher for topoteretes/cognee-integrations can be removed once the
++# first release from here is out.
++on:
++  workflow_dispatch:
++
++# Minimal default permissions (OSSF Scorecard: Token-Permissions). The one job
++# opts in to exactly what it needs.
++permissions:
++  contents: read
++
++concurrency:
++  group: release-hermes-plugin
++  cancel-in-progress: false
++
++jobs:
++  release-hermes-plugin-pypi:
++    name: Release cognee-integration-hermes-agent to PyPI from ${{ github.ref_name }}
++    permissions:
++      contents: write       # push the hermes-agent-v* tag
++      id-token: write       # OIDC: Trusted Publishing and signing attestations
++      attestations: write   # Persist the SLSA build provenance attestation
++    runs-on: ubuntu-latest
++    timeout-minutes: 30
++    env:
++      TELEMETRY_DISABLED: "1"
++    defaults:
++      run:
++        working-directory: cognee-integrations/integrations/hermes-agent
++
++    steps:
++      - name: Refuse any ref but main
++        working-directory: .
++        run: |
++          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
++            echo "::error::release_hermes_plugin.yml publishes and tags permanently; run it from main (got ${GITHUB_REF})."
++            exit 1
++          fi
++
++      - name: Check out ${{ github.ref_name }} at ${{ github.sha }}
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
++        with:
++          # The commit the run was dispatched on, not the branch head now.
++          ref: ${{ github.sha }}
++
++      - name: Install uv
++        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
++
++      - name: Install Python
++        run: uv python install
++
++      - name: Resolve version and tag
++        id: meta
++        run: |
++          VERSION="$(uv version --short)"
++          TAG="hermes-agent-v${VERSION}"
++          echo "Releasing cognee-integration-hermes-agent ${VERSION} as ${TAG}"
++          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
++          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
++
++      - name: Refuse to republish an existing version
++        env:
++          VERSION: ${{ steps.meta.outputs.version }}
++          TAG: ${{ steps.meta.outputs.tag }}
++        run: |
++          # PyPI versions are immutable: a second upload of the same version is
++          # rejected. Fail here, with a message that says what to do, rather
++          # than at the upload step.
++          if curl -fsS "https://pypi.org/pypi/cognee-integration-hermes-agent/${VERSION}/json" >/dev/null 2>&1; then
++            echo "::error::cognee-integration-hermes-agent ${VERSION} is already on PyPI. Bump the version (pyproject.toml, both plugin.yaml files and inventory.yml) and re-lock before releasing."
++            exit 1
++          fi
++          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
++            echo "::error::Tag ${TAG} already exists on origin."
++            exit 1
++          fi
++          echo "${VERSION} is unpublished and ${TAG} is free."
++
++      - name: Run the test suite
++        run: |
++          uv sync --locked --dev
++          uv pip install -r local-mode-requirements.txt
++          uv run --no-sync pytest tests/ -q
++
++      - name: Build distributions
++        run: uv build
++
++      - name: Verify distributions were built
++        run: |
++          shopt -s nullglob
++          wheels=(dist/*.whl)
++          sdists=(dist/*.tar.gz)
++          if [ "${#wheels[@]}" -ne 1 ] || [ "${#sdists[@]}" -ne 1 ] || \
++             [ ! -s "${wheels[0]}" ] || [ ! -s "${sdists[0]}" ]; then
++            echo "::error::Build must produce exactly one nonempty wheel and sdist."
++            ls -lh dist/ || true
++            exit 1
++          fi
++          ls -lh "${wheels[@]}" "${sdists[@]}"
++
++ 
+```
+
+**File**: `.github/workflows/test_integrations.yml` (added, +473/-0)
+```diff
+@@ -0,0 +1,473 @@
++name: test | integrations
++# Checks for the agent plugins under cognee-integrations/integrations/: lint, the
++# lockfile and each plugin's own test suite on every change, and, when dispatched
++# with `live`, each plugin's live round trip against a real cognee server and LLM.
++#
++# Plugins are discovered from their folders (a pyproject.toml makes a Python
++# plugin), so moving one here needs no edit to this file. A pull request tests
++# only the plugins it changes, or all of them when it changes something they
++# share. `integrations-tests` is the one job to require.
++#
++# Each plugin declares no cognee dependency (cognee's pins conflict with the
++# environments the host agents share between plugins). A plugin whose tests
++# start a local server gets cognee from its local-mode-requirements.txt, the
++# release its local mode installs: a PyPI release, not this checkout.
++#
++# The live tier (tests/test_integration_*.py) needs secrets and spends LLM
++# tokens, so it runs only on dispatch: nightly_scheduler.yml dispatches it
++# against dev every evening. It fails when any of those tests skips, so a
++# missing dependency or key can never pass as green, and `notify` posts every
++# dispatched run's result, green included, to #nightly-ci-integrations: the
++# live tier and every other job that run executes, so no failure reports green.
++#
++# The case tables in integrations/conformance/ are a copy: the hook plugins in
++# topoteretes/cognee-integrations generate two of them and test against the
++# same files there. `conformance-drift` fails when the copy here differs from
++# upstream main, on pull requests that touch it and on every dispatched run.
++
++on:
++  push:
++    branches: [ main, dev ]
++    paths: &paths
++      - "cognee-integrations/**"
++      - ".github/workflows/test_integrations.yml"
++  pull_request:
++    branches: [ main, dev ]
++    types: [opened, synchronize, reopened]
++    paths: *paths
++  workflow_dispatch:
++    inputs:
++      live:
++        description: "Also run each plugin's live round trip (real cognee server and LLM)"
++        required: false
++        type: boolean
++        default: false
++
++permissions:
++  contents: read
++
++concurrency:
++  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.live && 'live' || 'checks' }}
++  # Cancel superseded PR runs, never a push-to-dev or live run.
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++
++env:
++  TELEMETRY_DISABLED: "1"
++
++jobs:
++  detect:
++    name: Detect integration plugins
++    runs-on: ubuntu-22.04
++    outputs:
++      python: ${{ steps.plugins.outputs.python }}
++      live: ${{ steps.plugins.outputs.live }}
++      conformance: ${{ steps.plugins.outputs.conformance }}
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
++        with:
++          # The pull request's base commit, to list what it changed.
++          fetch-depth: 0
++
++      - name: List the plugins to test
++        id: plugins
++        env:
++          EVENT: ${{ github.event_name }}
++          BASE_SHA: ${{ github.event.pull_request.base.sha }}
++          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
++        run: |
++          set -euo pipefail
++          # On a pull request, test the plugins it changed, or all of them when it
++          # changed something they share. Everywhere else, test all of them.
++          # Conformance drift: on pull requests that touch the tables, and on
++          # dispatched runs (the nightly), never on a push.
++          all=true
++          changed=""
++          conformance=false
++          if [ "${EVENT}" = "workflow_dispatch" ]; then
++            conformance=true
++          fi
++          if [ "${EVENT}" = "pull_request" ]; then
++            conformance=true
++            changed="$(git diff --name-only "${BASE_SHA}...${HEAD_SHA}")"
++            if ! grep -q -E '^(cognee-integrations/pyproject\.toml|cognee-integrations/integrations/conformance/|\.github/workflows/test_integrations\.yml)' <<<"${changed}"; then
++              all=false
++            fi
++            if ! grep -q '^cognee-integrations/integrations/conformance/' <<<"${changed}"; then
++              conformance=false
++            fi
++          fi
++
++          python=()
++          live=()
++          cd cognee-integrations/integrations
++          for dir in */; do
++            slug="${dir%/}"
++            case "${slug}" in conformance|tests) continue ;; esac
++            if [ -f "${slug}/pyproject.toml" ]; then
++              if [ "${all}" = true ] || grep -q "^cognee-integrations/integrations/${slug}/" <<<"${changed}"; then
++                python+=("${slug}")
++              fi
++              # The live tier runs every plugin that has one, changed or not.
++              if compgen -G "${slug}/tests/test_integration_*.py" > /dev/null; then
++                live+=("${slug}")
++              fi
++            elif [ -f "${slug}/package.json
+```
+
+**File**: `cognee-integrations/README.md` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++# Cognee integrations
++
++Plugins that give agent tools persistent memory backed by Cognee. Each plugin
++is its own package, released on its own schedule.
++
++The integrations are moving here from
++[topoteretes/cognee-integrations](https://github.com/topoteretes/cognee-integrations),
++one at a time. Until an integration is listed below, its source, docs and
++releases are still in that repository.
++
++## Moved so far
++
++<!-- inventory:start -->
++<!-- Generated by scripts/inventory.py from integrations/inventory.yml; do not edit by hand. -->
++
++| Integration | Package | Version | Source | Release |
++|---|---|---|---|---|
++| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.3 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
++
++<!-- inventory:end -->
++
++The table is rendered from [`integrations/inventory.yml`](integrations/inventory.yml)
++by `scripts/inventory.py`, which also checks the inventory against the plugin
++folders and their manifests.
++
++## Layout
++
++```
++cognee-integrations/
++├── pyproject.toml   Shared lint and test settings for every plugin below
++├── scripts/         inventory.py: checks the inventory, renders the table above
++└── integrations/
++    ├── inventory.yml One entry per plugin below
++    ├── conformance/ Case tables that every plugin tests against
++    └── <plugin>/    One folder per plugin, with its own pyproject.toml or
++                     package.json, tests, README and CHANGELOG
++```
++
++The layout is the same as in topoteretes/cognee-integrations, with this
++folder in place of that repository's root, so paths inside a plugin keep
++working when it moves. Everything at that repository's root has a place here:
++
++| In topoteretes/cognee-integrations | Here |
++|---|---|
++| `integrations/<plugin>/` | `integrations/<plugin>/` |
++| `integrations/tests/` (the shared hook-plugin suite) | `integrations/tests/` |
++| `integrations/inventory.yml`, `integrations/CONFIGURATION.md` | `integrations/` |
++| `scripts/`, `assets/`, `n8n_workflows/` | `scripts/`, `assets/`, `n8n_workflows/` |
++| `.github/workflows/` | the shared workflows in this repository's `.github/workflows/` |
++| `reports/` | not moved |
++| `.claude-plugin/`, `.cursor-plugin/`, `.grok-plugin/`, `.agents/plugins/` | not moved; see [Marketplace plugins](#marketplace-plugins) |
++
++`integrations/conformance/` is a copy. Two of its tables are generated from
++the Claude Code and Codex hook plugins, which are still in
++topoteretes/cognee-integrations, so that copy is canonical until they move
++here. `test_integrations.yml` fails when this copy differs from it.
++
++## Marketplace plugins
++
++The Claude Code, Codex, Cursor and Grok Bot plugins are installed from agent
++marketplaces, not from a package registry. Their code moves here like the rest.
++They are distributed through the official listings (the claude.ai Directory,
++and each agent's own marketplace), pointed at this repository. Nothing is added
++at this repository's root for them.
++
++topoteretes/cognee-integrations keeps only its marketplace manifests, repointed
++here, for users who added that repository as a marketplace by hand. Once they
++have moved to the official listings, it is archived.
++
++## Moving a plugin
++
++1. Copy the plugin folder from topoteretes/cognee-integrations to
++   `integrations/<plugin>/`, move its entry from that repository's
++   `integrations/inventory.yml` to `integrations/inventory.yml` here (adding
++   `path`, `tag_prefix`, `release_workflow` and `moved_from`), and run
++   `python scripts/inventory.py` to render the table above.
++2. If it is listed in a marketplace or directory, point that listing at
++   `topoteretes/cognee` and `cognee-integrations/integrations/<plugin>` first.
++   The Directory reviews each version, so allow time for that.
++3. In topoteretes/cognee-integrations, in the same change: replace the plugin
++   folder with a note pointing here, remove it from that repository's CI and
++   release workflows, and mark it moved in `integrations/inventory.yml`.
++4. Triage the CodeQL alerts the move raises on the copied code, and dismiss
++   the false positives with a reason.
++
++## Development and releases
++
++Each plugin's README covers its own setup, tests and release steps.
++`.github/workflows/test_integrations.yml` lints and tests every plugin under
++`integrations/` that has a `pyproject.toml`, and runs each plugin's live round
++trip (`tests/test_integration_*.py`) nightly against `dev`, posting every
++result to `#nightly-ci-integrations` on Slack. It needs no edit when a plugin
++moves here. Releases are per plugin for now, for example
++`release_hermes_plugin.yml` for Hermes.
+```
+
+**File**: `cognee-integrations/integrations/conformance/README.md` (added, +173/-0)
+```diff
+@@ -0,0 +1,173 @@
++> **Copy.** These case tables are shared by every Cognee agent plugin. Only the
++> Hermes plugin has moved into this repository so far. The canonical tables are
++> in `integrations/conformance/` of
++> [topoteretes/cognee-integrations](https://github.com/topoteretes/cognee-integrations):
++> `recall_text_cases.json` and `capture_policy_cases.json` are generated there
++> from the hook plugins' `_recall_text.py` and `_capture_policy.py`, and Claude
++> Code, Codex and OpenClaw test against them there. Change a table there first,
++> then copy it here; `.github/workflows/test_integrations.yml` fails when the
++> two differ. The test paths below are paths in that repository, except
++> hermes-agent's, which are under `cognee-integrations/` here.
++
++# Session id sanitization conformance
++
++Every Cognee integration turns a native session id into a Cognee session id with
++the same shape: `{agent}_{native_id}`. Before the native id is used, each
++integration runs it through a small sanitizer. The rule is:
++
++- Keep only the ASCII set `[A-Za-z0-9-_.]`.
++- Replace every other character with `_`.
++- Trim leading and trailing `.` and `_`.
++- Cap the length at 120 characters.
++
++`session_id_cases.json` is the single source of truth for that rule. It is a
++list of `{ "input", "expected", "note" }` cases. Each test loads this file and
++checks its sanitizer against it. The tests live with the suite that already
++covers the tree they test, so no integration needs a test project of its own:
++
++- claude-code and codex:
++  `integrations/tests/tests/unit/test_session_id_conformance.py` — the shared
++  hook-plugin suite, parametrized over both plugin trees.
++- hermes-agent: `integrations/hermes-agent/tests/test_session_id_conformance.py`
++- openclaw: `integrations/openclaw/__tests__/unit/test_session_id_conformance.ts`
++
++Because every test reads the same file, any implementation that drifts from the
++rule fails its test. CI runs all of them on every pull request through the
++existing jobs in `.github/workflows/ci.yml`: the shared suite via `test-python`
++(`detect-changes` maps a claude-code or codex change onto the `tests` cell) and
++again under Python 3.9 via `test-hooks-python39`, hermes-agent via `test-python`
++(it has its own `pyproject.toml`), and openclaw via `test-typescript`, which
++runs `npm test` as well as the type check.
++
++## Note on empty results
++
++The table only holds inputs whose sanitized output is not empty. hermes-agent
++returns `"session"` when the result would be empty, while the others return an
++empty string. That one case is left out on purpose so the shared table stays
++identical for all four integrations.
++
++# Dataset name sanitization conformance
++
++cognee rejects a dataset name that contains a space or a dot
++(`check_dataset_name`, run on every write: remember, improve, memify and the
++pipelines). Every integration therefore runs a configured or derived dataset
++name through a small sanitizer before using it. The rule is deliberately narrow:
++
++- Trim surrounding whitespace.
++- Replace every run of spaces and dots with a single `_`.
++- If nothing but underscores is left (and the input was not already that),
++  use the integration's default dataset instead.
++
++Nothing else changes. A name the server accepts today (`Foo+Bar`, `héllo`,
++`_x_`) comes back unchanged, so no user is silently moved to a new, empty
++dataset. A name that contains a space or a dot never took a write, so rewriting
++it orphans nothing. The vscode extension's `sanitizeDatasetName` is stricter
++(`[^A-Za-z0-9_-]` → `_`) because it only cleans names it derives itself.
++
++`dataset_name_cases.json` holds `{ "input", "fallback", "expected", "note" }`
++cases; each test passes `fallback` as the default, so one table serves
++integrations with different defaults. The tests live next to the session-id ones:
++
++- claude-code, codex and antigravity:
++  `integrations/tests/tests/unit/test_dataset_name_conformance.py`
++- hermes-agent: `integrations/hermes-agent/tests/test_dataset_name_conformance.py`
++- openclaw: `integrations/openclaw/__tests__/unit/test_dataset_name_conformance.ts`
++
++Where a name is typed explicitly (the dataset-switch commands), an invalid name
++is refused with the sanitized form as a suggestion instead of being rewritten,
++so a switch never lands in a dataset the user did not name.
++
++# Recall text trimming conformance
++
++On cognee 1.6.x a graph recall with `only_context` returns the full prompt the
++server's own LLM would have received: the conversation history, the question
++template around the retrieved context, and the `## Active session guidance`
++block. The hook plugins and openclaw keep only the retrieved context and shrink
++it the same way, without an LLM:
++
++- Find the context by the question marker (`` The question is: `<prompt>` ``)
++  and the final backtick, or the last `` `\n\n## Active session guidance ``.
++  Text that does not fit is returned whole and flagged `parsed: false`.
++- Drop passages w
+```
+
+**File**: `cognee-integrations/integrations/conformance/capture_policy_cases.json` (added, +1568/-0)
+```diff
+@@ -0,0 +1,1568 @@
++{
++  "_comment": "Generated by running integrations/claude-code/scripts/_capture_policy.py. tool_cases: expected is true/false, or \"error\" when the policy raises (fail closed). redact_cases: expected output, or error=true when redaction raises.",
++  "tool_cases": [
++    {
++      "note": "default allows any tool",
++      "env": {},
++      "tool": "Bash",
++      "params": {
++        "command": "ls -la"
++      },
++      "expected": true
++    },
++    {
++      "note": "default allows a read of an ordinary file",
++      "env": {},
++      "tool": "Read",
++      "params": {
++        "file_path": "/project/main.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "allow list by name keeps the named tool",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Grep|Glob"
++      },
++      "tool": "Grep",
++      "params": {
++        "path": "main.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "allow list by name drops other tools",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Grep|Glob"
++      },
++      "tool": "Read",
++      "params": {
++        "path": "main.py"
++      },
++      "expected": false
++    },
++    {
++      "note": "allow list glob",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "mcp__*"
++      },
++      "tool": "mcp__github__get_issue",
++      "params": {},
++      "expected": true
++    },
++    {
++      "note": "allow list glob drops non-matching",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "mcp__*"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "ls"
++      },
++      "expected": false
++    },
++    {
++      "note": "allow list as JSON array",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[\"Read\", \"Bash(git:*)\"]"
++      },
++      "tool": "Read",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "empty JSON array allow list means everything",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[]"
++      },
++      "tool": "Write",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "an env value starting with [ is read as JSON",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[RW]*"
++      },
++      "tool": "Write",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": "error"
++    },
++    {
++      "note": "glob with character class",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[\"[RW]*\"]"
++      },
++      "tool": "Write",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "glob with negated character class",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[\"[!RW]*\"]"
++      },
++      "tool": "Write",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": false
++    },
++    {
++      "note": "glob with a range",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[\"[A-C]*\"]"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "ls"
++      },
++      "expected": true
++    },
++    {
++      "note": "glob question mark",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Rea?"
++      },
++      "tool": "Read",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "whitespace around pipe entries is trimmed",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": " Read | Grep "
++      },
++      "tool": "Grep",
++      "params": {},
++      "expected": true
++    },
++    {
++      "note": "prefix keeps the command",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "git status"
++      },
++      "expected": true
++    },
++    {
++      "note": "prefix keeps the bare command",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "git"
++      },
++      "expected": true
++    },
++    {
++      "note": "prefix ends on a word boundary",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "gitk --all"
++      },
++      "expected": false
++    },
++    {
++      "note": "prefix ignores leading whitespace",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "   git log"
++      },
++      "expected": true
++    },
++    {
++      "note": "prefix boundary may be a tab",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "git\tlog"
++      },
++      "expected": true
++    },
++    {
++      "note": "compound command counts as its first word",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "cd x && git status"
++      },
++      "expected": false
++    },
+
+```
+
+**File**: `cognee-integrations/integrations/conformance/dataset_name_cases.json` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++[
++  {
++    "input": "agent_sessions",
++    "fallback": "agent_sessions",
++    "expected": "agent_sessions",
++    "note": "a valid name passes through unchanged"
++  },
++  {
++    "input": "My-Project_2",
++    "fallback": "agent_sessions",
++    "expected": "My-Project_2",
++    "note": "letters, digits, dash and underscore are untouched"
++  },
++  {
++    "input": "Foo+Bar@team",
++    "fallback": "agent_sessions",
++    "expected": "Foo+Bar@team",
++    "note": "characters the server accepts are left alone, so no existing dataset is orphaned"
++  },
++  {
++    "input": "héllo-wörld",
++    "fallback": "agent_sessions",
++    "expected": "héllo-wörld",
++    "note": "non-ASCII letters are accepted by the server and left alone"
++  },
++  {
++    "input": "my project",
++    "fallback": "agent_sessions",
++    "expected": "my_project",
++    "note": "a space becomes an underscore"
++  },
++  {
++    "input": "project-x_2.0",
++    "fallback": "agent_sessions",
++    "expected": "project-x_2_0",
++    "note": "a dot becomes an underscore"
++  },
++  {
++    "input": "team-user-a.b@x.com",
++    "fallback": "agent_sessions",
++    "expected": "team-user-a_b@x_com",
++    "note": "dots inside a derived name (an email user id) are replaced"
++  },
++  {
++    "input": "a . b",
++    "fallback": "agent_sessions",
++    "expected": "a_b",
++    "note": "a run of spaces and dots collapses to one underscore"
++  },
++  {
++    "input": "  padded  ",
++    "fallback": "agent_sessions",
++    "expected": "padded",
++    "note": "surrounding whitespace is trimmed"
++  },
++  {
++    "input": ".hidden",
++    "fallback": "agent_sessions",
++    "expected": "_hidden",
++    "note": "a leading dot becomes an underscore rather than being dropped"
++  },
++  {
++    "input": "_x_",
++    "fallback": "agent_sessions",
++    "expected": "_x_",
++    "note": "existing underscores are not trimmed"
++  },
++  {
++    "input": "___",
++    "fallback": "agent_sessions",
++    "expected": "___",
++    "note": "a valid all-underscore name is kept, not replaced by the fallback"
++  },
++  {
++    "input": "...",
++    "fallback": "agent_sessions",
++    "expected": "agent_sessions",
++    "note": "nothing usable left after replacement falls back to the default"
++  },
++  {
++    "input": "   ",
++    "fallback": "my-default",
++    "expected": "my-default",
++    "note": "a blank name falls back to the integration's own default"
++  },
++  {
++    "input": "",
++    "fallback": "agent_sessions",
++    "expected": "agent_sessions",
++    "note": "an empty name falls back to the default"
++  }
++]
+```
+
+---
+
+### Incident Patch 2: `f5250eab` (2026-11-13)
+**Commit Message**: ci: Report every nightly job to Slack (SDK-1489)
+
+A dispatched run also runs the plugin checks, the conformance drift
+check and the inventory check, but the Slack report waited for the live
+tier alone and built its headline from it. A failed drift check or unit
+test posted "green" while the run was red, and since the bot dispatches
+the run, GitHub notified nobody.
+
+notify now needs every job of the run, lists each one's result and
+counts it in the headline, so any failure turns the post red.
+
+**File**: `.github/workflows/test_integrations.yml` (modified, +29/-8)
+```diff
+@@ -17,7 +17,8 @@ name: test | integrations
+ # tokens, so it runs only on dispatch: nightly_scheduler.yml dispatches it
+ # against dev every evening. It fails when any of those tests skips, so a
+ # missing dependency or key can never pass as green, and `notify` posts every
+-# live run's result, green included, to #nightly-ci-integrations.
++# dispatched run's result, green included, to #nightly-ci-integrations: the
++# live tier and every other job that run executes, so no failure reports green.
+ #
+ # The case tables in integrations/conformance/ are a copy: the hook plugins in
+ # topoteretes/cognee-integrations generate two of them and test against the
+@@ -295,9 +296,12 @@ jobs:
+           retention-days: 7
+ 
+   notify:
+-    name: Slack live report
+-    needs: [detect, live]
+-    # Every live run, green included: a failure-only report makes a passing
++    name: Slack nightly report
++    # Every job a dispatched run executes: a dispatch also runs the plugin checks,
++    # the conformance drift check and the inventory check, and a report built from
++    # the live tier alone would post green over any of them failing.
++    needs: [detect, python-plugin, live, conformance-drift, inventory]
++    # Every dispatched run, green included: a failure-only report makes a passing
+     # night and a broken notifier look the same. Not on push or PR runs.
+     if: ${{ always() && inputs.live }}
+     runs-on: ubuntu-22.04
+@@ -318,6 +322,9 @@ jobs:
+           PLUGINS: ${{ needs.detect.outputs.live }}
+           DETECT_RESULT: ${{ needs.detect.result }}
+           LIVE_RESULT: ${{ needs.live.result }}
++          PLUGIN_CHECKS_RESULT: ${{ needs.python-plugin.result }}
++          CONFORMANCE_RESULT: ${{ needs.conformance-drift.result }}
++          INVENTORY_RESULT: ${{ needs.inventory.result }}
+           REPORTS: ${{ runner.temp }}/reports
+           REF: ${{ github.ref_name }}
+           TRIGGER: ${{ github.event_name }}
+@@ -333,13 +340,14 @@ jobs:
+           token = os.environ["SLACK_BOT_TOKEN"].strip()
+           channel = os.environ["SLACK_CHANNEL"].strip()
+           if not token or not channel:
+-              print("::error::SLACK_BOT_TOKEN / SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID are not set; cannot post the live report.")
++              print("::error::SLACK_BOT_TOKEN / SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID are not set; cannot post the nightly report.")
+               sys.exit(1)
+ 
+           icons = {
+               "success": ":white_check_mark:",
+               "failure": ":red_circle:",
+               "cancelled": ":octagonal_sign:",
++              "skipped": ":fast_forward:",
+           }
+           try:
+               plugins = json.loads(os.environ.get("PLUGINS") or "[]")
+@@ -364,14 +372,27 @@ jobs:
+               if status != "success" and not any(t.strip() for t in tests):
+                   lines.append("> no per-test summary — the job likely crashed or timed out; see the run log")
+ 
++          # The other jobs of the run. Skipped means it had nothing to check
++          # (no plugin, no conformance run) and does not change the headline.
++          checks = {
++              "lint and unit tests": os.environ["PLUGIN_CHECKS_RESULT"],
++              "conformance drift": os.environ["CONFORMANCE_RESULT"],
++              "inventory": os.environ["INVENTORY_RESULT"],
++          }
++          for name, result in checks.items():
++              result = result or "unknown"
++              lines.append(f"{icons.get(result, ':white_circle:')} *{name}*: {result}")
++              if result != "skipped":
++                  outcomes.add(result)
++
+           trigger = os.environ["TRIGGER"]
+           ref = os.environ["REF"]
+           if outcomes == {"success"}:
+-              headline = f":large_green_circle: *Integrations live tier green* (`{ref}`, {trigger})"
++              headline = f":large_green_circle: *Integrations nightly green* (`{ref}`, {trigger})"
+           elif "failure" in outcomes:
+-              headline = f":rotating_light: *Integrations live tier failed* (`{ref}`, {trigger})"
++              headline = f":rotating_light: *Integrations nightly failed* (`{ref}`, {trigger})"
+           else:
+-              headline = f":warning: *Integrations live tier incomplete* (`{ref}`, {trigger}) — a plugin was cancelled or not run"
++              headline = f":warning: *Integrations nightly incomplete* (`{ref}`, {trigger}) — a job was cancelled or not run"
+           text = "\n".join([headline, *lines, f"<{os.environ['RUN_URL']}|Open the run>"])
+ 
+           request = urllib.request.Request(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6705** (2026-11-13): feat: Add the Vercel connector (SDK-1568) (@goran-radonic)
-- **PR #6704** (2026-11-13): fix: Delete forgotten dlt table's staging copy and state (SDK-1549) (@goran-radonic)
-- **PR #6702** (2026-11-13): chore: sync cognee mcp lock to cognee 1.6.8 (@siillee)
-- **PR #6701** (2026-11-13): chore: bump mcp lock (@siillee)
-- **PR #6700** (2026-11-13): feat: Add the Dropbox connector package (SDK-1512) (@goran-radonic)
-- **PR #6698** (closed): chore: release v1.6.8.rc1 (@goran-radonic)
+- **PR #6737** (closed): dev -> main (@mertzamir)
+- **PR #6718** (closed): feat: resolve issue #5916 - Hackathon [Feature]: Add Polar customer-state, sub (@ademolaaa)
+- **PR #6717** (2026-11-16): docs(guides): rework hybrid decomposition guide, remove dlt column search guide (RES-110) (@ArmagedonFlamer)
+- **PR #6715** (2026-11-13): feat: package standalone Vercel connector (SDK-1568) (@NMZivkovic)
+- **PR #6714** (2026-11-16): perf(pgvector): Store new collections as halfvec, require pgvector 0.7.0 (SDK-651) (@dexters1)
+- **PR #6712** (2026-11-14): perf(pgvector): Build HNSW indexes with 8 links per node (SDK-651) (@dexters1)
 
 ---
 
@@ -2248,49 +2557,58 @@ Linear: SDK-1548
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update): Remove stored files no document points at (SDK-1541) (#6674)
+## X. hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489)
 
 **RULE**:
-When implementing operations in `.env.template`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/nightly_scheduler.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc10f9f3`: update): Remove stored files no document points at (SDK-1541) (#6674). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5870f15d`: hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.template`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_scheduler.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Audit ledger: append-only, hash-chained provenance_entries table with one
-# row per data item (ids and the content hash, nothing the item produced). It
-# is written at the add_data_points storage seam, gets a new version when an
-# update changes the content, and a tombstone when the item is deleted
-# (written once its row is gone; dropping only its memory writes none). For
-# compliance history, not retrieval. With it on, a ledger write that fails
-# fails the ingestion, the update or the delete. With it off (the default)
-# the ledger is neither written nor read: deletes do not touch it, and the
-# routes and CLI below answer that it is off. Read it with
-# `cognee-cli provenance ...` or /api/v1/provenance.
-# External anchoring of the ledger's hash chain. With a key set,
-# `cognee-cli provenance anchor` (or POST /api/v1/provenance/anchor) signs the
-# chain head with HMAC-SHA256 and appends it to the anchor file; `provenance
-# verify --anchors` then detects a ledger that was rewritten AND re-chained.
-# Keep the key out of the database host; point the path somewhere it cannot
-# write. Default path: {SYSTEM_ROOT_DIRECTORY}/provenance_anchors.jsonl
-#PROVENANCE_ANCHOR_KEY=
-#PROVENANCE_ANC
+
+  # The integrations' live round trip (test_integrations.yml, `live`), every
+  # evening against dev: plugin fixes land on dev, and main only moves at core
+  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
+  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
+  # which would run it a second time that day.
+  dispatch-integrations:
+    name: Dispatch the integrations live tier
+    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Note the newest existing integrations run
+        id: baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Before dispatching, so the confirm step below cannot match an older run.
+          id="$(gh run list --workflow test_integrations.yml --branch dev \
+                  --event workflow_dispatch --limit 1 \
+                  --json databaseId --jq '.[0].databaseId // 0')"
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-# Audit ledger: append-only, hash-chained provenance_entries table written by
-# an opt-in cognify task. For compliance/lineage history, not retrieval.
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc10f9f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5870f15d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

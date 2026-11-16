@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T15:00:51.528Z",
+  "last_updated": "2026-11-16T15:10:13.324Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-7WJF",
+      "id": "CD-H2KP",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7WJF-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-H2KP-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
@@ -19126,6 +19126,57 @@
       "source_repo": "qdrant-qdrant",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1F120C-disable-pipnn-graph-building-by-default.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-H1H9",
+      "directive_title": "Handle deferred-split THPs in PageFlags::Get.",
+      "source_repo": "google-tcmalloc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H1H9-handle-deferred-split-thps-in-pageflags-get.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-GYZN",
+      "directive_title": "Move the Hermes plugin into cognee-integrations/ (SDK-1489)",
+      "source_repo": "topoteretes/cognee",
+      "source_commit": "5870f15d",
+      "staged_file": "11_INBOX/candidate-directives/CD-GYZN-move-the-hermes-plugin-into-cognee-integrations-sdk-1489.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-5F6C5D",
+      "directive_title": "Handle deferred-split THPs in PageFlags::Get.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "google-tcmalloc",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F6C5D-handle-deferred-split-thps-in-pageflags-.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-H21Q",
+      "directive_title": "hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489)",
+      "source_repo": "topoteretes-cognee-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H21Q-hermes-move-the-hermes-plugin-into-cognee-integrations-sdk-1489.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-FD704F",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FD704F-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-16"
     }
   ]

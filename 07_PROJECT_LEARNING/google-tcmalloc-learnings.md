@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `f69a26d2`  
+> **Source Version**: `c2f1eaba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T18:26:21.443Z  
+> **Timestamp**: 2026-11-16T15:09:58.167Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T18:26:21.436Z  
+> **Harvest Timestamp**: 2026-11-16T15:09:55.976Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5403 stars
+- **Stars / Engagement**: 5402 stars
 
 ---
 
@@ -1247,11 +1247,13 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1928** (2026-11-14): **Avoid KCFI typeid emission in TestAliasedFunctions.**
+  *Symptoms*: Avoid KCFI typeid emission in TestAliasedFunctions.  Co-authored-by: Mike Kruskal <mkruskal@google.com> 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1928/checks?check_run_id=132481476045) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+
 - **Issue #1921** (2026-11-13): **Use small-model RIP-relative addressing for tc_globals on x86-64.**
   *Symptoms*: Use small-model RIP-relative addressing for tc_globals on x86-64.  Under `-mcmodel=medium` PIC builds, Clang treats objects larger than `-mlarge-data-threshold` (64 KiB) as potentially residing in .lbss (>2 GiB away) and materializes `&tc_globals` (sizeof(Static) ~ 719 KiB) via a 3-instruction, 20-byte GOTPC64 + GOTOFF64 sequence (`leaq _GLOBAL_OFFSET_TABLE_(%rip)` + 10-byte movabsq + addq) in every allocation and deallocation fast path. However, GOOGLE_MALLOC_SECTION_BEGIN on Clang/Linux explicitly places tc_globals in google_malloc_bss (a standard small BSS section without SHF_X86_64_LARGE), so 32-bit RIP-relative addressing is always in range.  Annotate tc_globals declarations and its definition with `__attribute__((model("small")))` on Clang/Linux x86-64 so `&tc_globals` collapses to a single 7-byte `leaq tc_globals(%rip), %reg`, removing 2 instructions, 2 uOps, 13 bytes, and 1 serial address-generation cycle from the SizeMap and PageMap critical paths. 
-
-- **Issue #1920** (2026-11-13): **Automated Code Change**
-  *Symptoms*: Automated Code Change 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1268,195 +1270,250 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f69a26d2` (2026-11-13)
-**Commit Message**: Use small-model RIP-relative addressing for tc_globals on x86-64.
+### Incident Patch 1: `c2f1eaba` (2026-11-16)
+**Commit Message**: Handle deferred-split THPs in PageFlags::Get.
 
-Under `-mcmodel=medium` PIC builds, Clang treats objects larger than `-mlarge-data-threshold` (64 KiB) as potentially residing in .lbss (>2 GiB away) and materializes `&tc_globals` (sizeof(Static) ~ 719 KiB) via a 3-instruction, 20-byte GOTPC64 + GOTOFF64 sequence (`leaq _GLOBAL_OFFSET_TABLE_(%rip)` + 10-byte movabsq + addq) in every allocation and deallocation fast path. However, GOOGLE_MALLOC_SECTION_BEGIN on Clang/Linux explicitly places tc_globals in google_malloc_bss (a standard small BSS section without SHF_X86_64_LARGE), so 32-bit RIP-relative addressing is always in range.
+This preserves the compound head flags across interior non-compound pages within
+a 2MB region, reads the 2MB base page whenever a tail page has no cached head,
+and requires a compound THP head there.
 
-Annotate tc_globals declarations and its definition with `__attribute__((model("small")))` on Clang/Linux x86-64 so `&tc_globals` collapses to a single 7-byte `leaq tc_globals(%rip), %reg`, removing 2 instructions, 2 uOps, 13 bytes, and 1 serial address-generation cycle from the SizeMap and PageMap critical paths.
+PiperOrigin-RevId: 1022462135
 
-PiperOrigin-RevId: 1021207831
-
-**File**: `tcmalloc/internal/config.h` (modified, +11/-0)
+**File**: `tcmalloc/internal/pageflags.cc` (modified, +10/-15)
 ```diff
-@@ -77,6 +77,17 @@
- #define GOOGLE_MALLOC_SECTION
- #endif
+@@ -163,7 +163,7 @@ absl::StatusCode PageFlags::MaybeReadOne(uintptr_t vaddr, uint64_t& flags,
+                           /*bytes_read=*/nullptr) != kPagemapEntrySize) {
+       return absl::StatusCode::kUnavailable;
+     }
+-    if (ABSL_PREDICT_FALSE(PageTail(flags))) {
++    if (ABSL_PREDICT_FALSE(!PageHead(flags) || !PageThp(flags))) {
+       TC_LOG("Somehow still at tail page even after seeking?");
+       return absl::StatusCode::kFailedPrecondition;
+     }
+@@ -222,7 +222,6 @@ std::optional<PageStats> PageFlags::Get(const void* const addr,
+   const uintptr_t endPage =
+       (uend + kHardwarePageSize - 1) & ~(kHardwarePageSize - 1);
  
-+// GOOGLE_MALLOC_SECTION_BEGIN places globals in google_malloc_data /
-+// google_malloc_bss (normal small sections, not .ldata / .lbss), so
-+// RIP-relative small-model addressing is safe even under -mcmodel=medium when
-+// the object exceeds -mlarge-data-threshold.
-+#if defined(__clang__) && defined(__linux__) && defined(__x86_64__) && \
-+    ABSL_HAVE_ATTRIBUTE(model)
-+#define TCMALLOC_SMALL_MODEL __attribute__((model("small")))
-+#else
-+#define TCMALLOC_SMALL_MODEL
+-  const uintptr_t basePage = vaddr;
+   int64_t remainingPages = (endPage - vaddr) / kHardwarePageSize;
+   while (remainingPages > 0) {
+     const size_t batch_size = std::min<int64_t>(kEntriesInBuf, remainingPages);
+@@ -245,28 +244,24 @@ std::optional<PageStats> PageFlags::Get(const void* const addr,
+       if (PageHead(flags)) {
+         last_head_read_ = flags;
+       } else if (PageTail(flags)) {
+-        // The object may start on a tail page of a hugepage, whose flags are
+-        // only on the head page. Simplifying to four native pages per hugepage
+-        // to make the diagram fit, an entire hugepage looks like (where X is
+-        // the span of interest):
++        // A tail page's flags are only on the compound head page, which we may
++        // not have read yet (either because the span starts on a tail page or
++        // because earlier pages in a deferred-split THP were unbacked/native).
++        // Simplifying to four native pages per hugepage to make the diagram
++        // fit, an entire hugepage looks like (where X is the span of interest):
+         // .                     vaddr & kHugePageMask (head page)
+-        //      .                basePage
++        //      .                vaddr
+         // [....|..XX|XXXX|XXXX]
+         //  ^^^^^^^              some other stale object(s)
+-        if (vaddr == basePage) {
++        if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
+           bool is_huge = false;
+           if (MaybeReadOne(vaddr & kHugePageMask, last_head_read_, is_huge) !=
+-              absl::StatusCode::kOk) {
++                  absl::StatusCode::kOk ||
++              ABSL_PREDICT_FALSE(!is_huge)) {
+             return std::nullopt;
+           }
+-        } else if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
+-          TC_LOG("Did not see head page before tail page (i=%v, buf=%v)", i,
+-                 buf_[i]);
+-          return std::nullopt;
+         }
+         flags = last_head_read_;
+-      } else {
+-        last_head_read_ = -1;
+       }
+       // Intersect [uaddr, uend) (where X is the span of interest) with each
+       // page [vaddr, vaddr + kHardwarePageSize) (delimited by |) to get
+```
+
+**File**: `tcmalloc/internal/pageflags_test.cc` (modified, +354/-0)
+```diff
+@@ -908,6 +908,360 @@ TEST(PageFlagsTest, GetSinglePageBitmapsSuccess) {
+   EXPECT_EQ(ret.stale_scan_seconds, kSetScanSeconds);
+ }
+ 
++TEST(PageFlagsTest, DeferredSplitThpFlags) {
++  const size_t kHardwarePageSize = GetPageSize();
++  const size_t kPagesPerHugepage = kHugePageSize / kHardwarePageSize;
++  std::vector<uint64_t> data(4 * kPagesPerHugepage, 0);
++
++  auto set_tails = [&](size_t huge_idx, size_t first_tail) {
++    for (size_t i = first_tail; i < kPagesPerHugepage; ++i) {
++      data[huge_idx * kPagesPerHugepage + i] = kPageTail | kPageThp;
++    }
++  };
++
++  // Hugepage 0: intact mlocked THP.
++  data[0] = kPageHead | kPageThp | kPageMlocked;
++  set_tails(0, 1);
++
++  // Hugepage 1: deferred-split THP with stale+incompressible compound head at
++  // page 0, unbacked page 1 (0), native mlocked order-0 page 2, and tail pages
++  // 3..N-1 inheriting the compound head's stale+incompressible flags.
++  data[kPagesPerHugepage] =
++      kPageHead | kPageThp | kPageStale | kPageIncompressible;
++  data[kPagesPerHugepage + 2] = kPageMlocked;
++  set_tails(1, 3);
++
++  // Hugepages 2 and 3: orphaned tail pages 1..N-1 with unbacked (0) or native
++  // order-0 (kPageMlocked) page 0.
++  set_tails(2, 1);
++  data[3 * kPagesPerHugepage] = kPageMlocked;
++  set_tails(3, 1);
++
++  std::string file_path =
++      absl::StrCat(testing::TempDir(), "/deferred_split_thp_flags");
++  SetContents(file_path,
++              absl::string_view(reinterpret_cast<const char*>(data.data()),
++                                data.size() * sizeof(data[0])));
++
++  PageFlagsFriend s(file_path);
++  constexpr uint64_t kSetScanSeconds = 63;
++  s.SetCachedScanSeconds(kSetScanSeconds);
++
++  const size_t kHeadBytes = (kPagesPerHugepage - 2) * kHardwarePageSize;
++  const size_t kTailBytes = (kPagesPerHugepage - 3) * kHardwarePageSize;
++  struct Case {
++    uintptr_t offset;
++    size_t size;
++    PageStats expected;
++  };
++  for (const Case& tc : {
++           Case{kHugePageSize, kHugePageSize,
++                PageStats{kHeadBytes, kHardwarePageSize, kHeadBytes,
++                          kSetScanSeconds}},
++           Case{kHugePageSize + kHardwarePageSize,
++                kHugePageSize - kHardwarePageSize,
++                PageStats{kTailBytes, kHardwarePageSize, kTailBytes,
++                          kSetScanSeconds}},
++           Case{kHugePageSize + 2 * kHardwarePageSize + 100,
++                kHugePageSize - 2 * kHardwarePageSize - 100,
++                PageStats{kTailBytes, kHardwarePageSize - 100, kTailBytes,
++                          kSetScanSeconds}},
++           Case{kHugePageSize + 3 * kHardwarePageSize,
++                kHugePageSize - 3 * kHardwarePageSize,
++                PageStats{kTailBytes, 0, kTailBytes, kSetScanSeconds}},
++           Case{0, 2 * kHugePageSize,
++                PageStats{kHeadBytes, kHugePageSize + kHardwarePageSize,
++                          kHeadBytes, kSetScanSeconds}},
++       }) {
++    SCOPED_TRACE(absl::StrCat("offset=", tc.offset, " size=", tc.size));
++    EXPECT_THAT(s.Get(reinterpret_cast<const void*>(tc.offset), tc.size),
++                Optional(tc.expected));
++  }
++
++  auto h1_bitmaps =
++      s.GetSinglePageBitmaps(reinterpret_cast<const void*>(kHugePageSize));
++  EXPECT_EQ(h1_bitmaps.status, absl::StatusCode::kOk);
++  EXPECT_EQ(h1_bitmaps.stale.CountBits(), kPagesPerHugepage - 2);
++  EXPECT_EQ(h1_bitmaps.locked.CountBits(), 1);
++  EXPECT_TRUE(h1_bitmaps.locked.GetBit(2));
++  EXPECT_EQ(h1_bitmaps.incompressible.CountBits(), kPagesPerHugepage - 2);
++
++  for (size_t huge_idx : {size_t{2}, size_t{3}}) {
++    const uintptr_t h = huge_idx * kHugePageSize;
++    EXPECT_THAT(
++        s.Get(reinterpret_cast<const void*>(h), kHardwarePageSize),
++        Optional(FieldsAre(0, huge_idx == 3 ? kHardwarePageSize : 0, 0, 0)));
++    EXPECT_EQ(s.Get(reinterpret_cast<const void*>(h), kHugePageSize),
++              std::nullopt);
++    EXPECT_EQ(s.Get(reinterpret_cast<const void*>(h + kHardwarePageSize),
++                    kHardwarePageSize),
++              std::nullopt);
++    EXPECT_EQ(s.GetSinglePageBitmaps(reinterpret_cast<const void*>(h)).status,
++              absl::StatusCode::kFailedPrecondition);
++  }
++  EXPECT_EQ(s.Get(nullptr, 3 * kHugePageSize), std::nullopt);
++}
++
++TEST(PageFlagsTest, DeferredSplitThp) {
++  GTEST_SKIP() << "pageflags not commonly available";
++
++#if ABSL_HAVE_ADDRESS_SANITIZER || ABSL_HAVE_MEMORY_SANITIZER || \
++    ABSL_HAVE_THREAD_SANITIZER
++  GTEST_SKIP() << "Skipped under sanitizers.";
 +#endif
 +
- // TCMALLOC_ATTRIBUTE_NO_DESTROY is defined when clang::no_destroy attribute is
- // present.
- #if ABSL_HAVE_CPP_ATTRIBUTE(clang::no_destroy)
-```
-
-**File**: `tcmalloc/static_forwarder.h` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ namespace tcmalloc_internal {
- 
- class PageTracker;
- class Static;
--extern Static tc_globals;
-+extern Static tc_globals TCMALLOC_SMALL_MODEL;
- 
- // StaticForwarder provides the caches and page allocator with access to the
- // global allocator state, `state`.
-```
-
-**File**: `tcmalloc/static_vars.cc` (modified, +2/-1)
-```diff
-@@ -63,7 +63,8 @@ alignas(ABSL_CACHELINE_SIZE)
- // ABSL_ATTRIBUTE_SECTION_VARIABLE(google_malloc_bss). So instead,
- // we check this in arena_test.cc (a random test) by declaring another
- // global Static variable with ABSL_ATTRIBUTE_SECTION_VARIABLE(.bss).
--TCMALLOC_ATTRIBUTE_NO_DESTROY ABSL_CONST_INIT Static tc_globals;
-+TCMALLOC_ATTRIBUTE_NO_DESTROY ABSL_CONST_INIT Static tc_globals
-+    TCMALLOC_SMALL_MODEL;
- 
- size_t Static::metadata_bytes() {
-   const size_t internal_dependencies_size = sizeof(pageheap_lock) +
-```
-
-**File**: `tcmalloc/static_vars.h` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ using SampledAllocationRecorder = ::tcmalloc::tcmalloc_internal::SampleRecorder<
-     MetadataObjectAllocator<SampledAllocation, ArenaAlloc::kSampledAllocation>>;
- 
- class Static;
--extern Static tc_globals;
-+extern Static tc_globals TCMALLOC_SMALL_MODEL;
- 
- class Static final {
-  public:
-```
-
-**File**: `tcmalloc/testing/fast_path.insecure.golden` (modified, +2/-2)
-```diff
-@@ -15,6 +15,6 @@ new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2
- new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
- new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
- new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
--new(token_1)->size         -    -   3     27   -   4   -    6   -   -    -   2   -     1
--new->size                  -    -   3     27   -   4   -    6   -   -    -   2   -     1
-+new(token_1)->size         -    -   3     25   -   4   -    6   -   -    -   2   -     1
-+new->size                  -    -   3     25   -   4   -    6   -   -    -   2   -     1
- posix_memalign             -    -   8     29   -   8   -    6   -   1    1   2   3     2
-```
-
-**File**: `tcmalloc/testing/fast_path.release+insecure.golden` (modified, +2/-2)
-```diff
-@@ -15,6 +15,6 @@ new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2
- new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
- new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
- new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
--new(token_1)->size         -    -   3     27   -   4   -    6   -   -    -   2   -     1
--new->size                  -    -   3     27   -   4   -    6   -   -    -   2   -     1
-+new(token_1)->size         -    -   3     25   -   4   -    6   -   -    -   2   -     1
-+new->size                  -    -   3     25   -   4   -    6   -   -    -   2   -     1
- posix_memalign             -    -   8     29   -   8   -    6   -   1    1   2   3     2
-```
-
-**File**: `tcmalloc/testing/fast_path.release.golden` (modified, +6/-6)
-```diff
-@@ -1,18 +1,18 @@
- func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
--aligned_alloc              -    -   6     30   -   7   -    6   -   1    1   2   1     1
-+aligned_alloc              -    -   6     29   -   7   -    6   -   1    1   2   1     1
- calloc                     -    -   4     31   -   6   -    6   1   1    1   2   3     1
--delete                     -    -   5     33   -   6   -    5   -   -    -   -   -     3
--delete(size)               -    -   4     25   -   5   -    3   -   -    -   -   -     3
-+delete                     -    -   5     32   -   6   -    5   -   -    -   -   -     3
-+delete(size)               -    -   4     24   -   5   -    3   -   -    -   -   -     3
- delete(size,align)         -    -   6     25   -   7   -    4   -   -    -   -   -     3
- malloc                     -    -   4     27   -   5   -    6   -   -    -   2   -     1
- malloc(token_1)            -    -   4     27   -   5   -    6   -   -    -   2   -     1
- new                        -    -   3     27   -   4   -    5   -   -    -   2   -     1
- new(align)                 -    -   5     28   -   6   -    6   -   -    -   2   -     1
- new(align)->size           -    -   5     28   -   6   -    7   -   -    -   2   -     1
--new(align,cold)->size      -    1   6     33   -   6   -    8   -   -    -   2   -     1
-+new(align,cold)->size      -    1   6     32   -   6   -    8   -   -    -   2   -     1
- new(align,nothrow)         -    -   5     28   -   6   -    6   -   -    -   2   -     1
--new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2   -     1
--new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
-+new(cold)->size            -    1   4     30   -   4   -    7   -   -    -   2   -     1
-+new(cold,token_1)->size    -    1   4     30   -   4   -    7   -   -    -   2   -     1
- new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
- new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
- new(token_1)->size         -    -   3     27   -   4   -    6   -   -    -   2   -     1
++  const size_t kHardwarePageSize = getpagesize();
++  const size_t kSize = 3 * kHugePageSize;
++  char* p = MmapWithHugepageMisalignment(kSize, /*misalignment=*/0);
++  struct Unmapper {
++    char* ptr;
++    size_t size;
++    ~Unmapper() { CHECK_EQ(munmap(ptr, size), 0) << errno; }
++  } unmap_p{p, kSize};
++  std::memset(p, 0x5a, kSize);
++
++  if (madvise(p, kSize, MADV_COLLAPSE) != 0) {
++    GTEST_SKIP() << "MADV_COLLAPSE unavailable or out of hugepages: " << errno;
++  }
++  ASSERT_EQ(madvise(p, 
 ```
 
 ---
 
-### Incident Patch 2: `685cae7c` (2026-11-13)
-**Commit Message**: Automated Code Change
+### Incident Patch 2: `d287419e` (2026-11-14)
+**Commit Message**: Avoid KCFI typeid emission in TestAliasedFunctions.
 
-PiperOrigin-RevId: 1021178560
+Co-authored-by: Mike Kruskal <[REDACTED_EMAIL]>
+PiperOrigin-RevId: 1021860779
 
-**File**: `tcmalloc/internal/affinity_test.cc` (modified, +1/-1)
+**File**: `tcmalloc/testing/tcmalloc_test.cc` (modified, +12/-1)
 ```diff
-@@ -77,7 +77,7 @@ TEST(AffinityInternalTest, ScopedAffinityTamper) {
+@@ -1073,20 +1073,31 @@ void ExpectSameAddresses(T1 v1, T2 v2) {
+ }
+ }  // end unnamed namespace
+ 
++#if ABSL_HAVE_FEATURE(kcfi)
++extern "C" char kDeleteNothrow[] asm("_ZdlPvRKSt9nothrow_t");
++extern "C" char kDeleteArrayNothrow[] asm("_ZdaPvRKSt9nothrow_t");
++#endif
++
+ TEST(TCMallocTest, TestAliasedFunctions) {
+   if (kSanitizerPresent) {
+     GTEST_SKIP() << "Skipping under sanitizers";
+   }
+   void (*operator_delete)(void*) = &::operator delete;
++  void (*operator_delete_array)(void*) = &::operator delete[];
++#if ABSL_HAVE_FEATURE(kcfi)
++  ExpectSameAddresses(operator_delete, kDeleteNothrow);
++  ExpectSameAddresses(operator_delete, operator_delete_array);
++  ExpectSameAddresses(operator_delete, kDeleteArrayNothrow);
++#else
+   void (*operator_delete_nothrow)(void*, const std::nothrow_t&) =
+       &::operator delete;
+-  void (*operator_delete_array)(void*) = &::operator delete[];
+   void (*operator_delete_array_nothrow)(void*, const std::nothrow_t&) =
+       &::operator delete[];
+ 
+   ExpectSameAddresses(operator_delete, operator_delete_nothrow);
+   ExpectSameAddresses(operator_delete, operator_delete_array);
+   ExpectSameAddresses(operator_delete, operator_delete_array_nothrow);
++#endif
  }
  
- TEST(AffinityInternalTest, ScopedAffinityMask) {
--  auto original_cpus = AllowedCpus();
-+  [[maybe_unused]] auto original_cpus = AllowedCpus();
- 
- restart:
-   std::vector<int> original_affinity = AllowedCpus(), temporary_affinity;
-```
-
-**File**: `tcmalloc/mock_transfer_cache.h` (modified, +0/-1)
-```diff
-@@ -439,7 +439,6 @@ class FakeShardedTransferCacheEnvironment {
- 
-   void Remove(int cpu, int n) {
-     cpu_layout_.SetCurrentCpu(cpu);
--    std::vector<void*> bufs;
-     for (int i = 0; i < n; ++i) {
-       void* ptr = sharded_manager_.Pop(kSizeClass);
-       // Ensure we make progress.
-```
-
-**File**: `tcmalloc/testing/get_stats_test.cc` (modified, +0/-1)
-```diff
-@@ -664,7 +664,6 @@ TEST_F(GetStatsTest, RequiredBufferSizes) {
-     GTEST_SKIP() << "Not linked against malloc";
-   }
- 
--  std::string stats;
-   const int kLargeBufferSize = 3 << 20;
-   const int kSmallBufferSize = 16 << 10;
-   std::string buf;
-```
-
-**File**: `tcmalloc/testing/profile_drop_frames_test.cc` (modified, +0/-1)
-```diff
-@@ -325,7 +325,6 @@ TEST(AllocationSampleTest, ProfileDropFrames) {
-       tcmalloc::tcmalloc_internal::kProfileDropFrames.end());
-   absl::flat_hash_map<void*, std::string> symbol_cache;
-   absl::flat_hash_map<std::string, bool> drop_cache;
--  std::vector<char> symbol_name(4 << 10);
-   bool failed = false;
-   int got_stacks = 0;
-   constexpr absl::string_view kOurFunction =
+ // This test is extremely slow on riscv.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1928** (2026-11-14): Avoid KCFI typeid emission in TestAliasedFunctions. (@copybara-service[bot])
 - **PR #1921** (2026-11-13): Use small-model RIP-relative addressing for tc_globals on x86-64. (@copybara-service[bot])
 - **PR #1920** (2026-11-13): Automated Code Change (@copybara-service[bot])
 - **PR #1918** (closed): No public description (@copybara-service[bot])
 - **PR #1917** (closed): No public description (@copybara-service[bot])
 - **PR #1916** (2026-11-12): Revert: percpu helper change (@copybara-service[bot])
-- **PR #1914** (2026-11-12): Use pread in PageFlags. (@copybara-service[bot])
 
 ---
 
@@ -1476,38 +1533,51 @@ PiperOrigin-RevId: 1021178560
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use small-model RIP-relative addressing for tc_globals on x86-64.
+## X. Handle deferred-split THPs in PageFlags::Get.
 
 **RULE**:
-When implementing operations in `tcmalloc/internal/config.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/internal/pageflags.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f69a26d2`: Use small-model RIP-relative addressing for tc_globals on x86-64.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2f1eaba`: Handle deferred-split THPs in PageFlags::Get.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/config.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/pageflags.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-// GOOGLE_MALLOC_SECTION_BEGIN places globals in google_malloc_data /
-// google_malloc_bss (normal small sections, not .ldata / .lbss), so
-// RIP-relative small-model addressing is safe even under -mcmodel=medium when
-// the object exceeds -mlarge-data-threshold.
-#if defined(__clang__) && defined(__linux__) && defined(__x86_64__) && \
-    ABSL_HAVE_ATTRIBUTE(model)
-#define TCMALLOC_SMALL_MODEL __attribute__((model("small")))
-#else
-#define TCMALLOC_SMALL_MODEL
-#endif
-
+    if (ABSL_PREDICT_FALSE(!PageHead(flags) || !PageThp(flags))) {
+        // A tail page's flags are only on the compound head page, which we may
+        // not have read yet (either because the span starts on a tail page or
+        // because earlier pages in a deferred-split THP were unbacked/native).
+        // Simplifying to four native pages per hugepage to make the diagram
+        // fit, an entire hugepage looks like (where X is the span of interest):
+        //      .                vaddr
+        if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
+                  absl::StatusCode::kOk ||
+              ABSL_PREDICT_FALSE(!is_huge)) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    if (ABSL_PREDICT_FALSE(PageTail(flags))) {
+  const uintptr_t basePage = vaddr;
+        // The object may start on a tail page of a hugepage, whose flags are
+        // only on the head page. Simplifying to four native pages per hugepage
+        // to make the diagram fit, an entire hugepage looks like (where X is
+        // the span of interest):
+        //      .                basePage
+        if (vaddr == basePage) {
+              absl::StatusCode::kOk) {
+        } else if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
+          TC_LOG("Did not see head page before tail page (i=%v, buf=%v)", i,
+                 buf_[i]);
+          return std::nullopt;
+      } else {
+        last_head_read_ = -1;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f69a26d2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2f1eaba` are properly handled with clean fallback behavior.

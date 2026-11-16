@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T15:00:51.638Z",
-  "total_records": 1265,
+  "last_updated": "2026-11-16T15:10:13.440Z",
+  "total_records": 1267,
   "domains": {
     "A": {
       "total": 7,
@@ -667,7 +667,7 @@
       ]
     },
     "G": {
-      "total": 226,
+      "total": 228,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -894,7 +894,9 @@
         "domain_intelligence-architecture-intelligence-juicedata-juicefs-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-revenuecat-purchases-ios-core-invariants",
         "domain_intelligence-architecture-intelligence-revenuecat-purchases-ios-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-topoteretes-cognee-core-invariants",
+        "domain_intelligence-architecture-intelligence-topoteretes-cognee-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7998,8 +8000,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "dd09f14515bef7b51e2ecd3c7b5cad9bd81e57b353395d8c528da24dcc1b6349",
-      "created_at": "2026-11-16T14:07:06.476Z"
+      "content_hash": "7bc391ae5187835a6942867741397009b3e51e476edbc619f0723fc21311816e",
+      "created_at": "2026-11-16T15:10:13.440Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16444,8 +16446,8 @@
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "repository": "google/tcmalloc",
-      "content_hash": "70acdba3375195ca9b9941aa3efac8c876637b07be928a312bbef4ee1ed017c1",
-      "created_at": "2026-11-14T18:26:22.818Z"
+      "content_hash": "f3b53cf3962718cb06f8b0e21bb48bbfff10a084dd3cf3230ddc723318525bc6",
+      "created_at": "2026-11-16T15:09:59.361Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
@@ -16462,8 +16464,8 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-learnings-technical-construction-intelligence-google-tcmalloc-le.md",
       "repository": "google-tcmalloc-learnings",
-      "content_hash": "f00c888b618e0db10e7c816be3d47d9c9f80703e24211a037f1168908bb1362d",
-      "created_at": "2026-11-14T18:26:40.759Z"
+      "content_hash": "305b456bf2d6f4e49c27ddc4238c022f944d9d6655e6e793745a248e229591be",
+      "created_at": "2026-11-16T15:10:12.020Z"
     },
     "DOM-D-301C83AD": {
       "record_id": "DOM-D-301C83AD",
@@ -23179,6 +23181,24 @@
       "repository": "qdrant-qdrant-learnings",
       "content_hash": "cc5a45362e5d822f601329e1cd1d5fd667ae463c257a546c95e1ceefb1f2ae32",
       "created_at": "2026-11-16T15:00:51.638Z"
+    },
+    "domain_intelligence-architecture-intelligence-topoteretes-cognee-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-topoteretes-cognee-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: topoteretes/cognee Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topoteretes-cognee-architecture-intelligence-topoteretes-cognee-core-invariants.md",
+      "repository": "topoteretes/cognee",
+      "content_hash": "158781282293da31793550ea0274f82305dc32a745ddb034cbb48707d4bbd546",
+      "created_at": "2026-11-16T15:10:08.791Z"
+    },
+    "domain_intelligence-architecture-intelligence-topoteretes-cognee-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-topoteretes-cognee-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: topoteretes-cognee-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topoteretes-cognee-learnings-architecture-intelligence-topoteretes-cognee-learni.md",
+      "repository": "topoteretes-cognee-learnings",
+      "content_hash": "921a2110cc60ceb84b53f774a4469cd5314971c434e1b0f566d58b3a8eaa2d3f",
+      "created_at": "2026-11-16T15:10:12.759Z"
     }
   }
 }

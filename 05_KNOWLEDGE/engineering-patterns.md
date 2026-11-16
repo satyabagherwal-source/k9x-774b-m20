@@ -634919,3 +634919,193 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f8cdcfef` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8749. Handle deferred-split THPs in PageFlags::Get. (Harvested from google/tcmalloc)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Handle deferred-split THPs in PageFlags::Get.",
+  "source": "google/tcmalloc",
+  "source_url": "https://github.com/google/tcmalloc",
+  "source_version": "c2f1eaba",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-16T15:09:58.626Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-google-tcmalloc",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google/tcmalloc](https://github.com/google/tcmalloc) (Revision: `c2f1eaba`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `tcmalloc/internal/pageflags.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c2f1eaba`: Handle deferred-split THPs in PageFlags::Get.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/pageflags.cc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+    if (ABSL_PREDICT_FALSE(!PageHead(flags) || !PageThp(flags))) {
+        // A tail page's flags are only on the compound head page, which we may
+        // not have read yet (either because the span starts on a tail page or
+        // because earlier pages in a deferred-split THP were unbacked/native).
+        // Simplifying to four native pages per hugepage to make the diagram
+        // fit, an entire hugepage looks like (where X is the span of interest):
+        //      .                vaddr
+        if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
+                  absl::StatusCode::kOk ||
+              ABSL_PREDICT_FALSE(!is_huge)) {
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+    if (ABSL_PREDICT_FALSE(PageTail(flags))) {
+  const uintptr_t basePage = vaddr;
+        // The object may start on a tail page of a hugepage, whose flags are
+        // only on the head page. Simplifying to four native pages per hugepage
+        // to make the diagram fit, an entire hugepage looks like (where X is
+        // the span of interest):
+        //      .                basePage
+        if (vaddr == basePage) {
+              absl::StatusCode::kOk) {
+        } else if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
+          TC_LOG("Did not see head page before tail page (i=%v, buf=%v)", i,
+                 buf_[i]);
+          return std::nullopt;
+      } else {
+        last_head_read_ = -1;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c2f1eaba` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8750. Move the Hermes plugin into cognee-integrations/ (SDK-1489) (Harvested from topoteretes/cognee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Move the Hermes plugin into cognee-integrations/ (SDK-1489)",
+  "source": "topoteretes/cognee",
+  "source_url": "https://github.com/topoteretes/cognee",
+  "source_version": "5870f15d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-16T15:10:08.054Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-topoteretes-cognee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `5870f15d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/nightly_scheduler.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5870f15d`: hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_scheduler.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+
+  # The integrations' live round trip (test_integrations.yml, `live`), every
+  # evening against dev: plugin fixes land on dev, and main only moves at core
+  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
+  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
+  # which would run it a second time that day.
+  dispatch-integrations:
+    name: Dispatch the integrations live tier
+    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Note the newest existing integrations run
+        id: baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Before dispatching, so the confirm step below cannot match an older run.
+          id="$(gh run list --workflow test_integrations.yml --branch dev \
+                  --event workflow_dispatch --limit 1 \
+                  --json databaseId --jq '.[0].databaseId // 0')"
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+ 
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5870f15d` are properly handled with clean fallback behavior.

@@ -10285,3 +10285,5 @@
 | `CYCLE-20261116-4OXW` | `2026-11-16T15:00:35.780Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8746` | Yes (`5c94cdb4...`) |
 | `CYCLE-20261116-4S6W` | `2026-11-16T15:00:39.992Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8747` | Yes (`5743b956...`) |
 | `CYCLE-20261116-4XNY` | `2026-11-16T15:00:47.086Z` | `qdrant/qdrant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8748` | Yes (`2fdda9e3...`) |
+| `CYCLE-20261116-GRKO` | `2026-11-16T15:09:59.064Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8749` | Yes (`c2a7a096...`) |
+| `CYCLE-20261116-GYUI` | `2026-11-16T15:10:08.490Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8750` | Yes (`314216ef...`) |

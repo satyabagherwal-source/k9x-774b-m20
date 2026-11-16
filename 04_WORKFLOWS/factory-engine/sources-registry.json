@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T15:00:50.122Z",
-    "lastVerified": "2026-11-16T15:00:50.122Z",
+    "lastChecked": "2026-11-16T15:10:11.550Z",
+    "lastVerified": "2026-11-16T15:10:11.550Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,12 +255,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T13:38:33.225Z",
-    "lastVerified": "2026-11-16T13:38:33.225Z",
+    "lastChecked": "2026-11-16T15:10:04.881Z",
+    "lastVerified": "2026-11-16T15:10:04.881Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -269,7 +269,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "faa20a23"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -848,22 +849,21 @@
     "revisionIdentifier": "eaec0e89"
   },
   "topoteretes-cognee": {
-    "name": "cognee",
+    "name": "topoteretes/cognee",
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T03:48:12.695Z",
-    "lastVerified": "2026-11-15T03:48:12.695Z",
+    "lastChecked": "2026-11-16T15:10:07.562Z",
+    "lastVerified": "2026-11-16T15:10:07.562Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
-    "contentHash": "fcfbb70ac809a1a01e9829d27b62149cb55cbeb52a6712e399b6c000e05d74f6",
+    "contentHash": "314216efa4368f94afa850a3f1557ff68a24616621622ef65a4a3b76e4db9e62",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4053f6cc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-tencent-hy-simulmt-30b-a3b-fp8": {
     "name": "tencent/Hy-SimulMT-30B-A3B-FP8",
@@ -1856,8 +1856,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T03:23:21.173Z",
-    "lastVerified": "2026-11-16T03:23:21.173Z",
+    "lastChecked": "2026-11-16T15:10:00.144Z",
+    "lastVerified": "2026-11-16T15:10:00.144Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -7699,12 +7699,12 @@
     "lastVerified": "2026-11-14T22:11:19.999Z"
   },
   "temporalio-temporal": {
-    "name": "temporalio/temporal",
+    "name": "temporal",
     "officialUrl": "https://github.com/temporalio/temporal",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T06:00:09.280Z",
-    "lastVerified": "2026-11-15T06:00:09.280Z",
+    "lastChecked": "2026-11-16T15:09:57.330Z",
+    "lastVerified": "2026-11-16T15:09:57.330Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-temporalio-temporal",
@@ -7713,7 +7713,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "170fb83d"
   },
   "redisearch-redisearch": {
     "name": "RediSearch/RediSearch",
@@ -9235,12 +9236,12 @@
     "officialUrl": "https://github.com/google/tcmalloc",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-14T18:26:21.436Z",
-    "lastVerified": "2026-11-14T18:26:21.436Z",
+    "lastChecked": "2026-11-16T15:09:55.976Z",
+    "lastVerified": "2026-11-16T15:09:55.976Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "b002fa6bd2b10becd88ee4fafea443e6a9094e1c9bead9e11b73cd73a3fdd2cb",
+    "contentHash": "c2a7a096ccd37c9cafd9880a40da412a037b8d760c9d975590138b1abbd04893",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -11407,8 +11408,8 @@
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T00:22:55.237Z",
-    "lastVerified": "2026-11-12T00:22:55.237Z",
+    "lastChecked": "2026-11-16T15:09:52.520Z",
+    "lastVerified": "2026-11-16T15:09:52.520Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
@@ -11610,9 +11611,9 @@
   "kruszoneq-macusb": {
     "name": "macUSB",
     "officialUrl": "https://github.com/Kruszoneq/macUSB",
-    "lastChecked": "2026-11-13T03:18:43.456Z",
+    "lastChecked": "2026-11-16T15:09:54.774Z",
     "revisionIdentifier": "777ed534",
-    "lastVerified": "2026-11-13T03:18:43.456Z"
+    "lastVerified": "2026-11-16T15:09:54.774Z"
   },
   "fb55-htmlparser2": {
     "name": "fb55/htmlparser2",

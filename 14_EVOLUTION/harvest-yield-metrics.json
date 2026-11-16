@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T15:00:47.094Z",
-  "total_cycles_completed": 9875,
-  "total_learnings_persisted": 9875,
-  "total_rules_promoted": 9480,
+  "last_updated": "2026-11-16T15:10:08.499Z",
+  "total_cycles_completed": 9877,
+  "total_learnings_persisted": 9877,
+  "total_rules_promoted": 9482,
   "history": [
-    {
-      "timestamp": "2026-11-15T06:18:19.329Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T06:36:43.085Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T06:36:51.624Z",
       "repository": "k3s-io/k3s",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T15:00:47.094Z",
       "repository": "qdrant/qdrant",
       "learningId": "learn-github-qdrant-qdrant",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T15:09:59.073Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T15:10:08.499Z",
+      "repository": "topoteretes/cognee",
+      "learningId": "learn-github-topoteretes-cognee",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T15:00:51.751Z",
-  "total_verified_learnings": 8777,
+  "last_updated": "2026-11-16T15:10:13.562Z",
+  "total_verified_learnings": 8778,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19111,
+  "total_items": 19120,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7WJF-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-H2KP-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d5f9a003e6ecc55226cf5c5d42608198c3f5feacc0d4d4936d6792dac8147eb",
+      "content_hash": "e073eada3a85ee591d4d7c1d1522deb9921c8be8330e33756c9c7966e0b8bdcd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T14:07:06.366Z"
+      "persisted_at": "2026-11-16T15:10:13.324Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd09f14515bef7b51e2ecd3c7b5cad9bd81e57b353395d8c528da24dcc1b6349",
+      "content_hash": "7bc391ae5187835a6942867741397009b3e51e476edbc619f0723fc21311816e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T14:07:06.476Z"
+      "persisted_at": "2026-11-16T15:10:13.440Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "91f2a1b0640da9197287f6b56d5c6fce6521a44b50ff07138327ee66e09fe273",
+      "content_hash": "9ad873c7914e0005ddc39ddb007448503770090e1515a899d6d1db145bd330cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T14:07:06.593Z"
+      "persisted_at": "2026-11-16T15:10:13.562Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114685,10 +114685,10 @@
       "relative_path": "08_VERIFICATION/topoteretes-cognee-verification-protocol-empirical-defect-shield-for-topoteretes.md",
       "title": "Verification Protocol: Empirical Defect Shield for topoteretes/cognee",
       "repository": "topoteretes/cognee",
-      "source_version": "4053f6cc",
-      "content_hash": "46987602af8b5eddbf2f91e8a3b9ba5e23fa2d76b9cfbc3e0e94fac89a02a338",
+      "source_version": "5870f15d",
+      "content_hash": "e674dacd2253979d297b0599e501c0ff7ff5ca502585242512ef05bb6bb5c1e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:35:00.239Z"
+      "persisted_at": "2026-11-16T15:10:08.911Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning",
@@ -232875,14 +232875,19 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "f69a26d2",
-      "content_hash": "b002fa6bd2b10becd88ee4fafea443e6a9094e1c9bead9e11b73cd73a3fdd2cb",
+      "source_version": "c2f1eaba",
+      "content_hash": "c2a7a096ccd37c9cafd9880a40da412a037b8d760c9d975590138b1abbd04893",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
         {
           "number": 8519,
           "title": "Use small-model RIP-relative addressing for tc_globals on x86-64.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8749,
+          "title": "Handle deferred-split THPs in PageFlags::Get.",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -232891,7 +232896,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T18:26:22.307Z",
+      "verified_at": "2026-11-16T15:09:58.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232933,10 +232938,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "repository": "google/tcmalloc",
-      "source_version": "f69a26d2",
-      "content_hash": "70acdba3375195ca9b9941aa3efac8c876637b07be928a312bbef4ee1ed017c1",
+      "source_version": "c2f1eaba",
+      "content_hash": "f3b53cf3962718cb06f8b0e21bb48bbfff10a084dd3cf3230ddc723318525bc6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T18:26:22.818Z"
+      "persisted_at": "2026-11-16T15:09:59.361Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc",
@@ -232945,10 +232950,10 @@
       "relative_path": "08_VERIFICATION/google-tcmalloc-verification-protocol-empirical-defect-shield-for-google-tcmallo.md",
       "title": "Verification Protocol: Empirical Defect Shield for google/tcmalloc",
       "repository": "google/tcmalloc",
-      "source_version": "f69a26d2",
-      "content_hash": "be211804cfdfd191fdf354c9c7d867a735ce1147218b7ceb3ffeae7760e919df",
+      "source_version": "c2f1eaba",
+      "content_hash": "ed76a3f7333d254d470e0dd2d224703c28a7b59ae5921ba404e218f84ed12617",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T18:26:22.952Z"
+      "persisted_at": "2026-11-16T15:09:59.491Z"
     },
     "learn-github-open-ani-animeko": {
       "learning_id": "learn-github-open-ani-animeko",
@@ -233053,9 +233058,9 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "f00c888b618e0db10e7c816be3d47d9c9f80703e24211a037f1168908bb1362d",
+      "content_hash": "305b456bf2d6f4e49c27ddc4238c022f944d9d6655e6e793745a248e229591be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T18:26:40.759Z"
+      "persisted_at": "2026-11-16T15:10:12.020Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings",
@@ -233065,9 +233070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for google-tcmalloc-learnings",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "27185f53950f77fed2e0962bd1b739eac1a054a0c1060d4dbea74dbc8bf7de0a",
+      "content_hash": "0508734cf41c74295ad7480ea6a0dabef15e6a941112c8ffdf85f2f6e281259e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T18:26:40.887Z"
+      "persisted_at": "2026-11-16T15:10:12.141Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
@@ -254136,6 +254141,139 @@
       "content_hash": "295dd440920a062daae6b250a5603784aa13e10fc2bd0b0494dae50741d3baf8",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T15:00:51.751Z"
+    },
+    "rule-8749": {
+      "learning_id": "rule-8749",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8749,
+      "title": "Handle deferred-split THPs in PageFlags::Get.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "c2f1eaba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:09:58.884Z"
+    },
+    "candidate_directive-handle-deferred-split-thps-in-pageflags-get": {
+      "item_id": "candidate_directive-handle-deferred-split-thps-in-pageflags-get",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H1H9-handle-deferred-split-thps-in-pageflags-get.md",
+      "title": "Handle deferred-split THPs in PageFlags::Get.",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ac500f4d1e7054b10fa953a62bf6b482496039698e045b82b712c95b1adefb1d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:10:11.902Z"
+    },
+    "learn-github-topoteretes-cognee": {
+      "learning_id": "learn-github-topoteretes-cognee",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "topoteretes/cognee",
+      "repository": "topoteretes/cognee",
+      "slug": "topoteretes-cognee",
+      "platform": "github",
+      "source_url": "https://github.com/topoteretes/cognee",
+      "source_version": "5870f15d",
+      "content_hash": "314216efa4368f94afa850a3f1557ff68a24616621622ef65a4a3b76e4db9e62",
+      "dossier_path": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8750,
+          "title": "Move the Hermes plugin into cognee-integrations/ (SDK-1489)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T15:10:08.323Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8750": {
+      "learning_id": "rule-8750",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8750,
+      "title": "Move the Hermes plugin into cognee-integrations/ (SDK-1489)",
+      "source_url": "https://github.com/topoteretes/cognee",
+      "source_version": "5870f15d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:10:08.323Z"
+    },
+    "candidate_directive-move-the-hermes-plugin-into-cognee-integrations-sdk-1489": {
+      "item_id": "candidate_directive-move-the-hermes-plugin-into-cognee-integrations-sdk-1489",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GYZN-move-the-hermes-plugin-into-cognee-integrations-sdk-1489.md",
+      "title": "Move the Hermes plugin into cognee-integrations/ (SDK-1489)",
+      "repository": "topoteretes/cognee",
+      "source_version": "5870f15d",
+      "content_hash": "a7a783637ea6089f1c898125c88fc06ca1699ba325ffa18b94b40c92e72cd8c7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:10:08.679Z"
+    },
+    "domain_intelligence-architecture-intelligence-topoteretes-cognee-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-topoteretes-cognee-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topoteretes-cognee-architecture-intelligence-topoteretes-cognee-core-invariants.md",
+      "title": "Architecture Intelligence: topoteretes/cognee Core Invariants",
+      "repository": "topoteretes/cognee",
+      "source_version": "5870f15d",
+      "content_hash": "158781282293da31793550ea0274f82305dc32a745ddb034cbb48707d4bbd546",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:10:08.791Z"
+    },
+    "candidate_directive-hermes-move-the-hermes-plugin-into-cognee-integrations-sdk-1489": {
+      "item_id": "candidate_directive-hermes-move-the-hermes-plugin-into-cognee-integrations-sdk-1489",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H21Q-hermes-move-the-hermes-plugin-into-cognee-integrations-sdk-1489.md",
+      "title": "hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489)",
+      "repository": "topoteretes-cognee-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4272a09434c324fde813a1c762dfd53fcb144e9136edb224e2cc5eb9e61734f4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:10:12.641Z"
+    },
+    "domain_intelligence-architecture-intelligence-topoteretes-cognee-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-topoteretes-cognee-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topoteretes-cognee-learnings-architecture-intelligence-topoteretes-cognee-learni.md",
+      "title": "Architecture Intelligence: topoteretes-cognee-learnings Core Invariants",
+      "repository": "topoteretes-cognee-learnings",
+      "source_version": "HEAD",
+      "content_hash": "921a2110cc60ceb84b53f774a4469cd5314971c434e1b0f566d58b3a8eaa2d3f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T15:10:12.759Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-topoteretes-cognee-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-topoteretes-cognee-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/topoteretes-cognee-learnings-verification-protocol-empirical-defect-shield-for-t.md",
+      "title": "Verification Protocol: Empirical Defect Shield for topoteretes-cognee-learnings",
+      "repository": "topoteretes-cognee-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e3564b8d83dc576d3106932cf2ab2bc307e8ad47d9a88e7c15336eaf502b00f4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T15:10:12.881Z"
     }
   },
   "ai-builder-brain": {

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:53.012Z",
+  "timestamp": "2026-11-16T15:10:12.535Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-topoteretes-cognee-learnings",
+  "learning_id": "LEARN-EVO-topoteretes-cognee-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [topoteretes-cognee-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:53.012Z`  
-> **Learning ID**: `LEARN-REEXTRACT-topoteretes-cognee-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T15:10:12.535Z`  
+> **Learning ID**: `LEARN-EVO-topoteretes-cognee-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source**: github ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
-> **Source Version**: `8853378e`  
+> **Source Version**: `5870f15d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T21:06:51.115Z  
+> **Timestamp**: 2026-11-16T15:10:07.568Z  
 > **Learning ID**: `learn-github-topoteretes-cognee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T21:06:50.273Z  
+> **Harvest Timestamp**: 2026-11-16T15:10:07.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33116 stars
+- **Stars / Engagement**: 33347 stars
 
 ---
 
@@ -879,6 +879,11 @@ the package with itself and never refuses an old cognee.
 
 import importlib
 import json
+import time
+from collections.abc import Callable
+from typing import TypeVar
+
+_T = TypeVar("_T")
 
 # A dlt source sets this attribute to opt into the "document" ingestion path:
 # each row becomes a text document that flows through normal cognify (LLM entity
@@ -996,6 +1001,39 @@ def guarded_rows(rows, check_active=None):
         yield row
 
 
+def with_retries(
+    attempt: Callable[[], _T],
+    *,
+    retry_on: tuple[type[BaseException], ...],
+    delay: Callable[[BaseException, int], float | None],
+    attempts: int,
+    check_active: Callable[[], None] | None = None,
+    sleep: Callable[[float], None] | None = None,
+) -> _T:
+    """Run one provider request, retried by the connector's own policy.
+
+    ``attempt`` makes one request. An error of a ``retry_on`` class is retried after
+    ``delay(error, number)`` seconds unless it was the last of ``attempts`` or ``delay`` answers
+    ``None``; then it is raised as it is. ``check_active`` runs before every wait and every
+    retry, never before a first attempt, and what it raises propagates as it is.
+    """
+    for number in range(attempts):
+        if number and check_active is not None:
+            check_active()
+        try:
+            return attempt()
+        except retry_on as error:
+            if number == attempts - 1:
+                raise
+            wait = delay(error, number)
+            if wait is None:
+                raise
+        if check_active is not None:
+            check_active()
+        (sleep or time.sleep)(wait)
+    raise ValueError("with_retries needs at least one attempt")
+
+
 def document_source_tag(item) -> str | None:
     """Return the document-source tag a dlt source opted into, else ``None``."""
     tag = getattr(item, DOCUMENT_SOURCE_ATTR, None)
@@ -1062,9 +1100,7 @@ __all__ = [
     "is_dlt_sourced",
     "metadata_source",
     "pipeline_name_for_source",
-    "require_document_sync_version",
-]
-
+    "require_document_sync_v
 ```
 
 ### Core Architecture Module: `cognee-connectors/core/cognee_connectors_core/errors.py`
@@ -1493,11 +1529,11 @@ class DescriptorConnector(Connector):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6424** (2026-11-05): **[Bug]: search(node_name=<document name>) returns nothing for CHUNKS/RAG_COMPLETION, and FEELING_LUCKY can route into it**
-  *Symptoms*: ### Bug Description  `search()` documents `node_name` as "Filter results to specific named entities", but how it is applied depends on the search type, and for several types a document name silently matches nothing.  **Graph completion family** (`GRAPH_COMPLETION`, `_COT`, `_CONTEXT_EXTENSION`, `_DECOMPOSITION`, `GRAPH_SUMMARY_COMPLETION`, `AGENTIC_COMPLETION`): `node_type=TextDocument, node_name=["doc_a"]` goes through `get_nodeset_subgraph`, which keeps the document plus its 1-hop neighbours. Works. (Note: a document's only direct neighbours are its chunks; entities hang off chunks via `contains`, so they are 2 hops away and not included.)  **`CHUNKS` / `RAG_COMPLETION`**: `node_name` is passed to the vector search, which filters on `payload.belongs_to_set` (`LanceDBAdapter.py` ~L1369, `array_has_any(payload.belongs_to_set, ...)`). That field holds NodeSet tags only. `ChunksRetriever` is never given `node_type`, so a document name can never match and the search returns 0 results. `HYBRID_COMPLETION` only appears to work because `request_deferral_reason` hands a custom `node_type` to graph completion.  **`FEELING_LUCKY`**: `select_search_type(query_text)` sees only the query, not `node_name` / `node_type`. With a document filter set, the LLM can still route to `CHUNKS` or `RAG_COMPLETION` (filter matches nothing, empty result), or to `SUMMARIES`, `CYPHER`, `NATURAL_LANGUAGE`, which never receive `node_name` at all (unscoped results). So the scope depends on the LLM's choice.
+- **Issue #6689** (2026-11-13): **[Bug] LanceDB fails to persist transaction files on Windows during cognee.remember() — CognifyFailedError and CollectionNotFoundError**
+  *Symptoms*: ### Bug Description  I'm encountering an issue when using Cognee on Windows with LanceDB as the vector database and OpenRouter for both LLM and embedding inference.  After resetting Cognee's data and ingesting local text files using cognee.remember(), the indexing pipeline fails because LanceDB cannot persist a transaction file.  The initial error is: _RuntimeError: lance error: LanceError(IO): failed to shutdown local writer LanceError(IO): failed to persist temp file The system cannot find the path specified. (os error 3)_  The subsequent rollback also fails: _CollectionNotFoundError: Collection 'DocumentChunk_text' not found! (Status code: 422)_  ### Steps to Reproduce  I run the following code in a Jupyter notebook (the code was given in the first video in cognee Youtube channel : https://www.youtube.com/watch?v=lQpmXvsrBzg&list=PLbJ6aa1LYeSTxMhlfOTKw3RbHGiL3fbm0&index=1): import cognee import os  await cognee.forget(everything=True)  data_path = "../data/silver"  for root, dirs, files in os.walk(data_path):     for file in files:         file_path = os.path.join(root, file)         print(file_path)          content = open(file_path, "r").read()         await cognee.remember(content)  The directory contains local md documents that I want to ingest into Cognee.  ### Expected Behavior  1. Ingest and index documents without filesystem errors. 2. Handle failed collection creation gracefully during rollback, without raising an additional CollectionNotFoundError.  ### Actual Be
 
-- **Issue #6301** (2026-10-29): **[Bug]: S3FileStorage.list_files() hides backend failures as an empty result**
-  *Symptoms*: ### Bug Description  `S3FileStorage.list_files()` catches every exception raised by `s3.glob()` or `s3.isfile()` and returns `[]`. This makes permission errors, transient network failures, and endpoint problems indistinguishable from a genuinely empty directory. Callers that use the listing as a source-of-truth inventory can silently proceed with incomplete or missing data instead of surfacing the storage failure.  ### Steps to Reproduce  1. Configure S3FileStorage with a bucket/prefix. 2. Make the listing call fail (for example, use mocked s3.glob() that raises PermissionError or a connection exception). 3. Call await storage.list_files("some-prefix"). 4. Observe that the call returns [] instead of propagating the backend error.  ### Expected Behavior  Return an empty list only when the requested directory/prefix is confirmed to contain no files. Propagate permission, transport, and other backend errors so callers can fail or retry instead of treating the data source as empty.  ### Actual Behavior  The exception is logged only at debug level and list_files() returns an empty list, hiding the reason the listing failed.  ### Environment  Current main checkout, cognee/infrastructure/files/storage/S3FileStorage.py, S3FileStorage.list_files().  ### Logs/Error Messages  ```shell  ```  ### Additional Context  The blanket except Exception around self.s3.glob() and self.s3.isfile() at the end of list_files_sync() swallows all backend failures. This differs from a confirmed empty pref
+- **Issue #6558** (2026-11-09): **Recreated dataset reuses its deterministic ID but loses all non-owner ACLs, silently locking out shared principals**
+  *Symptoms*: ## Summary  When a dataset is deleted (`forget` / `delete_dataset`) and then created again under the same name by the same owner, it gets **the same dataset ID** but **only the owner's ACLs**. Every grant that other principals (users, roles, tenants) held on the old dataset is gone. Nothing in the API tells a client that this ID now refers to a different dataset. So a client that remembers "I already shared dataset `<id>` with role X" keeps trusting a grant that no longer exists. From then on that principal gets 403 on every read and write, with no clear signal why.  ## Where it comes from  - `cognee/modules/data/methods/get_unique_dataset_id.py`: the dataset ID is deterministic, `uuid5(NAMESPACE_OID, f"{dataset_name}{user.id}")` (and the tenant-aware variant). Recreating the dataset gives back the same UUID. - `cognee/modules/data/methods/delete_dataset.py`: `session.delete(dataset)` cascades and removes the dataset's ACL rows. That part is correct by itself. - On re-creation, only the owner gets `read/write/delete/share`.  Together these mean a dataset ID does not identify one dataset over its whole life. It can come back after a delete, with different permissions.  ## Steps to reproduce  1. User A creates dataset `agent_sessions` and adds data. 2. A grants a role (or another user B) `read` and `write` on it via `POST /api/v1/permissions/datasets/{principal_id}?permission_name=...`. 3. B writes to and searches the dataset successfully. 4. A runs `forget` on the dataset (or 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1514,1176 +1550,1008 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `556e958c` (2026-11-06)
-**Commit Message**: fix: Gate database connection-string ingestion (SDK-1443) (#6588)
-
-## Description
-Fix for GHSA-xjmj-34mq-6g3h.
-
-### Breaking change for API users
-
-**Database ingestion over the HTTP API is now off by default.** A
-`postgresql://`, `mysql://`, `sqlite:///` (or any other
-`DB_CONNECTION_PATTERNS`) string posted to `POST /api/v1/add` or `POST
-/api/v1/remember` in `raw_data` is refused with `422
-DatabaseIngestionDisabled` unless the server sets
-`ALLOW_DATABASE_INGESTION=true`. Releases 1.6.3 through 1.6.5 accepted
-it. The SDK, CLI and MCP server are unaffected with the variable unset,
-so only API deployments whose callers are trusted need the switch;
-`false` refuses connection-string ingestion on every surface.
-
-The 422 and the switch are stated in the add / remember endpoint docs
-(field description, docstring and error list), the `add()` docstring,
-`.env.template` and the CLAUDE.md security entry.
-
-### What
-
-dlt connection-string ingestion (add/remember with sqlite:///,
-postgresql://, mysql://, ...) connects from the server, with the
-server's network position. All of it now goes through one gate in
-`create_dlt_source_from_connection_string`:
-
-1. **ALLOW_DATABASE_INGESTION, three states.
-
-**File**: `.env.template` (modified, +11/-0)
-```diff
-@@ -469,6 +469,17 @@ HASH_API_KEY="False"
- # Enable automatic scan-and-apply for plain folders targeting main_dataset:
- # PRESORT_FOLDERS_ENABLED=false
- ALLOW_HTTP_REQUESTS=True
-+# Ingesting a database from a connection string (add/remember with sqlite:///,
-+# postgresql://, mysql://, ...) connects from this server, with its network
-+# position. Unset (the default), the SDK, CLI and MCP server may do it and the
-+# API server refuses it (422 DatabaseIngestionDisabled): its callers are whoever
-+# can register. Set true to allow it for API callers you trust, false to refuse
-+# it everywhere. Connection strings that point at cognee's own storage are always
-+# refused: SQLite files in its roots, strings carrying cognee's own database
-+# credentials, and hosts resolving to one of its servers (best-effort: not every
-+# address of a host can be known, so keep cognee's databases behind a password
-+# and egress rules). A sqlite:/// path must be an existing file.
-+# ALLOW_DATABASE_INGESTION=true
- # Raw Cypher search (CYPHER, NATURAL_LANGUAGE) is off by default: it lets any user with read
- # access to a dataset run arbitrary graph queries, up to remote code execution on the server.
- # Enable it only when every user of this deployment is trusted.
-```
-
-**File**: `CLAUDE.md` (modified, +1/-0)
-```diff
-@@ -824,6 +824,7 @@ Several security environment variables in `.env`:
- - `ACCEPT_LOCAL_FILE_PATH` - Allow a path in `raw_data` to be read with the server's own access: a local file or directory, cognee's own data root included, or an `s3://` object read with cognee's AWS credentials. One gate, `local_file_paths_accepted()` in `cognee/tasks/ingestion/save_data_item_to_storage.py`, applied before anything is read or listed (`resolve_data_directories` refuses a directory or S3 prefix before walking it): an explicit value is honoured on every surface; unset, the SDK, CLI and MCP server keep the code default (True) while an API request is refused (the gate reads the call origin the API server stamps on each request, `cognee/modules/operations/origin.py`; a task the request starts keeps that origin unless it opens a scope of its own, and the one that does, the session-bridge improve under `background`, only ever stores literal text). There is no exemption for cognee's storage: a caller's path into it is refused like any other. The documents of a repository cognee cloned from a URL are the one path form that passes without the gate: `resolve_data_directories` marks them `DataItem.cognee_path`, since the caller named a URL and cognee produced the paths. Uploads, text and web URLs are unaffected: they are stored under cognee's data root first and loaded from there, and the loader (`data_item_to_text_file`) applies no policy of its own, since everything it receives is cognee's copy or already admitted by the gate. `PATCH /update` takes the new version as an upload, so a document in a dataset shared with the caller is updated by upload under the dataset's write permission alone
- - `COGNEE_ALLOWED_LOCAL_FILE_ROOTS` - Optional `os.pathsep`-separated allowlist of directories local paths may be read from, applied once a path is accepted at all (over HTTP that needs `ACCEPT_LOCAL_FILE_PATH=true`). Unset (default) means any accepted local path is read, so a local repo or document tree can be ingested from anywhere; a path-looking string that does not exist is still ingested as text. When set, paths outside the listed roots are rejected (or ingested as text on the non-strict `add()` path); cognee's own data/system/cache/logs/repos roots are always allowed. Set it when paths are accepted from untrusted callers.
- - `ALLOW_HTTP_REQUESTS` - Allow HTTP requests from Cognee (default: True)
-+- `ALLOW_DATABASE_INGESTION` - **Database ingestion over the API is off by default.** A `postgresql://`, `mysql://`, `sqlite:///` (any `DB_CONNECTION_PATTERNS` scheme) string posted to `POST /api/v1/add` or `POST /api/v1/remember` is refused with 422 `DatabaseIngestionDisabled` unless the server sets `ALLOW_DATABASE_INGESTION=true` (a change from releases before 1.6.6, which accepted it); the SDK, CLI and MCP server ingest databases with the variable unset, so only API deployments need the switch. The reason: the connection is made from the server, with its network position, and the API's callers are whoever can register. `false` refuses connection-string sources on every surface. Connection strings that point at cognee's own storage are refused whatever the setting: SQLite files inside its data/system/cache/logs/repos roots or configured database paths, and network databases on a server its relational, vector, graph or cache settings use, matched by server and not by database name (the per-dataset Postgres handlers keep every dataset's database on one server). A server is recognised two ways. By credentials: a string carrying one of cognee's own username/password pairs (the relational, vector and graph settings' fields and the vector, graph and cache URLs) is refused on any host, which needs no address and so holds under aliases the address check cannot know and under DNS rebinding; it cannot cover a server that admits clients without a password or another role with access to cognee's databases. By address: the host resolved and compared with cognee's servers' addresses on the same port, where every loopback address, `0.0.0.0`/`::`, an IPv4-mapped IPv6 address and whatever this machine's hostname resolves to count as this machine. The address check is best-effort: it cannot list every address of this machine (on Debian-family hosts the hostname resolves to `127.0.1.1` alone) or of the database host (the host's LAN address behind the compose default `DB_HOST=host.docker.internal`), so an operator who turns the switch on relies on the credential refusal, on cognee's databases not accepting passwordless clients, and on network egress rules. A `sqlite:///` path must be an existing regular file (the driver would otherwise create it) and may not carry the `uri` option. A network connection string must name its server as the URL host and may carry only the `sslmode`, `connect_timeout`, `application_name` and `charset` options. Driver errors are reported by exception class only (`DatabaseSourceUnreachable`), with the full error in the server log.
- - `
-```
-
-**File**: `cognee/api/v1/add/add.py` (modified, +9/-0)
-```diff
-@@ -95,6 +95,15 @@ async def add(
-           (cross-file edges), plus the repo's documents; same as adding a local code
-           project directory. Requires ALLOW_HTTP_REQUESTS and git on PATH. Pass
-           ``branch`` to clone a branch other than the remote's default.
-+        - **Database connection strings**: "postgresql://...", "mysql://...",
-+          "sqlite:///path/to/file.db" and the other schemes in
-+          ``create_dlt_source.DB_CONNECTION_PATTERNS`` are read through dlt, with
-+          ``dlt_config["query"]`` as an optional single-table filter. The connection is
-+          made from the machine running cognee: the SDK, CLI and MCP server ingest a
-+          database by default, the API server refuses it (422
-+          ``DatabaseIngestionDisabled``) unless ``ALLOW_DATABASE_INGESTION=true``, and
-+          ``false`` refuses it everywhere. Cognee's own databases are refused whatever
-+          the setting, and a sqlite:/// path must be an existing file.
-         - **Lists**: Multiple files or text strings in a single call
- 
-     Supported File Formats:
-```
-
-**File**: `cognee/api/v1/add/routers/get_add_router.py` (modified, +11/-2)
-```diff
-@@ -55,8 +55,11 @@ async def add(
-                 "Data given as strings instead of uploads, one entry each: raw text to "
-                 "ingest, a local file or directory path on the server's filesystem "
-                 "(requires ACCEPT_LOCAL_FILE_PATH), a web URL to fetch (requires "
--                "ALLOW_HTTP_REQUESTS), or a GitHub/GitLab repository URL, which is "
--                "shallow-cloned and indexed as a code graph by cognify. Combined with "
-+                "ALLOW_HTTP_REQUESTS), a GitHub/GitLab repository URL, which is "
-+                "shallow-cloned and indexed as a code graph by cognify, or a database "
-+                "connection string (postgresql://, mysql://, sqlite:///, ...), refused "
-+                "over the API with 422 DatabaseIngestionDisabled unless the server sets "
-+                "ALLOW_DATABASE_INGESTION=true. Combined with "
-                 "'data': uploads come first, then these entries; labels and "
-                 "external_metadata pair with that combined order. Empty entries are "
-                 "ignored."
-@@ -124,6 +127,12 @@ async def add(
-             limits where local paths may point)
-           - A web URL, fetched as a page (requires ALLOW_HTTP_REQUESTS)
-           - A GitHub/GitLab repository URL, shallow-cloned and indexed as a code graph
-+          - A database connection string (postgresql://, mysql://, sqlite:///, ...),
-+            read with the server's own network position. Disabled over the API by
-+            default: the request fails with 422 DatabaseIngestionDisabled unless the
-+            server sets ALLOW_DATABASE_INGESTION=true (the SDK, CLI and MCP server
-+            ingest databases without the setting). Cognee's own databases are refused
-+            either way, and a sqlite:/// path must be an existing file.
-           At least one of data or raw_data is required. Uploads come first, then
-           raw_data entries; labels and external_metadata pair with that combined order.
-         - **labels** (Optional[str]): JSON array of per-item labels, e.g.
-```
-
-**File**: `cognee/api/v1/remember/routers/get_remember_router.py` (modified, +16/-4)
-```diff
-@@ -125,8 +125,11 @@ async def remember(
-                 "Data given as strings instead of uploads, one entry each: raw text to "
-                 "remember, a local file or directory path on the server's filesystem "
-                 "(requires ACCEPT_LOCAL_FILE_PATH), a web URL to fetch (requires "
--                "ALLOW_HTTP_REQUESTS), or a GitHub/GitLab repository URL, which is "
--                "shallow-cloned and indexed as a code graph. Combined with 'data': "
-+                "ALLOW_HTTP_REQUESTS), a GitHub/GitLab repository URL, which is "
-+                "shallow-cloned and indexed as a code graph, or a database connection "
-+                "string (postgresql://, mysql://, sqlite:///, ...), refused over the "
-+                "API with 422 DatabaseIngestionDisabled unless the server sets "
-+                "ALLOW_DATABASE_INGESTION=true. Combined with 'data': "
-                 "uploads come first, then these entries; labels and external_metadata "
-                 "pair with that combined order. Empty entries are ignored. With "
-                 "content_type='code' every entry is a repository spec (git URL or "
-@@ -313,8 +316,14 @@ async def remember(
-         - **data** (List[UploadFile]): Files to upload and process.
-         - **raw_data** (Optional[List[str]]): String inputs, one entry each: raw text, a
-           local file or directory path on the server (requires ACCEPT_LOCAL_FILE_PATH), a
--          web URL fetched as a page (requires ALLOW_HTTP_REQUESTS), or a GitHub/GitLab
--          repository URL, shallow-cloned and indexed as a code graph. Uploads come first,
-+          web URL fetched as a page (requires ALLOW_HTTP_REQUESTS), a GitHub/GitLab
-+          repository URL, shallow-cloned and indexed as a code graph, or a database
-+          connection string (postgresql://, mysql://, sqlite:///, ...). Database
-+          ingestion is disabled over the API by default: the request fails with
-+          422 DatabaseIngestionDisabled unless the server sets
-+          ALLOW_DATABASE_INGESTION=true (the SDK, CLI and MCP server ingest databases
-+          without the setting); cognee's own databases are refused either way, and a
-+          sqlite:/// path must be an existing file. Uploads come first,
-           then raw_data entries; labels and external_metadata pair with that combined
-           order. Normal ingestion only — rejected with content_type. At least one of data
-           or raw_data is required for normal ingestion.
-@@ -368,6 +377,9 @@ async def remember(
-           combination (no raw_data repository specs, file uploads or session_id with
-           content_type="code", index_vectors without it, or local repo paths while
-           ACCEPT_LOCAL_FILE_PATH=false)
-+        - **422 Unprocessable Entity**: A database connection string in raw_data while
-+          ALLOW_DATABASE_INGESTION is unset or false (DatabaseIngestionDisabled), or one
-+          that names cognee's own storage (DatabaseSourceRefused, SqliteSourceRefused)
-         - **409 Conflict**: Error during processing
-         """
-         # Swagger UI submits an untouched file list as one blank part; treat it
-```
-
-**File**: `cognee/infrastructure/files/utils/local_path_safety.py` (modified, +71/-11)
-```diff
-@@ -29,20 +29,80 @@ def get_allowed_local_file_roots() -> tuple[Path, ...] | None:
-     # holds repositories cognee cloned on request; its document files (README,
-     # docs) are ingested by path exactly like a local project's, so the same
-     # allowlist check they pass through has to admit it.
--    base_config = get_base_config()
--    root_values.extend(
--        [
--            base_config.data_root_directory,
--            base_config.system_root_directory,
--            base_config.cache_root_directory,
--            base_config.logs_root_directory,
--            base_config.repos_root_directory,
--        ]
-+    root_values.extend(_storage_root_directories())
-+
-+    return _canonical_paths(root_values)
-+
-+
-+def get_cognee_internal_roots() -> tuple[Path, ...]:
-+    """Every location holding cognee's own state: the storage roots plus the
-+    database files, which their settings can move outside those roots.
-+
-+    Ingestion must never read these as a *source*. They hold every tenant's
-+    users, ACLs, sessions and stored files, so a caller who could point a
-+    source at them would read past the multi-tenant boundary.
-+    """
-+    # Imported here: the database configs sit above this module in the import graph.
-+    from cognee.infrastructure.databases.cache.config import get_cache_config
-+    from cognee.infrastructure.databases.graph.config import get_graph_config
-+    from cognee.infrastructure.databases.relational.config import get_relational_config
-+    from cognee.infrastructure.databases.vector.config import get_vectordb_config
-+
-+    locations: list[str | None] = [*_storage_root_directories()]
-+    locations.append(get_relational_config().db_path)
-+    locations.append(get_graph_config().graph_file_path)
-+    locations.extend(
-+        _local_database_path(url)
-+        for url in (get_vectordb_config().vector_db_url, get_cache_config().cache_db_url)
-+    )
-+
-+    return _canonical_paths([location for location in locations if location])
-+
-+
-+def is_within_roots(path: str | Path, roots: tuple[Path, ...]) -> bool:
-+    """True when the canonical ``path`` is one of ``roots`` or lies under one."""
-+    resolved = os.path.realpath(os.path.expanduser(os.fspath(path)))
-+    return any(
-+        resolved == os.fspath(root) or resolved.startswith(os.fspath(root).rstrip(os.sep) + os.sep)
-+        for root in roots
-     )
- 
-+
-+def _storage_root_directories() -> list[str]:
-+    base_config = get_base_config()
-+    return [
-+        base_config.data_root_directory,
-+        base_config.system_root_directory,
-+        base_config.cache_root_directory,
-+        base_config.logs_root_directory,
-+        base_config.repos_root_directory,
-+    ]
-+
-+
-+def _local_database_path(value: str | None) -> str | None:
-+    """The file behind a database setting: a bare path, or the path of a SQLite-family
-+    URL (sqlite, turso). ``None`` for network URLs, which have no local file."""
-+    if not value:
-+        return None
-+    if "://" not in value:
-+        return value
-+
-+    from sqlalchemy.engine import make_url
-+    from sqlalchemy.exc import ArgumentError
-+
-+    try:
-+        url = make_url(value)
-+    except ArgumentError:
-+        # Not a SQLAlchemy URL (Neptune's `neptune-graph://<id>`, for one): a
-+        # network endpoint with no local file behind it.
-+        return None
-+    return url.database if url.get_backend_name().startswith("sqlite") else None
-+
-+
-+def _canonical_paths(paths: list[str]) -> tuple[Path, ...]:
-     # realpath canonicalizes symlinks (and e.g. macOS /tmp -> /private/tmp) without
--    # requiring the path to exist, so containment checks below are symlink-safe.
--    return tuple(Path(os.path.realpath(os.path.expanduser(root))) for root in root_values)
-+    # requiring the path to exist, so containment checks are symlink-safe.
-+    return tuple(Path(os.path.realpath(os.path.expanduser(path))) for path in paths)
- 
- 
- def resolve_local_path(path: str | Path, *, must_exist: bool = False) -> Path:
-```
-
-**File**: `cognee/tasks/ingestion/create_dlt_source.py` (modified, +386/-7)
-```diff
-@@ -2,8 +2,12 @@
- import os
- import re
- 
-+from cognee.shared.logging_utils import get_logger
-+
- from .dlt_utils import SOURCE_LABEL_ATTR
- 
-+logger = get_logger("create_dlt_source")
-+
- DB_CONNECTION_PATTERNS = [
-     "postgresql://",
-     "postgres://",
-@@ -51,18 +55,43 @@ def create_dlt_source_from_connection_string(
- 
-     ``resolve_foreign_keys`` makes dlt record the source's foreign keys in its schema;
-     the staging tables dlt creates carry no key constraints to reflect them from.
-+
-+    The connection is opened here: ``sql_database`` connects and reflects the schema
-+    when it is built. Driver errors are reported by class only — the driver message
-+    names the target and says whether it refused, timed out or rejected the
-+    credentials, which would make this call a scanner for every server it can reach.
-+    The full error is logged.
-     """
-     import sqlalchemy
-     from dlt.sources.sql_database import sql_database
- 
--    # SQLite paths must be absolute for SQLAlchemy to find the file.
--    # sqlite:/// = relative, sqlite://// = absolute
--    if connection_string.startswith("sqlite:///") and not connection_string.startswith(
--        "sqlite:////"
--    ):
--        relative_path = connection_string[len("sqlite:///") :]
--        connection_string = "sqlite:///" + os.path.abspath(relative_path)
-+    from cognee.exceptions import CogneeValidationError
-+
-+    _require_database_ingestion_allowed()
-+    if connection_string.startswith("sqlite:///"):
-+        connection_string = _allowed_sqlite_connection_string(connection_string)
-+    else:
-+        _require_foreign_database_server(connection_string)
-+
-+    try:
-+        return _build_sql_source(sql_database, sqlalchemy, connection_string, query)
-+    except CogneeValidationError:
-+        raise
-+    except Exception as error:
-+        logger.warning(
-+            "Database source could not be opened (%s.%s): %s",
-+            type(error).__module__,
-+            type(error).__name__,
-+            error,
-+        )
-+        raise CogneeValidationError(
-+            message="The database could not be opened as a source "
-+            f"({type(error).__name__}); details are in the server log.",
-+            name="DatabaseSourceUnreachable",
-+        ) from error
-+
- 
-+def _build_sql_source(sql_database, sqlalchemy, connection_string: str, query: str | None):
-     if query:
-         table_name, where_clause = _parse_sql_query(query)
-         schema_name, bare_table_name = _split_schema_and_table(table_name)
-@@ -100,6 +129,356 @@ def _database_label(connection_string: str) -> str:
-     return os.path.basename(database) if url.get_backend_name() == "sqlite" else database
- 
- 
-+def _allowed_sqlite_connection_string(connection_string: str) -> str:
-+    """Return the SQLite connection string with its file path made absolute, or
-+    raise when the file is one cognee must not read as a source.
-+
-+    A SQLite file has no credentials, so whoever names it reads it. Refused:
-+    files inside cognee's own storage (every tenant's users, ACLs and data), files
-+    outside COGNEE_ALLOWED_LOCAL_FILE_ROOTS when that allowlist is set, and paths
-+    that are not an existing regular file: the driver creates a missing file when
-+    it connects, and ingestion must never write one.
-+    """
-+    from cognee.exceptions import CogneeValidationError
-+    from cognee.infrastructure.files.utils.local_path_safety import (
-+        get_cognee_internal_roots,
-+        is_within_roots,
-+        resolve_local_path,
-+    )
-+
-+    # Parsed with the same parser the connection uses, so the path checked here
-+    # is the path that gets opened.
-+    url = _parse_connection_string(connection_string)
-+    # `uri=true` makes SQLite read the path as a `file:` URI, a second path
-+    # syntax; refuse it rather than parse it.
-+    if "uri" in url.query:
-+        raise CogneeValidationError(
-+            message="SQLite connection strings with the 'uri' option are not supported.",
-+            name="SqliteSourceRefused",
-+        )
-+    if not url.database:
-+        # In-memory database: there is no file to read.
-+        return connection_string
-+
-+    # realpath, not abspath: a symlink is resolved to the file it points at.
-+    database_path = os.path.realpath(os.path.expanduser(url.database))
-+    if is_within_roots(database_path, get_cognee_internal_roots()):
-+        raise CogneeValidationError(
-+            message="This SQLite file is part of cognee's own storage and cannot be "
-+            "ingested as a source.",
-+            name="SqliteSourceRefused",
-+        )
-+    try:
-+        resolve_local_path(database_path)
-+    except ValueError as error:
-+        raise CogneeValidationError(
-+            message="This SQLite file is outside COGNEE_ALLOWED_LOCAL_FILE_ROOTS.",
-+            name="SqliteSourceRefused",
-+        ) from error
-+    # Checked last, so a path cognee refuses anyway tells nothing about the disk.
-+    if not os.path.isfile(database_path):
-+        raise CogneeValida
-```
-
-**File**: `cognee/tasks/ingestion/resolve_dlt_sources.py` (modified, +11/-3)
-```diff
-@@ -168,7 +168,7 @@ async def resolve_dlt_sources(
-     # CSVs are NOT handled here anymore: they route through the loader engine
-     # (dlt_csv_loader, registered above csv_loader) inside the ingest
-     # pipeline, which owns localization (s3/file://) and manifest emission.
--    data_list = _normalize_structured_inputs(data_list, query)
-+    data_list = await _normalize_structured_inputs(data_list, query)
- 
-     dlt_items = []
-     non_dlt_items = []
-@@ -337,18 +337,26 @@ async def _cleanup() -> None:
-     return result, orphan_cleanup
- 
- 
--def _normalize_structured_inputs(data_list: list, query: str | None) -> list:
-+async def _normalize_structured_inputs(data_list: list, query: str | None) -> list:
-     """Wrap auto-detected structured inputs in dlt sources.
- 
-     Connection strings become dlt sql_database sources; everything else
-     passes through unchanged. CSV inputs are deliberately NOT handled here —
-     the loader engine's dlt_csv_loader owns them inside the ingest pipeline
-     (with localization of s3:// and file:// locations built in).
-+
-+    Building a sql_database source connects to the database and reflects its
-+    schema, a blocking call that can wait out a connect timeout, so it runs in a
-+    worker thread (the operation-origin context travels with it).
-     """
-+    import asyncio
-+
-     normalized = []
-     for item in data_list:
-         if isinstance(item, str) and is_connection_string(item):
--            normalized.append(create_dlt_source_from_connection_string(item, query=query))
-+            normalized.append(
-+                await asyncio.to_thread(create_dlt_source_from_connection_string, item, query=query)
-+            )
-         else:
-             normalized.append(item)
-     return normalized
-```
-
----
-
-### Incident Patch 2: `f1bac60b` (2026-11-06)
-**Commit Message**: fix(lancedb): Evolve payload schemas in place (#6556)
+### Incident Patch 1: `5870f15d` (2026-11-16)
+**Commit Message**: feat(hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489) (#6650)
 
 <!-- .github/pull_request_template.md -->
 
 ## Description
-<!--
-Please provide a clear, human-generated description of the changes in
-this PR.
-DO NOT use AI-generated descriptions. We want to understand your thought
-process and reasoning.
--->
-Fixes SDK-413. A LanceDB payload schema migration (a field added to or
-removed from `IndexSchema`, a type or nullability change) used to read
-every row of the table into Python, vectors included, drop the table,
-and write it back through pydantic. On large stores that exhausted
-memory, and a crash between the drop and the rewrite lost the table. The
-migration now evolves the `payload` column in place with Lance's own
-schema evolution, never reads or rewrites the vectors, and never drops
-anything before its replacement exists.
 
-## How it works
+Moves the Hermes Agent memory plugin (`cognee-integration-hermes-agent`)
+from topoteretes/cognee-integrations into
+`cognee-integrations/integrations/hermes-agent`, the first of the agent
+plugins to move into this repository. The shared conformance case tables
+come along as `cognee-integrations/integrations/conformance/`.
 
-`cognee_db_workers/lancedb_schema_evolution.py` (new, pure pyarrow,
-shared by the adapter and the subprocess worker):
+- **Code:** the plugin is the released `hermes-agent-v1.4.3`
+(cognee-integrations@3b2a19b6), byte for byte, except the README (new
+location and release flow), a CHANGELOG note and preamble, `[tool.uv]`
+in its pyproject plus the re-lock, the conformance README's "Copy" note
+and a header comment in `cognee-integrations/pyproject.toml`. Neither
+the cognee sdist nor the wheel includes `cognee-integrations/`.
+- **CI:** `test_integrations.yml` finds plugins by their folders, so a
+moved plugin needs no workflow edit. On a PR it lints, lock-checks and
+tests the changed plugins, and `integrations-tests` is its gate job.
+When dispatched with `live`, it runs each plugin's live round trip
+against a real cognee server and LLM. That tier 
 
-1. `add_columns` computes `__payload_migrating` from `payload` with a
-batch UDF that reads only the payload column: kept fields cast where
-their type changed, new fields filled from the model's default or null,
-dropped fields left out
-
-**File**: `CLAUDE.md` (modified, +2/-0)
+**File**: `.github/workflows/nightly_scheduler.yml` (modified, +75/-0)
 ```diff
-@@ -395,6 +395,8 @@ DB_NAME=cognee_db
- 
- #### Vector Databases
- Supported in-tree: lancedb (default), pgvector, neptune_analytics, turso.
+@@ -156,3 +156,78 @@ jobs:
+           payload: |
+             channel: ${{ secrets.SLACK_NIGHTLY_CHANNEL_ID }}
+             text: "Nightly Scheduler failed to dispatch Nightly Tests at `${{ steps.pick.outputs.ref }}` — tonight's nightly will not run and will post nothing. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 +
-+**LanceDB payload schema migrations.** When a payload model changes (a field added or removed on `IndexSchema`, a type or nullability change), the stored `payload` struct is evolved in place by `cognee_db_workers/lancedb_schema_evolution.py` (its module docstring is the reference: Lance schema evolution on the payload column alone, vectors never read, `payload` present at every committed version, rows another process wrote during the run repaired by fragment, which is why compaction leaves a table mid-migration alone, interrupted runs finished by the next one, nothing partial). It runs proactively on every cognee version change (`run_migrations`, schema reads only, every table visited before one error names the failures) and reactively when a write hits LanceDB's schema-drift errors (`create_data_points`); in subprocess mode on the worker's handle (`OP_TABLE_EVOLVE_PAYLOAD`), with the model's required fields carried apart from the relaxed storage schema. Index collections are compared against `IndexSchema`, `TruthCentroid_vector` against its own model (`_resolve_collection_payload_schema`). A table whose vectors are not the configured width is refused with `StoredVectorWidthMismatchError` (a re-embedding, not a schema migration). Commits through pylance, so it needs the pylance line matching lancedb's Lance core, like compaction.
- Others (ChromaDB, Qdrant, Weaviate, Milvus, …) are community adapters — install from
- https://github.com/topoteretes/cognee-community and register via `use_vector_adapter`
- before setting `VECTOR_DB_PROVIDER`, otherwise cognee raises
++  # The integrations' live round trip (test_integrations.yml, `live`), every
++  # evening against dev: plugin fixes land on dev, and main only moves at core
++  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
++  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
++  # which would run it a second time that day.
++  dispatch-integrations:
++    name: Dispatch the integrations live tier
++    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
++    runs-on: ubuntu-latest
++    timeout-minutes: 10
++    permissions:
++      contents: read
++      actions: write
++    steps:
++      - name: Note the newest existing integrations run
++        id: baseline
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          GH_REPO: ${{ github.repository }}
++        run: |
++          set -euo pipefail
++          # Before dispatching, so the confirm step below cannot match an older run.
++          id="$(gh run list --workflow test_integrations.yml --branch dev \
++                  --event workflow_dispatch --limit 1 \
++                  --json databaseId --jq '.[0].databaseId // 0')"
++          echo "id=$id" >> "$GITHUB_OUTPUT"
++          echo "baseline run id: $id"
++
++      - name: Dispatch test_integrations.yml at dev with live
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          GH_REPO: ${{ github.repository }}
++        run: |
++          set -euo pipefail
++          # Input values as strings, as the dispatch API documents them; a
++          # boolean input still arrives as a boolean `inputs.live`.
++          jq -nc '{ref: "dev", inputs: {live: "true"}}' \
++          | gh api -X POST \
++              "repos/$GH_REPO/actions/workflows/test_integrations.yml/dispatches" \
++              --input -
++
++      - name: Confirm a NEW run was created
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          GH_REPO: ${{ github.repository }}
++          BASELINE: ${{ steps.baseline.outputs.id }}
++        run: |
++          set -euo pipefail
++          # The dispatch endpoint answers 204 with no body, so a lost dispatch
++          # looks like success, and a live tier that never starts posts nothing.
++          for _ in $(seq 1 12); do
++            read -r id url <<<"$(gh run list --workflow test_integrations.yml \
++                  --branch dev --event workflow_dispatch --limit 1 \
++                  --json databaseId,url --jq '.[0] | "\(.databaseId) \(.url)"' \
++                  2>/dev/null || echo "0 -")"
++            if [ "${id:-0}" != "0" ] && [ "${id}" != "${BASELINE}" ]; then
++              echo "dispatched: $url"
++              echo "Integrations live tier dispatched at \`dev\`: $url" >> "$GITHUB_STEP_SUMMARY"
++              exit 0
++            fi
++            sleep 5
++          done
++          echo "::error::no NEW test_integrations.yml run appeared for dev within 60s"
++          exit 1
++
++      - name: Alert Slack if the dispatch failed
++        if: ${{ failure() }}
++        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d  # v4.0.0
++        with:
++          method: chat.postMessage
++          token: ${{ secrets.SLACK_BOT_TOKEN }}
++          payload: |
++            channel: ${{ secrets.SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID }}
++            text: "Nightly Scheduler failed to dispatch the integrations live tier at `dev` — tonight's live tier will not run and will post nothing. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 ```
 
-**File**: `cognee/infrastructure/databases/vector/exceptions/__init__.py` (modified, +2/-0)
+**File**: `.github/workflows/pre_test.yml` (modified, +6/-1)
 ```diff
-@@ -2,10 +2,12 @@
-     CollectionNotFoundError,
-     EmbeddingDimensionMismatchError,
-     SharedDatabasePruneError,
-+    StoredVectorWidthMismatchError,
- )
+@@ -34,6 +34,11 @@ jobs:
+         if: ${{ !cancelled() }}
+         run: uv sync --extra dev
  
- __all__ = [
-     "CollectionNotFoundError",
-     "EmbeddingDimensionMismatchError",
-     "SharedDatabasePruneError",
-+    "StoredVectorWidthMismatchError",
- ]
++      # The Hermes plugin is excluded: it came from topoteretes/cognee-integrations,
++      # where these rules did not apply, and catches broad exceptions on purpose so
++      # a memory failure never crashes the host agent. Each plugin that moves here
++      # is excluded by its own entry, not by a rule covering all of them.
++      #
+       # Exception-handling rules are enforced without escape hatch: `--ignore-noqa`
+       # makes a `# noqa` comment on these rules count as a finding, so a silent
+       # `except Exception` has to be fixed (log with traceback, re-raise, or narrow
+@@ -42,7 +47,7 @@ jobs:
+       # Exception raise.
+       - name: Ruff exception-handling rules (strict, noqa ignored)
+         if: ${{ !cancelled() }}
+-        run: uv run ruff check . --select BLE001,S110,S112,G201,TRY201,TRY002 --ignore-noqa
++        run: uv run ruff check . --select BLE001,S110,S112,G201,TRY201,TRY002 --ignore-noqa --extend-exclude cognee-integrations/integrations/hermes-agent
+ 
+       - name: Ty type check
+         if: ${{ !cancelled() }}
 ```
 
-**File**: `cognee/infrastructure/databases/vector/exceptions/exceptions.py` (modified, +44/-0)
+**File**: `.github/workflows/release_hermes_plugin.yml` (added, +146/-0)
 ```diff
-@@ -52,6 +52,50 @@ def __init__(
-         )
- 
- 
-+class StoredVectorWidthMismatchError(CogneeValidationError):
-+    """A table's vectors are not the configured embedding width, so its schema cannot be migrated.
+@@ -0,0 +1,146 @@
++name: release_hermes_plugin.yml
++# Publish the Hermes Agent memory plugin (cognee-integrations/integrations/hermes-agent) to
++# PyPI as cognee-integration-hermes-agent.
++#
++# The plugin versions independently of the cognee library, so, like cognee-mcp,
++# it has its own workflow and its own tag namespace (hermes-agent-v*). The tag
++# names are the same as when the plugin lived in topoteretes/cognee-integrations.
++#
++# Release flow:
++#   1. Bump the version in pyproject.toml, plugin.yaml,
++#      cognee_integration_hermes/_plugin_root/plugin.yaml and the hermes-agent
++#      entry of cognee-integrations/integrations/inventory.yml (the tests and
++#      the inventory check verify they match), re-lock, and add a CHANGELOG.md
++#      section. Merge that to main.
++#   2. Run this workflow from main. It tests, builds, attests, publishes and
++#      then tags the released commit hermes-agent-v<version>.
++#
++# Auth: PyPI Trusted Publishing only. A PyPI owner of
++# cognee-integration-hermes-agent has to add a publisher with
++#   Repository owner: topoteretes
++#   Repository name:  cognee
++#   Workflow name:    release_hermes_plugin.yml
++#   Environment:      (leave blank)
++# The publisher for topoteretes/cognee-integrations can be removed once the
++# first release from here is out.
++on:
++  workflow_dispatch:
 +
-+    A payload schema migration keeps every vector; a width change is a re-embedding.
-+    """
++# Minimal default permissions (OSSF Scorecard: Token-Permissions). The one job
++# opts in to exactly what it needs.
++permissions:
++  contents: read
 +
-+    def __init__(
-+        self,
-+        collection_name: str,
-+        stored_dimensions: int | None,
-+        configured_dimensions: int,
-+        name: str = "StoredVectorWidthMismatchError",
-+        status_code: int = status.HTTP_409_CONFLICT,
-+    ):
-+        self.collection_name = collection_name
-+        self.stored_dimensions = stored_dimensions
-+        self.configured_dimensions = configured_dimensions
-+        if stored_dimensions is None:
-+            # A variable-length list column, which no cognee release writes.
-+            stored = "a variable-length vector column with no fixed width"
-+            remediation = (
-+                "Delete the dataset (forget(dataset=...) / cognee-cli forget) and ingest it "
-+                "again with the current model."
-+            )
-+        else:
-+            stored = f"{stored_dimensions}-dimensional vectors"
-+            remediation = (
-+                "Set EMBEDDING_MODEL back to the model that built this store to keep using it, "
-+                "or delete the dataset (forget(dataset=...) / cognee-cli forget) and ingest it "
-+                "again with the current model."
-+            )
-+        super().__init__(
-+            message=(
-+                f"LanceDB collection '{collection_name}' holds {stored}, but the configured "
-+                f"embedding model produces {configured_dimensions} dimensions. A schema "
-+                "migration keeps the stored vectors, so it cannot bring this table to the "
-+                "current model."
-+            ),
-+            name=name,
-+            status_code=status_code,
-+            remediation=remediation,
-+        )
++concurrency:
++  group: release-hermes-plugin
++  cancel-in-progress: false
 +
++jobs:
++  release-hermes-plugin-pypi:
++    name: Release cognee-integration-hermes-agent to PyPI from ${{ github.ref_name }}
++    permissions:
++      contents: write       # push the hermes-agent-v* tag
++      id-token: write       # OIDC: Trusted Publishing and signing attestations
++      attestations: write   # Persist the SLSA build provenance attestation
++    runs-on: ubuntu-latest
++    timeout-minutes: 30
++    env:
++      TELEMETRY_DISABLED: "1"
++    defaults:
++      run:
++        working-directory: cognee-integrations/integrations/hermes-agent
 +
- class CollectionNotFoundError(CogneeValidationError):
-     """
-     Represents an error that occurs when a requested collection cannot be found.
++    steps:
++      - name: Refuse any ref but main
++        working-directory: .
++        run: |
++          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
++            echo "::error::release_hermes_plugin.yml publishes and tags permanently; run it from main (got ${GITHUB_REF})."
++            exit 1
++          fi
++
++      - name: Check out ${{ github.ref_name }} at ${{ github.sha }}
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
++        with:
++          # The commit the run was dispatched on, not the branch head now.
++          ref: ${{ github.sha }}
++
++      - name: Install uv
++        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
++
++      - name: Install Python
++        run: uv python install
++
++      - name: Resolve version and tag
++        id: meta
++        run: |
++          VERSION="$(uv version --short)"
++          TAG="hermes-agent-v${VERSION}"
++          echo "Releasing cognee-integration-hermes-agent ${VERSION} as ${TAG}"
++          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
++          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
++
++      - name: Refuse to republish an existing version
++        env:
++          VERSION: ${{ steps.meta.outputs.version }}
++          TAG: ${{ steps.meta.outputs.tag }}
++        run: |
++          # PyPI versions are immutable: a second upload of the same version is
++          # rejected. Fail here, with a message that says what to do, rather
++          # than at the upload step.
++          if curl -fsS "https://pypi.org/pypi/cognee-integration-hermes-agent/${VERSION}/json" >/dev/null 2>&1; then
++            echo "::error::cognee-integration-hermes-agent ${VERSION} is already on PyPI. Bump the version (pyproject.toml, both plugin.yaml files and inventory.yml) and re-lock before releasing."
++            exit 1
++          fi
++          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
++            echo "::error::Tag ${TAG} already exists on origin."
++            exit 1
++          fi
++          echo "${VERSION} is unpublished and ${TAG} is free."
++
++      - name: Run the test suite
++        run: |
++          uv sync --locked --dev
++          uv pip install -r local-mode-requirements.txt
++          uv run --no-sync pytest tests/ -q
++
++      - name: Build distributions
++        run: uv build
++
++      - name: Verify distributions were built
++        run: |
++          shopt -s nullglob
++          wheels=(dist/*.whl)
++          sdists=(dist/*.tar.gz)
++          if [ "${#wheels[@]}" -ne 1 ] || [ "${#sdists[@]}" -ne 1 ] || \
++             [ ! -s "${wheels[0]}" ] || [ ! -s "${sdists[0]}" ]; then
++            echo "::error::Build must produce exactly one nonempty wheel and sdist."
++            ls -lh dist/ || true
++            exit 1
++          fi
++          ls -lh "${wheels[@]}" "${sdists[@]}"
++
++ 
 ```
 
-**File**: `cognee/infrastructure/databases/vector/lancedb/LanceDBAdapter.py` (modified, +204/-146)
+**File**: `.github/workflows/test_integrations.yml` (added, +473/-0)
 ```diff
-@@ -17,11 +17,15 @@
- from uuid import UUID
- 
- import lancedb
-+import pyarrow as pa
- from lancedb.pydantic import LanceModel, Vector
--from pydantic import BaseModel
-+from pydantic import BaseModel, TypeAdapter, ValidationError
- 
- from cognee.infrastructure.databases.exceptions import MissingQueryParameterError
--from cognee.infrastructure.databases.vector.exceptions import CollectionNotFoundError
-+from cognee.infrastructure.databases.vector.exceptions import (
-+    CollectionNotFoundError,
-+    StoredVectorWidthMismatchError,
-+)
- from cognee.infrastructure.databases.vector.local_scoring import (
-     score_rows_against_queries,
- )
-@@ -49,6 +53,14 @@
-     open_as_lance,
-     prune_superseded_versions,
- )
-+from cognee_db_workers.lancedb_schema_evolution import (
-+    MIGRATING_COLUMN,
-+    OLD_PAYLOAD_COLUMN,
-+    SchemaEvolutionError,
-+    arrow_default,
-+    evolve_payload_schema,
-+    relax_nullability,
-+)
- 
- from ..embeddings.EmbeddingGateway import EmbeddingGateway
- from ..models.ScoredResult import ScoredResult
-@@ -695,11 +707,7 @@ async def upsert_raw_vectors(
-             payload_schema = IndexSchema
- 
-         vector_size = self.embedding_engine.get_vector_size()
--        payload_model = (
--            self.get_data_point_schema(payload_schema)
--            if issubclass(payload_schema, DataPoint)
--            else payload_schema
--        )
-+        payload_model = self._payload_model_for(payload_schema)
-         LanceDataPoint = self._make_lance_datapoint_cls(payload_model, vector_size)
- 
-         # Every check runs before the table exists, so a rejected call creates nothing.
-@@ -751,8 +759,8 @@ async def upsert_raw_vectors(
-                 )
-         except (ValueError, OSError, RuntimeError) as e:
-             # The same two schema-drift errors create_data_points recovers from: a
--            # table created with an older payload shape is rebuilt to the current
--            # one, its rows kept, and the points are written into the new table.
-+            # table created with an older payload shape is evolved to the current
-+            # one in place, and the points are written afterwards.
-             if not self._is_schema_drift_error(e):
-                 raise
-             logger.warning(
-@@ -864,7 +872,10 @@ async def compact(self, collection_name: str | None = None) -> dict:
-         wrote (that pass raises ``PylanceIncompatibleError``, later ones skip).
-         A failure on one collection does not stop the pass: the rest are
-         compacted, the failed one stays first in line for the next pass, and
--        one error naming every failed collection is raised at the end.
-+        one error naming every failed collection is raised at the end. A table
-+        in the middle of a payload schema migration is left alone (reported
-+        ``skipped``): a rewrite would renumber the fragments the migration
-+        repairs by id (see ``cognee_db_workers.lancedb_schema_evolution``).
-         """
-         options = self._compaction_options()
-         reason = self._compaction_skip_reason()
-@@ -971,12 +982,33 @@ async def _prune_collection(self, collection, retention_seconds: int, max_versio
-             max_versions=max_versions,
-         )
- 
-+    def _payload_model_for(self, payload_schema: type) -> type:
-+        """The model a collection stores for ``payload_schema``: a DataPoint's storable
-+        shape (``get_data_point_schema``), a plain BaseModel as declared."""
-+        if issubclass(payload_schema, DataPoint):
-+            return self.get_data_point_schema(payload_schema)
-+        return payload_schema
+@@ -0,0 +1,473 @@
++name: test | integrations
++# Checks for the agent plugins under cognee-integrations/integrations/: lint, the
++# lockfile and each plugin's own test suite on every change, and, when dispatched
++# with `live`, each plugin's live round trip against a real cognee server and LLM.
++#
++# Plugins are discovered from their folders (a pyproject.toml makes a Python
++# plugin), so moving one here needs no edit to this file. A pull request tests
++# only the plugins it changes, or all of them when it changes something they
++# share. `integrations-tests` is the one job to require.
++#
++# Each plugin declares no cognee dependency (cognee's pins conflict with the
++# environments the host agents share between plugins). A plugin whose tests
++# start a local server gets cognee from its local-mode-requirements.txt, the
++# release its local mode installs: a PyPI release, not this checkout.
++#
++# The live tier (tests/test_integration_*.py) needs secrets and spends LLM
++# tokens, so it runs only on dispatch: nightly_scheduler.yml dispatches it
++# against dev every evening. It fails when any of those tests skips, so a
++# missing dependency or key can never pass as green, and `notify` posts every
++# dispatched run's result, green included, to #nightly-ci-integrations: the
++# live tier and every other job that run executes, so no failure reports green.
++#
++# The case tables in integrations/conformance/ are a copy: the hook plugins in
++# topoteretes/cognee-integrations generate two of them and test against the
++# same files there. `conformance-drift` fails when the copy here differs from
++# upstream main, on pull requests that touch it and on every dispatched run.
 +
-+    def _require_lance_core(self) -> None:
-+        """Raise when pylance is not on the Lance core lancedb bundles.
++on:
++  push:
++    branches: [ main, dev ]
++    paths: &paths
++      - "cognee-integrations/**"
++      - ".github/workflows/test_integrations.yml"
++  pull_request:
++    branches: [ main, dev ]
++    types: [opened, synchronize, reopened]
++    paths: *paths
++  workflow_dispatch:
++    inputs:
++      live:
++        description: "Also run each plugin's live round trip (real cognee server and LLM)"
++        required: false
++        type: boolean
++        default: false
 +
-+        The in-place migration commits through pylance; a mismatched pair could
-+        write a version lancedb cannot read, so it is an error here, not a skip.
-+        """
-+        mismatch = lance_core_mismatch()
-+        if mismatch:
-+            raise PylanceIncompatibleError(
-+                f"LanceDB schema migration needs pylance on lancedb's Lance core: {mismatch}. "
-+                "Install the pylance release line matching lancedb's bundled Lance core "
-+                "(see pyproject)."
-+            )
++permissions:
++  contents: read
 +
-     @staticmethod
-     def _is_schema_drift_error(error: Exception) -> bool:
-         """Whether a write failed because the table's payload shape is an older one.
- 
--        Two LanceDB failures are recoverable by rebuilding the table through
--        Pydantic validation, which fills the defaults of the current schema:
-+        Two LanceDB failures are recoverable by evolving the stored payload
-+        struct to the current schema, which fills the defaults of its new fields:
-         "not found in target schema" (the payload has a field the table does
-         not know) and "contained null values" (old rows lack a field the
-         current schema requires; raised by the Rust file writer).
-@@ -990,18 +1022,16 @@ async def _migrate_collection_schema(
-     
++concurrency:
++  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.live && 'live' || 'checks' }}
++  # Cancel superseded PR runs, never a push-to-dev or live run.
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++
++env:
++  TELEMETRY_DISABLED: "1"
++
++jobs:
++  detect:
++    name: Detect integration plugins
++    runs-on: ubuntu-22.04
++    outputs:
++      python: ${{ steps.plugins.outputs.python }}
++      live: ${{ steps.plugins.outputs.live }}
++      conformance: ${{ steps.plugins.outputs.conformance }}
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
++        with:
++          # The pull request's base commit, to list what it changed.
++          fetch-depth: 0
++
++      - name: List the plugins to test
++        id: plugins
++        env:
++          EVENT: ${{ github.event_name }}
++          BASE_SHA: ${{ github.event.pull_request.base.sha }}
++          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
++        run: |
++          set -euo pipefail
++          # On a pull request, test the plugins it changed, or all of them when it
++          # changed something they share. Everywhere else, test all of them.
++          # Conformance drift: on pull requests that touch the tables, and on
++          # dispatched runs (the nightly), never on a push.
++          all=true
++          changed=""
++          conformance=false
++          if [ "${EVENT}" = "workflow_dispatch" ]; then
++            conformance=true
++          fi
++          if [ "${EVENT}" = "pull_request" ]; then
++            conformance=true
++            changed="$(git diff --name-only "${BASE_SHA}...${HEAD_SHA}")"
++            if ! grep -q -E '^(cognee-integrations/pyproject\.toml|cognee-integrations/integrations/conformance/|\.github/workflows/test_integrations\.yml)' <<<"${changed}"; then
++              all=false
++            fi
++            if ! grep -q '^cognee-integrations/integrations/conformance/' <<<"${changed}"; then
++              conformance=false
++            fi
++          fi
++
++          python=()
++          live=()
++          cd cognee-integrations/integrations
++          for dir in */; do
++            slug="${dir%/}"
++            case "${slug}" in conformance|tests) continue ;; esac
++            if [ -f "${slug}/pyproject.toml" ]; then
++              if [ "${all}" = true ] || grep -q "^cognee-integrations/integrations/${slug}/" <<<"${changed}"; then
++                python+=("${slug}")
++              fi
++              # The live tier runs every plugin that has one, changed or not.
++              if compgen -G "${slug}/tests/test_integration_*.py" > /dev/null; then
++                live+=("${slug}")
++              fi
++            elif [ -f "${slug}/package.json
 ```
 
-**File**: `cognee/infrastructure/databases/vector/lancedb/subprocess/proxy.py` (modified, +31/-0)
+**File**: `cognee-integrations/README.md` (added, +94/-0)
 ```diff
-@@ -29,6 +29,7 @@
-     OP_TABLE_COMPACT_FRAGMENTS,
-     OP_TABLE_COUNT_ROWS,
-     OP_TABLE_DELETE,
-+    OP_TABLE_EVOLVE_PAYLOAD,
-     OP_TABLE_MERGE_INSERT_EXECUTE,
-     OP_TABLE_NAMES,
-     OP_TABLE_OPTIMIZE,
-@@ -347,6 +348,36 @@ async def compact_fragments(self, *, target_rows_per_fragment: int, max_tasks: i
-         )
-         return resp.result
- 
-+    async def evolve_payload_schema(
-+        self,
-+        target: pa.StructType,
-+        *,
-+        defaults: dict,
-+        required: frozenset[str],
-+        batch_size: int | None = None,
-+    ) -> dict:
-+        """Mirrors ``lancedb_schema_evolution.evolve_payload_schema`` on the worker's handle.
+@@ -0,0 +1,94 @@
++# Cognee integrations
 +
-+        The target struct travels as a one-field Arrow schema in IPC form, like the
-+        schema of ``create_table``; ``defaults`` holds plain values only and
-+        ``required`` goes as a sorted list of field names.
-+        """
-+        target_bytes = pa.schema([pa.field("payload", target)]).serialize().to_pybytes()
-+        resp = await self._session.call_async(
-+            Request(
-+                op=OP_TABLE_EVOLVE_PAYLOAD,
-+                handle_id=self.handle_id,
-+                args=(target_bytes,),
-+                kwargs={
-+                    "defaults": defaults,
-+                    "required": sorted(required),
-+                    "batch_size": batch_size,
-+                },
-+            ),
-+            timeout=None,
-+        )
-+        return resp.result
++Plugins that give agent tools persistent memory backed by Cognee. Each plugin
++is its own package, released on its own schedule.
 +
-     async def prune_versions(self, *, retention_seconds: int, max_versions: int) -> dict:
-         resp = await self._session.call_async(
-             Request(
++The integrations are moving here from
++[topoteretes/cognee-integrations](https://github.com/topoteretes/cognee-integrations),
++one at a time. Until an integration is listed below, its source, docs and
++releases are still in that repository.
++
++## Moved so far
++
++<!-- inventory:start -->
++<!-- Generated by scripts/inventory.py from integrations/inventory.yml; do not edit by hand. -->
++
++| Integration | Package | Version | Source | Release |
++|---|---|---|---|---|
++| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.3 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
++
++<!-- inventory:end -->
++
++The table is rendered from [`integrations/inventory.yml`](integrations/inventory.yml)
++by `scripts/inventory.py`, which also checks the inventory against the plugin
++folders and their manifests.
++
++## Layout
++
++```
++cognee-integrations/
++├── pyproject.toml   Shared lint and test settings for every plugin below
++├── scripts/         inventory.py: checks the inventory, renders the table above
++└── integrations/
++    ├── inventory.yml One entry per plugin below
++    ├── conformance/ Case tables that every plugin tests against
++    └── <plugin>/    One folder per plugin, with its own pyproject.toml or
++                     package.json, tests, README and CHANGELOG
++```
++
++The layout is the same as in topoteretes/cognee-integrations, with this
++folder in place of that repository's root, so paths inside a plugin keep
++working when it moves. Everything at that repository's root has a place here:
++
++| In topoteretes/cognee-integrations | Here |
++|---|---|
++| `integrations/<plugin>/` | `integrations/<plugin>/` |
++| `integrations/tests/` (the shared hook-plugin suite) | `integrations/tests/` |
++| `integrations/inventory.yml`, `integrations/CONFIGURATION.md` | `integrations/` |
++| `scripts/`, `assets/`, `n8n_workflows/` | `scripts/`, `assets/`, `n8n_workflows/` |
++| `.github/workflows/` | the shared workflows in this repository's `.github/workflows/` |
++| `reports/` | not moved |
++| `.claude-plugin/`, `.cursor-plugin/`, `.grok-plugin/`, `.agents/plugins/` | not moved; see [Marketplace plugins](#marketplace-plugins) |
++
++`integrations/conformance/` is a copy. Two of its tables are generated from
++the Claude Code and Codex hook plugins, which are still in
++topoteretes/cognee-integrations, so that copy is canonical until they move
++here. `test_integrations.yml` fails when this copy differs from it.
++
++## Marketplace plugins
++
++The Claude Code, Codex, Cursor and Grok Bot plugins are installed from agent
++marketplaces, not from a package registry. Their code moves here like the rest.
++They are distributed through the official listings (the claude.ai Directory,
++and each agent's own marketplace), pointed at this repository. Nothing is added
++at this repository's root for them.
++
++topoteretes/cognee-integrations keeps only its marketplace manifests, repointed
++here, for users who added that repository as a marketplace by hand. Once they
++have moved to the official listings, it is archived.
++
++## Moving a plugin
++
++1. Copy the plugin folder from topoteretes/cognee-integrations to
++   `integrations/<plugin>/`, move its entry from that repository's
++   `integrations/inventory.yml` to `integrations/inventory.yml` here (adding
++   `path`, `tag_prefix`, `release_workflow` and `moved_from`), and run
++   `python scripts/inventory.py` to render the table above.
++2. If it is listed in a marketplace or directory, point that listing at
++   `topoteretes/cognee` and `cognee-integrations/integrations/<plugin>` first.
++   The Directory reviews each version, so allow time for that.
++3. In topoteretes/cognee-integrations, in the same change: replace the plugin
++   folder with a note pointing here, remove it from that repository's CI and
++   release workflows, and mark it moved in `integrations/inventory.yml`.
++4. Triage the CodeQL alerts the move raises on the copied code, and dismiss
++   the false positives with a reason.
++
++## Development and releases
++
++Each plugin's README covers its own setup, tests and release steps.
++`.github/workflows/test_integrations.yml` lints and tests every plugin under
++`integrations/` that has a `pyproject.toml`, and runs each plugin's live round
++trip (`tests/test_integration_*.py`) nightly against `dev`, posting every
++result to `#nightly-ci-integrations` on Slack. It needs no edit when a plugin
++moves here. Releases are per plugin for now, for example
++`release_hermes_plugin.yml` for Hermes.
 ```
 
-**File**: `cognee/tests/unit/exceptions/test_cognee_error_contract.py` (modified, +2/-0)
+**File**: `cognee-integrations/integrations/conformance/README.md` (added, +173/-0)
 ```diff
-@@ -89,6 +89,8 @@
-     "stored_dimensions": 384,
-     "configured_model": "sample-provider/new-model",
-     "configured_dimensions": 1536,
-+    # StoredVectorWidthMismatchError: the LanceDB table whose vectors are not that width.
-+    "collection_name": "DocumentChunk_text",
-     # GlinerWorkerModelMismatchError: the model required vs the one the worker serves.
-     "expected": "sample-org/required-model",
-     "served": "sample-org/served-model",
+@@ -0,0 +1,173 @@
++> **Copy.** These case tables are shared by every Cognee agent plugin. Only the
++> Hermes plugin has moved into this repository so far. The canonical tables are
++> in `integrations/conformance/` of
++> [topoteretes/cognee-integrations](https://github.com/topoteretes/cognee-integrations):
++> `recall_text_cases.json` and `capture_policy_cases.json` are generated there
++> from the hook plugins' `_recall_text.py` and `_capture_policy.py`, and Claude
++> Code, Codex and OpenClaw test against them there. Change a table there first,
++> then copy it here; `.github/workflows/test_integrations.yml` fails when the
++> two differ. The test paths below are paths in that repository, except
++> hermes-agent's, which are under `cognee-integrations/` here.
++
++# Session id sanitization conformance
++
++Every Cognee integration turns a native session id into a Cognee session id with
++the same shape: `{agent}_{native_id}`. Before the native id is used, each
++integration runs it through a small sanitizer. The rule is:
++
++- Keep only the ASCII set `[A-Za-z0-9-_.]`.
++- Replace every other character with `_`.
++- Trim leading and trailing `.` and `_`.
++- Cap the length at 120 characters.
++
++`session_id_cases.json` is the single source of truth for that rule. It is a
++list of `{ "input", "expected", "note" }` cases. Each test loads this file and
++checks its sanitizer against it. The tests live with the suite that already
++covers the tree they test, so no integration needs a test project of its own:
++
++- claude-code and codex:
++  `integrations/tests/tests/unit/test_session_id_conformance.py` — the shared
++  hook-plugin suite, parametrized over both plugin trees.
++- hermes-agent: `integrations/hermes-agent/tests/test_session_id_conformance.py`
++- openclaw: `integrations/openclaw/__tests__/unit/test_session_id_conformance.ts`
++
++Because every test reads the same file, any implementation that drifts from the
++rule fails its test. CI runs all of them on every pull request through the
++existing jobs in `.github/workflows/ci.yml`: the shared suite via `test-python`
++(`detect-changes` maps a claude-code or codex change onto the `tests` cell) and
++again under Python 3.9 via `test-hooks-python39`, hermes-agent via `test-python`
++(it has its own `pyproject.toml`), and openclaw via `test-typescript`, which
++runs `npm test` as well as the type check.
++
++## Note on empty results
++
++The table only holds inputs whose sanitized output is not empty. hermes-agent
++returns `"session"` when the result would be empty, while the others return an
++empty string. That one case is left out on purpose so the shared table stays
++identical for all four integrations.
++
++# Dataset name sanitization conformance
++
++cognee rejects a dataset name that contains a space or a dot
++(`check_dataset_name`, run on every write: remember, improve, memify and the
++pipelines). Every integration therefore runs a configured or derived dataset
++name through a small sanitizer before using it. The rule is deliberately narrow:
++
++- Trim surrounding whitespace.
++- Replace every run of spaces and dots with a single `_`.
++- If nothing but underscores is left (and the input was not already that),
++  use the integration's default dataset instead.
++
++Nothing else changes. A name the server accepts today (`Foo+Bar`, `héllo`,
++`_x_`) comes back unchanged, so no user is silently moved to a new, empty
++dataset. A name that contains a space or a dot never took a write, so rewriting
++it orphans nothing. The vscode extension's `sanitizeDatasetName` is stricter
++(`[^A-Za-z0-9_-]` → `_`) because it only cleans names it derives itself.
++
++`dataset_name_cases.json` holds `{ "input", "fallback", "expected", "note" }`
++cases; each test passes `fallback` as the default, so one table serves
++integrations with different defaults. The tests live next to the session-id ones:
++
++- claude-code, codex and antigravity:
++  `integrations/tests/tests/unit/test_dataset_name_conformance.py`
++- hermes-agent: `integrations/hermes-agent/tests/test_dataset_name_conformance.py`
++- openclaw: `integrations/openclaw/__tests__/unit/test_dataset_name_conformance.ts`
++
++Where a name is typed explicitly (the dataset-switch commands), an invalid name
++is refused with the sanitized form as a suggestion instead of being rewritten,
++so a switch never lands in a dataset the user did not name.
++
++# Recall text trimming conformance
++
++On cognee 1.6.x a graph recall with `only_context` returns the full prompt the
++server's own LLM would have received: the conversation history, the question
++template around the retrieved context, and the `## Active session guidance`
++block. The hook plugins and openclaw keep only the retrieved context and shrink
++it the same way, without an LLM:
++
++- Find the context by the question marker (`` The question is: `<prompt>` ``)
++  and the final backtick, or the last `` `\n\n## Active session guidance ``.
++  Text that does not fit is returned whole and flagged `parsed: false`.
++- Drop passages w
 ```
 
-**File**: `cognee/tests/unit/infrastructure/databases/vector/test_lancedb_compaction.py` (modified, +24/-0)
+**File**: `cognee-integrations/integrations/conformance/capture_policy_cases.json` (added, +1568/-0)
 ```diff
-@@ -149,6 +149,30 @@ async def test_compact_is_a_cheap_no_op_on_a_compact_table(tmp_path, compaction_
-     assert _data_files(db_path, collection) == before
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("temporary_column", ["__payload_migrating", "__payload_old"])
-+async def test_compaction_leaves_a_table_mid_migration_alone(
-+    tmp_path, compaction_settings, temporary_column
-+):
-+    """A payload migration finds the rows written during its run by fragment id, and a
-+    rewrite would renumber them; while one of its temporary columns is present the
-+    table is skipped, in the shared function both modes run."""
-+    import lance
-+
-+    compaction_settings(retention_seconds=0)
-+    adapter, db_path = _adapter(tmp_path)
-+    collection = "MidMigration_label"
-+    await _write_n_points(adapter, collection, 3)
-+    dataset = lance.dataset(str(Path(db_path) / f"{collection}.lance"))
-+    dataset.add_columns({temporary_column: "payload"})
-+
-+    stats = await adapter.compact()
-+
-+    assert stats[collection]["skipped"] == "payload_migration"
-+    assert stats[collection]["executed_tasks"] == 0
-+    assert await _fragment_count(adapter, collection) == 3
-+
-+
- @pytest.mark.asyncio
- async def test_compact_leaves_fragments_at_target_size_alone(tmp_path, compaction_settings):
-     """The property that makes it cheap on any disk: cold fragments are not rewritten."""
+@@ -0,0 +1,1568 @@
++{
++  "_comment": "Generated by running integrations/claude-code/scripts/_capture_policy.py. tool_cases: expected is true/false, or \"error\" when the policy raises (fail closed). redact_cases: expected output, or error=true when redaction raises.",
++  "tool_cases": [
++    {
++      "note": "default allows any tool",
++      "env": {},
++      "tool": "Bash",
++      "params": {
++        "command": "ls -la"
++      },
++      "expected": true
++    },
++    {
++      "note": "default allows a read of an ordinary file",
++      "env": {},
++      "tool": "Read",
++      "params": {
++        "file_path": "/project/main.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "allow list by name keeps the named tool",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Grep|Glob"
++      },
++      "tool": "Grep",
++      "params": {
++        "path": "main.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "allow list by name drops other tools",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Grep|Glob"
++      },
++      "tool": "Read",
++      "params": {
++        "path": "main.py"
++      },
++      "expected": false
++    },
++    {
++      "note": "allow list glob",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "mcp__*"
++      },
++      "tool": "mcp__github__get_issue",
++      "params": {},
++      "expected": true
++    },
++    {
++      "note": "allow list glob drops non-matching",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "mcp__*"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "ls"
++      },
++      "expected": false
++    },
++    {
++      "note": "allow list as JSON array",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[\"Read\", \"Bash(git:*)\"]"
++      },
++      "tool": "Read",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "empty JSON array allow list means everything",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[]"
++      },
++      "tool": "Write",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "an env value starting with [ is read as JSON",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[RW]*"
++      },
++      "tool": "Write",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": "error"
++    },
++    {
++      "note": "glob with character class",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[\"[RW]*\"]"
++      },
++      "tool": "Write",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "glob with negated character class",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[\"[!RW]*\"]"
++      },
++      "tool": "Write",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": false
++    },
++    {
++      "note": "glob with a range",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "[\"[A-C]*\"]"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "ls"
++      },
++      "expected": true
++    },
++    {
++      "note": "glob question mark",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Rea?"
++      },
++      "tool": "Read",
++      "params": {
++        "file_path": "a.py"
++      },
++      "expected": true
++    },
++    {
++      "note": "whitespace around pipe entries is trimmed",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": " Read | Grep "
++      },
++      "tool": "Grep",
++      "params": {},
++      "expected": true
++    },
++    {
++      "note": "prefix keeps the command",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "git status"
++      },
++      "expected": true
++    },
++    {
++      "note": "prefix keeps the bare command",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "git"
++      },
++      "expected": true
++    },
++    {
++      "note": "prefix ends on a word boundary",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "gitk --all"
++      },
++      "expected": false
++    },
++    {
++      "note": "prefix ignores leading whitespace",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "   git log"
++      },
++      "expected": true
++    },
++    {
++      "note": "prefix boundary may be a tab",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "git\tlog"
++      },
++      "expected": true
++    },
++    {
++      "note": "compound command counts as its first word",
++      "env": {
++        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
++      },
++      "tool": "Bash",
++      "params": {
++        "command": "cd x && git status"
++      },
++      "expected": false
++    },
+
 ```
 
-**File**: `cognee/tests/unit/infrastructure/databases/vector/test_lancedb_schema_migration.py` (modified, +1078/-1)
+**File**: `cognee-integrations/integrations/conformance/dataset_name_cases.json` (added, +92/-0)
 ```diff
-@@ -2,12 +2,26 @@
- 
- from __future__ import annotations
- 
-+import hashlib
-+import importlib
-+import os
-+import tracemalloc
-+from datetime import datetime, timezone
-+from enum import Enum
- from uuid import uuid4
- 
- import pyarrow as pa
- import pytest
- 
-+from cognee.infrastructure.databases.vector.embeddings.EmbeddingEngine import EmbeddingResult
-+from cognee.infrastructure.databases.vector.exceptions import StoredVectorWidthMismatchError
- from cognee.infrastructure.engine import DataPoint
-+from cognee_db_workers.lancedb_schema_evolution import (
-+    MIGRATING_COLUMN,
-+    OLD_PAYLOAD_COLUMN,
-+    STATE_KEY,
-+    SchemaEvolutionError,
-+)
- 
- try:
-     from cognee.infrastructure.databases.vector.lancedb.LanceDBAdapter import (
-@@ -21,14 +35,16 @@
- 
- 
- class _FakeEmbeddingEngine:
-+    model = "fake"
-+
-     def get_vector_size(self):
-         return 3
- 
-     def get_batch_size(self):
-         return 100
- 
-     async def embed_text(self, texts):
--        return [[0.1, 0.2, 0.3] for _ in texts]
-+        return EmbeddingResult([[0.1, 0.2, 0.3] for _ in texts], tokens=0)
- 
- 
- def _make_point(id: str, text: str, name: str = "") -> IndexSchema:
-@@ -40,6 +56,21 @@ class _InheritedFieldsPoint(DataPoint):
-     metadata: dict = {"index_fields": ["text"]}
- 
- 
-+class _Tier(str, Enum):
-+    FREE = "free"
-+    PAID = "paid"
-+
-+
-+class _TypedDefaultsPoint(DataPoint):
-+    """Defaults pyarrow cannot build from their string form, and one required Enum
-+    (whose inferred default is an Enum member)."""
-+
-+    text: str
-+    seen_at: datetime = datetime(2026, 1, 1, tzinfo=timezone.utc)
-+    tier: _Tier
-+    metadata: dict = {"index_fields": ["text"]}
-+
-+
- class _ImpossibleDefaultPoint(DataPoint):
-     text: str
-     required_pair: tuple[int, int]
-@@ -349,3 +380,1049 @@ async def test_payload_preserves_inherited_datapoint_fields(tmp_path):
-     assert result.payload["feedback_weight"] == 0.75
-     assert result.payload["created_at"] == point.created_at
-     assert result.payload["updated_at"] == point.updated_at
-+
-+
-+# ---------------------------------------------------------------------------
-+# In-place evolution: the vectors are never read, nothing is dropped.
-+# ---------------------------------------------------------------------------
-+
-+
-+class _WideEmbeddingEngine:
-+    """3,072 dimensions, like the production default: the width that made the old
-+    rewrite swap; it also tells a cheap migration from one that touched the vectors."""
-+
-+    dimensions = 3072
-+
-+    def get_vector_size(self):
-+        return self.dimensions
-+
-+    def get_batch_size(self):
-+        return 100
-+
-+    async def embed_text(self, texts):
-+        return EmbeddingResult([[0.0] * self.dimensions for _ in texts], tokens=0)
-+
-+
-+def _data_files(db_path: str, collection: str) -> dict[str, str]:
-+    """sha256 of every data file of the table, by file name."""
-+    data_dir = os.path.join(db_path, f"{collection}.lance", "data")
-+    return {
-+        name: hashlib.sha256(open(os.path.join(data_dir, name), "rb").read()).hexdigest()
-+        for name in os.listdir(data_dir)
-+    }
-+
-+
-+async def _payload_type(adapter, collection):
-+    schema = await (await adapter.get_collection(collection)).schema()
-+    return schema.field("payload").type
-+
-+
-+async def _rewrite_payload(adapter, collection, new_struct: pa.StructType, build):
-+    """Replace the table's payload struct with one built by ``build(old_struct_array)``,
-+    simulating a table written by an older or differently typed model."""
-+    table = await (await adapter.get_collection(collection)).to_arrow()
-+    pi = table.schema.get_field_index("payload")
-+    col = table.column("payload").combine_chunks()
-+    rewritten = table.set_column(pi, pa.field("payload", new_struct), build(col))
-+    conn = await adapter.get_connection()
-+    await conn.drop_table(collection)
-+    await conn.create_table(collection, data=rewritten)
-+
-+
-+def _struct_without(struct: pa.StructType, *names) -> tuple[pa.StructType, list[int]]:
-+    keep = [i for i in range(struct.num_fields) if struct.field(i).name not in names]
-+    return pa.struct([struct.field(i) for i in keep]), keep
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.skipif(not HAS_LANCEDB, reason="lancedb not installed")
-+async def test_proactive_migration_reads_schemas_only(tmp_path, monkeypatch):
-+    """A version bump over a compatible store never loads a table's rows."""
-+    import lancedb
-+
-+    adapter = LanceDBAdapter(
-+        url=str(tmp_path / "db"), api_key=None, embedding_engine=_FakeEmbeddingEngine()
-+    )
-+    await _seed(adapter, "Entity_name", [_make_point(str(uuid4()), "alice")])
-+    await _seed(adapter, "DocumentChunk_text", [_make_point(str(uuid4()), "a chunk")])
-+
-+    async def never(self, *args, **kwargs):
-+        raise AssertionError("the schema check must not read the table")
-+
-+    monkeypatch.setattr(lancedb.AsyncTable, "to_arrow", never)
-+    monkeypatch.setattr(lancedb.AsyncTable, "to_pandas", never, raising=False)
-+
-+    result = awa
+@@ -0,0 +1,92 @@
++[
++  {
++    "input": "agent_sessions",
++    "fallback": "agent_sessions",
++    "expected": "agent_sessions",
++    "note": "a valid name passes through unchanged"
++  },
++  {
++    "input": "My-Project_2",
++    "fallback": "agent_sessions",
++    "expected": "My-Project_2",
++    "note": "letters, digits, dash and underscore are untouched"
++  },
++  {
++    "input": "Foo+Bar@team",
++    "fallback": "agent_sessions",
++    "expected": "Foo+Bar@team",
++    "note": "characters the server accepts are left alone, so no existing dataset is orphaned"
++  },
++  {
++    "input": "héllo-wörld",
++    "fallback": "agent_sessions",
++    "expected": "héllo-wörld",
++    "note": "non-ASCII letters are accepted by the server and left alone"
++  },
++  {
++    "input": "my project",
++    "fallback": "agent_sessions",
++    "expected": "my_project",
++    "note": "a space becomes an underscore"
++  },
++  {
++    "input": "project-x_2.0",
++    "fallback": "agent_sessions",
++    "expected": "project-x_2_0",
++    "note": "a dot becomes an underscore"
++  },
++  {
++    "input": "team-user-a.b@x.com",
++    "fallback": "agent_sessions",
++    "expected": "team-user-a_b@x_com",
++    "note": "dots inside a derived name (an email user id) are replaced"
++  },
++  {
++    "input": "a . b",
++    "fallback": "agent_sessions",
++    "expected": "a_b",
++    "note": "a run of spaces and dots collapses to one underscore"
++  },
++  {
++    "input": "  padded  ",
++    "fallback": "agent_sessions",
++    "expected": "padded",
++    "note": "surrounding whitespace is trimmed"
++  },
++  {
++    "input": ".hidden",
++    "fallback": "agent_sessions",
++    "expected": "_hidden",
++    "note": "a leading dot becomes an underscore rather than being dropped"
++  },
++  {
++    "input": "_x_",
++    "fallback": "agent_sessions",
++    "expected": "_x_",
++    "note": "existing underscores are not trimmed"
++  },
++  {
++    "input": "___",
++    "fallback": "agent_sessions",
++    "expected": "___",
++    "note": "a valid all-underscore name is kept, not replaced by the fallback"
++  },
++  {
++    "input": "...",
++    "fallback": "agent_sessions",
++    "expected": "agent_sessions",
++    "note": "nothing usable left after replacement falls back to the default"
++  },
++  {
++    "input": "   ",
++    "fallback": "my-default",
++    "expected": "my-default",
++    "note": "a blank name falls back to the integration's own default"
++  },
++  {
++    "input": "",
++    "fallback": "agent_sessions",
++    "expected": "agent_sessions",
++    "note": "an empty name falls back to the default"
++  }
++]
 ```
 
 ---
 
-### Incident Patch 3: `690b7e55` (2026-11-06)
-**Commit Message**: fix(search): exclude disabled types from feeling lucky (SDK-1447) (#6600)
+### Incident Patch 2: `f5250eab` (2026-11-13)
+**Commit Message**: ci: Report every nightly job to Slack (SDK-1489)
 
-## Description
+A dispatched run also runs the plugin checks, the conformance drift
+check and the inventory check, but the Slack report waited for the live
+tier alone and built its headline from it. A failed drift check or unit
+test posted "green" while the run was red, and since the bot dispatches
+the run, GitHub notified nobody.
 
-FEELING_LUCKY could select `CYPHER` or `NATURAL_LANGUAGE` while
-`ALLOW_CYPHER_QUERY` was disabled, causing an ordinary search to fail
-with HTTP 403.
+notify now needs every job of the run, lists each one's result and
+counts it in the headline, so any failure turns the post red.
 
-Exclude those choices using the same deployment gate as the retriever
-factory and recall router. An unavailable LLM proposal uses the
-selector's existing RAG/graph default. Request scope restrictions and
-explicit Cypher opt-in keep their existing behavior. The shared selector
-covers search and recall.
-
-## Validation
-
-- New regression tests before the fix: **8 failed**, demonstrating
-selection of disabled types.
-- Search, retrieval and recall unit suites: **1,357 passed**.
-  ```sh
-python -m pytest cognee/tests/unit/modules/search
-cognee/tests/unit/modules/retrieval cognee/tests/unit/api/v1/recall -q
-  ```
-- New journey tests against local Ladybug/Kuzu, LanceDB and SQLite: **8
-passed**, covering search/recall, both disabled choices, context and
-generated answers.
-  ```sh
-python -m pytest
-cognee/tests/journeys/test_feeling_lucky_disabled_types.py -q
-  ```
-- Live OpenAI check: `Get all nodes connected to Volvo C70.` proposed
-`NATURAL_LANGUAGE` in bo
-
-**File**: `cognee/api/v1/recall/query_router.py` (modified, +1/-3)
+**File**: `.github/workflows/test_integrations.yml` (modified, +29/-8)
 ```diff
-@@ -69,10 +69,8 @@ def from_config(
-         """Constraints for this deployment and request; ``node_name`` names node sets."""
-         from cognee.modules.engine.models.node_set import NodeSet
-         from cognee.modules.preflight import llm_available
--        from cognee.modules.search.methods.get_search_type_retriever_instance import (
--            cypher_queries_allowed,
--        )
-         from cognee.modules.search.methods.node_name_scope import lucky_search_types
-+        from cognee.modules.search.search_type_policy import cypher_queries_allowed
+@@ -17,7 +17,8 @@ name: test | integrations
+ # tokens, so it runs only on dispatch: nightly_scheduler.yml dispatches it
+ # against dev every evening. It fails when any of those tests skips, so a
+ # missing dependency or key can never pass as green, and `notify` posts every
+-# live run's result, green included, to #nightly-ci-integrations.
++# dispatched run's result, green included, to #nightly-ci-integrations: the
++# live tier and every other job that run executes, so no failure reports green.
+ #
+ # The case tables in integrations/conformance/ are a copy: the hook plugins in
+ # topoteretes/cognee-integrations generate two of them and test against the
+@@ -295,9 +296,12 @@ jobs:
+           retention-days: 7
  
-         return cls(
-             llm_available=llm_available(llm_config),
-```
-
-**File**: `cognee/modules/search/methods/get_search_type_retriever_instance.py` (modified, +1/-8)
-```diff
-@@ -1,4 +1,3 @@
--import os
- from collections.abc import Callable
+   notify:
+-    name: Slack live report
+-    needs: [detect, live]
+-    # Every live run, green included: a failure-only report makes a passing
++    name: Slack nightly report
++    # Every job a dispatched run executes: a dispatch also runs the plugin checks,
++    # the conformance drift check and the inventory check, and a report built from
++    # the live tier alone would post green over any of them failing.
++    needs: [detect, python-plugin, live, conformance-drift, inventory]
++    # Every dispatched run, green included: a failure-only report makes a passing
+     # night and a broken notifier look the same. Not on push or PR runs.
+     if: ${{ always() && inputs.live }}
+     runs-on: ubuntu-22.04
+@@ -318,6 +322,9 @@ jobs:
+           PLUGINS: ${{ needs.detect.outputs.live }}
+           DETECT_RESULT: ${{ needs.detect.result }}
+           LIVE_RESULT: ${{ needs.live.result }}
++          PLUGIN_CHECKS_RESULT: ${{ needs.python-plugin.result }}
++          CONFORMANCE_RESULT: ${{ needs.conformance-drift.result }}
++          INVENTORY_RESULT: ${{ needs.inventory.result }}
+           REPORTS: ${{ runner.temp }}/reports
+           REF: ${{ github.ref_name }}
+           TRIGGER: ${{ github.event_name }}
+@@ -333,13 +340,14 @@ jobs:
+           token = os.environ["SLACK_BOT_TOKEN"].strip()
+           channel = os.environ["SLACK_CHANNEL"].strip()
+           if not token or not channel:
+-              print("::error::SLACK_BOT_TOKEN / SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID are not set; cannot post the live report.")
++              print("::error::SLACK_BOT_TOKEN / SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID are not set; cannot post the nightly report.")
+               sys.exit(1)
  
- from cognee.base_config import get_base_config
-@@ -45,14 +44,13 @@
-     reject_unsupported_node_name,
- )
- from cognee.modules.search.operations import select_search_type
-+from cognee.modules.search.search_type_policy import CYPHER_SEARCH_TYPES, cypher_queries_allowed
- from cognee.modules.search.types import SearchType
- from cognee.modules.search.types.SearchType import DEPRECATED_SEARCH_TYPES
- from cognee.shared.logging_utils import get_logger
+           icons = {
+               "success": ":white_check_mark:",
+               "failure": ":red_circle:",
+               "cancelled": ":octagonal_sign:",
++              "skipped": ":fast_forward:",
+           }
+           try:
+               plugins = json.loads(os.environ.get("PLUGINS") or "[]")
+@@ -364,14 +372,27 @@ jobs:
+               if status != "success" and not any(t.strip() for t in tests):
+                   lines.append("> no per-test summary — the job likely crashed or timed out; see the run log")
  
- logger = get_logger()
++          # The other jobs of the run. Skipped means it had nothing to check
++          # (no plugin, no conformance run) and does not change the headline.
++          checks = {
++              "lint and unit tests": os.environ["PLUGIN_CHECKS_RESULT"],
++              "conformance drift": os.environ["CONFORMANCE_RESULT"],
++              "inventory": os.environ["INVENTORY_RESULT"],
++          }
++          for name, result in checks.items():
++              result = result or "unknown"
++              lines.append(f"{icons.get(result, ':white_circle:')} *{name}*: {result}")
++              if result != "skipped":
++                  outcomes.add(result)
++
+           trigger = os.environ["TRIGGER"]
+           ref = os.environ["REF"]
+           if outcomes == {"success"}:
+-              headline = f":large_green_circle: *Integrations live tier green* (`{ref}`, {trigger})"
++              headline = f":large_green_circle: *Integrations nightly green* (`{ref}`, {trigger})"
+           elif "failure" in outcomes:
+-              headline = f":rotating_light: *Integrations live tier failed* (`{ref}`, {trigger})"
++              headline = f":rotating_light: *Integrations nightly failed* (`{ref}`, {trigger})"
+           else:
+-              headline = f":warning: *Integrations live tier incomplete* (`{ref}`, {trigger}) — a plugin was cancelled or not run"
++              headline = f":warning: *Integrations nightly incomplete* (`{ref}`, {trigger}) — a job was cancelled or not run"
+           text = "\n".join([headline, *lines, f"<{os.environ['RUN_URL']}|Open the run>"])
  
--CYPHER_SEARCH_TYPES = (SearchType.CYPHER, SearchType.NATURAL_LANGUAGE)
--
- # Returned to the caller: says what to change, without detailing the risk.
- CYPHER_DISABLED_MESSAGE = "{search_type} search is disabled by default for security reasons."
- CYPHER_DISABLED_REMEDIATION = (
-@@ -69,11 +67,6 @@
- )
- 
- 
--def cypher_queries_allowed() -> bool:
--    """Raw Cypher (CYPHER, NATURAL_LANGUAGE) is opt-in through ALLOW_CYPHER_QUERY=true."""
--    return os.getenv("ALLOW_CYPHER_QUERY", "false").strip().lower() in ("true", "1", "yes")
--
--
- def _hybrid_lane_top_k(config: dict, key: str, search_top_k: int | None) -> int | None:
-     """Search top_k feeds hybrid's chunk/entity/fact lanes, capped so default context stays small.
- 
-```
-
-**File**: `cognee/modules/search/operations/select_search_type.py` (modified, +4/-1)
-```diff
-@@ -1,5 +1,6 @@
- from cognee.infrastructure.llm.LLMGateway import LLMGateway
- from cognee.infrastructure.llm.prompts import read_query_prompt
-+from cognee.modules.search.search_type_policy import CYPHER_SEARCH_TYPES, cypher_queries_allowed
- from cognee.modules.search.types import SearchType
- from cognee.shared.logging_utils import get_logger
- 
-@@ -22,7 +23,7 @@ async def select_search_type(
-             so the LLM's choice can never drop the filter.
- 
-     Returns:
--        The best search type given by the LLM.
-+        An enabled search type that can serve the request.
-     """
-     default_search_type = SearchType.RAG_COMPLETION
-     if allowed_search_types is not None and default_search_type not in allowed_search_types:
-@@ -32,6 +33,8 @@ async def select_search_type(
-     # their own: CODE runs one exact graph operation driven by a structured
-     # code_query, which FEELING_LUCKY has no way to construct.
-     excluded_search_types = {SearchType.CODE}
-+    if not cypher_queries_allowed():
-+        excluded_search_types.update(CYPHER_SEARCH_TYPES)
-     if allowed_search_types is not None:
-         excluded_search_types |= set(SearchType) - allowed_search_types
-     system_prompt = read_query_prompt(system_prompt_path)
-```
-
-**File**: `cognee/modules/search/search_type_policy.py` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+"""Deployment gates shared by search selection, routing and execution."""
-+
-+import os
-+
-+from cognee.modules.search.types import SearchType
-+
-+CYPHER_SEARCH_TYPES = (SearchType.CYPHER, SearchType.NATURAL_LANGUAGE)
-+
-+
-+def cypher_queries_allowed() -> bool:
-+    """Raw Cypher (CYPHER, NATURAL_LANGUAGE) is opt-in through ALLOW_CYPHER_QUERY=true."""
-+    return os.getenv("ALLOW_CYPHER_QUERY", "false").strip().lower() in ("true", "1", "yes")
-```
-
-**File**: `cognee/tests/journeys/test_feeling_lucky_disabled_types.py` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+"""FEELING_LUCKY answers through an enabled retriever when Cypher is disabled."""
-+
-+import json
-+from unittest.mock import AsyncMock
-+
-+import pytest
-+from fastapi.encoders import jsonable_encoder
-+
-+import cognee
-+from cognee.infrastructure.llm.LLMGateway import LLMGateway
-+from cognee.infrastructure.llm.prompts import read_query_prompt
-+from cognee.modules.search.types import SearchType
-+
-+
-+@pytest.mark.journey
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("api", ["search", "recall"])
-+@pytest.mark.parametrize("only_context", [True, False])
-+@pytest.mark.parametrize("search_type", [SearchType.CYPHER, SearchType.NATURAL_LANGUAGE])
-+async def test_feeling_lucky_rejects_a_disabled_llm_choice(
-+    clean_env, default_user, tmp_path, monkeypatch, api, only_context, search_type
-+):
-+    monkeypatch.setenv("ALLOW_CYPHER_QUERY", "false")
-+    dataset = "journey_lucky_disabled"
-+    document = tmp_path / "maintenance.txt"
-+    document.write_text("Volvo C70 maintenance includes an annual inspection.")
-+    await cognee.add(str(document), dataset_name=dataset, user=default_user)
-+    await cognee.cognify(datasets=[dataset], user=default_user)
-+
-+    original_gateway = LLMGateway.acreate_structured_output
-+    selector_prompt = read_query_prompt("search_type_selector_prompt.txt")
-+    selector = AsyncMock(return_value=search_type.value)
-+
-+    async def gateway(*args, **kwargs):
-+        if kwargs.get("system_prompt") == selector_prompt:
-+            return await selector(*args, **kwargs)
-+        return await original_gateway(*args, **kwargs)
-+
-+    monkeypatch.setattr(LLMGateway, "acreate_structured_output", staticmethod(gateway))
-+
-+    results = await getattr(cognee, api)(
-+        query_text="What maintenance does Volvo C70 need?",
-+        query_type=SearchType.FEELING_LUCKY,
-+        datasets=[dataset],
-+        only_context=only_context,
-+        verbose=True,
-+        user=default_user,
-+    )
-+
-+    selector.assert_awaited_once()
-+    assert results
-+    assert "annual inspection" in json.dumps(jsonable_encoder(results)).lower()
-+    if api == "recall":
-+        assert all(result.search_type == SearchType.RAG_COMPLETION for result in results)
-```
-
-**File**: `cognee/tests/unit/api/v1/recall/test_query_router.py` (modified, +4/-4)
-```diff
-@@ -380,10 +380,10 @@ def test_cypher_disabled_and_no_llm_compose(self):
- 
-     def test_constraints_come_from_the_shared_predicates(self, monkeypatch):
-         from cognee.modules import preflight
--        from cognee.modules.search.methods import get_search_type_retriever_instance as factory
-+        from cognee.modules.search import search_type_policy
- 
-         monkeypatch.setattr(preflight, "llm_available", lambda _config: False)
--        monkeypatch.setattr(factory, "cypher_queries_allowed", lambda: False)
-+        monkeypatch.setattr(search_type_policy, "cypher_queries_allowed", lambda: False)
- 
-         assert RoutingConstraints.from_config(None) == RoutingConstraints(
-             llm_available=False, cypher_allowed=False
-@@ -471,10 +471,10 @@ def test_composes_with_no_llm(self):
- 
-     def test_no_filter_means_no_scope_constraint(self, monkeypatch):
-         from cognee.modules import preflight
--        from cognee.modules.search.methods import get_search_type_retriever_instance as factory
-+        from cognee.modules.search import search_type_policy
- 
-         monkeypatch.setattr(preflight, "llm_available", lambda _config: True)
--        monkeypatch.setattr(factory, "cypher_queries_allowed", lambda: True)
-+        monkeypatch.setattr(search_type_policy, "cypher_queries_allowed", lambda: True)
- 
-         assert RoutingConstraints.from_config(None).scoped_types is None
-         assert RoutingConstraints.from_config(None, node_name=[]).scoped_types is None
-```
-
-**File**: `cognee/tests/unit/modules/search/test_select_search_type.py` (modified, +39/-0)
-```diff
-@@ -50,3 +50,42 @@ async def test_without_a_bound_any_type_but_code_is_kept():
-         assert await mod.select_search_type("q") is SearchType.SUMMARIES
-     with _llm_answering("CODE"):
-         assert await mod.select_search_type("q") is SearchType.RAG_COMPLETION
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("search_type", [SearchType.CYPHER, SearchType.NATURAL_LANGUAGE])
-+@pytest.mark.parametrize("flag", [None, "false"])
-+@pytest.mark.parametrize("graph_only", [False, True])
-+async def test_disabled_cypher_choice_uses_an_allowed_default(
-+    monkeypatch, search_type, flag, graph_only
-+):
-+    if flag is None:
-+        monkeypatch.delenv("ALLOW_CYPHER_QUERY", raising=False)
-+    else:
-+        monkeypatch.setenv("ALLOW_CYPHER_QUERY", flag)
-+    # Even an explicit request allowlist cannot enable a disabled type.
-+    allowed = frozenset({SearchType.GRAPH_COMPLETION, search_type}) if graph_only else None
-+    with _llm_answering(search_type.value):
-+        chosen = await mod.select_search_type("q", allowed_search_types=allowed)
-+    expected = SearchType.GRAPH_COMPLETION if graph_only else SearchType.RAG_COMPLETION
-+    assert chosen is expected
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("search_type", [SearchType.CYPHER, SearchType.NATURAL_LANGUAGE])
-+@pytest.mark.parametrize("flag", ["true", "1", "yes", " TRUE "])
-+async def test_enabled_cypher_choice_is_kept(monkeypatch, search_type, flag):
-+    monkeypatch.setenv("ALLOW_CYPHER_QUERY", flag)
-+    with _llm_answering(search_type.value):
-+        assert await mod.select_search_type("q") is search_type
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("search_type", [SearchType.CYPHER, SearchType.NATURAL_LANGUAGE])
-+async def test_enabled_cypher_choice_still_respects_request_scope(monkeypatch, search_type):
-+    monkeypatch.setenv("ALLOW_CYPHER_QUERY", "true")
-+    with _llm_answering(search_type.value):
-+        chosen = await mod.select_search_type(
-+            "q", allowed_search_types=frozenset({SearchType.GRAPH_COMPLETION})
-+        )
-+    assert chosen is SearchType.GRAPH_COMPLETION
+           request = urllib.request.Request(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6606** (2026-11-06): chore(mcp): Release cognee-mcp 0.5.8 for dev (SDK-1449) (@NMZivkovic)
-- **PR #6605** (2026-11-06): chore(mcp): Release cognee-mcp 0.5.8 (SDK-1449) (@NMZivkovic)
-- **PR #6603** (2026-11-06): chore: update MCP (@dexters1)
-- **PR #6602** (2026-11-06): chore: update MCP (@dexters1)
-- **PR #6600** (2026-11-06): fix(search): exclude disabled types from feeling lucky (SDK-1447) (@dexters1)
-- **PR #6599** (2026-11-06): fix: fix error when file paths in ingestion (SDK-1446) (@siillee)
+- **PR #6737** (closed): dev -> main (@mertzamir)
+- **PR #6718** (closed): feat: resolve issue #5916 - Hackathon [Feature]: Add Polar customer-state, sub (@ademolaaa)
+- **PR #6717** (2026-11-16): docs(guides): rework hybrid decomposition guide, remove dlt column search guide (RES-110) (@ArmagedonFlamer)
+- **PR #6715** (2026-11-13): feat: package standalone Vercel connector (SDK-1568) (@NMZivkovic)
+- **PR #6714** (2026-11-16): perf(pgvector): Store new collections as halfvec, require pgvector 0.7.0 (SDK-651) (@dexters1)
+- **PR #6712** (2026-11-14): perf(pgvector): Build HNSW indexes with 8 links per node (SDK-651) (@dexters1)
 
 ---
 
@@ -2703,41 +2571,58 @@ cognee/tests/journeys/test_feeling_lucky_disabled_types.py -q
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Gate database connection-string ingestion (SDK-1443) (#6588)
+## X. hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489)
 
 **RULE**:
-When implementing operations in `.env.template`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/nightly_scheduler.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `556e958c`: Gate database connection-string ingestion (SDK-1443) (#6588). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5870f15d`: hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.template`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_scheduler.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Ingesting a database from a connection string (add/remember with sqlite:///,
-# postgresql://, mysql://, ...) connects from this server, with its network
-# position. Unset (the default), the SDK, CLI and MCP server may do it and the
-# API server refuses it (422 DatabaseIngestionDisabled): its callers are whoever
-# can register. Set true to allow it for API callers you trust, false to refuse
-# it everywhere. Connection strings that point at cognee's own storage are always
-# refused: SQLite files in its roots, strings carrying cognee's own database
-# credentials, and hosts resolving to one of its servers (best-effort: not every
-# address of a host can be known, so keep cognee's databases behind a password
-# and egress rules). A sqlite:/// path must be an existing file.
-# ALLOW_DATABASE_INGESTION=true
+
+  # The integrations' live round trip (test_integrations.yml, `live`), every
+  # evening against dev: plugin fixes land on dev, and main only moves at core
+  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
+  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
+  # which would run it a second time that day.
+  dispatch-integrations:
+    name: Dispatch the integrations live tier
+    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Note the newest existing integrations run
+        id: baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Before dispatching, so the confirm step below cannot match an older run.
+          id="$(gh run list --workflow test_integrations.yml --branch dev \
+                  --event workflow_dispatch --limit 1 \
+                  --json databaseId --jq '.[0].databaseId // 0')"
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `556e958c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5870f15d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

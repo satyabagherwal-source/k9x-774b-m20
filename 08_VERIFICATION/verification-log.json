@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-WHJO",
-    "timestamp": "2026-11-13T21:07:07.092Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "6f432600c6f07b144012992a26858c61540f930ced5374d92de6aeb01311ebec",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-WNX4",
-    "timestamp": "2026-11-13T21:07:15.352Z",
-    "repository": "pubkey/rxdb",
-    "learningId": "learn-github-pubkey-rxdb",
-    "contentHash": "f7efce8d1552b7b4a98986af42d37207aa560e3f0d1d8c00c660800abae9b897",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-WPQ9",
     "timestamp": "2026-11-13T21:07:17.697Z",
     "repository": "k3s-io/k3s",
@@ -7490,6 +7460,36 @@
     "repository": "qdrant/qdrant",
     "learningId": "learn-github-qdrant-qdrant",
     "contentHash": "2fdda9e36f03c4baf38a033bf11dcf0e360b3fc46ca507efc1b5645aed7eac2f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-GRKO",
+    "timestamp": "2026-11-16T15:09:59.064Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "c2a7a096ccd37c9cafd9880a40da412a037b8d760c9d975590138b1abbd04893",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-GYUI",
+    "timestamp": "2026-11-16T15:10:08.490Z",
+    "repository": "topoteretes/cognee",
+    "learningId": "learn-github-topoteretes-cognee",
+    "contentHash": "314216efa4368f94afa850a3f1557ff68a24616621622ef65a4a3b76e4db9e62",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

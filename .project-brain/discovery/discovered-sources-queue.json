@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T15:00:51.374Z",
+  "updated_at": "2026-11-16T15:10:12.467Z",
   "stats": {
-    "total_discovered": 4213,
-    "approved_pending_harvest": 3959,
+    "total_discovered": 4222,
+    "approved_pending_harvest": 3968,
     "harvested_count": 0,
     "rejected_count": 254,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3960,
-      "OFFICIAL_DOCUMENTATION": 134,
+      "COMMUNITY_AND_EXPERT": 3967,
+      "OFFICIAL_DOCUMENTATION": 136,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 15,
@@ -90929,6 +90929,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
         "fileName": "qdrant-qdrant-learnings.md"
+      }
+    },
+    "SRC-8F7504FB1D5B": {
+      "id": "SRC-8F7504FB1D5B",
+      "url": "https://github.com/google/tcmalloc/pull/1928/checks?check_run_id=132481476045",
+      "title": "https://github.com/google/tcmalloc/pull/1928/checks?check_run_id=132481476045",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:11.716Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-D399D99EF4E4": {
+      "id": "SRC-D399D99EF4E4",
+      "url": "https://github.com/topoteretes/cognee",
+      "title": "https://github.com/topoteretes/cognee",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:12.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+        "fileName": "topoteretes-cognee-learnings.md"
+      }
+    },
+    "SRC-54F0B41284B0": {
+      "id": "SRC-54F0B41284B0",
+      "url": "https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries",
+      "title": "https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:12.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+        "fileName": "topoteretes-cognee-learnings.md"
+      }
+    },
+    "SRC-1E4876B9DB99": {
+      "id": "SRC-1E4876B9DB99",
+      "url": "https://linear.app/developers/webhooks",
+      "title": "https://linear.app/developers/webhooks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:12.331Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+        "fileName": "topoteretes-cognee-learnings.md"
+      }
+    },
+    "SRC-F005EF20F08F": {
+      "id": "SRC-F005EF20F08F",
+      "url": "https://docs.slack.dev/authentication/verifying-requests-from-slack",
+      "title": "https://docs.slack.dev/authentication/verifying-requests-from-slack",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:12.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+        "fileName": "topoteretes-cognee-learnings.md"
+      }
+    },
+    "SRC-ADAC193735E1": {
+      "id": "SRC-ADAC193735E1",
+      "url": "https://www.youtube.com/watch?v=lQpmXvsrBzg&list=PLbJ6aa1LYeSTxMhlfOTKw3RbHGiL3fbm0&index=1",
+      "title": "https://www.youtube.com/watch?v=lQpmXvsrBzg&list=PLbJ6aa1LYeSTxMhlfOTKw3RbHGiL3fbm0&index=1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:12.386Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+        "fileName": "topoteretes-cognee-learnings.md"
+      }
+    },
+    "SRC-1CF739C52EBD": {
+      "id": "SRC-1CF739C52EBD",
+      "url": "https://pypi.org/pypi/cognee-integration-hermes-agent/$%7BVERSION",
+      "title": "https://pypi.org/pypi/cognee-integration-hermes-agent/$%7BVERSION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:12.412Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+        "fileName": "topoteretes-cognee-learnings.md"
+      }
+    },
+    "SRC-3289E902DB7B": {
+      "id": "SRC-3289E902DB7B",
+      "url": "https://github.com/topoteretes/cognee-integrations",
+      "title": "https://github.com/topoteretes/cognee-integrations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:12.439Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+        "fileName": "topoteretes-cognee-learnings.md"
+      }
+    },
+    "SRC-B9EBA73C99D1": {
+      "id": "SRC-B9EBA73C99D1",
+      "url": "https://pypi.org/project/cognee-integration-hermes-agent",
+      "title": "https://pypi.org/project/cognee-integration-hermes-agent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T15:10:12.467Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
+        "fileName": "topoteretes-cognee-learnings.md"
       }
     }
   }

@@ -10318,3 +10318,5 @@ Every entry in this ledger must capture:
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `f416c5d1` | Multi-dimensional audit evidence | 2026-11-16T15:00:35.784Z |
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `547f252e` | Multi-dimensional audit evidence | 2026-11-16T15:00:39.995Z |
 | `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `23065a0b` | Multi-dimensional audit evidence | 2026-11-16T15:00:47.090Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `c2f1eaba` | Multi-dimensional audit evidence | 2026-11-16T15:09:59.068Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `5870f15d` | Multi-dimensional audit evidence | 2026-11-16T15:10:08.494Z |

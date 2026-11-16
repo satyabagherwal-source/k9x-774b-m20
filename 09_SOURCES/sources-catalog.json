@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "4053f6cc",
+    "sourceVersion": "5870f15d",
     "license": "Apache-2.0",
-    "contentHash": "fcfbb70ac809a1a01e9829d27b62149cb55cbeb52a6712e399b6c000e05d74f6",
-    "lastHarvestedAt": "2026-11-13T18:34:59.749Z",
+    "contentHash": "314216efa4368f94afa850a3f1557ff68a24616621622ef65a4a3b76e4db9e62",
+    "lastHarvestedAt": "2026-11-16T15:10:08.494Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "f69a26d2",
+    "sourceVersion": "c2f1eaba",
     "license": "Apache-2.0",
-    "contentHash": "b002fa6bd2b10becd88ee4fafea443e6a9094e1c9bead9e11b73cd73a3fdd2cb",
-    "lastHarvestedAt": "2026-11-14T18:26:22.483Z",
+    "contentHash": "c2a7a096ccd37c9cafd9880a40da412a037b8d760c9d975590138b1abbd04893",
+    "lastHarvestedAt": "2026-11-16T15:09:59.068Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
