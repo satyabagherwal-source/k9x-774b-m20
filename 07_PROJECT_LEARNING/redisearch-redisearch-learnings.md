@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `33d90342`  
+> **Source Version**: `9a5df815`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T14:25:46.013Z  
+> **Timestamp**: 2026-11-16T05:29:08.636Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:25:46.004Z  
+> **Harvest Timestamp**: 2026-11-16T05:29:08.632Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6244 stars
+- **Stars / Engagement**: 6245 stars
 
 ---
 
@@ -1626,494 +1626,373 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33d90342` (2026-11-12)
-**Commit Message**: [MOD-20889] [Disk observability] Keep TEXT metadata aggregation in C (#12325)
+### Incident Patch 1: `eb9b9bd9` (2026-11-15)
+**Commit Message**: Remove dead build and QA scripts (#12335)
 
-* Keep TEXT metadata aggregation in C and clarify INFO collection
+These files have no remaining callers on master:
 
-* Document cached INFO metrics collection API
+- build/{hiredis,libuv}/Makefile{,.defs}: include deps/readies, which was
+  removed in #6506; the CMake build uses the sibling *.cmake files.
+- tests/qa/: the legacy QA runner depends on paella (from readies) and
+  nothing invokes it.
+- sbin/circleci-pack-logs: CircleCI leftover.
+- sbin/code_style.py: points at a srcutil/ path that no longer exists.
+- tests/pytests/rmtest.config: RLTest does not read it.
 
-**File**: `src/info/indexes_info.c` (modified, +2/-1)
-```diff
-@@ -54,7 +54,8 @@ TotalIndexesInfo IndexesInfo_TotalInfo() {
-     bool cachedDisk = sp->diskSpec != NULL;
-     CachedIndexMetrics diskMetrics = {0};
-     if (cachedDisk) {
--      diskMetrics = SearchDisk_ReadCachedIndexMetrics(sp->diskSpec, IndexSpec_collect_text_overhead(sp));
-+      diskMetrics = SearchDisk_CollectInfoIndexMetrics(sp->diskSpec);
-+      info.text_ram_metadata_bytes += IndexSpec_collect_text_overhead(sp);
-     }
-     size_t cur_mem = IndexSpec_TotalMemUsageForInfo(sp, vec_info.memory, diskMetrics.memory);
-     size_t prev_total_mem = info.total_mem;
-```
-
-**File**: `src/info/indexes_info.h` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ typedef struct {
-   size_t total_mem;  // Total memory used by the indexes
-   size_t min_mem;    // Memory used by the smallest (local) index
-   size_t max_mem;    // Memory used by the largest (local) index
-+  uint64_t text_ram_metadata_bytes;
- 
-   // Indexing
-   rs_wall_clock_ns_t indexing_time;  // Time spent on indexing
-```
-
-**File**: `src/info/info_command.c` (modified, +1/-1)
-```diff
-@@ -329,7 +329,7 @@ void fillReplyWithIndexInfo(RedisSearchCtx* sctx, RedisModule_Reply *reply, bool
-   REPLY_KVNUM("key_table_size_mb", DocTable_KeyMapMemoryUsage(&sp->docs) / (float)0x100000);
-   REPLY_KVNUM("tag_overhead_sz_mb", tags_overhead / (float)0x100000);
-   if (isDisk) {
--    TextResourceMetrics text = SearchDisk_ReadCachedIndexMetrics(sp->diskSpec, text_overhead).text;
-+    TextResourceMetrics text = SearchDisk_CollectInfoIndexMetrics(sp->diskSpec).text;
-     REPLY_KVMAP("column_families");
-     REPLY_KVMAP("text");
-     REPLY_KVINT("ram_metadata_bytes", text_overhead);
-```
-
-**File**: `src/info/info_redis/info_redis.c` (modified, +4/-4)
-```diff
-@@ -56,7 +56,7 @@ static inline void AddToInfo_Dialects(RedisModuleInfoCtx *ctx);
- static inline void AddToInfo_RSConfig(RedisModuleInfoCtx *ctx);
- static inline void AddToInfo_BlockedQueries(RedisModuleInfoCtx *ctx);
- static inline void AddToInfo_CurrentThread(RedisModuleInfoCtx *ctx);
--static inline void AddToInfo_Disk(RedisModuleInfoCtx *ctx);
-+static inline void AddToInfo_Disk(RedisModuleInfoCtx *ctx, const TotalIndexesInfo *total_info);
- static inline void AddToInfo_CoordinatorErrorsAndWarnings(RedisModuleInfoCtx *ctx);
- /* ========================== MAIN FUNC ============================ */
- 
-@@ -153,7 +153,7 @@ void RS_moduleInfoFunc(RedisModuleInfoCtx *ctx, int for_crash_report) {
-   if (SearchDisk_IsEnabled() &&
-       AddSectionWithIndexStats(ctx, "disk", &total_info, &collected, for_crash_report)) {
-     RS_ASSERT(SearchDisk_IsInitialized());
--    AddToInfo_Disk(ctx);
-+    AddToInfo_Disk(ctx, &total_info);
-   }
- 
-   // Active operations
-@@ -532,7 +532,7 @@ void AddToInfo_BlockedQueries(RedisModuleInfoCtx *ctx) {
-   AddCursorsToInfo(ctx, blockedQueries);
- }
- 
--void AddToInfo_Disk(RedisModuleInfoCtx *ctx) {
-+void AddToInfo_Disk(RedisModuleInfoCtx *ctx, const TotalIndexesInfo *total_info) {
-   // Delegate to the disk API which outputs aggregated metrics directly
--  SearchDisk_OutputInfoMetrics(ctx);
-+  SearchDisk_OutputInfoMetrics(ctx, total_info->text_ram_metadata_bytes);
- }
-```
-
-**File**: `src/search_disk.c` (modified, +4/-5)
-```diff
-@@ -757,10 +757,9 @@ bool SearchDisk_IsVectorWriteThrottling(void) {
-   return atomic_load(&vecSimThrottleDepth) > 0;
- }
- 
--CachedIndexMetrics SearchDisk_ReadCachedIndexMetrics(RedisSearchDiskIndexSpec *index,
--                                                     uint64_t textRamMetadataBytes) {
-+CachedIndexMetrics SearchDisk_CollectInfoIndexMetrics(RedisSearchDiskIndexSpec *index) {
-   RS_ASSERT(disk && disk_db && index);
--  return disk->metrics.readCachedIndexMetrics(disk_db, index, textRamMetadataBytes);
-+  return disk->metrics.collectInfoIndexMetrics(disk_db, index);
- }
- 
- uint64_t SearchDisk_CollectIndexMetrics(RedisSearchDiskIndexSpec *index) {
-@@ -788,9 +787,9 @@ uint64_t SearchDisk_GetInvertedIndexTotalBlocks(RedisSearchDiskIndexSpec* index)
-   return disk->metrics.getInvertedIndexTotalBlocks(index);
- }
- 
--void SearchDisk_OutputInfoMetrics(RedisModuleInfoCtx* ctx) {
-+void SearchDisk_OutputInfoMetrics(RedisModuleInfoCtx* ctx, uint64_t textRamMetadataBytes) {
-   RS_ASSERT(disk && disk_db && ctx);
--  disk->metrics.outputInfoMetrics(disk_db, ctx);
-+  disk->metrics.outputInfoMetrics(disk_db, ctx, textRamMetadataBytes);
- }
- 
- PerFieldTextDiskMetrics SearchDisk_GetTextFieldMetrics(const RedisSearchDiskIndexSpec* index,
-```
-
-**File**: `src/search_disk.h` (modified, +2/-3)
-```diff
-@@ -786,8 +786,7 @@ bool SearchDisk_BindVectorIndexStorage(RedisModuleCtx *ctx, RedisSearchDiskIndex
-  */
- 
- void SearchDisk_ActivateUsage(IndexSpec *spec);
--CachedIndexMetrics SearchDisk_ReadCachedIndexMetrics(RedisSearchDiskIndexSpec *index,
--                                                     uint64_t textRamMetadataBytes);
-+CachedIndexMetrics SearchDisk_CollectInfoIndexMetrics(RedisSearchDiskIndexSpec *index);
- 
- /**
-  * @brief Collect metrics for an index and store them in the disk context
-@@ -858,7 +857,7 @@ uint64_t SearchDisk_GetInvertedIndexTotalBlocks(RedisSearchDiskIndexSpec* index)
-  *
-  * @param ctx Redis module info context
-  */
--void SearchDisk_OutputInfoMetrics(RedisModuleInfoCtx* ctx);
-+void SearchDisk_OutputInfoMetrics(RedisModuleInfoCtx* ctx, uint64_t textRamMetadataBytes);
- 
- /**
-  * @brief Get per-field disk metrics for a TEXT field.
-```
-
-**File**: `src/search_disk_api.h` (modified, +12/-4)
-```diff
-@@ -1164,9 +1164,16 @@ typedef struct MetricsDiskAPI {
-   void (*stopMetrics)(RedisSearchDisk *disk);
-   void (*activateTarget)(RedisSearchDiskIndexSpec *index);
-   uint64_t (*getCachedTotalDiskUsage)(RedisSearchDisk *disk);
--  /* Stages the disk snapshot and live C-owned TEXT metadata for INFO output. */
--  CachedIndexMetrics (*readCachedIndexMetrics)(RedisSearchDisk *disk, RedisSearchDiskIndexSpec *index,
--                                                uint64_t textRamMetadataBytes);
-+  /**
-+   * @brief Stage cached index metrics for INFO and return resource totals.
-+   *
-+   * Does not collect native storage properties.
-+   *
-+   * @param disk Pointer to the disk context
-+   * @param index Pointer to the index spec
-+   * @return Cached resource totals for the index
-+   */
-+  CachedIndexMetrics (*collectInfoIndexMetrics)(RedisSearchDisk *disk, RedisSearchDiskIndexSpec *index);
-   /**
-    * @brief Collect metrics for an index and store them in the disk context
-    *
-@@ -1235,8 +1242,9 @@ typedef struct MetricsDiskAPI {
-    *
-    * @param disk Pointer to the disk context
-    * @param ctx Redis module info context
-+   * @param textRamMetadataBytes Aggregate TEXT metadata RAM measured by the caller
-    */
--  void (*outputInfoMetrics)(RedisSearchDisk *disk, RedisModuleInfoCtx *ctx);
-+  void (*outputInfoMetrics)(RedisSearchDisk *disk, RedisModuleInfoCtx *ctx, uint64_t textRamMetadataBytes);
- 
-   /**
-    * @brief Get per-field disk metrics for a TEXT field.
-```
-
-**File**: `tests/cpptests/test_cpp_info_sections.cpp` (modified, +2/-3)
-```diff
-@@ -135,8 +135,7 @@ class InfoSectionsTest : public ::testing::Test {
-       ++collections;
-       return 1234;
-     };
--    api.metrics.readCachedIndexMetrics = [](RedisSearchDisk *, RedisSearchDiskIndexSpec *,
--                                            uint64_t) {
-+    api.metrics.collectInfoIndexMetrics = [](RedisSearchDisk *, RedisSearchDiskIndexSpec *) {
-       ++cachedCollections;
-       return CachedIndexMetrics{4321, 55, 9, {0, 0}};
-     };
-@@ -149,7 +148,7 @@ class InfoSectionsTest : public ::testing::Test {
-     api.metrics.getInvertedIndexTotalBlocks = [](RedisSearchDiskIndexSpec *) -> uint64_t {
-       return 7;
-     };
--    api.metrics.outputInfoMetrics = [](RedisSearchDisk *, RedisModuleInfoCtx *ctx) {
-+    api.metrics.outputInfoMetrics = [](RedisSearchDisk *, RedisModuleInfoCtx *ctx, uint64_t) {
-       ++diskOutputs;
-       EXPECT_EQ(collections + cachedCollections, 1);
-       EXPECT_EQ(InfoCapture::get(ctx).sections.back(), "disk");
-```
-
----
-
-### Incident Patch 2: `2968acb8` (2026-11-12)
-**Commit Message**: [MOD-21201] Carry the GC run interval in milliseconds (#12306)
-
-* Carry the GC run interval in milliseconds
-
-Every producer filled only tv_sec from a seconds config and the only
-consumer converted to milliseconds for the timer, so carry milliseconds
-end to end. The jitter now spans the same range at millisecond
-granularity, which also gives 1-second intervals jitter.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Clamp GC intervals so the millisecond period cannot overflow
-
-Interval configs accept up to LLONG_MAX seconds; converting them to
-milliseconds, and the jitter doubling the period, could wrap to a
-negative timer period.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Carry the THREAD policy's interval in milliseconds too
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
+Supersedes the deletion half of #6661.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/gc/disk_gc.c` (modified, +3/-3)
+**File**: `build/hiredis/Makefile` (removed, +0/-55)
 ```diff
-@@ -236,9 +236,9 @@ static void getStatsCb(void *gcCtx, InfoGCStats *out) {
-   out->lastRunTimeMs = (long long)atomic_load(&gc->lastRunTimeMs);
- }
- 
--static struct timespec getIntervalCb(void *ctx) {
-+static long long getIntervalMsCb(void *ctx) {
-   const DiskGC *gc = ctx;
--  return (struct timespec){ .tv_sec = gc->intervalSec, .tv_nsec = 0 };
-+  return GC_IntervalSecToMs(gc->intervalSec);
- }
- 
- DiskGC *DiskGC_Create(StrongRef spec_ref, GCCallbacks *callbacks) {
-@@ -265,7 +265,7 @@ DiskGC *DiskGC_Create(StrongRef spec_ref, GCCallbacks *callbacks) {
-   callbacks->periodicCallback = periodicCb;
-   callbacks->renderStats = statsCb;
-   callbacks->renderStatsForInfo = statsForInfoCb;
--  callbacks->getInterval = getIntervalCb;
-+  callbacks->getIntervalMs = getIntervalMsCb;
-   callbacks->onDelete = deleteCb;
-   callbacks->onWrite = writeCb;
-   callbacks->onUpdate = updateCb;
-```
-
-**File**: `src/gc/fork_cycle.c` (modified, +2/-2)
-```diff
-@@ -178,7 +178,7 @@ bool ForkCycle_Run(IndexGC *gc, GCForcedRun *forced, const IndexGCHook *hook, St
-   cpid = forkGCChild(ctx, forced);
- 
-   if (cpid == -1) {
--    gc->retryInterval.tv_sec = RSGlobalConfig.gcConfigParams.gcSettings.forkGcRetryInterval;
-+    gc->retryIntervalMs = GC_IntervalSecToMs(RSGlobalConfig.gcConfigParams.gcSettings.forkGcRetryInterval);
-     IndexSpecRef_Release(early_check);
- 
-     GilGate_Unlock(&gcGilGate_g, ctx);
-@@ -193,7 +193,7 @@ bool ForkCycle_Run(IndexGC *gc, GCForcedRun *forced, const IndexGCHook *hook, St
-   // the child cleans. Updates can still be counted from the reindexing pool, hence one exchange.
-   size_t num_docs_to_clean = atomic_exchange(&gc->deletedOrUpdatedDocsFromLastRun, 0);
- 
--  gc->retryInterval.tv_sec = RSGlobalConfig.gcConfigParams.gcSettings.forkGcRunIntervalSec;
-+  gc->retryIntervalMs = GC_IntervalSecToMs(RSGlobalConfig.gcConfigParams.gcSettings.forkGcRunIntervalSec);
- 
-   GilGate_Unlock(&gcGilGate_g, ctx);
- 
-```
-
-**File**: `src/gc/gc.c` (modified, +9/-13)
-```diff
-@@ -81,32 +81,28 @@ static bool GCContext_IsSchedulingPaused(GCContext* gc) {
-   return (RS_AtomicUintLoadRelaxed(&gc->schedFlags) & GC_SCHED_PAUSED) != 0;
- }
- 
--static long long getNextPeriod(struct timespec interval) {
--  long long ms = interval.tv_sec * 1000 + interval.tv_nsec / 1000000;  // convert to millisecond
+@@ -1,55 +0,0 @@
 -
-+static long long getNextPeriod(long long intervalMs) {
-   // add randomness to avoid congestion by multiple GCs from different shards
--  ms += (rand() % interval.tv_sec) * 1000;
+-ROOT=../..
 -
--  return ms;
-+  return intervalMs > 0 ? intervalMs + rand() % intervalMs : intervalMs;
- }
- 
--static RedisModuleTimerID scheduleNextIn(GCContext* gc, struct timespec interval) {
-+static RedisModuleTimerID scheduleNextIn(GCContext* gc, long long intervalMs) {
-   if (RS_IsMock) return 0;
- 
-   IncrementGCTimerArm();
--  return RedisModule_CreateTimer(RSDummyContext, getNextPeriod(interval), timerCallback, gc);
-+  return RedisModule_CreateTimer(RSDummyContext, getNextPeriod(intervalMs), timerCallback, gc);
- }
- 
- // Main thread only -- arming off it is unsafe even under the GIL (MOD-17309). Callable blindly;
- // the no-timer-while-a-run-is-pending invariant comes from QueueRun declining and timerCallback
- // zeroing timerID, not from the RunPending check here. A spec paused for a consistency window
- // arms nothing; the window's resume re-arms it.
--static bool GCContext_ArmTimerIn(GCContext* gc, struct timespec interval) {
-+static bool GCContext_ArmTimerIn(GCContext* gc, long long intervalMs) {
-   if (!gc->enabled || gc->timerID || GCContext_RunPending(gc) ||
-       GCContext_IsSchedulingPaused(gc)) {
-     return false;
-   }
--  gc->timerID = scheduleNextIn(gc, interval);
-+  gc->timerID = scheduleNextIn(gc, intervalMs);
-   if (gc->timerID == 0) {
-     RedisModule_Log(RSDummyContext, "warning", "GC did not schedule next collection");
-     return false;
-@@ -115,7 +111,7 @@ static bool GCContext_ArmTimerIn(GCContext* gc, struct timespec interval) {
- }
- 
- static void GCContext_ArmTimer(GCContext* gc) {
--  GCContext_ArmTimerIn(gc, gc->callbacks.getInterval(gc->gcCtx));
-+  GCContext_ArmTimerIn(gc, gc->callbacks.getIntervalMs(gc->gcCtx));
- }
- 
- static void GCContext_DisarmTimer(GCContext* gc) {
-@@ -145,7 +141,7 @@ static void GCContext_QueueRun(GCContext* gc) {
- static void rearmOneShotCb(void* data) {
-   GCContext* gc = data;
-   RS_AtomicUintFetchAndRelaxed(&gc->schedFlags, ~(unsigned)GC_SCHED_RUN_PENDING);
--  if (GCContext_ArmTimerIn(gc, gc->pendingInterval)) {
-+  if (GCContext_ArmTimerIn(gc, gc->pendingIntervalMs)) {
-     IncrementGCTimerArmFromOneShot();
-   }
- }
-@@ -168,7 +164,7 @@ static void taskCallback(void* data) {
-       RS_AtomicUintFetchAndRelaxed(&gc->schedFlags, ~(unsigned)GC_SCHED_RUN_PENDING);
-       return;
-     }
--    gc->pendingInterval = gc->callbacks.getInterval(gc->gcCtx);
-+    gc->pendingIntervalMs = gc->callbacks.getIntervalMs(gc->gcCtx);
- 
-     // Test hook (ENABLE_ASSERT): park with the pass over but the re-arm not yet posted -- the
-     // window a drop can overtake, where RUN_PENDING is held by a run that no longer exists.
+-MK.cmake=1
+-
+-include $(ROOT)/deps/readies/mk/main
+-
+-#----------------------------------------------------------------------------------------------
+-
+-define HELPTEXT
+-make build          # compile and link
+-  DEBUG=1             # build for debugging
+-  WHY=1               # explain CMake decisions (in /tmp/cmake-why)
+-  FORCE=1             # Force CMake rerun (default)
+-  CMAKE_ARGS=...      # extra arguments to CMake
+-  SLOW=1              # do not parallelize build (for diagnostics)
+-make clean         # remove build artifacts
+-  ALL=1              # remove entire artifacts directory
+-
+-endef
+-
+-#----------------------------------------------------------------------------------------------
+-
+-SRCDIR=$(ROOT)/deps/hiredis
+-
+-BINDIR=$(BINROOT)/hiredis
+-
+-TARGET=$(BINDIR)/libhiredis.a
+-
+-#----------------------------------------------------------------------------------------------
+-
+-include $(MK)/defs
+-
+-define CMAKE_DEFS +=
+-	DISABLE_TESTS=on
+-	ENABLE_SSL=on
+-	CMAKE_POSITION_INDEPENDENT_CODE=on
+-endef
+-
+-#----------------------------------------------------------------------------------------------
+-
+-MK_CUSTOM_CLEAN=1
+-
+-include $(MK)/rules
+-
+-#----------------------------------------------------------------------------------------------
+-
+-clean:
+-ifeq ($(ALL),1)
+-	$(SHOW)rm -rf $(BINDIR)
+-else
+-	$(SHOW)$(MAKE) -C $(BINDIR) clean
+-endif
+-
+-.PHONY: clean
 ```
 
-**File**: `src/gc/gc.h` (modified, +11/-3)
+**File**: `build/hiredis/Makefile.defs` (removed, +0/-2)
 ```diff
-@@ -18,6 +18,7 @@
- #include "util/references.h"
- #include "util/rs_atomic.h"
- #include <time.h>
-+#include <limits.h>
- 
- #ifdef __cplusplus
- extern "C" {
-@@ -82,6 +83,13 @@ typedef struct {
- // than filling the struct themselves: a forkWaitMs without a matching deadline reads as a budget
- // that expired before the first attempt. Call it on the thread asking for the collection, so the
- // budget runs from there rather than from whenever the GC worker picks the job up.
-+// Interval configs accept up to LLONG_MAX seconds. Capping at half the range keeps both the
-+// conversion and the timer's jitter (which can double the period) from overflowing.
-+static inline long long GC_IntervalSecToMs(size_t sec) {
-+  const size_t maxSec = LLONG_MAX / 2 / 1000;
-+  return (long long)(sec < maxSec ? sec : maxSec) * 1000;
-+}
-+
- static inline GCForcedRun GCForcedRun_New(long long forkWaitMs, long long retryIntervalMs) {
-   GCForcedRun forced;
-   forced.forkWaitMs = forkWaitMs;
-@@ -113,7 +121,7 @@ typedef struct GCCallbacks {
-   void (*onWrite)(void* ctx);
-   void (*onUpdate)(void* ctx);
-   void (*onTerm)(void* ctx);
--  struct timespec (*getInterval)(void* ctx);
-+  long long (*getIntervalMs)(void* ctx);
-   void (*getStats)(void* gcCtx, InfoGCStats* out);
- } GCCallbacks;
- 
-@@ -122,8 +130,8 @@ typedef struct GCContext {
-   RedisModuleTimerID timerID;  // a live timer, or 0. Never a sentinel. Guarded by the GIL
-   bool enabled;                // periodic collection wanted. Guarded by the GIL
-   // Captured by the pass that posted the re-arm; a queued GC_FORCEINVOKE can overwrite the
--  // GC's retryInterval before the one-shot drains, so it is not re-read there.
--  struct timespec pendingInterval;
-+  // GC's retryIntervalMs before the one-shot drains, so it is not re-read there.
-+  long long pendingIntervalMs;
-   // Main thread only in the real path; the atomic covers the RS_IsMock fallback, where the GC
-   // thread clears it. A bit set so a bit added later can be tested against RUN_PENDING in one
-   // read-modify-write; separate relaxed accesses would not be ordered.
+@@ -1,2 +0,0 @@
+-
+-export HIREDIS=$(HIREDIS_BINDIR)/libhiredis.a $(HIREDIS_BINDIR)/libhiredis_ssl.a
 ```
 
-**File**: `src/gc/index_gc.c` (modified, +4/-5)
+**File**: `build/libuv/Makefile` (removed, +0/-56)
 ```diff
-@@ -127,9 +127,9 @@ static void getStatsCb(void *gcCtx, InfoGCStats *out) {
-   out->lastRunTimeMs = gc->stats.lastRunTimeMs;
- }
- 
--static struct timespec getIntervalCb(void *ctx) {
-+static long long getIntervalMsCb(void *ctx) {
-   IndexGC *gc = ctx;
--  return gc->retryInterval;
-+  return gc->retryIntervalMs;
- }
- 
- IndexGC *IndexGC_Create(StrongRef spec_ref, GCCallbacks *callbacks) {
-@@ -138,8 +138,7 @@ IndexGC *IndexGC_Create(StrongRef spec_ref, GCCallbacks *callbacks) {
-       .index = StrongRef_Demote(spec_ref),
-       .deletedOrUpdatedDocsFromLastRun = 0,
-   };
--  forkGc->retryInterval.tv_sec = RSGlobalConfig.gcConfigParams.gcSettings.forkGcRunIntervalSec;
--  forkGc->retryInterval.tv_nsec = 0;
-+  forkGc->retryIntervalMs = GC_IntervalSecToMs(RSGlobalConfig.gcConfigParams.gcSettings.forkGcRunIntervalSec);
- 
-   forkGc->cleanNumericEmptyNodes = RSGlobalConfig.gcConfigParams.gcSettings.forkGCCleanNumericEmptyNodes;
-   forkGc->ctx = RedisModule_GetDetachedThreadSafeContext(RSDummyContext);
-@@ -148,7 +147,7 @@ IndexGC *IndexGC_Create(StrongRef spec_ref, GCCallbacks *callbacks) {
-   callbacks->periodicCallback = periodicCb;
-   callbacks->renderStats = statsCb;
-   callbacks->renderStatsForInfo = statsForInfoCb;
--  callbacks->getInterval = getIntervalCb;
-+  callbacks->getIntervalMs = getIntervalMsCb;
-   callbacks->onDelete = deleteOrUpdateCb;
-   callbacks->onWrite = NULL; // writes are not tracked for forkGC
-   callbacks->onUpdate = deleteOrUpdateCb;
+@@ -1,56 +0,0 @@
+-
+-ROOT=../..
+-
+-MK.cmake=1
+-
+-include $(ROOT)/deps/readies/mk/main
+-
+-#----------------------------------------------------------------------------------------------
+-
+-define HELPTEXT
+-make build          # compile and link
+-  DEBUG=1             # build for debugging
+-  WHY=1               # explain CMake decisions (in /tmp/cmake-why)
+-  FORCE=1             # Force CMake rerun (default)
+-  CMAKE_ARGS=...      # extra arguments to CMake
+-  SLOW=1              # do not parallelize build (for diagnostics)
+-make clean         # remove build artifacts
+-  ALL=1              # remove entire artifacts directory
+-
+-endef
+-
+-#----------------------------------------------------------------------------------------------
+-
+-SRCDIR=$(ROOT)/deps/libuv
+-
+-BINDIR=$(BINROOT)/libuv
+-
+-TARGET=$(BINDIR)/libuv_a.a
+-
+-#----------------------------------------------------------------------------------------------
+-
+-include $(MK)/defs
+-
+-define CMAKE_DEFS +=
+-	DISABLE_TESTS=on
+-	ENABLE_SSL=on
+-	CMAKE_POSITION_INDEPENDENT_CODE=on
+-  LIBUV_BUILD_SHARED=OFF
+-endef
+-
+-#----------------------------------------------------------------------------------------------
+-
+-MK_CUSTOM_CLEAN=1
+-
+-include $(MK)/rules
+-
+-#----------------------------------------------------------------------------------------------
+-
+-clean:
+-ifeq ($(ALL),1)
+-	$(SHOW)rm -rf $(BINDIR)
+-else
+-	$(SHOW)$(MAKE) -C $(BINDIR) clean
+-endif
+-
+-.PHONY: clean
 ```
 
-**File**: `src/gc/index_gc.h` (modified, +2/-1)
+**File**: `build/libuv/Makefile.defs` (removed, +0/-2)
 ```diff
-@@ -64,7 +64,8 @@ typedef struct IndexGC {
-   // as it reads, NULL otherwise.
-   void *readBuffer;
- 
--  struct timespec retryInterval;
-+  long long retryIntervalMs;
-+
-   // Deletions and updates not collected yet. A FORK cycle resets it as it forks; under THREAD it
-   // counts the doc table's deleted set, and a cycle subtracts the IDs it prunes from it.
-   RS_Atomic(size_t) deletedOrUpdatedDocsFromLastRun;
+@@ -1,2 +0,0 @@
+-
+-export LIBUV=$(LIBUV_BINDIR)/libuv_a.a
 ```
 
-**File**: `src/gc/thread_cycle.c` (modified, +1/-1)
+**File**: `sbin/circleci-pack-logs` (removed, +0/-33)
 ```diff
-@@ -27,7 +27,7 @@ bool ThreadCycle_Run(IndexGC *gc, GCForcedRun *forced, StrongRef spec_ref) {
-   // is dropped meanwhile.
-   CurrentThread_ClearIndexSpec();
- 
--  gc->retryInterval.tv_sec = RSGlobalConfig.gcConfigParams.gcSettings.forkGcRunIntervalSec;
-+  gc->retryIntervalMs = GC_IntervalSecToMs(RSGlobalConfig.gcConfigParams.gcSettings.forkGcRunIntervalSec);
-   gc->cleanNumericEmptyNodes = RSGlobalConfig.gcConfigParams.gcSettings.forkGCCleanNumericEmptyNodes;
- 
-   IndexSpec_AssertLockNotHeld();  // the driver takes the spec locks itself
+@@ -1,33 +0,0 @@
+-#!/usr/bin/env bash
+-
+-PROGNAME="${BASH_SOURCE[0]}"
+-HERE="$(cd "$(dirname "$PROGNAME")" &>/dev/null && pwd)"
+-ROOT=$(cd $HERE/.. && pwd)
+-
+-if [[ -z $CIRCLECI ]]; then
+-	echo "Not in CircleCI"
+-	exit 1
+-fi
+-
+-if [[ -n $CIRCLE_BRANCH ]]; then
+-	CIRCLE_BRANCH_OR_TAG="$CIRCLE_BRANCH"
+-else
+-	CIRCLE_BRANCH_OR_TAG="$CIRCLE_TAG"
+-fi
+-
+-TEST_LOGFILE_PREFIX=${CIRCLE_PROJECT_REPONAME}_${CIRCLE_BRANCH_OR_TAG}_${CIRCLE_JOB}
+-
+-mkdir -p $ROOT/logs
+-
+-if [[ -d $ROOT/tests/pytests/logs ]]; then
+-	cd $ROOT/tests/pytests/logs
+-	rm -f *.{aof,rdb}
+-	TEST_LOGFILE=$ROOT/logs/${TEST_LOGFILE_PREFIX}_tests-pytests-logs.tgz
+-	tar -czf $TEST_LOGFILE *.log* || true
+-fi
+-
+-if [[ -d $ROOT/tests/logs ]]; then
+-	cd $ROOT/tests/logs
+-	TEST_LOGFILE=$ROOT/logs/${TEST_LOGFILE_PREFIX}_tests-unit-tests-logs.tgz
+-	tar -czf $TEST_LOGFILE *.log* || true
+-fi
 ```
 
-**File**: `tests/cpptests/test_cpp_index_gc.cpp` (modified, +13/-0)
+**File**: `sbin/code_style.py` (removed, +0/-142)
 ```diff
-@@ -12,6 +12,7 @@
- #include "common.h"
- #include "llapi_test_helpers.h"
- #include "gc/index_gc.h"
-+#include "gc/gc.h"
- #include "index_gc_ffi.h"
- #include "deleted_docs_ffi.h"
- #include "config.h"
-@@ -35,6 +36,7 @@ extern "C" {
- #include <thread>
- #include <atomic>
- #include <chrono>
-+#include <climits>
- 
- /**
-  * The following tests purpose is to make sure the garbage collection is working properly,
-@@ -836,6 +838,17 @@ TEST_F(IndexGCTest, testWaitForPauseTimesOutWhileAJobRuns) {
-   ASSERT_EQ(GC_ThreadPoolJobsInProgress(), (size_t)0);
- }
- 
-+TEST(GCInterval, SecondsToMsClampsSoJitterCannotOverflow) {
-+  EXPECT_EQ(GC_IntervalSecToMs(0), 0);
-+  EXPECT_EQ(GC_IntervalSecToMs(1), 1000);
-+  EXPECT_EQ(GC_IntervalSecToMs(30), 30000);
-+  for (size_t sec : {(size_t)LLONG_MAX / 1000, (size_t)LLONG_MAX, SIZE_MAX}) {
-+    long long ms = GC_IntervalSecToMs(sec);
-+    EXPECT_GT(ms, 0);
-+    EXPECT_LE(ms, LLONG_MAX / 2);  // the jitter may add up to ms - 1
-+  }
-+}
-+
- /** A spec made under the THREAD policy, whose doc table tracks its deleted IDs. */
- class ThreadGCTest : public IndexGCTestTag {
-  protected:
+@@ -1,142 +0,0 @@
+-#!/usr/bin/env python
+-# Copyright (c) 2006-Present, Redis Ltd.
+-# All rights reserved.
+-#
+-# Licensed under your choice of the Redis Source Available License 2.0
+-# (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+-# GNU Affero General Public License v3 (AGPLv3).
+-
+-import glob
+-import os
+-import os.path
+-import sys
+-import shutil
+-from argparse import ArgumentParser
+-from subprocess import Popen, PIPE
+-
+-RED = '\033[0;31m'
+-GREEN = '\033[0;32m'
+-NC = '\033[0m' # No Color
+-CLANG_ARGS = ['-style=file', '-fallback-style=none']
+-GIT_STATUS_PATTERNS = [
+-    'src/*.[ch]',
+-    'src/*.[ch]pp'
+-]
+-
+-IGNPTRN = [
+-        'src/aggregate/expr/lexer.c',
+-        'src/dep/cndict/cndict_data.c',
+-        'src/redismodule.h',
+-        'src/aggregate/expr/parser.c',
+-        'src/query_parser/parser.c',
+-        'src/query_parser/lexer.c',
+-        'src/dep/gtest'
+-]
+-
+-IGNOREPATHS = []
+-for f in IGNPTRN:
+-    IGNOREPATHS += glob.glob(f)
+-
+-ap = ArgumentParser()
+-ap.add_argument('-f', '--path',
+-    help="Manual path or glob to format", metavar="FILE_OR_DIR")
+-ap.add_argument('-n', '--dry-run',
+-    help="Show which files would have been modified and exit",
+-    action='store_true')
+-ap.add_argument('--install',
+-    help="Install this script as a Git hook", action='store_true')
+-ap.add_argument('-v', '--verbose',
+-    help="Print commands being executed", action='store_true')
+-ap.add_argument('--clang-format-path', help='path to clang-format binary',
+-    default='clang-format')
+-
+-options = ap.parse_args()
+-
+-if options.install:
+-    # Copy this file as a git hook
+-    if not os.path.exists('.git'):
+-        raise Exception('Must be run from source directory (no .git directory found)')
+-    script_target = '.git/hooks/pre-commit'
+-    script_text = """
+-#!/usr/bin/env bash
+-./srcutil/code_style.py -n
+-"""
+-    with open(script_target, 'w') as f:
+-        f.write(script_text)
+-        f.close()
+-    os.chmod(script_target, 0o755)
+-    sys.exit(0)
+-
+-if options.path:
+-    files = glob.glob(options.path)
+-else:
+-    po = Popen(['git', 'status', '--porcelain'] + GIT_STATUS_PATTERNS, stdout=PIPE)
+-    output, _ = po.communicate()
+-    po.wait()
+-    lines = [line for line in output.decode("utf-8").split('\n') if line]
+-    files = []
+-    for line in lines:
+-        # Check the two letter status
+-        status = line[0:2].strip()
+-        if status[0] == ' ':
+-            continue
+-        if status[0] in ('C', 'R'):
+-            # [C]opy or [R]ename
+-            # TODO: This can theoretically break if there are spaces in
+-            # the filename. Needs to be tested.
+-            src, delim, dst, = line[3:].split(' ')
+-            files.append(dst)
+-        elif status[0] in ('M', 'A'):
+-            files.append(line[3:])
+-
+-
+-has_error = False
+-for f in files:
+-    is_skip = False
+-    if f in IGNOREPATHS:
+-        print(f + ' [SKIP]')
+-        continue
+-    for p in IGNOREPATHS:
+-        if f.startswith(p):
+-            print(f + ' [SKIP]')
+-            is_skip = True
+-            break
+-
+-    if is_skip:
+-        continue
+-
+-    cmd = ['clang-format'] + CLANG_ARGS + ['-output-replacements-xml', f]
+-    if options.verbose:
+-        print("Executing", cmd)
+-    po = Popen(cmd, stdout=PIPE)
+-    output, _ = po.communicate()
+-    rv = po.wait()
+-    if rv != 0:
+-        print('Warning: Could not analyze {}'.format(f))
+-    count = len([line for line in output.decode("utf-8").split('\n') if line])
+-    has_changes = count > 3
+-    if options.dry_run:
+-        if has_changes:
+-            print(RED + f + ' [FAIL]' + NC)
+-            has_error = True
+-        else:
+-            print(GREEN + f + ' [OK]' + NC)
+-    else:
+-        if has_changes:
+-            print('Reformatting ' + f)
+-            cmd = ['clang-format'] + CLANG_ARGS + ['-i', f]
+-            if options.verbose:
+-                print("Executing", cmd)
+-            po = Popen(cmd)
+-            po.communicate()
+-            if po.wait() != 0:
+-                print("Warning: Couldn't reformat!")
+-
+-if has_error:
+-    print(
+-        'Some files were not properly formatted. Run this script ({}) to '
+-        'format them'.format(__file__))
+-    if os.environ.get('CODE_STYLE_IGNORE'):
+-        print('Ignoring error because of CODE_STYLE_IGNORE in the environment')
+-    else:
+-        sys.exit(1)
+```
+
+**File**: `tests/pytests/rmtest.config` (removed, +0/-2)
+```diff
+@@ -1,2 +0,0 @@
+-[server]
+-module = ../redisearch.so
+```
+
+**File**: `tests/qa/RS_VERSIONS` (removed, +0/-11)
+```diff
+@@ -1,11 +0,0 @@
+-6.0.8-32
+-6.0.12-58
+-6.0.20-101
+-6.2.4-54
+-6.2.8-53
+-6.2.10-129
+-6.2.12-82
+-6.2.18-49
+-6.4.0-48
+-6.4.2-8
+-100.0.0-2988
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12339** (2026-11-15): [8.2] Refactor FT.CREATE option parsing into a reusable function (@Itzikvaknin)
+- **PR #12338** (2026-11-15): Use shared CI retry-command action (@kei-nan)
+- **PR #12336** (2026-11-15): [MOD-20665] gc: remove the dead fork pipe glue; lock a spec for a closure's span (@GuyAv46)
+- **PR #12335** (2026-11-15): Remove dead build and QA scripts (@alonre24)
 - **PR #12326** (2026-11-12): [8.8-rse] [MOD-18996] Bump VecSim allocation transfer API (@GuyAv46)
 - **PR #12325** (2026-11-12): [MOD-20889] [Disk observability] Keep TEXT metadata aggregation in C (@dkyurtovv)
-- **PR #12324** (2026-11-12): [8.10-rse] [MOD-18996] Bump VecSim for allocation accounting transfer (@redisearch-backport-pull-request[bot])
-- **PR #12317** (2026-11-12): [MOD-18996] Bump VecSim for allocation accounting transfer (@GuyAv46)
-- **PR #12316** (2026-11-12): [MOD-21206] CI: run Rust valgrind tests on Ubuntu Resolute (valgrind 3.26) (@GuyAv46)
-- **PR #12309** (closed): DEBUG: rust-valgrind vector_range investigation (do not merge) (@GuyAv46)
 
 ---
 
@@ -2127,35 +2006,3 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. [MOD-20889] [Disk observability] Keep TEXT metadata aggregation in C (#12325)
-
-**RULE**:
-When implementing operations in `src/info/indexes_info.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `33d90342`: [MOD-20889] [Disk observability] Keep TEXT metadata aggregation in C (#12325). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/info/indexes_info.c`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-      diskMetrics = SearchDisk_CollectInfoIndexMetrics(sp->diskSpec);
-      info.text_ram_metadata_bytes += IndexSpec_collect_text_overhead(sp);
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-      diskMetrics = SearchDisk_ReadCachedIndexMetrics(sp->diskSpec, IndexSpec_collect_text_overhead(sp));
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33d90342` are properly handled with clean fallback behavior.

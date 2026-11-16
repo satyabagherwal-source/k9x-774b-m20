@@ -10246,3 +10246,7 @@
 | `CYCLE-20261116-25PY` | `2026-11-16T05:10:45.622Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8685` | Yes (`bdf37aa4...`) |
 | `CYCLE-20261116-AXPK` | `2026-11-16T05:17:35.144Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md` | Yes (`1818df58...`) |
 | `CYCLE-20261116-B170` | `2026-11-16T05:17:39.660Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8716` | Yes (`afe23c20...`) |
+| `CYCLE-20261116-PJZ6` | `2026-11-16T05:28:57.186Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8717` | Yes (`080098fb...`) |
+| `CYCLE-20261116-PNOW` | `2026-11-16T05:29:02.000Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8718` | Yes (`89caf538...`) |
+| `CYCLE-20261116-PPFG` | `2026-11-16T05:29:04.252Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md` | Yes (`1e46b633...`) |
+| `CYCLE-20261116-PT4D` | `2026-11-16T05:29:09.037Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | Yes (`3d1d9cdc...`) |

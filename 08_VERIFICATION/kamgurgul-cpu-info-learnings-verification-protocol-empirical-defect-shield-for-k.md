@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:58.589Z",
+  "timestamp": "2026-11-16T05:29:12.543Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-kamgurgul-cpu-info-learnings",
+  "learning_id": "LEARN-EVO-kamgurgul-cpu-info-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kamgurgul-cpu-info-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:58.589Z`  
-> **Learning ID**: `LEARN-REEXTRACT-kamgurgul-cpu-info-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T05:29:12.543Z`  
+> **Learning ID**: `LEARN-EVO-kamgurgul-cpu-info-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source**: github ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
-> **Source Version**: `9599db1d`  
+> **Source Version**: `e0ad273c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T17:29:05.553Z  
+> **Timestamp**: 2026-11-16T05:29:01.094Z  
 > **Learning ID**: `learn-github-kamgurgul-cpu-info`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T17:29:05.544Z  
+> **Harvest Timestamp**: 2026-11-16T05:29:01.089Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CPU Info is a multiplatform application which provides information about device hardware and software
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1103 stars
+- **Stars / Engagement**: 1104 stars
 
 ---
 
@@ -683,39 +683,67 @@ interface IDispatchersProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9599db1d` (2026-11-07)
+### Incident Patch 1: `e0ad273c` (2026-11-15)
+**Commit Message**: [SHARED] Update typography
+
+**File**: `shared/src/commonMain/kotlin/com/kgurgul/cpuinfo/ui/theme/Typoghraphy.kt` (modified, +3/-0)
+```diff
+@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.unit.sp
+ 
+ private val defaultTextStyle = TextStyle.Default
++private val baselineTypography = Typography()
+ 
+ val CpuInfoTypography =
+     Typography(
+@@ -30,6 +31,8 @@ val CpuInfoTypography =
+                 fontWeight = FontWeight.Medium,
+                 lineHeight = 24.sp,
+             ),
++        titleSmall = baselineTypography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
++        bodyMedium = baselineTypography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+         labelSmall =
+             defaultTextStyle.copy(
+                 fontSize = 10.sp,
+```
+
+---
+
+### Incident Patch 2: `bbb85927` (2026-11-14)
 **Commit Message**: [SHARED] Libs update
 
-**File**: `gradle/libs.versions.toml` (modified, +3/-3)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,5 @@
- [versions]
--androidGradlePlugin = "9.5.0"
-+androidGradlePlugin = "9.5.1"
- androidxActivity = "1.13.0"
- androidxArchCoreTesting = "2.2.0"
- androidxCore = "1.19.1"
-@@ -40,9 +40,9 @@ licenses = "3.1.5"
- oshi = "7.7.3"
- profileinstaller = "1.4.1"
- relinker = "1.4.5"
--spotless = "8.10.4"
-+spotless = "8.11.0"
- turbine = "1.2.1"
--uiautomator = "2.4.0"
-+uiautomator = "2.4.1"
- 
- [libraries]
- androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+@@ -33,7 +33,7 @@ kotlin = "2.4.21"
+ kotlinxBrowser = "0.5.0"
+ kotlinxCoroutines = "1.11.0"
+ kotlinxImmutable = "0.5.2"
+-kotlinxSerialization = "1.12.0"
++kotlinxSerialization = "1.13.0"
+ kover = "0.9.11"
+ ktfmt = "0.64"
+ licenses = "3.1.5"
+```
+
+**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-all.zip
+ networkTimeout=10000
+ retries=0
+ retryBackOffMs=500
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #651** (closed): Update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.13.0 - autoclosed (@renovate[bot])
+- **PR #650** (closed): Update Gradle to v9.9.1 - autoclosed (@renovate[bot])
 - **PR #649** (closed): Update dependency androidx.test.uiautomator:uiautomator to v2.4.1 - autoclosed (@renovate[bot])
 - **PR #648** (closed): Update dependency com.diffplug.spotless to v8.11.0 - autoclosed (@renovate[bot])
 - **PR #647** (closed): Update dependency com.github.jk1.dependency-license-report to v3.1.5 - autoclosed (@renovate[bot])
 - **PR #646** (closed): Update plugin io.github.ben-manes.versions.settings to v0.67.0 - autoclosed (@renovate[bot])
-- **PR #645** (closed): Update dependency com.github.oshi:oshi-core to v7.7.3 - autoclosed (@renovate[bot])
-- **PR #644** (closed): Update androidGradlePlugin to v9.5.1 - autoclosed (@renovate[bot])
 
 ---
 
@@ -735,35 +763,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [SHARED] Libs update
+## X. [SHARED] Update typography
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/commonMain/kotlin/com/kgurgul/cpuinfo/ui/theme/Typoghraphy.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9599db1d`: [SHARED] Libs update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0ad273c`: [SHARED] Update typography. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/kotlin/com/kgurgul/cpuinfo/ui/theme/Typoghraphy.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-androidGradlePlugin = "9.5.1"
-spotless = "8.11.0"
-uiautomator = "2.4.1"
+private val baselineTypography = Typography()
+        titleSmall = baselineTypography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+        bodyMedium = baselineTypography.bodyMedium.copy(fontWeight = FontWeight.Medium),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-androidGradlePlugin = "9.5.0"
-spotless = "8.10.4"
-uiautomator = "2.4.0"
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9599db1d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0ad273c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

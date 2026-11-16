@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T05:17:45.840Z",
-  "total_records": 1231,
+  "last_updated": "2026-11-16T05:29:13.308Z",
+  "total_records": 1236,
   "domains": {
     "A": {
       "total": 7,
@@ -1147,7 +1147,7 @@
       ]
     },
     "I": {
-      "total": 52,
+      "total": 55,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1200,7 +1200,10 @@
         "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-learnings-core-",
         "DOM-I-5993B15B",
         "domain_intelligence-content-information-intelligence-mikepenz-multiplatform-markdown-renderer-core-i",
-        "domain_intelligence-content-information-intelligence-mikepenz-multiplatform-markdown-renderer-learni"
+        "domain_intelligence-content-information-intelligence-mikepenz-multiplatform-markdown-renderer-learni",
+        "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants",
+        "domain_intelligence-content-information-intelligence-redisearch-redisearch-core-invariants",
+        "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-learnings-core-invariants"
       ]
     },
     "J": {
@@ -1228,7 +1231,7 @@
       ]
     },
     "K": {
-      "total": 45,
+      "total": 47,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1274,7 +1277,9 @@
         "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian",
         "DOM-K-9BB3D64B",
         "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-shifthackz-stable-diffusion-kmp-learnings-core"
+        "domain_intelligence-quality-verification-intelligence-shifthackz-stable-diffusion-kmp-learnings-core",
+        "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-learnings-core-invariant"
       ]
     },
     "L": {
@@ -14562,8 +14567,8 @@
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "repository": "agent-of-empires/agent-of-empires",
-      "content_hash": "ed40320661b756da97e1a9c9345d8beb6e00e5c56a4a0882275bf9285b417b71",
-      "created_at": "2026-11-14T12:33:54.301Z"
+      "content_hash": "53920f51f7095f7113919a47963e3727a708492b0c05d2261f210bdc6587a783",
+      "created_at": "2026-11-16T05:28:57.475Z"
     },
     "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants",
@@ -14589,8 +14594,8 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-learnings-architecture-intelligence-agent-of-e.md",
       "repository": "agent-of-empires-agent-of-empires-learnings",
-      "content_hash": "f4f943104bf6fc8a974348d7b5cb55705c519fc640a1ee1798f9c6acaa271388",
-      "created_at": "2026-11-14T12:34:06.770Z"
+      "content_hash": "f8ef369bd3d64a43ec49627f1c86c858ebbf4144958c9776dec4b201e87cbb49",
+      "created_at": "2026-11-16T05:29:12.236Z"
     },
     "DOM-D-C580DAE3": {
       "record_id": "DOM-D-C580DAE3",
@@ -22773,6 +22778,51 @@
       "repository": "chrisbanes-skills-learnings",
       "content_hash": "3ed5ff0b0d8aefdadd3822b7b40343d0bc825f61d1743dea597c0e31f542dad3",
       "created_at": "2026-11-16T05:17:45.420Z"
+    },
+    "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kamgurgul/cpu-info Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kamgurgul-cpu-info-content-information-intelligence-kamgurgul-cpu-info-core-inva.md",
+      "repository": "kamgurgul/cpu-info",
+      "content_hash": "3b50fcd796a5ca587bf2ee55aca7a137016ca6e53a7076a9abe162d32065c3ef",
+      "created_at": "2026-11-16T05:29:02.287Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: DNSControl/dnscontrol Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-dnscontrol-dnscontrol-quality-verification-intelligence-dnscontrol-dnscontrol-co.md",
+      "repository": "DNSControl/dnscontrol",
+      "content_hash": "99fcd26476cdeeff75fc37cc6c6eb80ea5c17a89c2621da6cc458ec41bde2da2",
+      "created_at": "2026-11-16T05:29:04.553Z"
+    },
+    "domain_intelligence-content-information-intelligence-redisearch-redisearch-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-redisearch-redisearch-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: RediSearch/RediSearch Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-redisearch-redisearch-content-information-intelligence-redisearch-redisearch-cor.md",
+      "repository": "RediSearch/RediSearch",
+      "content_hash": "5254908b2746fbfad8adcc8ff0ca70d17b0e2091a79d3b57a59b09acefed47e9",
+      "created_at": "2026-11-16T05:29:09.210Z"
+    },
+    "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kamgurgul-cpu-info-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kamgurgul-cpu-info-learnings-content-information-intelligence-kamgurgul-cpu-info.md",
+      "repository": "kamgurgul-cpu-info-learnings",
+      "content_hash": "bf57e2b92c248fd290a5e05cf2cb0091719bf32e5184b5a1d15dcd6f029bb8d2",
+      "created_at": "2026-11-16T05:29:12.763Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-learnings-core-invariant": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-learnings-core-invariant",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-dnscontrol-dnscontrol-learnings-quality-verification-intelligence-dnscontrol-dns.md",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "content_hash": "36e47b831625f9dc826945a719c29c56446a926b91f7b47c28aacf02538e2039",
+      "created_at": "2026-11-16T05:29:13.308Z"
     }
   }
 }

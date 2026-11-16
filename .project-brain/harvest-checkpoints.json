@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T05:17:39.671Z",
+  "last_updated": "2026-11-16T05:29:09.048Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "e79f3bda488d8656be4e2316077b166afc8bf991e15106f80376674367e992bc",
-      "verified_at": "2026-11-14T23:43:13.635Z",
+      "content_hash": "1e46b633a08d744fa6e6ae9cc5ef6d2d5a9a53d57eea6efc297336fe199fba92",
+      "verified_at": "2026-11-16T05:29:04.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T23:43:13.635Z"
+      "last_updated": "2026-11-16T05:29:04.274Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "01ee42e42216e448373c669626ab41e1d52eabb514b53e2008cfc32e8d4187d5",
-      "verified_at": "2026-11-13T14:26:05.373Z",
+      "content_hash": "3d1d9cdc15047adb5c0db942fa63c1a3f7122c9d0c0223672d5b3d6419afdd71",
+      "verified_at": "2026-11-16T05:29:09.047Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:26:05.373Z"
+      "last_updated": "2026-11-16T05:29:09.047Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "b509aef91c3b969410d2e53ca2a8f9daf1cd3f8deddea5984e5a6f92f5b23780",
-      "verified_at": "2026-11-14T12:33:54.024Z",
+      "content_hash": "080098fbce8d89028f6c18efa03cd78c57feb2b1a42e366b001e99aec84edcc0",
+      "verified_at": "2026-11-16T05:28:57.198Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T12:33:54.024Z"
+      "last_updated": "2026-11-16T05:28:57.198Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -13311,14 +13311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kamgurgul-cpu-info",
-      "content_hash": "ef9d1c1b2cac39b003a84d40640ead8f917cf5d9eeeb387de24036d769faa4ee",
-      "verified_at": "2026-11-12T23:28:54.720Z",
+      "content_hash": "89caf5389e99928ad18346b57c701a764dfa4283093a72925b58ebe78b7b3348",
+      "verified_at": "2026-11-16T05:29:02.012Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T23:28:54.720Z"
+      "last_updated": "2026-11-16T05:29:02.012Z"
     },
     "ugolbck/seofordev": {
       "repository": "ugolbck/seofordev",

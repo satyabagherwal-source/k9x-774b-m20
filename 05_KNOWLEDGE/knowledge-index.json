@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T05:17:45.926Z",
-  "total_verified_learnings": 8765,
+  "last_updated": "2026-11-16T05:29:13.427Z",
+  "total_verified_learnings": 8767,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18968,
+  "total_items": 18984,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228141,14 +228141,19 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "0dedf44e",
-      "content_hash": "b509aef91c3b969410d2e53ca2a8f9daf1cd3f8deddea5984e5a6f92f5b23780",
+      "source_version": "87abaabc",
+      "content_hash": "080098fbce8d89028f6c18efa03cd78c57feb2b1a42e366b001e99aec84edcc0",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
         {
           "number": 8486,
           "title": "flash deletion cleanup notes instead of a blocking dialog",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8717,
+          "title": "wait for a stopped scope to drain before reporting it non-empty",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -228157,7 +228162,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T12:33:53.873Z",
+      "verified_at": "2026-11-16T05:28:57.025Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228199,10 +228204,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "repository": "agent-of-empires/agent-of-empires",
-      "source_version": "0dedf44e",
-      "content_hash": "ed40320661b756da97e1a9c9345d8beb6e00e5c56a4a0882275bf9285b417b71",
+      "source_version": "87abaabc",
+      "content_hash": "53920f51f7095f7113919a47963e3727a708492b0c05d2261f210bdc6587a783",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T12:33:54.301Z"
+      "persisted_at": "2026-11-16T05:28:57.475Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi",
@@ -228212,9 +228217,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-of-empires-agent-of-empires-learnings",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec998498338dd8565a4552ad421332ca0c8492a8d4b5b725fec061282d676c62",
+      "content_hash": "d10ac61b4fa49426e07bde2c33ec0bae5a11416fe15226c98ceff1315b9f2977",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T12:34:06.873Z"
+      "persisted_at": "2026-11-16T05:29:12.349Z"
     },
     "learn-github-koderover-zadig": {
       "learning_id": "learn-github-koderover-zadig",
@@ -228424,9 +228429,9 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4f943104bf6fc8a974348d7b5cb55705c519fc640a1ee1798f9c6acaa271388",
+      "content_hash": "f8ef369bd3d64a43ec49627f1c86c858ebbf4144958c9776dec4b201e87cbb49",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T12:34:06.770Z"
+      "persisted_at": "2026-11-16T05:29:12.236Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core",
@@ -236596,8 +236601,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "5da338d6",
-      "content_hash": "e79f3bda488d8656be4e2316077b166afc8bf991e15106f80376674367e992bc",
+      "source_version": "845815ae",
+      "content_hash": "1e46b633a08d744fa6e6ae9cc5ef6d2d5a9a53d57eea6efc297336fe199fba92",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -236612,7 +236617,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T23:43:13.411Z",
+      "verified_at": "2026-11-16T05:29:04.085Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236666,10 +236671,10 @@
       "relative_path": "08_VERIFICATION/dnscontrol-dnscontrol-verification-protocol-empirical-defect-shield-for-dnscontr.md",
       "title": "Verification Protocol: Empirical Defect Shield for DNSControl/dnscontrol",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "5da338d6",
-      "content_hash": "72a35ca2f61cee02b6659fa3b171c16e103cd7667355b2953d815bc0146ff03e",
+      "source_version": "845815ae",
+      "content_hash": "3a13a81b12d4830738f9718fac02f6151343e8f1adeca213b1d32644314beca9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T23:43:14.124Z"
+      "persisted_at": "2026-11-16T05:29:04.667Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
@@ -236715,9 +236720,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dnscontrol-dnscontrol-learnings",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "c53238613fe7ba7ed9aab0e6986f0179d2729211f7fa9d70dc664fa968ba94eb",
+      "content_hash": "4c438441c25526cb297327ef73ef17774aece14ee8d077f4ac98229f4c09cc7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T23:43:17.926Z"
+      "persisted_at": "2026-11-16T05:29:13.427Z"
     },
     "learn-huggingface-autotrust-jev-35b": {
       "learning_id": "learn-huggingface-autotrust-jev-35b",
@@ -252005,6 +252010,238 @@
       "content_hash": "3780c5e50558589c04a264cfb95c3c8ded9f231ffc8c94dae324b2e7fa7ce75e",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T05:17:45.507Z"
+    },
+    "rule-8717": {
+      "learning_id": "rule-8717",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8717,
+      "title": "wait for a stopped scope to drain before reporting it non-empty",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "87abaabc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T05:28:57.025Z"
+    },
+    "candidate_directive-wait-for-a-stopped-scope-to-drain-before-reporting-it-non-empty": {
+      "item_id": "candidate_directive-wait-for-a-stopped-scope-to-drain-before-reporting-it-non-empty",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PK3X-wait-for-a-stopped-scope-to-drain-before-reporting-it-non-empty.md",
+      "title": "wait for a stopped scope to drain before reporting it non-empty",
+      "repository": "agent-of-empires/agent-of-empires",
+      "source_version": "87abaabc",
+      "content_hash": "8f6a50adedcb69ac5fbb4053cb9033adb18ecc0569e011bf42d26fb4b4dc279e",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T05:28:57.360Z"
+    },
+    "learn-github-kamgurgul-cpu-info": {
+      "learning_id": "learn-github-kamgurgul-cpu-info",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kamgurgul/cpu-info",
+      "repository": "kamgurgul/cpu-info",
+      "slug": "kamgurgul-cpu-info",
+      "platform": "github",
+      "source_url": "https://github.com/kamgurgul/cpu-info",
+      "source_version": "e0ad273c",
+      "content_hash": "89caf5389e99928ad18346b57c701a764dfa4283093a72925b58ebe78b7b3348",
+      "dossier_path": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8718,
+          "title": "[SHARED] Update typography",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T05:29:01.848Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8718": {
+      "learning_id": "rule-8718",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8718,
+      "title": "[SHARED] Update typography",
+      "source_url": "https://github.com/kamgurgul/cpu-info",
+      "source_version": "e0ad273c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T05:29:01.848Z"
+    },
+    "candidate_directive-shared-update-typography": {
+      "item_id": "candidate_directive-shared-update-typography",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PVWD-shared-update-typography.md",
+      "title": "[SHARED] Update typography",
+      "repository": "kamgurgul-cpu-info-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f9b8c2d2128cd7c9768a1509f090a7001901d1cc9d217ea60d1eee160d33cbf",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T05:29:12.638Z"
+    },
+    "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kamgurgul-cpu-info-content-information-intelligence-kamgurgul-cpu-info-core-inva.md",
+      "title": "Content & Information Intelligence: kamgurgul/cpu-info Core Invariants",
+      "repository": "kamgurgul/cpu-info",
+      "source_version": "e0ad273c",
+      "content_hash": "3b50fcd796a5ca587bf2ee55aca7a137016ca6e53a7076a9abe162d32065c3ef",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T05:29:02.287Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kamgurgul-cpu-info": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kamgurgul-cpu-info",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kamgurgul-cpu-info-verification-protocol-empirical-defect-shield-for-kamgurgul-c.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kamgurgul/cpu-info",
+      "repository": "kamgurgul/cpu-info",
+      "source_version": "e0ad273c",
+      "content_hash": "3014b66b99327bf491b0c2d40b13153c2ac240b90dbbfbeb3b3326c21f57e5ac",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T05:29:02.396Z"
+    },
+    "candidate_directive-run-validateandnormalizeconfig-in-ordered-phases": {
+      "item_id": "candidate_directive-run-validateandnormalizeconfig-in-ordered-phases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PPKP-run-validateandnormalizeconfig-in-ordered-phases.md",
+      "title": "run ValidateAndNormalizeConfig in ordered phases",
+      "repository": "DNSControl/dnscontrol",
+      "source_version": "845815ae",
+      "content_hash": "10651c0fe5fb8d8aae63880852915e949080bc416cfea0ac96d7a7cbeb37c44b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T05:29:04.442Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-dnscontrol-dnscontrol-quality-verification-intelligence-dnscontrol-dnscontrol-co.md",
+      "title": "Quality & Verification Intelligence: DNSControl/dnscontrol Core Invariants",
+      "repository": "DNSControl/dnscontrol",
+      "source_version": "845815ae",
+      "content_hash": "99fcd26476cdeeff75fc37cc6c6eb80ea5c17a89c2621da6cc458ec41bde2da2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T05:29:04.553Z"
+    },
+    "learn-github-redisearch-redisearch": {
+      "learning_id": "learn-github-redisearch-redisearch",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RediSearch/RediSearch",
+      "repository": "RediSearch/RediSearch",
+      "slug": "redisearch-redisearch",
+      "platform": "github",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "9a5df815",
+      "content_hash": "3d1d9cdc15047adb5c0db942fa63c1a3f7122c9d0c0223672d5b3d6419afdd71",
+      "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T05:29:08.860Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-content-information-intelligence-redisearch-redisearch-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-redisearch-redisearch-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-redisearch-redisearch-content-information-intelligence-redisearch-redisearch-cor.md",
+      "title": "Content & Information Intelligence: RediSearch/RediSearch Core Invariants",
+      "repository": "RediSearch/RediSearch",
+      "source_version": "9a5df815",
+      "content_hash": "5254908b2746fbfad8adcc8ff0ca70d17b0e2091a79d3b57a59b09acefed47e9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T05:29:09.210Z"
+    },
+    "candidate_directive-process-wait-for-a-stopped-scope-to-drain-before-reporting-it-non-empty": {
+      "item_id": "candidate_directive-process-wait-for-a-stopped-scope-to-drain-before-reporting-it-non-empty",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PVI5-process-wait-for-a-stopped-scope-to-drain-before-reporting-it-non-empty.md",
+      "title": "process): wait for a stopped scope to drain before reporting it non-empty",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "source_version": "HEAD",
+      "content_hash": "39c92fe7ef8d203116e21314827ef4552cdaeb65311ba424c96a585faaafde73",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-16T05:29:12.128Z"
+    },
+    "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kamgurgul-cpu-info-learnings-content-information-intelligence-kamgurgul-cpu-info.md",
+      "title": "Content & Information Intelligence: kamgurgul-cpu-info-learnings Core Invariants",
+      "repository": "kamgurgul-cpu-info-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf57e2b92c248fd290a5e05cf2cb0091719bf32e5184b5a1d15dcd6f029bb8d2",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T05:29:12.763Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kamgurgul-cpu-info-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kamgurgul-cpu-info-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kamgurgul-cpu-info-learnings-verification-protocol-empirical-defect-shield-for-k.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kamgurgul-cpu-info-learnings",
+      "repository": "kamgurgul-cpu-info-learnings",
+      "source_version": "HEAD",
+      "content_hash": "45f84db84710fb751339ea0e7a4ccc0cff32d367167ff9c9fc7a95b5a5f068ee",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T05:29:12.883Z"
+    },
+    "candidate_directive-normalize-run-validateandnormalizeconfig-in-ordered-phases": {
+      "item_id": "candidate_directive-normalize-run-validateandnormalizeconfig-in-ordered-phases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PWBI-normalize-run-validateandnormalizeconfig-in-ordered-phases.md",
+      "title": "normalize): run ValidateAndNormalizeConfig in ordered phases",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cea65cadd5c1189968a710cd0103428e1d80de5ef2e137b44e41d6c45aeae978",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T05:29:13.183Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-learnings-core-invariant": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-dnscontrol-dnscontrol-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-dnscontrol-dnscontrol-learnings-quality-verification-intelligence-dnscontrol-dns.md",
+      "title": "Quality & Verification Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "36e47b831625f9dc826945a719c29c56446a926b91f7b47c28aacf02538e2039",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T05:29:13.308Z"
     }
   },
   "ai-builder-brain": {

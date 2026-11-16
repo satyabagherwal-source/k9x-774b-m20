@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T05:17:39.667Z",
-  "total_cycles_completed": 9838,
-  "total_learnings_persisted": 9838,
-  "total_rules_promoted": 9448,
+  "last_updated": "2026-11-16T05:29:09.045Z",
+  "total_cycles_completed": 9842,
+  "total_learnings_persisted": 9842,
+  "total_rules_promoted": 9450,
   "history": [
-    {
-      "timestamp": "2026-11-15T01:46:37.671Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T01:46:46.735Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T02:14:57.985Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T02:15:10.450Z",
-      "repository": "run-llama/llama_index",
-      "learningId": "learn-github-run-llama-llama_index",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T02:15:12.051Z",
       "repository": "dathere/qsv",
@@ -1403,6 +1375,34 @@
       "repository": "chrisbanes/skills",
       "learningId": "learn-github-chrisbanes-skills",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T05:28:57.195Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T05:29:02.009Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T05:29:04.272Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T05:29:09.045Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "5da338d6",
+    "sourceVersion": "845815ae",
     "license": "MIT",
-    "contentHash": "e79f3bda488d8656be4e2316077b166afc8bf991e15106f80376674367e992bc",
-    "lastHarvestedAt": "2026-11-14T23:43:13.624Z",
+    "contentHash": "1e46b633a08d744fa6e6ae9cc5ef6d2d5a9a53d57eea6efc297336fe199fba92",
+    "lastHarvestedAt": "2026-11-16T05:29:04.257Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "33d90342",
+    "sourceVersion": "9a5df815",
     "license": "NOASSERTION",
-    "contentHash": "01ee42e42216e448373c669626ab41e1d52eabb514b53e2008cfc32e8d4187d5",
-    "lastHarvestedAt": "2026-11-13T14:26:05.362Z",
+    "contentHash": "3d1d9cdc15047adb5c0db942fa63c1a3f7122c9d0c0223672d5b3d6419afdd71",
+    "lastHarvestedAt": "2026-11-16T05:29:09.040Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "0dedf44e",
+    "sourceVersion": "87abaabc",
     "license": "MIT",
-    "contentHash": "b509aef91c3b969410d2e53ca2a8f9daf1cd3f8deddea5984e5a6f92f5b23780",
-    "lastHarvestedAt": "2026-11-14T12:33:54.015Z",
+    "contentHash": "080098fbce8d89028f6c18efa03cd78c57feb2b1a42e366b001e99aec84edcc0",
+    "lastHarvestedAt": "2026-11-16T05:28:57.190Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -8843,10 +8843,10 @@
     "repository": "kamgurgul/cpu-info",
     "platform": "github",
     "sourceUrl": "https://github.com/kamgurgul/cpu-info",
-    "sourceVersion": "b93f1630",
+    "sourceVersion": "e0ad273c",
     "license": "Apache-2.0",
-    "contentHash": "ef9d1c1b2cac39b003a84d40640ead8f917cf5d9eeeb387de24036d769faa4ee",
-    "lastHarvestedAt": "2026-11-12T23:28:54.711Z",
+    "contentHash": "89caf5389e99928ad18346b57c701a764dfa4283093a72925b58ebe78b7b3348",
+    "lastHarvestedAt": "2026-11-16T05:29:02.004Z",
     "learningId": "learn-github-kamgurgul-cpu-info"
   },
   "ugolbck-seofordev": {

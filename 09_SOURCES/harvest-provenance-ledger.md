@@ -10279,3 +10279,7 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `2299a19b` | Multi-dimensional audit evidence | 2026-11-16T05:10:45.625Z |
 | `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `a7e479f2` | Multi-dimensional audit evidence | 2026-11-16T05:17:35.147Z |
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `a7962de2` | Multi-dimensional audit evidence | 2026-11-16T05:17:39.663Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `87abaabc` | Multi-dimensional audit evidence | 2026-11-16T05:28:57.190Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `e0ad273c` | Multi-dimensional audit evidence | 2026-11-16T05:29:02.004Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `845815ae` | Multi-dimensional audit evidence | 2026-11-16T05:29:04.257Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `9a5df815` | Multi-dimensional audit evidence | 2026-11-16T05:29:09.040Z |
