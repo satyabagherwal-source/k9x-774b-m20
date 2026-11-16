@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-CDJO",
-    "timestamp": "2026-11-13T16:39:32.244Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "929bfc80fe37a9b0834735235b3179515abb05e3bbf25f4d1741022579b4102b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-CLPP",
-    "timestamp": "2026-11-13T16:39:42.829Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "82d82e2a89c4da7ed16fcb29a83fb77af647a05c934b8ba71e0f8f177eb5a25c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-OGCH",
     "timestamp": "2026-11-13T16:48:55.745Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7490,6 +7460,36 @@
     "repository": "adobe/structured-data-validator",
     "learningId": "learn-github-adobe-structured-data-validator",
     "contentHash": "2db818dc649c038528e0f218722bd995a1e4ec1a8a40210aab48169235e7ed4f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-9SBJ",
+    "timestamp": "2026-11-16T01:32:44.575Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "729d4e13040c5b1b66b7440ce16e8bedc2393e570b3f55309067a9e1a2b3221b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-A2LJ",
+    "timestamp": "2026-11-16T01:32:57.895Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "8ed6e559a818509ff47b745c18c0b1c54547f1ed07947391ee7f4efc0ca62455",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

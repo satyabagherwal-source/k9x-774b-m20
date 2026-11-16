@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T01:21:26.296Z",
-  "total_records": 1182,
+  "last_updated": "2026-11-16T01:33:02.401Z",
+  "total_records": 1184,
   "domains": {
     "A": {
       "total": 7,
@@ -645,7 +645,7 @@
       ]
     },
     "G": {
-      "total": 209,
+      "total": 211,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -855,7 +855,9 @@
         "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-clastix-kamaji-core-invariants",
         "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-core-invariants",
+        "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants"
       ]
     },
     "H": {
@@ -15743,8 +15745,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "3b08f720ffd7247483a6096529a5a62f172fa5cfb43618e516e4940192cdb4a6",
-      "created_at": "2026-11-14T16:38:37.396Z"
+      "content_hash": "1a8fcce7108832288798fe981074dd80660b19d9f7cef4fb4c83afddc37818b3",
+      "created_at": "2026-11-16T01:32:58.132Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -15821,8 +15823,8 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-learnings-technical-construction-intelligence-starrocks-star.md",
       "repository": "starrocks-starrocks-learnings",
-      "content_hash": "445ecbcbb8a528ed05e7abcbb913495c41bdb2666bb17a53275028e5b6fa61e7",
-      "created_at": "2026-11-14T16:43:51.804Z"
+      "content_hash": "eb97117d350b4960e1d975c2a853224b91583a284bf64e408603513fff305857",
+      "created_at": "2026-11-16T01:33:01.829Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
@@ -16832,8 +16834,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "2bc003994d326929e66e811f577282f5d25fa990cfae0eb19cb93ca5ae0ba8df",
-      "created_at": "2026-11-16T00:10:13.296Z"
+      "content_hash": "0a0df90ca9e56758116faf45ab737161c15a51f72775bc0ca0aef5f48107d479",
+      "created_at": "2026-11-16T01:33:02.401Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -22142,6 +22144,24 @@
       "repository": "adobe-structured-data-validator-learnings",
       "content_hash": "c85182907a634728aa81936aa88579605d6268184e50a7a62a32ba9fe5fe87eb",
       "created_at": "2026-11-16T01:21:25.029Z"
+    },
+    "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: topgrade-rs/topgrade Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-architecture-intelligence-topgrade-rs-topgrade-core-invaria.md",
+      "repository": "topgrade-rs/topgrade",
+      "content_hash": "244450a72dbca33dcd50e6a6c671b4454bef107a7f4e6a9e274edd25f2de9244",
+      "created_at": "2026-11-16T01:32:44.814Z"
+    },
+    "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: topgrade-rs-topgrade-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-learnings-architecture-intelligence-topgrade-rs-topgrade-le.md",
+      "repository": "topgrade-rs-topgrade-learnings",
+      "content_hash": "de92f29c09c742003a85022e0a3c47442b62fa3bd8c6a5978e990ecba69cf48c",
+      "created_at": "2026-11-16T01:33:01.217Z"
     }
   }
 }

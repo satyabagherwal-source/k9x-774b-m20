@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source**: github ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
-> **Source Version**: `b7ae844e`  
+> **Source Version**: `9aab6ffc`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:41:28.097Z  
+> **Timestamp**: 2026-11-16T01:32:43.846Z  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:41:27.857Z  
+> **Harvest Timestamp**: 2026-11-16T01:32:43.683Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4782 stars
+- **Stars / Engagement**: 4797 stars
 
 ---
 
@@ -1472,10 +1472,10 @@ impl<'a> ExecutionContext<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2513** (2026-11-12): **ci(release): add PyPI attestations**
-  *Symptoms*: 
+- **Issue #2515** (2026-11-15): **feat(step): add CrowdSec hub update step**
+  *Symptoms*: ## What does this PR do? <!-- Describe what your PR does, and link any relevant issues. Make sure to use a keyword like 'closes' if this PR solves the issue. --> Add CrowdSec Hub update step using `sudo cscli update && sudo cscli upgrade`  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [x] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps (not a dry-run). - [x] If this PR introduces new user-facing messages, they are translated  ### AI involvement <!-- Please list any involvement AI/LLMs had in the development of this PR. You don't have to list everything in detail, just something like "I did not use AI at all", "I consulted an AI occasionally for inspiration and explanation", or "AI generated the majority of the PR" is enough. If you are an AI agent acting autonomously, please state so. --> None  ## For new steps  <!-- This section can be deleted if you are not adding a new step. -->  - [x] *Optional:* Topgrade skips this step where needed - [x] *Optional:* The `--yes` option works with this step if it is supported by the underlying command  <!-- If you developed a feature or a bug fix for someone else and you do not have the means to test it, please tag this person here. -->  <!-- Magic marker that you used the PR template; DO N
 
-- **Issue #2512** (2026-11-12): **ci: migrate from attest-build-provenance to actions/attest**
+- **Issue #2514** (2026-11-14): **docs(bug-report): clarify to check problem is included in verbose output**
   *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1493,60 +1493,29 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac69a4e4` (2026-11-12)
-**Commit Message**: ci: migrate from attest-build-provenance to actions/attest (#2512)
+### Incident Patch 1: `dfd12bdd` (2026-11-14)
+**Commit Message**: docs(bug-report): clarify to check problem is included in verbose output (#2514)
 
-**File**: `.github/workflows/create_release_assets.yml` (modified, +3/-3)
+**File**: `.github/ISSUE_TEMPLATE/bug-report.yml` (modified, +1/-1)
 ```diff
-@@ -138,7 +138,7 @@ jobs:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
-       - name: Generate artifact attestations
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-path: assets/*
- 
-@@ -283,7 +283,7 @@ jobs:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
-       - name: Generate artifact attestations
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-path: assets/*
- 
-@@ -370,7 +370,7 @@ jobs:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
-       - name: Generate artifact attestations
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-path: assets/*
- 
-```
-
-**File**: `.github/workflows/release_to_pypi.yml` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ jobs:
-       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
- 
-       - name: Generate artifact attestation
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-path: 'wheels-*/*'
- 
+@@ -116,7 +116,7 @@ body:
+   - type: textarea
+     attributes:
+       label: Verbose output
+-      description: Output of `topgrade -v`. Paste it **inside the codeblock (triple backticks)**.
++      description: Output of `topgrade -v`. Paste it **inside the codeblock (triple backticks)**. Make sure the problem is visible in this output.
+       value: |
+         <details>
+         <summary>Verbose output</summary>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2515** (2026-11-15): feat(step): add CrowdSec hub update step (@yannhodiesne)
+- **PR #2514** (2026-11-14): docs(bug-report): clarify to check problem is included in verbose output (@GideonBear)
 - **PR #2513** (2026-11-12): ci(release): add PyPI attestations (@GideonBear)
 - **PR #2512** (2026-11-12): ci: migrate from attest-build-provenance to actions/attest (@GideonBear)
 - **PR #2508** (2026-11-10): chore(pre-commit): autoupdate (@pre-commit-ci[bot])
 - **PR #2504** (2026-11-09): fix(tailscale): don't update when installed via homebrew (@GideonBear)
-- **PR #2503** (2026-11-09): chore(deps): lock file maintenance (@renovate[bot])
-- **PR #2502** (2026-11-09): chore(deps): update github/codeql-action action to v4.39.3 (@renovate[bot])
 
 ---
 
@@ -1566,32 +1535,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: migrate from attest-build-provenance to actions/attest (#2512)
+## X. docs(bug-report): clarify to check problem is included in verbose output
 
 **RULE**:
-When implementing operations in `.github/workflows/create_release_assets.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ISSUE_TEMPLATE/bug-report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac69a4e4`: ci: migrate from attest-build-provenance to actions/attest (#2512). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dfd12bdd`: docs(bug-report): clarify to check problem is included in verbose output. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/create_release_assets.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug-report.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+      description: Output of `topgrade -v`. Paste it **inside the codeblock (triple backticks)**. Make sure the problem is visible in this output.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+// Induced defect failure mode:
+      description: Output of `topgrade -v`. Paste it **inside the codeblock (triple backticks)**.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac69a4e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dfd12bdd` are properly handled with clean fallback behavior.

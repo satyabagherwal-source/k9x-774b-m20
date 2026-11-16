@@ -10235,3 +10235,5 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `9fe067c6` | Multi-dimensional audit evidence | 2026-11-16T00:56:42.284Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `60204b0c` | Multi-dimensional audit evidence | 2026-11-16T00:56:51.806Z |
 | `learn-github-adobe-structured-data-validator` | `https://github.com/adobe/structured-data-validator` | `6918b526` | Multi-dimensional audit evidence | 2026-11-16T01:21:20.730Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `9aab6ffc` | Multi-dimensional audit evidence | 2026-11-16T01:32:44.580Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `6895756f` | Multi-dimensional audit evidence | 2026-11-16T01:32:57.898Z |

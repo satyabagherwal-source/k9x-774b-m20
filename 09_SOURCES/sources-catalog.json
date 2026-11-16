@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "72c16b08",
+    "sourceVersion": "6895756f",
     "license": "Apache-2.0",
-    "contentHash": "dd85706414b35386a2205a1f40544cfe5888fa264c19427c50d61f2535892b18",
-    "lastHarvestedAt": "2026-11-14T16:38:37.133Z",
+    "contentHash": "8ed6e559a818509ff47b745c18c0b1c54547f1ed07947391ee7f4efc0ca62455",
+    "lastHarvestedAt": "2026-11-16T01:32:57.898Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "b7ae844e",
+    "sourceVersion": "9aab6ffc",
     "license": "GPL-3.0",
-    "contentHash": "451ad5b05e5704584492e895a5bf9e5368ef8e45704270758403b1293a2b359f",
-    "lastHarvestedAt": "2026-11-12T21:41:38.080Z",
+    "contentHash": "729d4e13040c5b1b66b7440ce16e8bedc2393e570b3f55309067a9e1a2b3221b",
+    "lastHarvestedAt": "2026-11-16T01:32:44.580Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T01:21:20.736Z",
-  "total_cycles_completed": 9799,
-  "total_learnings_persisted": 9799,
-  "total_rules_promoted": 9409,
+  "last_updated": "2026-11-16T01:32:57.902Z",
+  "total_cycles_completed": 9801,
+  "total_learnings_persisted": 9801,
+  "total_rules_promoted": 9411,
   "history": [
-    {
-      "timestamp": "2026-11-14T21:21:05.054Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T21:29:20.456Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T21:29:22.432Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T01:21:20.736Z",
       "repository": "adobe/structured-data-validator",
       "learningId": "learn-github-adobe-structured-data-validator",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T01:32:44.584Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T01:32:57.902Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

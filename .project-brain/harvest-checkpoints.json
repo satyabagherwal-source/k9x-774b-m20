@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T01:21:20.740Z",
+  "last_updated": "2026-11-16T01:32:57.905Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "dd85706414b35386a2205a1f40544cfe5888fa264c19427c50d61f2535892b18",
-      "verified_at": "2026-11-14T16:38:37.142Z",
+      "content_hash": "8ed6e559a818509ff47b745c18c0b1c54547f1ed07947391ee7f4efc0ca62455",
+      "verified_at": "2026-11-16T01:32:57.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T16:38:37.142Z"
+      "last_updated": "2026-11-16T01:32:57.904Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "451ad5b05e5704584492e895a5bf9e5368ef8e45704270758403b1293a2b359f",
-      "verified_at": "2026-11-12T21:41:38.115Z",
+      "content_hash": "729d4e13040c5b1b66b7440ce16e8bedc2393e570b3f55309067a9e1a2b3221b",
+      "verified_at": "2026-11-16T01:32:44.587Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:41:38.115Z"
+      "last_updated": "2026-11-16T01:32:44.587Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",

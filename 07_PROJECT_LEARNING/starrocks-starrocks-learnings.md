@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `72c16b08`  
+> **Source Version**: `6895756f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T16:38:36.341Z  
+> **Timestamp**: 2026-11-16T01:32:57.199Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T16:38:36.336Z  
+> **Harvest Timestamp**: 2026-11-16T01:32:57.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12253 stars
+- **Stars / Engagement**: 12254 stars
 
 ---
 
@@ -1818,117 +1818,584 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72c16b08` (2026-11-14)
-**Commit Message**: [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (#83259)
+### Incident Patch 1: `277e3f4c` (2026-11-15)
+**Commit Message**: [BugFix] Send the per-session token for Iceberg REST catalogs using security=jwt (#75811)
 
+Signed-off-by: Barnaby Keene <[REDACTED_EMAIL]>
 Signed-off-by: tqqq <[REDACTED_EMAIL]>
 Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
-**File**: `be/src/formats/parquet/encoding_plain.h` (modified, +6/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/rest/OAuth2SecurityConfig.java` (modified, +9/-2)
 ```diff
-@@ -296,7 +296,12 @@ class PlainDecoder<Slice> final : public Decoder {
-                 }
-             });
- 
--            binary_column->get_bytes().reserve(final_offset);
-+            // This runs once per page into the same column. An exact reserve(final_offset) would
-+            // reallocate and copy the whole column on every page (quadratic for large values),
-+            // so grow geometrically like the vector itself would.
-+            if (bytes.capacity() < final_offset) {
-+                bytes.reserve(std::max(final_offset, 2 * bytes.capacity()));
-+            }
+@@ -155,8 +155,15 @@ public static OAuth2SecurityConfig build(final Map<String, String> properties) {
+             config = config.setServerUri(URI.create(serverUri));
          }
  
-         if (read_count == 0) {
+-        // check OAuth2SecurityConfig is valid
+-        if (!config.credentialOrTokenPresent() || !config.scopePresentOnlyWithCredential()) {
++        // check OAuth2SecurityConfig is valid. JWT is exempt from the
++        // credential/token-present check: in JWT mode there is deliberately no static
++        // token or credential in the catalog properties. The token is the logged-in
++        // user's JWT, supplied per session at request time (see
++        // IcebergRESTCatalog.buildContext). Applying the OAUTH2 guard here would
++        // discard the JWT security mode entirely and fall back to NONE, so the
++        // per-session token would never be attached to REST calls.
++        if (config.getSecurity() != JWT
++                && (!config.credentialOrTokenPresent() || !config.scopePresentOnlyWithCredential())) {
+             return new OAuth2SecurityConfig();
+         }
+ 
 ```
 
-**File**: `be/test/formats/parquet/encoding_test.cpp` (modified, +47/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/rest/OAuth2SecurityProperties.java` (modified, +6/-0)
 ```diff
-@@ -1334,6 +1334,53 @@ TEST_F(ParquetEncodingTest, PlainFixedLengthWithNulls) {
-     }
- }
+@@ -15,6 +15,7 @@
+ package com.starrocks.connector.iceberg.rest;
  
-+// A chunk is filled page by page into the same column. Large values mean few rows per page and many
-+// pages, so the byte buffer must grow geometrically across pages instead of reallocating on each one.
-+TEST_F(ParquetEncodingTest, PlainStringWithNullsGrowsGeometricallyAcrossPages) {
-+    const EncodingInfo* encoding = nullptr;
-+    ASSERT_OK(EncodingInfo::get(tparquet::Type::BYTE_ARRAY, tparquet::Encoding::PLAIN, &encoding));
-+    std::unique_ptr<Decoder> decoder;
-+    ASSERT_OK(encoding->create_decoder(&decoder));
-+
-+    constexpr size_t kNumPages = 256;
-+    constexpr size_t kValueSize = 1000; // > 128, so values go through BinaryColumn::append_bytes
-+    const std::vector<uint8_t> nulls = {0, 1};
-+
-+    auto dst = NullableColumn::create(BinaryColumn::create(), NullColumn::create());
-+    auto* binary = down_cast<BinaryColumn*>(dst->data_column_raw_ptr());
-+    std::vector<std::string> expected;
-+    size_t num_reallocs = 0;
-+    NullInfos infos;
-+    for (size_t page = 0; page < kNumPages; page++) {
-+        std::string value(kValueSize, static_cast<char>('a' + page % 26));
-+        value[0] = static_cast<char>(page % 251);
-+        Slice slice(value);
-+        std::unique_ptr<Encoder> encoder;
-+        ASSERT_OK(encoding->create_encoder(&encoder));
-+        ASSERT_OK(encoder->append(reinterpret_cast<const uint8_t*>(&slice), 1));
-+        Slice data = encoder->build();
-+        ASSERT_OK(decoder->set_data(data));
-+
-+        fill_null_infos(nulls, 0, nulls.size(), &infos);
-+        size_t capacity = binary->get_bytes().capacity();
-+        ASSERT_OK(decoder->next_batch_with_nulls(nulls.size(), infos, ColumnContentType::VALUE, dst.get(), nullptr));
-+        num_reallocs += binary->get_bytes().capacity() != capacity;
-+        expected.push_back(std::move(value));
-+    }
-+
-+    ASSERT_EQ(kNumPages * nulls.size(), dst->size());
-+    for (size_t i = 0; i < dst->size(); i++) {
-+        if (i % 2 == 1) {
-+            ASSERT_TRUE(dst->is_null(i)) << "row " << i;
-+        } else {
-+            ASSERT_FALSE(dst->is_null(i)) << "row " << i;
-+            ASSERT_EQ(Slice(expected[i / 2]), binary->get_slice(i)) << "row " << i;
-+        }
-+    }
-+    // An exact reserve reallocates on every page (256 times); geometric growth needs about log2(256).
-+    ASSERT_LE(num_reallocs, 16);
-+}
-+
- TEST_F(ParquetEncodingTest, AssignNullsFromDefLevels) {
-     std::mt19937 rng(3);
-     std::uniform_int_distribution<int> pct(0, 99);
+ import com.google.common.collect.ImmutableMap;
++import org.apache.iceberg.rest.auth.AuthProperties;
+ import org.apache.iceberg.rest.auth.OAuth2Properties;
+ 
+ import java.util.Map;
+@@ -46,6 +47,11 @@ public OAuth2SecurityProperties(OAuth2SecurityConfig securityConfig) {
+         } else if (securityConfig.getSecurity() == IcebergRESTCatalog.Security.JWT) {
+             // for JWT disable the token-refresh
+             propertiesBuilder.put(OAuth2Properties.TOKEN_REFRESH_ENABLED, "false");
++            // The JWT is supplied per session at request time (SessionContext credentials
++            // from IcebergRESTCatalog.buildContext), not as a static catalog token. Select
++            // the OAuth2 auth manager explicitly so those per-session credentials are sent
++            // as the bearer; otherwise the REST client uses no auth and drops the token.
++            propertiesBuilder.put(AuthProperties.AUTH_TYPE, AuthProperties.AUTH_TYPE_OAUTH2);
+         }
+ 
+         this.securityProperties = propertiesBuilder.buildOrThrow();
 ```
 
 ---
 
-### Incident Patch 2: `e1eeaa0c` (2026-11-13)
-**Commit Message**: [Doc] Fix doubled words in the Tableau and AWS network pages (#83247)
+### Incident Patch 2: `85ceece0` (2026-11-15)
+**Commit Message**: [BugFix] Skip no-op raw-keyed external statistics cleanup DELETE (#83000)
 
-Signed-off-by: Dan Roscigno <[REDACTED_EMAIL]>
-Co-authored-by: Dan Roscigno <[REDACTED_EMAIL]>
+Signed-off-by: Jenwit Amonpongitsara <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/en/integrations/BI_integrations/Tableau_Desktop.md` (modified, +1/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/statistic/ExternalFullStatisticsCollectJob.java` (modified, +3/-0)
 ```diff
-@@ -65,7 +65,7 @@ Before proceeding, make sure the following requirements are met:
-       sudo cp /<path_to_driver_file_name>.jar /opt/tableau/tableau_driver/jdbc
-       ```
-   
--   2. Grant permission to the the "Tableau" user.
-+   2. Grant permission to the "Tableau" user.
+@@ -690,6 +690,9 @@ private void logIfRawKeyWouldExceedPkLimit(long jobId) {
+     // the next collection retries it. Best-effort: must never fail a job whose actual stats write
+     // already succeeded.
+     protected void cleanupStaleRawKeyedRows(ConnectContext context, long jobId) {
++        if (isAnalyzeCancelled(jobId)) {
++            return;
++        }
+         String rawTableUuid = table.getUUID();
+         boolean ok = new StatisticExecutor().dropExternalStatRawPartitions(context, rawTableUuid, partitionNames, columnNames);
+         if (!ok) {
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/statistic/StatisticExecutor.java` (modified, +66/-1)
+```diff
+@@ -376,10 +376,63 @@ public void dropExternalTableStatistics(ConnectContext statsConnectCtx, String c
+     // Best-effort cleanup of the stale raw-keyed rows superseded by a fresh hashed-key write.
+     // Failure just means the raw row lingers a bit longer (until this partition/column is
+     // collected again); it must never fail the collection job that just succeeded.
++    // The DELETE is issued only when a raw-keyed row exists in that scope (see
++    // StatisticSQLBuilder#buildExistsExternalStatRawPartitionsSQL): in shared-data mode every DELETE on these
++    // UNIQUE KEY tables later forces a compaction of the whole table, even when it matches nothing. If the
++    // existence check fails, the DELETE is skipped rather than issued blindly; the rows are retried next time.
+     public boolean dropExternalStatRawPartitions(ConnectContext statsConnectCtx, String rawTableUUID,
+                                                  List<String> partitionNames, List<String> columnNames) {
++        if (CollectionUtils.isEmpty(partitionNames) || CollectionUtils.isEmpty(columnNames)) {
++            return true;
++        }
++        String existsSql = StatisticSQLBuilder.buildExistsExternalStatRawPartitionsSQL(rawTableUUID, partitionNames,
++                columnNames);
++        Optional<Boolean> exists = rawKeyedRowExists(statsConnectCtx, existsSql);
++        if (exists.isEmpty()) {
++            return false;
++        }
++        if (!exists.get()) {
++            LOG.debug("No stale raw-keyed external statistic rows, skip cleanup: {}", existsSql);
++            return true;
++        }
+         String sql = StatisticSQLBuilder.buildDropExternalStatSQLForPartitions(rawTableUUID, partitionNames, columnNames);
+         LOG.debug("Cleanup stale raw-keyed external statistic rows SQL: {}", sql);
++        return executeRawKeyedCleanupDML(statsConnectCtx, sql);
++    }
++
++    /**
++     * Runs an existence check built by StatisticSQLBuilder#buildExistsExternalStatRawPartitionsSQL or
++     * #buildExistsExternalHistogramRawColumnsSQL. Returns true if it returned a row, false if it returned none, and
++     * empty if the check failed (the caller then skips the cleanup).
++     * <p>
++     * Like the DELETE that may follow, the check runs on the analyze job's own context, so KILL ANALYZE and the
++     * job's query timeout apply to it. The statement clock is restarted first because the query deadline is the
++     * context's start time plus its query timeout.
++     */
++    @VisibleForTesting
++    protected Optional<Boolean> rawKeyedRowExists(ConnectContext statsConnectCtx, String existsSql) {
++        int pipelineDop = statsConnectCtx.getSessionVariable().getPipelineDop();
++        try (var guard = statsConnectCtx.bindScope()) {
++            statsConnectCtx.setStartTime();
++            List<TResultBatch> batches = SimpleExecutor.getRepoExecutor().executeDQL(existsSql, statsConnectCtx);
++            for (TResultBatch batch : ListUtils.emptyIfNull(batches)) {
++                if (batch.getRows() != null && !batch.getRows().isEmpty()) {
++                    return Optional.of(true);
++                }
++            }
++            return Optional.of(false);
++        } catch (Exception e) {
++            LOG.warn("Failed to check for stale raw-keyed external statistic rows, skip cleanup | SQL {}", existsSql, e);
++            return Optional.empty();
++        } finally {
++            // SimpleExecutor#executeDQL(String, ConnectContext) overwrites the context's pipeline dop.
++            statsConnectCtx.getSessionVariable().setPipelineDop(pipelineDop);
++        }
++    }
++
++    @VisibleForTesting
++    protected boolean executeRawKeyedCleanupDML(ConnectContext statsConnectCtx, String sql) {
++        statsConnectCtx.setStartTime();
+         return executeDML(statsConnectCtx, sql);
+     }
  
-       ```Bash
-       # Replace <driver_file_name> with the name of the driver file.
+@@ -415,9 +468,21 @@ public boolean dropExternalStatDroppedPartitions(ConnectContext statsConnectCtx,
+ 
+     public boolean dropExternalHistogramRawColumns(ConnectContext statsConnectCtx, String rawTableUUID,
+                                                    List<String> columnNames) {
++        if (CollectionUtils.isEmpty(columnNames)) {
++            return true;
++        }
++        String existsSql = StatisticSQLBuilder.buildExistsExternalHistogramRawColumnsSQL(rawTableUUID, columnNames);
++        Optional<Boolean> exists = rawKeyedRowExists(statsConnectCtx, existsSql);
++        if (exists.isEmpty()) {
++            return false;
++        }
++        if (!exists.get()) {
++            LOG.debug("No stale raw-keyed external histogram rows, skip cleanup: {}", existsSql);
++            return true;
++        }
+         String sql = StatisticSQLBuilder.buildDropExternalHistogramSQLForRawUuid(rawTableUUID, columnNames);
+         LOG.debug("Cleanup stale raw-keyed external histogram row SQL: {}", sql);
+-        return executeDML(statsConnectCtx, sql);
++        return executeRawKeyedCleanupDML(statsConnectCtx, sql);
+     }
+ 
+     public boolean dropPartitionStatisti
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/statistic/StatisticSQLBuilder.java` (modified, +27/-0)
+```diff
+@@ -479,6 +479,33 @@ public static String buildDropExternalHistogramSQLForRawUuid(String rawTableUUID
+                 " where table_uuid = '" + SqlUtils.escapeSqlString(rawTableUUID) + "' and column_name in (" + columnsIn + ")";
+     }
+ 
++    // Existence checks run before the raw-keyed cleanups above, over exactly the same rows. In shared-data mode the
++    // external statistics tables are UNIQUE KEY, where every DELETE adds a delete-predicate rowset to every tablet
++    // whether or not it matches anything, and those rowsets can only be cleared by compacting the tablet from its
++    // base rowset. Issuing the cleanup DELETE after every collection therefore keeps forcing rewrites of the whole
++    // statistics table even once no raw-keyed rows are left, so the DELETE is issued only when one exists.
++    // The filter is on key columns only, led by table_uuid, so the lookup reads very little.
++    public static String buildExistsExternalStatRawPartitionsSQL(String rawTableUUID, List<String> partitionNames,
++                                                                 List<String> columnNames) {
++        String partitionsIn = partitionNames.stream()
++                .map(p -> "'" + SqlUtils.escapeSqlString(p) + "'").collect(Collectors.joining(", "));
++        String columnsIn = columnNames.stream()
++                .map(c -> "'" + SqlUtils.escapeSqlString(c) + "'").collect(Collectors.joining(", "));
++        return "SELECT 1 FROM " + StatsConstants.STATISTICS_DB_NAME + "." + EXTERNAL_FULL_STATISTICS_TABLE_NAME +
++                " WHERE TABLE_UUID = '" + SqlUtils.escapeSqlString(rawTableUUID) + "'" +
++                " AND PARTITION_NAME IN (" + partitionsIn + ")" +
++                " AND COLUMN_NAME IN (" + columnsIn + ") LIMIT 1";
++    }
++
++    public static String buildExistsExternalHistogramRawColumnsSQL(String rawTableUUID, List<String> columnNames) {
++        String columnsIn = columnNames.stream()
++                .map(c -> "'" + SqlUtils.escapeSqlString(c) + "'").collect(Collectors.joining(", "));
++        return "SELECT 1 FROM " + StatsConstants.STATISTICS_DB_NAME + "." +
++                StatsConstants.EXTERNAL_HISTOGRAM_STATISTICS_TABLE_NAME +
++                " WHERE TABLE_UUID = '" + SqlUtils.escapeSqlString(rawTableUUID) + "'" +
++                " AND COLUMN_NAME IN (" + columnsIn + ") LIMIT 1";
++    }
++
+     public static String buildDropExternalStatSQL(String catalogName, String dbName, String tableName) {
+         return "DELETE FROM " + EXTERNAL_FULL_STATISTICS_TABLE_NAME +
+                 " WHERE CATALOG_NAME = '" + SqlUtils.escapeSqlString(catalogName) + "'" +
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/statistic/StatisticSQLBuilderTest.java` (modified, +18/-0)
+```diff
+@@ -126,6 +126,24 @@ void buildDropExternalHistogramSQLForRawUuidOnlyMatchesRawUuid() {
+                 "cleanup delete must never also match the hashed uuid (it holds the fresh data): " + sql);
+     }
+ 
++    // The existence checks must cover exactly the rows the raw-keyed cleanup DELETEs would remove: the raw uuid only
++    // (never the hash), the same partitions and columns, filtering on key columns only.
++    @Test
++    void existsChecksMatchTheRawKeyedCleanupScope() {
++        String hashed = StatisticUtils.hashTableUuidForPkStorage(TABLE_UUID);
++        String sql = StatisticSQLBuilder.buildExistsExternalStatRawPartitionsSQL(
++                TABLE_UUID, ImmutableList.of("p1", "p'2"), ImmutableList.of("col1", "col2"));
++        Assertions.assertEquals("SELECT 1 FROM _statistics_.external_column_statistics WHERE TABLE_UUID = '" +
++                TABLE_UUID + "' AND PARTITION_NAME IN ('p1', 'p''2') AND COLUMN_NAME IN ('col1', 'col2') LIMIT 1", sql);
++        Assertions.assertFalse(sql.contains(hashed), sql);
++
++        String histogramSql = StatisticSQLBuilder.buildExistsExternalHistogramRawColumnsSQL(
++                TABLE_UUID, ImmutableList.of("c'1", "c2"));
++        Assertions.assertEquals("SELECT 1 FROM _statistics_.external_histogram_statistics WHERE TABLE_UUID = '" +
++                TABLE_UUID + "' AND COLUMN_NAME IN ('c''1', 'c2') LIMIT 1", histogramSql);
++        Assertions.assertFalse(histogramSql.contains(hashed), histogramSql);
++    }
++
+     @Test
+     void buildQueryExternalFullStatisticsSQLDedupsByLatestUpdateTime() {
+         // Correctness must not depend on the write-side cleanup delete succeeding: if both a
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/statistic/StatisticsExecutorTest.java` (modified, +142/-0)
+```diff
+@@ -28,6 +28,7 @@
+ import com.starrocks.common.jmockit.Deencapsulation;
+ import com.starrocks.qe.ConnectContext;
+ import com.starrocks.qe.QueryState;
++import com.starrocks.qe.SimpleExecutor;
+ import com.starrocks.qe.StmtExecutor;
+ import com.starrocks.server.GlobalStateMgr;
+ import com.starrocks.sql.analyzer.Analyzer;
+@@ -37,6 +38,7 @@
+ import com.starrocks.sql.parser.SqlParser;
+ import com.starrocks.sql.plan.ConnectorPlanTestBase;
+ import com.starrocks.sql.plan.PlanTestBase;
++import com.starrocks.thrift.TResultBatch;
+ import com.starrocks.thrift.TStatisticData;
+ import com.starrocks.type.IntegerType;
+ import com.starrocks.type.StringType;
+@@ -48,10 +50,14 @@
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.Test;
+ 
++import java.nio.ByteBuffer;
++import java.nio.charset.StandardCharsets;
+ import java.time.Clock;
++import java.time.Instant;
+ import java.time.LocalDateTime;
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.Optional;
+ 
+ public class StatisticsExecutorTest extends PlanTestBase {
+     @BeforeAll
+@@ -427,4 +433,140 @@ public void testDropHistogramWithEmptyColumnNames() {
+         statisticExecutor.dropExternalHistogram(context, "catalog", "db", "table", Lists.newArrayList());
+         statisticExecutor.dropExternalHistogram(context, "catalog", "db", "table", null);
+     }
++
++    private static class RawKeyedCleanupRecorder extends StatisticExecutor {
++        private final Optional<Boolean> existsResult;
++        private final List<String> checks = new ArrayList<>();
++        private final List<String> dmls = new ArrayList<>();
++
++        RawKeyedCleanupRecorder(Optional<Boolean> existsResult) {
++            this.existsResult = existsResult;
++        }
++
++        @Override
++        protected Optional<Boolean> rawKeyedRowExists(ConnectContext statsConnectCtx, String existsSql) {
++            checks.add(existsSql);
++            return existsResult;
++        }
++
++        @Override
++        protected boolean executeRawKeyedCleanupDML(ConnectContext statsConnectCtx, String sql) {
++            dmls.add(sql);
++            return true;
++        }
++    }
++
++    // In shared-data mode every DELETE on the UNIQUE KEY external statistics tables adds a delete-predicate rowset
++    // that later forces a compaction of the whole table, even when it matches nothing. The raw-keyed cleanup that
++    // runs after every collection must therefore only DELETE when a raw-keyed row exists in that scope.
++    @Test
++    public void testRawKeyedCleanupSkipsDeleteWhenNoRawRowExists() {
++        ConnectContext context = StatisticUtils.buildConnectContext();
++        RawKeyedCleanupRecorder executor = new RawKeyedCleanupRecorder(Optional.of(false));
++
++        Assertions.assertTrue(executor.dropExternalStatRawPartitions(context, "hive.db.tbl.1", List.of("p1"),
++                List.of("c1")));
++        Assertions.assertTrue(executor.dropExternalHistogramRawColumns(context, "hive.db.tbl.1", List.of("c1")));
++        Assertions.assertEquals(2, executor.checks.size());
++        Assertions.assertTrue(executor.checks.get(0).startsWith("SELECT 1 FROM _statistics_.external_column_statistics"),
++                executor.checks.get(0));
++        Assertions.assertTrue(
++                executor.checks.get(1).startsWith("SELECT 1 FROM _statistics_.external_histogram_statistics"),
++                executor.checks.get(1));
++        Assertions.assertTrue(executor.dmls.isEmpty(), executor.dmls.toString());
++    }
++
++    @Test
++    public void testRawKeyedCleanupDeletesWhenRawRowExists() {
++        ConnectContext context = StatisticUtils.buildConnectContext();
++        RawKeyedCleanupRecorder executor = new RawKeyedCleanupRecorder(Optional.of(true));
++
++        Assertions.assertTrue(executor.dropExternalStatRawPartitions(context, "hive.db.tbl.1", List.of("p1"),
++                List.of("c1")));
++        Assertions.assertTrue(executor.dropExternalHistogramRawColumns(context, "hive.db.tbl.1", List.of("c1")));
++        Assertions.assertEquals(List.of(
++                StatisticSQLBuilder.buildDropExternalStatSQLForPartitions("hive.db.tbl.1", List.of("p1"), List.of("c1")),
++                StatisticSQLBuilder.buildDropExternalHistogramSQLForRawUuid("hive.db.tbl.1", List.of("c1"))),
++                executor.dmls);
++    }
++
++    @Test
++    public void testRawKeyedCleanupSkipsDeleteWhenCheckFails() {
++        ConnectContext context = StatisticUtils.buildConnectContext();
++        RawKeyedCleanupRecorder executor = new RawKeyedCleanupRecorder(Optional.empty());
++
++        Assertions.assertFalse(executor.dropExternalStatRawPartitions(context, "hive.db.tbl.1", List.of("p1"),
++                List.of("c1")));
++        Assertions.assertFalse(executor.dropExternalHistogramRawColumns(context, "hive.db.tbl.1", List.of("c1")));
++        Assertions.assertTrue(executor.dmls.isEmpty(), executor.dmls.toString());
++    }
++
++    @Test
++    public void testRawKeyedCleanupWithEmptyScopeDoesNothing() {
++        ConnectContex
+```
+
+---
+
+### Incident Patch 3: `e4acf5d1` (2026-11-14)
+**Commit Message**: [Doc] Fix a second batch of docs that contradict the source (#83113)
+
+Signed-off-by: Binglin Chang <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: docs-automation[bot] <docs-automation[bot]@starrocks.io>
+
+**File**: `docs/en/administration/configuration/BE_parameters/log_server_meta.md` (modified, +5/-5)
+```diff
+@@ -111,7 +111,7 @@ This topic introduces the following types of BE configurations:
+ - Type: String
+ - Unit: -
+ - Is mutable: Yes (from v3.3.0, v3.2.7, and v3.1.12)
+-- Description: The severity levels into which system log entries are classified. Valid values: INFO, WARNING, ERROR, and FATAL. At startup, if the value in the configuration file is none of these, it is reported in the log and INFO is used, so an invalid value cannot leave the BE without working logging. At runtime, an invalid value is instead rejected with an error and the level in effect is left unchanged. This item was changed to a dynamic configuration from v3.3.0, v3.2.7, and v3.1.12 onwards.
++- Description: The severity levels into which system log entries are classified. Valid values: INFO, WARNING, ERROR, and FATAL. At startup, if the value in the configuration file is none of these, it is reported in the log and INFO is used, so an invalid value cannot leave the BE without working logging. At runtime, an invalid value is instead rejected with an error and the level in effect is left unchanged. This item was changed to a dynamic configuration from v3.3.0, v3.2.7, and v3.1.12 onwards. However, a runtime modification changes the log level in effect only in v3.1.12 to v3.1.13, v3.2.7 to v3.2.8, v3.3.0, and from v4.0.16 and v4.1.6 onwards. In other versions, the item can be modified at runtime, but the log level in effect does not change.
+ - Introduced in: -
+ 
+ ### sys_log_roll_mode
+@@ -435,9 +435,9 @@ This topic introduces the following types of BE configurations:
+ - Default: `percpu_arena:percpu,oversize_threshold:134217728,muzzy_decay_ms:5000,dirty_decay_ms:5000,metadata_thp:auto,background_thread:true,prof:true,prof_active:false`
+ - Type: string
+ - Unit: -
+-- Is mutable: Yes (only some options)
++- Is mutable: Yes (only some options; from v4.0.16 and v4.1.6 onwards. Not mutable in v4.1.3 and v4.1.4)
+ - Description: The jemalloc runtime options that `bin/start_backend.sh` exports as the `JEMALLOC_CONF` environment variable when the BE is started in the normal mode. This item is ignored if `JEMALLOC_CONF` is already set in the environment, and if the BE is started with `--jemalloc_debug` or `--check_mem_leak`, because those modes force their own option string. jemalloc reads `JEMALLOC_CONF` before the BE parses its configuration, so modifying this item at runtime only re-applies the options that jemalloc itself allows to be changed after initialization: `dirty_decay_ms`, `muzzy_decay_ms`, and `prof_active`. Adding, removing, or changing any other option is rejected with an error and the configuration value is rolled back, which means those options require restarting the BE. `prof_active` can only be changed if the BE was started with `prof:true`. Setting `dirty_decay_ms` or `muzzy_decay_ms` to `0` purges all unused pages synchronously and can therefore make the modification take a while, and setting it to `-1` disables purging.
+-- Introduced in: v4.0.15, v4.1.3
++- Introduced in: v4.0.16, v4.1.3
+ 
+ ### large_memory_alloc_report_threshold
+ 
+@@ -472,7 +472,7 @@ This topic introduces the following types of BE configurations:
+ - Type: String
+ - Unit: -
+ - Is mutable: No
+-- Description: BE process memory upper limit. You can set it as a percentage ("80%") or a physical limit ("100G"). The default hard limit is 90% of the server's memory size, and the soft limit is 80%. You need to configure this parameter if you want to deploy StarRocks with other memory-intensive services on a same server.
++- Description: BE process memory upper limit. You can set it as a percentage ("80%") or a physical limit ("100G"). The default value is 90% of the server's memory size. The BE uses 90% of `mem_limit` as the memory limit of the process memory tracker, which is 81% of the server's memory size by default. You need to configure this parameter if you want to deploy StarRocks with other memory-intensive services on a same server.
+ - Introduced in: -
+ 
+ ### memory_max_alignment
+@@ -508,7 +508,7 @@ This topic introduces the following types of BE configurations:
+ - Type: Int
+ - Unit: Cores
+ - Is mutable: No
+-- Description: Controls the number of CPU cores the system will use for CPU-aware decisions (for example, thread-pool sizing and runtime scheduling). A value of 0 enables auto-detection: the system reads `/proc/cpuinfo` and uses all available cores. If set to a positive integer, that value overrides the detected core count and becomes the effective core count. When running inside containers, cgroup cpuset or cpu quota settings can further restrict usable cores; `CpuInfo` also respects those cgroup limits.
++- Description: Controls the number of CPU cores the system will use for CPU-aware decisions (for example, thread-pool sizing and runtime scheduling). A value of 0 enables auto-detection: the system reads `/proc/cpuinfo` and uses all available cores. If set to a positive integer, that value overrides the detected core count and becomes the effective core count. 
+```
+
+**File**: `docs/en/administration/configuration/BE_parameters/stats_storage.md` (modified, +1/-1)
+```diff
+@@ -1082,7 +1082,7 @@ This topic introduces the following types of BE configurations:
+ - Type: Int
+ - Unit: -
+ - Is mutable: Yes
+-- Description: The maximum number of threads for the release snapshot tasks on a BE node.
++- Description: The maximum number of threads for the release snapshot tasks on a BE node. In a shared-data cluster, this thread pool also runs vacuum, full vacuum, and transaction log deletion tasks.
+ - Introduced in: -
+ 
+ ### repair_compaction_interval_seconds
+```
+
+**File**: `docs/en/administration/configuration/FE_parameters/log_server_meta.md` (modified, +6/-6)
+```diff
+@@ -328,7 +328,7 @@ This topic introduces the following types of FE configurations:
+ - Type: Boolean
+ - Unit: -
+ - Is mutable: Yes
+-- Description: Whether to enable profile logging. When this feature is enabled, the FE writes per-query profile logs (the serialized `queryDetail` JSON produced by `ProfileManager`) to the profile log sink. This logging is performed only if `enable_collect_query_detail_info` is also enabled; when `enable_profile_log_compress` is enabled, the JSON may be gzipped before logging. Profile log files are managed by `profile_log_dir`, `profile_log_roll_num`, `profile_log_roll_interval` and rotated/deleted according to `profile_log_delete_age` (supports formats like `7d`, `10h`, `60m`, `120s`). Disabling this feature stops writing profile logs (reducing disk I/O, compression CPU and storage usage). Which queries are logged can be further filtered by `profile_log_latency_threshold_ms`.
++- Description: Whether to enable profile logging. When this feature is enabled, the FE writes per-query profile logs (the serialized `queryDetail` JSON produced by `ProfileManager`) to the profile log sink. This logging is performed only if `enable_collect_query_detail_info` is also enabled. Profile log files are managed by `profile_log_dir`, `profile_log_roll_num`, `profile_log_roll_interval` and rotated/deleted according to `profile_log_delete_age` (supports formats like `7d`, `10h`, `60m`, `120s`). Disabling this feature stops writing profile logs (reducing disk I/O, compression CPU and storage usage). Which queries are logged can be further filtered by `profile_log_latency_threshold_ms`.
+ - Introduced in: v3.2.5
+ 
+ ### `enable_qe_slow_log`
+@@ -617,7 +617,7 @@ This topic introduces the following types of FE configurations:
+ - Unit: Milliseconds
+ - Is mutable: Yes
+ - Description: Minimum query latency (in milliseconds) for a profile to be written to `fe.profile.log`. Only queries whose execution time is greater than or equal to this value are logged. Set to 0 to log all profiles (no threshold). Use a positive value to reduce log volume by logging only slower queries.
+-- Introduced in: -
++- Introduced in: v4.2.0
+ 
+ 
+ ### `profile_log_roll_file_index`
+@@ -653,7 +653,7 @@ This topic introduces the following types of FE configurations:
+ - Type: Int
+ - Unit: MB
+ - Is mutable: No
+-- Description: Sets the size threshold (in megabytes) that triggers a size-based rollover of the FE profile log file. This value is used by the Log4j RollingFile SizeBasedTriggeringPolicy for the `ProfileFile` appender; when a profile log exceeds `profile_log_roll_size_mb` it will be rotated. Rotation can also occur by time when `profile_log_roll_interval` is reached — either condition will trigger rollover. Combined with `profile_log_roll_num` and `profile_log_delete_age`, this item controls how many historical profile files are retained and when old files are deleted. Compression of rotated files is controlled by `enable_profile_log_compress`.
++- Description: Sets the size threshold (in megabytes) that triggers a size-based rollover of the FE profile log file. This value is used by the Log4j RollingFile SizeBasedTriggeringPolicy for the `ProfileFile` appender; when a profile log exceeds `profile_log_roll_size_mb` it will be rotated. Rotation can also occur by time when `profile_log_roll_interval` is reached — either condition will trigger rollover. Combined with `profile_log_roll_num` and `profile_log_delete_age`, this item controls how many historical profile files are retained and when old files are deleted.
+ - Introduced in: v3.2.5
+ 
+ ### `qe_slow_log_ms`
+@@ -789,7 +789,7 @@ This topic introduces the following types of FE configurations:
+ - Type: String
+ - Unit: -
+ - Is mutable: No
+-- Description: The severity levels into which system log entries are classified. Valid values: `INFO`, `WARN`, `ERROR`, and `FATAL`.
++- Description: The severity levels into which system log entries are classified. Valid values: `DEBUG`, `INFO`, `WARN`, `ERROR`, and `FATAL`.
+ - Introduced in: -
+ 
+ ### `sys_log_roll_file_index`
+@@ -836,7 +836,7 @@ This topic introduces the following types of FE configurations:
+ - Type: String[]
+ - Unit: -
+ - Is mutable: No
+-- Description: The modules for which StarRocks generates system logs. If this parameter is set to `org.apache.starrocks.catalog`, StarRocks generates system logs only for the catalog module. Separate the module names with a comma (,) and a space.
++- Description: The modules for which StarRocks generates DEBUG-level system logs, in addition to the logs at the level specified by `sys_log_level`. If this parameter is set to `com.starrocks.catalog`, StarRocks also generates DEBUG-level system logs for the catalog module. Separate the module names with a comma (,) and a space.
+ - Introduced in: -
+ 
+ ### `sys_log_warn_modules`
+@@ -1011,7 +1011,7 @@ This topic introduces the following types of FE configurations:
+ - Type: Boolean
+ - Unit: -
+ - Is mutable: No
+-- Introduced in: v4.2.0
++- Introduced in: v4.
+```
+
+**File**: `docs/en/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +8/-8)
+```diff
+@@ -520,7 +520,7 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
+ - Unit: -
+ - Is mutable: Yes
+ - Description: The table or partition list of which compaction is disabled in shared-data mode. The format is `tableId1;partitionId2`, seperated by semicolon, for example, `12345;98765`.
+-- Introduced in: v3.4.4
++- Introduced in: v3.4.5, v3.5.0
+ 
+ ### `lake_compaction_history_size`
+ 
+@@ -563,7 +563,7 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
+ - Type: Long
+ - Unit: -
+ - Is mutable: Yes
+-- Description: The upper limit of the Compaction Score for a partition in a shared-data cluster. `0` indicates no upper limit. This item only takes effect when `lake_enable_ingest_slowdown` is set to `true`. When the Compaction Score of a partition reaches or exceeds this upper limit, incoming loading tasks will be rejected. From v3.3.6 onwards, the default value is changed from `0` to `2000`.
++- Description: The upper limit of the Compaction Score for a partition in a shared-data cluster. `0` indicates no upper limit. This item only takes effect when `lake_enable_ingest_slowdown` is set to `true`. When the Compaction Score of a partition exceeds this upper limit, incoming loading tasks will be rejected. From v3.3.6 onwards, the default value is changed from `0` to `2000`.
+ - Introduced in: v3.2.0
+ 
+ ### `lake_compaction_interval_ms_on_success`
+@@ -602,13 +602,13 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
+ - Description: The Compaction Score threshold that triggers Data Ingestion Slowdown in a shared-data cluster. This configuration only takes effect when `lake_enable_ingest_slowdown` is set to `true`.
+ - Introduced in: v3.2.0
+ 
+-### `lake_publish_version_max_threads`
++### `publish_version_max_threads`
+ 
+ - Default: 512
+ - Type: Int
+ - Unit: -
+ - Is mutable: Yes
+-- Description: The maximum number of threads for Version Publish tasks in a shared-data cluster.
++- Description: The maximum number of threads for Version Publish tasks in a shared-data cluster. From v4.0.5 and v4.1.0 onwards, this item is renamed from `lake_publish_version_max_threads` to `publish_version_max_threads`. The old name is still accepted as an alias.
+ - Introduced in: v3.2.0
+ 
+ ### `lake_publish_version_timeout_ms`
+@@ -799,7 +799,7 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
+ - Type: Int
+ - Unit: Count
+ - Is mutable: Yes
+-- Description: Sets the upper bound on how many consecutive transaction versions may be grouped together when building a publish batch for lake (cloud‑native) tables. The value is passed to the transaction graph batching routine (see getReadyToPublishTxnListBatch) and caps the candidate range size for a TransactionStateBatch. Larger values can increase publish throughput by batching more commits, but increase the scope of an atomic publish (longer visibility latency and larger rollback surface) and may be limited at runtime when versions are not consecutive. Tune according to workload and visibility/latency requirements.
++- Description: Sets the upper bound on how many consecutive transaction versions may be grouped together when building a publish batch for lake (cloud‑native) tables. The value is passed to the transaction graph batching routine (see getReadyToPublishTxnListBatch) and caps the candidate range size for a TransactionStateBatch. Larger values can increase publish throughput by batching more commits, but increase the scope of an atomic publish (longer visibility latency and larger rollback surface) and a batch can end before reaching this limit. A batch ends before a replication or DELETE transaction, which is published on its own, and before a transaction that writes multiple tables when `lake_enable_batch_publish_multi_table` is `false`. It also ends where a partition's versions are not consecutive (for example, because a schema change occupied a version) or its loaded materialized indexes change, and before a transaction on a dropped table. When `lake_enable_batch_publish_retry_freeze` is `true`, a retried batch contains only the transactions of the earlier attempt. Tune according to workload and visibility/latency requirements.
+ - Introduced in: v3.2.0
+ 
+ ### `lake_batch_publish_min_version_num`
+@@ -808,7 +808,7 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
+ - Type: Int
+ - Unit: -
+ - Is mutable: Yes
+-- Description: Deprecated. This parameter no longer takes effect. It is kept only so that an existing setting in **fe.conf** or an `ADMIN SET FRONTEND CONFIG` statement on it does not fail. In shared-data mode, batch publish starts a batch in each round from every committed transaction that no longer waits for another transaction, and publishes the batch whatever its size, with at most `lake_batch_publish_max_version_num` transactions in a batch. Previously, this parameter set the minimum number of transactions in a batch, and a batch 
+```
+
+**File**: `docs/en/administration/configuration/FE_parameters/user_query_loading.md` (modified, +1/-1)
+```diff
+@@ -97,7 +97,7 @@ This topic introduces the following types of FE configurations:
+ - Type: Int
+ - Unit:
+ - Is mutable: Yes
+-- Description: The maximum number of roles a user can have.
++- Description: The maximum number of roles a user can have, including the roles inherited through the roles granted to the user. This limit is checked when a role is granted to a user.
+ - Introduced in: v3.0.0
+ 
+ ### `ranger_hive_catalog_prefix_enabled`
+```
+
+**File**: `docs/en/administration/management/Backup_and_restore.md` (modified, +3/-2)
+```diff
+@@ -433,7 +433,8 @@ The following example restores all tables from the database `sr_hub` in the snap
+ RESTORE SNAPSHOT sr_all_backup
+ FROM test_repo
+ DATABASE sr_hub
+-ON (ALL TABLES);
++ON (ALL TABLES)
++PROPERTIES ("backup_timestamp" = "2024-12-09-10-52-10-940");
+ ```
+ 
+ The following example restores one of all tables from the database `sr_hub` in the snapshot `sr_all_backup`.
+@@ -663,4 +664,4 @@ You can optimize the performance of BACKUP or RESTORE jobs by modifying the foll
+ - If there is an existing table that has a duplicated name with the table to be restored, StarRocks first checks whether or not the schema of the existing table matches that of the table to be restored. If the schemas match, StarRocks overwrites the existing table with the data in the snapshot. If the schema does not match, the RESTORE job fails. You can either rename the table to be restored using the keyword `AS`, or delete the existing table before restoring data.
+ - If the RESTORE job overwrites an existing database, table, or partition, the overwritten data cannot be restored after the job enters the COMMIT phase. If the RESTORE job fails or is canceled at this point, the data may be corrupted and inaccessible. In this case, you can only perform the RESTORE operation again and wait for the job to complete. Therefore, we recommend that you do not restore data by overwriting unless you are sure that the current data is no longer used. The overwrite operation first checks metadata consistency between the snapshot and the existing database, table, or partition. If an inconsistency is detected, the RESTORE operation cannot be performed.
+ - Currently, StarRocks does not support backing up and restoring the configuration data related to user accounts, privileges, and resource groups.
+-- Currently, StarRocks does not support backing up and restoring the Colocate Join relationship among tables.
++- By default, StarRocks does not restore the Colocate Join relationship among tables. From v3.2.10 and v3.3.2 onwards, in shared-nothing clusters, you can set the FE configuration item `enable_colocate_restore` to `true` so that the restored tables keep their Colocate Join relationship. This applies only to tables that do not already exist in the target cluster.
+```
+
+**File**: `docs/en/administration/management/Scale_up_down.md` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@ This topic describes how to scale in and out the node of StarRocks.
+ 
+ StarRocks has two types of FE nodes: Follower and Observer. Followers are involved in election voting and writing. Observers are only used to synchronize logs and extend read performance.
+ 
+-> * The number of follower FEs (including leader) must be odd, and it is recommended to deploy 3 of them to form a High Availability (HA) mode.
++> * We recommend that the number of follower FEs (including leader) be odd, and that 3 of them be deployed to form a High Availability (HA) mode.
+ > * When the FE is in high availability deployment (1 leader, 2 followers), it is recommended to add Observer FEs for better read performance. 
+ 
+ ### Scale FE out
+```
+
+**File**: `docs/en/administration/management/audit_loader.md` (modified, +1/-1)
+```diff
+@@ -79,7 +79,7 @@ After a partition is created, you can move on to the next step.
+ 
+ :::note
+ 
+-If the table already exists from an earlier version, add the columns that were introduced since, otherwise the corresponding fields are silently dropped when the audit logs are loaded. For example, `errorMessage` is introduced in v4.2.0:
++If the table already exists from an earlier version, add the columns that were introduced since, otherwise the corresponding fields are silently dropped when the audit logs are loaded. For example, `errorMessage` is introduced in v4.1.6:
+ 
+ ```SQL
+ ALTER TABLE starrocks_audit_db__.starrocks_audit_tbl__
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #83266** (closed): [UT] Fix URI-encoded BE tab assertion in proc profile SQL test (@starrocks-bot[bot])
-- **PR #83265** (closed): [BugFix] Fail FE startup when the BDB environment becomes invalid (@starrocks-bot[bot])
-- **PR #83264** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
-- **PR #83263** (closed): [BugFix] Keep version-valid replicas queryable during balance (@starrocks-bot[bot])
-- **PR #83262** (2026-11-14): [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (backport #83259) (@mergify[bot])
-- **PR #83261** (2026-11-14): [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (backport #83259) (@mergify[bot])
+- **PR #83303** (2026-11-15): [BugFix] Skip no-op raw-keyed external statistics cleanup DELETE (backport #83000) (@mergify[bot])
+- **PR #83302** (2026-11-15): [BugFix] Skip no-op raw-keyed external statistics cleanup DELETE (backport #83000) (@mergify[bot])
+- **PR #83301** (2026-11-15): [BugFix] Skip no-op raw-keyed external statistics cleanup DELETE (backport #83000) (@mergify[bot])
+- **PR #83299** (2026-11-15): [BugFix][RB-1637] Extrapolate truncated Iceberg ANALYZE samples despite many position deletes (backport #83289) (@mergify[bot])
+- **PR #83298** (2026-11-15): [BugFix][RB-1637] Extrapolate truncated Iceberg ANALYZE samples despite many position deletes (backport #83289) (@mergify[bot])
+- **PR #83297** (2026-11-15): [BugFix][RB-1538] Fix Iceberg/Hive/Paimon view resolution for views created by other engines (backport #83290) (@mergify[bot])
 
 ---
 
@@ -1948,33 +2415,37 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically acro
+## X. [BugFix] Send the per-session token for Iceberg REST catalogs using security=jwt
 
 **RULE**:
-When implementing operations in `be/src/formats/parquet/encoding_plain.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/rest/OAuth2SecurityConfig.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72c16b08`: [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `277e3f4c`: [BugFix] Send the per-session token for Iceberg REST catalogs using security=jwt. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/formats/parquet/encoding_plain.h`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/rest/OAuth2SecurityConfig.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            // This runs once per page into the same column. An exact reserve(final_offset) would
-            // reallocate and copy the whole column on every page (quadratic for large values),
-            // so grow geometrically like the vector itself would.
-            if (bytes.capacity() < final_offset) {
-                bytes.reserve(std::max(final_offset, 2 * bytes.capacity()));
-            }
+        // check OAuth2SecurityConfig is valid. JWT is exempt from the
+        // credential/token-present check: in JWT mode there is deliberately no static
+        // token or credential in the catalog properties. The token is the logged-in
+        // user's JWT, supplied per session at request time (see
+        // IcebergRESTCatalog.buildContext). Applying the OAUTH2 guard here would
+        // discard the JWT security mode entirely and fall back to NONE, so the
+        // per-session token would never be attached to REST calls.
+        if (config.getSecurity() != JWT
+                && (!config.credentialOrTokenPresent() || !config.scopePresentOnlyWithCredential())) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-            binary_column->get_bytes().reserve(final_offset);
+        // check OAuth2SecurityConfig is valid
+        if (!config.credentialOrTokenPresent() || !config.scopePresentOnlyWithCredential()) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72c16b08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `277e3f4c` are properly handled with clean fallback behavior.

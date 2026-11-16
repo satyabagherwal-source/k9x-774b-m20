@@ -10202,3 +10202,5 @@
 | `CYCLE-20261116-ZFVT` | `2026-11-16T00:56:42.281Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8678` | Yes (`ef3d6562...`) |
 | `CYCLE-20261116-ZN8B` | `2026-11-16T00:56:51.803Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8679` | Yes (`9d8fa97c...`) |
 | `CYCLE-20261116-V4NQ` | `2026-11-16T01:21:20.726Z` | `adobe/structured-data-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8680` | Yes (`2db818dc...`) |
+| `CYCLE-20261116-9SBJ` | `2026-11-16T01:32:44.575Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8681` | Yes (`729d4e13...`) |
+| `CYCLE-20261116-A2LJ` | `2026-11-16T01:32:57.895Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8682` | Yes (`8ed6e559...`) |
