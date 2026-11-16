@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T22:47:42.524Z",
+  "last_updated": "2026-11-16T22:55:52.166Z",
   "total_verified_learnings": 8808,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19414,
+  "total_items": 19416,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218043,13 +218043,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZK1K-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3W45-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5918d274ef5fe9945589145de033eb0c6df9a1705d167686ca4a9d95ed7181f",
+      "content_hash": "417fdc5c93bb1c9d2263563e97778e12b81a9db348bcc56408d3482975e66b8b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T21:28:30.776Z"
+      "persisted_at": "2026-11-16T22:55:51.893Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218059,9 +218059,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c967a12b1e5600bbad48bcc3091597a24f7c088713daa5c78ba3b3b5050d21dc",
+      "content_hash": "4cb3f97ca3689991699f44560e16cd50cb1f7686231b39fd2f965dcb03023225",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T21:28:30.923Z"
+      "persisted_at": "2026-11-16T22:55:52.013Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218071,9 +218071,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "1fabffba774a380f2dac8e8331c7bd2746a4f4582b7f1ccbf21a80ceafe4fd05",
+      "content_hash": "090a176f388607744ea1c9b6c7b7a50e1aac968ff75b7e02c43eec833be884f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:28:31.075Z"
+      "persisted_at": "2026-11-16T22:55:52.166Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -221851,14 +221851,19 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "e4d319d7",
-      "content_hash": "0544bb2b619d8d14d67701c79391860830f0f991c18dce6b07b97b0d9f0a4d4a",
+      "source_version": "5f79fbc6",
+      "content_hash": "58ed5bccba2e7419f390c49b217bb14adc3d6d7281f1f78aab27ec54f1cf63ab",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
         {
           "number": 8431,
           "title": "allow large filesync pattern lists",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8806,
+          "title": "Empirical Invariant Guard in grpc.go",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -221867,7 +221872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:32:22.936Z",
+      "verified_at": "2026-11-16T22:55:47.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221909,10 +221914,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "repository": "moby/buildkit",
-      "source_version": "e4d319d7",
-      "content_hash": "b62fbf8c51524fe229bbe3f56d5272a3eb54f632d064a08b384bf08b9f4fa4f6",
+      "source_version": "5f79fbc6",
+      "content_hash": "dcdfb2b30e99f1f612637789f1c60f4945ad4eabfd39c8a9bf4dad70d9578707",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T03:32:23.373Z"
+      "persisted_at": "2026-11-16T22:55:47.541Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
@@ -221921,10 +221926,10 @@
       "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
       "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
       "repository": "moby/buildkit",
-      "source_version": "e4d319d7",
-      "content_hash": "7a2465296a4b695cfbf119c83f1f738ffe5f348f199fd0a2e456a265edaddb45",
+      "source_version": "5f79fbc6",
+      "content_hash": "a2a272d0a0a6388e920262303d4287ddce8bb74f0470f2d490bfe82bd0d25c62",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:32:23.473Z"
+      "persisted_at": "2026-11-16T22:55:47.694Z"
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -222042,9 +222047,9 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "0214f6d495e4b3e5433882a5d817f32642b2c2f397fd253fd87e796f8beff851",
+      "content_hash": "8337afe799d2023b399bcdeae01f36ebd26ee0a9bde671ac8870fd1c049e1b13",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T03:33:00.884Z"
+      "persisted_at": "2026-11-16T22:55:50.840Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings",
@@ -222054,9 +222059,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for moby-buildkit-learnings",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "841ce323ab2008f768b413e1d3a5187af4491336590f30e323f63890b70a7f8e",
+      "content_hash": "af100651eeb2e5bc7a0423aa7e20cf6baaaebb99cfa88fc697fce7fe556a6f8c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:33:01.002Z"
+      "persisted_at": "2026-11-16T22:55:50.962Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -226828,13 +226833,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-B5WC-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3VOS-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e0a54d47242c2a5cfe5534aece67fbc82e4fc438891d2d5566917647a94fe4c",
+      "content_hash": "4245ca11717c8542161280d9327f2942b826802228ea4d10046b7469bf1d09c1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T05:17:45.757Z"
+      "persisted_at": "2026-11-16T22:55:51.341Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226844,9 +226849,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "44ccd73b5a8fa56c9e2af08352abb1a2b5ef9116df58ff23fe846b67a3b75cdf",
+      "content_hash": "b2a1d54c993edbe5073d5d82de189451255eb65e947ed7c06b735e3fb25dcb23",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T05:17:45.840Z"
+      "persisted_at": "2026-11-16T22:55:51.455Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226856,9 +226861,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "90550df94bb18c2f472f51f471bb3a350e5f2135edb2d257ce98c9157e2fdfd8",
+      "content_hash": "1bbbdf3cd8b8ba249164644e0b5517ebdae230dec555f112e86f5eea5109ff8f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:17:45.926Z"
+      "persisted_at": "2026-11-16T22:55:51.578Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -258668,6 +258673,32 @@
       "content_hash": "6e8d77fd5612cabd32c687e598c6d397fbd9210d3a4f9ff1850322717480cfa2",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T22:47:42.058Z"
+    },
+    "rule-8806": {
+      "learning_id": "rule-8806",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8806,
+      "title": "Empirical Invariant Guard in grpc.go",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "5f79fbc6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T22:55:47.053Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-grpc-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-grpc-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3V7F-empirical-invariant-guard-in-grpc-go.md",
+      "title": "Empirical Invariant Guard in grpc.go",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d96176a1270cc6d5e133f998e59ee62ceb3eb1aeb22ea44b455c812b13ce152",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T22:55:50.723Z"
     }
   },
   "ai-builder-brain": {

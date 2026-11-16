@@ -10392,3 +10392,4 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `c5bdfc45` | Multi-dimensional audit evidence | 2026-11-16T22:47:29.615Z |
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `c0d4c900` | Multi-dimensional audit evidence | 2026-11-16T22:47:32.086Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `a5b5d7de` | Multi-dimensional audit evidence | 2026-11-16T22:47:37.886Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `5f79fbc6` | Multi-dimensional audit evidence | 2026-11-16T22:55:47.216Z |

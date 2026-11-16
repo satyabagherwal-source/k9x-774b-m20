@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T22:47:37.890Z",
-  "total_cycles_completed": 9946,
-  "total_learnings_persisted": 9946,
-  "total_rules_promoted": 9542,
+  "last_updated": "2026-11-16T22:55:47.222Z",
+  "total_cycles_completed": 9947,
+  "total_learnings_persisted": 9947,
+  "total_rules_promoted": 9543,
   "history": [
-    {
-      "timestamp": "2026-11-15T19:04:03.122Z",
-      "repository": "Diffuspace/Clover-35B-A3B-Preview",
-      "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T19:12:00.650Z",
       "repository": "pyannote/speaker-diarization-3.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T22:47:37.890Z",
       "repository": "siderolabs/talos",
       "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:55:47.222Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

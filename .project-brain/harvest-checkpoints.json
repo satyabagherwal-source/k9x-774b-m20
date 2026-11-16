@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T22:47:37.894Z",
+  "last_updated": "2026-11-16T22:55:47.226Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "0544bb2b619d8d14d67701c79391860830f0f991c18dce6b07b97b0d9f0a4d4a",
-      "verified_at": "2026-11-14T03:32:23.114Z",
+      "content_hash": "58ed5bccba2e7419f390c49b217bb14adc3d6d7281f1f78aab27ec54f1cf63ab",
+      "verified_at": "2026-11-16T22:55:47.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:32:23.115Z"
+      "last_updated": "2026-11-16T22:55:47.225Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",

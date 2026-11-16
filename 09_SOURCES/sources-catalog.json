@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "e4d319d7",
+    "sourceVersion": "5f79fbc6",
     "license": "Apache-2.0",
-    "contentHash": "0544bb2b619d8d14d67701c79391860830f0f991c18dce6b07b97b0d9f0a4d4a",
-    "lastHarvestedAt": "2026-11-14T03:32:23.106Z",
+    "contentHash": "58ed5bccba2e7419f390c49b217bb14adc3d6d7281f1f78aab27ec54f1cf63ab",
+    "lastHarvestedAt": "2026-11-16T22:55:47.216Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {

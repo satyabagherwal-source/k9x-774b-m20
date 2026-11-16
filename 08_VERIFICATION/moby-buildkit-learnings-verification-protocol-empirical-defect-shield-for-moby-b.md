@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T03:33:00.669Z",
+  "timestamp": "2026-11-16T22:55:50.619Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-moby-buildkit-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [moby-buildkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T03:33:00.669Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T22:55:50.619Z`  
 > **Learning ID**: `LEARN-EVO-moby-buildkit-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `e4d319d7`  
+> **Source Version**: `5f79fbc6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:32:22.230Z  
+> **Timestamp**: 2026-11-16T22:55:46.325Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:32:22.224Z  
+> **Harvest Timestamp**: 2026-11-16T22:55:46.172Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10417 stars
+- **Stars / Engagement**: 10425 stars
 
 ---
 
@@ -2320,11 +2320,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7426** (2026-11-16): **session: clarify reconnect failures and test disconnect cleanup**
+  *Symptoms*: relates to https://github.com/moby/buildkit/issues/7409  The session dialer gives gRPC a single established connection and rejects subsequent dial attempts. When that connection fails, the resulting "only one connection allowed" error can misleadingly suggest that concurrent clients have exhausted a shared connection limit. Replace it with "session connection cannot be re-established" to describe the actual restriction without changing reconnection or teardown behavior.  Add a regression test that completes a health RPC before breaking the connection, then verifies that health monitoring cancels the session, the handler exits and removes it from the manager, and the gRPC client reaches shutdown.
+
 - **Issue #7420** (2026-11-13): **session: allow large filesync pattern lists in go1.27**
   *Symptoms*: Lift Go 1.27's header value count limit for session connections while preserving the header byte limit and compatibility with earlier Go versions.  Add regression coverage for large include and exclude pattern lists.  fixes https://github.com/docker/buildx/issues/4209  @viiqswim
-
-- **Issue #7419** (2026-11-13): **exporter: skip empty attestation manifests**
-  *Symptoms*: - closes https://github.com/moby/buildkit/issues/7411 - closes https://github.com/moby/buildkit/pull/7417  Skip attestation export when unbundling produces no entries. An empty bundle has nothing to attest, so avoid writing its manifest and config.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2341,445 +2341,131 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `447bca32` (2026-11-13)
-**Commit Message**: fix(session): allow large filesync pattern lists
+### Incident Patch 1: `5f79fbc6` (2026-11-16)
+**Commit Message**: Merge pull request #7426 from crazy-max/session-disconnect-cleanup
 
-Lift Go 1.27's header value count limit for session connections while
-preserving the header byte limit and compatibility with earlier Go versions.
-
-Add regression coverage for large include and exclude pattern lists.
-
-Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
-
-**File**: `client/client_local_source_test.go` (modified, +59/-0)
-```diff
-@@ -433,3 +433,62 @@ func testParallelLocalBuilds(t *testing.T, sb integration.Sandbox) {
- 	err = eg.Wait()
- 	require.NoError(t, err)
- }
-+
-+// testLocalSourceManyPatterns checks that filesync patterns are not limited by
-+// the HTTP/2 header value count. Every pattern is sent as a separate gRPC
-+// metadata value and Go 1.27 net/http rejects requests with more than 500 of
-+// them by default.
-+func testLocalSourceManyPatterns(t *testing.T, sb integration.Sandbox) {
-+	c, err := New(sb.Context(), sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	dir := integration.Tmpdir(
-+		t,
-+		fstest.CreateFile("foo", []byte("foo"), 0600),
-+		fstest.CreateFile("ignored-1", []byte("ignored"), 0600),
-+	)
-+
-+	const n = 1000
-+	excludes := make([]string, 0, n)
-+	includes := make([]string, 0, n+1)
-+	for i := 1; i <= n; i++ {
-+		excludes = append(excludes, fmt.Sprintf("ignored-%d", i))
-+		includes = append(includes, fmt.Sprintf("included-%d", i))
-+	}
-+	includes = append(includes, "foo")
-+
-+	for _, tc := range []struct {
-+		name string
-+		opt  llb.LocalOption
-+	}{
-+		{name: "exclude", opt: llb.ExcludePatterns(excludes)},
-+		{name: "include", opt: llb.IncludePatterns(includes)},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			def, err := llb.Local("mylocal", tc.opt).Marshal(sb.Context())
-+			require.NoError(t, err)
-+
-+			destDir := t.TempDir()
-+			_, err = c.Solve(sb.Context(), def, SolveOpt{
-+				Exports: []ExportEntry{
-+					{
-+						Type:      ExporterLocal,
-+						OutputDir: destDir,
-+					},
-+				},
-+				LocalMounts: map[string]fsutil.FS{
-+					"mylocal": dir,
-+				},
-+			}, nil)
-+			require.NoError(t, err)
-+
-+			dt, err := os.ReadFile(filepath.Join(destDir, "foo"))
-+			require.NoError(t, err)
-+			require.Equal(t, "foo", string(dt))
-+
-+			_, err = os.Stat(filepath.Join(destDir, "ignored-1"))
-+			require.ErrorIs(t, err, os.ErrNotExist)
-+		})
-+	}
-+}
-```
-
-**File**: `client/client_test.go` (modified, +1/-0)
-```diff
-@@ -192,6 +192,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
- 	testLocalSymlinkEscape,
- 	testMetadataOnlyLocal,
- 	testParallelLocalBuilds,
-+	testLocalSourceManyPatterns,
- 
- 	// client_mergeop_test.go
- 	testMergeOp,
-```
+session: clarify reconnect failures and test disconnect cleanup
 
 **File**: `session/grpc.go` (modified, +1/-1)
 ```diff
-@@ -63,7 +63,7 @@ func serve(ctx context.Context, grpcServer *grpc.Server, conn net.Conn) {
- 		conn.Close()
- 	}()
- 	bklog.G(ctx).Debugf("serving grpc connection")
--	(&http2.Server{}).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
-+	newHTTP2Server(ctx).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
- }
- 
- func grpcClientConn(ctx context.Context, conn net.Conn, opts map[string][]string) (context.Context, *grpc.ClientConn, error) {
+@@ -70,7 +70,7 @@ func grpcClientConn(ctx context.Context, conn net.Conn, opts map[string][]string
+ 	var dialCount atomic.Int64
+ 	dialer := grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
+ 		if c := dialCount.Add(1); c > 1 {
+-			return nil, errors.New("only one connection allowed")
++			return nil, errors.New("session connection cannot be re-established")
+ 		}
+ 		return conn, nil
+ 	})
 ```
 
-**File**: `session/http2server_go127.go` (added, +29/-0)
+**File**: `session/grpc_test.go` (added, +71/-0)
 ```diff
-@@ -0,0 +1,29 @@
-+//go:build go1.27
-+
+@@ -0,0 +1,71 @@
 +package session
 +
 +import (
 +	"context"
-+	"math"
-+	"net/http"
++	"net"
++	"testing"
++	"time"
 +
-+	"github.com/moby/buildkit/util/bklog"
-+	"golang.org/x/net/http2"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/connectivity"
++	"google.golang.org/grpc/health"
++	"google.golang.org/grpc/health/grpc_health_v1"
 +)
 +
-+// newHTTP2Server returns the HTTP/2 server for session connections.
-+//
-+// Since Go 1.27, x/net/http2 is backed by net/http, which limits requests to
-+// http.DefaultMaxHeaderValueCount (500) header values. Session metadata, such
-+// as filesync include/exclude patterns, uses one value per item and can exceed
-+// that. The total header size is still bounded by http.DefaultMaxHeaderBytes.
-+func newHTTP2Server(ctx context.Context) *http2.Server { //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
-+	h2 := &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
-+	// h1 only carries config for h2 connections and never serves on its own.
-+	h1 := &http.Server{MaxHeaderValueCount: math.MaxInt}  //nolint:gosec // G112: session streams are long-lived, no read timeouts.
-+	if err := http2.ConfigureServer(h1, h2); err != nil { //nolint:staticcheck // h1 is never served, Protocols does not apply.
-+		bklog.G(ctx).WithError(err).Warn("failed to configure session http2 server")
-+		return &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++func TestSessionDisconnectCleanup(t *testing.T) {
++	t.Parallel()
++
++	ctx, cancel := context.WithCancelCause(t.Context())
++	defer cancel(context.Canceled)
++	manager, err := NewManager()
++	require.NoError(t, err)
++
++	clientConn, serverConn := net.Pipe()
++	defer clientConn.Close()
++	defer serverConn.Close()
++	server := grpc.NewServer()
++	defer server.Stop()
++	grpc_health_v1.RegisterHealthServer(server, health.NewServer())
++	go serve(ctx, server, serverConn)
++
++	done := make(chan error, 1)
++	go func() {
++		done <- manager.HandleConn(ctx, clientConn, map[string][]string{
++			headerSessionID:                  {"disconnect-test"},
++			headerSessionHealthCustomTimeout: {"1000"},
++		})
++	}()
++
++	checkCtx, checkCancel := context.WithTimeoutCause(ctx, 10*time.Second, context.DeadlineExceeded)
++	defer checkCancel()
++	caller, err := manager.Get(checkCtx, "disconnect-test", false)
++	require.NoError(t, err)
++	require.NotNil(t, caller)
++	cc := caller.Conn()
++	callerCtx := caller.Context(ctx)
++	_, err = grpc_health_v1.NewHealthClient(cc).Check(checkCtx, &grpc_health_v1.HealthCheckRequest{}, grpc.WaitForReady(true))
++	require.NoError(t, err)
++
++	// Break an established transport without canceling the handler's context.
++	require.NoError(t, serverConn.Close())
++	select {
++	case err := <-done:
++		require.NoError(t, err)
++	case <-time.After(10 * time.Second):
++		t.Fatal("session handler did not exit after disconnect")
 +	}
-+	return h2
-+}
-```
-
-**File**: `session/http2server_legacy.go` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+//go:build !go1.27
-+
-+package session
-+
-+import (
-+	"context"
-+
-+	"golang.org/x/net/http2"
-+)
-+
-+// newHTTP2Server returns the HTTP/2 server for session connections. Before Go
-+// 1.27 x/net/http2 has no header value count limit, so no extra setup is needed.
-+func newHTTP2Server(_ context.Context) *http2.Server { //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
-+	return &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	require.NoError(t, context.Cause(ctx))
++	select {
++	case <-callerCtx.Done():
++		require.ErrorContains(t, context.Cause(callerCtx), "session healthcheck failed fatally")
++	case <-time.After(5 * time.Second):
++		t.Fatal("session context was not canceled")
++	}
++	caller, err = manager.Get(ctx, "disconnect-test", true)
++	require.NoError(t, err)
++	require.Nil(t, caller)
++	require.Eventually(t, func() bool {
++		return cc.GetState() == connectivity.Shutdown
++	}, 5*time.Second, 10*time.Millisecond)
 +}
 ```
 
 ---
 
-### Incident Patch 2: `e4d319d7` (2026-11-13)
-**Commit Message**: Merge pull request #7419 from crazy-max/fix-attestation-empty-layers
+### Incident Patch 2: `21bb455f` (2026-11-16)
+**Commit Message**: session: clarify the error when a connection cannot be re-established
 
-exporter: skip empty attestation manifests
+Describe the session dialer's inability to reconnect instead of implying
+that callers have exceeded a shared connection limit. This changes only
+the diagnostic message, not session teardown or reconnection behavior.
 
-**File**: `client/client_export_metadata_test.go` (modified, +79/-0)
-```diff
-@@ -195,6 +195,85 @@ func testAttestationBundle(t *testing.T, sb integration.Sandbox) {
- 	}
- }
- 
-+func testAttestationEmptyBundle(t *testing.T, sb integration.Sandbox) {
-+	workers.CheckFeatureCompat(t, sb, workers.FeatureOCIExporter)
-+	requiresLinux(t)
-+	c, err := New(sb.Context(), sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	frontend := func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
-+		p := platforms.MustParse("linux/amd64")
-+		pk := platforms.Format(p)
-+		// An empty bundle unpacks to zero statements in the image exporter.
-+		def, err := llb.Scratch().File(llb.Mkdir("/bundle", 0700)).Marshal(ctx, llb.Platform(p))
-+		if err != nil {
-+			return nil, err
-+		}
-+		r, err := c.Solve(ctx, gateway.SolveRequest{Definition: def.ToPB()})
-+		if err != nil {
-+			return nil, err
-+		}
-+		ref, err := r.SingleRef()
-+		if err != nil {
-+			return nil, err
-+		}
-+		res := gateway.NewResult()
-+		res.AddRef(pk, ref)
-+		res.AddAttestation(pk, gateway.Attestation{
-+			Kind: gatewaypb.AttestationKind_Bundle,
-+			Ref:  ref,
-+			Path: "/bundle",
-+		})
-+		dt, err := json.Marshal(exptypes.Platforms{
-+			Platforms: []exptypes.Platform{
-+				{
-+					ID:       pk,
-+					Platform: p,
-+				},
-+			},
-+		})
-+		if err != nil {
-+			return nil, err
-+		}
-+		res.AddMeta(exptypes.ExporterPlatformsKey, dt)
-+		return res, nil
-+	}
-+
-+	for _, ociArtifact := range []bool{false, true} {
-+		t.Run("oci-artifact="+strconv.FormatBool(ociArtifact), func(t *testing.T) {
-+			out := filepath.Join(t.TempDir(), "out.tar")
-+			outW, err := os.Create(out)
-+			require.NoError(t, err)
-+			_, err = c.Build(sb.Context(), SolveOpt{
-+				Exports: []ExportEntry{
-+					{
-+						Type: ExporterOCI,
-+						Attrs: map[string]string{
-+							"oci-artifact": strconv.FormatBool(ociArtifact),
-+						},
-+						Output: fixedWriteCloser(outW),
-+					},
-+				},
-+			}, "", frontend, nil)
-+			require.NoError(t, err)
-+			dt, err := os.ReadFile(out)
-+			require.NoError(t, err)
-+			m, err := testutil.ReadTarToMap(dt, false)
-+			require.NoError(t, err)
-+			var index ocispecs.Index
-+			require.NoError(t, json.Unmarshal(m[ocispecs.ImageIndexFile].Data, &index))
-+			require.Len(t, index.Manifests, 1)
-+			require.NoError(t, json.Unmarshal(m[ocispecs.ImageBlobsDir+"/sha256/"+index.Manifests[0].Digest.Hex()].Data, &index))
-+			require.Len(t, index.Manifests, 1)
-+			desc := index.Manifests[0]
-+			require.NotNil(t, desc.Platform)
-+			require.Equal(t, "linux/amd64", platforms.Format(*desc.Platform))
-+			require.NotContains(t, desc.Annotations, attestation.DockerAnnotationReferenceType)
-+		})
-+	}
-+}
-+
- func testAttestationDefaultSubject(t *testing.T, sb integration.Sandbox) {
- 	workers.CheckFeatureCompat(t, sb, workers.FeatureDirectPush)
- 	c, err := New(sb.Context(), sb.Address())
-```
-
-**File**: `client/client_test.go` (modified, +1/-0)
-```diff
-@@ -116,6 +116,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
- 
- 	// client_export_metadata_test.go
- 	testAttestationBundle,
-+	testAttestationEmptyBundle,
- 	testAttestationDefaultSubject,
- 	testExportAnnotations,
- 	testExportAnnotationsMediaTypes,
-```
-
-**File**: `exporter/containerimage/writer.go` (modified, +3/-0)
-```diff
-@@ -319,6 +319,9 @@ func (ic *ImageWriter) Commit(ctx context.Context, inp *exporter.Source, session
- 			if err != nil {
- 				return nil, nil, err
- 			}
-+			if len(attestations) == 0 {
-+				continue
-+			}
- 
- 			eg, ctx2 := errgroup.WithContext(ctx)
- 			for i, att := range attestations {
-```
-
----
-
-### Incident Patch 3: `f24a1f50` (2026-11-13)
-**Commit Message**: Merge pull request #7420 from tonistiigi/go127-big-pattern-fix
-
-session: allow large filesync pattern lists in go1.27
-
-**File**: `client/client_local_source_test.go` (modified, +59/-0)
-```diff
-@@ -433,3 +433,62 @@ func testParallelLocalBuilds(t *testing.T, sb integration.Sandbox) {
- 	err = eg.Wait()
- 	require.NoError(t, err)
- }
-+
-+// testLocalSourceManyPatterns checks that filesync patterns are not limited by
-+// the HTTP/2 header value count. Every pattern is sent as a separate gRPC
-+// metadata value and Go 1.27 net/http rejects requests with more than 500 of
-+// them by default.
-+func testLocalSourceManyPatterns(t *testing.T, sb integration.Sandbox) {
-+	c, err := New(sb.Context(), sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	dir := integration.Tmpdir(
-+		t,
-+		fstest.CreateFile("foo", []byte("foo"), 0600),
-+		fstest.CreateFile("ignored-1", []byte("ignored"), 0600),
-+	)
-+
-+	const n = 1000
-+	excludes := make([]string, 0, n)
-+	includes := make([]string, 0, n+1)
-+	for i := 1; i <= n; i++ {
-+		excludes = append(excludes, fmt.Sprintf("ignored-%d", i))
-+		includes = append(includes, fmt.Sprintf("included-%d", i))
-+	}
-+	includes = append(includes, "foo")
-+
-+	for _, tc := range []struct {
-+		name string
-+		opt  llb.LocalOption
-+	}{
-+		{name: "exclude", opt: llb.ExcludePatterns(excludes)},
-+		{name: "include", opt: llb.IncludePatterns(includes)},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			def, err := llb.Local("mylocal", tc.opt).Marshal(sb.Context())
-+			require.NoError(t, err)
-+
-+			destDir := t.TempDir()
-+			_, err = c.Solve(sb.Context(), def, SolveOpt{
-+				Exports: []ExportEntry{
-+					{
-+						Type:      ExporterLocal,
-+						OutputDir: destDir,
-+					},
-+				},
-+				LocalMounts: map[string]fsutil.FS{
-+					"mylocal": dir,
-+				},
-+			}, nil)
-+			require.NoError(t, err)
-+
-+			dt, err := os.ReadFile(filepath.Join(destDir, "foo"))
-+			require.NoError(t, err)
-+			require.Equal(t, "foo", string(dt))
-+
-+			_, err = os.Stat(filepath.Join(destDir, "ignored-1"))
-+			require.ErrorIs(t, err, os.ErrNotExist)
-+		})
-+	}
-+}
-```
-
-**File**: `client/client_test.go` (modified, +1/-0)
-```diff
-@@ -192,6 +192,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
- 	testLocalSymlinkEscape,
- 	testMetadataOnlyLocal,
- 	testParallelLocalBuilds,
-+	testLocalSourceManyPatterns,
- 
- 	// client_mergeop_test.go
- 	testMergeOp,
-```
+Signed-off-by: CrazyMax <[REDACTED_EMAIL]>
 
 **File**: `session/grpc.go` (modified, +1/-1)
 ```diff
-@@ -63,7 +63,7 @@ func serve(ctx context.Context, grpcServer *grpc.Server, conn net.Conn) {
- 		conn.Close()
- 	}()
- 	bklog.G(ctx).Debugf("serving grpc connection")
--	(&http2.Server{}).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
-+	newHTTP2Server(ctx).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
- }
- 
- func grpcClientConn(ctx context.Context, conn net.Conn, opts map[string][]string) (context.Context, *grpc.ClientConn, error) {
-```
-
-**File**: `session/http2server_go127.go` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+//go:build go1.27
-+
-+package session
-+
-+import (
-+	"context"
-+	"math"
-+	"net/http"
-+
-+	"github.com/moby/buildkit/util/bklog"
-+	"golang.org/x/net/http2"
-+)
-+
-+// newHTTP2Server returns the HTTP/2 server for session connections.
-+//
-+// Since Go 1.27, x/net/http2 is backed by net/http, which limits requests to
-+// http.DefaultMaxHeaderValueCount (500) header values. Session metadata, such
-+// as filesync include/exclude patterns, uses one value per item and can exceed
-+// that. The total header size is still bounded by http.DefaultMaxHeaderBytes.
-+func newHTTP2Server(ctx context.Context) *http2.Server { //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
-+	h2 := &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
-+	// h1 only carries config for h2 connections and never serves on its own.
-+	h1 := &http.Server{MaxHeaderValueCount: math.MaxInt}  //nolint:gosec // G112: session streams are long-lived, no read timeouts.
-+	if err := http2.ConfigureServer(h1, h2); err != nil { //nolint:staticcheck // h1 is never served, Protocols does not apply.
-+		bklog.G(ctx).WithError(err).Warn("failed to configure session http2 server")
-+		return &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
-+	}
-+	return h2
-+}
-```
-
-**File**: `session/http2server_legacy.go` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+//go:build !go1.27
-+
-+package session
-+
-+import (
-+	"context"
-+
-+	"golang.org/x/net/http2"
-+)
-+
-+// newHTTP2Server returns the HTTP/2 server for session connections. Before Go
-+// 1.27 x/net/http2 has no header value count limit, so no extra setup is needed.
-+func newHTTP2Server(_ context.Context) *http2.Server { //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
-+	return &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
-+}
+@@ -70,7 +70,7 @@ func grpcClientConn(ctx context.Context, conn net.Conn, opts map[string][]string
+ 	var dialCount atomic.Int64
+ 	dialer := grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
+ 		if c := dialCount.Add(1); c > 1 {
+-			return nil, errors.New("only one connection allowed")
++			return nil, errors.New("session connection cannot be re-established")
+ 		}
+ 		return conn, nil
+ 	})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7426** (2026-11-16): session: clarify reconnect failures and test disconnect cleanup (@crazy-max)
 - **PR #7420** (2026-11-13): session: allow large filesync pattern lists in go1.27 (@tonistiigi)
 - **PR #7419** (2026-11-13): exporter: skip empty attestation manifests (@crazy-max)
 - **PR #7417** (closed): fix attestation manifest serializing layers as null with zero statements (@ToniAdreal)
+- **PR #7413** (2026-11-15): Dockerfile: update runc binary to v1.5.3 (@thaJeztah)
 - **PR #7407** (2026-11-11): [v0.35] vendor: update policy helpers to 6acab594b423 (@tonistiigi)
-- **PR #7406** (2026-11-11): vendor: update policy helpers to 6acab594b423 (@tonistiigi)
-- **PR #7405** (2026-11-12): build(deps): bump vmactions/freebsd-vm from 1.5.9 to 1.6.0 (@dependabot[bot])
 
 ---
 
@@ -2799,68 +2485,31 @@ session: allow large filesync pattern lists in go1.27
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. session): allow large filesync pattern lists
+## X. Empirical Invariant Guard in grpc.go
 
 **RULE**:
-When implementing operations in `client/client_local_source_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `session/grpc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `447bca32`: session): allow large filesync pattern lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f79fbc6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_local_source_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `session/grpc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-// testLocalSourceManyPatterns checks that filesync patterns are not limited by
-// the HTTP/2 header value count. Every pattern is sent as a separate gRPC
-// metadata value and Go 1.27 net/http rejects requests with more than 500 of
-// them by default.
-func testLocalSourceManyPatterns(t *testing.T, sb integration.Sandbox) {
-	c, err := New(sb.Context(), sb.Address())
-	require.NoError(t, err)
-	defer c.Close()
-
-	dir := integration.Tmpdir(
-		t,
-		fstest.CreateFile("foo", []byte("foo"), 0600),
-		fstest.CreateFile("ignored-1", []byte("ignored"), 0600),
-	)
-
-	const n = 1000
-	excludes := make([]string, 0, n)
-	includes := make([]string, 0, n+1)
-	for i := 1; i <= n; i++ {
-		excludes = append(excludes, fmt.Sprintf("ignored-%d", i))
-		includes = append(includes, fmt.Sprintf("included-%d", i))
-	}
-	includes = append(includes, "foo")
-
-	for _, tc := range []struct {
-		name string
-		opt  llb.LocalOption
-	}{
-		{name: "exclude", opt: llb.ExcludePatterns(excludes)},
-		{name: "include", opt: llb.IncludePatterns(includes)},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			def, err := llb.Local("mylocal", tc.opt).Marshal(sb.Context())
-			require.NoError(t, err)
-
-			destDir := t.TempDir()
-			_, err = c.Solve
+			return nil, errors.New("session connection cannot be re-established")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+			return nil, errors.New("only one connection allowed")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `447bca32` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f79fbc6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

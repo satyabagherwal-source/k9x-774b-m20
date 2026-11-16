@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T22:47:41.725Z",
+  "updated_at": "2026-11-16T22:55:50.519Z",
   "stats": {
-    "total_discovered": 4477,
-    "approved_pending_harvest": 4212,
+    "total_discovered": 4478,
+    "approved_pending_harvest": 4213,
     "harvested_count": 0,
     "rejected_count": 265,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4214,
+      "COMMUNITY_AND_EXPERT": 4215,
       "OFFICIAL_DOCUMENTATION": 140,
       "STANDARDS_AND_SPECIFICATIONS": 96,
       "ENGINEERING_BLOGS": 3,
@@ -96660,6 +96660,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
         "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-BE25E384F401": {
+      "id": "SRC-BE25E384F401",
+      "url": "https://github.com/moby/buildkit/issues/7409",
+      "title": "https://github.com/moby/buildkit/issues/7409",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T22:55:50.519Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
       }
     }
   }
