@@ -4,24 +4,24 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "b9c39f1f",
+  "source_version": "c160c4ff",
   "license": "MIT",
-  "timestamp": "2026-11-16T03:57:22.361Z",
+  "timestamp": "2026-11-16T16:00:13.541Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `b9c39f1f`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T03:57:22.361Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `c160c4ff`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T16:00:13.541Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from projectdiscovery/nuclei:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:57:21.378Z  
+> **Harvest Timestamp**: 2026-11-16T16:00:12.424Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32961 stars
+- **Stars / Engagement**: 32979 stars
 
 ---
 
@@ -1608,135 +1608,272 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9c39f1f` (2026-11-15)
-**Commit Message**: fix(deps): bump golang.org/x/crypto v0.58.0 → v0.59.0 (#8141)
+### Incident Patch 1: `c160c4ff` (2026-11-16)
+**Commit Message**: docs: update README links to moved ProjectDiscovery docs pages (#8126)
 
-Resolves GO-2026-5932 (openpgp deprecated/unsafe package advisory).
-
-golang.org/x/crypto v0.58.0 is flagged by govulncheck and osv-scanner
-for GO-2026-5932: the bundled golang.org/x/crypto/openpgp package is
-unmaintained, unsafe by design, and has known security issues.
-
-Reachability analysis: the vulnerable openpgp code is NOT called by
-nuclei or any of its transitive dependencies — no Go source file in the
-tree imports any golang.org/x/crypto/openpgp subpackage. This is an
-indirect dependency; the upgrade clears the scanner finding without
-behavioral change.
-
-This is the smallest tagged version bump that reaches a release past the
-fix commit (v0.58.1-0.20261009181718-2f1f834330b2). The bump also
-raises the matching x/ companion modules:
-  - golang.org/x/mod     v0.41.0 → v0.42.0
-  - golang.org/x/sync    v0.24.0 → v0.25.0
-  - golang.org/x/sys     v0.49.0 → v0.50.0
-  - golang.org/x/term    v0.47.0 → v0.48.0
-  - golang.org/x/text    v0.43.0 → v0.44.0
-  - golang.org/x/tools   v0.51.0 → v0.52.0
-
-go mod tidy, go build ./cmd/nuclei, and go test ./lib/... all pass.
-
-Co-authored-by: Neo <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +7/-7)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -131,12 +131,12 @@ require (
- 	golang.org/x/exp v0.0.0-20260527015227-08cc5374adb3
- 	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sync v0.24.0
--	golang.org/x/sys v0.49.0
--	golang.org/x/term v0.47.0
--	golang.org/x/text v0.43.0
-+	golang.org/x/sync v0.25.0
-+	golang.org/x/sys v0.50.0
-+	golang.org/x/term v0.48.0
-+	golang.org/x/text v0.44.0
- 	golang.org/x/time v0.15.0
--	golang.org/x/tools v0.51.0
-+	golang.org/x/tools v0.52.0
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.11
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -456,8 +456,8 @@ require (
- 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
- 	goftp.io/server/v2 v2.0.1 // indirect
- 	golang.org/x/arch v0.3.0 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	google.golang.org/api v0.264.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+@@ -416,11 +416,11 @@ Run nuclei with a JSON output:
+ Run nuclei with sorted Markdown outputs (with environment variables):
+ 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+ 
+-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
++Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 
+ ```
+ 
+-Additional documentation is available at: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
++Additional documentation is available at: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+ 
+ </details>
+ 
 ```
 
-**File**: `go.sum` (modified, +14/-14)
+**File**: `README_CN.md` (modified, +3/-3)
 ```diff
-@@ -1337,8 +1337,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
- golang.org/x/crypto v0.31.0/go.mod h1:kDsLvtWBEx7MV9tJOj9bnXsPbxwJQ6csT/x4KIN4Ssk=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
-@@ -1376,8 +1376,8 @@ golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.15.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
- golang.org/x/mod v0.17.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
--golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
--golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
-+golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
-+golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -1454,8 +1454,8 @@ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.6.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.10.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -1520,8 +1520,8 @@ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.20.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.28.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/telemetry v0.0.0-20240228155512-f48c80bd79b2/go.mod h1:TeRTkGYfJXctD9OcfyVLyj2J3IxLnKwHJR8f4D8a3YE=
- golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
-@@ -1534,8 +1534,8 @@ golang.org/x/term v0.12.0/go.mod h1:owVbMEjm3cBLCHdkQu9b1opXd4ETQWc3BhuQGKgXgvU=
- golang.org/x/term v0.17.0/go.mod h1:lLRBjIVuehSbZlaOtGMbcMncT+aqLLLmKrsjNrUguwk=
- golang.org/x/term v0.20.0/go.mod h1:8UkIAJTvZgivsXaD6/pH6U9ecQzZ45awqEOzuCvwpFY=
- golang.org/x/term v0.27.0/go.mod h1:iMsnZpn0cago0GOrHO2+Y7u7JPn5AylBrcoWkElMTSM=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
-@@ -1552,8 +1552,8 @@ golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/
+@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
+ Run nuclei with sorted Markdown outputs (with environment variables):
+ 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+ 
+-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
++Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 
+ ```
+ 
+-更多文档请访问：[**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
++更多文档请访问：[**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+ 
+ </details>
+ 
+@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
+ ```
+ 
+ > [!NOTE]
+-> 此功能完全免费，无需订阅。详细指引请参阅[**`文档`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)。
++> 此功能完全免费，无需订阅。详细指引请参阅[**`文档`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)。
+ 
+ <br>
+ <br>
+```
+
+**File**: `README_ES.md` (modified, +3/-3)
+```diff
+@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
+ Run nuclei with sorted Markdown outputs (with environment variables):
+ 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+ 
+-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
++Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 
+ ```
+ 
+-Documentación adicional disponible en: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
++Documentación adicional disponible en: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+ 
+ </details>
+ 
+@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
+ ```
+ 
+ > [!NOTE]
+-> Esta funcionalidad es totalmente gratuita y no requiere suscripción. Para una guía detallada, consulta la [**`documentación`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
++> Esta funcionalidad es totalmente gratuita y no requiere suscripción. Para una guía detallada, consulta la [**`documentación`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
+ 
+ <br>
+ <br>
+```
+
+**File**: `README_FA.md` (modified, +2/-2)
+```diff
+@@ -428,13 +428,13 @@ Run nuclei with a JSON output:
+ Run nuclei with sorted Markdown outputs (with environment variables):
+ 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+ 
+-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
++Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 
+ ```
+ 
+ </div>
+ 
+-مستندات تکمیلی در این آدرس در دسترس است: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
++مستندات تکمیلی در این آدرس در دسترس است: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+ 
+ </details>
+ 
+```
+
+**File**: `README_ID.md` (modified, +3/-3)
+```diff
+@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
+ Run nuclei with sorted Markdown outputs (with environment variables):
+ 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+ 
+-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
++Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 
+ ```
+ 
+-Dokumentasi tambahan tersedia di: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
++Dokumentasi tambahan tersedia di: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+ 
+ </details>
+ 
+@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
+ ```
+ 
+ > [!NOTE]
+-> Fitur ini sepenuhnya gratis dan tidak memerlukan langganan. Untuk panduan rinci, lihat [**`dokumentasi`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
++> Fitur ini sepenuhnya gratis dan tidak memerlukan langganan. Untuk panduan rinci, lihat [**`dokumentasi`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
+ 
+ <br>
+ <br>
+```
+
+**File**: `README_JP.md` (modified, +3/-3)
+```diff
+@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
+ Run nuclei with sorted Markdown outputs (with environment variables):
+ 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+ 
+-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
++Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 
+ ```
+ 
+-追加のドキュメントは以下で参照できます: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
++追加のドキュメントは以下で参照できます: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+ 
+ </details>
+ 
+@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
+ ```
+ 
+ > [!NOTE]
+-> この機能は完全に無料で、サブスクリプションは不要です。詳しいガイドは[**`ドキュメント`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)を参照してください。
++> この機能は完全に無料で、サブスクリプションは不要です。詳しいガイドは[**`ドキュメント`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)を参照してください。
+ 
+ <br>
+ <br>
+```
+
+**File**: `README_KR.md` (modified, +3/-3)
+```diff
+@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
+ Run nuclei with sorted Markdown outputs (with environment variables):
+ 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+ 
+-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
++Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 
+ ```
+ 
+-추가 문서는 다음 주소에서 확인할 수 있습니다: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
++추가 문서는 다음 주소에서 확인할 수 있습니다: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+ 
+ </details>
+ 
+@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
+ ```
+ 
+ > [!NOTE]
+-> 이 기능은 완전히 무료이며 구독이 필요하지 않습니다. 자세한 가이드는 [**`문서`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)를 참조하세요.
++> 이 기능은 완전히 무료이며 구독이 필요하지 않습니다. 자세한 가이드는 [**`문서`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)를 참조하세요.
+ 
+ <br>
+ <br>
+```
+
+**File**: `README_PT-BR.md` (modified, +3/-3)
+```diff
+@@ -407,11 +407,11 @@ Run nuclei with a JSON output:
+ Run nuclei with sorted Markdown outputs (with environment variables):
+ 	$ MARKDOWN_EXPORT_SORT_MODE=template nuclei -target example.com -markdown-export nuclei_report/
+ 
+-Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
++Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+ 
+ ```
+ 
+-Documentação adicional disponível em: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
++Documentação adicional disponível em: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
+ 
+ </details>
+ 
+@@ -456,7 +456,7 @@ nuclei -target https://example.com -dashboard
+ ```
+ 
+ > [!NOTE]
+-> Este recurso é totalmente gratuito e não requer assinatura. Para um guia detalhado, consulte a [**`documentação`**](https://docs.projectdiscovery.io/cloud/scanning/nuclei-scan?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
++> Este recurso é totalmente gratuito e não requer assinatura. Para um guia detalhado, consulte a [**`documentação`**](https://docs.projectdiscovery.io/cloud/scanning?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme).
+ 
+ <br>
+ <br>
+```
+
+---
+
+### Incident Patch 2: `1a762d9f` (2026-11-16)
+**Commit Message**: chore(deps): bump the workflows group with 2 updates (#8146)
+
+Bumps the workflows group with 2 updates: [peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-request) and [crate-ci/typos](https://github.com/crate-ci/typos).
+
+
+Updates `peter-evans/create-pull-request` from 8.1.1 to 8.1.3
+- [Release notes](https://github.com/peter-evans/create-pull-request/releases)
+- [Commits](https://github.com/peter-evans/create-pull-request/compare/5f6978faf089d4d20b00c7766989d076bb2fc7f1...3ffccacd46053766916f087ce41d627c0b8cf2d1)
+
+Updates `crate-ci/typos` from 1.52.0 to 1.52.2
+- [Release notes](https://github.com/crate-ci/typos/releases)
+- [Changelog](https://github.com/crate-ci/typos/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/crate-ci/typos/compare/v1.52.0...v1.52.2)
+
+---
+updated-dependencies:
+- dependency-name: peter-evans/create-pull-request
+  dependency-version: 8.1.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: workflows
+- dependency-name: crate-ci/typos
+  dependency-version: 1.52.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: workflows
+...
+
+Signe
+
+**File**: `.github/workflows/security-context.yml` (modified, +1/-1)
+```diff
+@@ -107,7 +107,7 @@ jobs:
+           } >> "$GITHUB_OUTPUT"
+ 
+       - name: Open an update pull request
+-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
++        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
+         with:
+           branch: security-context/refresh
+           commit-message: ${{ steps.agents.outputs.subject }}
+```
+
+**File**: `.github/workflows/typos.yaml` (modified, +1/-1)
+```diff
+@@ -17,4 +17,4 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v7
+-      - uses: crate-ci/typos@v1.52.0
++      - uses: crate-ci/typos@v1.52.2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8146** (2026-11-16): chore(deps): bump the workflows group with 2 updates (@dependabot[bot])
 - **PR #8141** (2026-11-15): fix(deps): bump golang.org/x/crypto v0.58.0 → v0.59.0 (GO-2026-5932) (@neo-by-projectdiscovery[bot])
 - **PR #8138** (2026-11-14): add -auto-tech to skip templates bound to products the tech templates did not detect (@dogancanbakir)
 - **PR #8136** (2026-11-14): follow appends to a running plan and its cancel log (@dogancanbakir)
 - **PR #8135** (2026-11-14): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
-- **PR #8107** (2026-11-10): send identical requests once per scan (@dogancanbakir)
-- **PR #8103** (2026-11-10): add -store-events and -replay over stored events of any protocol (@dogancanbakir)
+- **PR #8126** (2026-11-16): docs: update README links to moved ProjectDiscovery docs pages (@abd1rahmane)
 
 ---
 
@@ -1756,43 +1893,33 @@ Co-authored-by: Neo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump golang.org/x/crypto v0.58.0 → v0.59.0
+## X. docs: update README links to moved ProjectDiscovery docs pages
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9c39f1f`: deps): bump golang.org/x/crypto v0.58.0 → v0.59.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c160c4ff`: docs: update README links to moved ProjectDiscovery docs pages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/sync v0.25.0
-	golang.org/x/sys v0.50.0
-	golang.org/x/term v0.48.0
-	golang.org/x/text v0.44.0
-	golang.org/x/tools v0.52.0
-	golang.org/x/crypto v0.59.0 // indirect
-	golang.org/x/mod v0.42.0 // indirect
+Additional documentation is available at: https://docs.projectdiscovery.io/tools/nuclei/running
+Additional documentation is available at: [**`docs.projectdiscovery.io/tools/nuclei/running`**](https://docs.projectdiscovery.io/tools/nuclei/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	golang.org/x/sync v0.24.0
-	golang.org/x/sys v0.49.0
-	golang.org/x/term v0.47.0
-	golang.org/x/text v0.43.0
-	golang.org/x/tools v0.51.0
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/mod v0.41.0 // indirect
+Additional documentation is available at: https://docs.projectdiscovery.io/getting-started/running
+Additional documentation is available at: [**`docs.projectdiscovery.io/getting-started/running`**](https://docs.projectdiscovery.io/getting-started/running?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9c39f1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c160c4ff` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

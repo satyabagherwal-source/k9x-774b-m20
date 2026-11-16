@@ -10295,3 +10295,7 @@
 | `CYCLE-20261116-XS6B` | `2026-11-16T15:51:12.611Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`807e9e43...`) |
 | `CYCLE-20261116-XTLB` | `2026-11-16T15:51:14.447Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8756` | Yes (`c813ade6...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T15:51:45.334Z` | `tw93-pake` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-497D3321` [Domain L] | Yes (`ddb92a2f...`) |
+| `CYCLE-20261116-9AA8` | `2026-11-16T16:00:09.296Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md` | Yes (`feb9d292...`) |
+| `CYCLE-20261116-9BJD` | `2026-11-16T16:00:10.921Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8757` | Yes (`499c6a7a...`) |
+| `CYCLE-20261116-9DEW` | `2026-11-16T16:00:13.352Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8758` | Yes (`5160ad3e...`) |
+| `CYCLE-20261116-9HNM` | `2026-11-16T16:00:18.850Z` | `Zyphra/ZONOS3-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md` | Yes (`a961c138...`) |

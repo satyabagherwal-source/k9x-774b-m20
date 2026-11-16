@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T15:51:14.458Z",
+  "last_updated": "2026-11-16T16:00:18.864Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "cc0ab6e973ccd3cdbed34ea4748f183985e4a6d7690848a877634e43826fa1dd",
-      "verified_at": "2026-11-16T03:57:22.209Z",
+      "content_hash": "5160ad3e200d08a8b9cdec6884407cd5e2a900fe6b69d58b1f23d4f547b757a0",
+      "verified_at": "2026-11-16T16:00:13.364Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T03:57:22.209Z"
+      "last_updated": "2026-11-16T16:00:13.364Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "abec00e578532cf5da361173590f9f2ebad8c3a593c978691261d91670e7f0df",
-      "verified_at": "2026-11-13T21:16:13.680Z",
+      "content_hash": "499c6a7a4aac8939f1c61cef323f3348589e70f1351c89f948cb24bde48c52bd",
+      "verified_at": "2026-11-16T16:00:10.933Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:16:13.680Z"
+      "last_updated": "2026-11-16T16:00:10.933Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -14001,14 +14001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-louis-cfm-coucou",
-      "content_hash": "9d9e473dd3face7170f75ea177272885af79fd6246946b57a4417645075cf420",
-      "verified_at": "2026-11-13T03:56:21.344Z",
+      "content_hash": "feb9d2924edf89cd7f4feb81ae2255a9beeaaf204870cc06dc6c086b44ce75be",
+      "verified_at": "2026-11-16T16:00:09.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:56:21.344Z"
+      "last_updated": "2026-11-16T16:00:09.322Z"
     },
     "lxml/lxml": {
       "repository": "lxml/lxml",
@@ -18621,14 +18621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zyphra-zonos3-mini",
-      "content_hash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
-      "verified_at": "2026-11-12T01:11:42.006Z",
+      "content_hash": "a961c1385219e6e5c5dcd25e583b9cff39e55fc643d8b4f730b30672f695c093",
+      "verified_at": "2026-11-16T16:00:18.863Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T01:11:42.006Z"
+      "last_updated": "2026-11-16T16:00:18.863Z"
     },
     "unovue/reka-ui": {
       "repository": "unovue/reka-ui",

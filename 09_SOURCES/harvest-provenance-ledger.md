@@ -10328,3 +10328,7 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f7254f67` | Multi-dimensional audit evidence | 2026-11-16T15:51:12.615Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `ca73857d` | Multi-dimensional audit evidence | 2026-11-16T15:51:14.450Z |
 | `learn-dom-l-497d3321` | `project://tw93-pake` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md` | 2026-11-16T15:51:45.334Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `0d7fe588` | Multi-dimensional audit evidence | 2026-11-16T16:00:09.300Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `05bbd304` | Multi-dimensional audit evidence | 2026-11-16T16:00:10.925Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `c160c4ff` | Multi-dimensional audit evidence | 2026-11-16T16:00:13.356Z |
+| `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-16T16:00:18.854Z |

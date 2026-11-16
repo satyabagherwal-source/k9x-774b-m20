@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T15:51:48.625Z",
+  "last_updated": "2026-11-16T16:00:23.471Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T15:33:28.860Z",
@@ -248,7 +248,7 @@
       "staged_for_review": 1
     },
     "prometheus-prometheus-learnings.md": {
-      "processed_at": "2026-11-11T11:39:47.832Z",
+      "processed_at": "2026-11-16T16:00:22.847Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -613,8 +613,8 @@
       "staged_for_review": 1
     },
     "hf-zyphra-zonos3-mini-learnings.md": {
-      "processed_at": "2026-11-12T01:12:31.449Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-16T16:00:21.819Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "webrecorder-browsertrix-crawler-learnings.md": {
@@ -1513,7 +1513,7 @@
       "staged_for_review": 0
     },
     "louis-cfm-coucou-learnings.md": {
-      "processed_at": "2026-11-13T03:56:42.697Z",
+      "processed_at": "2026-11-16T16:00:22.169Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3188,7 +3188,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1311,
+  "total_dossiers_evaluated": 1314,
   "total_canonical_promoted": 289,
-  "total_staged_for_review": 1015
+  "total_staged_for_review": 1017
 }

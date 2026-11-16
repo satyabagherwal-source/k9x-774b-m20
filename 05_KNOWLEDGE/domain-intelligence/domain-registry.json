@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T15:51:48.370Z",
-  "total_records": 1274,
+  "last_updated": "2026-11-16T16:00:23.233Z",
+  "total_records": 1279,
   "domains": {
     "A": {
       "total": 7,
@@ -40,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 583,
+      "total": 585,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -624,7 +624,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-ifm-pan2-core-invariants",
         "DOM-D-3870AF12",
-        "domain_intelligence-research-knowledge-intelligence-hf-ifm-pan2-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-ifm-pan2-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-zyphra-zonos3-mini-learnings-core-invariants"
       ]
     },
     "E": {
@@ -667,7 +669,7 @@
       ]
     },
     "G": {
-      "total": 228,
+      "total": 230,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -896,7 +898,9 @@
         "domain_intelligence-architecture-intelligence-revenuecat-purchases-ios-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-topoteretes-cognee-core-invariants",
-        "domain_intelligence-architecture-intelligence-topoteretes-cognee-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-topoteretes-cognee-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants",
+        "domain_intelligence-architecture-intelligence-louis-cfm-coucou-learnings-core-invariants"
       ]
     },
     "H": {
@@ -1180,7 +1184,7 @@
       ]
     },
     "I": {
-      "total": 59,
+      "total": 60,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1240,7 +1244,8 @@
         "domain_intelligence-content-information-intelligence-vectifyai-pageindex-core-invariants",
         "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-meta-folly-core-invariants",
-        "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants"
       ]
     },
     "J": {
@@ -10020,8 +10025,8 @@
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "repository": "prometheus/prometheus",
-      "content_hash": "b850c867e7db0365a6f8d3fc7a56447fdd98189ca899770c5d14ee794cc5ec70",
-      "created_at": "2026-11-13T21:16:13.877Z"
+      "content_hash": "657b2c3095b8946448218b9df0efbef662f08a22835cdb2106241cc89615bfb5",
+      "created_at": "2026-11-16T16:00:11.239Z"
     },
     "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
@@ -14623,8 +14628,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "7978c83d69745fe364fd4bbdb9971990345e401f11c621d93518d76f1187ec23",
-      "created_at": "2026-11-16T03:57:22.461Z"
+      "content_hash": "9029c4f42db0f62eaccb912388bfb67d3b78d383b538f16fc552cabeb32df06c",
+      "created_at": "2026-11-16T16:00:13.661Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -23294,6 +23299,51 @@
       "repository": "0xcub3-wblock-learnings",
       "content_hash": "ba3bf6cf64d2d2cfebc9a2b1c3fd76ffe319ff8966e3576f3b2b1bb6f96146f0",
       "created_at": "2026-11-16T15:51:48.370Z"
+    },
+    "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Louis-CFM/coucou Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-architecture-intelligence-louis-cfm-coucou-core-invariants.md",
+      "repository": "Louis-CFM/coucou",
+      "content_hash": "6926a266dc9ad662365d5edc7e48cd80627c7f756a79cd97794be0c5b14a977f",
+      "created_at": "2026-11-16T16:00:09.639Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Zyphra/ZONOS3-Mini Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zyphra-zonos3-mini-research-knowledge-intelligence-zyphra-zonos3-mini-core-in.md",
+      "repository": "Zyphra/ZONOS3-Mini",
+      "content_hash": "57d0acc39dc5bd471e66d3b914faad31d405fff354c159ac826243de864611b9",
+      "created_at": "2026-11-16T16:00:19.037Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-zyphra-zonos3-mini-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-zyphra-zonos3-mini-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-zyphra-zonos3-mini-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zyphra-zonos3-mini-learnings-research-knowledge-intelligence-hf-zyphra-zonos3.md",
+      "repository": "hf-zyphra-zonos3-mini-learnings",
+      "content_hash": "28d5434929194a44815de4b7a3cf434f9e302ecdb58b43a89773a178e855ac09",
+      "created_at": "2026-11-16T16:00:22.001Z"
+    },
+    "domain_intelligence-architecture-intelligence-louis-cfm-coucou-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-louis-cfm-coucou-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: louis-cfm-coucou-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-learnings-architecture-intelligence-louis-cfm-coucou-learnings-.md",
+      "repository": "louis-cfm-coucou-learnings",
+      "content_hash": "a405f0ae38c2fe846e8a9619d9d8b23bc8ec2c79bd9a1ae002cb4c0721d49950",
+      "created_at": "2026-11-16T16:00:22.490Z"
+    },
+    "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-learnings-content-information-intelligence-prometheus-prom.md",
+      "repository": "prometheus-prometheus-learnings",
+      "content_hash": "58f5f8e18b80faa5decc244e37d3b5df0a9ea2021afefa67be38e0f2a1dbb6e8",
+      "created_at": "2026-11-16T16:00:23.233Z"
     }
   }
 }

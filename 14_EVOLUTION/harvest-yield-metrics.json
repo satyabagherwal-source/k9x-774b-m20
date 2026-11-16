@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T15:51:14.455Z",
-  "total_cycles_completed": 9884,
-  "total_learnings_persisted": 9884,
-  "total_rules_promoted": 9489,
+  "last_updated": "2026-11-16T16:00:18.860Z",
+  "total_cycles_completed": 9888,
+  "total_learnings_persisted": 9888,
+  "total_rules_promoted": 9491,
   "history": [
-    {
-      "timestamp": "2026-11-15T07:41:53.700Z",
-      "repository": "mrkai77/Loop",
-      "learningId": "learn-github-mrkai77-loop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T07:41:58.809Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T08:07:12.684Z",
-      "repository": "tuist/tuist",
-      "learningId": "learn-github-tuist-tuist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T08:09:07.215Z",
-      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T08:09:26.280Z",
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -1403,6 +1375,34 @@
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T16:00:09.319Z",
+      "repository": "Louis-CFM/coucou",
+      "learningId": "learn-github-louis-cfm-coucou",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T16:00:10.930Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T16:00:13.361Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T16:00:18.860Z",
+      "repository": "Zyphra/ZONOS3-Mini",
+      "learningId": "learn-huggingface-zyphra-zonos3-mini",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

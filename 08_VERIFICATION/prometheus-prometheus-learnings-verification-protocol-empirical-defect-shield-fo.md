@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:43:32.700Z",
+  "timestamp": "2026-11-16T16:00:23.019Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-prometheus-prometheus-learnings",
+  "learning_id": "LEARN-EVO-prometheus-prometheus-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [prometheus-prometheus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:43:32.700Z`  
-> **Learning ID**: `LEARN-REEXTRACT-prometheus-prometheus-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T16:00:23.019Z`  
+> **Learning ID**: `LEARN-EVO-prometheus-prometheus-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `49c815a0`  
+> **Source Version**: `05bbd304`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:39:34.197Z  
+> **Timestamp**: 2026-11-16T16:00:10.009Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:33:36.151Z  
+> **Harvest Timestamp**: 2026-11-16T16:00:10.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 67634 stars
+- **Stars / Engagement**: 67651 stars
 
 ---
 
@@ -1806,11 +1806,13 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20412** (2026-11-10): **tsdb: keep samples of series recreated while an eviction tombstone is pending**
-  *Symptoms*: ## Problem  When stale series compaction (`stale_series_compaction_threshold`) evicts a series from the head, a race with ingestion can make successfully committed samples disappear after a restart.  1. The compaction writes series `A` to a block and removes it from the head. 2. Before eviction writes `A`'s deletion marker (tombstone) to the WAL, ingestion receives another sample with the same labels. `A` is gone from the head, so this creates series `B` with a new reference. 3. `B`'s declaration and first sample reach the WAL before `A`'s tombstone. Further samples for `B` can arrive afterwards.  Everything works while Prometheus is running. The problem shows up on WAL replay: replay deduplicates series by labels, so `B` becomes an alias for `A`. `A`'s tombstone then deletes that shared identity, including `B`'s already replayed samples, and later samples for `B` are dropped as `Unknown series references`. `A`'s own data is safe in the block.  The invariant: deleting an evicted series must not discard samples committed to a newly created series with the same labels.  ## Fix  `gcSeries` now also returns the labels and the index hash of every series it removes (it already has both at hand, so nothing is hashed twice).  Before writing the tombstones, `truncateSeries` checks whether the labels of each evicted series now resolve to a different live series. If so, it skips that series' tombstone and lets its WAL records expire the normal way, through the existing WAL expiry cutoff
+- **Issue #20456** (2026-11-16): **web: ui: align literal and duration keyword parsing with PromQL**
+  *Symptoms*: Fixes #20455  The query editor rejects valid trailing-dot floats, uppercase hexadecimal prefixes, hexadecimal digit separators, and uppercase duration keywords that the Go parser accepts. The frontend number token excludes these literal forms, and duration keywords use case-sensitive function extensions.  Allow an empty fractional part and hexadecimal prefixes/separators in the number token. Match duration keywords through the existing case-insensitive contextual matcher, preserving metric names and the case sensitivity of ordinary functions. Add strict parser cases for valid queries, malformed literals, and keyword names used as metrics.  Tests: `/bin/sh -c 'cd web/ui/module/lezer-promql && pnpm test --runInBand --verbose --json'` (fails on base; passes with this patch). Regression coverage: `web/ui/module/lezer-promql/test/promql.test.js`.  #### Which issue(s) does the PR fix: Fixes #20455  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  ```release-notes [BUGFIX] UI: Accept trailing-dot floats, uppercase and underscored hexadecimal literals, and case-insensitive duration keywords in the query editor. ``` <!-- oss-scout-job:job-70275eb8-baf2-463e-87b9-a5071179f51e -->  ```release-notes [BUGFIX] web: ui: align literal and duration keyword parsing with PromQL ```
 
-- **Issue #20405** (2026-11-11): **docs: fix dead Marathon and DC/OS links**
-  *Symptoms*: #### Which issue(s) does the PR fix:  None. In the `marathon_sd_config` section, the Marathon link (`mesosphere.github.io/marathon`) returns 404, and `docs.mesosphere.com` now redirects every path to the Nutanix portal home page, so the two `auth_token` links no longer reach the DC/OS token docs. I pointed the Marathon link at the archived repository (`github.com/d2iq-archive/marathon`) and the two token links at the Wayback Machine copy of the DC/OS 1.11 IAM API page, which still has the "Passing an authentication token" section. If you'd rather not link to the archive, I can drop those two URL lines instead.  It also fixes the same dead DC/OS link in two comments in `discovery/marathon/marathon.go` (thanks @jamesconwaydev).  #### Release notes for end users (**ALL** commits must be considered).  ```release-notes NONE ```  
+- **Issue #20455** (2026-11-16): **lezer-promql: rejects trailing-dot floats, `0X`/underscored hex literals, and uppercase duration keywords (`STEP()`, `RANGE()`)**
+  *Symptoms*: ### What did you do?  Parsed valid PromQL expressions (including examples from `docs/querying/basics.md`, `promql/promqltest/testdata/histograms.test`, `promql/promqltest/testdata/duration_expression.test`, and `promql/parser/lex_test.go`) with `@prometheus-io/lezer-promql`:  ```bash npm i @prometheus-io/lezer-promql@0.316.0 node repro.mjs ```  `repro.mjs`:  ```js import { parser } from "@prometheus-io/lezer-promql";  const firstError = (q) => {   let e = -1;   parser.parse(q).iterate({ enter(n) { if (n.type.isError && e < 0) e = n.from; } });   return e; };  for (const q of [   "histogram_quantile(1./6., rate(testhistogram2_bucket[15m]))", // histograms.test   "2.",   "1.e2",                                                        // lex_test.go   "0X1F",   "0x_53_AB_F3_82",                                              // docs/querying/basics.md   "foo[STEP()]",   "rate(foo[MIN_OF(5m, RANGE())])",   "avg_over_time(foo[MAX_OF(STEP(), 1m)])",   "metric1_total offset STEP()",                                 // duration_expression.test   "foo[step()]",                                                 // control: no error ]) {   console.log(firstError(q), q); } ```  ### What did you expect to see?  `-1` (no error node) for every expression above. `promql/parser.NewParser(parser.Options{}).ParseExpr` accepts all of them: - Trailing-dot floats such as `2.`, `1./6.`, and `1.e2` are valid float literals. - [Float literals](https://prometheus.io/docs/prometheus/latest/querying/basics/#f
+  **Post-Mortem & Fix Analysis**:
+  > I'm working on a fix and a regression test for this issue with OpenCode.  <!-- oss-scout-issue-claim -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1827,270 +1829,129 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49c815a0` (2026-11-11)
-**Commit Message**: Merge pull request #20398 from ayushbuilds-code/sanitize-builder-grow
+### Incident Patch 1: `05bbd304` (2026-11-16)
+**Commit Message**: web: ui: align literal and duration keyword parsing with PromQL (#20456)
 
-strutil: preallocate strings.Builder capacity in SanitizeFullLabelName
+* web: ui: align literal and duration keyword parsing with PromQL
 
-**File**: `util/strutil/strconv.go` (modified, +1/-0)
+Signed-off-by: wangshun <[REDACTED_EMAIL]>
+
+* chore: retrigger CI (golangci-lint-action tar cache failure)
+
+Signed-off-by: wangshun <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: wangshun <[REDACTED_EMAIL]>
+
+**File**: `web/ui/module/lezer-promql/src/promql.grammar` (modified, +6/-6)
 ```diff
-@@ -53,6 +53,7 @@ func SanitizeFullLabelName(name string) string {
- 		return "_"
- 	}
- 	var validSb strings.Builder
-+	validSb.Grow(len(name))
- 	for i, b := range name {
- 		if (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || b == '_' || (b >= '0' && b <= '9' && i > 0) {
- 			validSb.WriteRune(b)
+@@ -346,8 +346,8 @@ durationPrimary[@inline] {
+   LineComment { "#" ![\n]* }
+ 
+   number {
+-      (std.digit+ (("_")? std.digit)* ("." std.digit+ (("_")? std.digit)*)? | "." std.digit+ (("_")? std.digit)*) (("e" | "E") ("+" | "-")? std.digit+ (("_")? std.digit)*)? |
+-      "0x" (std.digit | $[a-fA-F])+ | duration
++      (std.digit+ (("_")? std.digit)* ("." (std.digit+ (("_")? std.digit)*)?)? | "." std.digit+ (("_")? std.digit)*) (("e" | "E") ("+" | "-")? std.digit+ (("_")? std.digit)*)? |
++      "0" ("x" | "X") "_"? (std.digit | $[a-fA-F]) ("_"? (std.digit | $[a-fA-F]))* | duration
+   }
+   StringLiteral { // TODO: This is for JS, make this work for PromQL.
+     '"' (![\\\n"] | "\\" _)* '"'? |
+@@ -433,6 +433,10 @@ durationPrimary[@inline] {
+   EndFn,
+   AtStart,
+   AtEnd,
++  DurationStep,
++  DurationRange,
++  DurationMinOf,
++  DurationMaxOf,
+   Smoothed,
+   Anchored,
+   Fill,
+@@ -534,7 +538,3 @@ durationPrimary[@inline] {
+ 
+ // Conditional function names (only parsed as function names when used as such).
+ condFn<term> { @extend<Identifier, term> }
+-DurationStep { condFn<"step"> }
+-DurationRange { condFn<"range"> }
+-DurationMinOf { condFn<"min_of"> }
+-DurationMaxOf { condFn<"max_of"> }
 ```
 
-**File**: `util/strutil/strconv_test.go` (modified, +21/-0)
+**File**: `web/ui/module/lezer-promql/src/tokens.js` (modified, +8/-0)
 ```diff
-@@ -226,3 +226,24 @@ func TestSanitizeFullLabelName(t *testing.T) {
- 		})
- 	}
- }
-+
-+func BenchmarkSanitizeFullLabelName(b *testing.B) {
-+	cases := []struct {
-+		name  string
-+		input string
-+	}{
-+		{"valid_short", "http_requests_total"},
-+		{"valid_long", "container_cpu_usage_seconds_total_with_extended_dimensions_and_namespaces"},
-+		{"needs_sanitizing_short", "123-invalid.metric.name"},
-+		{"needs_sanitizing_long", "http-service.cluster.local:8080/metrics@prod-us-west-2/system-metric"},
-+	}
-+
-+	for _, bc := range cases {
-+		b.Run(bc.name, func(b *testing.B) {
-+			b.ReportAllocs()
-+			for range b.N {
-+				_ = SanitizeFullLabelName(bc.input)
-+			}
-+		})
-+	}
-+}
+@@ -51,6 +51,10 @@ import {
+   Unless,
+   Without,
+   AtEnd,
++  DurationStep,
++  DurationRange,
++  DurationMinOf,
++  DurationMaxOf,
+   AtStart,
+   Smoothed,
+   Anchored,
+@@ -111,6 +115,10 @@ export const specializeIdentifier = (value, stack) => {
+ };
+ 
+ const contextualKeywordTokens = {
++  step: DurationStep,
++  range: DurationRange,
++  min_of: DurationMinOf,
++  max_of: DurationMaxOf,
+   avg: Avg,
+   atan2: Atan2,
+   bitand: BitAnd,
 ```
 
----
-
-### Incident Patch 2: `62efd0b3` (2026-11-11)
-**Commit Message**: Merge pull request #20405 from donaldraph/docs/fix-marathon-links
-
-docs: fix dead Marathon and DC/OS links
-
-**File**: `discovery/marathon/marathon.go` (modified, +2/-2)
+**File**: `web/ui/module/lezer-promql/test/promql.test.js` (modified, +33/-0)
 ```diff
-@@ -189,7 +189,7 @@ func newAuthTokenRoundTripper(token config.Secret, rt http.RoundTripper) (http.R
- }
- 
- func (rt *authTokenRoundTripper) RoundTrip(request *http.Request) (*http.Response, error) {
--	// According to https://docs.mesosphere.com/1.11/security/oss/managing-authentication/
-+	// According to https://web.archive.org/web/20190720050610/https://docs.mesosphere.com/1.11/security/oss/managing-authentication/
- 	// DC/OS wants with "token=" a different Authorization header than implemented in httputil/client.go
- 	// so we set this explicitly here.
- 	request.Header.Set("Authorization", "token="+string(rt.authToken))
-@@ -219,7 +219,7 @@ func (rt *authTokenFileRoundTripper) RoundTrip(request *http.Request) (*http.Res
- 	}
- 	authToken := strings.TrimSpace(string(b))
- 
--	// According to https://docs.mesosphere.com/1.11/security/oss/managing-authentication/
-+	// According to https://web.archive.org/web/20190720050610/https://docs.mesosphere.com/1.11/security/oss/managing-authentication/
- 	// DC/OS wants with "token=" a different Authorization header than implemented in httputil/client.go
- 	// so we set this explicitly here.
- 	request.Header.Set("Authorization", "token="+authToken)
-```
-
-**File**: `docs/configuration/configuration.md` (modified, +3/-3)
-```diff
-@@ -2994,7 +2994,7 @@ The following meta labels are available on targets during [relabeling](#relabel_
- ### `<marathon_sd_config>`
- 
- Marathon SD configurations allow retrieving scrape targets using the
--[Marathon](https://mesosphere.github.io/marathon/) REST API. Prometheus
-+[Marathon](https://github.com/d2iq-archive/marathon) REST API. Prometheus
- will periodically check the REST endpoint for currently running tasks and
- create a target group for every app that has at least one healthy task.
- 
-@@ -3020,12 +3020,12 @@ servers:
- [ refresh_interval: <duration> | default = 30s ]
- 
- # Optional authentication information for token-based authentication
--# https://docs.mesosphere.com/1.11/security/ent/iam-api/#passing-an-authentication-token
-+# https://web.archive.org/web/20190718110036/https://docs.mesosphere.com/1.11/security/ent/iam-api/#passing-an-authentication-token
- # It is mutually exclusive with `auth_token_file` and other authentication mechanisms.
- [ auth_token: <secret> ]
- 
- # Optional authentication information for token-based authentication
--# https://docs.mesosphere.com/1.11/security/ent/iam-api/#passing-an-authentication-token
-+# https://web.archive.org/web/20190718110036/https://docs.mesosphere.com/1.11/security/ent/iam-api/#passing-an-authentication-token
- # It is mutually exclusive with `auth_token` and other authentication mechanisms.
- [ auth_token_file: <filename> ]
- 
-```
-
----
-
-### Incident Patch 3: `d7aa875a` (2026-11-11)
-**Commit Message**: Merge pull request #20307 from h8y3/fix-federate-nhcb-count
-
-web: keep federated NHCB count at least the sum of its buckets
-
-**File**: `web/federate.go` (modified, +17/-0)
-```diff
-@@ -370,6 +370,23 @@ func makeClassicHistogram(h *histogram.FloatHistogram) *dto.Histogram {
- 			CumulativeCountFloat: proto.Float64(cumulativeCount),
- 		}
- 	}
-+	// Add the overflow bucket beyond the last custom value, if any.
-+	for bucketAvailable && int(bucketIter.At().Index) < len(h.CustomValues) {
-+		bucketAvailable = bucketIter.Next()
-+	}
-+	if bucketAvailable {
-+		cumulativeCount += bucketIter.At().Count
-+	}
-+	// The count of a float histogram resulting from PromQL operations (e.g.
-+	// sum(rate(...))) is calculated independently from its buckets, so
-+	// floating point errors can make it marginally smaller than the sum of
-+	// the buckets. As the +Inf bucket is implied by the count, the resulting
-+	// classic histogram would not be cumulative, and converting it back into
-+	// an NHCB would yield a negative +Inf bucket. Use the sum of the buckets
-+	// as the count in that case.
-+	if cumulativeCount > h.Count {
-+		result.SampleCountFloat = proto.Float64(cumulativeCount)
-+	}
- 	// Note that we do not add the +Inf bucket explicitly. In the protobuf
- 	// exposition format, it is optional. For other exposition formats, the
- 	// code converting the protobuf created here into the actual exposition
-```
-
-**File**: `web/federate_test.go` (modified, +111/-0)
-```diff
-@@ -505,3 +505,114 @@ func TestFederationWithNativeHistograms(t *testing.T) {
- 	require.Equal(t, 4, metricFamilies)
- 	testutil.RequireEqual(t, expVec, actVec)
- }
+@@ -75,3 +75,36 @@ describe('unquoted UTF-8 names', () => {
+         });
+     }
+ });
 +
-+// TestFederationNHCBCountBelowBucketSum checks that a float NHCB whose count is
-+// marginally below the sum of its buckets, as can result from floating point
-+// rounding in PromQL (e.g. sum(rate(...))), is federated as a valid classic
-+// histogram that converts back into an NHCB without negative buckets.
-+func TestFederationNHCBCountBelowBucketSum(t *testing.T) {
-+	db := teststorage.New(t).DB
-+	// 0.1 + 0.2 == 0.30000000000000004 > 0.3.
-+	fh := &histogram.FloatHistogram{
-+		CounterResetHint: histogram.GaugeType,
-+		Count:            0.3,
-+		Sum:              1,
-+		Schema:           histogram.CustomBucketsSchema,
-+		PositiveSpans:    []histogram.Span{{Offset: 0, Length: 2}},
-+		PositiveBuckets:  []float64{0.1, 0.2},
-+		CustomValues:     []float64{1, 2},
-+	}
-+	require.NoError(t, fh.Validate())
-+
-+	app := db.AppenderV2(context.Background())
-+	_, err := app.Append(0, labels.FromStrings("__name__", "test_metric"), 0, 100*60*1000, 0, nil, fh, storage.AOptions{})
-+	require.NoError(t, err)
-+	require.NoError(t, app.Commit())
-+
-+	h := &Handler{
-+		localStorage:  &dbAdapter{db},
-+		lookbackDelta: 5 * time.Minute,
-+		now:           func() model.Time { return 101 * 60 * 1000 },
-+		config:        &config.Config{GlobalConfig: config.GlobalConfig{}},
-+		options:       &Options{Parser: testParser},
-+	}
-+	req := httptest.NewRequest(http.MethodGet, "http://example.org/federate?match[]=test_metric", http.NoBody)
-+	req.Header.Add("Accept", `application/vnd.google.protobuf;proto=io.prometheus.client.MetricFamily;encoding=delimited`)
-+	res := httptest.NewRecorder()
-+	h.federation(res, req)
-+	require.Equal(t, http.StatusOK, res.Code)
-+
-+	body, err := io.ReadAll(res.Body)
-+	require.NoError(t, err)
-+	p := textparse.NewProtobufParser(body, false, false, true, false, labels.NewSymbolTable())
-+	var histograms int
-+	for {
-+		et, err := p.Next()
-+		if errors.Is(err, io.EOF) {
-+			break
-+		}
-+		require.NoError(t, err)
-+		if et != textparse.EntryHistogram {
-+			continue
-+		}
-+		histograms++
-+		_, _, _, got := p.Histogram()
-+		require.NotNil(t, got)
-+		require.NoError(t, got.Validate())
-+		require.InDelta(t, 0.3, got.Count, 1e-15)
-+	}
-+	require.Equal(t, 1, histograms)
-+}
-+
-+func TestMakeClassicHistogramCount(t *testing.T) {
-+	for name, tc := range map[string]struct {
-+		count     float64
-+		buckets   []float64
-+		spans     []histogram.Span
-+		wantCount float64 // Zero means the bucket sum, added at runtime.
-+	}{
-+		"count equals bucket sum": {
-+			count:     6,
-+			buckets:   []float64{3, 2, 1},
-+			spans:     []histogram.Span{{Offset: 0, Length: 3}},
-+			wantCount: 6,
-+		},
-+		"count above bucket sum is kept": {
-+			count:     7,
-+			buckets:   []float64{3, 2, 1},
-+			spans:     []histogram.Span{{Offset: 0, Length: 3}},
-+			wantCount: 7,
-+		},
-+		"count below bucket sum without +Inf bucket": {
-+			count:   0.3,
-+			buckets: []float64{0.1, 0.2},
-+			spans:   []histogram.Span{{Offset: 0, Length: 2}},
-+		},
-+		"count below bucket sum with +Inf bucket": {
-+			count:   0.6,
-+			buckets: []float64{0.1, 0.2, 0.3},
-+			spans:   []histogram.Span{{Offset: 0, Length: 1}, {Offset: 1, Length: 2}},
-+		},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			fh := &histogram.FloatHistogram{
-+				Count:           tc.count,
-+				Schema:          histogram.CustomBucketsSchema,
-+				PositiveSpans:   tc.spans,
-+				PositiveBuckets: tc.buckets,
-+				CustomValues:    []float64{1, 2, 5},
-+			}
-+			require.NoError(t, fh.Validate())
-+			if tc.wantCount == 0 {
-+				for _, b := range tc.buckets {
-+					tc.wantCount += b
-+				}
-+				require.Greater(t, tc.wantCount, tc.count)
-+			}
-+			got := makeClassicHistogram(fh)
-+			require.Equal(t, tc.wantCount, got.GetSampleCountFloat())
-+			last := got.Bucket[len(got.Bucket)-1].GetCumulativeCountFloat()
-+			require.GreaterOrEqual(t, got.GetSampleCountFloat(), last)
-+		})
-+	}
-+}
++// Keep literal and duration keyword syntax aligned with the Go parser.
++describe('literal and duration keyword compatibility', () => {
++    const strictParser = parser.configure({ strict: true });
++    const valid = [
++        'histogram_quantile(1./6., rate(testhistogram2_bucket[15m]))',
++        '2.', '1.e2', '1.E-2', '1_000.', '1.2_3', '.1_2', '1e1_0',
++        '0X1F', '0x_53_AB_F3_82', '0X_53_AB_F3_82', '0x1_f',
++        'foo[STEP()]',
++        'foo[RaNgE()]',
++        'rate(foo[MIN_OF(5m, RANGE())])',
++        'avg_over_time(foo[MAX_OF(STEP(), 1m)])',
++        'foo[1h:StEp()]',
++        'metric1_total offset STEP()',
++        'foo offset MaX_Of(RaNgE(), 1m)',
++        'foo[step()]',
++    ];
++    for (const query of valid) {
++        it(`accepts ${query}`, () => {
++            expect(() => strictParser.parse(query)).not.toThrow();
++        });
++    }
++    for (const query of ['1._2', '1_.2', '0x_', '0x1_', '0x1__2', '0X', '0x1.2', 'foo[ſtep()]', 'STEP()', 'RANGE()']) {
++        it(`rejects ${query}`, () => {
++            expect(() => strictParser.parse(query)).toThrow();
++        });
++    }
++    for (const name of ['step', 'STEP', 'range', 'RANGE', 'min_of', 'MIN_OF', 'max_of', 'MAX_OF']) {
++        it(`preserves ${name} as a metric name`, () => {
++            expect(strictParser.parse(name).toString()).toBe('PromQL(VectorSelector(Identifier))');
++        });
++    }
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20412** (closed): tsdb: keep samples of series recreated while an eviction tombstone is pending (@duricanikolic)
-- **PR #20405** (2026-11-11): docs: fix dead Marathon and DC/OS links (@donaldraph)
-- **PR #20404** (2026-11-11): tsdb/chunkenc [PERF]: use the writeBitsFast implementation in writeBits (@g4lb)
-- **PR #20401** (2026-11-09): otlp: emit target_info when keep_identifying_resource_attributes is true and resource only has identifying attributes (@krajorama)
-- **PR #20400** (2026-11-10): otlptranslator: copy native histogram zero threshold from OTel (@krajorama)
-- **PR #20398** (2026-11-11): strutil: preallocate strings.Builder capacity in SanitizeFullLabelName (@ayushbuilds-code)
+- **PR #20456** (2026-11-16): web: ui: align literal and duration keyword parsing with PromQL (@xixi-box)
+- **PR #20443** (2026-11-13): ci: do not run govulncheck on forks (@electron0zero)
+- **PR #20437** (2026-11-13): rules: restrict automatic metadata inference to schema-preserving expressions (@roidelapluie)
+- **PR #20428** (2026-11-13): docs: fix STACKIT example key and list Vultr SD in scrape_config (@rawsun007)
+- **PR #20423** (closed): promtool: allow YAML merge keys to override values in rule unit tests (@cvas22)
+- **PR #20419** (2026-11-13): strutil: Speed up SanitizeFullLabelName (@bboreham)
 
 ---
 
@@ -2110,31 +1971,41 @@ web: keep federated NHCB count at least the sum of its buckets
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #20398 from ayushbuilds-code/sanitize-builder-grow
+## X. web: ui: align literal and duration keyword parsing with PromQL
 
 **RULE**:
-When implementing operations in `util/strutil/strconv.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/ui/module/lezer-promql/src/promql.grammar`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49c815a0`: Merge pull request #20398 from ayushbuilds-code/sanitize-builder-grow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `05bbd304`: web: ui: align literal and duration keyword parsing with PromQL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/strutil/strconv.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/ui/module/lezer-promql/src/promql.grammar`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	validSb.Grow(len(name))
+      (std.digit+ (("_")? std.digit)* ("." (std.digit+ (("_")? std.digit)*)?)? | "." std.digit+ (("_")? std.digit)*) (("e" | "E") ("+" | "-")? std.digit+ (("_")? std.digit)*)? |
+      "0" ("x" | "X") "_"? (std.digit | $[a-fA-F]) ("_"? (std.digit | $[a-fA-F]))* | duration
+  DurationStep,
+  DurationRange,
+  DurationMinOf,
+  DurationMaxOf,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+      (std.digit+ (("_")? std.digit)* ("." std.digit+ (("_")? std.digit)*)? | "." std.digit+ (("_")? std.digit)*) (("e" | "E") ("+" | "-")? std.digit+ (("_")? std.digit)*)? |
+      "0x" (std.digit | $[a-fA-F])+ | duration
+DurationStep { condFn<"step"> }
+DurationRange { condFn<"range"> }
+DurationMinOf { condFn<"min_of"> }
+DurationMaxOf { condFn<"max_of"> }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49c815a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `05bbd304` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

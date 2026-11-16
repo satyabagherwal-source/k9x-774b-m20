@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T15:51:48.252Z",
+  "last_updated": "2026-11-16T16:00:23.117Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3678,14 +3678,14 @@
       "learning_id": "learn-github-prometheus-prometheus"
     },
     {
-      "id": "CD-RUPX",
+      "id": "CD-9KDD",
       "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_repo": "yvgude-lean-ctx-learnings",
+      "source_repo": "louis-cfm-coucou-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-RUPX-empirical-invariant-guard-in-changelog-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-9KDD-empirical-invariant-guard-in-changelog-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-15",
+      "date_staged": "2026-11-16",
       "domain_letter": "D"
     },
     {
@@ -19315,6 +19315,68 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-16",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-9AAK",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Louis-CFM/coucou",
+      "source_commit": "0d7fe588",
+      "date_staged": "2026-11-16",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-louis-cfm-coucou",
+      "candidateDomain": "D",
+      "candidateDomainName": "Research & Knowledge Intelligence",
+      "secondaryDomains": [
+        "K"
+      ],
+      "classificationConfidence": 0.1,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-9BOS",
+      "directive_title": "ui: align literal and duration keyword parsing with PromQL",
+      "source_repo": "prometheus/prometheus",
+      "source_commit": "05bbd304",
+      "staged_file": "11_INBOX/candidate-directives/CD-9BOS-ui-align-literal-and-duration-keyword-parsing-with-promql.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-9DK5",
+      "directive_title": "update README links to moved ProjectDiscovery docs pages",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "c160c4ff",
+      "staged_file": "11_INBOX/candidate-directives/CD-9DK5-update-readme-links-to-moved-projectdiscovery-docs-pages.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-7302C0",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "louis-cfm-coucou",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7302C0-empirical-invariant-guard-in-changelog-m.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-9KY1",
+      "directive_title": "web: ui: align literal and duration keyword parsing with PromQL",
+      "source_repo": "prometheus-prometheus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9KY1-web-ui-align-literal-and-duration-keyword-parsing-with-promql.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
     }
   ]
 }

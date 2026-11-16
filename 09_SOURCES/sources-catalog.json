@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "b9c39f1f",
+    "sourceVersion": "c160c4ff",
     "license": "MIT",
-    "contentHash": "cc0ab6e973ccd3cdbed34ea4748f183985e4a6d7690848a877634e43826fa1dd",
-    "lastHarvestedAt": "2026-11-16T03:57:22.202Z",
+    "contentHash": "5160ad3e200d08a8b9cdec6884407cd5e2a900fe6b69d58b1f23d4f547b757a0",
+    "lastHarvestedAt": "2026-11-16T16:00:13.356Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "8e974df2",
+    "sourceVersion": "05bbd304",
     "license": "Apache-2.0",
-    "contentHash": "abec00e578532cf5da361173590f9f2ebad8c3a593c978691261d91670e7f0df",
-    "lastHarvestedAt": "2026-11-13T21:16:13.673Z",
+    "contentHash": "499c6a7a4aac8939f1c61cef323f3348589e70f1351c89f948cb24bde48c52bd",
+    "lastHarvestedAt": "2026-11-16T16:00:10.925Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "15cc178d",
+    "sourceVersion": "0d7fe588",
     "license": "MIT",
-    "contentHash": "9d9e473dd3face7170f75ea177272885af79fd6246946b57a4417645075cf420",
-    "lastHarvestedAt": "2026-11-13T03:56:21.331Z",
+    "contentHash": "feb9d2924edf89cd7f4feb81ae2255a9beeaaf204870cc06dc6c086b44ce75be",
+    "lastHarvestedAt": "2026-11-16T16:00:09.300Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {
@@ -12375,8 +12375,8 @@
     "sourceUrl": "https://huggingface.co/Zyphra/ZONOS3-Mini",
     "sourceVersion": "hf-zyphra-zonos3-mini",
     "license": "Open-Source",
-    "contentHash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
-    "lastHarvestedAt": "2026-11-12T01:11:41.996Z",
+    "contentHash": "a961c1385219e6e5c5dcd25e583b9cff39e55fc643d8b4f730b30672f695c093",
+    "lastHarvestedAt": "2026-11-16T16:00:18.854Z",
     "learningId": "learn-huggingface-zyphra-zonos3-mini"
   },
   "unovue-reka-ui": {

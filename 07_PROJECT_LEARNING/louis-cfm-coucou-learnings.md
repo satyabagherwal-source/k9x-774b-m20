@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `15cc178d`  
+> **Source Version**: `0d7fe588`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:56:06.996Z  
+> **Timestamp**: 2026-11-16T16:00:08.861Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:56:06.987Z  
+> **Harvest Timestamp**: 2026-11-16T16:00:05.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7155 stars
+- **Stars / Engagement**: 7265 stars
 
 ---
 
@@ -1793,325 +1793,40 @@ final class SoundEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bc221c7` (2026-11-12)
-**Commit Message**: Windows and Linux: show the relay settings to testers
+### Incident Patch 1: `0d7fe588` (2026-11-13)
+**Commit Message**: Merge pull request #1097 from Louis-CFM/android-0.5.0-dates
 
-The "Away from home Wi-Fi" block stays hidden until a relay is ready for everyone, but now shows when Coucou starts with
-COUCOU_RELAY_SETTINGS=1, or when a relay is already on. Without it, nobody could reach a relay, so the Android 0.5 relay
-fixes (#19, #30 on Rhytam23/coucou) could not be tested. Nothing changes for other users.
+CHANGELOG: date Android 0.4.0 and 0.5.0
 
-- phone_relay_status carries `shown`; Settings → Android phone inserts the block only when it is set.
-- docs/RELAY_DEPLOY.md says how to start Coucou with the variable; CHANGELOG notes it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
+**File**: `CHANGELOG.md` (modified, +2/-2)
 ```diff
-@@ -31,6 +31,7 @@ Fixes:
- - **Start a Claude Code session from the island** — the terminal tab in the island's header: pick the project (the folders your sessions ran in, or any folder), say what Claude should do, and your terminal opens there with Claude Code and your words. Windows Terminal or PowerShell on Windows; your own terminal on Linux. The prompt is never written into a command line
- - **Drop a file on a session** — drag a file over the island and let go on one of the sessions listed on the right of the drop card: its window comes forward and the file's path lands in its prompt
- - **Approve Antigravity commands from the island** *(optional)* — the Mac's setting comes to Windows and Linux: turn on Settings → Agents → Antigravity → **Approve commands from the notch**, and a shell command that none of your Antigravity rules covers waits for you on the approval card: **Allow**, **Deny**, or **Reply in terminal** for Antigravity's own prompt. Commands your rules allow or deny are left to Antigravity, and with no answer in 2 min, or Coucou closed, Antigravity asks in its terminal as before. Reinstall the Antigravity hooks once, then restart Antigravity: its command hook now waits up to 2 min
-+- **Relay settings for testers** — the *Away from home Wi-Fi* block in Settings → Android phone stays hidden until a relay is ready for everyone, but now shows when Coucou starts with `COUCOU_RELAY_SETTINGS=1` (or when a relay is already on), so the Android relay link can be tested; how in [docs/RELAY_DEPLOY.md](docs/RELAY_DEPLOY.md)
- - **Approve OpenCode from the island** — OpenCode's permission requests get Allow and Deny on the island; with no click, OpenCode asks as usual (#442 by @ValentinoMartz)
- - **A card answered in the terminal goes away** — allow or deny in the terminal (or Claude's app) and the island's card closes by itself (#740 by @arnavaggarwal-dev)
- - **Flow: one press starts hands-free** (#1063 by @Brezinben)
-@@ -53,7 +54,7 @@ Fixes:
- ## Android 0.5.0 — Unreleased
+@@ -51,7 +51,7 @@ Fixes:
+ - **Instant page switches in Settings** *(Linux)* (#906 by @RomainBrocheton)
+ - **The finished card goes away when a new prompt comes** (#587) and **the GitHub week strip is graded against its own week** (#611), by @rollecode
+ 
+-## Android 0.5.0 — Unreleased
++## Android 0.5.0 — November 13, 2026
  
  - **Coucou for Android 0.5.0**, by @Rhytam23 (versionCode 5)
--  - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill)
-+  - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill). The relay settings are still hidden on Windows and Linux, so this is for testers for now (see Windows and Linux 0.6.0)
-   - **Swipe the island up to put it away** — it goes back into the camera hole and stays there while the same thing goes on (the same agent working, the same request); anything new brings it back down. TalkBack has a *Dismiss the island* action for it
-   - **Nothing is lost with the swipe** — a finish, an error, a usage limit or a question becomes a quiet notification, and a permission request keeps its own notification with Deny and Allow
-   - **Hide the island in Do Not Disturb** *(optional, off by default)* — Settings → **Hide the island in Do Not Disturb**: while the phone is in Do Not Disturb, nothing drops from the top of the screen; requests still arrive as notifications, which Android handles by its own Do Not Disturb rules
-```
-
-**File**: `docs/RELAY_DEPLOY.md` (modified, +4/-0)
-```diff
-@@ -44,6 +44,10 @@ Notes:
+   - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill). The relay settings are still hidden on Windows and Linux, so this is for testers for now (see Windows and Linux 0.6.0)
+@@ -61,7 +61,7 @@ Fixes:
+   - **The island fits again** when the phone is rotated or the screen resolution or font size changes while it is open
+   - **Six more languages** — German, Japanese, Korean, Traditional Chinese and Thai (from #1043 to #1047 by @Ohualtex) and Italian (from #974 by @roccordx); the app now has 16 translations
  
- ## 2. Set up the computer (Windows or Linux)
+-## Android 0.4.0 — Unreleased
++## Android 0.4.0 — November 3, 2026
  
-+The **Away from home Wi-Fi** block is hidden in Settings until a relay is ready for everyone. To see it, quit Coucou and start
-+it with `COUCOU_RELAY_SETTINGS=1`: in PowerShell, `$env:COUCOU_RELAY_SETTINGS="1"` then start Coucou from that window; on Linux, from a terminal,
-+`COUCOU_RELAY_SETTINGS=1 coucou` (or the path to the AppImage instead of `coucou`). Once the relay is turned on, the block stays visible without it.
-+
- 1. Settings > **Android phone**. Turn **Phone link** on.
- 2. In the block **Away from home Wi-Fi**:
-    - **Relay address**: `wss://coucou-link.<your-name>.workers.dev` (it must start with `wss://`), press **Save address**.
-```
-
-**File**: `windows/src-tauri/src/phone_link/mod.rs` (modified, +9/-0)
-```diff
-@@ -390,6 +390,14 @@ pub struct RelayStatus {
-     /// An access key is stored. The key itself is never sent back to the window.
-     pub has_access: bool,
-     pub state: relay_client::State,
-+    /// The "Away from home Wi-Fi" block is shown in Settings. It stays hidden until a relay is ready to use, except for
-+    /// testers who start Coucou with `COUCOU_RELAY_SETTINGS=1`, and for a relay that is already turned on.
-+    pub shown: bool,
-+}
-+
-+/// Testers start Coucou with `COUCOU_RELAY_SETTINGS=1` to see the relay settings (docs/RELAY_DEPLOY.md).
-+fn relay_settings_for_testers() -> bool {
-+    std::env::var("COUCOU_RELAY_SETTINGS").map(|v| v == "1").unwrap_or(false)
- }
- 
- fn relay_status_of(link: &PhoneLink, shared: &Shared) -> RelayStatus {
-@@ -399,6 +407,7 @@ fn relay_status_of(link: &PhoneLink, shared: &Shared) -> RelayStatus {
-         url: s.phone_relay_url.clone(),
-         has_access: relay_client::access_key(&*link.store).is_some(),
-         state: link.relay.lock().unwrap().as_ref().map_or(relay_client::State::Off, |h| h.state()),
-+        shown: relay_settings_for_testers() || s.phone_relay,
-     }
- }
- 
-```
-
-**File**: `windows/src/core/bridge.ts` (modified, +2/-0)
-```diff
-@@ -55,6 +55,8 @@ export interface PhoneRelayStatus {
-   url: string;
-   hasAccess: boolean;
-   state: PhoneRelayState;
-+  /** The relay settings are shown: for testers (COUCOU_RELAY_SETTINGS=1), or when a relay is already on. */
-+  shown: boolean;
- }
- 
- /** Session details for the phone: the switch (off by default). */
-```
-
-**File**: `windows/src/settings/phone.ts` (modified, +12/-5)
-```diff
-@@ -11,10 +11,17 @@ import { t } from "../i18n/i18n";
- type Toggle = (on: boolean, onChange: (v: boolean) => void) => HTMLElement;
- 
- /**
-- * The relay block ("Away from home Wi-Fi") is hidden until a relay is ready to use: the code and its tests stay, and
-- * turning this on shows it again. Nothing else changes.
-+ * The relay block ("Away from home Wi-Fi") is hidden until a relay is ready to use: the code and its tests stay.
-+ * Testers who start Coucou with COUCOU_RELAY_SETTINGS=1 see it (docs/RELAY_DEPLOY.md), and so does anyone whose relay
-+ * is already on. Nothing else changes.
-  */
--const SHOW_RELAY_SETTINGS = false;
-+function relaySlot(makeToggle: Toggle, refreshPairing: () => void): HTMLElement {
-+  const slot = h("div", {});
-+  void Bridge.phoneRelayStatus().then((status) => {
-+    if (status?.shown) slot.replaceWith(relayBlock(makeToggle, refreshPairing));
-+  });
-+  return slot;
-+}
- 
- export function phoneSection(on: boolean, makeToggle: Toggle, settings: Settings): HTMLElement {
-   const detail = h("div", {});
-@@ -64,7 +71,7 @@ export function phoneSection(on: boolean, makeToggle: Toggle, settings: Settings
-       h("div", { class: "hint", text: t("The phone connects to {address}", { address }) }),
-       h("div", { class: "hint", text: t("If Windows asks about the firewall, allow Coucou on private networks. The phone and this computer must be on the same Wi-Fi.") }),
-       h("div", { class: "hint", text: t("Your phone finds this computer again by itself when the network changes. It is announced on your local network only while this switch is on. Some hotspots and guest networks block this.") }),
--      ...(SHOW_RELAY_SETTINGS ? [relayBlock(makeToggle, () => void refreshPairing())] : []),
-+      relaySlot(makeToggle, () => void refreshPairing()),
-       detailsBlock(makeToggle),
-       answersBlock(makeToggle),
-       diffsBlock(makeToggle),
-@@ -138,7 +145,7 @@ function relayBlock(makeToggle: Toggle, changed: () => void): HTMLElement {
-   const state = h("div", { class: "hint" });
-   const address = h("input", { type: "text", placeholder: "wss://", style: "width:100%", autocomplete: "off", spellcheck: "false" }) as HTMLInputElement;
-   const access = h("input", { type: "password", style: "width:100%", autocomplete: "off", spellcheck: "false" }) as HTMLInputElement;
--  let current: PhoneRelayStatus = { enabled: false, url: "", hasAccess: false, state: "off" };
-+  let current: PhoneRelayStatus = { enabled: false, url: "", hasAccess: false, state: "off", shown: true };
- 
-   const show = (status: PhoneRelayStatus | null) => {
-     if (!status) return;
-```
-
-**File**: `windows/tests/phone-relay.test.mjs` (modified, +11/-0)
-```diff
-@@ -33,3 +33,14 @@ test("the bridge never asks Rust for the access key", () => {
-   assert.match(status.slice(0, 400), /hasAccess: boolean/);
-   assert.ok(!/access: string/.test(status.slice(0, 400)));
- });
-+
-+test("the relay block shows only for testers (COUCOU_RELAY_SETTINGS=1) or when a relay is already on", () => {
-+  const src = readFileSync(new URL("../src/settings/phone.ts", import.meta.url), "utf8");
-+  assert.ok(!/SHOW_RELAY_SETTINGS/.test(src), "no hard-coded switch left");
-+  const slot = src.slice(src.indexOf("function relaySlot"), src.indexOf("export function phoneSection"));
-+  assert.match(slot, /status\?\.shown/);
-+  assert.match(src, /relaySlot\(makeToggle/);
-+  const rust = readFileSync(new URL("../src-tauri/src/phone_link/mod.rs", import.meta.url), "utf8");
-+  assert.match(rust, /env::var\("COUCOU_RELAY_SETTINGS"\)\.map\(\|v\| v == "1"\)\.unwrap_or\(false\)/);
-+  assert.match(rust, /shown: relay_settings_for_testers\(\) \|\| s\.phone_relay/);
-+});
-```
-
----
-
-### Incident Patch 2: `fd056232` (2026-10-24)
-**Commit Message**: Relay link: keep reading after the handshake without its timeout, and forward frames in order in the Node twin (#19, from PR #554 by rollecode)
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `android/app/src/main/kotlin/com/coucou/android/link/RelayLink.kt` (modified, +2/-0)
-```diff
-@@ -88,6 +88,8 @@ class RelayConnector(
-         }
-         try {
-             val session = handshake(ws, key)
-+            // The stream keeps its own read timeout; the handshake's would end it after any quiet stretch.
-+            ws.setReadTimeout(0)
-             issue = RelayIssue.NONE
-             return RelayStreamSocket(ws, session)
-         } catch (e: Throwable) {
-```
-
-**File**: `android/app/src/test/kotlin/com/coucou/android/link/RelayConnectorTest.kt` (modified, +13/-0)
-```diff
-@@ -276,6 +276,19 @@ class RelayConnectorTest {
-         assertTrue(s.isClosed)
-     }
- 
-+    @Test fun aQuietStretchAfterTheHandshakeDoesNotEndTheStream() {
-+        val f = Fake()
-+        val s = connectorFor(f, resendMs = 150).connect(2_000)
-+        try {
-+            f.awaitSession()
-+            Thread.sleep(400) // longer than the handshake waited for each answer
-+            f.sendLine("{\"type\":\"welcome\"}")
-+            assertEquals("{\"type\":\"welcome\"}", readLine(s))
-+        } finally {
-+            s.close()
-+        }
-+    }
-+
-     @Test fun aLineOverTheLimitCannotBeSent() {
-         val f = Fake()
-         val s = connectorFor(f).connect(2_000)
-```
-
-**File**: `android/relay/tests/behaviour.ts` (modified, +13/-0)
-```diff
-@@ -124,6 +124,19 @@ export function behaviour(name: string, make: () => Promise<Harness>) {
-       expect(got.kind === "binary" && got.data.length).toBe(66_000);
-     });
- 
-+    it("forwards a burst in the order it was sent", async () => {
-+      const { pc, phone } = await pair();
-+      // Under the rate burst (60); frames of different sizes, as a conversation sends them.
-+      const count = 50;
-+      for (let i = 0; i < count; i++) phone.send(new Uint8Array(1 + ((i * 7919) % 40_000)).fill(i));
-+      const order: number[] = [];
-+      for (let i = 0; i < count; i++) {
-+        const m = await pc.next(5000);
-+        if (m.kind === "binary") order.push(m.data[0]);
-+      }
-+      expect(order).toEqual(Array.from({ length: count }, (_, i) => i));
-+    });
-+
-     it("closes a socket that sends a frame over 66,000 bytes (1009)", async () => {
-       const { pc, phone } = await pair();
-       phone.send(new Uint8Array(66_001));
-```
-
-**File**: `android/relay/tools/dev-relay.ts` (modified, +6/-1)
-```diff
-@@ -96,7 +96,7 @@ export async function startRelay(options: { port?: number; host?: string; access
-         peer.ws.send(PEER_ONLINE);
-       }
- 
--      ws.on("message", async (data, isBinary) => {
-+      const onMessage = async (data: WebSocket.RawData, isBinary: boolean) => {
-         if ((await accessGeneration(accessKey)) !== me.gen || !me.gen) return ws.close(1008, "access key changed");
-         if (!isBinary) {
-           if (data.toString() === "ping") return ws.send("pong"); // the platform's auto-response in the Worker
-@@ -108,6 +108,11 @@ export async function startRelay(options: { port?: number; host?: string; access
-         const other = room[otherRole(me.role)];
-         if (!other || other.replaced || other.ws.readyState !== other.ws.OPEN) return ws.send(PEER_OFFLINE);
-         other.ws.send(frame, { binary: true });
-+      };
-+      // One message at a time: the await above would otherwise let a burst overtake itself, which the Worker never does.
-+      let turn: Promise<void> = Promise.resolve();
-+      ws.on("message", (data, isBinary) => {
-+        turn = turn.then(() => onMessage(data, isBinary)).catch(() => {});
-       });
- 
-       const left = () => {
-```
-
----
-
-### Incident Patch 3: `1a61b5e5` (2026-11-11)
-**Commit Message**: Release prep: Mac 0.6.0 (build 26)
-
-- project.yml and Info.plist: 0.6.0, build 26.
-- CHANGELOG: 0.6.0 dated November 12, 2026.
-- README: 0.6.0 row in the Versions table.
-- What's new 0.6.0 was already in whats-new.json (16 languages).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # Changelog
- 
--## 0.6.0 — Unreleased
-+## 0.6.0 — November 12, 2026
- 
- - **Start a Claude Code session from the notch** *(GitHub build)* — the terminal tab in the island's header, or ⌃⌥N: pick the project (the folders your sessions ran in, or any folder), type or dictate what Claude should do, and your terminal opens there with Claude Code and your words. Terminal, iTerm2, Ghostty, kitty, WezTerm and Alacritty; the prompt is never written into a command line
- - **Drop a file on a session** *(GitHub build)* — drag a file over the notch (a ⌘⇧2 thumbnail, a capture, anything from Finder) and let go on one of the sessions listed on the right of the drop card: its terminal comes forward and the file lands in its prompt, as if dropped on the terminal itself
-```
-
-**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
-```diff
-@@ -36,9 +36,9 @@
- 	<key>CFBundlePackageType</key>
- 	<string>APPL</string>
- 	<key>CFBundleShortVersionString</key>
--	<string>0.5.8</string>
-+	<string>0.6.0</string>
- 	<key>CFBundleVersion</key>
--	<string>25</string>
-+	<string>26</string>
- 	<key>LSUIElement</key>
- 	<true/>
- 	<key>NSAccessibilityUsageDescription</key>
-```
-
-**File**: `NotchBuddy/project.yml` (modified, +2/-2)
-```diff
-@@ -140,8 +140,8 @@ targets:
-         CFBundleName: Coucou
-         CFBundleDisplayName: Coucou
-         CFBundleIdentifier: fr.louisraille.NotchBuddy
--        CFBundleVersion: "25"
--        CFBundleShortVersionString: "0.5.8"
-+        CFBundleVersion: "26"
-+        CFBundleShortVersionString: "0.6.0"
-         CFBundlePackageType: APPL
-         LSUIElement: YES
-         NSHighResolutionCapable: YES
-```
-
-**File**: `README.md` (modified, +1/-0)
-```diff
-@@ -151,6 +151,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
- 
- | Version | Date | Highlights |
- |---------|------|------------|
-+| [0.6.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.6.0) | Nov 12, 2026 | Start a Claude Code session from the notch, drop a file on a session, ⌘⇧2 screenshot copied, approve Antigravity commands, Android phone link, Coucoudoro |
- | [0.5.8](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.8) | Oct 31, 2026 | Fixes by @Ohualtex: approvals and questions stay put, desktop Mochi stays visible, dropped files no longer overwrite each other |
- | [0.5.7](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.7) | Oct 31, 2026 | Mail in the notch: search, filters, reading, automatic sorting with rules and Undo, mail plans from the chat; search the settings; Coucou in a corner of the screen |
- | [0.5.6](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.6) | Oct 30, 2026 | Chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot), switched on in Settings → Chat; Korean and Japanese |
+ - **The island sits in the middle again** when the screen resolution is set below the panel's (#900 by @pfTheTrial)
+ - **Coucou for Android 0.4.0** — works with a Mac as well as with Windows and Linux: pair it the same way (Settings → Android phone on the Mac, then scan the QR code). The app itself does not change for this; the Mac speaks the same link as the PC. Needs the Mac release that carries the Android phone link
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1097** (2026-11-13): CHANGELOG: date Android 0.4.0 and 0.5.0 (@Louis-CFM)
 - **PR #1092** (2026-11-12): Windows and Linux: show the relay settings to testers (@Louis-CFM)
 - **PR #1090** (2026-11-12): Windows and Linux: Flow can hide the pill until you dictate (@Rhytam23)
 - **PR #1089** (2026-11-12): Android 0.5.0: swipe the island away, Do Not Disturb, six more languages, a steadier relay link (@Rhytam23)
 - **PR #1088** (2026-11-11): Release prep: Mac 0.6.0 (@Louis-CFM)
 - **PR #1085** (closed): feat: initialize ml7a Windows app and complete Milestone 1 (@marceleno1717)
-- **PR #1082** (closed): Worktree nexisland plan (@Snzy09)
 
 ---
 
@@ -2131,13 +1846,13 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Windows and Linux: show the relay settings to testers
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bc221c7`: Windows and Linux: show the relay settings to testers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d7fe588`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2145,15 +1860,16 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-- **Relay settings for testers** — the *Away from home Wi-Fi* block in Settings → Android phone stays hidden until a relay is ready for everyone, but now shows when Coucou starts with `COUCOU_RELAY_SETTINGS=1` (or when a relay is already on), so the Android relay link can be tested; how in [docs/RELAY_DEPLOY.md](docs/RELAY_DEPLOY.md)
-  - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill). The relay settings are still hidden on Windows and Linux, so this is for testers for now (see Windows and Linux 0.6.0)
+## Android 0.5.0 — November 13, 2026
+## Android 0.4.0 — November 3, 2026
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-  - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill)
+// Induced defect failure mode:
+## Android 0.5.0 — Unreleased
+## Android 0.4.0 — Unreleased
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bc221c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d7fe588` are properly handled with clean fallback behavior.

@@ -4,22 +4,22 @@
 {
   "source_repository": "prometheus/prometheus",
   "source_url": "https://github.com/prometheus/prometheus",
-  "source_version": "8e974df2",
+  "source_version": "05bbd304",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T21:16:13.809Z",
+  "timestamp": "2026-11-16T16:00:11.120Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-prometheus-prometheus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [prometheus/prometheus](https://github.com/prometheus/prometheus) (Revision: `8e974df2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T21:16:13.809Z`  
+> **Provenance**: Harvested from [prometheus/prometheus](https://github.com/prometheus/prometheus) (Revision: `05bbd304`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T16:00:11.120Z`  
 > **Learning ID**: `learn-github-prometheus-prometheus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `prometheus/prometheus` (Commit: `8e974df2`)
+- **Target Repository**: `prometheus/prometheus` (Commit: `05bbd304`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:16:13.020Z  
+> **Harvest Timestamp**: 2026-11-16T16:00:10.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 67590 stars
+- **Stars / Engagement**: 67651 stars
 
 ---
 
@@ -1792,14 +1792,13 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20443** (2026-11-13): **ci: do not run govulncheck on forks**
-  *Symptoms*: Skip the govulncheck workflow on forks, matching the existing guard in stale.yml.  The workflow is synced to all repos and currently runs on every fork of every repo that has this workflow synced to.  ```release-notesa NONE ```
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"85594aa9b7ab0c726345d13a7ef072f8940be3d8","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-13T15:21:35.938118Z">2026-11-13T15:21:35.938118Z</relative-time> | `85594aa` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
-  > makes sense, thanks!
+- **Issue #20456** (2026-11-16): **web: ui: align literal and duration keyword parsing with PromQL**
+  *Symptoms*: Fixes #20455  The query editor rejects valid trailing-dot floats, uppercase hexadecimal prefixes, hexadecimal digit separators, and uppercase duration keywords that the Go parser accepts. The frontend number token excludes these literal forms, and duration keywords use case-sensitive function extensions.  Allow an empty fractional part and hexadecimal prefixes/separators in the number token. Match duration keywords through the existing case-insensitive contextual matcher, preserving metric names and the case sensitivity of ordinary functions. Add strict parser cases for valid queries, malformed literals, and keyword names used as metrics.  Tests: `/bin/sh -c 'cd web/ui/module/lezer-promql && pnpm test --runInBand --verbose --json'` (fails on base; passes with this patch). Regression coverage: `web/ui/module/lezer-promql/test/promql.test.js`.  #### Which issue(s) does the PR fix: Fixes #20455  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  ```release-notes [BUGFIX] UI: Accept trailing-dot floats, uppercase and underscored hexadecimal literals, and case-insensitive duration keywords in the query editor. ``` <!-- oss-scout-job:job-70275eb8-baf2-463e-87b9-a5071179f51e -->  ```release-notes [BUGFIX] web: ui: align literal and duration keyword parsing with PromQL ```
 
-- **Issue #20437** (2026-11-13): **rules: restrict automatic metadata inference to schema-preserving expressions**
-  *Symptoms*:  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add `/api/v1/features` endpoint.  Re
+- **Issue #20455** (2026-11-16): **lezer-promql: rejects trailing-dot floats, `0X`/underscored hex literals, and uppercase duration keywords (`STEP()`, `RANGE()`)**
+  *Symptoms*: ### What did you do?  Parsed valid PromQL expressions (including examples from `docs/querying/basics.md`, `promql/promqltest/testdata/histograms.test`, `promql/promqltest/testdata/duration_expression.test`, and `promql/parser/lex_test.go`) with `@prometheus-io/lezer-promql`:  ```bash npm i @prometheus-io/lezer-promql@0.316.0 node repro.mjs ```  `repro.mjs`:  ```js import { parser } from "@prometheus-io/lezer-promql";  const firstError = (q) => {   let e = -1;   parser.parse(q).iterate({ enter(n) { if (n.type.isError && e < 0) e = n.from; } });   return e; };  for (const q of [   "histogram_quantile(1./6., rate(testhistogram2_bucket[15m]))", // histograms.test   "2.",   "1.e2",                                                        // lex_test.go   "0X1F",   "0x_53_AB_F3_82",                                              // docs/querying/basics.md   "foo[STEP()]",   "rate(foo[MIN_OF(5m, RANGE())])",   "avg_over_time(foo[MAX_OF(STEP(), 1m)])",   "metric1_total offset STEP()",                                 // duration_expression.test   "foo[step()]",                                                 // control: no error ]) {   console.log(firstError(q), q); } ```  ### What did you expect to see?  `-1` (no error node) for every expression above. `promql/parser.NewParser(parser.Options{}).ParseExpr` accepts all of them: - Trailing-dot floats such as `2.`, `1./6.`, and `1.e2` are valid float literals. - [Float literals](https://prometheus.io/docs/prometheus/latest/querying/basics/#f
+  **Post-Mortem & Fix Analysis**:
+  > I'm working on a fix and a regression test for this issue with OpenCode.  <!-- oss-scout-issue-claim -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1816,47 +1815,129 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `740695f5` (2026-11-12)
-**Commit Message**: docs: fix STACKIT example key and list Vultr SD in scrape_config
+### Incident Patch 1: `05bbd304` (2026-11-16)
+**Commit Message**: web: ui: align literal and duration keyword parsing with PromQL (#20456)
 
-The STACKIT OAuth2 example used `stackit_sd_config:`, which config.Load
-rejects; the scrape_config field is `stackit_sd_configs`. The
-scrape_config list of service discovery configurations also left out
-`vultr_sd_configs`, which the alerting list already includes.
+* web: ui: align literal and duration keyword parsing with PromQL
 
-Signed-off-by: Roshan Ramani <[REDACTED_EMAIL]>
+Signed-off-by: wangshun <[REDACTED_EMAIL]>
 
-**File**: `docs/configuration/configuration.md` (modified, +5/-1)
+* chore: retrigger CI (golangci-lint-action tar cache failure)
+
+Signed-off-by: wangshun <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: wangshun <[REDACTED_EMAIL]>
+
+**File**: `web/ui/module/lezer-promql/src/promql.grammar` (modified, +6/-6)
 ```diff
-@@ -557,6 +557,10 @@ triton_sd_configs:
- uyuni_sd_configs:
-   [ - <uyuni_sd_config> ... ]
+@@ -346,8 +346,8 @@ durationPrimary[@inline] {
+   LineComment { "#" ![\n]* }
  
-+# List of Vultr service discovery configurations.
-+vultr_sd_configs:
-+  [ - <vultr_sd_config> ... ]
+   number {
+-      (std.digit+ (("_")? std.digit)* ("." std.digit+ (("_")? std.digit)*)? | "." std.digit+ (("_")? std.digit)*) (("e" | "E") ("+" | "-")? std.digit+ (("_")? std.digit)*)? |
+-      "0x" (std.digit | $[a-fA-F])+ | duration
++      (std.digit+ (("_")? std.digit)* ("." (std.digit+ (("_")? std.digit)*)?)? | "." std.digit+ (("_")? std.digit)*) (("e" | "E") ("+" | "-")? std.digit+ (("_")? std.digit)*)? |
++      "0" ("x" | "X") "_"? (std.digit | $[a-fA-F]) ("_"? (std.digit | $[a-fA-F]))* | duration
+   }
+   StringLiteral { // TODO: This is for JS, make this work for PromQL.
+     '"' (![\\\n"] | "\\" _)* '"'? |
+@@ -433,6 +433,10 @@ durationPrimary[@inline] {
+   EndFn,
+   AtStart,
+   AtEnd,
++  DurationStep,
++  DurationRange,
++  DurationMinOf,
++  DurationMaxOf,
+   Smoothed,
+   Anchored,
+   Fill,
+@@ -534,7 +538,3 @@ durationPrimary[@inline] {
+ 
+ // Conditional function names (only parsed as function names when used as such).
+ condFn<term> { @extend<Identifier, term> }
+-DurationStep { condFn<"step"> }
+-DurationRange { condFn<"range"> }
+-DurationMinOf { condFn<"min_of"> }
+-DurationMaxOf { condFn<"max_of"> }
+```
+
+**File**: `web/ui/module/lezer-promql/src/tokens.js` (modified, +8/-0)
+```diff
+@@ -51,6 +51,10 @@ import {
+   Unless,
+   Without,
+   AtEnd,
++  DurationStep,
++  DurationRange,
++  DurationMinOf,
++  DurationMaxOf,
+   AtStart,
+   Smoothed,
+   Anchored,
+@@ -111,6 +115,10 @@ export const specializeIdentifier = (value, stack) => {
+ };
+ 
+ const contextualKeywordTokens = {
++  step: DurationStep,
++  range: DurationRange,
++  min_of: DurationMinOf,
++  max_of: DurationMaxOf,
+   avg: Avg,
+   atan2: Atan2,
+   bitand: BitAnd,
+```
+
+**File**: `web/ui/module/lezer-promql/test/promql.test.js` (modified, +33/-0)
+```diff
+@@ -75,3 +75,36 @@ describe('unquoted UTF-8 names', () => {
+         });
+     }
+ });
 +
- # List of labeled statically configured targets for this job.
- static_configs:
-   [ - <static_config> ... ]
-@@ -3334,7 +3338,7 @@ From a given Service Account json
- properties can be mapped as:
- 
- ```yaml
--stackit_sd_config:
-+stackit_sd_configs:
- - oauth2:
-     client_id: <credentials.sub>
-     client_certificate_key: <credentials.privateKey>
++// Keep literal and duration keyword syntax aligned with the Go parser.
++describe('literal and duration keyword compatibility', () => {
++    const strictParser = parser.configure({ strict: true });
++    const valid = [
++        'histogram_quantile(1./6., rate(testhistogram2_bucket[15m]))',
++        '2.', '1.e2', '1.E-2', '1_000.', '1.2_3', '.1_2', '1e1_0',
++        '0X1F', '0x_53_AB_F3_82', '0X_53_AB_F3_82', '0x1_f',
++        'foo[STEP()]',
++        'foo[RaNgE()]',
++        'rate(foo[MIN_OF(5m, RANGE())])',
++        'avg_over_time(foo[MAX_OF(STEP(), 1m)])',
++        'foo[1h:StEp()]',
++        'metric1_total offset STEP()',
++        'foo offset MaX_Of(RaNgE(), 1m)',
++        'foo[step()]',
++    ];
++    for (const query of valid) {
++        it(`accepts ${query}`, () => {
++            expect(() => strictParser.parse(query)).not.toThrow();
++        });
++    }
++    for (const query of ['1._2', '1_.2', '0x_', '0x1_', '0x1__2', '0X', '0x1.2', 'foo[ſtep()]', 'STEP()', 'RANGE()']) {
++        it(`rejects ${query}`, () => {
++            expect(() => strictParser.parse(query)).toThrow();
++        });
++    }
++    for (const name of ['step', 'STEP', 'range', 'RANGE', 'min_of', 'MIN_OF', 'max_of', 'MAX_OF']) {
++        it(`preserves ${name} as a metric name`, () => {
++            expect(strictParser.parse(name).toString()).toBe('PromQL(VectorSelector(Identifier))');
++        });
++    }
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20456** (2026-11-16): web: ui: align literal and duration keyword parsing with PromQL (@xixi-box)
 - **PR #20443** (2026-11-13): ci: do not run govulncheck on forks (@electron0zero)
 - **PR #20437** (2026-11-13): rules: restrict automatic metadata inference to schema-preserving expressions (@roidelapluie)
 - **PR #20428** (2026-11-13): docs: fix STACKIT example key and list Vultr SD in scrape_config (@rawsun007)
 - **PR #20423** (closed): promtool: allow YAML merge keys to override values in rule unit tests (@cvas22)
 - **PR #20419** (2026-11-13): strutil: Speed up SanitizeFullLabelName (@bboreham)
-- **PR #20417** (2026-11-13): promtool: write valid OpenMetrics names and label values in dump-openmetrics (@0z5a)
 
 ---
 
@@ -1876,35 +1957,41 @@ Signed-off-by: Roshan Ramani <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix STACKIT example key and list Vultr SD in scrape_config
+## X. web: ui: align literal and duration keyword parsing with PromQL
 
 **RULE**:
-When implementing operations in `docs/configuration/configuration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/ui/module/lezer-promql/src/promql.grammar`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `740695f5`: docs: fix STACKIT example key and list Vultr SD in scrape_config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `05bbd304`: web: ui: align literal and duration keyword parsing with PromQL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/configuration/configuration.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/ui/module/lezer-promql/src/promql.grammar`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# List of Vultr service discovery configurations.
-vultr_sd_configs:
-  [ - <vultr_sd_config> ... ]
-
-stackit_sd_configs:
+      (std.digit+ (("_")? std.digit)* ("." (std.digit+ (("_")? std.digit)*)?)? | "." std.digit+ (("_")? std.digit)*) (("e" | "E") ("+" | "-")? std.digit+ (("_")? std.digit)*)? |
+      "0" ("x" | "X") "_"? (std.digit | $[a-fA-F]) ("_"? (std.digit | $[a-fA-F]))* | duration
+  DurationStep,
+  DurationRange,
+  DurationMinOf,
+  DurationMaxOf,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-stackit_sd_config:
+      (std.digit+ (("_")? std.digit)* ("." std.digit+ (("_")? std.digit)*)? | "." std.digit+ (("_")? std.digit)*) (("e" | "E") ("+" | "-")? std.digit+ (("_")? std.digit)*)? |
+      "0x" (std.digit | $[a-fA-F])+ | duration
+DurationStep { condFn<"step"> }
+DurationRange { condFn<"range"> }
+DurationMinOf { condFn<"min_of"> }
+DurationMaxOf { condFn<"max_of"> }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `740695f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `05bbd304` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

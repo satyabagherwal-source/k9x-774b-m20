@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T15:51:48.061Z",
+  "updated_at": "2026-11-16T16:00:22.939Z",
   "stats": {
-    "total_discovered": 4308,
-    "approved_pending_harvest": 4048,
+    "total_discovered": 4311,
+    "approved_pending_harvest": 4051,
     "harvested_count": 0,
     "rejected_count": 260,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4051,
+      "COMMUNITY_AND_EXPERT": 4054,
       "OFFICIAL_DOCUMENTATION": 138,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -92977,6 +92977,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
         "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-F95ED07AC3C6": {
+      "id": "SRC-F95ED07AC3C6",
+      "url": "https://github.com/prometheus/prometheus",
+      "title": "https://github.com/prometheus/prometheus",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T16:00:22.867Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-FA408D3D8418": {
+      "id": "SRC-FA408D3D8418",
+      "url": "https://github.com/prometheus/prometheus/pull/20070",
+      "title": "https://github.com/prometheus/prometheus/pull/20070",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T16:00:22.910Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-259F99F2C33B": {
+      "id": "SRC-259F99F2C33B",
+      "url": "https://prometheus.io/docs/prometheus/latest/querying/basics",
+      "title": "https://prometheus.io/docs/prometheus/latest/querying/basics",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T16:00:22.939Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
       }
     }
   }
