@@ -10373,3 +10373,6 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `fbd9a416` | Multi-dimensional audit evidence | 2026-11-16T20:20:57.509Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `1445ac44` | Multi-dimensional audit evidence | 2026-11-16T20:21:03.870Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `a0570118` | Multi-dimensional audit evidence | 2026-11-16T20:21:07.592Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `554cb1b7` | Multi-dimensional audit evidence | 2026-11-16T21:10:24.537Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `573231ac` | Multi-dimensional audit evidence | 2026-11-16T21:10:31.051Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `342ec629` | Multi-dimensional audit evidence | 2026-11-16T21:10:35.764Z |

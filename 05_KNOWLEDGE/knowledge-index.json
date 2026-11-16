@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T20:32:46.899Z",
+  "last_updated": "2026-11-16T21:10:40.685Z",
   "total_verified_learnings": 8804,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19344,
+  "total_items": 19355,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216780,8 +216780,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "4fc66b82",
-      "content_hash": "cda1e3381c8cff5838ada0572053b9d633b78bd6c97452dc34fab43c80559cb9",
+      "source_version": "342ec629",
+      "content_hash": "2d407fbe529c2f138259823d5734173a7197114a47f19d916867f9740e678ccb",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -216794,6 +216794,11 @@
           "number": 8608,
           "title": "stop Iceberg DDL/DML from silently doing nothing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8791,
+          "title": "decode BLOOM table index type; default cache.data_max_ratio to 0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216801,7 +216806,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T10:48:14.588Z",
+      "verified_at": "2026-11-16T21:10:35.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216855,10 +216860,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "4fc66b82",
-      "content_hash": "f13171d7ebc1046e658365012d735c94024b33dd591cfdfbadb929da8f48c4f3",
+      "source_version": "342ec629",
+      "content_hash": "adfdc8ba2a71b5d9fda799c87eb0d357306bd624c74207b6f36088dc7b2600d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T10:48:15.241Z"
+      "persisted_at": "2026-11-16T21:10:36.149Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -219734,8 +219739,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "eca4674a",
-      "content_hash": "371369efeac5c632ebb64e5e8bd6deeac9500b10b63392631eff27fd0ac77dff",
+      "source_version": "573231ac",
+      "content_hash": "93bef85a3e0e86c7870f69c74a398ecfa5eb174db4cfe91c3d5a5c5bac26b257",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -219748,6 +219753,11 @@
           "number": 8616,
           "title": "keep same-upper groups together at global histogram cuts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8790,
+          "title": "respect redaction in deadlock retry logs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219755,7 +219765,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T13:09:00.855Z",
+      "verified_at": "2026-11-16T21:10:30.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219797,10 +219807,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "eca4674a",
-      "content_hash": "f0e366dad0db3a3a2fb43151e3ab6b6090023d4a23fa60cce36cded928224943",
+      "source_version": "573231ac",
+      "content_hash": "b39aea47b36c173854e8a0c821ec1c69e37683eec216395f2905535ff786812b",
       "domain_letter": "I",
-      "persisted_at": "2026-11-15T13:09:01.278Z"
+      "persisted_at": "2026-11-16T21:10:31.339Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -219809,10 +219819,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "eca4674a",
-      "content_hash": "8082c0f75aa9f0290841baba0ef7a9e5830033a34f93e1c97474779c0778dbec",
+      "source_version": "573231ac",
+      "content_hash": "6b165418d0302d4700b6d0715632a0989fa3f3e911f4c92c55d5d8368e269175",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:09:01.378Z"
+      "persisted_at": "2026-11-16T21:10:31.453Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -219884,9 +219894,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f25bc0cd1f798b9ef6742fa2e197031c135da35918b0819525a0f324725a93b",
+      "content_hash": "0fd8c07f27d29c0107f2acfdc935c3a1d285405a083d60c75dd42ad6e8e16311",
       "domain_letter": "I",
-      "persisted_at": "2026-11-15T13:09:10.757Z"
+      "persisted_at": "2026-11-16T21:10:40.071Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -219896,9 +219906,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "89afbd60b32dc59516294d1a445f04f5a0ad1d16dc9a05fee0199ab213a3821e",
+      "content_hash": "003ed93e3edb5a785740335b36c01ca0d38bec204e0e855ea8a5fa9f78fba49a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:09:10.857Z"
+      "persisted_at": "2026-11-16T21:10:40.179Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -229263,13 +229273,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "336cd8a4",
-      "content_hash": "10f08cf6e988a2cc6c3eeb99b5b4098ab9db301b8f95cc98f8f0686f1022c857",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "554cb1b7",
+      "content_hash": "abd19c27ee3a190e547bff1e659144fa69f4fb937116746a00df45090c9bb356",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -229280,6 +229290,11 @@
           "number": 8724,
           "title": "show exact, estimated, or unknown cost labels and update changelog",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8789,
+          "title": "decide the reasoning dialect by endpoint, not by model id",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229287,7 +229302,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T07:19:48.838Z",
+      "verified_at": "2026-11-16T21:10:24.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229326,37 +229341,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "336cd8a4",
-      "content_hash": "6e8baccd5fac4fd6776d478ba8803f1e53fb582b1b387b6a2d28625cf8fc6043",
+      "source_version": "554cb1b7",
+      "content_hash": "ad2a1036b7fb47e45982ff223d6ec25741c973b87dcd863e7a7aae59eb261aae",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:19:49.223Z"
+      "persisted_at": "2026-11-16T21:10:24.822Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "336cd8a4",
-      "content_hash": "5719e25c8db28cc0207921b162de91b11dd9450e236802542dfea546fcd58ad9",
+      "source_version": "554cb1b7",
+      "content_hash": "ca2a51f770be4221757ffc09538ce7eb884fba028b5a3625bb217caf35031b64",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:19:49.393Z"
+      "persisted_at": "2026-11-16T21:10:24.931Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
+      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "336cd8a4",
-      "content_hash": "a8c69c228b253a0b10af9401af3c1a6618ba902c268cc3b0c55956120bbf0cb1",
+      "source_version": "554cb1b7",
+      "content_hash": "ed08bc1dbc5c5882b9f51f2e248c4355de71635068e66e061a1e2fedcfff41c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:19:49.476Z"
+      "persisted_at": "2026-11-16T21:10:25.038Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -236670,9 +236685,9 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "7dca47dc957427a5c97c5ccf43806348ae82b876f622f4dcc9432b0d4b189e2e",
+      "content_hash": "fbbbba9720b0534abcb3bee37885ceacc5ccbcd9a53bdff498dfaa3f5a6fca00",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:57:54.727Z"
+      "persisted_at": "2026-11-16T21:10:39.421Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings",
@@ -236694,9 +236709,9 @@
       "title": "Agent Contract: hmbown-codewhale-learnings Autonomous Specialist Persona",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "db009ba8fca446c01a0eafe9d6107c62f225f89578a5382a514aca8181078363",
+      "content_hash": "0d6f26f0afc7f5f5459b00a153c0143315b81ebfa10198acb0435f76d40d4f10",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:57:54.986Z"
+      "persisted_at": "2026-11-16T21:10:39.529Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings",
@@ -236706,9 +236721,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hmbown-codewhale-learnings",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "42a251e64d369e40aec749f083c916b5dccb115b5f4ca93af9f33665e7e37cc1",
+      "content_hash": "72350965a34f090a3c40b62ec728c94ffdfbded450b908db1af83564ef290056",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:57:55.111Z"
+      "persisted_at": "2026-11-16T21:10:39.628Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
@@ -243098,9 +243113,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "fedfd0e7b68873197c5af2dfba124feea01c7f7e95c0394d205687783633eaa0",
+      "content_hash": "64ab751bb0d4ac2e976caafa1e1e05510c640f3026e8829340df6277e6f90d39",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T10:53:37.138Z"
+      "persisted_at": "2026-11-16T21:10:40.685Z"
     },
     "learn-huggingface-abiray-minimax-h3-image-gguf": {
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -257646,6 +257661,144 @@
       "content_hash": "161916ab5e67459b71263efc4985479b50011061773a15752708069a989129f7",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T20:21:13.345Z"
+    },
+    "rule-8789": {
+      "learning_id": "rule-8789",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8789,
+      "title": "decide the reasoning dialect by endpoint, not by model id",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "554cb1b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T21:10:24.381Z"
+    },
+    "candidate_directive-decide-the-reasoning-dialect-by-endpoint-not-by-model-id": {
+      "item_id": "candidate_directive-decide-the-reasoning-dialect-by-endpoint-not-by-model-id",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CA10-decide-the-reasoning-dialect-by-endpoint-not-by-model-id.md",
+      "title": "decide the reasoning dialect by endpoint, not by model id",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "554cb1b7",
+      "content_hash": "da052905dda0c3c7b8ee179ea2eda9100d9bb83196b51983b9a36239aceddfa7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:10:24.711Z"
+    },
+    "rule-8790": {
+      "learning_id": "rule-8790",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8790,
+      "title": "respect redaction in deadlock retry logs",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "573231ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T21:10:30.902Z"
+    },
+    "candidate_directive-respect-redaction-in-deadlock-retry-logs": {
+      "item_id": "candidate_directive-respect-redaction-in-deadlock-retry-logs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CF21-respect-redaction-in-deadlock-retry-logs.md",
+      "title": "respect redaction in deadlock retry logs",
+      "repository": "pingcap/tidb",
+      "source_version": "573231ac",
+      "content_hash": "e5b4610d3f5b8964e8c47bdfed51478a9d85c2e9f953dc904efe919ae9448d98",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T21:10:31.228Z"
+    },
+    "rule-8791": {
+      "learning_id": "rule-8791",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8791,
+      "title": "decode BLOOM table index type; default cache.data_max_ratio to 0",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "342ec629",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T21:10:35.611Z"
+    },
+    "candidate_directive-decode-bloom-table-index-type-default-cache-data_max_ratio-to-0": {
+      "item_id": "candidate_directive-decode-bloom-table-index-type-default-cache-data_max_ratio-to-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CIOS-decode-bloom-table-index-type-default-cache-data_max_ratio-to-0.md",
+      "title": "decode BLOOM table index type; default cache.data_max_ratio to 0",
+      "repository": "databendlabs/databend",
+      "source_version": "342ec629",
+      "content_hash": "b01dd2ac70af5b3bb6815bdce1e561cca02f2004704f2042a8bbcff35a8df25a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:10:35.935Z"
+    },
+    "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-databendlabs-databend-architecture-intelligence-databendlabs-databend-core-invar.md",
+      "title": "Architecture Intelligence: databendlabs/databend Core Invariants",
+      "repository": "databendlabs/databend",
+      "source_version": "342ec629",
+      "content_hash": "5a0a765038677110116e26ea275b6e450c8b3a3c1489ef429c8d3486dd845bd3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:10:36.041Z"
+    },
+    "candidate_directive-client-decide-the-reasoning-dialect-by-endpoint-not-by-model-id": {
+      "item_id": "candidate_directive-client-decide-the-reasoning-dialect-by-endpoint-not-by-model-id",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CLAK-client-decide-the-reasoning-dialect-by-endpoint-not-by-model-id.md",
+      "title": "client): decide the reasoning dialect by endpoint, not by model id",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "64c7281612cfb67a638b4af4af70b4dfb63a553a192e3c5c32e38f1b8bd8978d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:10:39.312Z"
+    },
+    "candidate_directive-sessiontxn-respect-redaction-in-deadlock-retry-logs": {
+      "item_id": "candidate_directive-sessiontxn-respect-redaction-in-deadlock-retry-logs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CLSQ-sessiontxn-respect-redaction-in-deadlock-retry-logs.md",
+      "title": "sessiontxn: respect redaction in deadlock retry logs",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "088936ad63a42b8a0047ced32e91877f50034a001875a437617fbc93c2ff5327",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T21:10:39.965Z"
+    },
+    "candidate_directive-meta-decode-bloom-table-index-type-default-cache-data_max_ratio-to-0": {
+      "item_id": "candidate_directive-meta-decode-bloom-table-index-type-default-cache-data_max_ratio-to-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CM6M-meta-decode-bloom-table-index-type-default-cache-data_max_ratio-to-0.md",
+      "title": "meta): decode BLOOM table index type; default cache.data_max_ratio to 0",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c1fba0773a238d7b45866e9e1c3a78a19b04a3c8428c47560881a8ad1f29df9",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-16T21:10:40.465Z"
+    },
+    "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-databendlabs-databend-learnings-architecture-intelligence-databendlabs-databend-.md",
+      "title": "Architecture Intelligence: databendlabs-databend-learnings Core Invariants",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "70605191a65c690d2315efe6ae843ca6dc16bace3f90a01131d8266f5180d25d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T21:10:40.575Z"
     }
   },
   "ai-builder-brain": {

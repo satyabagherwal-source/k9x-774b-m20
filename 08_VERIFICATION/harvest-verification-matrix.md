@@ -10340,3 +10340,6 @@
 | `CYCLE-20261116-KOIP` | `2026-11-16T20:20:57.505Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8787` | Yes (`43b45712...`) |
 | `CYCLE-20261116-KTFD` | `2026-11-16T20:21:03.865Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md` | Yes (`1ff4c458...`) |
 | `CYCLE-20261116-KWAS` | `2026-11-16T20:21:07.588Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8788` | Yes (`9bcf4206...`) |
+| `CYCLE-20261116-C9W5` | `2026-11-16T21:10:24.533Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8789` | Yes (`abd19c27...`) |
+| `CYCLE-20261116-CEX3` | `2026-11-16T21:10:31.047Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8790` | Yes (`93bef85a...`) |
+| `CYCLE-20261116-CIK1` | `2026-11-16T21:10:35.761Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8791` | Yes (`2d407fbe...`) |

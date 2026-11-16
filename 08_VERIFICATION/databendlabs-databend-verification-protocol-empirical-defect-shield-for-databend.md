@@ -4,22 +4,22 @@
 {
   "source_repository": "databendlabs/databend",
   "source_url": "https://github.com/databendlabs/databend",
-  "source_version": "4fc66b82",
+  "source_version": "342ec629",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T10:48:14.981Z",
+  "timestamp": "2026-11-16T21:10:35.935Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-databendlabs-databend",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `4fc66b82`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T10:48:14.981Z`  
+> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `342ec629`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T21:10:35.935Z`  
 > **Learning ID**: `learn-github-databendlabs-databend`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `databendlabs/databend` (Commit: `4fc66b82`)
+- **Target Repository**: `databendlabs/databend` (Commit: `342ec629`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T10:43:13.054Z  
+> **Harvest Timestamp**: 2026-11-16T21:10:34.941Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9495 stars
+- **Stars / Engagement**: 9497 stars
 
 ---
 
@@ -1207,11 +1207,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #21099** (2026-11-16): **fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Two small, independent changes, one commit each.  **1. Default `cache.data_max_ratio` to 0.**  With the shared cache backend on by default (#21091), the data pool reserved 10% of `max_server_memory_usage` for deserialized column data (`memory_cache_table_data`). That pool is the first one reclaimed under memory pressure and re-reads are already served by the disk cache, so the memory is better left to queries. With a 0 cap `SharedStore::check_admissible` rejects every insert into the pool, so no column data is kept in memory; the meta and index pools (10% / 40%) and the disk cache (`cache.disk.*`) are unchanged. Users who want the pool back set `cache.data_max_ratio` explicitly. Legacy options such as `table_data_deserialized_data_bytes` were already ignored by the shared backend, so they do not re-enable it.  **2. Decode `TableIndexType::Bloom` written by newer releases.**  A page-index branch rolling out in production writes `TableIndex.index_type = 4` (`BLOOM`). `proto-conv` on `main` only knows values 0..=3 and returns `Incompatible("invalid IndexType: 4")`, which fails the whole `TableMeta`. `list_tables` then skips the table (or, before #20663, fails the database), so it disappears from the admin tables API and `SHOW CREATE TABLE`.  This adds the enum placeholders (`TableIndexType::Bloom = 4`, `MarkedDeletedIndexType::BLOOM = 6`, `Display` → `BLOOM`, the `mark_t
+
 - **Issue #21093** (2026-11-15): **fix(query): link cosine HNSW graphs with normalized vectors**
   *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - On main, `HNSWIndex::build` normalizes cosine vectors only for SQ8 and links the graph with the raw vectors (inner product), so non-unit-length data gets a poor graph and needs a much larger ef. Link the graph with the normalized vectors; L1/L2 are unchanged. - Test: `test_cosine_graph_ignores_vector_lengths` (recall 0.196 before, 0.904 after).  Cohere 1M (768d, cosine, top 100), aarch64 8 vCPU, warm cache, refine 2, single round. Both columns use the same binary (it also carries a separate aarch64 SQ8 kernel tweak, not part of this PR), so they differ only in how the index was built:  | | 18 blocks (default)<br>main | 18 blocks (default)<br>this PR | 4 × 250K rows<br>main | 4 × 250K rows<br>this PR | 1 × 1M rows<br>this PR | |---|---:|---:|---:|---:|---:| | ef | 200 | 200 | 800 | 200 | 400 | | Recall@100 | 0.9677 | 0.9858 | 0.9686 | 0.9767 | 0.9742 | | c1 QPS | 86.3 | 85.1 | 97.6 | 111.7 | 103.5 | | c8 QPS | 334.9 | 335.8 | 415.7 | 524.7 | 570.9 | | c80 QPS | 438.0 | 437.1 | 583.1 | **812.2** | **948.4** | | c80 P99 (ms) | 295.0 | 293.3 | 219.1 | 149.5 | 129.2 |  At Recall ≥ 0.9677, the best c80 goes from 583.1 QPS (main, 4 × 250K, ef 800) to 948.4 QPS (this PR, 1 × 1M, ef 400), **+63%**. main needs ef 800 on 4 blocks because ef 200 only reaches recall 0.8943.  Layouts: `CREATE TABLE t (id BIGINT, emb VECTOR(768), VECTOR INDEX vi (emb) distance='cosine' m=16 ef_con
-
-- **Issue #21092** (2026-11-13): **fix(query): truncate REPLACE statements in query logs**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Long `REPLACE INTO ... VALUES ...` statements bypass `short_sql_max_length` because `short_sql` only recognizes `INSERT`. Add `REPLACE` to the existing keyword list so its query log text is truncated in the same way, including in `system_history.query_history`. - Keep truncation behavior unchanged for all other statement types. For example, an oversized `REPLACE INTO t ON (id) VALUES (1, '...')` now retains the configured prefix followed by `...[X more characters]`; execution SQL is unaffected. - Add `test_short_sql_replace` covering keyword case, leading whitespace, Unicode, and lengths below, at, and above the limit. Confirmed the regression fails before the fix and passes afterward alongside the existing `INSERT` tests. - Validation: `cargo test --offline -p databend-common-base --test it test_short_sql`, `cargo clippy --offline -p databend-common-base --tests -- -D warnings`, formatting, and `git diff --check` passed. Full-service end-to-end validation was not run. No migrations or new settings are required.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Documentation 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1228,858 +1228,800 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86507e14` (2026-11-14)
-**Commit Message**: fix(iceberg): stop Iceberg DDL/DML from silently doing nothing (#21073)
+### Incident Patch 1: `a7a0a58b` (2026-11-16)
+**Commit Message**: fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (#21099)
 
-* fix(iceberg): reject silent no-ops and fix DDL/DML on Iceberg tables
+* chore(cache): turn the in-memory column data pool off by default
 
-Several Iceberg statements reported success while changing nothing, and a
-few write paths could not handle the schemas they were given.
+Default cache.data_max_ratio to 0 so the shared cache backend reserves
+no server memory for deserialized column data; the disk cache and the
+meta and index pools are unchanged. Users who want the in-memory pool
+back set cache.data_max_ratio explicitly.
 
-- CREATE TABLE ... AS SELECT panicked on the missing table id sequence of an
-  Iceberg catalog reply, and then hit the meta-only staging and
-  commit_table_meta paths. External catalogs now create and insert without
-  the staging protocol.
-- CREATE TABLE with DECIMAL, TUPLE, ARRAY or MAP columns failed during the
-  arrow to iceberg schema conversion: decimals were handed over as
-  Decimal64/Decimal256 and nested fields carried no field id. Convert the
-  databend schema recursively instead.
-- The writer cast block columns to the physical iceberg types, so a
-  decimal(10, 2) or an array column can be written at all.
-- INSERT OVERWRITE, TRUNCATE TABLE and ALTER TABLE ADD/DROP COLUMN return a
-  clear unsupported error instead of silently appending or leaving rows and
-  schemas untouched.
-- Partition values are computed through the partition transform; only
-  identity was applied before, which corrupted (or pa
+* fix(meta): decode BLOOM table index type written by newer releases
 
-**File**: `Cargo.lock` (modified, +1/-0)
+Table metadata written by the page-index rollout carries
+TableIndexType::Bloom (index_type = 4). Without the variant, proto-conv
+rejects the whole TableMeta, so the table disappears from the admin
+tables API and SHOW CREATE TABLE.
+
+Add the enum placeholder (and MarkedDeletedIndexType::BLOOM) so the
+metadata decodes and displays, while creating or refreshing a BLOOM
+index stays rejected in this release.
+
+* chore(cache): align tests with the data pool off by default
+
+Tests that exercise the data pool set cache.data_max_ratio explicitly;
+the system.caches and system.configs golden files follow the default.
+
+**File**: `src/meta/api/src/api_impl/schema_api.rs` (modified, +1/-0)
 ```diff
-@@ -4302,6 +4302,7 @@ version = "0.1.0"
- dependencies = [
-  "anyhow",
-  "arrow-array",
-+ "arrow-cast",
-  "arrow-schema",
-  "async-backtrace",
-  "async-trait",
+@@ -790,6 +790,7 @@ pub fn mark_table_index_as_deleted(
+         TableIndexType::Ngram => MarkedDeletedIndexType::NGRAM,
+         TableIndexType::Vector => MarkedDeletedIndexType::VECTOR,
+         TableIndexType::Spatial => MarkedDeletedIndexType::SPATIAL,
++        TableIndexType::Bloom => MarkedDeletedIndexType::BLOOM,
+     };
+     let marked_deleted_table_index_meta = MarkedDeletedIndexMeta {
+         dropped_on: Utc::now(),
 ```
 
-**File**: `src/query/service/src/interpreters/interpreter_table_add_column.rs` (modified, +5/-1)
+**File**: `src/meta/app/src/schema/index.rs` (modified, +1/-0)
 ```diff
-@@ -36,6 +36,7 @@ use databend_common_sql::plans::Mutation;
- use databend_common_sql::plans::Plan;
- use databend_common_storages_basic::view_table::VIEW_ENGINE;
- use databend_common_storages_fuse::FuseTable;
-+use databend_common_storages_iceberg::table::ICEBERG_ENGINE;
- use databend_common_storages_stream::stream_table::STREAM_ENGINE;
- use databend_meta_client::types::MatchSeq;
- use databend_storages_common_table_meta::meta::TableSnapshot;
-@@ -91,7 +92,10 @@ impl Interpreter for AddTableColumnInterpreter {
- 
-             let mut table_info = tbl.get_table_info().clone();
-             let engine = table_info.engine();
--            if matches!(engine, VIEW_ENGINE | STREAM_ENGINE) {
-+            if matches!(
-+                engine.to_uppercase().as_str(),
-+                VIEW_ENGINE | STREAM_ENGINE | ICEBERG_ENGINE
-+            ) {
-                 return Err(ErrorCode::TableEngineNotSupported(format!(
-                     "{}.{} engine is {} that doesn't support alter",
-                     self.plan.database, self.plan.table, engine
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_create.rs` (modified, +31/-7)
-```diff
-@@ -279,13 +279,18 @@ impl CreateTableInterpreter {
-         let tenant = self.ctx.get_tenant();
- 
-         let catalog = self.ctx.get_catalog(&self.plan.catalog).await?;
-+        // Tables of an external catalog (iceberg) are committed by the catalog itself right
-+        // away: they cannot be staged as dropped and they have no meta table id to commit.
-+        let external_catalog = catalog.is_external();
- 
-         let mut req = self.build_request()?;
-         let dictionary_indexes = self.take_dictionary_indexes(&mut req.table_meta).await?;
- 
-         // create a dropped table first.
--        req.as_dropped = true;
--        req.table_meta.drop_on = Some(Utc::now());
-+        if !external_catalog {
-+            req.as_dropped = true;
-+            req.table_meta.drop_on = Some(Utc::now());
-+        }
-         let table_meta = req.table_meta.clone();
-         // The prefix is moved into the pipeline's 'static finish hook, while the request itself can
-         // be consumed by the catalog.
-@@ -321,7 +326,7 @@ impl CreateTableInterpreter {
-             .expect("internal error: table_id_seq must have been set. CTAS(replace) of table");
-         let db_id = reply.db_id;
- 
--        if temp_prefix.is_none() {
-+        if temp_prefix.is_none() && !external_catalog {
-             self.process_ownership(&tenant, reply).await?;
-         }
- 
-@@ -381,7 +386,13 @@ impl CreateTableInterpreter {
-             schema: self.plan.schema.clone(),
-             overwrite: false,
-             source: InsertInputSource::SelectPlan(select_plan),
--            table_info: Some(table_info),
-+            // An external catalog resolves the table it created from the catalog; the staged
-+            // table info has no iceberg engine options to read it with.
-+            table_info: if external_catalog {
-+                None
-+            } else {
-+                Some(table_info)
-+            },
-             lineage_target_table_id: None,
-             lineage_target_catalog_type: if self.plan.engine == Engine::Iceberg {
-                 CatalogType::Iceberg
-@@ -433,9 +444,8 @@ impl CreateTableInterpreter {
-         //
-         // If the un-drop fails, data inserted and the table will be invisible, and available for vacuum.
- 
--        pipeline
--            .main_pipeline
--            .lift_on_finished(move |info: &ExecutionInfo| {
-+        if !external_catalog {
-+            pipeline.main_pipeline.lift_on_finished(move |info: &ExecutionInfo| {
-                 let qualified_table_name = format!("{}.{}", db_name, table_name);
- 
-                 if info.res.is_ok() {
-@@ -466,6 +476,20 @@ impl CreateTableInterpreter {
- 
-                 Ok(())
-             });
-+        } else {
-+            let qualified_table_name = format!("{}.{}", db_name, table_name);
-+            pipeline
-+                .main_pipeline
-+                .lift_on_finished(move |info: &ExecutionInfo| {
-+                    if info.res.is_ok() {
-+                        info!(
-+                            "create_table_as_select {} success, committed by the external catalog",
-+                            qualified_table_name
-+                        );
-+                    }
-+                    Ok(())
-+                });
-+        }
- 
-         if let Some(temp_prefix) = temp_prefix {
-             let temp_tbl_mgr = self.ctx.get_current_session().temp_tbl_mgr();
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_drop_column.rs` (modified, +5/-1)
-```diff
-@@ -24,6 +24,7 @@ use databend_common_sql::BloomIndexColumns;
- use databend_common_sql::binder::validate_constraints_by_schema;
- use databend_common_sql::plans::DropTableColumnPlan;
- use databend_common_storages_basic::view_table::VIEW_ENGINE;
-+use databend_common_storages_iceberg::table::ICEBERG_ENGINE;
- use databend_common_storages_stream::stream_table::STREAM_ENGINE;
- use databend_storages_common_table_meta::table::OPT_KEY_ANALYZE_FREQUENCY_COLUMNS;
- use databend_storages_common_table_meta::table::OPT_KEY_APPROX_DISTINCT_COLUMNS;
-@@ -77,7 +78,10 @@ impl Interpreter for DropTableColumnInterpreter {
- 
-             let table_info = table.get_table_info();
-             let engine = table_info.engine();
--            if matches!(engine, VIEW_ENGINE | STREAM_ENGINE) {
-+            if matches!(
-+                engine.to_uppercase().as_str(),
-+                VIEW_ENGINE | STREAM_ENGINE | ICEBERG_ENGINE
-+            ) {
-                 return Err(ErrorCode::TableEngineNotSupported(format!(
-                     "{}.{} engine is {} that doesn't support alter",
-                     self.plan.database, self.plan.table, engine
-```
-
-**File**: `src/query/storages/iceberg/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ publish = false
- [dependencies]
- anyhow = { workspace = true }
- arrow-array = { workspace = true }
-+arrow-cast = { workspace = true }
- arrow-schema = { workspace = true }
- async-backtrace = { workspace = true }
- async-trait = { workspace = true }
-```
-
-**File**: `src/query/storages/iceberg/src/append.rs` (modified, +403/-94)
-```diff
-@@ -28,6 +28,7 @@ use databend_common_expression::DataBlock;
- use databend_common_expression::ScalarRef;
- use databend_common_expression::types::Bitmap;
- use databend_common_expression::types::MutableBitmap;
-+use databend_common_expression::types::NumberScalar;
- use databend_common_meta_app::schema::CatalogInfo;
- use databend_common_pipeline::core::InputPort;
- use databend_common_pipeline::core::ProcessorPtr;
-@@ -37,11 +38,17 @@ use databend_common_pipeline_transforms::AsyncAccumulatingTransform;
- use databend_common_storage::MutationStatus;
- use iceberg::arrow::schema_to_arrow_schema;
- use iceberg::spec::DataFileFormat;
-+use iceberg::spec::Datum;
- use iceberg::spec::Literal;
- use iceberg::spec::PartitionKey;
-+use iceberg::spec::PrimitiveLiteral;
-+use iceberg::spec::PrimitiveType;
- use iceberg::spec::Struct as IcebergStruct;
- use iceberg::transaction::ApplyTransactionAction;
- use iceberg::transaction::Transaction;
-+use iceberg::transform::BoxedTransformFunction;
-+use iceberg::transform::TransformFunction;
-+use iceberg::transform::create_transform_function;
- use iceberg::writer::IcebergWriter;
- use iceberg::writer::IcebergWriterBuilder;
- use iceberg::writer::base_writer::data_file_writer::DataFileWriterBuilder;
-@@ -211,7 +218,7 @@ impl IcebergDataFileWriter {
-     {
-         // Get partition column indices and field info
-         let partition_fields = partition_spec.fields();
--        let mut partition_column_indices = Vec::with_capacity(partition_fields.len());
-+        let mut partition_sources = Vec::with_capacity(partition_fields.len());
- 
-         for field in partition_fields {
-             // Find the source column index in the schema
-@@ -234,7 +241,29 @@ impl IcebergDataFileWriter {
-                     ))
-                 })?;
- 
--            partition_column_indices.push((col_idx, field.clone()));
-+            let source_type = match schema_field.field_type.as_ref() {
-+                iceberg::spec::Type::Primitive(primitive) => primitive.clone(),
-+                _ => {
-+                    return Err(ErrorCode::TableEngineNotSupported(format!(
-+                        "Iceberg partition source column '{field_name}' is not a primitive type"
-+                    )));
-+                }
-+            };
-+
-+            // The stored partition value is the transformed source value, which is not
-+            // necessarily the raw column value (bucket, truncate, temporal transforms).
-+            let transform = create_transform_function(&field.transform).map_err(|err| {
-+                ErrorCode::TableEngineNotSupported(format!(
-+                    "Iceberg partition transform '{}' on column '{field_name}' is not supported: {err}",
-+                    field.transform
-+                ))
-+            })?;
-+
-+            partition_sources.push(PartitionSource {
-+                column_index: col_idx,
-+                transform,
-+                source_type,
-+            });
-         }
- 
-         // Group rows by partition values
-@@ -244,7 +273,7 @@ impl IcebergDataFileWriter {
-         for row_idx in 0..num_rows {
-             // Build partition value for this row
-             let partition_value =
--                self.extract_partition_value(&block, row_idx, &partition_column_indices)?;
-+                self.extract_partition_value(&block, row_idx, &partition_sources)?;
-             let bitmap = partition_groups.entry(partition_value).or_insert_with(|| {
-                 let mut bitmap = MutableBitmap::new();
-                 bitmap.extend_constant(num_rows, false);
-@@ -293,118 +322,186 @@ impl IcebergDataFileWriter {
-         &self,
-         block: &DataBlock,
-         row_idx: usize,
--        partition_column_indices: &[(usize, iceberg::spec::PartitionField)],
-+        partition_sources: &[PartitionSource],
-     ) -> Result<IcebergStruct> {
--        let mut literals: Vec<Option<Literal>> = Vec::with_capacity(partition_column_indices.len());
-+        let mut literals: Vec<Option<Literal>> = Vec::with_capacity(partition_sources.len());
- 
--        for (col_idx, _field) in partition_column_indices {
--            let entry = &block.columns()[*col_idx];
-+        for source in partition_sources {
-+            let entry = &block.columns()[source.column_index];
-             let column = entry.to_column();
-             let value = column.index(row_idx);
--
--            // Convert Databend ScalarRef to Iceberg Literal
--            // Note: We only support Identity transform for now
--            let literal = self.scalar_to_iceberg_literal(value)?;
--            literals.push(literal);
-+            literals.push(transform_partition_literal(
-+                value,
-+                &source.source_type,
-+                source.transform.as_ref(),
-+            )?);
-         }
- 
-         Ok(IcebergStruct::from_iter(literals))
-     }
- 
--    fn scalar_to_iceberg_literal(&self, scalar: Option<ScalarRef>) -> Result<Option<Literal>> {
--        match scalar {
--            None => Ok(None),
--            Some(s) => {
--    
-```
-
-**File**: `src/query/storages/iceberg/src/database.rs` (modified, +286/-19)
-```diff
-@@ -17,14 +17,17 @@
- use std::collections::HashMap;
- use std::sync::Arc;
- 
-+use arrow_schema::DataType as ArrowDataType;
- use arrow_schema::Field;
- use arrow_schema::Schema;
-+use arrow_schema::TimeUnit;
- use async_trait::async_trait;
- use databend_common_catalog::catalog::Catalog;
- use databend_common_catalog::database::Database;
- use databend_common_catalog::table::Table;
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
-+use databend_common_expression::ColumnId;
- use databend_common_expression::TableDataType;
- use databend_common_expression::TableDataType::Null;
- use databend_common_expression::TableDataType::Timestamp;
-@@ -194,17 +197,29 @@ impl Database for IcebergDatabase {
-         match req.create_option {
-             CreateOption::Create => {}
-             CreateOption::CreateIfNotExists => {
--                if let Ok(exists) = self.ctl.iceberg_catalog().table_exists(&table_name).await {
--                    if exists {
--                        return Ok(CreateTableReply {
--                            table_id: 0,
--                            table_id_seq: None,
--                            db_id: 0,
--                            new_table: true,
--                            prev_table_id: None,
--                            orphan_table_name: None,
--                        });
--                    }
-+                // `Catalog::table_exists` asks the REST catalog with a HEAD request, which older
-+                // REST servers (iceberg-rest 0.10 answers 400 to any HEAD) reject, so the table
-+                // is looked up instead: a GET works everywhere, and a failed lookup means there
-+                // is nothing to do.
-+                if self
-+                    .ctl
-+                    .iceberg_catalog()
-+                    .load_table(&table_name)
-+                    .await
-+                    .is_ok()
-+                {
-+                    return Ok(CreateTableReply {
-+                        table_id: 0,
-+                        table_id_seq: Some(0),
-+                        db_id: 0,
-+                        // The table is already there, so `CREATE TABLE IF NOT EXISTS` has
-+                        // nothing to do. Callers such as CTAS only skip their write when the
-+                        // reply says the table is not new; reporting a new table here made them
-+                        // append to the existing one.
-+                        new_table: false,
-+                        prev_table_id: None,
-+                        orphan_table_name: None,
-+                    });
-                 }
-             }
-             CreateOption::CreateOrReplace => {
-@@ -250,7 +265,9 @@ impl Database for IcebergDatabase {
-             })?;
-         Ok(CreateTableReply {
-             table_id: 0,
--            table_id_seq: None,
-+            // Iceberg tables are not managed by the meta service, but callers such as CTAS
-+            // expect the sequence number of the created table to be present.
-+            table_id_seq: Some(0),
-             db_id: 0,
-             new_table: true,
-             prev_table_id: None,
-@@ -300,14 +317,20 @@ fn convert_table_schema(
-     db_name: &str,
-     table_name: &str,
- ) -> Result<IcebergSchema> {
--    let mut fields = vec![];
-+    // Nested fields have no column id of their own, but iceberg requires a unique id on every
-+    // field of the schema, including struct members, list elements and map keys/values.
-+    let mut next_field_id = schema
-+        .fields()
-+        .iter()
-+        .map(|f| f.column_id)
-+        .max()
-+        .unwrap_or(0)
-+        + 1;
-+    let mut fields = Vec::with_capacity(schema.fields().len());
-     for f in schema.fields() {
--        let mut metadata = HashMap::new();
--        metadata.insert(
--            PARQUET_FIELD_ID_META_KEY.to_string(),
--            f.column_id.to_string(),
--        );
--        fields.push(Field::from(f).with_metadata(metadata));
-+        let field =
-+            databend_field_to_arrow(&f.name, &f.data_type, f.column_id, &mut next_field_id)?;
-+        fields.push(field.with_nullable(f.is_nullable() || f.data_type.is_nullable()));
-     }
-     let metadata = schema
-         .metadata
-@@ -326,6 +349,119 @@ fn convert_table_schema(
-     Ok(schema) // Return the converted Iceberg schema
+@@ -74,6 +74,7 @@ pub enum MarkedDeletedIndexType {
+     NGRAM = 3,
+     VECTOR = 4,
+     SPATIAL = 5,
++    BLOOM = 6,
  }
  
-+/// Convert a databend field to an arrow field that [`arrow_schema_to_schema`] accepts.
-+///
-+/// Decimals are restricted to `Decimal128` and every field carries the field id that iceberg
-+/// expects in its metadata.
-+fn databend_field_to_arrow(
-+    name: &str,
-+    ty: &TableDataType,
-+    field_id: ColumnId,
-+    next_field_id: &mut ColumnId,
-+) -> Result<Field> {
-+    let arrow_ty = databend_type_to_arrow(ty, next_field_id)?;
-+    let metadata = HashMap::from([(PARQUET_FIELD_ID_META_KEY.to_string(), field_id.to_string())]);
-+    Ok(Field::new(name, arrow_ty, ty.is_nullable()).with_metadata(metadata))
+ #[derive(Clone, Debug, Eq, PartialEq)]
+```
+
+**File**: `src/meta/app/src/schema/table/mod.rs` (modified, +8/-0)
+```diff
+@@ -290,6 +290,11 @@ pub enum TableIndexType {
+     Ngram = 1,
+     Vector = 2,
+     Spatial = 3,
++    /// Granule-level Bloom index written by newer releases.
++    ///
++    /// This release only decodes the variant so table metadata that carries it
++    /// remains readable; creating or refreshing such an index is rejected.
++    Bloom = 4,
+ }
+ 
+ #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Eq, PartialEq)]
+@@ -490,6 +495,9 @@ impl Display for TableIndexType {
+             TableIndexType::Spatial => {
+                 write!(f, "SPATIAL")
+             }
++            TableIndexType::Bloom => {
++                write!(f, "BLOOM")
++            }
+         }
+     }
+ }
+```
+
+**File**: `src/meta/proto-conv/tests/it/proto_conv.rs` (modified, +30/-0)
+```diff
+@@ -387,6 +387,36 @@ fn test_pb_from_to() -> anyhow::Result<()> {
+     Ok(())
+ }
+ 
++/// Table metadata written by a newer release may carry a `BLOOM` table index
++/// (`index_type = 4`). This release must still decode that metadata, so the
++/// table remains visible to listing and `SHOW CREATE TABLE`, while any
++/// unknown value is rejected as before.
++#[test]
++fn test_table_index_type_bloom_placeholder() -> anyhow::Result<()> {
++    let mut index = new_table_index();
++    index.index_type = TableIndexType::Bloom;
++    index.options = btreemap! {s("filter_type") => s("binary_fuse32")};
++
++    let mut p = index.to_pb();
++    assert_eq!(p.index_type, 4);
++    let got = mt::TableIndex::from_pb(p.clone())?;
++    assert_eq!(index, got);
++    assert_eq!(got.index_type.to_string(), "BLOOM");
++
++    let mut tbl = new_table_meta();
++    tbl.indexes.insert(index.name.clone(), index);
++    let got = mt::TableMeta::from_pb(tbl.to_pb())?;
++    assert_eq!(tbl, got);
++
++    p.index_type = 99;
++    assert_eq!(
++        Incompatible::new(s("invalid IndexType: 99")),
++        mt::TableIndex::from_pb(p).unwrap_err()
++    );
++
++    Ok(())
 +}
 +
-+fn next_nested_field(
-+    name: &str,
-+    ty: &TableDataType,
-+
+ #[test]
+ fn test_incompatible() -> anyhow::Result<()> {
+     let db_meta = new_db_meta();
 ```
 
-**File**: `src/query/storages/iceberg/src/statistics.rs` (modified, +36/-7)
+**File**: `src/meta/schema-api-test-suite/src/schema_api_test_suite.rs` (modified, +4/-2)
 ```diff
-@@ -60,7 +60,17 @@ impl IcebergStatistics {
-         let Some(snapshot) = table.metadata().current_snapshot() else {
-             return Ok(IcebergStatistics::default());
-         };
-+        Self::parse_snapshot(table, snapshot).await
-+    }
- 
-+    /// Get statistics of the given snapshot.
-+    ///
-+    /// Time travel reads a historical snapshot, so its row counts and column bounds must be
-+    /// computed from that snapshot's manifests instead of the current one.
-+    pub async fn parse_snapshot(
-+        table: &iceberg::table::Table,
-+        snapshot: &iceberg::spec::Snapshot,
-+    ) -> Result<IcebergStatistics> {
-         // Map from column id to the total size on disk of all regions that
-         // store the column. Does not include bytes necessary to read other
-         // columns, like footers. Leave null for row-oriented formats (Avro)
-@@ -95,6 +105,10 @@ impl IcebergStatistics {
-             .await
-             .map_err(|err| ErrorCode::Internal(format!("load manifest list error: {err:?}")))?;
- 
-+        let snapshot_schema = snapshot.schema(table.metadata()).map_err(|err| {
-+            ErrorCode::TableSchemaMismatch(format!("Iceberg snapshot schema: {err}"))
-+        })?;
-+
-         for manifest_file in manifest.entries() {
-             statistics.number_of_manifest_files += 1;
- 
-@@ -167,13 +181,28 @@ impl IcebergStatistics {
- 
-         let mut computed_statistics = HashMap::new();
-         for field in IcebergTable::get_schema(table)?.fields() {
--            let column_stats = get_column_stats(
--                field,
--                &column_sizes,
--                &lower_bounds,
--                &upper_bounds,
--                &null_value_counts,
--            );
-+            // A column that the scanned snapshot does not know about has no files in it, so
-+            // it can only report nulls. Lookups stay on the field id, which both schemas share.
-+            let known_in_snapshot = snapshot_schema
-+                .field_by_id(field.column_id as i32)
-+                .is_some();
-+            let column_stats = if known_in_snapshot {
-+                get_column_stats(
-+                    field,
-+                    &column_sizes,
-+                    &lower_bounds,
-+                    &upper_bounds,
-+                    &null_value_counts,
-+                )
-+            } else {
-+                BasicColumnStatistics {
-+                    min: None,
-+                    max: None,
-+                    ndv: None,
-+                    null_count: statistics.record_count,
-+                    in_memory_size: 0,
-+                }
-+            };
-             computed_statistics.insert(field.column_id, column_stats);
-         }
- 
+@@ -7482,7 +7482,8 @@ impl SchemaApiTestSuite {
+                     ver: VER,
+                     min_reader_ver: MIN_READER_VER,
+                     name: "idx".to_string(),
+-                    index_type: 4,
++                    // No `TableIndexType` variant has this value.
++                    index_type: 99,
+                     ..Default::default()
+                 });
+                 let table_key = TableId::new(table_id);
+@@ -7709,7 +7710,8 @@ impl SchemaApiTestSuite {
+                     ver: VER,
+                     min_reader_ver: MIN_READER_VER,
+                     name: "idx".to_string(),
+-                    index_type: 4,
++                    // No `TableIndexType` variant has this value.
++                    index_type: 99,
+                     ..Default::default()
+                 });
+                 upsert_test_data(mt, &TableId::new(table_id), table_pb.encode_to_vec()).await?;
 ```
 
----
-
-### Incident Patch 2: `4fc66b82` (2026-11-15)
-**Commit Message**: feat(query): enable the memory limit and the shared cache by default (#21091)
-
-* feat(query): enable the memory limit and the shared cache by default
-
-max_memory_limit_enabled and cache.shared_memory_enabled now default to
-true. A max_server_memory_usage of 0 is derived as 80% of the memory of
-the machine, or of the cgroup the process runs in; the process limit and
-the shared cache pools both use it.
-
-The shared backend no longer refuses to start without the memory limit:
-its pools are then sized but not shrunk under pressure.
-
-CI keeps the legacy backend covered by the former shared-cache job, and
-tests that need the legacy backend select it explicitly.
-
-* test(query): pin the memory limit in the system.caches golden test
-
-The shared cache backend is the default, so system.caches lists its pools, sized by the memory limit. Fix the limit at 1 GiB so the capacities do not depend on the machine.
-
-* test(query): ignore the cache-dependent read sources in the cluster EXPLAIN ANALYZE test
-
-The shared cache backend is the default and keeps table data in memory, so
-re-reads of a table are served partly from the memory cache of whichever node
-scans each block. The remote/memory split is no
-
-**File**: `.github/actions/test_sqllogic_standalone_linux/action.yml` (modified, +3/-9)
+**File**: `src/query/config/src/config.rs` (modified, +4/-3)
 ```diff
-@@ -18,9 +18,9 @@ inputs:
-     required: false
-     default: "true"
-   shared_cache:
--    description: "Use the shared cache backend"
-+    description: "Use the shared cache backend, the default; false runs the legacy backend"
-     required: false
--    default: "false"
-+    default: "true"
- 
- runs:
-   using: "composite"
-@@ -36,10 +36,4 @@ runs:
-         TEST_PARALLEL: ${{ inputs.parallel }}
-         CACHE_ENABLE_TABLE_META_CACHE: ${{ inputs.enable_table_meta_cache}}
-         CACHE_SHARED_MEMORY_ENABLED: ${{ inputs.shared_cache }}
--      run: |
--        if [ "$CACHE_SHARED_MEMORY_ENABLED" = "true" ]; then
--          # The shared cache backend requires a server memory limit: 80% of the runner memory.
--          export QUERY_MAX_MEMORY_LIMIT_ENABLED=true
--          export QUERY_MAX_SERVER_MEMORY_USAGE=$(( $(awk '/MemTotal/{print $2}' /proc/meminfo) * 1024 * 8 / 10 ))
--        fi
--        bash ./scripts/ci/ci-run-sqllogic-tests.sh ${{ inputs.dirs }}
-+      run: bash ./scripts/ci/ci-run-sqllogic-tests.sh ${{ inputs.dirs }}
-```
-
-**File**: `.github/workflows/reuse.sqllogic.yml` (modified, +6/-3)
-```diff
-@@ -370,13 +370,16 @@ jobs:
-           dirs: ${{ matrix.dirs }}
-           handlers: ${{ matrix.handler }}
-           enable_table_meta_cache: false
-+          # `enable_table_meta_cache` is an option of the legacy cache backend.
-+          shared_cache: false
-       - name: Upload failure
-         if: failure()
-         uses: ./.github/actions/artifact_failure
-         with:
-           name: test-sqllogic-standalone-no-table-meta-cache-${{ matrix.dirs }}-${{ matrix.handler }}
- 
--  standalone_shared_cache:
-+  # The cache backend is the shared one by default; these keep the legacy one covered.
-+  standalone_legacy_cache:
-     runs-on:
-       - self-hosted
-       - ${{ inputs.runner_arch }}
-@@ -397,12 +400,12 @@ jobs:
-         with:
-           dirs: ${{ matrix.tests.dirs }}
-           handlers: http
--          shared_cache: true
-+          shared_cache: false
-       - name: Upload failure
-         if: failure()
-         uses: ./.github/actions/artifact_failure
-         with:
--          name: test-sqllogic-standalone-shared-cache-${{ matrix.tests.dirs }}
-+          name: test-sqllogic-standalone-legacy-cache-${{ matrix.tests.dirs }}
- 
-   ee:
-     runs-on:
-```
-
-**File**: `Cargo.lock` (modified, +1/-11)
-```diff
-@@ -3294,6 +3294,7 @@ dependencies = [
-  "serde_ignored",
-  "serde_with",
-  "serfig",
-+ "sysinfo",
-  "temp-env",
-  "tempfile",
-  "toml 0.8.22",
-@@ -3998,7 +3999,6 @@ dependencies = [
-  "once_cell",
-  "serde",
-  "serde_json",
-- "sys-info",
-  "tokio",
- ]
- 
-@@ -14687,16 +14687,6 @@ dependencies = [
-  "syn 2.0.106",
- ]
- 
--[[package]]
--name = "sys-info"
--version = "0.9.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0b3a0d0aba8bf96a0e1ddfdc352fc53b3df7f39318c71854910c3c4b024ae52c"
--dependencies = [
-- "cc",
-- "libc",
--]
--
- [[package]]
- name = "sysinfo"
- version = "0.34.2"
-```
-
-**File**: `Cargo.toml` (modified, +0/-1)
-```diff
-@@ -465,7 +465,6 @@ stringslice = "0.2.0"
- strum = "0.24.1"
- sub-cache = "0.2.1"
- syn = { version = "2.0", features = ["full"] }
--sys-info = "0.9"
- sysinfo = "0.34.2"
- tantivy = { version = "0.26.2", features = ["quickwit"] }
- tantivy-common = "0.11.0"
-```
-
-**File**: `src/binaries/query/entry.rs` (modified, +2/-2)
-```diff
-@@ -135,7 +135,7 @@ async fn precheck_services(conf: &InnerConfig) -> Result<(), MainError> {
-     let make_error = || "failed to precheck";
- 
-     if conf.query.common.max_memory_limit_enabled {
--        let size = conf.query.common.max_server_memory_usage as i64;
-+        let size = conf.server_memory_limit() as i64;
-         info!("Set memory limit: {}", size);
-         GLOBAL_MEM_STAT.set_limit(size, false);
-     }
-@@ -324,7 +324,7 @@ pub async fn start_services(conf: &InnerConfig) -> Result<(), MainError> {
-         if conf.query.common.max_memory_limit_enabled {
-             format!(
-                 "Memory: server memory limit to {} (bytes)",
--                conf.query.common.max_server_memory_usage
-+                conf.server_memory_limit()
-             )
-         } else {
-             "unlimited".to_string()
-```
-
-**File**: `src/query/config/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -28,6 +28,7 @@ serde = { workspace = true }
- serde_ignored = { workspace = true }
- serde_with = { workspace = true }
- serfig = { workspace = true }
-+sysinfo = { workspace = true }
- toml = { workspace = true }
- 
- [dev-dependencies]
-```
-
-**File**: `src/query/config/src/config.rs` (modified, +10/-8)
-```diff
-@@ -1715,15 +1715,17 @@ pub struct QueryConfig {
-     #[clap(long, value_name = "VALUE", default_value = "false")]
-     pub global_statement_queue: bool,
- 
--    /// The max total memory in bytes that can be used by this process.
-+    /// The max total memory in bytes that can be used by this process. 0, the default, is 80%
-+    /// of the memory of the machine, or of the cgroup the process runs in.
-     #[clap(long, value_name = "VALUE", default_value = "0")]
-     pub max_server_memory_usage: u64,
- 
-+    /// Enforce `max_server_memory_usage`: queries are killed when the process reaches it.
-     #[clap(
-         long,
-         value_name = "VALUE",
-         value_parser = clap::value_parser!(bool),
--        default_value = "false"
-+        default_value = "true"
+@@ -3582,11 +3582,12 @@ pub struct CacheConfig {
      )]
-     pub max_memory_limit_enabled: bool,
+     pub index_max_ratio: u64,
  
-@@ -3551,15 +3553,15 @@ pub struct CacheConfig {
- 
-     /// Use the shared cache backend: three memory pools (meta, index and data), each sized as a
-     /// percentage of the server memory limit, evicted with S3-FIFO and shrunk under memory
--    /// pressure before queries are killed. Requires a server memory limit
--    /// (`max_memory_limit_enabled` and `max_server_memory_usage`). The per-cache capacity options
--    /// above and `enable_table_meta_cache` are then ignored; disk cache options still apply.
-+    /// pressure before queries are killed, which takes `max_memory_limit_enabled`. The per-cache
-+    /// capacity options above and `enable_table_meta_cache` are then ignored; disk cache options
-+    /// still apply. Set it to false for the legacy backend, sized by those options.
+-    /// Shared backend: percentage of the server memory limit for column data.
++    /// Shared backend: percentage of the server memory limit for column data. 0 disables the
++    /// in-memory column data pool.
      #[clap(
-         long = "cache-shared-memory-enabled",
+         long = "cache-data-max-ratio",
          value_name = "VALUE",
--        default_value = "false"
-+        default_value = "true"
+-        default_value = "10"
++        default_value = "0"
      )]
--    #[serde(default = "bool_false")]
-+    #[serde(default = "bool_true")]
-     pub shared_memory_enabled: bool,
+     pub data_max_ratio: u64,
  
-     /// Shared backend: percentage of the server memory limit for table, segment and index
-@@ -3647,7 +3649,7 @@ impl Default for CacheConfig {
-             table_data_deserialized_memory_ratio: 0,
-             table_data_encoded_dictionary_ndv_ratio: 100,
-             iceberg_table_meta_count: 1024,
--            shared_memory_enabled: false,
-+            shared_memory_enabled: true,
+@@ -3652,7 +3653,7 @@ impl Default for CacheConfig {
+             shared_memory_enabled: true,
              meta_max_ratio: 10,
              index_max_ratio: 40,
-             data_max_ratio: 10,
+-            data_max_ratio: 10,
++            data_max_ratio: 0,
+             kind_max_bytes: BTreeMap::new(),
+ 
+             // ----- the following options/args are all deprecated               ----
 ```
 
-**File**: `src/query/config/src/inner.rs` (modified, +20/-0)
+**File**: `src/query/service/tests/it/configs.rs` (modified, +9/-0)
 ```diff
-@@ -128,6 +128,16 @@ impl InnerConfig {
-         Config::load_with_config_file("")?.try_into()
-     }
+@@ -1030,6 +1030,15 @@ fn test_server_memory_limit_defaults() {
+     assert!(config.query.common.max_memory_limit_enabled);
+     assert!(config.cache.shared_memory_enabled);
+     assert_eq!(config.query.common.max_server_memory_usage, 0);
++    // The in-memory column data pool is off by default; metadata and index pools stay on.
++    assert_eq!(
++        (
++            config.cache.meta_max_ratio,
++            config.cache.index_max_ratio,
++            config.cache.data_max_ratio
++        ),
++        (10, 40, 0)
++    );
  
-+    /// The server memory limit in bytes: `max_server_memory_usage`, or when that is 0,
-+    /// [`default_server_memory_limit`]. The allocator limit, the cache pools and the
-+    /// `max_memory_usage` setting, from which the spill thresholds derive, all use it.
-+    pub fn server_memory_limit(&self) -> u64 {
-+        match self.query.common.max_server_memory_usage {
-+            0 => default_server_memory_limit(),
-+            limit => limit,
-+        }
-+    }
-+
-     pub fn tls_query_cli_enabled(&self) -> bool {
-         !self
-             .query
-@@ -170,6 +180,16 @@ impl InnerConfig {
-     }
- }
- 
-+/// 80% of the memory of the machine, or of the cgroup the process runs in.
-+pub fn default_server_memory_limit() -> u64 {
-+    let mut system = sysinfo::System::new();
-+    system.refresh_memory();
-+    let total = system
-+        .cgroup_limits()
-+        .map_or(system.total_memory(), |limits| limits.total_memory);
-+    total / 10 * 8
-+}
-+
- impl Debug for InnerConfig {
-     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-         f.debug_struct("InnerConfig")
+     let mut system = sysinfo::System::new();
+     system.refresh_memory();
+```
+
+**File**: `src/query/service/tests/it/servers/admin/v1/mod.rs` (modified, +1/-0)
+```diff
+@@ -18,3 +18,4 @@ mod clustering_information;
+ mod config;
+ mod perf;
+ mod status;
++mod tenant_tables;
 ```
 
 ---
 
-### Incident Patch 3: `2c77ade4` (2026-11-15)
-**Commit Message**: fix(query): link cosine HNSW graphs with normalized vectors (#21093)
+### Incident Patch 2: `342ec629` (2026-11-16)
+**Commit Message**: fix(query): hash equal bitmap, geometry and interval values consistently (#20971)
 
-HNSWIndex::build normalized cosine vectors only for SQ8 encoding and linked
-the graph with the raw column, which builds an inner product graph for
-vectors that are not unit length. Queries, SQ8 codes and FP16 refinement all
-score cosine, so recall needed a much larger ef.
+* fix(query): preserve equality across group hash representations
 
-Link the graph with the normalized vectors. L1 and L2 are unchanged.
+* fix(query): hash canonical bitmap containers without member expansion
 
-**File**: `src/query/storages/common/index/src/hnsw_index/hnsw.rs` (modified, +62/-0)
+* fix(query): validate bitmap range hashing without a direct dependency
+
+* fix(query): compare bitmap members across roaring stores
+
+* test(query): focus value hash regressions and expand SQL coverage
+
+---------
+
+Co-authored-by: kould <[REDACTED_EMAIL]>
+
+**File**: `src/query/expression/src/aggregate/group_hash.rs` (modified, +6/-47)
 ```diff
-@@ -289,6 +289,11 @@ impl HNSWIndex {
-         let column = column.remove_nullable();
-         let vector_column = column.as_vector().unwrap();
-         let vector_column = preprocess(distance_type, vector_column.clone());
-+        // Link the graph with the vectors that queries are scored against. For
-+        // cosine, those are normalized (the SQ8 codes, the query and the FP16
-+        // refinement all use cosine); linking raw vectors would build an inner
-+        // product graph that favours long vectors and loses recall.
-+        let column = Column::Vector(vector_column.clone());
+@@ -34,7 +34,6 @@ use crate::types::decimal::Decimal;
+ use crate::types::i256;
+ use crate::types::number::Number;
+ use crate::types::*;
+-use crate::utils::bitmap::normalize_bitmap_column;
+ use crate::visitor::ValueVisitor;
+ use crate::with_decimal_mapped_type;
+ use crate::with_number_mapped_type;
+@@ -243,10 +242,7 @@ fn combine_group_hash_const_nonnull<const IS_FIRST: bool>(
+         Scalar::Date(value) => value.agg_hash(),
+         Scalar::Boolean(value) => value.agg_hash(),
+         Scalar::String(value) => value.as_bytes().agg_hash(),
+-        Scalar::Binary(value)
+-        | Scalar::Bitmap(value)
+-        | Scalar::Variant(value)
+-        | Scalar::Geometry(value) => value.agg_hash(),
++        Scalar::Binary(value) | Scalar::Variant(value) => value.agg_hash(),
+         Scalar::Geography(value) => value.0.agg_hash(),
+         _ => scalar.as_ref().agg_hash(),
+     };
+@@ -366,8 +362,8 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
+     }
  
-         let mut rng = thread_rng();
-         let mut graph_layers_builder = GraphLayersBuilder::new(
-@@ -655,4 +660,61 @@ mod tests {
-         }
+     fn visit_bitmap(&mut self, column: BinaryColumn) -> Result<()> {
+-        let column = normalize_bitmap_column(&column);
+-        self.combine_group_hash_string_column::<BitmapType>(column.as_ref());
++        // Equal bitmaps can have different encodings, including within the hybrid format.
++        self.combine_group_hash_type_column::<AnyType>(&Column::Bitmap(column));
          Ok(())
      }
+ 
+@@ -377,7 +373,7 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
+     }
+ 
+     fn visit_geometry(&mut self, column: BinaryColumn) -> Result<()> {
+-        self.combine_group_hash_string_column::<GeometryType>(&column);
++        self.combine_group_hash_type_column::<AnyType>(&Column::Geometry(column));
+         Ok(())
+     }
+ 
+@@ -508,7 +504,6 @@ where I: Index
+             Scalar::Binary(v) => v.agg_hash(),
+             Scalar::String(v) => v.as_bytes().agg_hash(),
+             Scalar::Variant(v) => v.agg_hash(),
+-            Scalar::Geometry(v) => v.agg_hash(),
+             Scalar::Geography(v) => v.0.agg_hash(),
+             Scalar::Opaque(v) => v.as_ref().agg_hash(),
+             v => v.as_ref().agg_hash(),
+@@ -575,11 +570,7 @@ where I: Index
+     }
+ 
+     fn visit_bitmap(&mut self, column: crate::types::BinaryColumn) -> Result<()> {
+-        let column = normalize_bitmap_column(&column);
+-        self.visit_indices(|i| {
+-            let value = column.as_ref().index(i.to_usize()).unwrap();
+-            value.agg_hash()
+-        })
++        self.visit_typed_column::<BitmapType>(column, &DataType::Bitmap)
+     }
+ 
+     fn visit_string(&mut self, column: crate::types::StringColumn) -> Result<()> {
+@@ -591,7 +582,7 @@ where I: Index
+     }
+ 
+     fn visit_geometry(&mut self, column: crate::types::BinaryColumn) -> Result<()> {
+-        self.visit_binary(column)
++        self.visit_typed_column::<GeometryType>(column, &DataType::Geometry)
+     }
+ 
+     fn visit_geography(&mut self, column: crate::types::GeographyColumn) -> Result<()> {
+@@ -794,8 +785,6 @@ mod tests {
+     use databend_common_column::bitmap::Bitmap;
+     use databend_common_column::types::months_days_micros;
+     use databend_common_column::types::timestamp_tz;
+-    use databend_common_io::HybridBitmap;
+-    use roaring::RoaringTreemap;
+ 
+     use super::*;
+     use crate::BlockEntry;
+@@ -804,7 +793,6 @@ mod tests {
+     use crate::ProjectedBlock;
+     use crate::Value;
+     use crate::types::ArgType;
+-    use crate::types::BitmapType;
+     use crate::types::DecimalSize;
+     use crate::types::Int32Type;
+     use crate::types::NullableColumn;
+@@ -1106,35 +1094,6 @@ mod tests {
+         Ok(())
+     }
+ 
+-    #[test]
+-    fn test_bitmap_group_hash_legacy_bytes_normalized() -> Result<()> {
+-        let values = [1_u64, 5, 42];
+-
+-        let mut hybrid = HybridBitmap::new();
+-        for v in values {
+-            hybrid.insert(v);
+-        }
+-        let mut hybrid_bytes = Vec::new();
+-        hybrid.serialize_into(&mut hybrid_bytes).unwrap();
+-
+-        let mut tree = RoaringTreemap::new();
+-        for v in values {
+-            tree.insert(v);
+-        }
+-        let mut legacy_bytes = Vec::new();
+-        tree.serialize_into(&mut legacy_bytes).unwrap();
+-
+-        let bitmap_column = BitmapType::from_data(vec![hybrid_bytes, legacy_bytes]);
+-        let block = DataBlock::new(vec![bitmap_column.into()], 2);
+-
+-        let mut hashes = vec![0_u64; block.num_rows()];
+-        group_hash_entries(ProjectedBlock::from(block.columns()), &mut hashes);
+-
+-        // Legacy-encoded bitmap should hash identically to hybrid-encoded bitmap.
+-        assert_eq!(hashes[0], hashes[1]);
+-        Ok(())
+-    }
+-
+     #[test]
+     fn test_dict_value_hashes_match_group_hash_entries() {
+         const ROWS: usize = 5000;
+```
+
+**File**: `src/query/expression/src/utils/bitmap.rs` (modified, +39/-0)
+```diff
+@@ -13,14 +13,53 @@
+ // limitations under the License.
+ 
+ use std::borrow::Cow;
++use std::hash::Hash;
++use std::hash::Hasher;
++use std::io;
+ 
+ use databend_common_column::binary::BinaryColumn;
+ use databend_common_column::binary::BinaryColumnBuilder;
+ use databend_common_io::HYBRID_KIND_LARGE;
+ use databend_common_io::HYBRID_KIND_SMALL;
+ use databend_common_io::HYBRID_MAGIC;
+ use databend_common_io::HYBRID_VERSION;
++use databend_common_io::HybridBitmap;
+ use databend_common_io::deserialize_bitmap;
 +
-+    /// A cosine graph is linked by the angles between rows, not their lengths:
-+    /// with lengths from 1 to 1000, an inner product graph links rows to the
-+    /// longest ones and a small ef misses most nearest neighbours.
-+    #[test]
-+    fn test_cosine_graph_ignores_vector_lengths() -> Result<()> {
-+        use rand::Rng as _;
-+        use rand::SeedableRng as _;
-+        use rand::rngs::StdRng;
-+
-+        // Measured 0.904 with the normalized graph and 0.196 with the inner
-+        // product graph; the threshold sits far from both.
-+        const RECALL_THRESHOLD: f64 = 0.6;
-+        let (dim, num_points, num_queries, limit, ef) = (16, 3000, 50, 10, 16);
-+        let mut rng = StdRng::seed_from_u64(7);
-+        let mut direction = || -> Vec<f32> { (0..dim).map(|_| rng.gen_range(-1.0..1.0)).collect() };
-+        let queries: Vec<Vec<f32>> = (0..num_queries).map(|_| direction()).collect();
-+        let directions: Vec<Vec<f32>> = (0..num_points).map(|_| direction()).collect();
-+        let rows: Vec<Vec<f32>> = directions
-+            .iter()
-+            .enumerate()
-+            .map(|(i, row)| {
-+                // Lengths spread evenly over 1..1000 on a log scale.
-+                let length = 10f32.powf(3.0 * (i * 7919 % num_points) as f32 / num_points as f32);
-+                row.iter().map(|value| value * length).collect()
-+            })
-+            .collect();
-+        let values: Vec<F32> = rows.iter().flatten().map(|&v| F32::from(v)).collect();
-+        let column = Column::Vector(VectorColumn::Float32((values.into(), dim)));
-+        let (_, entries) = HNSWIndex::build(8, 64, 0, column, DistanceType::Dot)?;
-+        let columns: Vec<_> = entries.iter().map(|entry| entry.to_column()).collect();
-+        let components: Vec<_> = columns
-+            .iter()
-+            .map(|column| column.as_binary().unwrap().index(0).unwrap())
-+            .collect();
-+        let index = HNSWIndex::open(DistanceType::Dot, dim, num_points, &components, None)?;
-+
-+        let cosine = |a: &[f32], b: &[f32]| {
-+            let dot: f32 = a.iter().zip(b).map(|(x, y)| x * y).sum();
-+            let norm = |v: &[f32]| v.iter().map(|x| x * x).sum::<f32>().sqrt();
-+            dot / (norm(a) * norm(b))
-+        };
-+        let mut hits = 0;
-+        for query in &queries {
-+            let mut exact: Vec<usize> = (0..num_points).collect();
-+            exact.sort_by(|&a, &b| cosine(query, &rows[b]).total_cmp(&cosine(query, &rows[a])));
-+            let query = HNSWIndex::preprocess_query(DistanceType::Dot, query.clone());
-+            let found = index.search_with_ef(limit, Some(ef), &query, false)?;
-+            hits += found
-+                .iter()
-+                .filter(|point| exact[..limit].contains(&(point.idx as usize)))
-+                .count();
++/// Hash a canonical compressed representation, not every decoded member.
++/// Small hybrid sets are bounded by their one-byte serialized length; large
++/// bitmaps stay in Roaring's array/bitset containers throughout hashing.
++pub fn hash_bitmap<H: Hasher>(bytes: &[u8], state: &mut H) {
++    let mut tree = match deserialize_bitmap(bytes) {
++        Ok(HybridBitmap::Small(values)) => values.into_iter().collect(),
++        Ok(HybridBitmap::Large(tree)) => tree,
++        Err(_) => {
++            bytes.hash(state);
++            return;
 +        }
-+        let recall = hits as f64 / (num_queries * limit) as f64;
-+        assert!(recall >= RECALL_THRESHOLD, "cosine recall {recall}");
++    };
++    // Self-intersection preserves members while normalizing container stores by
++    // cardinality and removing empty containers. In particular, decoding a run
++    // can otherwise leave an array store at the array/bitset threshold.
++    // This works on compressed containers, without enumerating the large set.
++    tree &= tree.clone();
++    // The writer only feeds a Hasher, so serialization cannot fail with I/O.
++    tree.serialize_into(BitmapHashWriter(state)).unwrap();
++}
++
++struct BitmapHashWriter<'a, H>(&'a mut H);
++
++impl<H: Hasher> io::Write for BitmapHashWriter<'_, H> {
++    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
++        self.0.write(bytes);
++        Ok(bytes.len())
++    }
++
++    fn flush(&mut self) -> io::Result<()> {
 +        Ok(())
 +    }
- }
++}
++
+ #[inline]
+ pub fn is_hybrid_encoding(bytes: &[u8]) -> bool {
+     if bytes.is_empty() {
+```
+
+**File**: `src/query/expression/src/values.rs` (modified, +8/-11)
+```diff
+@@ -57,6 +57,7 @@ use string::StringColumnBuilder;
+ 
+ use crate::BlockEntry;
+ use crate::ColumnView;
++use crate::bitmap::hash_bitmap;
+ use crate::bitmap::is_hybrid_encoding;
+ use crate::property::Domain;
+ use crate::types::EncodedColumn;
+@@ -1038,7 +1039,11 @@ impl PartialOrd for Scalar {
+                 let Ok(map_2) = deserialize_bitmap(b2) else {
+                     return None;
+                 };
+-                map_1.eq(&map_2).then_some(Ordering::Equal)
++                // Roaring's equality distinguishes array and bitset stores.
++                // Decoding a run can leave an oversized array at the threshold,
++                // so compare members through compressed intersection instead.
++                (map_1.len() == map_2.len() && map_1.intersection_len(&map_2) == map_1.len())
++                    .then_some(Ordering::Equal)
+             }
+             (Scalar::Tuple(t1), Scalar::Tuple(t2)) => t1.partial_cmp(t2),
+             (Scalar::Variant(v1), Scalar::Variant(v2)) => {
+@@ -1160,7 +1165,7 @@ impl Hash for ScalarRef<'_> {
+             ScalarRef::Timestamp(v) => v.hash(state),
+             ScalarRef::TimestampTz(v) => v.hash(state),
+             ScalarRef::Date(v) => v.hash(state),
+-            ScalarRef::Interval(v) => v.0.hash(state),
++            ScalarRef::Interval(v) => v.hash(state),
+             ScalarRef::Array(v) | ScalarRef::Map(v) => {
+                 v.len().hash(state);
+                 for value in v.iter() {
+@@ -1170,15 +1175,7 @@ impl Hash for ScalarRef<'_> {
+             // `Scalar::eq` compares bitmaps by their decoded members, so the
+             // hash must not depend on the encoding. Undecodable payloads only
+             // compare equal bytewise and fall back to hashing the bytes.
+-            ScalarRef::Bitmap(v) => match deserialize_bitmap(v) {
+-                Ok(bitmap) => {
+-                    bitmap.len().hash(state);
+-                    for member in bitmap.iter() {
+-                        member.hash(state);
+-                    }
+-                }
+-                Err(_) => v.hash(state),
+-            },
++            ScalarRef::Bitmap(v) => hash_bitmap(v, state),
+             ScalarRef::Tuple(v) => {
+                 v.hash(state);
+             }
+```
+
+**File**: `src/query/expression/tests/it/group_hash.rs` (added, +356/-0)
+```diff
+@@ -0,0 +1,356 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use std::collections::HashMap;
++use std::hash::DefaultHasher;
++use std::hash::Hash;
++use std::hash::Hasher;
++
++use databend_common_expression::types::DictColumn;
++use databend_common_expression::types::EncodedColumn;
++use databend_common_expression::types::Int16Type;
++use databend_common_expression::types::NarrowBuffer;
++use databend_common_expression::types::StringType;
++use databend_common_expression::*;
++use databend_common_io::HybridBitmap;
++use roaring::RoaringBitmap;
++use roaring::RoaringTreemap;
++
++fn repeated(scalar: Scalar, rows: usize) -> BlockEntry {
++    BlockEntry::new_const_column(scalar.as_ref().infer_data_type(), scalar, rows)
++}
++
++fn scalar_hash(scalar: &impl Hash) -> u64 {
++    let mut hasher = DefaultHasher::new();
++    scalar.hash(&mut hasher);
++    hasher.finish()
++}
++
++// All rows in a class have the same logical value. No expected hash is derived
++// from the hash implementation: compare representations and layouts instead.
++fn assert_hash_class(scalars: &[Scalar]) -> databend_common_exception::Result<()> {
++    let first = &scalars[0];
++    let data_type = first.as_ref().infer_data_type();
++    let mut map = HashMap::new();
++    let mut builder = ColumnBuilder::with_capacity(&data_type, scalars.len() + 2);
++    builder.push(first.as_ref());
++    for scalar in scalars {
++        // Check equality in both directions before diagnosing HashMap hashing.
++        assert_eq!(scalar, first);
++        assert_eq!(first, scalar);
++        assert_eq!(scalar_hash(scalar), scalar_hash(first));
++        map.insert(scalar.clone(), ());
++        builder.push(scalar.as_ref());
++    }
++    assert_eq!(map.len(), 1);
++    builder.push(first.as_ref());
++    // Slice off padding so binary/array buffers and validity can have offsets.
++    let column = builder.build().slice(1..scalars.len() + 1);
++    let rows = scalars.len();
++    let dictionary = Column::Encoded(Box::new(EncodedColumn::Dict(DictColumn::new(
++        NarrowBuffer::pack((0..rows).rev().map(|index| index as u64), (rows - 1) as u64),
++        column.clone(),
++    ))));
++    let suffix = Int16Type::from_data(vec![4_i16; rows]);
++    let entries = [BlockEntry::Column(column), BlockEntry::Column(dictionary)]
++        .into_iter()
++        .chain(scalars.iter().cloned().flat_map(|value| {
++            let entry = repeated(value.clone(), rows);
++            let nullable =
++                BlockEntry::new_const_column(data_type.clone().wrap_nullable(), value, rows);
++            [entry, nullable]
++        }))
++        .collect::<Vec<_>>();
++
++    for projection in [vec![0], vec![0, 1], vec![1, 0]] {
++        let null_block = DataBlock::new(
++            vec![
++                BlockEntry::new_const_column(data_type.clone().wrap_nullable(), Scalar::Null, rows),
++                suffix.clone().into(),
++            ],
++            rows,
++        );
++        let mut null_hashes = vec![0; rows];
++        group_hash_entries(
++            ProjectedBlock::project(&projection, &null_block),
++            &mut null_hashes,
++        );
++        // Compare the same layouts both without NULLs and with actual masked
++        // payloads. Indexed hashing selects a valid row and a NULL row.
++        for nullable in [false, true] {
++            let mut expected = None;
++            for entry in &entries {
++                let entry = if nullable {
++                    entry
++                        .to_column()
++                        .remove_nullable()
++                        .wrap_nullable(Some((0..rows).map(|row| row != rows - 1).collect()))
++                        .into()
++                } else {
++                    entry.clone()
++                };
++                let block = DataBlock::new(vec![entry, suffix.clone().into()], rows);
++                let mut hashes = vec![u64::MAX; rows];
++                group_hash_entries(ProjectedBlock::project(&projection, &block), &mut hashes);
++                let valid_rows = if nullable { rows - 1 } else { rows };
++                assert!(hashes[..valid_rows].iter().all(|hash| *hash == hashes[0]));
++                if nullable {
++                    assert_eq!(hashes[rows - 1], null_hashes[rows - 1]);
++                }
++                if let Some(expected) = &expected {
++                    assert_eq!(&hashes, expected);
++                } else {
++                    expected = Some(hashes.clone());
++ 
+```
+
+**File**: `src/query/expression/tests/it/main.rs` (modified, +1/-0)
+```diff
+@@ -40,6 +40,7 @@ mod filter_executor;
+ mod fold_rules;
+ mod function_factory;
+ mod group_by;
++mod group_hash;
+ mod hilbert;
+ mod kernel;
+ mod meta_scalar;
+```
+
+**File**: `tests/sqllogictests/suites/mode/cluster/shuffle_value_hash.test` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++# Integration smoke coverage for scalar/materialized bitmap shuffle inputs,
++# single/composite keys and NULLs. to_bitmap canonicalizes member order, so
++# these are not cross-encoding regressions; those require the Rust fixtures.
++# Cross-encoding JOIN key serialization remains outside this hash-only fix.
++
++statement ok
++set prefer_broadcast_join = 0
++
++statement ok
++create or replace table shuffle_value_left(tag int not null, bits bitmap null)
++
++statement ok
++create or replace table shuffle_value_right(tag int not null, bits bitmap null)
++
++statement ok
++insert into shuffle_value_left values (1, to_bitmap('2,9')), (2, to_bitmap('4')), (3, null)
++
++statement ok
++insert into shuffle_value_right values (1, to_bitmap('9,2')), (2, to_bitmap('4')), (3, null)
++
++query I
++select count(*) from shuffle_value_left l join shuffle_value_right r on l.bits = r.bits and l.tag = r.tag
++----
++2
++
++query I
++select count(*) from (select tag, to_bitmap('2,9') as bits from shuffle_value_left) l join shuffle_value_right r on l.bits = r.bits and l.tag = r.tag
++----
++1
++
++query I
++select count(*) from shuffle_value_left l join shuffle_value_right r on l.bits = r.bits
++----
++2
++
++statement ok
++drop table shuffle_value_left
++
++statement ok
++drop table shuffle_value_right
+```
+
+**File**: `tests/sqllogictests/suites/query/functions/02_0087_function_interval_hash.test` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++# Scalar interval hashes must follow duration equality, including inside
++# arrays, tuples and maps. Keep these SQL-visible cases here rather than
++# duplicating them in the expression crate's group-hash layout tests.
++
++# Establish the equality contract independently of hash-based deduplication.
++skipif mysql
++query BB
++select to_interval('1 month') = to_interval('30 days'), to_interval('30 days') = to_interval('29 days 24 hours')
++----
++1 1
++
++# Constant folding: three storage representations of one duration.
++skipif mysql
++query I
++select array_length(array_distinct([to_interval('1 month'), to_interval('30 days'), to_interval('29 days 24 hours')]))
++----
++1
++
++# Runtime evaluation: expose each row instead of hiding the result in a sum.
++skipif mysql
++query II
++select number, array_length(array_distinct([to_interval(if(number % 2 = 0, '1 month', '30 days')), to_interval('30 days')])) from numbers(4) order by number
++----
++0 1
++1 1
++2 1
++3 1
++
++# Recursive scalar hashing must use the same duration semantics in every
++# supported nested container, including a tuple with a NULL field.
++skipif mysql
++query III
++select
++    array_length(array_distinct([[to_interval('1 month')], [to_interval('30 days')]])),
++    array_length(array_distinct([tuple(null, to_interval('1 month')), tuple(null, to_interval('30 days'))])),
++    array_length(array_distinct([map(['key'], [to_interval('1 month')]), map(['key'], [to_interval('30 days')])]))
++----
++1 1 1
++
++# Negative durations must canonicalize too, not only positive intervals.
++skipif mysql
++query I
++select array_length(array_distinct([to_interval('-1 month'), to_interval('-30 days'), to_interval('-29 days -24 hours')]))
++----
++1
++
++# Do not collapse a genuinely different duration; NULL is ignored by array_distinct.
++skipif mysql
++query I
++select array_length(array_distinct([null, to_interval('1 month'), to_interval('30 days'), to_interval('31 days')]))
++----
++2
+```
+
+---
+
+### Incident Patch 3: `3c30b0dd` (2026-11-16)
+**Commit Message**: fix(query): bind a CTE body in its definition's scope (#21076)
+
+* fix(query): bind a CTE body in its definition's scope
+
+A non-materialized CTE was rebound at every reference with the referencing
+context chained as its parent, so its body could bind columns that only the
+referencing query provides. `WITH t AS (SELECT x) ... , LATERAL (SELECT * FROM
+t)` therefore returned a row instead of rejecting `x`, and the meaning of the
+same CTE depended on where it was used.
+
+Bind the body without the referencing scope, so an unknown column is reported
+where the CTE is defined. The context the CTE scan hands back still chains to
+the referencing query: a correlated subquery that reads the CTE has to reach
+the query it sits in.
+
+* test(query): cover CTE binding scope with a sqllogictest instead of a binder unit test
+
+**File**: `src/query/sql/src/planner/binder/table.rs` (modified, +10/-1)
+```diff
+@@ -179,7 +179,12 @@ impl Binder {
+         cte_info: &CteInfo,
+     ) -> Result<(SExpr, BindContext)> {
+         let mut new_bind_context = BindContext {
+-            parent: Some(Box::new(bind_context.clone())),
++            // A CTE definition is bound at the point of its `WITH` clause, not at the point
++            // where it is referenced. Chaining the referencing context as a parent would let
++            // the body bind its columns — a CTE referenced from a lateral subquery would
++            // silently correlate with whatever the subquery's left side produces. Earlier
++            // CTEs still resolve through the cloned `cte_context`.
++            parent: None,
+             binding_depth: bind_context.next_depth()?,
+             bound_internal_columns: BTreeMap::new(),
+             bound_virtual_columns: BTreeMap::new(),
+@@ -207,6 +212,10 @@ impl Binder {
+ 
+         let (s_expr, mut res_bind_context) =
+             self.bind_query(&mut new_bind_context, &cte_info.query)?;
++        // The body above was bound without the referencing scope, but the scan it produced is
++        // part of the referencing query: a correlated subquery that reads the CTE still has to
++        // reach the columns of the query it sits in.
++        res_bind_context.parent = Some(Box::new(bind_context.clone()));
+         let mut cols_alias = cte_info.columns_alias.clone();
+         if let Some(alias) = alias {
+             for (idx, col_alias) in alias.columns.iter().enumerate() {
+```
+
+**File**: `tests/sqllogictests/suites/query/cte/cte_scope.test` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++# A CTE body is bound where its WITH clause is, so it can never resolve a column
++# that only the query referencing it provides. Issue #20983.
++
++# The enclosing SELECT does not provide x.
++statement error 1065
++WITH t AS (SELECT x) SELECT * FROM t
++
++# Another item of the referencing FROM does not provide x.
++statement error 1065
++WITH t AS (SELECT x) SELECT * FROM (SELECT 1 AS x) s, t
++
++# The left side of a LATERAL subquery used to leak into the CTE body and
++# this query returned `1 1`.
++statement error 1065
++WITH t AS (SELECT x) SELECT * FROM (SELECT 1 AS x) s, LATERAL (SELECT * FROM t)
++
++# A self-contained CTE is still readable from a lateral subquery.
++query II
++WITH t AS (SELECT 1 AS x) SELECT * FROM (SELECT 1 AS x) s, LATERAL (SELECT * FROM t)
++----
++1 1
++
++# A CTE body may still reference a CTE defined earlier in the same WITH clause.
++query I
++WITH a AS (SELECT 1 AS x), b AS (SELECT x + 1 AS y FROM a) SELECT * FROM b
++----
++2
++
++# A correlated subquery that reads a CTE still reaches the columns of the
++# query it sits in (the TPC-DS Q1 shape).
++statement ok
++create or replace table cte_scope_t(k int, v int)
++
++statement ok
++insert into cte_scope_t values (1, 10), (1, 30), (2, 5)
++
++query II
++WITH c AS (SELECT k, v FROM cte_scope_t)
++SELECT k, v FROM c c1
++WHERE v > (SELECT avg(v) * 1.2 FROM c c2 WHERE c1.k = c2.k)
++ORDER BY k
++----
++1 30
++
++statement ok
++drop table cte_scope_t
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21099** (2026-11-16): fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (@zhang2014)
 - **PR #21093** (2026-11-15): fix(query): link cosine HNSW graphs with normalized vectors (@bohutang)
 - **PR #21092** (2026-11-13): fix(query): truncate REPLACE statements in query logs (@TCeason)
 - **PR #21091** (2026-11-15): feat(query): enable the memory limit and the shared cache by default (@bohutang)
 - **PR #21090** (2026-11-13): refactor(query): scan only the rows matched by the inverted index (@bohutang)
 - **PR #21087** (2026-11-13): feat(query): support native charset conversion for binary strings (@sundy-li)
-- **PR #21083** (2026-11-13): fix(query): keep multi-table insert distributed when the source needs reorder (@zhang2014)
 
 ---
 
@@ -2099,21 +2041,21 @@ Link the graph with the normalized vectors. L1 and L2 are unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iceberg): stop Iceberg DDL/DML from silently doing nothing
+## X. meta): decode BLOOM table index type; default cache.data_max_ratio to 0
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta/api/src/api_impl/schema_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86507e14`: iceberg): stop Iceberg DDL/DML from silently doing nothing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7a0a58b`: meta): decode BLOOM table index type; default cache.data_max_ratio to 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/api/src/api_impl/schema_api.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "arrow-cast",
+        TableIndexType::Bloom => MarkedDeletedIndexType::BLOOM,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2123,7 +2065,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86507e14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7a0a58b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "29e41070",
+    "sourceVersion": "554cb1b7",
     "license": "MIT",
-    "contentHash": "257ca9b69ee726f0df831bb75727f76bc7ceb64499e67b7ea9ca6078aa81a881",
-    "lastHarvestedAt": "2026-11-14T22:57:36.163Z",
+    "contentHash": "abd19c27ee3a190e547bff1e659144fa69f4fb937116746a00df45090c9bb356",
+    "lastHarvestedAt": "2026-11-16T21:10:24.537Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "eca4674a",
+    "sourceVersion": "573231ac",
     "license": "Apache-2.0",
-    "contentHash": "371369efeac5c632ebb64e5e8bd6deeac9500b10b63392631eff27fd0ac77dff",
-    "lastHarvestedAt": "2026-11-15T13:09:01.007Z",
+    "contentHash": "93bef85a3e0e86c7870f69c74a398ecfa5eb174db4cfe91c3d5a5c5bac26b257",
+    "lastHarvestedAt": "2026-11-16T21:10:31.051Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "4fc66b82",
+    "sourceVersion": "342ec629",
     "license": "Apache-2.0",
-    "contentHash": "cda1e3381c8cff5838ada0572053b9d633b78bd6c97452dc34fab43c80559cb9",
-    "lastHarvestedAt": "2026-11-15T10:48:14.768Z",
+    "contentHash": "2d407fbe529c2f138259823d5734173a7197114a47f19d916867f9740e678ccb",
+    "lastHarvestedAt": "2026-11-16T21:10:35.764Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {

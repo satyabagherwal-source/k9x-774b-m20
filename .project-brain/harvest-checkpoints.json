@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T20:21:07.601Z",
+  "last_updated": "2026-11-16T21:10:35.773Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "10f08cf6e988a2cc6c3eeb99b5b4098ab9db301b8f95cc98f8f0686f1022c857",
-      "verified_at": "2026-11-16T07:19:48.968Z",
+      "content_hash": "abd19c27ee3a190e547bff1e659144fa69f4fb937116746a00df45090c9bb356",
+      "verified_at": "2026-11-16T21:10:24.544Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T07:19:48.968Z"
+      "last_updated": "2026-11-16T21:10:24.544Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "371369efeac5c632ebb64e5e8bd6deeac9500b10b63392631eff27fd0ac77dff",
-      "verified_at": "2026-11-15T13:09:01.015Z",
+      "content_hash": "93bef85a3e0e86c7870f69c74a398ecfa5eb174db4cfe91c3d5a5c5bac26b257",
+      "verified_at": "2026-11-16T21:10:31.058Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T13:09:01.015Z"
+      "last_updated": "2026-11-16T21:10:31.058Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "cda1e3381c8cff5838ada0572053b9d633b78bd6c97452dc34fab43c80559cb9",
-      "verified_at": "2026-11-15T10:48:14.778Z",
+      "content_hash": "2d407fbe529c2f138259823d5734173a7197114a47f19d916867f9740e678ccb",
+      "verified_at": "2026-11-16T21:10:35.772Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T10:48:14.778Z"
+      "last_updated": "2026-11-16T21:10:35.772Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

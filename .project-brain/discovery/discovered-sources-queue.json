@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T20:21:12.939Z",
+  "updated_at": "2026-11-16T21:10:39.134Z",
   "stats": {
-    "total_discovered": 4446,
-    "approved_pending_harvest": 4182,
+    "total_discovered": 4455,
+    "approved_pending_harvest": 4191,
     "harvested_count": 0,
     "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4183,
+      "COMMUNITY_AND_EXPERT": 4192,
       "OFFICIAL_DOCUMENTATION": 140,
       "STANDARDS_AND_SPECIFICATIONS": 96,
       "ENGINEERING_BLOGS": 3,
@@ -95985,6 +95985,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
         "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-817B373377B6": {
+      "id": "SRC-817B373377B6",
+      "url": "https://api.deepseek.com/openai%60",
+      "title": "https://api.deepseek.com/openai%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:38.900Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-585E072D007C": {
+      "id": "SRC-585E072D007C",
+      "url": "https://api.freeshare.tech:8443/v1",
+      "title": "https://api.freeshare.tech:8443/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:38.932Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-12B8DEACCC34": {
+      "id": "SRC-12B8DEACCC34",
+      "url": "https://api.deepseek.com/v1",
+      "title": "https://api.deepseek.com/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:38.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-548C8DADBBA3": {
+      "id": "SRC-548C8DADBBA3",
+      "url": "https://api.deepseek.com/",
+      "title": "https://api.deepseek.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:38.988Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-812B1F7C4A8B": {
+      "id": "SRC-812B1F7C4A8B",
+      "url": "https://api.deepseek.com/beta",
+      "title": "https://api.deepseek.com/beta",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:39.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-6F97BFA066E4": {
+      "id": "SRC-6F97BFA066E4",
+      "url": "https://api.deepseek.com/openai",
+      "title": "https://api.deepseek.com/openai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:39.042Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-C14ABD0EA563": {
+      "id": "SRC-C14ABD0EA563",
+      "url": "https://user:pw@api.deepseek.com/v1",
+      "title": "https://user:pw@api.deepseek.com/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:39.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-2A64BADB264F": {
+      "id": "SRC-2A64BADB264F",
+      "url": "https://github.com/SparkofSpike",
+      "title": "https://github.com/SparkofSpike",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:39.106Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-F854D7E3073D": {
+      "id": "SRC-F854D7E3073D",
+      "url": "https://github.com/Ricardo-M-L",
+      "title": "https://github.com/Ricardo-M-L",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T21:10:39.134Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
       }
     }
   }

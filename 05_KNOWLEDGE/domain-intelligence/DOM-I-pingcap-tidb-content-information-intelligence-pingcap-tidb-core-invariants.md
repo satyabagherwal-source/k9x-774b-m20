@@ -4,24 +4,24 @@
 {
   "source_repository": "pingcap/tidb",
   "source_url": "https://github.com/pingcap/tidb",
-  "source_version": "eca4674a",
+  "source_version": "573231ac",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T13:09:01.177Z",
+  "timestamp": "2026-11-16T21:10:31.225Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pingcap-tidb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `eca4674a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T13:09:01.177Z`  
+> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `573231ac`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T21:10:31.225Z`  
 > **Learning ID**: `learn-github-pingcap-tidb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pingcap/tidb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T13:09:00.057Z  
+> **Harvest Timestamp**: 2026-11-16T21:10:30.176Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40735 stars
+- **Stars / Engagement**: 40739 stars
 
 ---
 
@@ -1934,14 +1934,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73148** (2026-11-14): **test: add a protected-changes smoke test**
-  *Symptoms*: ## What  Emit one error log line from a unit test.  ## Why  Check the new protected-changes review end to end: a pull request that adds a line matching the repository's protected-change rules should get a `protected-changes` commit status naming the approvers configured for this repository, plus one comment that explains the finding.  This pull request is not meant to be merged; it only adds a test file.
-  **Post-Mortem & Fix Analysis**:
-  > Adding the "do-not-merge/release-note-label-needed" label because no release-note block was detected, please follow our [release note process](https://git.k8s.io/community/contributors/guide/release-notes.md) to remove it.  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues/new?title=Prow%20issue:) repository. </details>
-  >  [FORMAT CHECKER NOTIFICATION]  **Notice**: To remove the `do-not-merge/needs-linked-issue` label, please provide the linked issue number on one line in the PR body, for example: `Issue Number: close #123` or `Issue Number: ref #456`.  <sub>:open_book: For more info, you can check the ["Contribute Code"](https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue) section in the development guide.</sub>  <hr>  **Notice**: To remove the `do-not-merge/needs-tests-checked` label, please finished the tests then check the finished items in description.  For example:      Tests <!-- At least one of them must be included. -->      - [x] Unit test     - [ ] Integration test     - [ ] Manual test (add detailed scripts or steps below)     - [ ] No code > ‼️ Must keep the HTML comments `<!-- At least one of them must be included. -->`  <sub>:open_book: For more info, you can check the ["Contribute Code"](https://pingcap.github.io/tidb-dev-guide/contribut
+- **Issue #73233** (2026-11-16): **ddl: advance table revision on rename**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #73228  Problem Summary:  RENAME TABLE preserves table IDs but can leave their revisions unchanged. After exchanging two table names through separate renames, the table-ID/revision map can therefore match the old map even though the name-to-ID bindings changed. This allows the per-table plan-cache key proposed in #72856 to reuse a stale JOIN plan.  ### What changed and how does it work?  Advance the table revision in the shared rename helper before writing the renamed TableInfo. The new name and revision become visible together in the first DDL phase, independently of foreign-key metadata updates, without extra metadata writes or schema synchronization rounds.  Add DDL regression coverage for sequential and atomic swaps, cross-database moves, ALTER TABLE RENAME, foreign keys enabled/disabled, self-references and child references, rollback, and retry before commit. Verify that the intermediate public state already exposes the new revision. Plan-cache tests are deferred until #72856 lands.  ### Chec
 
-- **Issue #73145** (2026-11-14): **statistics: remove historical stats feature (#69889)**
-  *Symptoms*: This is an automated cherry-pick of #69889  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #52826  Problem Summary: Historical stats keep large internal INSERT statements in the domain session pool and can use a lot of memory. The feature is off by default and rarely used, so remove it.  ### What changed and how does it work?  - Remove historical stats recording, the `/stats/dump/{db}/{table}/{snapshot}` API, and the related metric. `PLAN REPLAYER DUMP ... WITH STATS AS OF TIMESTAMP` now returns an error. - Keep `tidb_enable_historical_stats` and `tidb_enable_historical_stats_for_capture` as no-op variables that warn on `ON`, like `tidb_enable_fast_analyze`. - Keep `mysql.stats_history` and `mysql.stats_meta_history`, but stats GC no longer deletes their rows. The rows stay until a user deletes them. `tidb_historical_stats_duration` has no effect and returns a warning when it is set.  TODO: update pingcap/docs for this removal: `sql-plan-replayer.md`, `system-variable-reference.md`, `sql-tuning-best-practice.md`, `mysql-schema/mysql-schema.md`, and the TiDB Cloud `plan-replayer.md`.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit t
+- **Issue #73228** (2026-11-16): **planner: cached JOIN returns wrong results after sequential table renames after #72856**
+  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  This tracks a wrong-result regression introduced by #72856. **Once #72856 is merged, master will be affected by the rename scenario below unless this is fixed.** At filing time, the PR is still open; the issue was reproduced on its head, while its base passes.  With the default repeatable-read isolation and prepared plan cache enabled, warm a two-table JOIN plan, swap the table names through three separate single-table `RENAME TABLE` statements, and execute the prepared statement again. No non-default configuration is required; `tidb_enable_foreign_key` remains `ON`, and these tables have no foreign keys.  ```sql -- Session A USE test; CREATE TABLE t1 (a INT); CREATE TABLE t2 (a INT); INSERT INTO t1 VALUES (1); INSERT INTO t2 VALUES (2); PREPARE s FROM 'SELECT t1.a,t2.a FROM t1 JOIN t2'; EXECUTE s; -- (1, 2) EXECUTE s; -- (1, 2) SELECT @@last_plan_from_cache; -- 1  -- Session B USE test; RENAME TABLE t1 TO tmp; RENAME TABLE t2 TO t1; RENAME TABLE tmp TO t2;  -- Session A EXECUTE s; -- wrong on PR head: (1, 2) SELECT @@last_plan_from_cache; -- 1 on PR head SELECT t1.a,t2.a FROM t1 JOIN t2; -- correct: (2, 1) ```  The three separate rename statements matter: a single multi-table rename follows a different metadata-update path.  ### 2. What did you expect to see? (Required)  The final `EXECUTE s` should return `(2, 1)`, matching the ordinary SELECT after the table names are exchanged. A cached plan must not retain the old 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1958,272 +1955,311 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eca4674a` (2026-11-14)
-**Commit Message**: statistics: keep same-upper groups together at global histogram cuts (#73121)
+### Incident Patch 1: `ce0faf10` (2026-11-16)
+**Commit Message**: sessiontxn: respect redaction in deadlock retry logs (#73193)
 
-close pingcap/tidb#73119
+close pingcap/tidb#73191
 
-**File**: `pkg/statistics/handle/globalstats/BUILD.bazel` (modified, +1/-1)
+**File**: `pkg/sessiontxn/isolation/BUILD.bazel` (modified, +4/-1)
 ```diff
-@@ -40,7 +40,7 @@ go_test(
+@@ -58,7 +58,7 @@ go_test(
+         "serializable_test.go",
      ],
-     embed = [":globalstats"],
      flaky = True,
--    shard_count = 26,
-+    shard_count = 27,
+-    shard_count = 28,
++    shard_count = 29,
      deps = [
-         "//pkg/domain",
-         "//pkg/kv",
+         ":isolation",
+         "//pkg/config",
+@@ -77,6 +77,7 @@ go_test(
+         "//pkg/testkit",
+         "//pkg/testkit/testfork",
+         "//pkg/testkit/testsetup",
++        "//pkg/util/logutil",
+         "@com_github_pingcap_errors//:errors",
+         "@com_github_pingcap_failpoint//:failpoint",
+         "@com_github_pingcap_kvproto//pkg/kvrpcpb",
+@@ -85,5 +86,7 @@ go_test(
+         "@com_github_tikv_client_go_v2//oracle",
+         "@com_github_tikv_client_go_v2//tikv",
+         "@org_uber_go_goleak//:goleak",
++        "@org_uber_go_zap//:zap",
++        "@org_uber_go_zap//zaptest/observer",
+     ],
+ )
 ```
 
-**File**: `pkg/statistics/handle/globalstats/global_stats_internal_test.go` (modified, +7/-13)
+**File**: `pkg/sessiontxn/isolation/readcommitted.go` (modified, +4/-3)
 ```diff
-@@ -378,24 +378,18 @@ func testIssues24349(t *testing.T, testKit *testkit.TestKit, store kv.Storage) {
- 	// count 2) become virtual single-value buckets in the merge, so
- 	// column b's 8 histogram rows land in three global buckets:
- 	// [1,1] mass 2 (p2's two b=1 rows, Repeat 2 at the bucket upper),
--	// [1,3] mass 2 (p1's interior b=1 row plus its b=3 row at the
--	// upper, Repeat 1) and [3,4] mass 4 (the three virtual b=3 rows
--	// plus the b=4 row, Repeat 1 for b=4).
-+	// [1,3] mass 5 (p1's interior b=1 row plus all four b=3 rows,
-+	// Repeat 4) and [4,4] mass 1 (the b=4 row, Repeat 1).
- 	//
--	// Neither b=1 nor b=3 ends up exactly estimable, and this layout
--	// does not improve on the previous one: b=1 is truly 3 rows but
--	// estimates 2, because its third row is an unidentifiable interior
--	// row of p1's [1,3]; b=3 is truly 4 rows but estimates 1, because
--	// the three virtual b=3 rows land in [3,4], where 3 is the lower
--	// rather than the upper, so they stay as plain bucket mass. Both
--	// are cases of one value's rows spread over several refs, which
--	// the merge does not currently reunite.
-+	// The b=3 group stays together across histogram and virtual TopN
-+	// refs, so its full frequency is retained. The b=1 estimate is still
-+	// 2 rather than 3 because p1's b=1 row is unidentifiable interior mass.
- 	testKit.MustQuery("show stats_buckets where table_name='t'").Sort().Check(testkit.Rows(
- 		"test t global a 0 0 4 4 0 0 0",
- 		"test t global a 0 1 6 2 2 2 0",
- 		"test t global b 0 0 2 2 1 1 0",
--		"test t global b 0 1 4 1 1 3 0",
--		"test t global b 0 2 8 1 3 4 0",
-+		"test t global b 0 1 7 4 1 3 0",
-+		"test t global b 0 2 8 1 4 4 0",
- 		"test t p0 b 0 0 1 1 2 2 0",
- 		"test t p1 b 0 0 2 1 1 3 0",
- 		"test t p1 b 0 1 3 1 4 4 0",
+@@ -32,6 +32,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/sessiontxn"
+ 	isolation_metrics "github.com/pingcap/tidb/pkg/sessiontxn/isolation/metrics"
+ 	"github.com/pingcap/tidb/pkg/util/logutil"
++	"github.com/pingcap/tidb/pkg/util/redact"
+ 	tikverr "github.com/tikv/client-go/v2/error"
+ 	"github.com/tikv/client-go/v2/oracle"
+ 	"go.uber.org/zap"
+@@ -215,13 +216,14 @@ func (p *PessimisticRCTxnContextProvider) handleAfterQueryError(queryErr error)
+ }
+ 
+ func (p *PessimisticRCTxnContextProvider) handleAfterPessimisticLockError(ctx context.Context, lockErr error) (sessiontxn.StmtErrorAction, error) {
+-	txnCtx := p.sctx.GetSessionVars().TxnCtx
++	sessVars := p.sctx.GetSessionVars()
++	txnCtx := sessVars.TxnCtx
+ 	retryable := false
+ 	if deadlock, ok := errors.Cause(lockErr).(*tikverr.ErrDeadlock); ok && deadlock.IsRetryable {
+ 		logutil.Logger(p.ctx).Info("single statement deadlock, retry statement",
+ 			zap.Uint64("txn", txnCtx.StartTS),
+ 			zap.Uint64("lockTS", deadlock.LockTs),
+-			zap.Stringer("lockKey", kv.Key(deadlock.LockKey)),
++			zap.Stringer("lockKey", redact.Stringer(sessVars.EnableRedactLog, kv.Key(deadlock.LockKey))),
+ 			zap.Uint64("deadlockKeyHash", deadlock.DeadlockKeyHash))
+ 		retryable = true
+ 
+@@ -233,7 +235,6 @@ func (p *PessimisticRCTxnContextProvider) handleAfterPessimisticLockError(ctx co
+ 			return sessiontxn.ErrorAction(err)
+ 		}
+ 	} else if terror.ErrorEqual(kv.ErrWriteConflict, lockErr) {
+-		sessVars := p.sctx.GetSessionVars()
+ 		waitTime := time.Since(sessVars.StmtCtx.GetLockWaitStartTime())
+ 		if waitTime.Milliseconds() >= sessVars.LockWaitTimeout {
+ 			return sessiontxn.ErrorAction(tikverr.ErrLockWaitTimeout)
 ```
 
-**File**: `pkg/statistics/handle/globalstats/global_stats_test.go` (modified, +25/-0)
+**File**: `pkg/sessiontxn/isolation/repeatable_read.go` (modified, +2/-1)
 ```diff
-@@ -39,6 +39,31 @@ import (
+@@ -30,6 +30,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
+ 	"github.com/pingcap/tidb/pkg/sessiontxn"
+ 	"github.com/pingcap/tidb/pkg/util/logutil"
++	"github.com/pingcap/tidb/pkg/util/redact"
+ 	tikverr "github.com/tikv/client-go/v2/error"
+ 	"go.uber.org/zap"
+ )
+@@ -248,7 +249,7 @@ func (p *PessimisticRRTxnContextProvider) handleAfterPessimisticLockError(ctx co
+ 		logutil.Logger(p.ctx).Info("single statement deadlock, retry statement",
+ 			zap.Uint64("txn", txnCtx.StartTS),
+ 			zap.Uint64("lockTS", deadlock.LockTs),
+-			zap.Stringer("lockKey", kv.Key(deadlock.LockKey)),
++			zap.Stringer("lockKey", redact.Stringer(sessVars.EnableRedactLog, kv.Key(deadlock.LockKey))),
+ 			zap.Uint64("deadlockKeyHash", deadlock.DeadlockKeyHash))
  
- const asyncMergeWarn = "Warning 1105 The 'tidb_enable_async_merge_global_stats' variable will always be enabled in a future release; changing it is discouraged."
+ 		// In fair locking mode, when statement retry happens, `retryFairLockingIfNeeded` should be
+```
+
+**File**: `pkg/sessiontxn/isolation/repeatable_read_test.go` (modified, +58/-0)
+```diff
+@@ -34,8 +34,11 @@ import (
+ 	"github.com/pingcap/tidb/pkg/sessiontxn/isolation"
+ 	"github.com/pingcap/tidb/pkg/testkit"
+ 	"github.com/pingcap/tidb/pkg/testkit/testfork"
++	"github.com/pingcap/tidb/pkg/util/logutil"
+ 	"github.com/stretchr/testify/require"
+ 	tikverr "github.com/tikv/client-go/v2/error"
++	"go.uber.org/zap"
++	"go.uber.org/zap/zaptest/observer"
+ )
  
-+func TestGlobalStatsSameUpperGroupAtBucketBoundary(t *testing.T) {
-+	store, dom := testkit.CreateMockStoreAndDomain(t)
+ func newDeadLockError(isRetryable bool) error {
+@@ -135,6 +138,61 @@ func TestPessimisticRRErrorHandle(t *testing.T) {
+ 	require.Nil(t, err)
+ }
+ 
++func TestPessimisticDeadlockLogRedaction(t *testing.T) {
++	store := testkit.CreateMockStore(t)
 +	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec("set tidb_partition_prune_mode = 'dynamic'")
-+	tk.MustExec("set tidb_enable_async_merge_global_stats = off")
-+	tk.MustExec("set tidb_analyze_version = 2")
-+	tk.MustExec("create table same_upper_group (id int, v bigint) partition by hash(id) partitions 12")
-+	// One partition has eight zeros, ten partitions have one 10 each, and
-+	// the last partition has one 20. The first bucket's size gate fires
-+	// after consuming the 20 and eight of the references for 10.
-+	tk.MustExec(`insert into same_upper_group
-+		with recursive s(n) as (select 1 union all select n + 1 from s where n < 8)
-+		select 0, 0 from s`)
-+	tk.MustExec(`insert into same_upper_group
-+		with recursive s(n) as (select 1 union all select n + 1 from s where n < 10)
-+		select n, 10 from s`)
-+	tk.MustExec("insert into same_upper_group values (11, 20)")
-+	tk.MustExec("analyze table same_upper_group all columns with 0 topn, 2 buckets, 1 samplerate")
-+	require.NoError(t, dom.StatsHandle().Update(context.Background(), dom.InfoSchema()))
-+	tk.MustQuery("select count(*) from same_upper_group where v=10").Check(testkit.Rows("10"))
-+	plan := tk.MustQuery("explain select * from same_upper_group where v=10").Rows()
-+	require.Equal(t, "10.00", plan[0][1])
++	defer tk.MustExec("rollback")
++	sessVars := tk.Session().GetSessionVars()
++	originalMode := sessVars.EnableRedactLog
++	originalGlobalMode := errors.RedactLogEnabled.Load()
++	t.Cleanup(func() {
++		sessVars.EnableRedactLog = originalMode
++		errors.RedactLogEnabled.Store(originalGlobalMode)
++	})
++
++	for _, isolationLevel := range []string{ast.RepeatableRead, ast.ReadCommitted} {
++		tk.MustExec("rollback")
++		tk.MustExec(fmt.Sprintf("set @@tx_isolation = '%s'", isolationLevel))
++		tk.MustExec("begin pessimistic")
++		provider := sessiontxn.GetTxnManager(tk.Session()).GetContextProvider()
++		for _, tc := range []struct {
++			mode       string
++			globalMode string
++			expected   string
++		}{
++			{mode: "OFF", globalMode: "ON", expected: "646561646c6f636b2d6b6579"},
++			{mode: "ON", globalMode: "OFF", expected: ""},
++			{mode: "MARKER", globalMode: "OFF", expected: "‹646561646c6f636b2d6b6579›"},
++		} {
++			// The log must use the session mode even when the process-wide mode differs.
++			sessVars.EnableRedactLog = tc.mode
++			errors.RedactLogEnabled.Store(tc.globalMode)
++			core, recorded := observer.New(zap.InfoLevel)
++			ctx := logutil.WithLogger(context.Background(), zap.New(core))
++			require.NoError(t, provider.OnStmtStart(ctx, nil))
++			deadlock := &tikverr.ErrDeadlock{
++				Deadlock: &kvrpcpb.Deadlock{
++					LockTs:          123,
++					LockKey:         []byte("deadlock-key"),
++					DeadlockKeyHash: 456,
++				},
++				IsRetryable: true,
++			}
++			action, err := provider.OnStmtErrorForNextAction(ctx, sessiontxn.StmtErrAfterPessimisticLock, deadlock)
++			require.NoError(t, err)
++			require.Equal(t, sessiontxn.StmtActionRetryReady, action)
++			entries := recorded.FilterMessage("single statement deadlock, retry statement").All()
++			require.Len(t, entries, 1)
++			fields := entries[0].ContextMap()
++			require.Equal(t, tc.expected, fields["lockKey"], "%s, %s", isolationLevel, tc.mode)
++			require.Equal(t, sessVars.TxnCtx.StartTS, fields["txn"])
++			require.Equal(t, uint64(123), fields["lockTS"])
++			require.Equal(t, uint64(456), fields["deadlockKeyHash"])
++			require.Equal(t, []byte("deadlock-key"), deadlock.LockKey)
++		}
++	}
 +}
 +
- func TestShowGlobalStatsWithAsyncMergeGlobal(t *testing.T) {
- 	testShowGlobalStats(t, true)
+ func TestRepeatableReadProviderTS(t *testing.T) {
+ 	store := testkit.CreateMockStore(t)
+ 	tk := testkit.NewTestKit(t, store)
+```
+
+---
+
+### Incident Patch 2: `049bb177` (2026-11-16)
+**Commit Message**: planner: fix sql inject when analyze table with table name and db name (#73190)
+
+close pingcap/tidb#73188
+
+**File**: `pkg/ddl/index.go` (modified, +2/-1)
+```diff
+@@ -89,6 +89,7 @@ import (
+ 	tidblogutil "github.com/pingcap/tidb/pkg/util/logutil"
+ 	decoder "github.com/pingcap/tidb/pkg/util/rowDecoder"
+ 	"github.com/pingcap/tidb/pkg/util/size"
++	"github.com/pingcap/tidb/pkg/util/sqlescape"
+ 	"github.com/pingcap/tidb/pkg/util/sqlexec"
+ 	"github.com/tikv/client-go/v2/oracle"
+ 	"github.com/tikv/client-go/v2/tikv"
+@@ -1628,7 +1629,7 @@ func (w *worker) analyzeTableInner(job *model.Job, tblInfo *model.TableInfo, dbN
+ 				w.sessPool.Put(sessCtx)
+ 				close(doneCh)
+ 			}()
+-			dbTable := fmt.Sprintf("`%s`.`%s`", dbName, tblName)
++			dbTable := sqlescape.MustEscapeSQL("%n.%n", dbName, tblName)
+ 
+ 			exec, ok := sessCtx.(sqlexec.RestrictedSQLExecutor)
+ 			if !ok {
+```
+
+**File**: `pkg/ddl/index_modify_test.go` (modified, +29/-0)
+```diff
+@@ -445,6 +445,35 @@ func TestAnalyzeStuck(t *testing.T) {
+ 	}, time.Minute, 200*time.Millisecond)
  }
-```
-
-**File**: `pkg/statistics/histogram.go` (modified, +40/-13)
-```diff
-@@ -2346,9 +2346,11 @@ func (r *globalMergeRefs) mergeVirtualTopN(virtualHistTopN []topNEntry, firstHis
- //     at least ~80% of target (avoids runt buckets after an
- //     overshoot).
- //  2. Coalesce the group: a "group" is the set of refs sharing one
--//     effective upper-bound value. The gate can fire mid-group, so
--//     consume the rest of the group before closing the bucket, keeping
--//     a value's summed Repeat on the bucket whose upper is that value.
-+//     effective upper-bound value. If the gate fires mid-group at the
-+//     merged upper, consume the rest of the group. Otherwise, restore
-+//     the bucket to its state before the group and leave the whole group
-+//     for the next bucket. This keeps a partial Repeat from becoming
-+//     the next bucket's upper-bound frequency.
- //  3. Overlap scan: refs further left whose [lower, effectiveUpper]
- //     crosses the closed bucket's lower bound (currentLeftMost) are
- //     either totally inside (their whole mass joins the bucket) or
-@@ -2360,14 +2362,6 @@ func (r *globalMergeRefs) mergeVirtualTopN(virtualHistTopN []topNEntry, firstHis
- //     ref's new effective upper, to be consumed by later merged
- //     buckets.
- //
--// TODO: phase 2 only reunites a group when the gate fires while the
--// current ref still sits at the bucket's upper, since its check compares
--// against mergedUpper. When the gate fires deeper in, the group straddles
--// the cut and the part away from a bucket upper degrades to interior
--// mass, so an equality estimate on that value sees only some of its rows.
--// Handing the whole group to the next bucket fixes it, at the cost of
--// reshaping bucket boundaries, so it is left to a follow-up change.
--//
- // Merged buckets are collected right-to-left, each with the mass
- // accumulated since the previous emit, then reversed into the
- // ascending global histogram.
-@@ -2403,6 +2397,14 @@ func buildGlobalHistogram(
- 	var mergedUpper *types.Datum
- 	var mergedRepeat int64
  
-+	// Checkpoint before the current same-upper group. A cut within the
-+	// group can be moved back here, even if it makes the bucket smaller
-+	// than the equi-depth target, so the next bucket retains its Repeat.
-+	var groupUpper types.Datum
-+	var groupStart int
-+	var groupStartSum int64
-+	var groupStartLower *types.Datum
++func TestAnalyzeTableWithQuotedIdentifiers(t *testing.T) {
++	store := testkit.CreateMockStoreWithSchemaLease(t, indexModifyLease, mockstore.WithDDLChecker())
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("set @@tidb_stats_update_during_ddl = 1")
 +
- 	updateLeftMost := func(d *types.Datum) (err error) {
- 		if currentLeftMost == nil {
- 			v := *d
-@@ -2440,6 +2442,20 @@ func buildGlobalHistogram(
- 		}
++	quoteIdent := func(name string) string {
++		return "`" + strings.ReplaceAll(name, "`", "``") + "`"
++	}
++	dbName := "db`name"
++	tableName := "table`name"
++	quotedDB := quoteIdent(dbName)
++	quotedTable := quoteIdent(tableName)
++
++	tk.MustExec("create database " + quotedDB)
++	t.Cleanup(func() {
++		tk.MustExec("drop database " + quotedDB)
++	})
++	tk.MustExec("create table " + quotedDB + "." + quotedTable + " (id int)")
++	tk.MustExec("insert into " + quotedDB + "." + quotedTable + " values (1)")
++	tk.MustExec("delete from mysql.analyze_jobs")
++
++	tk.MustExec("alter table " + quotedDB + "." + quotedTable + " add index idx_id (id)")
++	tk.MustQuery(
++		"select count(*) from mysql.analyze_jobs where table_schema = ? and table_name = ?",
++		dbName,
++		tableName,
++	).Check(testkit.Rows("1"))
++}
++
+ func TestAnalyzeOwnerResignNoReRun(t *testing.T) {
+ 	store, _ := testkit.CreateMockStoreAndDomainWithSchemaLease(t, indexModifyLease, mockstore.WithDDLChecker())
  
- 		refs.effectiveUpper(i, &refUpper)
-+		newGroup := mergedUpper == nil
-+		if !newGroup {
-+			c, err := refs.cmpBounds(&refUpper, &groupUpper)
-+			if err != nil {
-+				return nil, err
-+			}
-+			newGroup = c != 0
-+		}
-+		if newGroup {
-+			groupUpper = refUpper
-+			groupStart = i
-+			groupStartSum = sum
-+			groupStartLower = currentLeftMost
-+		}
- 		if mergedUpper == nil {
- 			v := refUpper
- 			mergedUpper = &v
-@@ -2476,7 +2492,7 @@ func buildGlobalHistogram(
- 			continue
- 		}
- 
--		// Coalesce same-upper refs into the merged bucket.
-+		// Do not split the current same-upper group at the size gate.
- 		for i > 0 {
- 			ahead := i - 1
- 			mass2, repeat2, fresh2, err := refs.massAndRepeat(ahead)
-@@ -2488,13 +2504,24 @@ func buildGlobalHistogram(
- 				continue
- 			}
- 			refs.effectiveUpper(ahead, &scanUpper)
--			c, err := refs.cmpBounds(&scanUpper, mergedUpper)
-+			c, err := refs.cmpBounds(&scanUpper, &groupUpper)
- 			if err != nil {
- 				return nil, err
- 			}
- 			if c != 0 {
- 				break
- 			}
-+			if groupStartSum > prevSum {
-+				// This group's upper is below mergedUpper. Returning just
-+				// the unconsumed refs would leave a partial Repeat on the
-+				// next bucket, so return the already consumed refs as well.
-+				sum = groupStartSum
-+				currentLeftMost = groupStartLower
-+				// The overlap scan starts at groupStart; the outer loop
-+				// revisits it after decrementing i.
-+				i = groupStart + 1
-+				break
-+			}
- 			i = ahead
- 			sum += mass2
- 			if fresh2 && repeat2 > 0 {
 ```
 
-**File**: `pkg/statistics/merge_global_cases_test.go` (modified, +53/-0)
+---
+
+### Incident Patch 3: `1858a2c5` (2026-11-15)
+**Commit Message**: planner: recognize IS NOT NULL filters for partial-index plan cache (#71956)
+
+close pingcap/tidb#71955
+
+**File**: `pkg/planner/core/casetest/index/index_test.go` (modified, +23/-0)
 ```diff
-@@ -184,6 +184,59 @@ func mergeCases() []mergeCase {
- 				}
- 			},
- 		},
-+		{
-+			// A global bucket boundary landing exactly on a partition
-+			// bucket's upper must retain the whole same-upper group even
-+			// when the size gate fires after part of it has been consumed.
-+			name:       "same_upper_group_crosses_bucket_gate",
-+			expBuckets: 2,
-+			parts: func() []partSpec {
-+				parts := []partSpec{{hist: []bucketSpec{{lo: di(0), up: di(0), mass: 98, repeat: 98}}}}
-+				for range 100 {
-+					parts = append(parts, partSpec{hist: []bucketSpec{{lo: di(10), up: di(10), mass: 1, repeat: 1}}})
-+				}
-+				return append(parts, partSpec{hist: []bucketSpec{{lo: di(20), up: di(20), mass: 1, repeat: 1}}})
-+			}(),
-+			wantBuckets: []bucketSpec{
-+				{lo: di(0), up: di(10), mass: 198},
-+				{lo: di(20), up: di(20), mass: 1},
-+			},
-+			extra: func(t *testing.T, hist *statistics.Histogram, _ *statistics.TopN) {
-+				require.Equal(t, int64(100), hist.Buckets[0].Repeat)
-+			},
-+			globalNDV: 3,
-+			estimates: func(t *testing.T, e estimator) {
-+				require.Equal(t, float64(100), e.equal(10))
-+			},
-+		},
-+		{
-+			// The group can span partition histograms and virtual buckets
-+			// made from non-promoted TopN entries, including encoded indexes.
-+			name:       "same_upper_group_with_virtual_topn_index",
-+			expBuckets: 2,
-+			isIndex:    true,
-+			parts: func() []partSpec {
-+				parts := []partSpec{{hist: []bucketSpec{{lo: di(0), up: di(0), mass: 8, repeat: 8}}}}
-+				for range 9 {
-+					parts = append(parts, partSpec{hist: []bucketSpec{{lo: di(10), up: di(10), mass: 1, repeat: 1}}})
-+				}
-+				return append(parts, partSpec{
-+					topN: []topnSpec{{val: di(10), count: 1}},
-+					hist: []bucketSpec{{lo: di(20), up: di(20), mass: 1, repeat: 1}},
-+				})
-+			}(),
-+			wantBuckets: []bucketSpec{
-+				{lo: di(0), up: di(10), mass: 18},
-+				{lo: di(20), up: di(20), mass: 1},
-+			},
-+			extra: func(t *testing.T, hist *statistics.Histogram, _ *statistics.TopN) {
-+				require.Equal(t, int64(10), hist.Buckets[0].Repeat)
-+			},
-+			globalNDV: 3,
-+			estimates: func(t *testing.T, e estimator) {
-+				require.Equal(t, float64(10), e.equal(10))
-+			},
-+		},
- 		{
- 			// A global bucket boundary landing exactly on a partition
- 			// bucket's upper must leave that bucket's Repeat on the left,
+@@ -459,6 +459,29 @@ func TestPartialIndexWithPlanCache(t *testing.T) {
+ 		tk.MustQuery(fmt.Sprintf("explain for connection %d", tkProcess.ID)).CheckContain("idx2")
+ 		tk.MustExec("execute stmt using @a")
+ 		tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("0"))
++
++		// Explicit and join-derived IS NOT NULL filters must remain cacheable.
++		tk.MustExec("insert into t values (1, 10), (2, 20), (NULL, 30)")
++		tk.MustExec("create table partial_cache_outer(a int, b int)")
++		tk.MustExec("insert into partial_cache_outer values (1, 10), (2, 20), (NULL, 30)")
++		for _, query := range []string{
++			"select a, b from t use index(idx1) where a is not null and b = ?",
++			"select t.a, t.b from partial_cache_outer l join t use index(idx1) on l.a = t.a where l.b = ?",
++		} {
++			tk.MustExec("prepare stmt from '" + query + "'")
++			tk.MustExec("set @a = 10")
++			tk.MustQuery("execute stmt using @a").Check(testkit.Rows("1 10"))
++			tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("0"))
++			tk.MustExec("set @a = 20")
++			tk.MustQuery("execute stmt using @a").Check(testkit.Rows("2 20"))
++			tkProcess = tk.Session().ShowProcess()
++			ps[0] = tkProcess
++			tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("1"))
++			tk.MustQuery(fmt.Sprintf("explain for connection %d", tkProcess.ID)).CheckContain("idx1")
++			tk.MustExec("set @a = 30")
++			tk.MustQuery("execute stmt using @a").Check(testkit.Rows())
++			tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("1"))
++		}
+ 	})
+ }
+ 
+```
+
+**File**: `pkg/planner/core/partidx/check_constraint.go` (modified, +8/-0)
+```diff
+@@ -207,6 +207,14 @@ func checkIsNullRejected(sctx planctx.PlanContext, targetCol *expression.Column,
+ 			return false
+ 		}
+ 	}
++	if filter.FuncName.L == ast.UnaryNot {
++		inner, ok := filter.GetArgs()[0].(*expression.ScalarFunction)
++		if !ok || inner.FuncName.L != ast.IsNull {
++			return false
++		}
++		col, ok := inner.GetArgs()[0].(*expression.Column)
++		return ok && col.Equal(sctx.GetExprCtx().GetEvalCtx(), targetCol)
++	}
+ 	if _, ok := expression.CompareOpMap[filter.FuncName.L]; ok {
+ 		if filter.FuncName.L == ast.NullEQ {
+ 			return false
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #73148** (closed): test: add a protected-changes smoke test (@wuhuizuo)
-- **PR #73145** (closed): statistics: remove historical stats feature (#69889) (@ti-chi-bot)
-- **PR #73126** (closed): *: upgrade brotli, compress, etcd client pkg, and prometheus (#73113) (@ti-chi-bot)
-- **PR #73121** (2026-11-14): statistics: keep same-upper groups together at global histogram cuts (@idle-lab)
-- **PR #73118** (2026-11-13): planner: register implicit MLog schema dependencies in MDL (@windtalker)
-- **PR #73116** (2026-11-13): *: upgrade Go dependencies (#72983) | plugin=pr/260 tidb-test=pr/2803- #72572 (@ti-chi-bot)
+- **PR #73233** (2026-11-16): ddl: advance table revision on rename (@winoros)
+- **PR #73209** (2026-11-16): executor: avoid MV refresh schema reloads for unrelated DDL (@windtalker)
+- **PR #73193** (2026-11-16): sessiontxn: respect redaction in deadlock retry logs (@cfzjywxk)
+- **PR #73190** (2026-11-16): planner: fix sql inject when analyze table with table name and db name (@elsa0520)
+- **PR #73185** (2026-11-16): planner: parameterize plan digest lookup (@qw4990)
+- **PR #73177** (2026-11-16): planner: remove the tests of the deprecated cascades planner (@terry1purcell)
 
 ---
 
@@ -2243,31 +2279,34 @@ close pingcap/tidb#73119
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. statistics: keep same-upper groups together at global histogram cuts
+## X. sessiontxn: respect redaction in deadlock retry logs
 
 **RULE**:
-When implementing operations in `pkg/statistics/handle/globalstats/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/sessiontxn/isolation/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eca4674a`: statistics: keep same-upper groups together at global histogram cuts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce0faf10`: sessiontxn: respect redaction in deadlock retry logs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/statistics/handle/globalstats/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sessiontxn/isolation/BUILD.bazel`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    shard_count = 27,
+    shard_count = 29,
+        "//pkg/util/logutil",
+        "@org_uber_go_zap//:zap",
+        "@org_uber_go_zap//zaptest/observer",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    shard_count = 26,
+    shard_count = 28,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eca4674a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce0faf10` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

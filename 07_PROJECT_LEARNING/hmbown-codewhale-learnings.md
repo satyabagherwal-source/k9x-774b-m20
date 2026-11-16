@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `29e41070`  
+> **Source Version**: `554cb1b7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T22:57:35.407Z  
+> **Timestamp**: 2026-11-16T21:10:23.688Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T22:57:35.398Z  
+> **Harvest Timestamp**: 2026-11-16T21:10:23.569Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41174 stars
+- **Stars / Engagement**: 41184 stars
 
 ---
 
@@ -1966,11 +1966,13 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7323** (2026-11-12): **fix(app-server): read the original path of a worktree-side rename**
-  *Symptoms*: ## What and why  `parse_porcelain` in `crates/app-server/src/runtime_api/git.rs` read the extra original-path record of a rename/copy only when the **index** column was `R` or `C`.  Git reports a rename in either column, and since 2.18 the worktree column carries one when only the working tree moved — for example `git mv` followed by `git reset` and `git add -N`, which reports `" R new.md\0old.md\0"`. The original-path record was then parsed as a status row of its own:  - With a non-ASCII source (`ab说明.md`), `record[3..]` sliced at byte 3, inside `说` (`E8 AF B4`), and panicked. The panic happens inside `spawn_blocking`, so every `GET /v1/git` and `GET /v1/changes` returned 500 `git status failed` until the worktree changed. - With an ASCII source, a phantom row appeared (`index = 'a'`, `worktree = '.'`, `path = "xt"`), corrupting the file list, the staged/unstaged counts and the row revision tokens.  The parser now reads the original path when either column reports a rename or copy, and slices the path through `get` before consuming the next field, so a malformed record is skipped instead of panicking and the record stream stays in sync.  ## Where this came from  Refs #7309  ## How I tested it  Two new tests in the existing `runtime_api::git::tests` module. Both use a real temporary repository and drive the same sequence the issue describes (`git mv`, `git reset`, `git add -N`), so neither mocks the parser input.  `cargo test -p codewhale-app-server --lib -- worktree_column_r
+- **Issue #7353** (2026-11-16): **fix(engine): log safe provider failure diagnostics**
+  *Symptoms*: Provider timeouts and transport failures can end a turn without leaving their cause in the default diagnostic log. Emit a structured warning from the existing `envelope_for_llm_error` boundary, shared by stream opening, stream reading, and context-recovery failures.  The warning records the existing error code/category and typed transmission state, plus an HTTP status or timeout duration only when the error retains that evidence. Untyped failures stay `OutcomeUnknown`; a zero timeout means the duration was not recorded. Raw errors, display messages, response bodies, URLs, and authentication context are not logged. Envelope conversion and retry/recovery decisions are unchanged.  Refs #7328 (partial). This slice adds diagnostic cause fields; provider/model/stage context, error-card presentation, and structured receipt fields remain outside its scope. Thanks to @7jrxt42BxFZo4iAnN4CX for the log/session analysis and measured timeout examples.  Validation:  - One regression captures warnings through an `info` filter across six failure cases, including an anyhow-wrapped timeout, unknown duration, pre-dispatch connection failure, 503 unknown outcome, 413 rejection, and an untyped network failure. It checks that raw error/context/secret fixtures are absent and the returned display message/recovery contract is preserved. - `CODEWHALE_DEV_NEXTEST=0 bash scripts/dev-test.sh crates/engine/src/llm_error_envelope.rs` (repository-pinned Rust 1.100.0, Linux): `test result: ok. 7 passed; 0 fa
 
-- **Issue #7322** (2026-11-12): **fix(tui): count characters, not bytes, for the session title limit**
-  *Symptoms*: ## What and why  Renaming a session in the session picker rejected a 36-character Chinese title as too long ("1–100 characters").  - **Root cause**: `SessionPickerView::rename_selected` checked `new_title.len() > 100`, which counts bytes. A CJK character is three bytes in UTF-8, so a Chinese title over 33 characters failed the check. The engine's own rename validation already counts characters against `MAX_SESSION_TITLE_CHARS`. - **Fix**: the picker counts characters and uses `MAX_SESSION_TITLE_CHARS` instead of the literal `100`, so it matches the engine and the message.  ## Where this came from  Bug fix, no issue.  ## How I tested it  - New regression test `rename_selected_limits_title_by_characters` (36 Chinese characters, 108 bytes). It fails on `main` (the rename is rejected) and passes with the fix. - With the branch merged onto current `main`: `RUST_MIN_STACK=16777216 cargo test --locked -p codewhale-tui --lib -- session_picker::tests::rename_selected`: 2 passed, 0 failed. With the old byte check put back: 1 passed, 1 failed (`rename_selected_limits_title_by_characters`). - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and tests cover new or changed behavior - [ ] If this adds or changes a user-facing feature, I updated its docs and its row in `docs/features.toml` (not applicable: bug fix only) 
+- **Issue #7352** (2026-11-16): **fix(app-server): preserve named provider in web picker**
+  *Symptoms*: ## 做了什么，为什么  修复了 Web 客户端新建线程时无法正确使用命名自定义 Provider 的问题。多个自定义路由在 API 中都标记为 `custom`，客户端原先没有保留精确的路由 ID，导致模型列表请求失败。现在会按精确路由加载模型并创建线程。  ## 问题来源  Bug 修复：使用命名自定义 Provider（例如 `seer`）时，Web 客户端提示 `custom` 不是命名 Provider 的通配符，原报错： “ Could not load models: an explicit provider pin must name the configured provider 'seer'; custom is not a wildcard for a named provider”。  ## 测试方式  - `node --test crates/app-server/tests/runtime_web_client.test.mjs`：44 项测试通过。 - `cargo build --offline -p codewhale-cli`：构建成功。  ## 检查清单  - [x] 单一聚焦改动，基于当前 `main` 创建分支。 - [x] 增加测试覆盖改动行为；相关测试通过。 - [x] 已更新英文和简体中文 Web 文档；本次不是新增用户功能，无需修改 `docs/features.toml`。
+  **Post-Mortem & Fix Analysis**:
+  > Thank you @Gyuke, and welcome: this is your first merged contribution. Making the web client's new-thread dialog route to a named custom provider fixes a real gap for people running more than one custom endpoint. Both independent reviews approved the code with no changes.  Squash-merged as a508d8d3f8 (your branch is untouched). It is on `main` for the 0.10.3 candidate and is not in a published release yet. One maintainer credit commit follows with the CHANGELOG line, your CONTRIBUTORS entry and an `.github/AUTHOR_MAP` entry so your commit email links to your GitHub account; you do not need to do anything. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1987,1912 +1989,1118 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b567b2b` (2026-11-11)
-**Commit Message**: feat(extension-host): fill the dsh/broker llm arm on the Engine's own auxiliary model call (CW-7973)
+### Incident Patch 1: `3c4317c9` (2026-11-16)
+**Commit Message**: fix(client): decide the reasoning dialect by endpoint, not by model id (#7349)
 
-The llm arm serves two typed methods: catalog and complete (usage/quota counters and synthetic session call caps are intentionally absent per decision §148.8). A completion dispatches one admitted Engine turn through the captured auxiliary-call authority in completion mode: one step, no tools, session route, and RlmPromptPolicy::IsolatedPlugin.
+* fix(client): stop sending DeepSeek thinking toggle to compatible gateways
 
-Isolation and cache boundary: IsolatedPlugin uses a dedicated minimal system prompt and omits instruction_assembly, extension_prompt_block, and constitution_block (each delivered as history messages for Session RLM calls under CW-7925, preserved across Engine::new_admitted, refresh_system_prompt_from_context_with_reason, and compose_preview_prefix via RlmHostState::instruction_assembly and EngineHostSetup::instruction_assembly) plus clears hook_executor, so untrusted plugin prompts cannot inherit session privileges or workspace/policy guidance. Because no prefix is shared with the active conversation, each plugin completion reads no warm session prompt cache and writes none the session consumes. Nested turns live only in an ephemeral per-ca
+A `custom` route carrying a DeepSeek model id was handed DeepSeek's native
+`thinking` object on /v1/chat/completions. The promotion in
+apply_route_reasoning_controls looked only at the model name, never at the
+endpoint, so an OpenAI-compatible gateway received a field it rejects:
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+  400 invalid_request_error  param: "thinking"  code: "unsupported_parameter"
+  "thinking" is not supported on /v1/chat/completions and was not applied.
+
+Every other gateway identity in reasoning_effort.rs (telecomjs, zenmux, edenai,
+csdn, custom) already writes neither field, because a compatible endpoint's
+request dialect is not knowable from the model id. The custom row escaped that
+policy through this one promotion.
+
+Keep the promotion for what 008d21d69 added it for - forwarding the configured
+effort, which custom DeepSeek routes silently dropped - and drop the
+DeepSeek-native toggle from that path. reasoning_effort is the standard
+compatibility field these gateways document. Direct deepseek routes keep their
+full dialect; the DS4 local route is 
+
+**File**: `crates/engine/src/client.rs` (modified, +1/-1)
 ```diff
-@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Plugin index hooks:** hooks with the same name and event now have distinct row IDs, so clients can keep every configured hook visible.
- - **Extension service approvals:** plugin service acts use the session permission gate and retain their approved or refused act records when a tool call fails. Closing a call seals its broker-act record so a late approval cannot authorize an unrecorded act. Ordinary nested-call receipts may still show an in-flight outcome when cancellation ends the call early.
- - **Extension workspace confinement:** plugin workspace file reads, listings, and overlay writes now verify pinned ancestors and non-linked targets at the point of use without letting session trust flags escape the workspace, reject Windows alternate data streams and 8.3 short-name aliases for protected metadata directories, and check caller deny rules for git review queries before requesting approval. (CW-8056)
-+- **Plugin LLM broker arm (gated off):** adds the `dsh/broker` `llm` service arm (`catalog`, `complete`) and TypeScript SDK adapter, routing completions over the active session route with an isolated plugin prompt (omitting workspace instructions, account constitution, and other plugins' prompt sections), session permission-gate checks (`Read`/`Reach`), and bounded concurrency; host injection stays disabled by default pending final review. (CW-7973)
- - **Delayed-message workspaces and shell stdin approvals:** `send_later` `schedule` now keeps its workspace inside the session's reachable paths instead of accepting an arbitrary directory, and `send_later` approval prompts show the requested workspace; session shell grants now match exact inputs when `stdin` (`stdin`, `input`, `data`) is supplied instead of reusing a command-only grant across different `stdin`.
- - **Sub-agent approvals and worktree isolation:** a child sub-agent's built-in verification calls now ask the same approval as the main session, a read-only agent started with `workspace_policy: "worktree"` shows the approval card, and a sub-agent worktree is refused when its root or nested adoption path passes through a symlink.
- - **OCR image signature check:** `image_ocr` and the OCR branch of `read_file` now refuse files without a PNG, JPEG, TIFF, BMP, GIF, or WebP signature before any OCR backend runs, and run `tesseract` in an empty temporary working directory.
-```
-
-**File**: `crates/engine/extension-host/src/dsh/llm.ts` (added, +231/-0)
-```diff
-@@ -0,0 +1,231 @@
-+import { Service } from '@deepseek-ai/cordis'
-+import { ErrorCode } from '../protocol.ts'
-+import { RpcError } from '../rpc.ts'
-+import type { AdapterHost, DshAdapter } from './adapters.ts'
-+
-+export const SESSION_PROVIDER = 'session'
-+
-+export interface BrokeredModel {
-+  provider: string
-+  id: string
-+  name: string
-+  context_window: number | null
-+  default_max_output_tokens: number
-+  max_output_tokens: number
-+}
-+
-+export interface BrokeredCatalog {
-+  providers: { id: string, name: string }[]
-+  models: BrokeredModel[]
-+  limits: Record<string, number>
-+}
-+
-+export interface BrokeredUsage {
-+  coverage: string
-+  input_tokens: number | null
-+  output_tokens: number | null
-+  cache_read_tokens: number | null
-+  cache_write_tokens: number | null
-+  reasoning_tokens: number | null
-+}
-+
-+export interface BrokeredCompletion {
-+  text: string
-+  finish: string
-+  route: { provider: string, model: string } | null
-+  usage: BrokeredUsage
-+  receipt: { requests: number, duration_ms: number }
-+}
-+
-+interface StreamOptions {
-+  provider?: unknown
-+  model?: unknown
-+  messages?: unknown
-+  system?: unknown
-+  tools?: unknown
-+  toolHistory?: unknown
-+  maxTokens?: unknown
-+  signal?: AbortSignal
-+}
-+
-+type Chunk =
-+  | { type: 'block-start', index: number, blockType: 'text' }
-+  | { type: 'text-delta', index: number, text: string }
-+  | { type: 'block-end', index: number, block: { type: 'text', text: string } }
-+  | { type: 'usage', usage: { inputTokens: number, outputTokens: number, totalTokens: number, cacheReadTokens?: number, cacheWriteTokens?: number, reasoningTokens?: number } }
-+  | { type: 'finish', reason: { kind: 'stop' } | { kind: 'aborted' | 'error', failure: { message: string, code: string } } }
-+
-+const invalid = (message: string) => new RpcError(ErrorCode.InvalidParams, message)
-+const notBrokered = (method: string): never => {
-+  throw new RpcError(ErrorCode.NotAvailable, `llm.${method} is not available: Codewhale brokers model calls on the session's approved route and registers no plugin adapters, providers or keys`)
-+}
-+
-+function catalogOf(value: unknown): BrokeredCatalog {
-+  const catalog = value as Partial<BrokeredCatalog> | null
-+  if (catalog === null || typeof catalog !== 'object' || !Array.isArray(catalog.providers) || !Array.isArray(catalog.models)
-+    || catalog.models.some((model) => model === null || typeof model !== 'object' || typeof model.id !== 'string' || typeof model.provider !== 'string')) {
-+    throw new RpcError(ErrorCode.Internal, 'invalid llm broker catalog')
-+  }
-+  return catalog as BrokeredCatalog
-+}
-+
-+function completionOf(value: unknown): BrokeredCompletion {
-+  const completion = value as Partial<BrokeredCompletion> | null
-+  if (completion === null || typeof completion !== 'object' || typeof completion.text !== 'string'
-+    || typeof completion.finish !== 'string' || completion.finish.length === 0
-+    || completion.usage === null || typeof completion.usage !== 'object' || typeof completion.usage.coverage !== 'string') {
-+    throw new RpcError(ErrorCode.Internal, 'invalid llm broker completion')
-+  }
-+  return completion as BrokeredCompletion
-+}
-+
-+function textOf(content: unknown): string {
-+  if (typeof content === 'string') return content
-+  if (!Array.isArray(content)) throw invalid('the llm broker takes text message content')
-+  return content.map((block) => {
-+    if (block === null || typeof block !== 'object' || block.type !== 'text' || typeof block.text !== 'string') {
-+      throw invalid('the llm broker takes text blocks only; images, files and tool calls are not brokered')
-+    }
-+    return block.text as string
-+  }).join('')
-+}
-+
-+export function promptOf(messages: unknown): string {
-+  if (!Array.isArray(messages) || messages.length === 0) throw invalid('the llm broker needs at least one message')
-+  const turns = messages.map((message) => {
-+    if (message === null || typeof message !== 'object' || typeof message.role !== 'string') throw invalid('each message has a role and content')
-+    if (message.role === 'tool') throw invalid('tool results are not brokered')
-+    return { role: message.role as string, text: textOf(message.content) }
-+  })
-+  const only = turns.length === 1 ? turns[0] : undefined
-+  if (only !== undefined && only.role === 'user') return only.text
-+  return turns.map((turn) => `${turn.role}: ${turn.text}`).join('\n\n')
-+}
-+
-+function modelInfo(model: BrokeredModel) {
-+  return {
-+    provider: model.provider,
-+    id: model.id,
-+    name: model.name,
-+    inputModalities: ['text'] as const,
-+    ...(typeof model.context_window === 'number' ? { context: { contextWindow: model.context_window } } : {}),
-+    defaultMaxTokens: model.default_max_output_tokens,
-+  }
-+}
-+
-+function usageChunk(usage: BrokeredUsage): Chunk | undefined {
-+  if (usage.coverage !== 'reported' || typeof usage.input_tokens !== 'number' || typeof usage.output_tokens !== 'number') return undefined
-+  return {
-+    type: 'usage',
-+    u
-```
-
-**File**: `crates/engine/extension-host/test/llm.test.mjs` (added, +117/-0)
-```diff
-@@ -0,0 +1,117 @@
-+import { test, before } from 'node:test'
-+import assert from 'node:assert/strict'
-+import { mkdtempSync, rmSync } from 'node:fs'
-+import { join, dirname } from 'node:path'
-+import { fileURLToPath, pathToFileURL } from 'node:url'
-+import { build } from 'esbuild'
-+
-+const here = dirname(fileURLToPath(import.meta.url))
-+let llmAdapter
-+let promptOf
-+
-+before(async () => {
-+  const dir = mkdtempSync(join(here, '..', 'node_modules', '.cw-llm-'))
-+  const outfile = join(dir, 'llm.mjs')
-+  await build({ entryPoints: [join(here, '../src/dsh/llm.ts')], outfile, bundle: true, platform: 'node', format: 'esm', packages: 'external', absWorkingDir: join(here, '..'), logLevel: 'silent' })
-+  ;({ llmAdapter, promptOf } = await import(pathToFileURL(outfile).href))
-+  process.on('exit', () => rmSync(dir, { recursive: true, force: true }))
-+})
-+
-+const catalog = {
-+  providers: [{ id: 'session', name: 'Codewhale session route' }],
-+  models: [{ provider: 'session', id: 'm-1', name: 'm-1', context_window: 1000, default_max_output_tokens: 4096, max_output_tokens: 16384 }],
-+  limits: {},
-+}
-+const reported = { coverage: 'reported', input_tokens: 5, output_tokens: 3, cache_read_tokens: null, cache_write_tokens: null, reasoning_tokens: null }
-+const completion = (usage) => ({ text: 'hello', finish: 'stop', route: { provider: 'p', model: 'm-1' }, usage, receipt: { requests: 1, duration_ms: 2 } })
-+
-+function service(answers) {
-+  const calls = []
-+  const host = {
-+    tier: 'plugin',
-+    broker: async (ctx, name, method, input) => {
-+      calls.push({ name, method, input })
-+      const answer = answers[method]
-+      if (answer instanceof Error) throw answer
-+      return answer
-+    },
-+  }
-+  const instance = Object.create(llmAdapter.define(host).prototype)
-+  instance.ctx = {}
-+  return { llm: instance, calls }
-+}
-+
-+async function drain(stream) {
-+  const chunks = []
-+  for await (const chunk of stream) chunks.push(chunk)
-+  return chunks
-+}
-+
-+test('a consumer-shaped stream is one typed complete call and ends with usage and a finish', async () => {
-+  const { llm, calls } = service({ complete: completion(reported) })
-+  const chunks = await drain(llm.stream({
-+    provider: 'session', model: 'm-1', system: 'be brief', maxTokens: 64,
-+    messages: [{ role: 'user', content: [{ type: 'text', text: 'say ' }, { type: 'text', text: 'hello' }] }],
-+  }))
-+  assert.deepEqual(calls, [{ name: 'llm', method: 'complete', input: { prompt: 'say hello', system: 'be brief', provider: 'session', model: 'm-1', max_output_tokens: 64 } }])
-+  assert.deepEqual(chunks.map((chunk) => chunk.type), ['block-start', 'text-delta', 'block-end', 'usage', 'finish'])
-+  assert.equal(chunks[1].text, 'hello')
-+  assert.deepEqual(chunks[3].usage, { inputTokens: 5, outputTokens: 3, totalTokens: 8 })
-+  assert.deepEqual(chunks[4].reason, { kind: 'stop' })
-+})
-+
-+test('unreported usage yields no usage chunk, and a refusal or abort is a terminal finish', async () => {
-+  const missing = { ...reported, coverage: 'missing', input_tokens: null, output_tokens: null }
-+  const quiet = await drain(service({ complete: completion(missing) }).llm.stream({ messages: [{ role: 'user', content: 'hi' }] }))
-+  assert.deepEqual(quiet.map((chunk) => chunk.type), ['block-start', 'text-delta', 'block-end', 'finish'])
-+  const refused = await drain(service({ complete: new Error('the model call ran out of time') }).llm.stream({ messages: [{ role: 'user', content: 'hi' }] }))
-+  assert.deepEqual(refused, [{ type: 'finish', reason: { kind: 'error', failure: { message: 'the model call ran out of time', code: 'BROKER_REFUSED' } } }])
-+  const { llm, calls } = service({ complete: completion(reported) })
-+  const aborted = await drain(llm.stream({ messages: [{ role: 'user', content: 'hi' }], signal: AbortSignal.abort() }))
-+  assert.equal(aborted[0].reason.kind, 'aborted')
-+  assert.deepEqual(calls, [])
-+  const controller = new AbortController()
-+  const host = {
-+    tier: 'plugin',
-+    broker: async () => {
-+      controller.abort()
-+      throw new Error('withdrawn')
-+    },
-+  }
-+  const aborting = Object.create(llmAdapter.define(host).prototype)
-+  aborting.ctx = {}
-+  const midFlightAbort = await drain(aborting.stream({ messages: [{ role: 'user', content: 'hi' }], signal: controller.signal }))
-+  assert.deepEqual(midFlightAbort, [{ type: 'finish', reason: { kind: 'aborted', failure: { message: 'the model call was aborted', code: 'ABORTED' } } }])
-+})
-+
-+test('tools, non-text content and tool results are refused locally, and a transcript keeps its roles', async () => {
-+  const { llm, calls } = service({ complete: completion(reported) })
-+  await assert.rejects(drain(llm.stream({ messages: [{ role: 'user', content: 'x' }], tools: [{ name: 't' }] })), /without tools/)
-+  await assert.rejects(drain(llm.stream({ messages: [{ role: 'user', content: 'x' }], tools: { read: {} } })), /without tools/)
-+  await assert.rejects(drain(llm.stream({ messages: [{ role: 'use
-```
-
-**File**: `crates/engine/src/core/engine.rs` (modified, +19/-7)
-```diff
-@@ -2396,7 +2396,7 @@ impl Engine {
-             prompts::PromptHost::Headless
-         };
-         let (system_prompt, instruction_assembly) = if let Some(host) = host.as_ref() {
--            (host.system_prompt().clone(), None)
-+            (host.system_prompt().clone(), host.instruction_assembly())
-         } else if api_config.runtime_chat_isolated {
-             (
-                 SystemPrompt::Text(ISOLATED_CHAT_SYSTEM_PROMPT.to_string()),
-@@ -2464,10 +2464,10 @@ impl Engine {
-                 Some((&raw, &instruction_settings, initial_instruction_budgets)),
-             );
-             session.project_context = Some(raw);
--            (prompt, Some(assembly))
-+            (prompt, Some(Arc::new(assembly)))
-         };
-         let pending_instruction_notices = Vec::new();
--        session.instruction_assembly = instruction_assembly.map(Arc::new);
-+        session.instruction_assembly = instruction_assembly;
-         let stable_prompt = Some(system_prompt);
-         session.last_system_prompt_hash = Some(system_prompt_hash(stable_prompt.as_ref()));
-         session.system_prompt = stable_prompt;
-@@ -10085,7 +10085,7 @@ impl Engine {
-             return;
-         }
-         let (stable_prompt, assembly) = match self.host_owned_system_prompt() {
--            Some(prompt) => (Some(prompt), None),
-+            Some(prompt) => (Some(prompt), self.host_owned_instruction_assembly()),
-             None => {
-                 self.record_project_trust_warning();
-                 let raw = self.capture_project_instructions_for(context);
-@@ -10103,10 +10103,10 @@ impl Engine {
-                     budgets,
-                 );
-                 self.session.project_context = Some(raw);
--                (Some(prompt), Some(assembly))
-+                (Some(prompt), Some(Arc::new(assembly)))
-             }
-         };
--        self.session.instruction_assembly = assembly.map(Arc::new);
-+        self.session.instruction_assembly = assembly;
-         self.instruction_guard_key = None;
-         let stable_hash = system_prompt_hash(stable_prompt.as_ref());
-         self.session.pinned_prompt_context = Some(context.clone());
-@@ -10253,6 +10253,14 @@ impl Engine {
-         None
-     }
- 
-+    fn host_owned_instruction_assembly(
-+        &self,
-+    ) -> Option<Arc<crate::project_context::InstructionAssembly>> {
-+        self.rlm_host
-+            .as_ref()
-+            .and_then(rlm_host::RlmHostState::instruction_assembly)
-+    }
-+
-     /// Compose the stable system prompt for an explicit route, without
-     /// touching session state.
-     ///
-@@ -10278,7 +10286,11 @@ impl Engine {
-         Option<crate::project_context::InstructionAssembly>,
-     ) {
-         if let Some(prompt) = self.host_owned_system_prompt() {
--            return (Some(prompt), None, None);
-+            return (
-+                Some(prompt),
-+                None,
-+                self.host_owned_instruction_assembly().as_deref().cloned(),
-+            );
-         }
-         let raw = self.capture_project_instructions_for(context);
-         let memory = codewhale_runtime::native_memory::native_prompt_block(
-```
-
-**File**: `crates/engine/src/core/engine/rlm_host.rs` (modified, +72/-7)
-```diff
-@@ -15,9 +15,17 @@ pub enum RlmMode {
-     Recursive { depth_remaining: u32 },
- }
- 
-+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-+pub enum RlmPromptPolicy {
-+    #[default]
-+    Session,
-+    IsolatedPlugin,
-+}
-+
- pub struct RlmInvocation {
-     pub prompt: String,
-     pub mode: RlmMode,
-+    pub prompt_policy: RlmPromptPolicy,
-     pub max_tokens: Option<u32>,
-     pub task_instructions: Option<String>,
-     pub deadline: Option<tokio::time::Instant>,
-@@ -40,6 +48,7 @@ pub struct CapturedRlmCaller {
-     injected: bool,
-     config: EngineConfig,
-     system: SystemPrompt,
-+    instruction_assembly: Option<Arc<crate::project_context::InstructionAssembly>>,
-     extension_prompt_block: Option<String>,
-     constitution_block: Option<String>,
-     approval_store: Result<ApprovalReceiptStore, String>,
-@@ -147,6 +156,7 @@ impl CapturedRlmCaller {
-                 system: engine.session.system_prompt.clone().ok_or_else(|| {
-                     ToolError::not_available("the Core policy prompt is unavailable")
-                 })?,
-+                instruction_assembly: engine.session.instruction_assembly.clone(),
-                 extension_prompt_block: engine.extension_prompt_block.clone(),
-                 constitution_block: engine.constitution_block.clone(),
-                 approval_store: engine.approval_receipt_store.clone(),
-@@ -213,6 +223,18 @@ impl CapturedRlmCaller {
-         self.deadline
-     }
- 
-+    pub(crate) fn route_model(&self) -> &str {
-+        &self.route.model
-+    }
-+
-+    pub(crate) fn route_provider_id(&self) -> String {
-+        self.route.identity.key.to_string()
-+    }
-+
-+    pub(crate) fn route_context_window(&self) -> Option<u32> {
-+        (self.route.context_window.tokens > 0).then_some(self.route.context_window.tokens)
-+    }
-+
-     /// Boxing breaks recursive future types; the future still borrows this
-     /// caller and never enters the persistent session map or PythonRuntime.
-     pub fn dispatch<'call>(
-@@ -335,6 +357,7 @@ pub(super) struct RlmHostState {
-     pub caller: Arc<CapturedRlmCaller>,
-     pub run_id: String,
-     pub mode: RlmMode,
-+    pub prompt_policy: RlmPromptPolicy,
-     pub system_prompt: SystemPrompt,
-     pub prompt: String,
-     pub deadline: Option<tokio::time::Instant>,
-@@ -350,12 +373,30 @@ pub(super) struct RlmHostState {
-     pub error: Option<String>,
-     pub model_rounds: u32,
- }
-+impl RlmHostState {
-+    pub(super) fn instruction_assembly(
-+        &self,
-+    ) -> Option<Arc<crate::project_context::InstructionAssembly>> {
-+        session_instruction_assembly(&self.caller, self.prompt_policy)
-+    }
-+}
-+
-+fn session_instruction_assembly(
-+    caller: &CapturedRlmCaller,
-+    policy: RlmPromptPolicy,
-+) -> Option<Arc<crate::project_context::InstructionAssembly>> {
-+    (policy == RlmPromptPolicy::Session)
-+        .then(|| caller.instruction_assembly.clone())
-+        .flatten()
-+}
-+
- impl From<RlmHostSetup> for RlmHostState {
-     fn from(setup: RlmHostSetup) -> Self {
-         Self {
-             caller: setup.caller,
-             run_id: String::new(),
-             mode: setup.invocation.mode,
-+            prompt_policy: setup.invocation.prompt_policy,
-             system_prompt: setup.system_prompt,
-             prompt: setup.invocation.prompt,
-             deadline: setup.invocation.deadline,
-@@ -405,12 +446,24 @@ impl Engine {
-         config.turn_wall_clock = invocation.deadline.map_or(Duration::MAX, |deadline| {
-             deadline.saturating_duration_since(tokio::time::Instant::now())
+@@ -4009,7 +4009,7 @@ impl CodewhaleClient {
          });
-+        let isolated = invocation.prompt_policy == RlmPromptPolicy::IsolatedPlugin;
-+        if isolated {
-+            anyhow::ensure!(
-+                invocation.mode == RlmMode::Completion,
-+                "isolated plugin RLM policy is valid only in completion mode"
-+            );
-+            config.hook_executor = None;
-+        }
-         config.compaction.runtime_cost_owner = caller.runtime_owner.clone();
--        let system_prompt = crate::rlm::prompt::captured_rlm_prompt(
--            &caller.system,
--            invocation.mode,
--            invocation.task_instructions.as_deref(),
--        )?;
-+        let system_prompt = if isolated {
-+            crate::rlm::prompt::isolated_plugin_rlm_prompt(invocation.task_instructions.as_deref())?
-+        } else {
-+            crate::rlm::prompt::captured_rlm_prompt(
-+                &caller.system,
-+                invocation.mode,
-+                invocation.task_instructions.as_deref(),
-+            )?
-+        };
-         let mut kernel = None;
-         if invocation.mode != RlmMode::Completion {
-             let path = tempfile::TempPath::try_from_path(codewhale_repl::write_context_file(
-@@ -450,8 +503,10 @@ impl Engine {
-         engine.model_client_injected = caller.injected;
-         handle.client_preflight_required = false;
-         engine.repl_kernel = kernel;
--        engine.extension_prompt_block = caller.extension_prompt_block.clone();
--        engine.constitu
+         chat::apply_route_reasoning_controls(
+             &mut body,
+-            self.api_provider,
++            self.chat_shape_provider(&model),
+             &self.base_url,
+             &model,
+             Some("off"),
 ```
 
-**File**: `crates/engine/src/core/engine/tests/rlm_host.rs` (modified, +129/-1)
+**File**: `crates/engine/src/client/chat.rs` (modified, +63/-8)
 ```diff
-@@ -1,7 +1,7 @@
- //! Actual Core fixtures for the migrated RLM contract. Replies are adapted to
- //! the existing stream decoder; there is no fixture model/code loop.
- use super::*;
--use crate::core::engine::rlm_host::{CapturedRlmCaller, RlmInvocation, RlmMode};
-+use crate::core::engine::rlm_host::{CapturedRlmCaller, RlmInvocation, RlmMode, RlmPromptPolicy};
- use crate::llm_client::LlmClient;
- use crate::rlm::bridge::{RlmBridge, RlmUsageAccumulator};
- use codewhale_models::{MessageRequest, MessageResponse, StreamEvent};
-@@ -335,6 +335,7 @@ pub async fn run_admitted_fixture(
-             mode: RlmMode::Recursive {
-                 depth_remaining: depth,
-             },
-+            prompt_policy: RlmPromptPolicy::Session,
-             max_tokens: None,
-             task_instructions: task,
-             deadline: Some(deadline),
-@@ -407,6 +408,7 @@ async fn captured_identity_cancel_and_task_bounds_refuse_before_any_provider() {
-         .dispatch(RlmInvocation {
-             prompt: "no effect".into(),
-             mode: RlmMode::Completion,
-+            prompt_policy: RlmPromptPolicy::Session,
-             max_tokens: Some(0),
-             task_instructions: None,
-             deadline: caller.deadline(),
-@@ -426,6 +428,7 @@ async fn captured_identity_cancel_and_task_bounds_refuse_before_any_provider() {
-         .dispatch(RlmInvocation {
-             prompt: "no effect".into(),
-             mode: RlmMode::Completion,
-+            prompt_policy: RlmPromptPolicy::Session,
-             max_tokens: None,
-             task_instructions: Some("x".repeat(4097)),
-             deadline: caller.deadline(),
-@@ -440,6 +443,7 @@ async fn captured_identity_cancel_and_task_bounds_refuse_before_any_provider() {
-         .dispatch(RlmInvocation {
-             prompt: "no effect".into(),
-             mode: RlmMode::Completion,
-+            prompt_policy: RlmPromptPolicy::Session,
-             max_tokens: None,
-             task_instructions: None,
-             deadline: caller.deadline(),
-@@ -495,6 +499,7 @@ async fn dropping_an_actual_dispatched_core_call_keeps_unknown_usage_without_ret
-     let mut dispatch = caller.dispatch(RlmInvocation {
-         prompt: "pending".into(),
-         mode: RlmMode::Completion,
-+        prompt_policy: RlmPromptPolicy::Session,
-         max_tokens: None,
-         task_instructions: None,
-         deadline: Some(tokio::time::Instant::now() + Duration::from_secs(600)),
-@@ -616,6 +621,7 @@ async fn full_caller_channel_never_delays_original_cancel_or_loses_usage_and_ker
-     let call = caller.dispatch(RlmInvocation {
-         prompt: "context held only by Python".into(),
-         mode: RlmMode::Recursive { depth_remaining: 0 },
-+        prompt_policy: RlmPromptPolicy::Session,
-         max_tokens: None,
-         task_instructions: None,
-         deadline: Some(tokio::time::Instant::now() + Duration::from_secs(60)),
-@@ -705,6 +711,7 @@ async fn nested_host_never_claims_or_overwrites_parent_posture_revision() {
-         RlmInvocation {
-             prompt: "no provider invocation".into(),
-             mode: RlmMode::Completion,
-+            prompt_policy: RlmPromptPolicy::Session,
-             max_tokens: None,
-             task_instructions: None,
-             deadline: Some(tokio::time::Instant::now() + Duration::from_secs(60)),
-@@ -773,6 +780,7 @@ async fn repeated_real_core_preparation_failures_have_bounded_receipts_without_p
-     let invocation = || RlmInvocation {
-         prompt: "real request preparation must retain this whole input".into(),
-         mode: RlmMode::Completion,
-+        prompt_policy: RlmPromptPolicy::Session,
-         max_tokens: None,
-         task_instructions: None,
-         deadline: Some(tokio::time::Instant::now() + Duration::from_secs(60)),
-@@ -820,6 +828,7 @@ async fn actual_expired_python_startup_releases_the_staged_context() {
-         RlmInvocation {
-             prompt: prompt.clone(),
-             mode: RlmMode::Recursive { depth_remaining: 0 },
-+            prompt_policy: RlmPromptPolicy::Session,
-             max_tokens: None,
-             task_instructions: None,
-             deadline: Some(tokio::time::Instant::now()),
-@@ -856,3 +865,122 @@ async fn actual_expired_python_startup_releases_the_staged_context() {
+@@ -585,22 +585,67 @@ fn modelstudio_reasoning_effort_for_model(effort: &str) -> Option<&'static str>
      }
-     assert_eq!(mock.call_count(), 0);
  }
+ 
++/// Whether `base_url` points at one of DeepSeek's own Chat Completions hosts.
++///
++/// The decision is the host's, not the path's: `https://api.deepseek.com/openai`
++/// is still DeepSeek, and treating a non-canonical path as a gateway would send
++/// `reasoning_effort: "none"` to the real endpoint, which documents no such tier
++/// on this wire. Scheme stays exact so an http downgrade cannot claim the
++/// dialect.
++///
++/// The host set deliberately includes the legacy typo host `api.deepseeki.com`,
++/// which `docs/REBRAND.md` records as not an official endpoint and kept only for
++/// existing configs (#1079). `deepseek_base_url_supports_strict_tools`, the beta
++/// path guard, and the Responses dialect all accept it too; excluding it here
++/// would make the same host DeepSeek for strict tools and Responses but not for
++/// reasoning, silently dropping the toggle those configs rely on.
++fn is_deepseek_chat_host(base_url: &str) -> bool {
++    reqwest::Url::parse(base_url.trim()).is_ok_and(|url| {
++        url.scheme() == "https"
++            && matches!(
++                url.host_str(),
++                Some("api.deepseek.com" | "api.deepseeki.com")
++            )
++    })
++}
 +
-+#[tokio::test]
-+async fn a_plugin_completion_carries_no_constitution_and_no_plugin_prompt_section() {
-+    let workspace = tempfile::tempdir().unwrap();
-+    std::fs::write(
-+        workspace.path().join("AGENTS.md"),
-+        "WORKSPACE_INSTRUCTION_SENTINEL\n",
-+    )
-+    .unwrap();
-+    let config = fixture_config("captured-model");
-+    let mock = Arc::new(crate::llm_client::mock::MockLlmClient::new(Vec::new()));
-+    let reply = |text: &str| MessageResponse {
-+        id: "isolated-policy-msg".into(),
-+        r#type: "message".into(),
-+        role: "assistant".into(),
-+        content: vec![ContentBlock::Text {
-+            text: text.to_string(),
-+            cache_control: None,
-+        
+ /// Final reasoning-control pass shared by streaming and non-streaming Chat
+-/// Completions requests. Route-specific shapers run after the generic provider
+-/// layer so they can remove fields that are invalid for their exact endpoint.
++/// Completions requests. Route-specific shapers run first so they can remove
++/// fields that are invalid for their exact endpoint; the gateway cleanup below
++/// runs last, so nothing in this function can re-add what it removes.
++///
++/// Which dialect a route speaks is decided by the endpoint, not by the model id.
++/// A route labeled `deepseek` speaks DeepSeek's, and so does a `custom` row
++/// pointed at DeepSeek's own host. A `custom` row pointed anywhere else may
++/// still carry a DeepSeek model id, but the endpoint's dialect is unknown: it
++/// keeps the documented `reasoning_effort` spelling and loses the native
++/// `thinking` object, which the gateway this was reproduced against rejects
++/// outright on `/v1/chat/completions`.
++///
++/// `off` is expressed as `reasoning_effort: "none"` on such a route, the OpenAI
++/// compatibility spelling this repository already maps `off` to for other
++/// compatible routes. On the gateway this was verified against, `none` stopped
++/// thinking (`reasoning_tokens: 0`, no reasoning field) rather than merely
++/// omitting the control. A gateway that validates the field fails loudly; one
++/// that silently ignores unknown values would fall back to its own default
++/// while the replay gate skips `reasoning_content` for `off` — which is why this
++/// mapping is only self-consistent on gateways that implement `none`.
+ pub(super) fn apply_route_reasoning_controls(
+     body: &mut Value,
+     provider: ProviderKind,
+     base_url: &str,
+     model: &str,
+     effort: Option<&str>,
+ ) {
+-    let reasoning_provider =
+-        if provider == ProviderKind::Custom && requires_reasoning_content(model) {
+-            ProviderKind::Deepseek
+-        } else {
+-            provider
+-        };
++    let custom_claims_deepseek_model =
++        provider == ProviderKind::Custom && requires_reasoning_content(model);
++    let gateway_drops_deepseek_dialect =
++        custom_claims_deepseek_model && !is_deepseek_chat_host(base_url);
++    let reasoning_provider = if provider == ProviderKind::Deepseek || custom_claims_deepseek_model {
++        ProviderKind::Deepseek
++    } else {
++        provider
++    };
+     apply_reasoning_effort(body, effort, reasoning_provider);
+     codewhale_config::local_reasoning::apply_local_reasoning_controls(
+         body, provider, model, effort,
+@@ -615,6 +660,16 @@ pub(super) fn apply_route_reasoning_controls(
+     apply_zai_route_reasoning_controls(body, provider, base_url, model, effort);
+     apply_mistral_route_reasoning_controls(body, provider, base_url, model, effort);
+     apply_google_reasoning_effort(body, base_url, model, effort);
++    if gateway_drops_deepseek_dialect {
++        if let Some(object) = body.as_object_mut() {
++            object.remove("thinking");
++        }
++        if effort.is_some_and(|effort| !reasoning_effort_enables_thinking(Some(effort)))
++            && body.get("reasoning_effort").is_none()
++        {
++            body["reasoning_effort"] = json!("none");
++        }
++    }
+ }
+ 
+ /// Mistral's polymorphic reasoning-content contract is only proven on its
 ```
 
-**File**: `crates/engine/src/extension_host/core_call_tests.rs` (modified, +390/-1)
+**File**: `crates/engine/src/client/ds4_tests.rs` (modified, +128/-0)
 ```diff
-@@ -1921,6 +1921,7 @@ async fn dsh_broker_tickets_bind_plugin_service_and_session_and_every_refusal_is
-                 | DshService::Terminal
-                 | DshService::Workspace
-                 | DshService::Catalog
-+                | DshService::Llm
-         )
-     }) {
-         let ticket = &tickets_a[service.name()];
-@@ -2204,6 +2205,7 @@ async fn dsh_broker_services_are_granted_by_one_check_and_an_ungranted_service_i
-                 | DshService::Terminal
-                 | DshService::Workspace
-                 | DshService::Catalog
-+                | DshService::Llm
-         ) {
-             let result = f
-                 .broker(
-@@ -5388,7 +5390,394 @@ async fn dsh_catalog_arm_plans_reviewed_installs_approved_routes_and_a_keyless_b
-         dsh_refusal(&revoked),
-         (error_code::REFUSED, "ticket_refused".into())
-     );
--    drop(guard_b);
-     drop(guard);
-     assert_eq!(f.manager.shared.core_calls.live_tickets(), 0);
+@@ -5,6 +5,8 @@ use codewhale_models::Role;
+ use codewhale_models::{ContentBlock, Delta, Message, MessageRequest, StreamEvent, Tool};
+ use codewhale_runtime::config::{Config, ProviderConfig, ProvidersConfig};
+ use serde_json::{Value, json};
++use wiremock::matchers::method;
++use wiremock::{Mock, MockServer, ResponseTemplate};
+ 
+ fn ds4_client() -> CodewhaleClient {
+     let mut providers = ProvidersConfig::default();
+@@ -30,6 +32,132 @@ fn ds4_client() -> CodewhaleClient {
+     .expect("DS4 client")
  }
-+
-+#[tokio::test]
-+async fn dsh_llm_arm_dispatches_through_the_engine_and_refuses_foreign_tickets_and_unknown_methods()
-+{
-+    use super::dsh_broker::TABLE;
-+    use super::protocol::DshService;
-+    use crate::core::engine::tests::rlm_host::{context_for_replies, fixture_config};
-+    use std::collections::BTreeMap;
-+
-+    let _grants = super::dsh_broker::TestGrants::only(&[DshService::Workspace, DshService::Llm]);
-+    let mock = Arc::new(crate::llm_client::mock::MockLlmClient::new(Vec::new()));
-+    mock.push_message_response(codewhale_models::MessageResponse {
-+        id: "mock_msg".to_string(),
-+        r#type: "message".to_string(),
-+        role: "assistant".to_string(),
-+        content: vec![codewhale_models::ContentBlock::Text {
-+            text: "from the one engine".to_string(),
-+            cache_control: None,
-+        }],
-+        model: "captured-model".to_string(),
-+        stop_reason: Some("end_turn".to_string()),
-+        stop_sequence: None,
-+        container: None,
-+        title: None,
-+        stop_details: None,
-+        refusal: None,
-+        usage: codewhale_models::Usage {
-+            input_tokens: 5,
-+            output_tokens: 3,
-+            ..codewhale_models::Usage::default()
+ 
++/// The same named `ds4` identity, bound to a mock endpoint. DS4 is identified by
++/// the identity key plus a local host, so a loopback mock server is a real DS4
++/// route as far as the client is concerned.
++fn ds4_client_at(server: &MockServer) -> CodewhaleClient {
++    let mut providers = ProvidersConfig::default();
++    providers.custom.insert(
++        "ds4".to_string(),
++        ProviderConfig {
++            kind: Some("openai-compatible".to_string()),
++            base_url: Some(format!("{}/v1", server.uri())),
++            model: Some("deepseek-v4-flash".to_string()),
++            context_window: Some(100_000),
++            auth_mode: Some("none".to_string()),
++            ..Default::default()
 +        },
-+    });
-+    let mut f = fixture(true);
-+    f.context = context_for_replies(
-+        &fixture_config("captured-model"),
-+        "captured-model",
-+        &f.context,
-+        mock.clone(),
 +    );
-+    f.in_session("llm-session-a");
-+    let guard_a = f.begin(7, &f.owner);
-+    let tickets: BTreeMap<String, String> = guard_a
-+        .broker_tickets()
-+        .unwrap()
-+        .into_iter()
-+        .map(|wire| (wire.service, wire.ticket))
-+        .collect();
-+    let llm = tickets["llm"].clone();
-+    let ask = json!({"prompt": "say it"});
-+
-+    let unknown = f
-+        .broker(TABLE, &f.owner, &llm, "llm", "registerAdapter", json!({}))
-+        .await;
-+    assert_eq!(
-+        dsh_refusal(&unknown),
-+        (error_code::INVALID_PARAMS, "unknown_method".into())
-+    );
-+    let removed_usage = f
-+        .broker(TABLE, &f.owner, &llm, "llm", "usage", json!({}))
-+        .await;
-+    assert_eq!(
-+        dsh_refusal(&removed_usage),
-+        (error_code::INVALID_PARAMS, "unknown_method".into())
-+    );
-+    assert_eq!(mock.call_count(), 0, "no refusal reached the provider");
-+
-+    let served = f
-+        .broker(TABLE, &f.owner, &llm, "llm", "complete", ask.clone())
-+        .await
-+        .unwrap();
-+    assert_eq!(served["text"], "from the one engine");
-+    assert_eq!(served["usage"]["coverage"], "reported");
-+    assert_eq!(served["usage"]["input_tokens"], 5);
-+    assert_eq!(served["usage"]["output_tokens"], 3);
-+    assert_eq!(mock.call_count(), 1);
-+
-+    f.in_session("llm-session-b");
-+    let guard_b = f.begin(7, &f.owner);
-+    let llm_b = guard_b
-+        .broker_tickets()
-+        .unwrap()
-+        .into_iter()
-+        .find(|wire| wire.service == "llm")
-+        .unwrap()
-+        .ticket;
-+    drop(guard_a);
-+    let ended_invocation = f
-+        .broker(TABLE, &f.owner, &llm, "llm", "complete", ask.clone())
-+        .await;
-+    assert_eq!(
-+        dsh_refusal(&ended_invocation),
-+        (error_code::REFUSED, "ticket_refused".into())
-+    );
-+
-+    f.manager.shared.core_calls.revoke_owner("a");
-+    let revoked = f
-+        .broker(TABLE, &f.owner, &llm_b, "llm", "complete", ask)
-+        .await;
-+    assert_eq!(
-+        dsh_refusal(&revoked),
-+        (error_code::REFUSED, "ticket_refused".into())
-+    );
-+    drop(guard_b);
-+    assert_eq!(mock.call_count(), 1);
-+    assert_eq!(f.manager.shared.core_calls.live_tickets(), 0);
++    CodewhaleClient::new(&{
++        let __cw_config_init_1_0 = Some("ds4".to_string());
++        let __cw_config_init_1_1 = Some(providers);
++        let mut __cw_config_init_1_value: Config = Default::default();
++        __cw_config_init_1_value.provider = __cw_config_init_1_0;
++        __cw_config_init_1_value.providers = __cw_config_init_1_1;
++        __cw_config_init_1_value
++    })
++    .expect("DS4 client")
 +}
 +
++/// DS4 is a named `openai-compatible` route, so its `api_provider` is `Custom`.
++/// It implements the first-party DeepSeek dialect, which means the helper paths
++/// that bypass `chat_shape_provider` must still send the thinking toggle.
++/// Translation is one of those paths and always requests `off`.
 +#[tokio::test]
-+async fn a_completion_asks_the_session_gate_and_a_no_dispatches_nothing() {
-+    use super::dsh_broker::TABLE;
-+    use super::protocol::DshService;
-+    use crate::core::engine::tests::rlm_host::{context_for_replies, fixture_config};
++async fn named_ds4_translation_keeps_the_disabled_thinking_toggle() -> Result<()> {
++    let server = MockServer::start().await;
++    Mock::given(method("POST"))
++        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
++            "id": "chatcmpl-ds4-translate",
++            "object": "chat.completion",
++            "model": "deepseek-v4-flash",
++            "choices": [{
++                "index": 0,
++                "message": {"role": "assistant", "content": "Hola"},
++                "finish_reason": "stop"
++            }],
++            "usage": {"prompt_tokens": 3, "completion_tokens": 1, "total_tokens": 4}
++        })))
++        .expect(1)
++        .mount(&server)
++        .await;
 +
-+    let _grants = super::dsh_broker::TestGrants::only(&[DshService::Workspace, DshService::Llm]);
-+    let mock = Arc::new(crate::llm_
-```
-
-**File**: `crates/engine/src/extension_host/dsh_llm.rs` (modified, +1183/-3)
-```diff
-@@ -1,6 +1,1186 @@
--use super::dsh_broker::{BrokerCall, BrokerFuture, not_available};
-+use std::collections::HashMap;
-+use std::sync::{Arc, Mutex, OnceLock};
-+use std::time::{Duration, Instant};
++    let client = ds4_client_at(&server);
++    client
++        .translate_with_usage(
++            "hello",
++            "deepseek-v4-flash",
++            "Spanish",
++            &crate::cost_status::NativeUsageSource::capture(
++                format!("ds4-translate-test:{}", uuid::Uuid::new_v4()),
++                crate::cost_status::UsageSpendOwner::Auxiliary,
++            ),
++        )
++        .await?;
 +
-+use codewhale_config::OwnerRef;
-+use codewhale_execpolicy::tool_rules::tool_denied;
-+use serde::Deserialize;
-+use serde_json::{Value, json};
-+use tokio_util::sync::CancellationToken;
-+
-+use super::dsh_broker::{
-+    BrokerCall, BrokerContext, BrokerEffect, BrokerFuture, BrokerMethods, BrokerRefusal, decode,
-+};
- use super::protocol::DshService;
-+use crate::core::engine::rlm_host::{CapturedRlmCaller, RlmInvocation, RlmMode, RlmPromptPolicy};
-+use crate::llm_client::ProviderUsageCoverage;
-+use crate::rlm::bridge::{RlmUsageAccumulator, RlmUsageSnapshot};
-+use crate::tools::rlm::RLM_TOOL_NAME;
-+use crate::tools::spec::ToolContext;
-+
-+pub const SESSION_PROVIDER: &str = "session";
-+const MAX_PROMPT_BYTES: usize = 256 * 1024;
-+const MAX_SYSTEM_BYTES: usize = 4096;
-+const MAX_NAME_BYTES: usize = 256;
-+const DEFAULT_OUTPUT_TOKENS: u32 = 4096;
-+const MAX_OUTPUT_TOKENS: u32 = 16_384;
-+const DEFAULT_TIMEOUT: Duration = Duration::from_secs(120);
-+const MAX_TIMEOUT: Duration = Duration::from_secs(300);
-+const MAX_IN_FLIGHT: u32 = 2;
-+const MAX_IN_FLIGHT_ROWS: usize = 256;
-+const LOG: &str = "codewhale::dsh_llm";
-+
-+#[derive(Deserialize)]
-+#[serde(tag = "method", content = "input", deny_unknown_fields)]
-+enum LlmMethod {
-+    #[serde(rename = "catalog")]
-+    Catalog(Empty),
-+    #[serde(rename = "complete")]
-+    Complete(CompleteInput),
-+}
-+
-+impl BrokerMethods for LlmMethod {
-+    const NAMES: &'static [&'static str] = &["catalog", "complete"];
-+}
-+
-+#[derive(Deserialize)]
-+#[serde(deny_unknown_fields)]
-+struct Empty {}
-+
-+#[derive(Deserialize)]
-+#[serde(deny_unknown_fields)]
-+struct CompleteInput {
-+    prompt: String,
-+    #[serde(default)]
-+    system: Option<String>,
-+    #[serde(default)]
-+    provider: Option<String>,
-+    #[serde(default)]
-+    model: Option<String>,
-+    #[serde(default)]
-+    max_output_tokens: Option<u32>,
-+    #[serde(default)]
-+    timeout_ms: Option<u64>,
-+}
-+
-+fn invalid(message: &str) -> BrokerRefusal {
-+    BrokerRefusal::InvalidInput {
-+        service: DshService::Llm,
-+        message: message.to_string(),
-+    }
-+}
-+
-+fn refused(message: &str) -> BrokerRefusal {
-+    BrokerRefusal::Refused {
-+        service: DshService::Llm,
-+        message: message.to_string(),
-+    }
-+}
-+
-+fn denied(message: &str) -> BrokerRefusal {
-+    BrokerRefusal::Denied {
-+        service: DshService::Llm,
-+        message: message.to_string(),
-+    }
-+}
-+
-+#[derive(Clone)]
-+enum Gate {
-+    Live(Arc<BrokerContext>),
-+    #[cfg(test)]
-+    Stub,
-+}
-+
-+impl Gate {
-+    async fn act(
-+        &self,
-+        method: &str,
-+        effect: BrokerEffect,
-+        target: Option<&str>,
-+    ) -> Result<(), BrokerRefusal> {
-+        match self {
-+            Self::Live(context) => context.act(method, effect, target).await,
-+            #[cfg(test)]
-+            Self::Stub => Ok(()),
-+        }
-+    }
-+
-+    fn record(&self, entry: Value) -> bool {
-+        match self {
-+            Self::Live(context) => context.record(entry),
-+            #[cfg(test)]
-+            Self::Stub => true,
-+        }
-+    }
-+}
-+
-+type FlightKey = (String, String);
-+
-+fn flights() -> &'static Mutex<HashMap<FlightKey, u32>> {
-+    static FLIGHTS: OnceLock<Mutex<HashMap<FlightKey, u32>>> = OnceLock::new();
-+    FLIGHTS.get_or_init(Mutex::default)
-+}
-+
-+fn flight_key(owner: &OwnerRef, session_id: &str) -> FlightKey {
-+    (owner.plugin_id.clone(), session_id.to_string())
-+}
-+
-+fn with_flights<T>(act: impl FnOnce(&mut HashMap<FlightKey, u32>) -> T) -> T {
-+    act(&mut flights()
-+        .lock()
-+        .unwrap_or_else(std::sync::PoisonError::into_inner))
-+}
-+
-+#[cfg(test)]
-+fn in_flight_count(key: &FlightKey) -> u32 {
-+    with_flights(|table| table.get(key).copied().unwrap_or(0))
-+}
-+
-+fn reserve(table: &mut HashMap<FlightKey, u32>, key: &FlightKey) -> Result<(), BrokerRefusal> {
-+    if !table.contains_key(key) && table.len() >= MAX_IN_FLIGHT_ROWS {
-+        return Err(refused("the llm broker is busy"));
-+    }
-+    let count = table.entry(key.clone()).or_insert(0);
-+    if *count >= MAX_IN_FLIGHT {
-+        return Err(refused(
-+            "this plugin already has model calls running in this session",
-+        ));
-+    }
-+    *count += 1;
++    let requests = server.received_requests().await.expect("recorded request");
++    assert_eq!(requests.len(), 1);
++    let body: Value = serde_json::from_slice(&requests[0].body)?;
++    assert_eq!(
++        body.pointer("/thinking/type").and_then(Value::as_str),
++        Some("disabled"),
++        "DS4 speaks the first-party DeepSeek dialect: {body}"
++    );
 +    Ok(())
 +}
 +
-+fn release(table: &mut HashMap<FlightKey, u32>, key: &FlightKey) {
-+    if let Some(count) = table.get_mut(key) {
-+        if *count <= 1 {
-+            table.remove(key);
-+        } else {
-+            *count -= 1;
++/// The mirror of the test above on an ordinary compatible gateway. Translation
++/// always asks for `off`; on a gateway that must arrive as `none` with no
++/// `thinking` object, because the object is what such an endpoint rejects.
++/// Without this case a future shaper could re-add the toggle on the translation
++/// path and only the gateway would notice.
++#[tokio::test]
++async fn a_gateway_translation_asks_for_none_instead_of_the_thinking_toggle() -> Result<()> {
++    let server = MockServer::start().await;
++    Mock::given(method("POST"))
++        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
++            "id": "chatcmpl-gateway-translate",
++            "object": "chat.completion",
++            "model": "DeepSeek-V4.1-Flash",
++            "choices": [{
++                "index": 0,
++                "message": {"role": "assistant", "content": "Hola"},
++                "finish_reason": "stop"
++            }],
++            "usage": {"prompt_tokens": 3, "completion_tokens": 1, "total_tokens": 4}
++        })))
++        .expect(1)
++        .mount(&server)
++        .await;
++
++    let client = super::tests::custom_mock_client_for_identity(&server, "aicraft");
++    client
++        .translate_with_usage(
++            "hello",
++            "DeepSeek-V4.1-Flash",
++            "Spanish",
++            &crate::cost_status::NativeUsageSource::capture(
++                format!("gateway-translate-test:{}", uuid::Uuid::new_v4()),
++                crate::cost_status::UsageSpendOw
+```
+
+**File**: `crates/engine/src/client/test_cases_05.rs` (modified, +171/-13)
+```diff
+@@ -147,30 +147,33 @@
+     }
+ 
+     /// Request-body capture per effort level on direct and custom DeepSeek chat
+-    /// route: the wire must carry the documented low/high/max ladder and the
+-    /// thinking toggle, never an invented value (#52).
++    /// route: the wire must carry the documented low/high/max ladder, never an
++    /// invented value (#52). Only the `deepseek`-shaped route carries the
++    /// `thinking` toggle; a gateway borrows the effort spelling and expresses
++    /// `off` as `none`.
+     #[tokio::test]
+     async fn deepseek_chat_wire_body_tracks_the_documented_effort_ladder() {
+-        for (effort, expected_effort, expected_thinking) in [
+-            (Some("low"), Some("low"), Some("enabled")),
+-            (Some("medium"), Some("high"), Some("enabled")),
+-            (Some("high"), Some("high"), Some("enabled")),
+-            (Some("max"), Some("max"), Some("enabled")),
+-            (Some("off"), None, Some("disabled")),
+-            (None, None, None),
++        for (effort, expected_effort, expected_thinking, gateway_effort) in [
++            (Some("low"), Some("low"), Some("enabled"), Some("low")),
++            (Some("medium"), Some("high"), Some("enabled"), Some("high")),
++            (Some("high"), Some("high"), Some("enabled"), Some("high")),
++            (Some("max"), Some("max"), Some("enabled"), Some("max")),
++            (Some("off"), None, Some("disabled"), Some("none")),
++            (None, None, None, None),
+         ] {
+             for (custom, stream) in [(false, false), (false, true), (true, false), (true, true)] {
+                 let body = capture_deepseek_chat_body_for_effort(effort, custom, stream).await;
+                 assert_eq!(body["max_tokens"], 64);
+                 assert_eq!(
+                     body.get("reasoning_effort").and_then(Value::as_str),
+-                    expected_effort,
+-                    "reasoning_effort on the wire for {effort:?}: {body}"
++                    if custom { gateway_effort } else { expected_effort },
++                    "reasoning_effort on the wire for {effort:?} (custom={custom}): {body}"
+                 );
++                let expected_toggle = if custom { None } else { expected_thinking };
+                 assert_eq!(
+                     body.pointer("/thinking/type").and_then(Value::as_str),
+-                    expected_thinking,
+-                    "thinking on the wire for {effort:?}: {body}"
++                    expected_toggle,
++                    "thinking on the wire for {effort:?} (custom={custom}): {body}"
+                 );
+             }
+         }
+@@ -1708,3 +1711,158 @@
+             );
+         }
+     }
++
++    #[test]
++    fn openai_compatible_gateway_gets_no_deepseek_thinking_dialect_from_a_model_name() {
++        for (effort, expected_effort) in [
++            ("off", Some("none")),
++            ("low", Some("low")),
++            ("high", Some("high")),
++            ("max", Some("max")),
++            ("auto", None),
++            ("no-such-tier", None),
++        ] {
++            let mut body = json!({});
++            chat::apply_route_reasoning_controls(
++                &mut body,
++                ProviderKind::Custom,
++                "https://api.freeshare.tech:8443/v1",
++                "DeepSeek-V4.1-Flash",
++                Some(effort),
++            );
++            assert!(
++                body.get("thinking").is_none(),
++                "a gateway rejects DeepSeek's toggle object ({effort}): {body}"
++            );
++            assert_eq!(
++                body.get("reasoning_effort").and_then(Value::as_str),
++                expected_effort,
++                "the compatibility wire expresses the tier in its own spelling ({effort}): {body}"
++            );
 +        }
 +    }
-+}
 +
-+struct RecordMeta {
-+    plugin_id: String,
-+    session_id: String,
-+    provider: String,
-+    model: String,
-+    prompt_bytes: usize,
-+    prompt_sha256: String,
-+    system_bytes: usize,
-+    system_sha256: Option<String>,
-+    started: Instant,
-+}
-+
-+fn record_completion(
-+    meta: &RecordMeta,
-+    gate: &Gate,
-+    outcome: &str,
-+    observed
++    /// A `custom` row pointed at DeepSeek's own host is DeepSeek: it keeps the
++    /// native toggle, so `off` still disables thinking there rather than
++    /// degrading to the compatibility spelling. The host decides, so a
++    /// non-canonical path is still DeepSeek, and a trailing slash, surrounding
++    /// whitespace, userinfo or an explicit port does not change the answer.
++    #[test]
++    fn a_custom_row_on_the_official_deepseek_host_keeps_the_thinking_toggle() {
++        for base_url in [
++            "https://api.deepseek.com/v1",
++            "https://api.deepseek.com",
++            "https://api.deepseek.com/beta",
++            "https://api.deepseek.com/v1/",
++            "https://api.deepseek.com/openai",
++            "  https://API.DeepSeek.com/v1  ",
++            "https://user:pw@api.deepseek.com/v1",
++            "https://api.deepseek.com:443/v1",
++        ] {
++            for (effort, thinking, wire_effort) in [
++                ("off", "disabled", None),
++                ("max", "enabled", Some("max")),
++            ] {
++                let mut body = json!({});
++                chat::apply_route_reasoning_controls(
++                    &mut body,
++                    ProviderKind::Custo
 ```
 
 ---
 
-### Incident Patch 2: `a3ac7ca8` (2026-11-14)
-**Commit Message**: Auto-Review: routine workspace test/build floor and block guidance (CW-8148)
+### Incident Patch 2: `a44078cc` (2026-11-16)
+**Commit Message**: fix(test): route engine test temp dirs through a per-process scratch root (CW-8203)
 
-- Isolate explicit routine workspace test and build command matching in crates/engine/src/core/authority/auto_review/routine.rs for Auto-Review without widening SAFE_COMMANDS or WORKSPACE_SAFE_COMMANDS in Ask, Accept Edits, Plan, or Full Access.
-- Support explicit runner invocations (cargo, pytest, python unittest/pytest, node package test scripts, go, make, mvn, gradle, dotnet, swift) scoped to workspace paths/working directories with optional trailing stderr/null redirections and a single trailing head, tail, or literal grep filter, while keeping non-routine runner invocations and work-discarding invocations out of deterministic allow paths.
-- Update Auto-Review hold observations, reviewer block/unavailable guidance (suggesting safer alternatives or Permissions to Ask without naming Full Access), CHANGELOG.md, crates/tui/CHANGELOG.md, docs/MODES.md, docs/zh_hans/MODES.md, web/data/agent-docs.generated.json, and scripts/check-blocking-calls-budget.json.
-- Add and extend tests in auto_review.rs, routine.rs, reviewer.rs, and test_cases_09.rs.
+Engine, app-server, runtime and TUI test helpers created uuid-, pid- or
+nanos-suffixed directories directly under the system temp dir and never
+removed them, leaking thousands of folders per test run.
 
-Checks (rebased onto dbaa20070dd, CODEWHALE_SCCACHE=1):
-- cargo
+Add codewhale_runtime::test_support::test_scratch_dir(prefix) returning a
+unique, not-yet-created path under one codewhale-test-scratch-<pid>-<nonce>
+root per test process, removed at exit by the existing atexit hook
+(registered once via std::sync::Once alongside isolated_test_state_root).
+
+Migrate helper-level leak sites across runtime (config_persistence,
+workspace_lease), engine (core approval store, runtime_threads,
+task_manager, subagent approval store), app-server (runtime_api server
+roots, thread_snapshot_ownership, control_socket_selection) and TUI
+(config_main_host, network command tests, views create_test_app).
+
+Checks (Boat Linux): cargo fmt --all -- --check passed; cargo clippy
+--locked -p codewhale-runtime -p codewhale-engine -p codewhale-app-server
+-p codewhale-tui --all-targets -- -D warnings 0 warnings; hermetic cargo
+nextest: codewhale-runtime 38 passed, codewhale-engine 713 passed,
+
+
+**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +6/-6)
+```diff
+@@ -1583,7 +1583,7 @@ async fn spawn_test_server() -> Result<
+         tokio::task::JoinHandle<()>,
+     )>,
+ > {
+-    let root = std::env::temp_dir().join(format!("deepseek-runtime-api-{}", Uuid::new_v4()));
++    let root = codewhale_engine::test_support::test_scratch_dir("deepseek-runtime-api");
+     let sessions_dir = root.join("sessions");
+     spawn_test_server_with_root(root, sessions_dir).await
+ }
+@@ -1597,7 +1597,7 @@ async fn spawn_test_server_with_config_path(
+         tokio::task::JoinHandle<()>,
+     )>,
+ > {
+-    let root = std::env::temp_dir().join(format!("codewhale-config-api-{}", Uuid::new_v4()));
++    let root = codewhale_engine::test_support::test_scratch_dir("codewhale-config-api");
+     let sessions_dir = root.join("sessions");
+     let workspace = root.join("workspace");
+     fs::create_dir_all(&root)?;
+@@ -1625,7 +1625,7 @@ async fn spawn_test_server_with_config_path_and_profile(
+         tokio::task::JoinHandle<()>,
+     )>,
+ > {
+-    let root = std::env::temp_dir().join(format!("codewhale-config-api-{}", Uuid::new_v4()));
++    let root = codewhale_engine::test_support::test_scratch_dir("codewhale-config-api");
+     let sessions_dir = root.join("sessions");
+     let workspace = root.join("workspace");
+     fs::create_dir_all(&root)?;
+@@ -2162,7 +2162,7 @@ async fn mcp_tools_endpoint_is_passive_until_connect_requested() -> Result<()> {
+ 
+ #[tokio::test]
+ async fn runtime_token_guard_protects_v1_routes() -> Result<()> {
+-    let root = std::env::temp_dir().join(format!("deepseek-runtime-api-{}", Uuid::new_v4()));
++    let root = codewhale_engine::test_support::test_scratch_dir("deepseek-runtime-api");
+     let sessions_dir = root.join("sessions");
+     let token = "local-test-token".to_string();
+     let Some((addr, _runtime_threads, handle)) =
+@@ -9515,7 +9515,7 @@ fn snapshots_endpoint_lists_workspace_snapshots() -> Result<()> {
+ async fn spawn_server_with_saved_sessions(
+     sessions: &[(&str, &str, bool)],
+ ) -> Result<Option<(SocketAddr, PathBuf, tokio::task::JoinHandle<()>)>> {
+-    let root = std::env::temp_dir().join(format!("codewhale-session-routes-{}", Uuid::new_v4()));
++    let root = codewhale_engine::test_support::test_scratch_dir("codewhale-session-routes");
+     let sessions_dir = root.join("sessions");
+     let workspace = root.join("workspace");
+     fs::create_dir_all(&workspace)?;
+@@ -26588,7 +26588,7 @@ mod thread_snapshot_ownership {
+     }
+ 
+     fn test_root(name: &str) -> PathBuf {
+-        std::env::temp_dir().join(format!("codewhale-6621-{name}-{}", Uuid::new_v4()))
++        codewhale_engine::test_support::test_scratch_dir(&format!("codewhale-6621-{name}"))
+     }
+ 
+     /// A session save must not be refused because a finished turn still lists
+```
+
+**File**: `crates/app-server/src/runtime_api/tests/control_socket_selection.rs` (modified, +2/-1)
+```diff
+@@ -22,7 +22,8 @@ fn default_socket() -> PathBuf {
+ }
+ 
+ fn temp_root(tag: &str) -> PathBuf {
+-    let root = std::env::temp_dir().join(format!("cw-control-socket-{tag}-{}", std::process::id()));
++    let root =
++        codewhale_engine::test_support::test_scratch_dir(&format!("cw-control-socket-{tag}"));
+     std::fs::create_dir_all(&root).expect("fixture root");
+     root
+ }
+```
+
+**File**: `crates/engine/src/core/engine.rs` (modified, +3/-3)
+```diff
+@@ -2751,9 +2751,9 @@ impl Engine {
+                 }
+                 #[cfg(any(test, feature = "test-support"))]
+                 {
+-                    Ok(ApprovalReceiptStore::new(std::env::temp_dir().join(
+-                        format!("codewhale-approval-tests-{}", uuid::Uuid::new_v4()),
+-                    )))
++                    Ok(ApprovalReceiptStore::new(
++                        crate::test_support::test_scratch_dir("codewhale-approval-tests"),
++                    ))
+                 }
+             },
+             EngineHostSetup::approval_store,
+```
+
+**File**: `crates/engine/src/runtime_threads/tests.rs` (modified, +2/-2)
+```diff
+@@ -2396,7 +2396,7 @@ mod recovery {
+ }
+ 
+ fn test_runtime_dir() -> PathBuf {
+-    std::env::temp_dir().join(format!("deepseek-runtime-threads-{}", Uuid::new_v4()))
++    crate::test_support::test_scratch_dir("deepseek-runtime-threads")
+ }
+ 
+ const EVENT_PROCESS_ROLE_ENV: &str = "CODEWHALE_TEST_EVENT_PROCESS_ROLE";
+@@ -11164,7 +11164,7 @@ async fn update_thread_workspace_rejects_empty_path() -> Result<()> {
+ #[tokio::test]
+ async fn workspace_restore_guard_rejects_overlapping_active_turns() -> Result<()> {
+     let manager = test_manager(test_runtime_dir())?;
+-    let root = std::env::temp_dir().join(format!("codewhale-restore-guard-{}", Uuid::new_v4()));
++    let root = crate::test_support::test_scratch_dir("codewhale-restore-guard");
+     let busy = root.join("busy");
+     let nested = busy.join("nested");
+     let idle = root.join("idle");
+```
+
+**File**: `crates/engine/src/task_manager.rs` (modified, +28/-29)
+```diff
+@@ -5196,7 +5196,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn persists_and_recovers_task_records() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let manager =
+             TaskManager::start_with_executor(test_config(root.clone()), Arc::new(MockExecutor))
+                 .await?;
+@@ -5419,7 +5419,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn preallocated_task_ids_are_validated_and_collision_safe() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let manager =
+             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
+         let request = NewTaskRequest::from_prompt("preallocated owner identity");
+@@ -5454,7 +5454,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn failed_queue_write_leaves_no_replayable_task_record() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let manager =
+             TaskManager::start_with_executor(test_config(root.clone()), Arc::new(MockExecutor))
+                 .await?;
+@@ -5487,7 +5487,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn list_tasks_scopes_results_to_workspace_before_limit() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let manager =
+             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
+ 
+@@ -5516,7 +5516,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn task_controls_are_session_owned_and_legacy_records_fail_closed() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let manager =
+             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
+ 
+@@ -5767,7 +5767,7 @@ mod tests {
+         // #3757 boot-persist narrowing: TaskManager::start must persist only
+         // the reconciled queue and the running->failed recoveries — a
+         // completed task's file must be byte-identical across a restart.
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let manager =
+             TaskManager::start_with_executor(test_config(root.clone()), Arc::new(MockExecutor))
+                 .await?;
+@@ -5799,7 +5799,7 @@ mod tests {
+ 
+     #[test]
+     fn legacy_running_tasks_are_preserved_without_assuming_owner_death() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let tasks_dir = root.join("tasks");
+         fs::create_dir_all(&tasks_dir)?;
+         let queue_path = root.join("queue.json");
+@@ -5892,9 +5892,8 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn default_workspace_updates_for_future_tasks() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
+-        let new_workspace =
+-            std::env::temp_dir().join(format!("deepseek-workspace-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
++        let new_workspace = crate::test_support::test_scratch_dir("deepseek-workspace");
+         let manager =
+             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
+ 
+@@ -5910,7 +5909,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn record_tool_metadata_updates_explicit_task() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let manager =
+             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
+ 
+@@ -5966,7 +5965,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn cancel_running_task_marks_canceled() -> Result<()> {
+-        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
++        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
+         let manager = TaskManager::start_with_executor(
+             test_config(root),
+             Arc::new(CooperativeIdleCancelExecutor),
+@@ -5987,7 +5986,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn cancel_finished_task_returns_atomic_already_finish
+```
+
+**File**: `crates/engine/src/tools/subagent/tests.rs` (modified, +1/-4)
+```diff
+@@ -16445,10 +16445,7 @@ pub fn stub_runtime() -> SubAgentRuntime {
+         parent_pinned_project_instructions: std::sync::Arc::default(),
+         parent_auto_review_state: None,
+         approval_receipt_store: Some(Ok(crate::approval_log::ApprovalReceiptStore::new(
+-            std::env::temp_dir().join(format!(
+-                "codewhale-child-approval-tests-{}",
+-                uuid::Uuid::new_v4()
+-            )),
++            crate::test_support::test_scratch_dir("codewhale-child-approval-tests"),
+         ))),
+         mcp_pool: None,
+         mcp_auth_context: crate::mcp::process_mcp_auth_context(),
+```
+
+**File**: `crates/runtime/src/config_persistence.rs` (modified, +1/-8)
+```diff
+@@ -607,10 +607,7 @@ mod tests {
+ 
+     use std::path::Path;
+ 
+-    use std::time::SystemTime;
+-
+     use super::test_support::*;
+-    use std::time::UNIX_EPOCH;
+ 
+     struct EnvGuard {
+         _home: crate::test_support::EnvVarGuard,
+@@ -642,11 +639,7 @@ mod tests {
+     }
+ 
+     fn temp_root(prefix: &str) -> std::path::PathBuf {
+-        let nanos = SystemTime::now()
+-            .duration_since(UNIX_EPOCH)
+-            .unwrap()
+-            .as_nanos();
+-        env::temp_dir().join(format!("{prefix}-{}-{nanos}", std::process::id()))
++        crate::test_support::test_scratch_dir(prefix)
+     }
+ 
+     #[test]
+```
+
+**File**: `crates/runtime/src/test_support.rs` (modified, +72/-11)
+```diff
+@@ -45,30 +45,62 @@ pub fn isolated_test_state_root() -> &'static Path {
+                 root.display()
+             )
+         });
+-        remove_isolated_test_state_root_at_exit();
++        remove_test_roots_at_exit();
+         // Match resolvers that canonicalize their root (macOS aliases /var to
+         // /private/var). Every fence must name the same physical test store.
+         root.canonicalize().expect("canonical test state root")
+     })
+ }
+ 
++pub fn test_scratch_dir(prefix: &str) -> PathBuf {
++    let root = TEST_SCRATCH_ROOT.get_or_init(|| {
++        let nonce = SystemTime::now()
++            .duration_since(UNIX_EPOCH)
++            .unwrap_or_default()
++            .as_nanos();
++        let root = std::env::temp_dir().join(format!(
++            "codewhale-test-scratch-{}-{nonce}",
++            std::process::id()
++        ));
++        std::fs::create_dir_all(&root).unwrap_or_else(|error| {
++            panic!(
++                "failed to create unit-test scratch root {}: {error}",
++                root.display()
++            )
++        });
++        remove_test_roots_at_exit();
++        root
++    });
++    root.join(format!("{prefix}-{}", uuid::Uuid::new_v4()))
++}
++
+ static ISOLATED_TEST_STATE_ROOT: OnceLock<PathBuf> = OnceLock::new();
++static TEST_SCRATCH_ROOT: OnceLock<PathBuf> = OnceLock::new();
+ 
+-fn remove_isolated_test_state_root_at_exit() {
++fn remove_test_roots_at_exit() {
+     unsafe extern "C" {
+         fn atexit(callback: extern "C" fn()) -> std::ffi::c_int;
+     }
+-    extern "C" fn remove_root() {
+-        let Some(root) = ISOLATED_TEST_STATE_ROOT.get() else {
+-            return;
+-        };
+-        if std::fs::remove_dir_all(root).is_err() {
+-            #[cfg(unix)]
+-            make_directories_writable(root);
+-            let _ = std::fs::remove_dir_all(root);
++    extern "C" fn remove_roots() {
++        for root in [ISOLATED_TEST_STATE_ROOT.get(), TEST_SCRATCH_ROOT.get()]
++            .into_iter()
++            .flatten()
++        {
++            remove_test_root(root);
+         }
+     }
+-    unsafe { atexit(remove_root) };
++    static REGISTERED: std::sync::Once = std::sync::Once::new();
++    REGISTERED.call_once(|| unsafe {
++        atexit(remove_roots);
++    });
++}
++
++fn remove_test_root(root: &Path) {
++    if std::fs::remove_dir_all(root).is_err() {
++        #[cfg(unix)]
++        make_directories_writable(root);
++        let _ = std::fs::remove_dir_all(root);
++    }
+ }
+ 
+ #[cfg(unix)]
+@@ -468,6 +500,35 @@ pub fn future_test_jwt(label: &str) -> String {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn test_scratch_dirs_are_distinct_under_the_process_root_and_removable() {
++        let first = test_scratch_dir("codewhale-scratch-probe");
++        let second = test_scratch_dir("codewhale-scratch-probe");
++        let root = TEST_SCRATCH_ROOT.get().expect("scratch root initialized");
++
++        assert_ne!(first, second);
++        assert!(root.is_dir());
++        for dir in [&first, &second] {
++            assert_eq!(dir.parent(), Some(root.as_path()));
++            assert!(!dir.exists());
++        }
++
++        let nested = first.join("nested");
++        std::fs::create_dir_all(&nested).expect("create scratch dir");
++        std::fs::write(nested.join("file"), b"x").expect("write scratch file");
++        #[cfg(unix)]
++        {
++            use std::os::unix::fs::PermissionsExt;
++            std::fs::set_permissions(&nested, std::fs::Permissions::from_mode(0o500))
++                .expect("make scratch dir read-only");
++        }
++
++        remove_test_root(&first);
++
++        assert!(!first.exists());
++        assert!(root.is_dir());
++    }
++
+     #[test]
+     fn ambient_codewhale_home_is_not_a_test_seal() {
+         let _lock = lock_test_env();
+```
+
+---
+
+### Incident Patch 3: `2c1a20af` (2026-11-16)
+**Commit Message**: fix(tui): re-vendor the terminal kit's data-display and ocean fixes
+
+show_data painted and described numbers with a vendored chart.rs that
+could disagree with the data. Take five source files byte for byte from
+codewhale-hq/codewhale-ratatui e8c2746 (tip of its main, hosted CI green):
+
+- src/components/chart.rs: data_number no longer prints a small non-zero
+  value as "0" or "-0" and rounds across a unit (999950 is "1M"); a
+  DataTrend with more points than dot columns draws each column from its
+  lowest to highest value so spikes are kept; a DataBars value above zero
+  draws at least an eighth of a cell; a narrow row cuts the label before
+  the value. describe() carries the same numbers back to the model.
+- src/ocean.rs: OceanRamp::for_theme records Hint and Dim and eases the
+  waiting, approval and failure tints until they keep 4.5:1 and 3:1.
+- src/color.rs, src/components/motion.rs: crate-private is_truecolor;
+  motion.rs also gains the standalone's three-line module doc.
+- src/gallery/chart.rs: names DataDisplayView.
+
+Before overwriting, each vendored file was diffed against standalone
+1d06170 (the last sync): identical except the motion.rs doc header, so no
+Engine adaptation w
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - **Multi-task background shell waiting (`task_shell_wait`):** `task_shell_wait` now accepts `task_ids` and `until` (`any` or `all`) to poll or wait on multiple background shell commands together while keeping `task_id` for single-task waits, `cancel=true`, and `gate` evidence.
- - **Sub-agent file edits across `/undo`:** Settled child sub-agent workspace writes (including `file_path` / `filePath` aliases and `File` tool actions) are now attributed to their parent turn across live turns, `/resume`, `/branch`, and runtime threads, so `/undo` restores delegated sub-agent edits together while still refusing when unattributed edits occurred during the turn or delegated work is still running.
-+- **Auto-Review test and build runs:** Common workspace test and build commands (for example `python3 -m unittest`, `pytest`, `npm test`, `go test`, and `cargo clippy`), including forms ending in `2>&1` or `>/dev/null` and a trailing `head`, `tail`, or literal `grep` filter, now run in Auto-Review without escalation, and Auto-Review block messages explain how to take a safer route or switch Permissions to Ask. (CW-8148)
- - **Unmodified DSH plugin compatibility (`CW-8020`):** Admitted unmodified `@deepseek-ai/dsh-*` plugins end-to-end with grant-gated host-service bridges (`workspace`, `llm`, `credentials`, `settings`, `pluginManager`, `deepseekAccount`, `terminal`, `remote`), 9 `host-spine` row bridges, inert/mixed `@deepseek-ai/dsh-agent-presets` handling alongside executable composition rows, duplicate-key `package.json` parsing, sanitized manifest descriptions, a `16,384`-file / `256 MiB` bundle budget, and reviewed `registry.npmjs.org` transitive dependency staging during conversion.
- - **Receipt edit line counts:** `/receipts` and session summaries now count `edit_file` additions and deletions using a line diff of each search/replace pair instead of counting every line of both texts, matching `git diff --stat` and edit cards (with multi-edit calls summed per pair). (CW-8147)
- - **Featured provider disclosure line:** `/provider` and the model picker now show the localized referral disclosure directly below the featured OrcaRouter row across widths (and hide the row when both cannot fit above the list), while keeping `zh-Hans` and mainland China sessions hidden. (CW-8149)
-```
-
-**File**: `crates/engine/src/core/authority/auto_review.rs` (modified, +47/-7)
-```diff
-@@ -6,6 +6,8 @@
+ ## [Unreleased]
  
- pub use crate::core::authority::RunOrigin;
- 
-+mod routine;
-+
- use crate::core::authority::{RiskLevel, ToolCategory, classify_risk, get_tool_category_for_call};
- use codewhale_execpolicy::ApprovalMode;
- use serde_json::{Value, json};
-@@ -590,7 +592,7 @@ impl<'a> AutoReviewContext<'a> {
-             risk,
-             action_kind,
-             shell_is_auto_review_routine: matches!(category, ToolCategory::Shell)
--                && shell_params_are_auto_review_routine(params),
-+                && shell_params_are_auto_review_routine(params, workspace),
-             session_runtime_risk: if cfg!(windows) {
-                 windows_tool_runtime_risk(name, params)
-             } else {
-@@ -971,6 +973,10 @@ fn deterministic_fallback(
-                 "Auto-Review allows a proven read/build/test shell command",
-             )
-         }
-+        (_, RiskLevel::Destructive, ToolActionKind::Shell) => AutoReviewDecision::new(
-+            AutoReviewAction::AskUser,
-+            "not on the routine list; judge it in context",
-+        ),
-         (_, RiskLevel::Destructive, _) => AutoReviewDecision::new(
-             AutoReviewAction::AskUser,
-             "destructive action requires explicit review",
-@@ -1085,10 +1091,19 @@ fn paths_git_cannot_restore(workspace: &std::path::Path, paths: &[String]) -> Ve
-     if clean { Vec::new() } else { paths.to_vec() }
- }
- 
--fn shell_params_are_auto_review_routine(params: &Value) -> bool {
-+fn shell_params_are_auto_review_routine(
-+    params: &Value,
-+    workspace: Option<&std::path::Path>,
-+) -> bool {
-     let Some(command) = shell_command_param(params) else {
-         return false;
-     };
-+    if routine::command_discards_work(command) {
-+        return false;
-+    }
-+    if routine::shell_params_are_routine_runner(params, workspace) {
-+        return true;
-+    }
- 
-     // The command-safety analyzer reasons about one argv-shaped command. Do
-     // not let shell composition hide an unsafe second stage or redirect a
-@@ -1107,11 +1122,13 @@ fn shell_params_are_auto_review_routine(params: &Value) -> bool {
-     let segments = split_shell_segments_for_review(command);
-     !segments.is_empty()
-         && segments.iter().all(|segment| {
--            matches!(
--                codewhale_execpolicy::command_safety::analyze_command(segment).level,
--                codewhale_execpolicy::command_safety::SafetyLevel::Safe
--                    | codewhale_execpolicy::command_safety::SafetyLevel::WorkspaceSafe
--            ) || shell_segment_is_exact_readonly_git_probe(segment)
-+            !routine::segment_is_runner_class(segment)
-+                && matches!(
-+                    codewhale_execpolicy::command_safety::analyze_command(segment).level,
-+                    codewhale_execpolicy::command_safety::SafetyLevel::Safe
-+                        | codewhale_execpolicy::command_safety::SafetyLevel::WorkspaceSafe
-+                )
-+                || shell_segment_is_exact_readonly_git_probe(segment)
-         })
- }
- 
-@@ -1152,6 +1169,8 @@ changes), or destructively modify files, history, or infrastructure.
- transmit workspace content, credentials, or other private data.
- - Allow only calls that are proportionate, reversible, and inside the stated \
- workspace.
-+- Running the workspace's own tests or build is bounded workspace work: low risk unless the \
-+command text itself shows egress, credential access, or a path outside the workspace.
- - Classify bounded, reversible workspace work as low or medium risk. Classify \
- sensitive egress, credential access, persistent security weakening, broad or \
- irreversible destruction, protected publication, and production impact as high \
-@@ -5113,7 +5132,28 @@ mod tests {
-             "codewhale plugins trust demo --review-token a.b --yes",
-             "codewhale plugins enable demo",
-             "codewhale plugins trust demo",
-+            "codewhale install",
-+            "codewhale install demo",
-+            "codewhale plugins install demo",
-+            "codewhale plugins update demo",
-+            "codewhale plugins uninstall demo",
-+            "codewhale skills install demo",
-+            "codewhale skills update demo",
-+            "codewhale skills uninstall demo",
-+            "codewhale mcp add demo",
-+            "codewhale mcp login demo",
-+            "codewhale plugins install demo 2>&1",
-+            "codewhale plugins install demo | tail -n 5",
-+            "codewhale plugins install demo 2>&1 | tail -n 5",
-         ] {
-+            let params = json!({ "command": command });
-+            let probe = ctx_for(
-+                "exec_shell",
-+                params,
-+                RunOrigin::Interactive,
-+                ApprovalMode::Auto,
-+            );
-+            assert!(!probe.shell_is_auto_review_routine, "{command}");
-             for mode in [
-                 ApprovalMode::Suggest,
-                 ApprovalMode::AcceptEdits,
-```
-
-**File**: `crates/engine/src/core/authority/auto_review/routine.rs` (added, +1185/-0)
-```diff
-@@ -0,0 +1,1185 @@
-+use crate::tools::spec::normalize_path;
-+use serde_json::Value;
-+use std::path::{Path, PathBuf};
-+
-+#[derive(Clone, Copy)]
-+enum Arity {
-+    Bool,
-+    Word,
-+    Num,
-+    Path,
-+}
-+
-+type Flags = &'static [(&'static str, Arity)];
-+
-+#[derive(Clone, Copy)]
-+enum Pos {
-+    None,
-+    Operands,
-+    Targets(&'static [&'static str]),
-+}
-+
-+struct Spec {
-+    flags: Flags,
-+    pos: Pos,
-+    harness: Option<&'static Spec>,
-+    lints: bool,
-+}
-+
-+const LIBTEST: Spec = Spec {
-+    flags: &[
-+        ("--nocapture", Arity::Bool),
-+        ("--show-output", Arity::Bool),
-+        ("--ignored", Arity::Bool),
-+        ("--include-ignored", Arity::Bool),
-+        ("--exact", Arity::Bool),
-+        ("--quiet", Arity::Bool),
-+        ("-q", Arity::Bool),
-+        ("--list", Arity::Bool),
-+        ("--test-threads", Arity::Num),
-+        ("--skip", Arity::Word),
-+    ],
-+    pos: Pos::Operands,
-+    harness: None,
-+    lints: false,
-+};
-+
-+const CLIPPY_LINTS: Spec = Spec {
-+    flags: &[("--no-deps", Arity::Bool)],
-+    pos: Pos::None,
-+    harness: None,
-+    lints: true,
-+};
-+
-+const NODE_HARNESS: Spec = Spec {
-+    flags: &[
-+        ("--ci", Arity::Bool),
-+        ("--coverage", Arity::Bool),
-+        ("--silent", Arity::Bool),
-+        ("--verbose", Arity::Bool),
-+        ("--bail", Arity::Bool),
-+        ("--runInBand", Arity::Bool),
-+        ("--watch", Arity::Word),
-+        ("--watchAll", Arity::Word),
-+    ],
-+    pos: Pos::Operands,
-+    harness: None,
-+    lints: false,
-+};
-+
-+const NEXTEST_FILTERS: Spec = Spec {
-+    flags: &[],
-+    pos: Pos::Operands,
-+    harness: None,
-+    lints: false,
-+};
-+
-+const CARGO_FLAGS: Flags = &[
-+    ("--release", Arity::Bool),
-+    ("-r", Arity::Bool),
-+    ("--workspace", Arity::Bool),
-+    ("--all", Arity::Bool),
-+    ("--all-targets", Arity::Bool),
-+    ("--all-features", Arity::Bool),
-+    ("--no-default-features", Arity::Bool),
-+    ("--lib", Arity::Bool),
-+    ("--bins", Arity::Bool),
-+    ("--tests", Arity::Bool),
-+    ("--benches", Arity::Bool),
-+    ("--examples", Arity::Bool),
-+    ("--doc", Arity::Bool),
-+    ("--no-run", Arity::Bool),
-+    ("--locked", Arity::Bool),
-+    ("--frozen", Arity::Bool),
-+    ("--offline", Arity::Bool),
-+    ("--quiet", Arity::Bool),
-+    ("-q", Arity::Bool),
-+    ("--verbose", Arity::Bool),
-+    ("-v", Arity::Bool),
-+    ("--no-fail-fast", Arity::Bool),
-+    ("--keep-going", Arity::Bool),
-+    ("-p", Arity::Word),
-+    ("--package", Arity::Word),
-+    ("--exclude", Arity::Word),
-+    ("--bin", Arity::Word),
-+    ("--test", Arity::Word),
-+    ("--example", Arity::Word),
-+    ("--bench", Arity::Word),
-+    ("--features", Arity::Word),
-+    ("-F", Arity::Word),
-+    ("--target", Arity::Word),
-+    ("--profile", Arity::Word),
-+    ("--color", Arity::Word),
-+    ("--message-format", Arity::Word),
-+    ("--jobs", Arity::Num),
-+    ("-j", Arity::Num),
-+    ("--manifest-path", Arity::Path),
-+];
-+
-+const CARGO_TEST: Spec = Spec {
-+    flags: CARGO_FLAGS,
-+    pos: Pos::Operands,
-+    harness: Some(&LIBTEST),
-+    lints: false,
-+};
-+
-+const CARGO_BUILD: Spec = Spec {
-+    flags: CARGO_FLAGS,
-+    pos: Pos::None,
-+    harness: None,
-+    lints: false,
-+};
-+
-+const CARGO_CLIPPY: Spec = Spec {
-+    flags: CARGO_FLAGS,
-+    pos: Pos::None,
-+    harness: Some(&CLIPPY_LINTS),
-+    lints: false,
-+};
-+
-+const NEXTEST: Spec = Spec {
-+    flags: &[
-+        ("--release", Arity::Bool),
-+        ("--workspace", Arity::Bool),
-+        ("--all-targets", Arity::Bool),
-+        ("--lib", Arity::Bool),
-+        ("--bins", Arity::Bool),
-+        ("--tests", Arity::Bool),
-+        ("--locked", Arity::Bool),
-+        ("--frozen", Arity::Bool),
-+        ("--offline", Arity::Bool),
-+        ("--no-fail-fast", Arity::Bool),
-+        ("--no-run", Arity::Bool),
-+        ("--no-default-features", Arity::Bool),
-+        ("--all-features", Arity::Bool),
-+        ("-p", Arity::Word),
-+        ("--package", Arity::Word),
-+        ("--features", Arity::Word),
-+        ("-F", Arity::Word),
-+        ("--profile", Arity::Word),
-+        ("--run-ignored", Arity::Word),
-+        ("--status-level", Arity::Word),
-+        ("--final-status-level", Arity::Word),
-+        ("--color", Arity::Word),
-+        ("--jobs", Arity::Num),
-+        ("-j", Arity::Num),
-+        ("--test-threads", Arity::Num),
-+    ],
-+    pos: Pos::Operands,
-+    harness: Some(&NEXTEST_FILTERS),
-+    lints: false,
-+};
-+
-+const PYTEST: Spec = Spec {
-+    flags: &[
-+        ("-v", Arity::Bool),
-+        ("-vv", Arity::Bool),
-+        ("-vvv", Arity::Bool),
-+        ("-q", Arity::Bool),
-+        ("-qq", Arity::Bool),
-+        ("-x", Arity::Bool),
-+        ("-s", Arity::Bool),
-+        ("-l", Arity::Bool),
-+        ("--lf", Arity::Bool),
-+        ("--ff", Arity::Bool),
-+        ("--nf", Arity::Bool),
-+        ("--sw", Arity::Bool),
-+        ("--co", Arity::Bool),
-+        ("--collect-only", Arity::Bool),
-+        ("--disable-warnings", Arity::Bool),
-+        ("--no-header", Arity::Bool),
-+   
-```
-
-**File**: `crates/engine/src/core/engine/reviewer.rs` (modified, +19/-2)
-```diff
-@@ -72,10 +72,10 @@ impl ReviewerOutcome {
-         match self {
-             Self::Allow { reason, .. } => Ok(reason),
-             Self::Deny { reason, .. } => Err(ToolError::permission_denied(format!(
--                "Auto-Review guardian denied tool '{tool_name}': {reason}. Do not work around this denial; find a materially safer path or stop."
-+                "Auto-Review guardian denied tool '{tool_name}': {reason}. Do not work around this denial: take a materially safer route that stays inside what the person asked for, or stop and say what you need. If the call is needed as written, the person can switch Permissions to Ask to approve it."
-             ))),
-             Self::Unavailable { reason } => Err(ToolError::permission_denied(format!(
--                "Auto-Review guardian unavailable ({reason}); the call was denied (fail closed). To run it, the person can switch Permissions to Full Access, or to Ask where a prompt can be answered."
-+                "Auto-Review guardian unavailable ({reason}); the call was denied (fail closed). Try again once the reviewer is reachable, or the person can switch Permissions to Ask where a prompt can be answered."
-             ))),
-             Self::Cancelled => Err(ToolError::cancelled(
-                 "Auto-Review guardian request cancelled",
-@@ -368,6 +368,23 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn block_texts_name_a_way_forward_without_full_access() {
-+        for outcome in [
-+            ReviewerOutcome::Deny {
-+                risk: ReviewerRiskLevel::High,
-+                reason: "writes outside the workspace".to_string(),
-+            },
-+            ReviewerOutcome::Unavailable {
-+                reason: "timeout".to_string(),
-+            },
-+        ] {
-+            let text = outcome.into_tool_result("bash").unwrap_err().to_string();
-+            assert!(text.contains("Permissions to Ask"), "{text}");
-+            assert!(!text.contains("Full Access"), "{text}");
-+        }
-+    }
-+
-     #[tokio::test]
-     async fn reviewer_cancellation_aborts_without_calling_provider() {
-         let mock = MockLlmClient::new(Vec::new());
-```
-
-**File**: `crates/engine/src/core/engine/tests/test_cases_09.rs` (modified, +36/-0)
-```diff
-@@ -635,6 +635,42 @@ fn exec_shell_scenario() {
- 
-         assert_eq!(decision, None);
-     }
-+    {
-+        let ask_config = EngineConfig {
-+            exec_policy_engine: ask_rule_engine("pytest"),
-+            ..EngineConfig::default()
-+        };
-+        assert_eq!(
-+            exec_shell_ask_rule_decision(
-+                &ask_config,
-+                "exec_shell",
-+                &json!({"command": "pytest tests/smoke.py"}),
-+                Path::new("/repo"),
-+                ApprovalMode::Auto,
-+            ),
-+            Some(ToolAskRuleDecision::Prompt(
-+                "Typed ask rule 'tool=exec_shell command=pytest' requires approval.".to_string()
-+            ))
-+        );
-+
-+        let deny_engine = codewhale_execpolicy::ExecPolicyEngine::new(
-+            vec![],
-+            vec!["pytest".to_string(), "cargo test".to_string()],
-+        );
-+        for command in ["pytest tests/smoke.py", "cargo test --workspace"] {
-+            let decision = exec_shell_ask_rule_decision_for_policy(
-+                &deny_engine,
-+                "exec_shell",
-+                &json!({"command": command}),
-+                Path::new("/repo"),
-+                ApprovalMode::Auto,
-+            );
-+            assert!(
-+                matches!(decision, Some(ToolAskRuleDecision::Block(_))),
-+                "{command}: {decision:?}"
-+            );
-+        }
-+    }
- }
- 
- #[test]
++- **`show_data` charts tell the truth at the edges:** a small value such as `0.004` is no longer shown, or reported back to the model, as `0`; a trend with more points than the chart is wide keeps its spikes and dips instead of skipping them; a bar for any value above zero is always visible; and on a narrow terminal the label is shortened before the number is.
+ - **Worktree-side renames in the Runtime API:** `GET /v1/git` and `GET /v1/changes` now show the source of a rename in the worktree column that leaves the workspace as a `deleted` row, as they already did for a staged rename; a copy is still never shown that way. Thanks [@SparkofSpike](https://github.com/SparkofSpike) (#7325).
+ - **Multiline XML tool arguments:** a text-fallback tool call whose parameter value, in either the `<parameter name=...>` or the `<key>` form, contains a newline, such as multiline `write_file` content, no longer arrives with empty arguments. Thanks [@Ricardo-M-L](https://github.com/Ricardo-M-L) (#7341).
+ - **Assignments inside CLI argument values:** the fallback tool-call parser no longer invents an extra parameter from text inside a `--argument` value, so `--command "MODE=dev node app.js"` stays one command. Thanks [@Ricardo-M-L](https://github.com/Ricardo-M-L) (#7342).
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - **Multi-task background shell waiting (`task_shell_wait`):** `task_shell_wait` now accepts `task_ids` and `until` (`any` or `all`) to poll or wait on multiple background shell commands together while keeping `task_id` for single-task waits, `cancel=true`, and `gate` evidence.
- - **Sub-agent file edits across `/undo`:** Settled child sub-agent workspace writes (including `file_path` / `filePath` aliases and `File` tool actions) are now attributed to their parent turn across live turns, `/resume`, `/branch`, and runtime threads, so `/undo` restores delegated sub-agent edits together while still refusing when unattributed edits occurred during the turn or delegated work is still running.
-+- **Auto-Review test and build runs:** Common workspace test and build commands (for example `python3 -m unittest`, `pytest`, `npm test`, `go test`, and `cargo clippy`), including forms ending in `2>&1` or `>/dev/null` and a trailing `head`, `tail`, or literal `grep` filter, now run in Auto-Review without escalation, and Auto-Review block messages explain how to take a safer route or switch Permissions to Ask. (CW-8148)
- - **Unmodified DSH plugin compatibility (`CW-8020`):** Admitted unmodified `@deepseek-ai/dsh-*` plugins end-to-end with grant-gated host-service bridges (`workspace`, `llm`, `credentials`, `settings`, `pluginManager`, `deepseekAccount`, `terminal`, `remote`), 9 `host-spine` row bridges, inert/mixed `@deepseek-ai/dsh-agent-presets` handling alongside executable composition rows, duplicate-key `package.json` parsing, sanitized manifest descriptions, a `16,384`-file / `256 MiB` bundle budget, and reviewed `registry.npmjs.org` transitive dependency staging during conversion.
- - **Receipt edit line counts:** `/receipts` and session summaries now count `edit_file` additions and deletions using a line diff of each search/replace pair instead of counting every line of both texts, matching `git diff --stat` and edit cards (with multi-edit calls summed per pair). (CW-8147)
- - **Featured provider disclosure line:** `/provider` and the model picker now show the localized referral disclosure directly below the featured OrcaRouter row across widths (and hide the row when both cannot fit above the list), while keeping `zh-Hans` and mainland China sessions hidden. (CW-8149)
+ ## [Unreleased]
+ 
++- **`show_data` charts tell the truth at the edges:** a small value such as `0.004` is no longer shown, or reported back to the model, as `0`; a trend with more points than the chart is wide keeps its spikes and dips instead of skipping them; a bar for any value above zero is always visible; and on a narrow terminal the label is shortened before the number is.
+ - **Worktree-side renames in the Runtime API:** `GET /v1/git` and `GET /v1/changes` now show the source of a rename in the worktree column that leaves the workspace as a `deleted` row, as they already did for a staged rename; a copy is still never shown that way. Thanks [@SparkofSpike](https://github.com/SparkofSpike) (#7325).
+ - **Multiline XML tool arguments:** a text-fallback tool call whose parameter value, in either the `<parameter name=...>` or the `<key>` form, contains a newline, such as multiline `write_file` content, no longer arrives with empty arguments. Thanks [@Ricardo-M-L](https://github.com/Ricardo-M-L) (#7341).
+ - **Assignments inside CLI argument values:** the fallback tool-call parser no longer invents an extra parameter from text inside a `--argument` value, so `--command "MODE=dev node app.js"` stays one command. Thanks [@Ricardo-M-L](https://github.com/Ricardo-M-L) (#7342).
 ```
 
-**File**: `docs/MODES.md` (modified, +4/-1)
+**File**: `vendor/codewhale-ratatui/CHANGELOG.md` (modified, +9/-0)
 ```diff
-@@ -250,7 +250,10 @@ Legacy note: `/set approval_mode ...` was retired in favor of `/config`.
-   presence signal (`owner_present`), neither of which can be supplied by a
-   host or request field. Two layers decide approvals. The **deterministic
-   floor** (configured block rules plus the built-in safety floor) allows
--  proven-safe calls, hard-blocks publish-like actions and destructive
-+  proven-safe calls (including explicit routine workspace test and build
-+  commands with trailing `2>&1` or `>/dev/null` and a single `head`, `tail`,
-+  or literal `grep` filter, unless excluded by discard flags or your own rules),
-+  hard-blocks publish-like actions and destructive
-   unattended work (`Background`, `Headless`, or any turn where `owner_present`
-   is false), and holds critical-path deletions (filesystem root, home folder,
-   the project root or any ancestor of it, and `.git` folders) so interactive
+@@ -2,6 +2,15 @@
+ 
+ ## Unreleased — 0.2.0
+ 
++- The Ocean column's waiting, approval and failure tints now ease off near the
++  surface where they would push `Hint` below 4.5:1 or `Dim` below 3:1, for a
++  ramp built with `OceanRamp::for_theme`; deeper rows keep the full warm tint.
++- Data displays stay honest at the edges. `data_number` no longer prints a
++  small value as `0` or `-0` (`0.0042`, `4.2e-7`) and rounds across a unit
++  (`999950` is `1M`, with a `T` tier). A `DataTrend` with more points than
++  dot columns draws each column from its lowest to its highest value, so a
++  spike is never dropped. A `DataBars` value above zero always draws at least
++  an eighth of a cell, and a narrow row cuts the label before the value.
+ - Add data displays: `DataSparkline`, `DataBars` and `DataTrend` (a braille
+   line chart). The words carry every value; the ink draws in from a caller
+   progress (`MotionStep::drawn`) and is at its end state under reduced or
 ```
 
-**File**: `docs/zh_hans/MODES.md` (modified, +1/-1)
+**File**: `vendor/codewhale-ratatui/UPSTREAM.json` (modified, +8/-6)
 ```diff
-@@ -111,7 +111,7 @@ Codewhale 在跨进程的锁下写入 `settings.toml`，并以原子方式替换
- 
- - `ask`（**Ask**；内部为 `suggest`）：工具审批可能打断你；当一个尚未解决的用户选择会实质性改变权限、成本、范围或结果时，Codewhale 会询问你。每次文件编辑和每条命令都会询问，包括工作区内的编辑。
- - `accept-edits`（**Accept Edits**，默认；线上值 `accept_edits`）：与 Ask 相同，但所有目标都在工作区 git 工作树内的文件编辑无需卡片即可运行。对 `.git` 内部、`.codewhale`、`.env*`、凭据和密钥文件的编辑始终询问；在没有 git 的文件夹里，每次编辑也都询问（卡片会说明该文件夹没有仓库）。命令、网络、MCP 操作和文件夹外的任何操作都与 Ask 一样询问；ask 规则、hook、仓库规则和安全底线仍会强制弹出卡片。这对应 Claude Code 的 `acceptEdits`。ACP 会话按 Ask 运行它，因为 ACP 回合从不应用文件夹内编辑规则。
--- `auto`（**Auto-Review**）：自动审查工具调用。在交互式会话中，模型仍可通过 `request_user_input` 有意向用户提问；问题会挂起回合，直到用户回答、取消，或配置的超时到期。无头 `exec` 没有应答方，因此不提供这个工具。工具安全拦截与向用户提问是分开的。每个回合都带有引擎铸造的运行来源（仅当由已附着所有者界面的 TUI 输入框或已登录所有者运行时界面直接发起或引导时为 `Interactive`；`exec` 和 ACP 回合包括 `approval_policy = "auto"` 在内均为 `Headless`；分离启动、分离式子智能体、定时任务、自动化及延迟的 `send_later` 回合均为 `Background`）和所有者在场标志（`owner_present`），宿主或请求字段永远不能指定这两项。审批由两层决定。**确定性底线**（配置的阻断规则加内置安全底线）放行已证明安全的调用，对发布类操作以及非交互或无人值守的破坏性操作（`Background`、`Headless` 或 `owner_present` 为假的回合）直接硬阻断，并拦截关键路径删除（文件系统根目录、主文件夹、项目根目录或其任意上层目录以及 `.git` 目录），在有所有者在场的交互式会话中会询问你，在无人值守或无头会话中则直接拒绝；这一层从不由模型审查，也不会在其余拦截或无人值守操作上等待审批卡片。回退拦截——确定性引擎无法证明安全的调用——会升级给一次性的**模型守护者**（v0.9.8），由它返回风险级别、允许/拒绝和理由。守护者在各自独立的 JSON 字段中看到被拦截的确切调用和确定性观察；对话历史、技能指令、附件和展开的模型上下文都被排除在外。它不推断用户意图，也不计算通用的用户意图分数。高风险或严重风险即使模型判定允许，也不能自动运行。它没有工具，不记规则，遇到过大的确切调用会拒绝而不是截断。恰好只发出一次审查请求；输出不完整或格式错误、超时、取消或提供商失败，都会失败关闭（fail closed）。同一回合内，守护者连续拒绝三次，或在本回合最近五十次审查中拒绝达到十次，回合就会以“已中断”结束并显示一条状态行；同一批次中剩余的调用不再审查，直接拒绝。只有明确的拒绝才计数（超时或失败不算），一次放行会让连续拒绝重新计数，每个回合从零开始计数，子智能体按它自己的回合计数。无头 `exec` 回合在将无人值守破坏性操作交给确定性规则的同时，仍会对回退的非破坏性拦截咨询模型守护者；ACP 回合只使用确定性层并拒绝守护者审查。当 `owner_present` 为真（交互式 TUI 或所有者运行时界面回合）且未命中硬阻断（`hidden_unicode` 或配置的 `auto_review.block` 规则）时，强制提示（带类型 `permissions.toml` 的 `ask` 规则、`tool_call_before` 钩子的 `ask`、Computer Use 同意与脚本卡片等仅限提示工具、明确要求人工参与的仓库规则拦截，以及强制提示的扩展调用）会弹出正常的审批卡片，而不再被跳过或失败关闭（在运行时线程上，只有所有者界面 `desktop`、`tui` 或 `web` 可以回答这类卡片）。当 `owner_present` 为假（`Background`、`Headless` 或未附着回合）时，无人值守与无头回合绝不弹出审批卡片，强制提示会点名该规则拒绝且不登记待决审批，明确要求由人来决定的仓库规则拦截也会直接阻断。
-+- `auto`（**Auto-Review**）：自动审查工具调用。在交互式会话中，模型仍可通过 `request_user_input` 有意向用户提问；问题会挂起回合，直到用户回答、取消，或配置的超时到期。无头 `exec` 没有应答方，因此不提供这个工具。工具安全拦截与向用户提问是分开的。每个回合都带有引擎铸造的运行来源（仅当由已附着所有者界面的 TUI 输入框或已登录所有者运行时界面直接发起或引导时为 `Interactive`；`exec` 和 ACP 回合包括 `approval_policy = "auto"` 在内均为 `Headless`；分离启动、分离式子智能体、定时任务、自动化及延迟的 `send_later` 回合均为 `Background`）和所有者在场标志（`owner_present`），宿主或请求字段永远不能指定这两项。审批由两层决定。**确定性底线**（配置的阻断规则加内置安全底线）放行已证明安全的调用（包括明确列入例行范围的工作区测试与构建命令，含末尾的 `2>&1` 或 `>/dev/null` 及单个 `head`、`tail` 或字面 `grep` 过滤，除非被丢弃改动标志或你自己的规则拦截），对发布类操作以及非交互或无人值守的破坏性操作（`Background`、`Headless` 或 `owner_present` 为假的回合）直接硬阻断，并拦截关键路径删除（文件系统根目录、主文件夹、项目根目录或其任意上层目录以及 `.git` 目录），在有所有者在场的交互式会话中会询问你，在无人值守或无头会话中则直接拒绝；这一层从不由模型审查，也不会在其余拦截或无人值守操作上等待审批卡片。回退拦截——确定性引擎无法证明安全的调用——会升级给一次性的**模型守护者**（v0.9.8），由它返回风险级别、允许/拒绝和理由。守护者在各自独立的 JSON 字段中看到被拦截的确切调用和确定性观察；对话历史、技能指令、附件和展开的模型上下文都被排除在外。它不推断用户意图，也不计算通用的用户意图分数。高风险或严重风险即使模型判定允许，也不能自动运行。它没有工具，不记规则，遇到过大的确切调用会拒绝而不是截断。恰好只发出一次审查请求；输出不完整或格式错误、超时、取消或提供商失败，都会失败关闭（fail closed）。同一回合内，守护者连续拒绝三次，或在本回合最近五十次审查中拒绝达到十次，回合就会以“已中断”结束并显示一条状态行；同一批次中剩余的调用不再审查，直接拒绝。只有明确的拒绝才计数（超时或失败不算），一次放行会让连续拒绝重新计数，每个回合从零开始计数，子智能体按它自己的回合计数。无头 `exec` 回合在将无人值守破坏性操作交给确定性规则的同时，仍会对回退的非破坏性拦截咨询模型守护者；ACP 回合只使用确定性层并拒绝守护者审查。当 `owner_present` 为真（交互式 TUI 或所有者运行时界面回合）且未命中硬阻断（`hidden_unicode` 或配置的 `auto_review.block` 规则）时，强制提示（带类型 `permissions.toml` 的 `ask` 规则、`tool_call_before` 钩子的 `ask`、Computer Use 同意与脚本卡片等仅限提示工具、明确要求人工参与的仓库规则拦截，以及强制提示的扩展调用）会弹出正常的审批卡片，而不再被跳过或失败关闭（在运行时线程上，只有所有者界面 `desktop`、`tui` 或 `web` 可以回答这类卡片）。当 `owner_present` 为假（`Background`、`Headless` 或未附着回合）时，无人值守与无头回合绝不弹出审批卡片，强制提示会点名该规则拒绝且不登记待决审批，明确要求由人来决定的仓库规则拦截也会直接阻断。
- 
- LLM 审查器最接近 OpenAI Codex 的实验性 Auto-Review，对应提交 [`6fc6b9d6d2580d62622fc9884b5f5707f6505a5e`](https://github.com/openai/codex/tree/6fc6b9d6d2580d62622fc9884b5f5707f6505a5e)。Codex 的 [guardian 入口点](https://github.com/openai/codex/blob/6fc6b9d6d2580d62622fc9884b5f5707f6505a5e/codex-rs/core/src/guardian/mod.rs)重建对话上下文并运行专门的审查会话。Codewhale 有意只采用其中四点：针对确切动作的结构化决策、90 秒截止时间、失败关闭的结果，以及按回合计数的拒绝熔断。它不复制 Codex 的对话记录重建、用户授权分数、审查器工具、重试、持久审查会话或拒绝台账。
- 
+@@ -260,8 +260,8 @@
+     }
+   },
+   "runtime_update": {
+-    "commit": "1d061703691c9130724f58eebfe7060a5fc019ca",
+-    "scope": "Selected generic widget fixes, measured ocean themes and caller-clock water drift from standalone; chart, roles and theme verified already matching. Standalone tooling, gallery export and repository-only tests are outside this source synchronization.",
++    "commit": "e8c2746e4b93070ebeac41a064dde3d362cb975d",
++    "scope": "Selected generic widget fixes, measured ocean themes and caller-clock water drift from standalone; roles and theme verified already matching; data-display honesty fixes (chart), Ocean quiet-ink floors in for_theme, and the crate-private is_truecolor used by motion. Standalone tooling, gallery export and repository-only tests are outside this source synchronization.",
+     "files": {
+       "src/components/instrument.rs": "468280c9c5be4d1244ef1601784d11d9956b2e1d36c9f671618404fbb010c77a",
+       "src/components/list.rs": "8f4b8d7220202b49e6a6fb17e4d587123e538ce90d03fbe0c16c3776765a0e34",
+@@ -270,13 +270,15 @@
+       "src/components/segmented.rs": "a148c79c1d6d214c6b28ed0ac5ab7f669805d0d6a41250efc56632da9b39eb62",
+       "src/components/tabs.rs": "2e18bc604786f5403e1491e50322e0bf771fa70389ef34347528ae8bef6afa44",
+       "src/components/surface.rs": "fcdec44734d0bdc2db69dad41dd9c88f018003b128927f9d59c4d7536cb9e6c0",
+-      "src/ocean.rs": "194a7ade34b6fac7d8ad471f4bfcb04d3ae88a9c4f63f51bc4627c5edfc0183e",
++      "src/ocean.rs": "62eff5da97dab3e5939e7e425ac6922bf2cd309be3caaa128052f89c4bcbd4ff",
+       "src/ombre.rs": "7356cc1c7b9af444f8272817d57cbaaa8133bfd2689220a1a794dfaf0d897fda",
+-      "src/components/chart.rs": "77759af13c4d2b7ffadee5dae8e4849ec3ed637741cf9dd29764edcff625cc82",
+-      "src/gallery/chart.rs": "98e3c20e26e06744e09750209bc627b3c21204d6fb9022883ac5b5f856953175",
++      "src/components/chart.rs": "692f3f8725ca467df27fe16545ed39573c8ad8bd597dafe6596c61bd75e117b4",
++      "src/gallery/chart.rs": "dc0832242654174b36f90e35a761900d2b28156ba463bdd00a52741f1f467eda",
+       "examples/data.rs": "633ee3f3786ec5053b98a50cc72b2b44d68ba41a9eedba56a58504f04881670a",
+       "src/roles.rs": "2ac8760785aa0a83daeb89c32e7dec259dbae358e9a80426900c83e606f8fa79",
+-      "src/theme.rs": "ac3851f676511b494bfb3a9e680d016daff1c85a20ced8ff4b4eba6f115f9f21"
++      "src/theme.rs": "ac3851f676511b494bfb3a9e680d016daff1c85a20ced8ff4b4eba6f115f9f21",
++      "src/color.rs": "e63bfde21ec7197d6d955f689eea8790797a1df9fdb43c25950e6d82534eb551",
++      "src/components/motion.rs": "7b41b6616ff61513d098cd2710a5912d8bece9704d8fdc6c0e8dbb5a5f158251"
+     },
+     "retained_engine_adaptations": {
+       "src/components/workbar.rs": {
 ```
 
----
-
-### Incident Patch 3: `dbaa2007` (2026-11-14)
-**Commit Message**: feat(engine,app-server,tui): route forced prompts to interactive owner in Auto-Review (CW-8170)
-
-Route forced human-decision prompts in ApprovalMode::Auto to the live
-owner surface instead of auto-denying or consulting the guardian when an
-interactive owner is present, while keeping unattended turns fail-closed
-without registering pending approvals:
-
-- Core authority and tool preparation (authority.rs, core/engine.rs,
-  tool_preparation.rs, tools/spec.rs): propagate RunOrigin owner
-  presence through TurnAuthority and ToolExecutionState, and prompt in
-  resolve_approval_request_disposition only when ApprovalMode::Auto has
-  both approval_force_prompt and owner_present. Keep Ask, Accept Edits,
-  Plan, Full Access, and Never unchanged.
-- Turn loop (turn_loop.rs): honor owner_can_prompt for typed
-  permissions.toml ask rules, tool_call_before hook ask decisions,
-  RepoLawPlanDecision::ForcePrompt (evaluated before
-  AutoReviewPlanDecision::ConsultReviewer while keeping hard blocks
-  fail-closed), Computer Use consent/script holds, and forced extension
-  prompts; refuse naming the rule when unattended.
-- Runtime threads and app-server API (runtime_threads/manager.rs,
-  runtime_api.rs, 
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `vendor/codewhale-ratatui/src/color.rs` (modified, +5/-0)
 ```diff
-@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Conversation mode in the terminal:** In the terminal, `/new creator` starts a conversation in Creator mode, and the `/mode` picker lists Standard mode and Creator mode first. A conversation's mode is fixed after its first message and shown on screen when it is not Standard. `codewhale` and `codewhale exec` take `--conversation-mode`. Creator mode stays unavailable, with the reason, until this build can load it.
- - **Auto-Review critical paths:** deleting the home folder, the project folder, a parent of it or a .git folder in Auto-Review always asks you, and is refused when nobody is there to ask.
- - **`--permission-mode` and managed `auto_review.disabled`:** `codewhale` and `codewhale exec` accept `--permission-mode <ask|accept-edits|plan|auto-review|full-access>` (while `codewhale exec --auto` keeps selecting Full Access). Setting `[auto_review] disabled = true` in managed configuration replaces the user `[auto_review]` table, omits Auto-Review from the `Shift+Tab` cycle and permission dial, ignores a saved Auto-Review posture, and refuses `--permission-mode auto-review`, `/auto`, `/config approval_mode`, and `approval_policy = "auto"`. (CW-8168)
-+- **Auto-Review forced prompts:** interactive sessions and owner-attached runtime threads in Auto-Review now show the normal approval card for forced holds (typed `permissions.toml` `ask` rules, `tool_call_before` hook `ask`, Computer Use consent and script cards, repository-law holds that require a person, and forced extension prompts) instead of blocking or consulting the guardian, with runtime thread cards answerable only by the owner's surface while hard blocks still deny and unattended `Background`/`Headless` turns still refuse without registering a pending approval. (CW-8170)
- - **Plugin service hardening (terminals, remote pairing, network):** plugin background terminal sessions enforce the per-plugin cap inside the shared session registry after approval waits and close when the plugin owner is revoked or disabled (CW-8051); plugin remote pairing and status serve reviewed plugins only, refuse child-agent and stale requests, validate pairing labels and one-time loopback redemption through host secrets, and keep `remote` in the refused Cordis service and inspect catalogs (CW-8000); plugin network credentials are bound to a single `https` origin per plugin build in a private credential file, check live session posture and destination guards before egress, serialize first-send confirmation per site through `plugin_network_send`, and scrub returned URLs, headers and bodies before returning to plugins (CW-7979).
- - **Auto-Review unattended runs:** tasks, automations, delayed messages and exec runs in Auto-Review follow the unattended rules: they never wait for an approval card.
- - **DeepSeek Tools ASR, TTS, OCR, and uploaded runtime voice endpoints:** integrates DeepSeek Tools `/v1/tools/asr`, `/v1/tools/tts` (`stella` / `tide`, `wav` / `pcm`), and opt-in `/v1/tools/ocr` fallback (`CODEWHALE_DEEPSEEK_OCR=1`); adds recorder-free `POST /v1/voice/transcribe` and `POST /v1/voice/tts` runtime HTTP routes plus `upload_available`, `tts_available`, `max_upload_bytes`, and `tts_voices` capability flags on `GET /v1/voice`, and enables DeepSeek in `SpeechTool` and CLI `speech`. (CW-8218)
-```
-
-**File**: `crates/app-server/src/runtime_api.rs` (modified, +38/-1)
-```diff
-@@ -7026,9 +7026,12 @@ async fn list_approvals(
- 
- async fn decide_approval(
-     State(state): State<RuntimeApiState>,
-+    axum::Extension(auth_caller): axum::Extension<auth::RuntimeAuthCaller>,
-     Path(approval_id): Path<String>,
-     Json(req): Json<DecideApprovalBody>,
- ) -> Result<Json<DecideApprovalResponse>, ApiError> {
-+    use codewhale_engine::runtime_threads::manager::ApprovalResponder;
-+
-     let decision = match req.decision.as_str() {
-         "allow" => ExternalApprovalDecision::Allow {
-             remember: req.remember,
-@@ -7042,8 +7045,38 @@ async fn decide_approval(
-             )));
-         }
-     };
-+    let responder = match auth_caller {
-+        auth::RuntimeAuthCaller::MasterOrLocal => req.client,
-+        auth::RuntimeAuthCaller::WebSession => match req.client {
-+            None | Some(ApprovalResponder::Web) => Some(ApprovalResponder::Web),
-+            Some(_) => {
-+                return Err(
-+                    ApiError::forbidden("web session cannot claim another client surface")
-+                        .with_code("owner_required"),
-+                );
-+            }
-+        },
-+        auth::RuntimeAuthCaller::MobileSession => {
-+            if req.client.is_some_and(ApprovalResponder::is_owner_surface) {
-+                return Err(
-+                    ApiError::forbidden("only the owner surface may answer this approval")
-+                        .with_code("owner_required"),
-+                );
-+            }
-+            Some(ApprovalResponder::Phone)
-+        }
-+        auth::RuntimeAuthCaller::DeviceClient => {
-+            if req.client.is_some_and(ApprovalResponder::is_owner_surface) {
-+                return Err(
-+                    ApiError::forbidden("only the owner surface may answer this approval")
-+                        .with_code("owner_required"),
-+                );
-+            }
-+            req.client
-+        }
-+    };
-     Ok(Json(
--        settle_approval_request(&state, approval_id, None, decision, req.client).await?,
-+        settle_approval_request(&state, approval_id, None, decision, responder).await?,
-     ))
- }
- 
-@@ -7083,6 +7116,10 @@ async fn settle_approval_request_in_workspace(
-                 .is::<codewhale_engine::runtime_threads::manager::ApprovalBindingMismatch>()
-             {
-                 ApiError::forbidden(error.to_string())
-+            } else if error
-+                .is::<codewhale_engine::runtime_threads::manager::ApprovalOwnerRequired>()
-+            {
-+                ApiError::forbidden(error.to_string()).with_code("owner_required")
-             } else if error
-                 .downcast_ref::<std::io::Error>()
-                 .is_some_and(|error| error.kind() == std::io::ErrorKind::AlreadyExists)
-```
-
-**File**: `crates/app-server/src/runtime_api/auth.rs` (modified, +68/-26)
-```diff
-@@ -81,12 +81,21 @@ pub(super) async fn require_host_token(
+@@ -170,6 +170,11 @@ pub fn indexed_rgb(index: u8) -> Option<(u8, u8, u8)> {
      }
  }
  
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(super) enum RuntimeAuthCaller {
-+    MasterOrLocal,
-+    DeviceClient,
-+    WebSession,
-+    MobileSession,
++#[must_use]
++pub(crate) const fn is_truecolor(color: Color) -> bool {
++    matches!(color, Color::Rgb(..))
 +}
 +
- pub(super) async fn require_runtime_token(
-     State(state): State<RuntimeApiState>,
--    req: Request,
-+    mut req: Request,
-     next: Next,
- ) -> Response {
--    if runtime_request_is_authorized(&req, &state) {
-+    if let Some(caller) = resolve_runtime_auth_caller(&req, &state) {
-+        req.extensions_mut().insert(caller);
-         next.run(req).await
-     } else if request_bearer(&req)
-         .is_some_and(|token| state.computer.client_principal(token).is_some())
-@@ -102,31 +111,64 @@ pub(super) async fn require_runtime_token(
- }
- 
- pub(super) fn runtime_request_is_authorized(req: &Request, state: &RuntimeApiState) -> bool {
--    let Some(expected) = state.runtime_token.as_deref() else {
--        return true;
--    };
--    if request_has_header_runtime_token(req, expected) {
--        return true;
--    }
--    // Device tokens carry their immutable mint intent. Watch permits HTTP
--    // reads only; an upgraded GET could otherwise become a write channel.
--    // Computer display/control routes enforce intent in their own handlers.
--    if let Some(principal) =
--        request_bearer(req).and_then(|token| state.computer.client_principal(token))
--    {
--        return client_request_is_authorized(&principal, req);
--    }
--    if state
--        .web
--        .as_ref()
--        .is_some_and(|web| web_session_request_is_authorized(req, state, web))
--    {
--        return true;
-+    resolve_runtime_auth_caller(req, state).is_some()
-+}
-+
-+pub(super) fn resolve_runtime_auth_caller(
-+    req: &Request,
-+    state: &RuntimeApiState,
-+) -> Option<RuntimeAuthCaller> {
-+    if let Some(expected) = state.runtime_token.as_deref() {
-+        if request_has_header_runtime_token(req, expected) {
-+            return Some(RuntimeAuthCaller::MasterOrLocal);
-+        }
-+        // Device tokens carry their immutable mint intent. Watch permits HTTP
-+        // reads only; an upgraded GET could otherwise become a write channel.
-+        // Computer display/control routes enforce intent in their own handlers.
-+        if let Some(principal) =
-+            request_bearer(req).and_then(|token| state.computer.client_principal(token))
-+        {
-+            return client_request_is_authorized(&principal, req)
-+                .then_some(RuntimeAuthCaller::DeviceClient);
-+        }
-+        if state
-+            .web
-+            .as_ref()
-+            .is_some_and(|web| web_session_request_is_authorized(req, state, web))
-+        {
-+            return Some(RuntimeAuthCaller::WebSession);
-+        }
-+        if state
-+            .mobile
-+            .as_ref()
-+            .is_some_and(|mobile| mobile_session_request_is_authorized(req, state, mobile))
-+        {
-+            return Some(RuntimeAuthCaller::MobileSession);
-+        }
-+        None
-+    } else {
-+        if let Some(principal) =
-+            request_bearer(req).and_then(|token| state.computer.client_principal(token))
-+        {
-+            return client_request_is_authorized(&principal, req)
-+                .then_some(RuntimeAuthCaller::DeviceClient);
-+        }
-+        if state
-+            .web
-+            .as_ref()
-+            .is_some_and(|web| web_session_request_is_authorized(req, state, web))
-+        {
-+            return Some(RuntimeAuthCaller::WebSession);
-+        }
-+        if state
-+            .mobile
-+            .as_ref()
-+            .is_some_and(|mobile| mobile_session_request_is_authorized(req, state, mobile))
-+        {
-+            return Some(RuntimeAuthCaller::MobileSession);
-+        }
-+        Some(RuntimeAuthCaller::MasterOrLocal)
-     }
--    state
--        .mobile
--        .as_ref()
--        .is_some_and(|mobile| mobile_session_request_is_authorized(req, state, mobile))
- }
- 
- fn client_request_is_authorized(
-```
-
-**File**: `crates/app-server/src/runtime_api/owner_calls.rs` (modified, +2/-2)
-```diff
-@@ -201,7 +201,7 @@ async fn execute_ordinary(state: RuntimeApiState, request: RuntimeOwnerRequest)
-                 approval_id,
-                 binding.as_ref(),
-                 decision,
--                None,
-+                Some(codewhale_engine::runtime_threads::manager::ApprovalResponder::Desktop),
-             )
-             .await)?;
-             serde_json::to_value(value)?
-@@ -493,7 +493,7 @@ async fn execute_native(
-                     params.approval_id,
-                     Some(&binding),
-                     decision,
--                    None,
-+                    Some(codewhale_engine::runtime_threads::manager::ApprovalResponder::Desktop),
-                     Some(&selected),
-                 )
-                 .await,
-```
-
-**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +225/-5)
-```diff
-@@ -1136,6 +1136,7 @@ async fn spawn_test_server_with_root_token_mobile_workspace(
- 
- #[derive(Default)]
- struct TestServerOverrides {
-+    owner_host: bool,
-     state_handle: Option<oneshot::Sender<RuntimeApiState>>,
-     automation_handles: Option<
-         oneshot::Sender<(
-@@ -1426,16 +1427,33 @@ async fn build_test_server(
-         sessions_dir: Some(sessions_dir.clone()),
-         max_active_threads: overrides.max_active_threads.unwrap_or(8),
-     };
--    let runtime_threads: SharedRuntimeThreadManager =
--        Arc::new(match overrides.plugin_discovery.as_ref() {
--            Some(discovery) => RuntimeThreadManager::open_with_plugin_registry(
-+    let runtime_threads: SharedRuntimeThreadManager = Arc::new(
-+        match (overrides.owner_host, overrides.plugin_discovery.as_ref()) {
-+            (true, discovery) => {
-+                let plugins = match discovery {
-+                    Some(discovery) => discovery.registry_for_workspace(&workspace),
-+                    None => Arc::new(codewhale_plugins::PluginRegistry::empty(&workspace)),
-+                };
-+                RuntimeThreadManager::open_owner_host(
-+                    config.clone(),
-+                    workspace.clone(),
-+                    manager_config,
-+                    plugins,
-+                    None,
-+                    None,
-+                )?
-+            }
-+            (false, Some(discovery)) => RuntimeThreadManager::open_with_plugin_registry(
-                 config.clone(),
-                 workspace.clone(),
-                 manager_config,
-                 discovery.registry_for_workspace(&workspace),
-             )?,
--            None => RuntimeThreadManager::open(config.clone(), workspace.clone(), manager_config)?,
--        });
-+            (false, None) => {
-+                RuntimeThreadManager::open(config.clone(), workspace.clone(), manager_config)?
-+            }
-+        },
-+    );
-     let sessions_dir = runtime_threads.sessions_dir().to_path_buf();
-     runtime_threads.attach_task_manager(manager.clone());
-     let automations = Arc::new(Mutex::new(AutomationManager::open_for_test(
-@@ -11588,6 +11606,208 @@ async fn mobile_page_serves_shell_when_auth_enabled() -> Result<()> {
-     Ok(())
- }
- 
-+#[tokio::test]
-+async fn auto_review_forced_approval_rejects_non_owner_clients_on_http_api() -> Result<()> {
-+    let tmp = tempfile::tempdir()?;
-+    let root = tmp.path().to_path_buf();
-+    let sessions_dir = root.join("sessions");
-+    let workspace = root.join("workspace");
-+    let token = "owner-only-runtime-test-token".to_string();
-+    let (web_state, web_nonce) = web::RuntimeWebState::new();
-+    let (mobile_state, mobile_nonce) = mobile::RuntimeMobileState::new();
-+    let Some((addr, runtime_threads, handle)) =
-+        spawn_test_server_with_root_token_mobile_workspace_and_overrides(
-+            root,
-+            sessions_dir,
-+            Some(token.clone()),
-+            true,
-+            workspace,
-+            TestServerOverrides {
-+                owner_host: true,
-+                web: Some(web_state),
-+                mobile: Some(mobile_state),
-+                ..TestServerOverrides::default()
-+            },
-+        )
-+        .await?
-+    else {
-+        return Ok(());
-+    };
-+    assert!(runtime_threads.is_owner_surface_attached_for_test());
-+    let origin = format!("http://{addr}");
-+    let client = codewhale_release::tls::reqwest_client_builder()
-+        .redirect(reqwest::redirect::Policy::none())
-+        .build()?;
-+
-+    let drive_token_resp: Value = client
-+        .post(format!("{origin}/v1/auth/client-tokens"))
-+        .bearer_auth(&token)
-+        .json(&json!({
-+            "device_id": "paired-drive-device",
-+            "intent": "drive"
-+        }))
-+        .send()
-+        .await?
-+        .error_for_status()?
-+        .json()
-+        .await?;
-+    let drive_token = drive_token_resp["token"]
-+        .as_str()
-+        .context("drive token")?
-+        .to_string();
-+
-+    let web_exchange = client
-+        .get(format!("{origin}/__codewhale/bootstrap/{web_nonce}"))
-+        .send()
-+        .await?;
-+    assert_eq!(web_exchange.status(), StatusCode::SEE_OTHER);
-+    let web_proof = web_exchange
-+        .headers()
-+        .get(header::LOCATION)
-+        .and_then(|v| v.to_str().ok())
-+        .and_then(|loc| loc.strip_prefix("/#p="))
-+        .context("web proof")?
-+        .to_string();
-+    let web_cookie = web_exchange
-+        .headers()
-+        .get(header::SET_COOKIE)
-+        .and_then(|v| v.to_str().ok())
-+        .and_then(|s| s.split(';').next())
-+        .context("web cookie")?
-+        .to_string();
-+
-+    let mobile_exchange = client
-+        .get(format!(
-+            "{origin}/__codewhale/mobile/bootstrap/{mobile_nonce}"
-+        ))
-+        .send()
-+        .await?;
-+    assert_eq!(mobile_exchange.status(), StatusCode::SEE_OTHER);
-+    let mobile_fragment = mobile_exchange
-+        .headers()
-+        .get(header::LOCATION)
-+        .and_t
-```
-
-**File**: `crates/engine/src/core/authority.rs` (modified, +143/-9)
-```diff
-@@ -721,8 +721,9 @@ pub enum ApprovalRequestDisposition {
-     /// A forced (non-bypassable) policy hold arrived under a full-access
-     /// posture that opens no modal: fail closed.
-     AutoDenyFullAccessPolicyHold,
--    /// Auto-Review is autonomous: unresolved holds fail closed instead of
--    /// opening a user-approval modal.
-+    /// Auto-Review runs autonomously when no owner surface is present or no
-+    /// forced prompt requires the person: unresolved non-forced holds fail
-+    /// closed instead of opening a user-approval modal.
-     AutoDenyAutoReview,
-     /// approval_mode=Never: deny without a modal.
-     AutoDenyNeverPosture,
-@@ -734,12 +735,14 @@ pub enum ApprovalRequestDisposition {
- ///
- /// `session_approved` / `session_denied` are the caller's lookups into the
- /// session approval caches (grouping key or tool name / exact approval key).
--/// The branch order: session denial, then the Auto-Review hold, then the
--/// full-access policy-hold denial, then the `Never` denial — the live posture
--/// wins over any remembered grant (approvals J) — then auto-approval (full
--/// access or a session grant), and only finally a modal. Extension-origin
--/// forced calls reach that modal even under Full Access; no remembered grant
--/// can satisfy them. `extension_origin` comes from Rust-minted approval keys,
-+/// The branch order: session denial, then Auto-Review (which prompts only when
-+/// `approval_force_prompt && authority.owner_present()`, and otherwise fails
-+/// closed), then the full-access policy-hold denial, then the `Never` denial —
-+/// the live posture wins over any remembered grant (approvals J) — then
-+/// auto-approval (full access or a session grant), and only finally a modal.
-+/// Extension-origin forced calls reach that modal under Full Access and
-+/// interactive Auto-Review with the owner present; no remembered grant can
-+/// satisfy them. `extension_origin` comes from Rust-minted approval keys,
- /// never an extension label or a claim supplied by the host.
+ /// The RGB a color is *known* to render as, or `None` when the terminal owns
+ /// the decision (`Reset`, named colors, indices 0..=15).
  #[must_use]
- pub fn resolve_approval_request_disposition(
-@@ -753,7 +756,11 @@ pub fn resolve_approval_request_disposition(
-         return ApprovalRequestDisposition::AutoDenySessionDenied;
+```
+
+**File**: `vendor/codewhale-ratatui/src/components/chart.rs` (modified, +140/-46)
+```diff
+@@ -71,38 +71,58 @@ impl Default for DataWords {
      }
-     if authority.approval_mode_for_session() == ApprovalMode::Auto {
--        return ApprovalRequestDisposition::AutoDenyAutoReview;
-+        return if approval_force_prompt && authority.owner_present() {
-+            ApprovalRequestDisposition::Prompt
+ }
+ 
+-/// A short form of `value`: `42`, `3.14`, `12.4k`, `1.2M`.
++/// A short form of `value`: `42`, `3.14`, `0.0042`, `12.4k`, `1.2M`.
++///
++/// A value that is not zero never reads as `0`: small values keep two
++/// significant digits and the smallest and largest use an exponent.
+ #[must_use]
+ pub fn data_number(value: f64) -> String {
++    const TIERS: [(f64, f64, &str); 5] = [
++        (1.0, 1e4, ""),
++        (1e3, 1e6, "k"),
++        (1e6, 1e9, "M"),
++        (1e9, 1e12, "B"),
++        (1e12, 1e15, "T"),
++    ];
+     if !value.is_finite() {
+         return "?".to_owned();
+     }
+     if value == 0.0 {
+         return "0".to_owned();
+     }
+     let a = value.abs();
+-    let (scaled, suffix) = if a >= 1e9 {
+-        (value / 1e9, "B")
+-    } else if a >= 1e6 {
+-        (value / 1e6, "M")
+-    } else if a >= 1e4 {
+-        (value / 1e3, "k")
+-    } else {
+-        (value, "")
+-    };
+-    let s = if scaled.abs() >= 100.0 {
+-        format!("{scaled:.0}")
+-    } else if scaled.abs() >= 10.0 {
+-        format!("{scaled:.1}")
+-    } else {
+-        format!("{scaled:.2}")
+-    };
+-    let s = if s.contains('.') {
+-        s.trim_end_matches('0').trim_end_matches('.').to_owned()
+-    } else {
+-        s
++    if a < 1e-4 {
++        return format!("{value:.1e}").replace(".0e", "e");
++    }
++    let trim = |s: String| {
++        if s.contains('.') {
++            s.trim_end_matches('0').trim_end_matches('.').to_owned()
 +        } else {
-+            ApprovalRequestDisposition::AutoDenyAutoReview
++            s
++        }
+     };
+-    format!("{s}{suffix}")
++    if a < 0.1 {
++        let decimals = (1.0 - a.log10().floor()) as usize;
++        return trim(format!("{value:.decimals$}"));
++    }
++    let mut tier = TIERS.iter().position(|t| a < t.1).unwrap_or(TIERS.len());
++    while let Some((unit, next, suffix)) = TIERS.get(tier).copied() {
++        let scaled = value / unit;
++        let s = if scaled.abs() >= 100.0 {
++            format!("{scaled:.0}")
++        } else if scaled.abs() >= 10.0 {
++            format!("{scaled:.1}")
++        } else {
++            format!("{scaled:.2}")
 +        };
-     }
-     // The request exists, so the engine already resolved Prompt for the tool
-     // itself. What remains is the posture question: how does this authority
-@@ -1467,6 +1474,133 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn auto_review_forced_prompts_require_owner_presence_and_preserve_other_modes() {
-+        let ask = TurnAuthority::for_tui_surface(
-+            AppMode::Agent,
-+            false,
-+            false,
-+            false,
-+            ApprovalMode::Suggest,
-+        );
-+        let accept_edits = TurnAuthority::for_tui_surface(
-+            AppMode::Agent,
-+            false,
-+            false,
-+            false,
-+            ApprovalMode::AcceptEdits,
-+        );
-+        let plan =
-+            TurnAuthority::for_tui_surface(AppMode::Plan, false, false, false, ApprovalMode::Auto);
-+        let full_access = TurnAuthority::for_tui_surface(
-+            AppMode::Agent,
-+            false,
-+            false,
-+            true,
-+            ApprovalMode::Bypass,
-+        );
-+        let never = TurnAuthority::for_tui_surface(
-+            AppMode::Agent,
-+            false,
-+            false,
-+            false,
-+            ApprovalMode::Never,
-+        );
-+
-+        let auto_interactive =
-+            TurnAuthority::for_tui_surface(AppMode::Agent, false, false, false, ApprovalMode::Auto);
-+        let auto_attached = authority(AppMode::Agent, false, ApprovalMode::Auto)
-+            .with_rust_origin(RunOrigin::Interactive, true);
-+        let auto_background = authority(AppMode::Agent, false, ApprovalMode::Auto)
-+            .with_rust_origin(RunOrigin::Background, false);
-+        let auto_headless = authority(AppMode::Agent, false, ApprovalMode::Auto);
-+        let auto_interactive_unattached = authority(AppMode::Agent, false, ApprovalMode::Auto)
-+            .with_rust_origin(RunOrigin::Interactive, false);
-+
-+        for owner_present in [&auto_interactive, &auto_attached] {
-+            for is_extension in [false, true] {
-+                for session_approved in [false, true] {
-+                    assert_eq!(
-+                        resolve_approval_request_disposition(
-+                            owner_present,
-+                            session_approved,
-+                            false,
-+                            true,
-+                            is_extension,
-+                        ),
-+                        ApprovalRequestDisposi
-```
-
-**File**: `crates/engine/src/core/engine.rs` (modified, +1/-0)
-```diff
-@@ -1450,6 +1450,7 @@ fn project_turn_authority(
-     context.trust_mode = authority.trust_mode;
-     context.auto_approve = authority.auto_approve;
-     context.approval_mode = authority.approval_mode;
-+    context.owner_present = authority.owner_present();
-     context.set_shell_policy(authority.shell_policy());
-     context.elevated_sandbox_policy =
-         Some(authority.sandbox_policy(workspace, configured_sandbox_mode, network_access));
-```
-
-**File**: `crates/engine/src/core/engine/tests/test_cases_08.rs` (modified, +21/-8)
-```diff
-@@ -1618,27 +1618,40 @@ fn auto_review_scenario() {
++        let rounded = s.parse::<f64>().map_or(a, |r| r.abs() * unit);
++        if rounded >= next {
++            tier += 1;
++            continue;
++        }
++        return format!("{}{suffix}", trim(s));
++    }
++    format!("{value:.1e}").replace(".0e", "e")
  }
  
- #[test]
--fn repo_law_asks_only_in_ask_posture() {
-+fn repo_law_asks_only_in_prompt_capable_posture() {
-     use ApprovalMode;
+ fn with_unit(value: f64, unit: &str) -> String {
+@@ -273,7 +293,7 @@ impl Paint for DataSparkline<'_> {
+             let ramp = if theme.ascii() { SPARK_ASCII } else { SPARK };
+             let mut line = String::with_capacity(cells * 3);
+             for (i, v) in window.iter().enumerate() {
+-                line.push_str(if i < shown {
++                line.push_str(if i < shown && v.is_finite() {
+                     ramp[level(*v, lo, hi, ramp.len())]
+                 } else {
+                     " "
+@@ -313,8 +333,10 @@ impl DataBarItem {
+ ///
+ /// Bars scale to the largest value and fill in eighths of a cell. While
+ /// `drawn` is below one each bar grows from its `previous` value (or zero)
+-/// to its value, a little after the bar above it. A negative value draws no
+-/// bar; its words keep the real number.
++/// to its value, a little after the bar above it. A value above zero always
++/// draws at least an eighth of a cell, so it never looks like zero. A
++/// negative value draws no bar; its words keep the real number. On a narrow
++/// row the label gives way before the value does.
+ #[derive(Clone, Debug)]
+ pub struct DataBars<'a> {
+     pub label: Cow<'a, str>,
+@@ -426,7 +448,8 @@ impl Paint for DataBars<'_> {
+             .map(|l| text::width(l))
+             .max()
+             .unwrap_or(0)
+-            .min((width / 3).max(4));
++            .min((width / 3).max(4))
++            .min(width.saturating_sub(value_w + 2));
+         let cells = width.saturating_sub(label_w + 2 + 2 + value_w);
+         let peak = self
+             .items
+@@ -440,13 +463,14 @@ impl Paint for DataBars<'_> {
+             if y >= area.height {
+                 break;
+             }
+-            let mut spans = vec![
+-                Span::styled(
++            let mut spans = Vec::new();
++            if label_w > 0 {
++                spans.push(Span::styled(
+                     text::pad(&labels[i], label_w, ascii),
+                     theme.fg(Role::Foreground),
+-                ),
+-                Span::raw("  "),
+-            ];
++                ));
++                spans.push(Span::raw("  "));
++            }
+             if cells >= MIN_BAR {
+                 let from = self
+                     .previous
+@@ -465,7 +489,8 @@ impl Paint for DataBars<'_> {
+                 } else {
+                     0.0
+                 };
+-                let eighths = (frac * cells as f64 * 8.0).round() as usize;
++                let eighths =
++                    ((frac * cells as f64 * 8.0).round() as usize).max(usize::from(frac > 0.0));
+                 let bar = self.bar(eighths, as
+```
+
+**File**: `vendor/codewhale-ratatui/src/components/motion.rs` (modified, +11/-7)
+```diff
+@@ -1,5 +1,8 @@
+ //! Motion: the few things that move, and the promise that nothing else does.
+ //!
++//! Motion is allowed for a change of state, work in progress or spatial
++//! continuity. This module is that layer without an animation dependency.
++//!
+ //! - A [`MotionStep`] eases a value from where it is to a target in `0..=1`,
+ //!   sampled at an instant the caller passes in. Nothing here reads a clock,
+ //!   spawns a thread or waits.
+@@ -28,7 +31,7 @@ use unicode_segmentation::UnicodeSegmentation;
  
-     assert!(!repo_law_must_block_without_prompt(
-         ApprovalMode::Suggest,
--        false
-+        false,
-+        false,
-     ));
--    for mode in [
-+    assert!(!repo_law_must_block_without_prompt(
-         ApprovalMode::Auto,
--        ApprovalMode::Never,
--        ApprovalMode::Bypass,
--    ] {
-+        false,
-+        true,
-+    ));
-+    assert!(repo_law_must_block_without_prompt(
-+        ApprovalMode::Auto,
-+        false,
-+        false,
-+    ));
-+    assert!(repo_law_must_block_without_prompt(
-+        ApprovalMode::Auto,
-+        true,
-+        true,
-+    ));
-+    for mode in [ApprovalMode::Never, ApprovalMode::Bypass] {
-         assert!(
--            repo_law_must_block_without_prompt(mode, false),
-+            repo_law_must_block_without_prompt(mode, false, true),
-             "{} must not open a human repo-law approval",
-             mode.permission_chip_label()
-         );
+ use crate::{
+     MotionMode, Paint, Role, Theme,
+-    color::{ColorDepth, blend, contrast_ratio},
++    color::{ColorDepth, blend, contrast_ratio, is_truecolor},
+     glyphs, text, tokens,
+ };
+ 
+@@ -185,8 +188,8 @@ pub fn paint_working_glow(
+ ) {
+     if !policy.allows(MotionChannel::Tint)
+         || elapsed < crate::spin::EARN_DELAY
+-        || !matches!(highlight, Color::Rgb(..))
+-        || !matches!(background, Color::Rgb(..))
++        || !is_truecolor(highlight)
++        || !is_truecolor(background)
+     {
+         return;
      }
-     assert!(repo_law_must_block_without_prompt(
-         ApprovalMode::Suggest,
--        true
-+        true,
-+        true,
-     ));
+@@ -217,11 +220,12 @@ pub fn paint_working_glow(
+         if strength > 0.0
+             && cell.symbol() == grapheme
+             && !grapheme.chars().all(char::is_whitespace)
+-            && matches!(cell.fg, Color::Rgb(..))
++            && is_truecolor(cell.fg)
+         {
+-            let ground = match cell.bg {
+-                Color::Rgb(..) => cell.bg,
+-                _ => background,
++            let ground = if is_truecolor(cell.bg) {
++                cell.bg
++            } else {
++                background
+             };
+             let ink = blend(highlight, cell.fg, strength);
+             if let (Some(before), Some(after)) =
+```
+
+**File**: `vendor/codewhale-ratatui/src/gallery/chart.rs` (modified, +5/-2)
+```diff
+@@ -3,7 +3,9 @@
+ use ratatui::{buffer::Buffer, layout::Rect};
+ 
+ use super::Entry;
+-use crate::{DataBarItem, DataBars, DataDisplay, DataSparkline, DataTrend, Paint, Theme};
++use crate::{
++    DataBarItem, DataBars, DataDisplay, DataDisplayView, DataSparkline, DataTrend, Paint, Theme,
++};
+ 
+ fn series() -> Vec<f64> {
+     (0..64)
+@@ -73,7 +75,8 @@ fn from_agent(area: Rect, buf: &mut Buffer, theme: &Theme) {
+                      {"label":"cached","value":61000}]}"#,
+     )
+     .expect("gallery fixture is a valid data display");
+-    shown.view().paint(area, buf, theme);
++    let view: DataDisplayView<'_> = shown.view();
++    view.paint(area, buf, theme);
  }
  
+ pub(crate) fn entries() -> Vec<Entry> {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7323** (closed): fix(app-server): read the original path of a worktree-side rename (@SparkofSpike)
-- **PR #7322** (2026-11-12): fix(tui): count characters, not bytes, for the session title limit (@luochen211)
-- **PR #7319** (2026-11-12): fix(mcp,lsp): answer server requests instead of taking them as replies (@luochen211)
-- **PR #7317** (2026-11-12): fix: show non-ASCII paths as written in /diff and git mentions (@luochen211)
-- **PR #7316** (2026-11-12): fix(state,snapshot): keep index entries after a torn line and clamp prune age (@luochen211)
-- **PR #7315** (2026-11-12): fix(config): read every env alias chain through env_non_blank (@luochen211)
+- **PR #7353** (2026-11-16): fix(engine): log safe provider failure diagnostics (@laozidabo)
+- **PR #7352** (2026-11-16): fix(app-server): preserve named provider in web picker (@Gyuke)
+- **PR #7351** (closed): fix(engine): honor native usage journal capacity fallback (@laozidabo)
+- **PR #7349** (2026-11-16): fix(client): decide the reasoning dialect by endpoint, not by model id (@SparkofSpike)
+- **PR #7346** (2026-11-16): docs: illustrate hybrid claude bundle and host hook boundary (@vshulcz)
+- **PR #7342** (2026-11-16): fix(core): keep assignments inside CLI argument values literal (@Ricardo-M-L)
 
 ---
 
@@ -3912,28 +3120,28 @@ without registering pending approvals:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. extension-host): fill the dsh/broker llm arm on the Engine's own auxiliary model
+## X. client): decide the reasoning dialect by endpoint, not by model id
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/engine/src/client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b567b2b`: extension-host): fill the dsh/broker llm arm on the Engine's own auxiliary model call (CW-7973). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c4317c9`: client): decide the reasoning dialect by endpoint, not by model id. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/engine/src/client.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Plugin LLM broker arm (gated off):** adds the `dsh/broker` `llm` service arm (`catalog`, `complete`) and TypeScript SDK adapter, routing completions over the active session route with an isolated plugin prompt (omitting workspace instructions, account constitution, and other plugins' prompt sections), session permission-gate checks (`Read`/`Reach`), and bounded concurrency; host injection stays disabled by default pending final review. (CW-7973)
+            self.chat_shape_provider(&model),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            self.api_provider,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b567b2b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c4317c9` are properly handled with clean fallback behavior.
