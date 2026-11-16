@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:10:14.452Z",
+  "last_updated": "2026-11-16T00:17:48.576Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T23:49:59.409Z",
@@ -708,7 +708,7 @@
       "staged_for_review": 1
     },
     "apache-shardingsphere-learnings.md": {
-      "processed_at": "2026-11-12T02:49:02.519Z",
+      "processed_at": "2026-11-16T00:17:48.058Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3091,9 +3091,19 @@
       "processed_at": "2026-11-15T23:41:17.020Z",
       "promoted_canonical": 2,
       "staged_for_review": 0
+    },
+    "metrolistgroup-metrolist-learnings.md": {
+      "processed_at": "2026-11-16T00:17:46.951Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "ehpanda-team-ehpanda-learnings.md": {
+      "processed_at": "2026-11-16T00:17:47.486Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1176,
+  "total_dossiers_evaluated": 1179,
   "total_canonical_promoted": 280,
-  "total_staged_for_review": 895
+  "total_staged_for_review": 898
 }

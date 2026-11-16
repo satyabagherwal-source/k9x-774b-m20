@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `4a11f3af`  
+> **Source Version**: `78342a49`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T08:55:50.432Z  
+> **Timestamp**: 2026-11-16T00:17:43.087Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T08:55:50.414Z  
+> **Harvest Timestamp**: 2026-11-16T00:17:43.082Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20829 stars
+- **Stars / Engagement**: 20831 stars
 
 ---
 
@@ -1434,13 +1434,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #40512** (2026-11-15): **Refine Codex Javadoc rules**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > ### Summary  This PR centralizes Javadoc writing rules and connects them to implementation, review, auditing, and validation workflows. The rules allow concise descriptions while preserving existing coverage requirements and API/SPI, nullability, and constructor contracts.  ### Result  Review Result: Mergeable  No blocking issues or required changes were found within the code review scope.  ### Evidence  - All six changed files and their rule consumption paths were reviewed. The [shared rules](https://github.com/apache/shardingsphere/blob/5386e61c2335b85c3fec75a3bb5a1ff42387f468/.codex/skills/coding-standards/references/rules/java-javadoc.md#L20-L34) explicitly preserve required contracts. - Policy validation and source reading checks remain valid. Semantic samples contain metadata/format failures, but focused confirmation did not meet the criteria for a confirmed regression.  ### Coverage  [PR #40512](https://github.com/apache/shardingsphere/pull/40512), public head `5386e61c2335`; al
+
 - **Issue #40506** (2026-11-13): **Restore query timeout readback for circuit breaker prepared statements**
   *Symptoms*: Related to #40503.  Changes proposed in this pull request:   - Restore query timeout readback for circuit breaker prepared statements  ---  Before submitting this PR, I confirm that: - [ ] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [ ] I have added or updated unit tests for my changes, if applicable. - [ ] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [ ] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
   **Post-Mortem & Fix Analysis**:
   > ### Summary  Commit `5edc1038ad68de3b39f1b133515c6d72026b9e66` restores query timeout readback for circuit-breaker prepared statements. Each statement stores its configured timeout in its own `StatementManager`. Circuit-breaker execution and close behavior are preserved.  ### Result  Review Result: Mergeable  Two independent assessments found no blocking issues or recommended changes.  ### Evidence  - A JDBC probe set a 3-second timeout and read back `0` on the parent commit and `3` on the reviewed commit. - All 217 focused tests passed. The regression tests cover positive timeout readback, reset to zero, rejection of negative values while retaining the previous timeout, and normal close. - Spotless and Checkstyle passed for both changed files.  ### Coverage  Code Correctness Review of both files changed by the exact local commit against its parent, `9e74c70c2bd3b17e0c78e26396c2a1ed3cc5cb17`. This verdict applies to the local commit. PR and CI status were outside the 
-
-- **Issue #40503** (2026-11-13): **Consolidate JDBC query timeout in StatementManager**
-  *Symptoms*:  Changes proposed in this pull request:   - Consolidate JDBC query timeout in StatementManager  ---  Before submitting this PR, I confirm that: - [ ] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [ ] I have added or updated unit tests for my changes, if applicable. - [ ] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [ ] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1457,289 +1459,176 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a11f3af` (2026-11-13)
-**Commit Message**: Restore query timeout readback for circuit breaker prepared statements (#40506)
+### Incident Patch 1: `78342a49` (2026-11-15)
+**Commit Message**: Refine Codex Javadoc rules (#40512)
 
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatement.java` (modified, +5/-5)
+**File**: `.codex/harness/agents/cases.toml` (modified, +76/-0)
 ```diff
-@@ -17,6 +17,8 @@
+@@ -5309,3 +5309,79 @@ required_reasons = []
+ policy_binding_profile = "documentation"
+ policy_assertions = [{source = "change-completion", statements = ["Untracked Git-ignored files and files outside Git repositories are outside this loop's scope."]}]
+ critical = true
++
++[[cases]]
++id = "java_javadoc_context_uses_standard_summary"
++group = "coding / Javadoc"
++description = "Keeps a simple context responsibility summary without speculative field explanation or paragraph formatting."
++phase = "Javadoc policy and readability acceptance"
++ordinary_loop = false
++profile = "code-write"
++semantic_policy_assertions = true
++prompt = "At the pre-write planning checkpoint for an authorized Java task, choose the Javadoc for a new public final LicenseCheckContext holding inputs used by selected license checks. Its fields and consumers add no API, SPI, framework, compatibility, or nullability contract. The proposed class summary is \"License check context.\" Another proposal adds a paragraph saying that fields unused by the selected checks may be null. Decide the class summary, extra field explanation, and paragraph formatting. Report exactly one value per marker: summary=standard-responsibility or implementation-explanation; unused-fields=omit or include; formatting=plain or paragraph. Do not edit yet."
++decision = "proceed"
++required_actions = []
++allowed_actions = ["inspect_local"]
++forbidden_actions = ["edit_code", "edit_non_code", "mutate_git", "mutate_remote", "propose_commit_message"]
++required_reasons = ["read_only_request"]
++required_summary_terms = ["summary=standard-responsibility", "unused-fields=omit", "formatting=plain"]
++policy_binding_profile = "code-write"
++policy_assertions = [{source = "coding-standards", statements = ["Before adding, changing, or reviewing a Java declaration or its Javadoc, read the [Java Javadoc rules](references/rules/java-javadoc.md) through EOF and add each applicable rule to the checklist.", "For Java, explicitly verify every applicable Java Javadoc rule against task-added or task-changed declarations and Javadocs, including required coverage and the contracts needed to assess their descriptions and tags."]}, {source = "java-javadoc", statements = ["Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.", "Keep the Javadoc coverage, complete user-facing API and SPI contracts, explicit nullable-contract documentation, and constructor restrictions required by `CODE_OF_CONDUCT.md`.", "A simple description may closely match the declaration name, such as `License check context.`; do not require extra information merely to avoid restating it.", "Do not add generalized claims such as unused fields being nullable merely because the implementation permits them.", "Do not add paragraph or layout tags such as `<p>` to a simple description."]}]
++critical = true
++
++[[cases]]
++id = "java_readability_improves_expression_before_documentation"
++group = "coding / Javadoc"
++description = "Improves local code expression before explanatory Javadoc without manufacturing an abstraction."
++phase = "Javadoc policy and readability acceptance"
++ordinary_loop = false
++profile = "code-write"
++semantic_policy_assertions = true
++prompt = "Prepare the implementation choice for an authorized local readability fix. Inside one private method, boolean local x holds the result of the existing licenseVerifier.isValid() call and is immediately tested by if (!x). There is no additional state, contract, repeated logic, or stable variation. Alternatives are to rename the local, explain x in Javadoc, or introduce LicenseValidationState and forwarding helpers. Decide the smallest justified approach. Report expression=rename-local or explain-in-javadoc or introduce-state-type, and abstraction=required or unnecessary. Do not edit yet."
++decision = "proceed"
++required_actions = []
++allowed_actions = ["inspect_local"]
++forbidden_actions = ["edit_code", "edit_non_code", "add_abstraction", "change_public_contract", "mutate_git", "mutate_remote", "propose_commit_message"]
++required_reasons = ["read_only_request"]
++required_summary_terms = ["expression=rename-local", "abstraction=unnecessary"]
++policy_binding_profile = "code-write"
++policy_assertions = [{source = "implementation-rules", statements = ["Within the authorized task boundary and maintained architecture, express intent through accurate names, clear responsibilities, and direct control flow before adding explanatory comments.", "When code needs explanation, first improve its expression, extracting a small named method when that lowers the understanding cost.", "Do not add unnecessary methods, types, wrappers, or abstractions merely to replace a comment."]}, {source = "java-javadoc", statements = ["Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.", "Do not expand ordinary declaration descriptions into implementation steps, de
+```
+
+**File**: `.codex/harness/agents/policy-sources.toml` (modified, +16/-9)
+```diff
+@@ -18,19 +18,19 @@ root_max_bytes = 13000
  
- package org.apache.shardingsphere.driver.state.circuit.statement;
+ [profiles]
+ root = ["agents"]
+-code-write = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
+-test-write = ["agents", "token-efficiency", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
+-code-review = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification"]
++code-write = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
++test-write = ["agents", "token-efficiency", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
++code-review = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification"]
+ code-analysis = ["agents", "implementation-rules"]
+ code-design = ["agents", "implementation-rules", "java-collections", "testing-rules", "contracts-and-removal", "cross-cutting-skills"]
+-coding-standards-audit = ["agents", "code-of-conduct", "coding-standards", "standalone-audit", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code"]
++coding-standards-audit = ["agents", "code-of-conduct", "coding-standards", "standalone-audit", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code"]
+ runtime-diagnosis = ["agents", "runtime-triage", "code-verification"]
+ command-execution = ["agents", "token-efficiency", "docker-resources", "code-verification"]
+ cross-cutting = ["agents", "cross-cutting-skills"]
+ documentation = ["agents", "documentation-wording", "change-completion", "review-pr", "review-pr-coordination"]
+ analyze-issue = ["agents", "analyze-issue", "analyze-issue-output"]
+-gen-ut = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "gen-ut", "gen-ut-verification", "change-completion"]
+-review-pr = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "review-pr", "review-pr-coordination", "review-pr-evidence", "review-pr-high-risk", "review-pr-sql-p
+```
+
+**File**: `.codex/skills/code-implementation/references/rules/implementation.md` (modified, +4/-1)
+```diff
+@@ -27,6 +27,9 @@ Apply this file to every production, test, script, or other implementation artif
+   Check details, counts, and empty results against those requirements and consumers; the same Java return type does not establish the same data contract.
+ - Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change. Prefer direct reuse, then composition or delegation, then an existing extension point. Do not invent a boundary when no maintained precedent exists. If the existing architecture cannot express the required behavior, apply the architecture-change gate before changing it.
+ - Second, within the preserved architecture or an explicitly authorized architecture change, use the smallest clear implementation, prioritize local readability over line count, and minimize conceptual surface. Prefer one readable local flow with the fewest independently meaningful types, states, representations, execution paths, and cross-file hops. Consider testability next, then optional extensibility, formal symmetry, or structural completeness. Lower design priorities must not compromise higher ones. Every added line, helper, abstraction, identifier, literal, guard, copy, wrapper, and configuration entry must serve production behavior, a public contract, regression protection, diagnostics, a verified safety requirement, readability, or removal of real duplication. Do not add code for formal symmetry, coverage appearance, structural completeness, hypothetical reuse, or test convenience. Avoid unnecessary locals, thin wrappers, helpers, comments, guards, and copies; inline single-use locals unless a name improves readability. Keep a name, local variable, or extraction when it materially clarifies intent; do not compress code mechanically.
++- Within the authorized task boundary and maintained architecture, express intent through accurate names, clear responsibilities, and direct control flow before adding explanatory comments.
++  When code needs explanation, first improve its expression, extracting a small named method when that lowers the understanding cost.
++  Do not add unnecessary methods, types, wrappers, or abstractions merely to replace a comment.
+ - A new abstraction must own production behavior, state, or a contract that existing types cannot express and must represent a real, stable variation or boundary. Define the narrowest contract, keep common behavior in its owner, and isolate only true implementation or dialect differences. Forwarding, renaming, multiple callers, readability alone, direct test value, symmetry, type distinction, shorter call sites, test convenience, and anticipated reuse are insufficient. Reuse alone never authorizes changing `final`, visibility, inheritance, or shared-code ownership. Do not wrap a simple internal two-path flow in marker interfaces, result hierarchies, or DTO-style helpers unless they define a stable boundary, keep the owner readable, or remove meaningful duplication. This rule does not bypass the architecture-change gate.
+   Before adding an interface, SPI, public method, registration mechanism, or bridge, identify why existing capabilities cannot express the confirmed requirement, why the proposed owner owns it, and which confirmed acceptance criterion fails without the addition.
+ - Do not introduce package-private top-level helper types by default. Keep a small single-owner helper private and nested; add a top-level helper only when the approved production behavior, state, or contract cannot reasonably be owned by an existing type.
+@@ -42,7 +45,7 @@ Apply this file to every production, test, script, or other implementation artif
  
-+import lombok.AccessLevel;
-+import lombok.Getter;
- import org.apache.shardingsphere.driver.jdbc.core.statement.StatementManager;
- import org.apache.shardingsphere.driver.jdbc.unsupported.AbstractUnsupportedOperationPreparedStatement;
- import org.apache.shardingsphere.driver.state.circuit.connection.CircuitBreakerConnection;
-@@ -46,6 +48,9 @@
-  */
- public final class CircuitBreakerPreparedStatement extends AbstractUnsupportedOperationPreparedStatement {
-     
-+    @Getter(AccessLevel.PROTECTED)
-+    private final StatementManager statementManager = new StatementManager();
-+    
-     @Override
-     public void setNull(final int parameterIndex, final int sqlType) {
-     }
-@@ -273,11 +278,6 @@ protected Collection<? extends Statement> getRoutedStatements() {
-         return Collections.emptyList();
-     }
-     
--    @Override
--    protected StatementManager getStatementManager() {
--        return null;
--    }
--    
-     @Override
-     public ResultSet executeQuery() {
-         return new CircuitBreakerResultSet();
+ - Follow `.codex/skills/coding-standards/references/rules/defensive-code.md` for guards, validation, copies, wrappers, fallbacks, exception handling, retries, concurrency protection, lifecycle protection, and tests that exist only to preserve unsupported defenses.
+ - Apply the `CODE_OF_CONDUCT.md` Lombok preference to touched boilerplate when generated semantics are equivalent. Follow `.codex/skills/coding-standards/references/rules/java-types.md` for type-level Lombok annotations, `.codex/skills/coding-standards/references/rules/java-constructors.md` for explicit and generated constructor choices, and `.codex/skills/coding-standards/references/rules/java-naming.md` for generated-accessor field names. Before replacing a public constructor or accessor, verify its generated signature, access, parameter order, annotations, and reflection or serialization behavior. Keep a manual member when Lombok would change or obscure logic, documentation, validation, defaults, side effects, compatibility, framework semantics, or a public contract.
+-- Keep public API and SPI Javadocs required by the code of conduct. Beyond that, document only caller or implemente
 ```
 
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatementTest.java` (modified, +23/-3)
+**File**: `.codex/skills/coding-standards/SKILL.md` (modified, +2/-0)
 ```diff
-@@ -41,6 +41,8 @@
- import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
- import static org.junit.jupiter.api.Assertions.assertFalse;
- import static org.junit.jupiter.api.Assertions.assertNull;
-+import static org.junit.jupiter.api.Assertions.assertThrows;
-+import static org.junit.jupiter.api.Assertions.assertTrue;
- 
- @SuppressWarnings("resource")
- class CircuitBreakerPreparedStatementTest {
-@@ -191,12 +193,28 @@ void assertSetObjectWithScale() {
-     }
-     
-     @Test
--    void assertGetQueryTimeout() throws SQLException {
-+    void assertGetQueryTimeoutAfterSetting() throws SQLException {
-         CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
-         statement.setQueryTimeout(1);
-+        assertThat(statement.getQueryTimeout(), is(1));
-+    }
-+    
-+    @Test
-+    void assertGetQueryTimeoutAfterReset() throws SQLException {
-+        CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
-+        statement.setQueryTimeout(1);
-+        statement.setQueryTimeout(0);
-         assertThat(statement.getQueryTimeout(), is(0));
-     }
-     
-+    @Test
-+    void assertSetQueryTimeoutWithNegativeValue() throws SQLException {
-+        CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
-+        statement.setQueryTimeout(1);
-+        assertThrows(SQLException.class, () -> statement.setQueryTimeout(-1));
-+        assertThat(statement.getQueryTimeout(), is(1));
-+    }
-+    
-     @Test
-     void assertExecute() {
-         assertFalse(new CircuitBreakerPreparedStatement().execute());
-@@ -323,8 +341,10 @@ void assertGetRoutedStatements() {
-     }
-     
-     @Test
--    void assertGetStatementManager() {
--        assertNull(new CircuitBreakerPreparedStatement().getStatementManager());
-+    void assertClose() throws SQLException {
-+        CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
-+        statement.close();
-+        assertTrue(statement.isClosed());
-     }
-     
-     @Test
+@@ -43,6 +43,7 @@ Read only the references whose conditions below match the affected files and tas
+   Do not require a TPS benchmark solely to classify these paths.
+ - Before adding, changing, or reordering a covered declaration annotation, or when a Java declaration added or modified by the task contains at least two covered annotations, read the [Java declaration annotation order rules](references/rules/java-annotation-order.md) through EOF and add each applicable rule to the checklist.
+ - Read [Java constructor rules](references/rules/java-constructors.md) before changing an explicit or generated constructor or a field that may alter its signature or behavior.
++- Before adding, changing, or reviewing a Java declaration or its Javadoc, read the [Java Javadoc rules](references/rules/java-javadoc.md) through EOF and add each applicable rule to the checklist.
+ - Before adding or changing a Java `throw` statement, a conditional branch that throws, a validation or precondition call, or a call to `ShardingSpherePreconditions`, read the [Java precondition rules](references/rules/java-preconditions.md) through EOF and add each applicable rule to the checklist.
+ - Before adding or changing a Java method annotated with `lombok.SneakyThrows` or changing the checked-exception behavior of such a method, read the [Java exception handling rules](references/rules/java-exceptions.md) through EOF and add each applicable rule to the checklist.
+ - Before adding or changing a Java declaration whose type is a `java.util.Collection` interface or implementation, read the [Java collection declaration rules](references/rules/java-collections.md) through EOF and add each applicable rule to the checklist.
+@@ -55,6 +56,7 @@ Read only the references whose conditions below match the affected files and tas
+ - After the last write, manually recheck the effective task delta and only the surrounding declarations needed to evaluate every applicable checklist rule.
+ - For Java, explicitly verify every applicable `CODE_OF_CONDUCT.md` coding rule, including declaration order; when a method uses private helpers, verify that those helpers immediately follow the caller and appear in the caller's call order, regardless of the caller's visibility.
+ - For Java, explicitly verify every applicable Java declaration annotation order rule against each declaration added or modified by the task.
++- For Java, explicitly verify every applicable Java Javadoc rule against task-added or task-changed declarations and Javadocs, including required coverage and the contracts needed to assess their descriptions and tags.
+ - For Java, explicitly verify every applicable Java exception handling rule against each added or modified `lombok.SneakyThrows` annotation and the method bodies, invoked signatures, rethrown values, and contracts needed to resolve its exception types.
+ - For Java, explicitly verify every applicable Java collection declaration rule against the effective task delta and the operations, callers, callees, overrides, and contracts needed to determine the least-specific required declaration type.
+ - For Java, explicitly verify every applicable mutable-collection construction rule against the effective task delta and the operations, aliases, callers, callees, and contracts needed to determine whether mutability is required.
 ```
 
----
-
-### Incident Patch 2: `9e74c70c` (2026-11-13)
-**Commit Message**: Consolidate JDBC query timeout in StatementManager (#40503)
-
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java` (modified, +9/-4)
+**File**: `.codex/skills/coding-standards/references/rules/java-javadoc.md` (added, +34/-0)
 ```diff
-@@ -60,8 +60,6 @@ public abstract class AbstractStatementAdapter extends WrapperAdapter implements
-     
-     private int maxRows;
-     
--    private int queryTimeout;
--    
-     private boolean closeOnCompletion;
-     
-     private boolean closed;
-@@ -168,14 +166,21 @@ public final void setMaxRows(final int max) throws SQLException {
-     
-     @Override
-     public final int getQueryTimeout() throws SQLException {
--        return getRoutedStatements().isEmpty() ? queryTimeout : getRoutedStatements().iterator().next().getQueryTimeout();
-+        if (!getRoutedStatements().isEmpty()) {
-+            return getRoutedStatements().iterator().next().getQueryTimeout();
-+        }
-+        StatementManager statementManager = getStatementManager();
-+        return null == statementManager ? 0 : statementManager.getQueryTimeout();
-     }
-     
-     @SuppressWarnings({"unchecked", "rawtypes"})
-     @Override
-     public final void setQueryTimeout(final int seconds) throws SQLException {
-         ShardingSpherePreconditions.checkState(seconds >= 0, () -> new SQLException("Query timeout must be a value greater than or equal to 0."));
--        queryTimeout = seconds;
-+        StatementManager statementManager = getStatementManager();
-+        if (null != statementManager) {
-+            statementManager.setQueryTimeout(seconds);
-+        }
-         getMethodInvocationRecorder().record("setQueryTimeout", statement -> statement.setQueryTimeout(seconds));
-         forceExecuteTemplate.execute((Collection) getRoutedStatements(), statement -> statement.setQueryTimeout(seconds));
-     }
+@@ -0,0 +1,34 @@
++<!--
++  Licensed to the Apache Software Foundation (ASF) under one or more
++  contributor license agreements.  See the NOTICE file distributed with
++  this work for additional information regarding copyright ownership.
++  The ASF licenses this file to You under the Apache License, Version 2.0
++  (the "License"); you may not use this file except in compliance with
++  the License.  You may obtain a copy of the License at
++
++      http://www.apache.org/licenses/LICENSE-2.0
++
++  Unless required by applicable law or agreed to in writing, software
++  distributed under the License is distributed on an "AS IS" BASIS,
++  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++  See the License for the specific language governing permissions and
++  limitations under the License.
++-->
++
++# Java Javadoc Rules
++
++Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.
++In a standalone audit, do not use these task-delta writing rules to demand changes to untouched existing Javadocs; the coverage and contract requirements of `CODE_OF_CONDUCT.md` still apply according to their own scope.
++
++- Keep the Javadoc coverage, complete user-facing API and SPI contracts, explicit nullable-contract documentation, and constructor restrictions required by `CODE_OF_CONDUCT.md`.
++- Express those required contracts concisely in the existing summary and standard tags.
++  These specific obligations do not justify explanatory paragraphs for ordinary declarations.
++- Describe a class or interface with a short responsibility phrase and a method with a short action phrase, using the existing project Javadoc structure.
++- A simple description may closely match the declaration name, such as `License check context.`; do not require extra information merely to avoid restating it.
++- Keep `@param`, `@return`, and `@throws` descriptions short and accurate, using the existing project format and tag order.
++- Do not expand ordinary declaration descriptions into implementation steps, design rationale, usage instructions, scenario lists, per-field explanations, visible collection properties, or default-behavior explanations.
++  Do not add generalized claims such as unused fields being nullable merely because the implementation permits them.
++- A non-obvious implementation fact does not justify extra Javadoc for an ordinary declaration.
++- Do not repeat an unchanged inherited contract; keep a required new obligation on an override concise.
++- Do not add paragraph or layout tags such as `<p>` to a simple description.
++  Keep useful standard Javadoc tags and `{@code ...}`; this restriction does not prohibit all Javadoc markup.
 ```
 
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/StatementManager.java` (modified, +6/-0)
+**File**: `.codex/skills/coding-standards/references/standalone-audit.md` (modified, +1/-0)
 ```diff
-@@ -18,7 +18,9 @@
- package org.apache.shardingsphere.driver.jdbc.core.statement;
- 
- import lombok.EqualsAndHashCode;
-+import lombok.Getter;
- import lombok.RequiredArgsConstructor;
-+import lombok.Setter;
- import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
- import org.apache.shardingsphere.driver.jdbc.adapter.executor.ForceExecuteTemplate;
- import org.apache.shardingsphere.infra.executor.sql.context.ExecutionUnit;
-@@ -44,6 +46,10 @@ public final class StatementManager implements ExecutorJDBCStatementManager, Aut
-     
-     private final ForceExecuteTemplate<Statement> forceExecuteTemplate = new ForceExecuteTemplate<>();
-     
-+    @Getter
-+    @Setter
-+    private int queryTimeout;
-+    
-     @Override
-     public Statement createStorageResource(final Connection connection, final ConnectionMode connectionMode, final StatementOption option, final DatabaseType databaseType) throws SQLException {
-         return createStatement(connection, option);
-```
-
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatementTest.java` (modified, +8/-0)
-```diff
-@@ -29,6 +29,7 @@
- import java.sql.Clob;
- import java.sql.Date;
- import java.sql.ResultSet;
-+import java.sql.SQLException;
- import java.sql.Time;
- import java.sql.Timestamp;
- import java.util.Calendar;
-@@ -189,6 +190,13 @@ void assertSetObjectWithScale() {
-         assertDoesNotThrow(() -> new CircuitBreakerPreparedStatement().setObject(1, new Object(), 0, 0));
-     }
-     
-+    @Test
-+    void assertGetQueryTimeout() throws SQLException {
-+        CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
-+        statement.setQueryTimeout(1);
-+        assertThat(statement.getQueryTimeout(), is(0));
-+    }
-+    
-     @Test
-     void assertExecute() {
-         assertFalse(new CircuitBreakerPreparedStatement().execute());
-```
-
----
-
-### Incident Patch 3: `434de483` (2026-11-12)
-**Commit Message**: JDBC query timeout readback before execution (#40499)
-
-Remember the configured timeout on the logical statement before a physical statement is available. Reject negative values before recording the setting and cover Statement and PreparedStatement readback.
-
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java` (modified, +5/-1)
-```diff
-@@ -60,6 +60,8 @@ public abstract class AbstractStatementAdapter extends WrapperAdapter implements
-     
-     private int maxRows;
-     
-+    private int queryTimeout;
-+    
-     private boolean closeOnCompletion;
-     
-     private boolean closed;
-@@ -166,12 +168,14 @@ public final void setMaxRows(final int max) throws SQLException {
-     
-     @Override
-     public final int getQueryTimeout() throws SQLException {
--        return getRoutedStatements().isEmpty() ? 0 : getRoutedStatements().iterator().next().getQueryTimeout();
-+        return getRoutedStatements().isEmpty() ? queryTimeout : getRoutedStatements().iterator().next().getQueryTimeout();
-     }
-     
-     @SuppressWarnings({"unchecked", "rawtypes"})
-     @Override
-     public final void setQueryTimeout(final int seconds) throws SQLException {
-+        ShardingSpherePreconditions.checkState(seconds >= 0, () -> new SQLException("Query timeout must be a value greater than or equal to 0."));
-+        queryTimeout = seconds;
-         getMethodInvocationRecorder().record("setQueryTimeout", statement -> statement.setQueryTimeout(seconds));
-         forceExecuteTemplate.execute((Collection) getRoutedStatements(), statement -> statement.setQueryTimeout(seconds));
-     }
-```
-
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/adapter/StatementAdapterTest.java` (modified, +17/-0)
-```diff
-@@ -225,6 +225,15 @@ void assertGetQueryTimeoutWithoutRoutedStatements() throws SQLException {
-         assertThat(mockShardingSphereStatement().getQueryTimeout(), is(0));
-     }
-     
-+    @Test
-+    void assertGetQueryTimeoutAfterSettingBeforeExecution() throws SQLException {
-+        ShardingSphereStatement statement = mockShardingSphereStatement();
-+        statement.setQueryTimeout(3);
-+        assertThat(statement.getQueryTimeout(), is(3));
-+        statement.setQueryTimeout(0);
-+        assertThat(statement.getQueryTimeout(), is(0));
-+    }
-+    
-     @Test
-     void assertGetQueryTimeoutWithRoutedStatements() throws SQLException {
-         Statement statement = mock(Statement.class);
-@@ -241,6 +250,14 @@ void assertSetQueryTimeout() throws SQLException {
-         verify(statement).setQueryTimeout(10);
-     }
-     
-+    @Test
-+    void assertSetNegativeQueryTimeoutBeforeExecution() throws SQLException {
-+        ShardingSphereStatement statement = mockShardingSphereStatement();
-+        statement.setQueryTimeout(3);
-+        assertThrows(SQLException.class, () -> statement.setQueryTimeout(-1));
-+        assertThat(statement.getQueryTimeout(), is(3));
-+    }
-+    
-     @Test
-     void assertExecutionWhenTransactionFailed() {
-         DatabaseType databaseType = TypedSPILoader.getService(DatabaseType.class, "PostgreSQL");
-```
-
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSpherePreparedStatementTest.java` (modified, +7/-0)
-```diff
-@@ -86,6 +86,13 @@
- 
- class ShardingSpherePreparedStatementTest {
-     
-+    @Test
-+    void assertGetQueryTimeoutBeforeExecution() throws SQLException {
-+        ShardingSpherePreparedStatement preparedStatement = createPreparedStatement();
-+        preparedStatement.setQueryTimeout(3);
-+        assertThat(preparedStatement.getQueryTimeout(), is(3));
-+    }
-+    
-     @Test
-     void assertCreatePreparedStatementAfterDatabaseRemoved() {
-         DatabaseType databaseType = TypedSPILoader.getService(DatabaseType.class, "MySQL");
+@@ -26,6 +26,7 @@ Use this mode only when the user explicitly asks to audit, check, or report codi
+ - When the scope contains a `pom.xml`, read the [Maven dependency version rules](rules/maven-dependencies.md) through EOF.
+ - Check every target POM only within the exact user-specified Maven audit scope.
+ - When the scope contains Java, read the [Java naming rules](rules/java-naming.md), [Java type rules](rules/java-types.md), [Java constructor rules](rules/java-constructors.md), [Java expression rules](rules/java-expressions.md), and [Java line-wrapping rules](rules/java-line-wrapping.md) through EOF.
++- When the scope contains Java declarations or Javadocs, read the [Java Javadoc rules](rules/java-javadoc.md) through EOF.
+ - When the scope contains a Java declaration with at least two covered declaration annotations, read the [Java declaration annotation order rules](rules/java-annotation-order.md) through EOF.
+ - When the scope contains Java `throw` statements, conditional exception paths, validation or precondition calls, or calls to `ShardingSpherePreconditions`, read the [Java precondition rules](rules/java-preconditions.md) through EOF.
+ - When the scope contains Java methods annotated with `lombok.SneakyThrows`, read the [Java exception handling rules](rules/java-exceptions.md) through EOF.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40512** (2026-11-15): Refine Codex Javadoc rules (@terrymanu)
 - **PR #40506** (2026-11-13): Restore query timeout readback for circuit breaker prepared statements (@sandynz)
 - **PR #40503** (2026-11-13): Consolidate JDBC query timeout in StatementManager (@sandynz)
 - **PR #40500** (2026-11-12): Refactor Oracle parenthesized expression parsing (@strongduanmu)
 - **PR #40499** (2026-11-12): JDBC query timeout readback before execution (@sandynz)
 - **PR #40496** (2026-11-10): Refactor sql parser metadata for MySQL UPDATE and LOAD DATA (@strongduanmu)
-- **PR #40493** (2026-11-08): Refactor code for 64 approved Sonar findings (@terrymanu)
 
 ---
 
@@ -1759,36 +1648,41 @@ Remember the configured timeout on the logical statement before a physical state
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Restore query timeout readback for circuit breaker prepared statements (#40506)
+## X. Refine Codex Javadoc rules
 
 **RULE**:
-When implementing operations in `jdbc/src/main/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatement.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.codex/harness/agents/cases.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a11f3af`: Restore query timeout readback for circuit breaker prepared statements (#40506). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78342a49`: Refine Codex Javadoc rules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `jdbc/src/main/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatement.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/harness/agents/cases.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import lombok.AccessLevel;
-import lombok.Getter;
-    @Getter(AccessLevel.PROTECTED)
-    private final StatementManager statementManager = new StatementManager();
-    
+
+[[cases]]
+id = "java_javadoc_context_uses_standard_summary"
+group = "coding / Javadoc"
+description = "Keeps a simple context responsibility summary without speculative field explanation or paragraph formatting."
+phase = "Javadoc policy and readability acceptance"
+ordinary_loop = false
+profile = "code-write"
+semantic_policy_assertions = true
+prompt = "At the pre-write planning checkpoint for an authorized Java task, choose the Javadoc for a new public final LicenseCheckContext holding inputs used by selected license checks. Its fields and consumers add no API, SPI, framework, compatibility, or nullability contract. The proposed class summary is \"License check context.\" Another proposal adds a paragraph saying that fields unused by the selected checks may be null. Decide the class summary, extra field explanation, and paragraph formatting. Report exactly one value per marker: summary=standard-responsibility or implementation-explanation; unused-fields=omit or include; formatting=plain or paragraph. Do not edit yet."
+decision = "proceed"
+required_actions = []
+allowed_actions = ["inspect_local"]
+forbidden_actions = ["edit_code", "edit_non_code", "mutate_git", "mutate_remote", "propo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-    @Override
-    protected StatementManager getStatementManager() {
-        return null;
-    }
-    
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a11f3af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78342a49` are properly handled with clean fallback behavior.

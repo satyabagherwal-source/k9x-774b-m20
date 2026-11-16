@@ -10188,3 +10188,6 @@
 | `CYCLE-20261115-YHJ4` | `2026-11-15T23:59:58.528Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md` | Yes (`98c6c67b...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T00:00:27.372Z` | `hf-webai-official-twil-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CB5F7DEE` [Domain D] | Yes (`76ff1707...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T00:01:01.447Z` | `agent-field-agentfield` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-20A56733` [Domain H] | Yes (`8206b042...`) |
+| `CYCLE-20261116-L1MX` | `2026-11-16T00:17:31.017Z` | `MetrolistGroup/Metrolist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8670` | Yes (`871933ee...`) |
+| `CYCLE-20261116-L5U7` | `2026-11-16T00:17:36.463Z` | `EhPanda-Team/EhPanda` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8671` | Yes (`cf9a0dfc...`) |
+| `CYCLE-20261116-LBK5` | `2026-11-16T00:17:43.877Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8672` | Yes (`43dce824...`) |

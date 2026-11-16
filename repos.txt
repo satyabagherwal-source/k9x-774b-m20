@@ -5110,3 +5110,7 @@ https://github.com/Tencent/LoopForge
 https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B
 # [MOBILE-CROSS-PLATFORM] chocoford/ExcalidrawZ (1350 score) - Excalidraw app for mac. Powered by pure SwiftUI.
 https://github.com/chocoford/ExcalidrawZ
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-16T00:17:19.801Z] ---
+# [MOBILE-CROSS-PLATFORM] MetrolistGroup/Metrolist (7971 score) - Material Design YouTube Music client for Android, iOS and desktop
+https://github.com/MetrolistGroup/Metrolist

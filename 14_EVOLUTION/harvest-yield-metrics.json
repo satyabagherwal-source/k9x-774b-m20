@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T23:59:58.547Z",
-  "total_cycles_completed": 9786,
-  "total_learnings_persisted": 9786,
-  "total_rules_promoted": 9398,
+  "last_updated": "2026-11-16T00:17:43.885Z",
+  "total_cycles_completed": 9789,
+  "total_learnings_persisted": 9789,
+  "total_rules_promoted": 9401,
   "history": [
-    {
-      "timestamp": "2026-11-14T19:59:28.148Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T20:09:32.652Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T20:32:29.783Z",
-      "repository": "sqldelight/sqldelight",
-      "learningId": "learn-github-sqldelight-sqldelight",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T20:32:38.233Z",
       "repository": "vespa-engine/vespa",
@@ -1403,6 +1382,27 @@
       "repository": "etcd-io/etcd",
       "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:17:31.026Z",
+      "repository": "MetrolistGroup/Metrolist",
+      "learningId": "learn-github-metrolistgroup-metrolist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:17:36.471Z",
+      "repository": "EhPanda-Team/EhPanda",
+      "learningId": "learn-github-ehpanda-team-ehpanda",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:17:43.885Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

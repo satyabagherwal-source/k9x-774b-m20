@@ -21244,5 +21244,20 @@
     "qualityScore": 1350,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-15T17:01:36.079Z"
+  },
+  {
+    "name": "Metrolist",
+    "fullName": "MetrolistGroup/Metrolist",
+    "url": "https://github.com/MetrolistGroup/Metrolist",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Material Design YouTube Music client for Android, iOS and desktop",
+    "stars": 14444,
+    "forks": 1329,
+    "openIssues": 161,
+    "language": "Kotlin",
+    "qualityScore": 7971,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-16T00:15:37.214Z"
   }
 ]

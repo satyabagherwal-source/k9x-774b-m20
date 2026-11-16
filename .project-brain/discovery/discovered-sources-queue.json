@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T00:01:03.992Z",
+  "updated_at": "2026-11-16T00:17:48.165Z",
   "stats": {
-    "total_discovered": 3993,
-    "approved_pending_harvest": 3751,
+    "total_discovered": 4007,
+    "approved_pending_harvest": 3765,
     "harvested_count": 0,
     "rejected_count": 242,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3746,
+      "COMMUNITY_AND_EXPERT": 3760,
       "OFFICIAL_DOCUMENTATION": 132,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
@@ -86173,6 +86173,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
         "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-7A3BFC4D600A": {
+      "id": "SRC-7A3BFC4D600A",
+      "url": "https://github.com/MetrolistGroup/Metrolist",
+      "title": "https://github.com/MetrolistGroup/Metrolist",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:46.967Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
+        "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-1D08CD978943": {
+      "id": "SRC-1D08CD978943",
+      "url": "https://github.com/MetrolistGroup/Metrolist/releases",
+      "title": "https://github.com/MetrolistGroup/Metrolist/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:46.992Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
+        "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-B2224A50EB44": {
+      "id": "SRC-B2224A50EB44",
+      "url": "https://github.com/user-attachments/assets/aec0716c-b432-48ad-b616-bccd36f26d0c",
+      "title": "https://github.com/user-attachments/assets/aec0716c-b432-48ad-b616-bccd36f26d0c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:47.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
+        "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-390475E97AB8": {
+      "id": "SRC-390475E97AB8",
+      "url": "https://github.com/user-attachments/assets/8e12a28d-cd7a-4f62-9a52-6cc348cc22a1",
+      "title": "https://github.com/user-attachments/assets/8e12a28d-cd7a-4f62-9a52-6cc348cc22a1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:47.036Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
+        "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-7D4792534A02": {
+      "id": "SRC-7D4792534A02",
+      "url": "https://github.com/EhPanda-Team/EhPanda",
+      "title": "https://github.com/EhPanda-Team/EhPanda",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:47.498Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-B0DC57973613": {
+      "id": "SRC-B0DC57973613",
+      "url": "https://github.com/EhPanda-Team/EhPanda/issues",
+      "title": "https://github.com/EhPanda-Team/EhPanda/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:47.520Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-4215E17CF286": {
+      "id": "SRC-4215E17CF286",
+      "url": "https://github.com/EhPanda-Team/EhPanda/discussions",
+      "title": "https://github.com/EhPanda-Team/EhPanda/discussions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:47.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-9795237BFC51": {
+      "id": "SRC-9795237BFC51",
+      "url": "https://github.com/EhPanda-Team/EhPanda/releases/tag/3.0.0",
+      "title": "https://github.com/EhPanda-Team/EhPanda/releases/tag/3.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:47.566Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-9E2CB5963E72": {
+      "id": "SRC-9E2CB5963E72",
+      "url": "https://github.com/user-attachments/assets/776a9ea3-dfee-449d-bd13-b5fec61de90f",
+      "title": "https://github.com/user-attachments/assets/776a9ea3-dfee-449d-bd13-b5fec61de90f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:47.590Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-4B4D4C68213A": {
+      "id": "SRC-4B4D4C68213A",
+      "url": "https://ehpanda.app/AltStorePAL.json",
+      "title": "https://ehpanda.app/AltStorePAL.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:47.612Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-E4AAB8B7F5E0": {
+      "id": "SRC-E4AAB8B7F5E0",
+      "url": "https://github.com/apache/shardingsphere/blob/5386e61c2335b85c3fec75a3bb5a1ff42387f468/.codex/skills/coding-standards/references/rules/java-javadoc.md",
+      "title": "https://github.com/apache/shardingsphere/blob/5386e61c2335b85c3fec75a3bb5a1ff42387f468/.codex/skills/coding-standards/references/rules/java-javadoc.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:48.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-47E94C1092A8": {
+      "id": "SRC-47E94C1092A8",
+      "url": "https://github.com/apache/shardingsphere/pull/40512",
+      "title": "https://github.com/apache/shardingsphere/pull/40512",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:48.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-81B0735783F1": {
+      "id": "SRC-81B0735783F1",
+      "url": "https://shardingsphere.apache.org/community/en/involved/contribute/contributor",
+      "title": "https://shardingsphere.apache.org/community/en/involved/contribute/contributor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:48.144Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-55D5AE8B0BDB": {
+      "id": "SRC-55D5AE8B0BDB",
+      "url": "https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md",
+      "title": "https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:17:48.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
       }
     }
   }

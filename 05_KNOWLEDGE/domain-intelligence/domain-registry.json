@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T00:10:14.239Z",
-  "total_records": 1161,
+  "last_updated": "2026-11-16T00:17:48.397Z",
+  "total_records": 1167,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 561,
+      "total": 563,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -599,7 +599,9 @@
         "DOM-D-9A5A6C46",
         "domain_intelligence-research-knowledge-intelligence-webai-official-twil-8b-core-invariants",
         "DOM-D-CB5F7DEE",
-        "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-learnings-core-invariants"
       ]
     },
     "E": {
@@ -638,7 +640,7 @@
       ]
     },
     "G": {
-      "total": 199,
+      "total": 203,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -838,7 +840,11 @@
         "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-core-invar",
         "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",
-        "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",
+        "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants",
+        "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants"
       ]
     },
     "H": {
@@ -21899,6 +21905,60 @@
       "repository": "etcd-io-etcd-learnings",
       "content_hash": "f318034b16f45216bfd3a2ddb97d53e2f48076a8350e8f1022f5d4b3ce93e160",
       "created_at": "2026-11-16T00:01:04.305Z"
+    },
+    "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: MetrolistGroup/Metrolist Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-architecture-intelligence-metrolistgroup-metrolist-core.md",
+      "repository": "MetrolistGroup/Metrolist",
+      "content_hash": "dd38a643be3c8276b7565322a0ee9b5b5482899e89dfe543aca2efb2e84c35ab",
+      "created_at": "2026-11-16T00:17:31.280Z"
+    },
+    "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: EhPanda-Team/EhPanda Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ehpanda-team-ehpanda-architecture-intelligence-ehpanda-team-ehpanda-core-invaria.md",
+      "repository": "EhPanda-Team/EhPanda",
+      "content_hash": "ac2723cc9ca69a893da92562acc9959afa00ae4ea8caf167268876456e898cbc",
+      "created_at": "2026-11-16T00:17:36.723Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
+      "repository": "apache/shardingsphere",
+      "content_hash": "f6e7c6d951191cafeb9c37e8285187ebfe8cc6b16cb537aa84e42ab784f6197d",
+      "created_at": "2026-11-16T00:17:44.133Z"
+    },
+    "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: metrolistgroup-metrolist-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-learnings-architecture-intelligence-metrolistgroup-metr.md",
+      "repository": "metrolistgroup-metrolist-learnings",
+      "content_hash": "791aa3471b7a49fabf95e1da887b4d7b67d396a1664360e58bbd25a443a47c7e",
+      "created_at": "2026-11-16T00:17:47.296Z"
+    },
+    "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ehpanda-team-ehpanda-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ehpanda-team-ehpanda-learnings-architecture-intelligence-ehpanda-team-ehpanda-le.md",
+      "repository": "ehpanda-team-ehpanda-learnings",
+      "content_hash": "65dea99799be8b81a87946f961b6d6fd7b748420383953d33751296fdfdc0fcf",
+      "created_at": "2026-11-16T00:17:47.867Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: apache-shardingsphere-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-learnings-research-knowledge-intelligence-apache-shardings.md",
+      "repository": "apache-shardingsphere-learnings",
+      "content_hash": "a529d84579ffec312fb4d865decb8d1fd5c090c2e39707ce9a10b42e3daad818",
+      "created_at": "2026-11-16T00:17:48.397Z"
     }
   }
 }

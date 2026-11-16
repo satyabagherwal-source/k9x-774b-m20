@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:10:14.131Z",
+  "last_updated": "2026-11-16T00:17:48.302Z",
   "directives": [
     {
       "id": "CD-001",
@@ -17139,6 +17139,68 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-14DA1C-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-L1RC",
+      "directive_title": "register java.rmi.MarshalledObject for native clipboard reflection",
+      "source_repo": "MetrolistGroup/Metrolist",
+      "source_commit": "7172398f",
+      "staged_file": "11_INBOX/candidate-directives/CD-L1RC-register-java-rmi-marshalledobject-for-native-clipboard-reflection.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LEK4",
+      "directive_title": "build(deps): bump actions/download-artifact from 7 to 8, and point Dependabot at",
+      "source_repo": "ehpanda-team-ehpanda-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LEK4-build-deps-bump-actions-download-artifact-from-7-to-8-and-point-dependabot-at.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LEYZ",
+      "directive_title": "Refine Codex Javadoc rules",
+      "source_repo": "apache-shardingsphere-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LEYZ-refine-codex-javadoc-rules.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-LE4D",
+      "directive_title": "desktop): register java.rmi.MarshalledObject for native clipboard reflection",
+      "source_repo": "metrolistgroup-metrolist-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LE4D-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-85C485",
+      "directive_title": "build(deps): bump actions/download-artifact from 7 to 8, and point Dependabot at",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ehpanda-team-ehpanda",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-85C485-build-deps-bump-actions-download-artifac.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-5F3441",
+      "directive_title": "Refine Codex Javadoc rules",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-shardingsphere",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F3441-refine-codex-javadoc-rules.md",
       "staged_date": "2026-11-16"
     }
   ]

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T00:10:12.762Z",
-    "lastVerified": "2026-11-16T00:10:12.762Z",
+    "lastChecked": "2026-11-16T00:17:46.834Z",
+    "lastVerified": "2026-11-16T00:17:46.834Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -439,8 +439,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T18:08:11.751Z",
-    "lastVerified": "2026-11-15T18:08:11.751Z",
+    "lastChecked": "2026-11-16T00:17:35.492Z",
+    "lastVerified": "2026-11-16T00:17:35.492Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -474,8 +474,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T23:37:56.862Z",
-    "lastVerified": "2026-11-15T23:37:56.862Z",
+    "lastChecked": "2026-11-16T00:17:40.468Z",
+    "lastVerified": "2026-11-16T00:17:40.468Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -4778,9 +4778,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-11-14T16:22:51.113Z",
+    "lastChecked": "2026-11-16T00:17:33.069Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-11-14T16:22:51.113Z"
+    "lastVerified": "2026-11-16T00:17:33.069Z"
   },
   "materializeinc-materialize": {
     "name": "MaterializeInc/materialize",
@@ -6089,22 +6089,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-shardingsphere": {
-    "name": "shardingsphere",
+    "name": "apache/shardingsphere",
     "officialUrl": "https://github.com/apache/shardingsphere",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-14T14:40:16.881Z",
-    "lastVerified": "2026-11-14T14:40:16.881Z",
+    "lastChecked": "2026-11-16T00:17:43.082Z",
+    "lastVerified": "2026-11-16T00:17:43.082Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "e3549a75afbef2e42464eb16c359524d4bccb9fe1d1f0d2c298af9a1bcc76aa0",
+    "contentHash": "43dce82425fd62e91df28eceb72776f20308a56807b1e6a6e152bb8eeca4531b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4a11f3af"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ntex-rs-ntex": {
     "name": "ntex-rs/ntex",
@@ -10579,9 +10578,9 @@
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
     "officialUrl": "https://github.com/pas7-studio/nextjs-sitemap-hreflang",
-    "lastChecked": "2026-11-11T09:59:51.364Z",
+    "lastChecked": "2026-11-16T00:17:28.030Z",
     "revisionIdentifier": "1faa101f3b",
-    "lastVerified": "2026-11-11T09:59:51.364Z"
+    "lastVerified": "2026-11-16T00:17:28.030Z"
   },
   "dimillian-redditos": {
     "name": "RedditOS",
@@ -10598,11 +10597,21 @@
     "lastVerified": "2026-11-11T10:26:26.265Z"
   },
   "ehpanda-team-ehpanda": {
-    "name": "EhPanda",
+    "name": "EhPanda-Team/EhPanda",
     "officialUrl": "https://github.com/EhPanda-Team/EhPanda",
-    "lastChecked": "2026-11-12T13:33:02.008Z",
-    "revisionIdentifier": "37b97996",
-    "lastVerified": "2026-11-12T13:33:02.008Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-16T00:17:35.672Z",
+    "lastVerified": "2026-11-16T00:17:35.672Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-ehpanda-team-ehpanda",
+    "contentHash": "cf9a0dfc65657508d548171c9fcbb296c5070cc0745ef68bfd88db552772d2a3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-liconstudio-minimax-h3-vbvr": {
     "name": "LiconStudio/Minimax-H3-VBVR",
@@ -15572,6 +15581,23 @@
     "contentHash": "ebddf28b5523f4864d6594d9e4282ab11fc2a7d252894e9ad4bd2f084f227c5a",
     "promotedRulesCount": 1,
     "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "metrolistgroup-metrolist": {
+    "name": "MetrolistGroup/Metrolist",
+    "officialUrl": "https://github.com/MetrolistGroup/Metrolist",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-16T00:17:29.977Z",
+    "lastVerified": "2026-11-16T00:17:29.977Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-metrolistgroup-metrolist",
+    "contentHash": "871933eea4398d0a45b5dff5058d12d3e157afa8159929d9d029701b50d88e7e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 29,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

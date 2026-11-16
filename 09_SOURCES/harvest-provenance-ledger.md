@@ -10221,3 +10221,6 @@ Every entry in this ledger must capture:
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f577f0d8` | Multi-dimensional audit evidence | 2026-11-15T23:59:58.531Z |
 | `learn-dom-d-cb5f7dee` | `project://hf-webai-official-twil-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md` | 2026-11-16T00:00:27.372Z |
 | `learn-dom-h-20a56733` | `project://agent-field-agentfield` | `1952010a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md` | 2026-11-16T00:01:01.447Z |
+| `learn-github-metrolistgroup-metrolist` | `https://github.com/MetrolistGroup/Metrolist` | `7172398f` | Multi-dimensional audit evidence | 2026-11-16T00:17:31.021Z |
+| `learn-github-ehpanda-team-ehpanda` | `https://github.com/EhPanda-Team/EhPanda` | `4d98daab` | Multi-dimensional audit evidence | 2026-11-16T00:17:36.466Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `78342a49` | Multi-dimensional audit evidence | 2026-11-16T00:17:43.880Z |
