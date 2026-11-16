@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T04:53:36.736Z",
+  "updated_at": "2026-11-16T05:17:45.213Z",
   "stats": {
-    "total_discovered": 4151,
-    "approved_pending_harvest": 3900,
+    "total_discovered": 4159,
+    "approved_pending_harvest": 3908,
     "harvested_count": 0,
     "rejected_count": 251,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3899,
+      "COMMUNITY_AND_EXPERT": 3907,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -89586,6 +89586,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
         "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-390627446DC1": {
+      "id": "SRC-390627446DC1",
+      "url": "https://chatgpt.com/codex/cloud/settings/general",
+      "title": "https://chatgpt.com/codex/cloud/settings/general",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:17:45.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-862DD0B49519": {
+      "id": "SRC-862DD0B49519",
+      "url": "https://app.greptile.com/api/retrigger?id=107483074&amp%3Bsig=8a18bc4c74d11c35d2432c5d983d66ec3014b28068a4d2c11e81a59173d9b1ca",
+      "title": "https://app.greptile.com/api/retrigger?id=107483074&amp%3Bsig=8a18bc4c74d11c35d2432c5d983d66ec3014b28068a4d2c11e81a59173d9b1ca",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:17:45.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-4AE8D2174316": {
+      "id": "SRC-4AE8D2174316",
+      "url": "https://app.greptile.com/-/switch-tenant?tenant=banes&amp%3Bnext=%2Fchrisbanes%2Fskills%2Fpull%2F147&amp%3Butm_source=greptile_review&amp%3Butm_medium=github&amp%3Butm_campaign=view_in_greptile",
+      "title": "https://app.greptile.com/-/switch-tenant?tenant=banes&amp%3Bnext=%2Fchrisbanes%2Fskills%2Fpull%2F147&amp%3Butm_source=greptile_review&amp%3Butm_medium=github&amp%3Butm_campaign=view_in_greptile",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:17:45.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-C22A17BC19F2": {
+      "id": "SRC-C22A17BC19F2",
+      "url": "https://greptile-static-assets.s3.amazonaws/",
+      "title": "https://greptile-static-assets.s3.amazonaws/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:17:45.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-CE001B07314E": {
+      "id": "SRC-CE001B07314E",
+      "url": "https://app.greptile.com/api/retrigger?id=106727805&amp%3Bsig=4f0c641811ff3a0e435f85603fbc0b852bded449f6cd98aeba4432c9c8d1e9f1",
+      "title": "https://app.greptile.com/api/retrigger?id=106727805&amp%3Bsig=4f0c641811ff3a0e435f85603fbc0b852bded449f6cd98aeba4432c9c8d1e9f1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:17:45.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-C140EA0E5435": {
+      "id": "SRC-C140EA0E5435",
+      "url": "https://app.greptile.com/-/switch-tenant?tenant=banes&amp%3Bnext=%2Fchrisbanes%2Fskills%2Fpull%2F146&amp%3Butm_source=greptile_review&amp%3Butm_medium=github&amp%3Butm_campaign=view_in_greptile",
+      "title": "https://app.greptile.com/-/switch-tenant?tenant=banes&amp%3Bnext=%2Fchrisbanes%2Fskills%2Fpull%2F146&amp%3Butm_source=greptile_review&amp%3Butm_medium=github&amp%3Butm_campaign=view_in_greptile",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:17:45.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-1678F1D1F058": {
+      "id": "SRC-1678F1D1F058",
+      "url": "https://github.com/chrisbanes",
+      "title": "https://github.com/chrisbanes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:17:45.194Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-59ED04B977D3": {
+      "id": "SRC-59ED04B977D3",
+      "url": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+      "title": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T05:17:45.213Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
       }
     }
   }

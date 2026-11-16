@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:22.659Z",
+  "timestamp": "2026-11-16T05:17:45.274Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-chrisbanes-skills-learnings",
+  "learning_id": "LEARN-EVO-chrisbanes-skills-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [chrisbanes-skills-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:22.659Z`  
-> **Learning ID**: `LEARN-REEXTRACT-chrisbanes-skills-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T05:17:45.274Z`  
+> **Learning ID**: `LEARN-EVO-chrisbanes-skills-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source**: github ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
-> **Source Version**: `72628aea`  
+> **Source Version**: `a7962de2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:30:49.994Z  
+> **Timestamp**: 2026-11-16T05:17:38.955Z  
 > **Learning ID**: `learn-github-chrisbanes-skills`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:30:49.987Z  
+> **Harvest Timestamp**: 2026-11-16T05:17:38.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Skills for Kotlin, Jetpack Compose, and Android development
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1139 stars
+- **Stars / Engagement**: 1158 stars
 
 ---
 
@@ -249,14 +249,17 @@ class ProfileModel {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #143** (2026-11-05): **Remove CLAUDE.md symlink**
-  *Symptoms*: This repo has an `AGENTS.md` file with a `CLAUDE.md` symlink pointing at it because Claude Code previously didn't support `AGENTS.md`. That causes issues with some tools like Microsoft's [APM](https://github.com/microsoft/apm), which sometimes throws an error when a repo contains a symlink: https://github.com/microsoft/apm/issues/3110  Since version v2.1.277, Claude Code natively supports `AGENTS.md`: https://code.claude.com/docs/en/memory#agents-md. The documentation says [the symlink workaround can be deleted](https://code.claude.com/docs/en/memory#remove-an-earlier-agents-md-workaround).  This PR removes the symlink since it doesn't seem like it's necessary anymore and it restricts these skills in APM.
-
-- **Issue #142** (2026-11-03): **Restore tier-calibration rules in subagent-delegation**
-  *Symptoms*: Follow-up to #141, which merged before its review repairs landed.  ## Summary  - Restores tier-calibration rules from the earlier user-level policy in `SKILL.md` step 5: keep the lead's model unchanged; file count, component count, or a sensitive area alone does not raise a tier; prefer a stronger model at lower effort when judgment matters; at opus, Sol, or an equivalent tier with high effort or above, make the investigation question or review checks concrete. - Marks the Claude ordinary-implementation row as the default. - `claude-code.md`: a required setting the runtime does not expose is reported to the lead before dispatch rather than omitted. - Step 8: proportional audits defer to a review the calling workflow requires. - Two `deliver-spec` nested rubrics now match the headless-session notification rule instead of claiming subagents never receive notifications. - Migration record: marks superseded statements, records the restored rules, and records the user-confirmed relaxation of the shared background-writer permission rule (merged in #141).  ## Validation  Independent read-only review: `ship` after two rounds.  - `npm run lint` - `npm run build` (references in sync) - `npm run evals:validate` (244 cases) - `npm test` (7 Node, 275 script, 416 evaluation-harness tests) - `git diff --check`  No live model evaluations; no version changes. 
+- **Issue #147** (2026-11-15): **Retire run-github-project worktrees instead of pooling them**
+  *Symptoms*: ## Problem  Long `drain` runs left many worktrees behind:  - Ticket worktrees were snapped to base for reuse, and nothing ever removed them. - T3 Code worktrees cannot be removed by the runtime. - After a restart, there was no rule for finding the worktrees from earlier in the run.  ## Changes  **Shared lifecycle.** The worker checkout rules move from `deliver-spec` and `implement-with-subagents` into `references/checkout-lifecycle.md`. `scripts/sync_references.py` copies it into all three skills.  - Uses the runtime's own worktrees only when it can both create one at an exact SHA and remove it. Otherwise uses plain Git worktrees. - Before removing a worktree, records `git status --porcelain`. Then runs one `git worktree remove --force`. - Tracked edits, locks, or work that isn't merged or pushed keep the worktree. It is reported with the reason. - Still never runs `git clean` or `reset`, never prunes globally, and never deletes branch refs the calling skill doesn't name.  **`run-github-project`** gets a new Worktrees section in `ticket-lifecycle.md`:  - One worktree per ticket. - Records branch, base SHA and checkout ID, never a local path. - After a restart, finds each worktree by its branch. A worktree with no claim is reported and left alone. - Removes it once merged, or once the PR's remote head matches local HEAD. That includes PRs closed unmerged, abandonment and Backlog moves. - The planning worktree is reused within a run and removed at run end. - A research worktree
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"883884b3f8f53a2dbf36a1a1ba1fe73ab056a9cb","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-03T19:31:15.694208Z">2026-11-03T19:31:15.694208Z</relative-time> | `883884b` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
-  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=94776886"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=banes&amp;next=%2Fchrisbanes%2Fskills%2Fpull%2F142&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2"><img alt="View in Greptile" src="https
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"752aab2c3dd6ad417e247ebe5401eea1c7e5cd54","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T11:43:31.007571Z">2026-11-15T11:43:31.007571Z</relative-time> | `752aab2` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=107483074&amp;sig=8a18bc4c74d11c35d2432c5d983d66ec3014b28068a4d2c11e81a59173d9b1ca"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=banes&amp;next=%2Fchrisbanes%2Fskills%2Fpull%2F147&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws
+
+- **Issue #146** (2026-11-14): **Preserve delivery evidence across plan revisions**
+  *Symptoms*: ## Summary  A later delivery revision could overwrite the reports referenced by an earlier revision’s blockers and budget. Bind new evidence to the verified plan revision and require the controller to verify preservation before accepting a handoff.  ```text verified plan revision N   → write evidence only to <evidence>/rN/   → return revision folder and written paths   → controller compares evidence outside rN/ with its retained inventory and hashes   → reject handoff if preservation changed or is unknown ```  Earlier evidence stays read-only and is reused by its original path and identity. Adds direct, novel and no-change evaluation cases covering output containment, preservation failures and evidence reuse.  ## Evidence  - **Before:** The reported haze #1753 incident rewrote six revision-2 reports during revision 3; the existing procedure recorded provenance without a revision-specific write boundary. - **After:** `npm run lint`, `npm run evals:validate` (247 cases), `npm run references:check` and `python3 -m unittest evals.tests.test_workflows_writing_matrix` (47 tests) pass. Deterministic checks reject missing, unsafe and contradictory evaluation decisions. Independent Standards and Spec reviews found no issues.  ## Merge Danger  **Door:** two-way  Revert the commit to restore the previous workflow. Versions remain unchanged.  **Blast Radius:** delivery  Changes the deliver-spec and Project-controller evidence contracts. These are procedural safeguards; filesystem enforce
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"417f11b87031db3694c3c52acf2523417333a9e7","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-14T05:38:35.562333Z">2026-11-14T05:38:35.562333Z</relative-time> | `417f11b` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=106727805&amp;sig=4f0c641811ff3a0e435f85603fbc0b852bded449f6cd98aeba4432c9c8d1e9f1"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=banes&amp;next=%2Fchrisbanes%2Fskills%2Fpull%2F146&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -273,20 +276,235 @@ class ProfileModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72628aea` (2026-11-05)
-**Commit Message**: Remove CLAUDE.md symlink (#143)
+### Incident Patch 1: `a7962de2` (2026-11-15)
+**Commit Message**: Retire run-github-project worktrees instead of pooling them (#147)
 
-**File**: `CLAUDE.md` (removed, +0/-1)
+## Problem
+
+Long `drain` runs left many worktrees behind:
+
+- Ticket worktrees were snapped to base for reuse, and nothing ever
+removed them.
+- T3 Code worktrees cannot be removed by the runtime.
+- After a restart, there was no rule for finding the worktrees from
+earlier in the run.
+
+## Changes
+
+**Shared lifecycle.** The worker checkout rules move from `deliver-spec`
+and `implement-with-subagents` into `references/checkout-lifecycle.md`.
+`scripts/sync_references.py` copies it into all three skills.
+
+- Uses the runtime's own worktrees only when it can both create one at
+an exact SHA and remove it. Otherwise uses plain Git worktrees.
+- Before removing a worktree, records `git status --porcelain`. Then
+runs one `git worktree remove --force`.
+- Tracked edits, locks, or work that isn't merged or pushed keep the
+worktree. It is reported with the reason.
+- Still never runs `git clean` or `reset`, never prunes globally, and
+never deletes branch refs the calling skill doesn't name.
+
+**`run-github-project`** gets a new Worktrees section in
+`ticket-lifecycle.md`:
+
+- One worktree per ticket.
+- Records branch, base SHA and check
+
+**File**: `.gitattributes` (modified, +3/-0)
 ```diff
-@@ -1 +0,0 @@
--AGENTS.md
-\ No newline at end of file
+@@ -14,3 +14,6 @@ skills/run-github-project/references/subagent-selection.md linguist-generated=tr
+ skills/gradle-run/references/subagent-selection.md linguist-generated=true
+ skills/shepherd/references/subagent-selection.md linguist-generated=true
+ skills/subagent-delegation/references/subagent-selection.md linguist-generated=true
++skills/deliver-spec/references/checkout-lifecycle.md linguist-generated=true
++skills/implement-with-subagents/references/checkout-lifecycle.md linguist-generated=true
++skills/run-github-project/references/checkout-lifecycle.md linguist-generated=true
+```
+
+**File**: `README.md` (modified, +7/-2)
+```diff
+@@ -153,8 +153,13 @@ preparation needs explicit slice ownership, permitted paths/resources, focused
+ checks and a stop before shared edits; native blockers, accepted-plan ordering,
+ resource grants and final integrated validation still apply.
+ 
+-Edit `references/subagent-selection.md`, then run
+-`npm run references:sync` and include the updated bundled copies in the change.
++Workflows that create worktrees (`deliver-spec`, `implement-with-subagents`
++and `run-github-project`) likewise share the
++[checkout lifecycle](references/checkout-lifecycle.md).
++
++Edit `references/subagent-selection.md` or `references/checkout-lifecycle.md`,
++then run `npm run references:sync` and include the updated bundled copies in
++the change.
+ Run `npm run references:check` to check that all copies are regular files matching their
+ sources; it fails on drift without rewriting files.
+ `.gitattributes` marks every copy as generated so GitHub collapses it in pull
+```
+
+**File**: `evals/cases/run-github-project-worktree-retention-negative/case.json` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++{
++  "id": "run-github-project-worktree-retention-negative",
++  "title": "Keep a merged worktree that still has tracked edits",
++  "family": "workflow",
++  "target_skills": [
++    "run-github-project"
++  ],
++  "expected_skills": [
++    "run-github-project"
++  ],
++  "task_mode": "review",
++  "kind": "negative",
++  "fixture": "workflow",
++  "forbid_all_commands": true,
++  "allowed_write_paths": [],
++  "validators": [
++    {
++      "argv": [
++        "python3",
++        "@validators/text_case.py",
++        "run-github-project-worktree-retention-negative"
++      ],
++      "timeout_seconds": 30
++    }
++  ],
++  "rubric": [
++    {
++      "id": "retain",
++      "text": "Rejects the force-removal: a modified tracked file keeps the worktree even though the ticket merged."
++    },
++    {
++      "id": "report",
++      "text": "Records the `git status --porcelain` output and reports the worktree as retained with the modified tracked file as its reason."
++    },
++    {
++      "id": "no-destructive",
++      "text": "Does not run `git clean`, `git reset`, `git checkout`, `git restore` or delete untracked files to make the worktree removable."
++    },
++    {
++      "id": "finish",
++      "text": "Accounts for the worktree in the drain's finish accounting as retained with its reason, leaves the human to resolve the unexplained edit, and continues independent work without stalling the drain."
++    },
++    {
++      "id": "review-restraint",
++      "text": "Provides a read-only assessment and does not run commands, launch agents, contact providers or edit files."
++    }
++  ],
++  "provenance": {
++    "kind": "synthetic"
++  },
++  "calibration": true,
++  "allow_skill_reference_reads": true
++}
+```
+
+**File**: `evals/cases/run-github-project-worktree-retention-negative/expectations.json` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++{
++  "files": [
++    "state.md"
++  ],
++  "must_contain": [
++    "Immutable evaluation state",
++    "controller owns"
++  ]
++}
+```
+
+**File**: `evals/cases/run-github-project-worktree-retention-negative/prompt.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++Use only the supplied state and applicable skill instructions. Read skill entrypoints and needed Markdown references using standalone `cat` commands. Do not execute the workflow, run other commands, contact providers, launch agents or change files.
++
++In `drain`, the controller reconciled the merge of #85's PR and moved #85 to Done. #85's plain Git worktree on `cb/issue-85-retry` has a HEAD contained in the merged PR, but `git status --porcelain` lists ` M src/Retry.kt` and `?? notes.txt`. Nobody knows why `src/Retry.kt` changed after the push. A cleanup proposal would force-remove the worktree because the ticket is merged. Review the proposal.
+```
+
+**File**: `evals/cases/run-github-project-worktree-retirement-direct/case.json` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++{
++  "id": "run-github-project-worktree-retirement-direct",
++  "title": "Retire a merged ticket worktree with untracked scratch files",
++  "family": "workflow",
++  "target_skills": [
++    "run-github-project"
++  ],
++  "expected_skills": [
++    "run-github-project"
++  ],
++  "task_mode": "review",
++  "kind": "direct",
++  "fixture": "workflow",
++  "forbid_all_commands": true,
++  "allowed_write_paths": [],
++  "validators": [
++    {
++      "argv": [
++        "python3",
++        "@validators/text_case.py",
++        "run-github-project-worktree-retirement-direct"
++      ],
++      "timeout_seconds": 30
++    }
++  ],
++  "rubric": [
++    {
++      "id": "retire",
++      "text": "Retires #80's worktree under the checkout lifecycle instead of snapping it to base and keeping it for reuse."
++    },
++    {
++      "id": "dirt-rule",
++      "text": "Records the exact `git status --porcelain` output in the run report, then removes the worktree with a single `git worktree remove --force` because only untracked files remain; notes that ignored `build/` output does not block removal."
++    },
++    {
++      "id": "readback",
++      "text": "Verifies the path is absent from `git worktree list --porcelain` and accounts for the worktree as retired with readback."
++    },
++    {
++      "id": "branch",
++      "text": "Deletes only the skill-created local `cb/issue-80-cache-key` branch; never runs `git clean`, `git reset`, a double force or a global prune."
++    },
++    {
++      "id": "review-restraint",
++      "text": "Provides a read-only assessment and does not run commands, launch agents, contact providers or edit files."
++    }
++  ],
++  "provenance": {
++    "kind": "synthetic"
++  },
++  "calibration": true,
++  "allow_skill_reference_reads": true
++}
+```
+
+**File**: `evals/cases/run-github-project-worktree-retirement-direct/expectations.json` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++{
++  "files": [
++    "state.md"
++  ],
++  "must_contain": [
++    "Immutable evaluation state",
++    "controller owns"
++  ]
++}
+```
+
+**File**: `evals/cases/run-github-project-worktree-retirement-direct/prompt.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++Use only the supplied state and applicable skill instructions. Read skill entrypoints and needed Markdown references using standalone `cat` commands. Do not execute the workflow, run other commands, contact providers, launch agents or change files.
++
++In `drain`, the controller just reconciled the squash merge of #80's PR into the verified base and moved #80 to Done. #80's plain Git worktree on `cb/issue-80-cache-key` holds a HEAD contained in the merged PR. Its ticket agent and test processes have stopped. `git status --porcelain` lists `?? scratch/notes.md` and `?? build-debug.log`; no tracked file is modified, no evidence references either file, and ignored `build/` output also exists. What happens to #80's worktree and local branch, and what does the run report record?
 ```
 
 ---
 
-### Incident Patch 2: `8df9735a` (2026-11-03)
-**Commit Message**: Bump version to 2026.11.3
+### Incident Patch 2: `cb70692c` (2026-11-14)
+**Commit Message**: Bump version to 2026.11.14
 
 **File**: `.claude-plugin/plugin.json` (modified, +1/-1)
 ```diff
@@ -294,8 +512,8 @@ Observed empirical fixes and code patches:
  {
    "name": "chrisbanes-skills",
    "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
--  "version": "2026.11.2",
-+  "version": "2026.11.3",
+-  "version": "2026.11.12",
++  "version": "2026.11.14",
    "author": {
      "name": "Chris Banes",
      "url": "https://github.com/chrisbanes"
@@ -306,8 +524,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  {
    "name": "chrisbanes-skills",
--  "version": "2026.11.2",
-+  "version": "2026.11.3",
+-  "version": "2026.11.12",
++  "version": "2026.11.14",
    "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
    "author": {
      "name": "Chris Banes",
@@ -318,8 +536,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  {
    "name": "chrisbanes-skills",
--  "version": "2026.11.2",
-+  "version": "2026.11.3",
+-  "version": "2026.11.12",
++  "version": "2026.11.14",
    "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
    "type": "module",
    "main": ".opencode/plugins/chrisbanes-skills.js",
@@ -331,20 +549,20 @@ Observed empirical fixes and code patches:
  {
    "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
    "name": "chrisbanes-skills",
--  "version": "2026.11.2",
-+  "version": "2026.11.3",
+-  "version": "2026.11.12",
++  "version": "2026.11.14",
    "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
    "author": {
      "name": "Chris Banes",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #147** (2026-11-15): Retire run-github-project worktrees instead of pooling them (@chrisbanes)
+- **PR #146** (2026-11-14): Preserve delivery evidence across plan revisions (@chrisbanes)
+- **PR #145** (2026-11-11): Fix OpenCode plugin installation from git (@chrisbanes)
+- **PR #144** (2026-11-10): Route Claude computer use to opus and conflicting evidence to fable/high (@chrisbanes)
 - **PR #143** (2026-11-05): Remove CLAUDE.md symlink (@VirtualParticle)
 - **PR #142** (2026-11-03): Restore tier-calibration rules in subagent-delegation (@chrisbanes)
-- **PR #141** (2026-11-03): Add opt-in provider-aware subagent delegation skill (@chrisbanes)
-- **PR #139** (2026-11-03): Harden run-github-project drain admission and recovery (@chrisbanes)
-- **PR #138** (2026-11-02): Drop the ready-for-agent label requirement from to-plan (@chrisbanes)
-- **PR #137** (2026-11-01): Include a plan overview in deliver-spec approval requests (@chrisbanes)
 
 ---
 
@@ -364,31 +582,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version to 2026.11.3
+## X. Retire run-github-project worktrees instead of pooling them
 
 **RULE**:
-When implementing operations in `.claude-plugin/plugin.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitattributes`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8df9735a`: Bump version to 2026.11.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7962de2`: Retire run-github-project worktrees instead of pooling them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/plugin.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitattributes`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  "version": "2026.11.3",
+skills/deliver-spec/references/checkout-lifecycle.md linguist-generated=true
+skills/implement-with-subagents/references/checkout-lifecycle.md linguist-generated=true
+skills/run-github-project/references/checkout-lifecycle.md linguist-generated=true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-  "version": "2026.11.2",
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8df9735a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7962de2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -10244,3 +10244,5 @@
 | `CYCLE-20261116-FSYK` | `2026-11-16T04:53:22.652Z` | `mikepenz/multiplatform-markdown-renderer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8715` | Yes (`799eaca7...`) |
 | `CYCLE-20261116-FYYM` | `2026-11-16T04:53:30.430Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md` | Yes (`552f7b88...`) |
 | `CYCLE-20261116-25PY` | `2026-11-16T05:10:45.622Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8685` | Yes (`bdf37aa4...`) |
+| `CYCLE-20261116-AXPK` | `2026-11-16T05:17:35.144Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md` | Yes (`1818df58...`) |
+| `CYCLE-20261116-B170` | `2026-11-16T05:17:39.660Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8716` | Yes (`afe23c20...`) |

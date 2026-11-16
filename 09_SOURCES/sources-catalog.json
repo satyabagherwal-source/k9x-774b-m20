@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "7b284277",
+    "sourceVersion": "a7e479f2",
     "license": "MIT",
-    "contentHash": "e6d5d69f9731df5dec7baa3130d0c25200cfd992c48a081953ff4733eb5572b4",
-    "lastHarvestedAt": "2026-11-14T12:04:07.677Z",
+    "contentHash": "1818df581c557b75d1bdc22568e36578198fa1e6db1435880aa40d4e41ff0b1f",
+    "lastHarvestedAt": "2026-11-16T05:17:35.147Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "b684174b",
+    "sourceVersion": "a7962de2",
     "license": "Apache-2.0",
-    "contentHash": "7734d4299176c5b0ff424df0c61d8e9685fa2ac33516b3e5c0d241f31e458b47",
-    "lastHarvestedAt": "2026-11-12T23:16:53.674Z",
+    "contentHash": "afe23c2005e11afd7b4fdd15076c6114289c1ab5a291b87e6a4a5a8803f28cc1",
+    "lastHarvestedAt": "2026-11-16T05:17:39.663Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {

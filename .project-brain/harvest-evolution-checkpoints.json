@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T05:10:50.230Z",
+  "last_updated": "2026-11-16T05:17:46.006Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T02:26:03.754Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-16T05:10:49.752Z",
+      "processed_at": "2026-11-16T05:17:45.590Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1323,7 +1323,7 @@
       "staged_for_review": 0
     },
     "chrisbanes-skills-learnings.md": {
-      "processed_at": "2026-11-12T23:17:07.855Z",
+      "processed_at": "2026-11-16T05:17:45.027Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1373,7 +1373,7 @@
       "staged_for_review": 1
     },
     "bahdotsh-wrkflw-learnings.md": {
-      "processed_at": "2026-11-14T12:04:18.611Z",
+      "processed_at": "2026-11-16T05:17:44.462Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3158,7 +3158,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1245,
+  "total_dossiers_evaluated": 1248,
   "total_canonical_promoted": 286,
-  "total_staged_for_review": 955
+  "total_staged_for_review": 958
 }

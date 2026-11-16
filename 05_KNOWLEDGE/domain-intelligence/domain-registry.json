@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T05:10:50.045Z",
-  "total_records": 1229,
+  "last_updated": "2026-11-16T05:17:45.840Z",
+  "total_records": 1231,
   "domains": {
     "A": {
       "total": 7,
@@ -884,7 +884,7 @@
       ]
     },
     "H": {
-      "total": 256,
+      "total": 258,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1141,7 +1141,9 @@
         "domain_intelligence-technical-construction-intelligence-crawlcove-xml-sitemap-validator-core-invaria",
         "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni",
         "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants"
       ]
     },
     "I": {
@@ -14020,8 +14022,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "e9c9875bf48330cd39275287eed71c6cace11a8fa2aa1778b43d7a9d225970fa",
-      "created_at": "2026-11-16T05:10:50.045Z"
+      "content_hash": "44ccd73b5a8fa56c9e2af08352abb1a2b5ef9116df58ff23fe846b67a3b75cdf",
+      "created_at": "2026-11-16T05:17:45.840Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -14455,8 +14457,8 @@
       "title": "Deployment & Operations Intelligence: bahdotsh/wrkflw Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-bahdotsh-wrkflw-deployment-operations-intelligence-bahdotsh-wrkflw-core-invarian.md",
       "repository": "bahdotsh/wrkflw",
-      "content_hash": "86754c1736013c9305f001e804597df4e94b282fec8360e00adbf066cf52a589",
-      "created_at": "2026-11-14T12:04:08.031Z"
+      "content_hash": "895ed35e0a2b5b10c59e935297251e3d433e1263e3943f3f4bef8631558de86e",
+      "created_at": "2026-11-16T05:17:35.399Z"
     },
     "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-core-invariants",
@@ -14482,8 +14484,8 @@
       "title": "Deployment & Operations Intelligence: bahdotsh-wrkflw-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-bahdotsh-wrkflw-learnings-deployment-operations-intelligence-bahdotsh-wrkflw-lea.md",
       "repository": "bahdotsh-wrkflw-learnings",
-      "content_hash": "b9dcead133007aec71e3af9b9407bbbe8d94182c2431285c9b5843b508b96577",
-      "created_at": "2026-11-14T12:04:18.958Z"
+      "content_hash": "97228ca859ec0d1cd8f1fc4d1e4a797096f179d166c371297162271cdd600d1c",
+      "created_at": "2026-11-16T05:17:44.729Z"
     },
     "DOM-D-5A7FBD90": {
       "record_id": "DOM-D-5A7FBD90",
@@ -22753,6 +22755,24 @@
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "content_hash": "e6b0e9d862f1c9543f8ab65525b7fe0410778cc77ccb02e1bc865c79986e8e02",
       "created_at": "2026-11-16T05:10:49.006Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: chrisbanes/skills Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-technical-construction-intelligence-chrisbanes-skills-core-inv.md",
+      "repository": "chrisbanes/skills",
+      "content_hash": "5fd875a423e85c3ebfbe9b84652a6944fee8ce63bf5df630644233907ac5306e",
+      "created_at": "2026-11-16T05:17:39.882Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: chrisbanes-skills-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-learnings-technical-construction-intelligence-chrisbanes-skill.md",
+      "repository": "chrisbanes-skills-learnings",
+      "content_hash": "3ed5ff0b0d8aefdadd3822b7b40343d0bc825f61d1743dea597c0e31f542dad3",
+      "created_at": "2026-11-16T05:17:45.420Z"
     }
   }
 }

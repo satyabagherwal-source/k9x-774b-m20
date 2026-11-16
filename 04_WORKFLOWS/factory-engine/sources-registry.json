@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T23:37:51.875Z",
-    "lastVerified": "2026-11-15T23:37:51.875Z",
+    "lastChecked": "2026-11-16T05:17:39.435Z",
+    "lastVerified": "2026-11-16T05:17:39.435Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T05:10:48.608Z",
-    "lastVerified": "2026-11-16T05:10:48.608Z",
+    "lastChecked": "2026-11-16T05:17:44.374Z",
+    "lastVerified": "2026-11-16T05:17:44.374Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -372,8 +372,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T04:17:58.294Z",
-    "lastVerified": "2026-11-16T04:17:58.294Z",
+    "lastChecked": "2026-11-16T05:17:44.364Z",
+    "lastVerified": "2026-11-16T05:17:44.364Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -6365,9 +6365,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-14T22:57:36.423Z",
+    "lastChecked": "2026-11-16T05:17:36.944Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-14T22:57:36.423Z"
+    "lastVerified": "2026-11-16T05:17:36.944Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -7641,12 +7641,12 @@
     "revisionIdentifier": "7ca6e772"
   },
   "genkit-ai-genkit": {
-    "name": "genkit-ai/genkit",
+    "name": "genkit",
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-14T21:21:04.360Z",
-    "lastVerified": "2026-11-14T21:21:04.360Z",
+    "lastChecked": "2026-11-16T05:17:42.093Z",
+    "lastVerified": "2026-11-16T05:17:42.093Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
@@ -7655,7 +7655,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "76130045"
   },
   "medialab-xan": {
     "name": "medialab/xan",
@@ -8422,12 +8423,12 @@
     "officialUrl": "https://github.com/bahdotsh/wrkflw",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T12:04:07.224Z",
-    "lastVerified": "2026-11-14T12:04:07.224Z",
+    "lastChecked": "2026-11-16T05:17:34.544Z",
+    "lastVerified": "2026-11-16T05:17:34.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "e6d5d69f9731df5dec7baa3130d0c25200cfd992c48a081953ff4733eb5572b4",
+    "contentHash": "1818df581c557b75d1bdc22568e36578198fa1e6db1435880aa40d4e41ff0b1f",
     "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -11034,9 +11035,9 @@
   "ugolbck-seofordev": {
     "name": "seofordev",
     "officialUrl": "https://github.com/ugolbck/seofordev",
-    "lastChecked": "2026-11-11T15:26:57.514Z",
+    "lastChecked": "2026-11-16T05:17:31.882Z",
     "revisionIdentifier": "d791e6dd",
-    "lastVerified": "2026-11-11T15:26:57.514Z"
+    "lastVerified": "2026-11-16T05:17:31.882Z"
   },
   "juullabs-kable": {
     "name": "JuulLabs/kable",
@@ -11133,14 +11134,14 @@
     "officialUrl": "https://github.com/chrisbanes/skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T23:16:40.613Z",
-    "lastVerified": "2026-11-12T23:16:40.613Z",
+    "lastChecked": "2026-11-16T05:17:38.950Z",
+    "lastVerified": "2026-11-16T05:17:38.950Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chrisbanes-skills",
-    "contentHash": "7734d4299176c5b0ff424df0c61d8e9685fa2ac33516b3e5c0d241f31e458b47",
+    "contentHash": "afe23c2005e11afd7b4fdd15076c6114289c1ab5a291b87e6a4a5a8803f28cc1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
