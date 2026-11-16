@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T13:23:00.234Z",
+  "last_updated": "2026-11-16T13:38:38.596Z",
   "directives": [
     {
       "id": "CD-001",
@@ -18901,6 +18901,90 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BE57F2-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-79XX",
+      "directive_title": "Stop consuming input after streaming sink failures",
+      "source_repo": "pola-rs-polars-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-79XX-stop-consuming-input-after-streaming-sink-failures.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7AEE",
+      "directive_title": "release preferences window content on close to stop idle CPU burn",
+      "source_repo": "duongductrong-snapzy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7AEE-release-preferences-window-content-on-close-to-stop-idle-cpu-burn.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-71ZV",
+      "directive_title": "Stop marking release binaries as dirty",
+      "source_repo": "open-policy-agent/opa",
+      "source_commit": "caa6e120",
+      "staged_file": "11_INBOX/candidate-directives/CD-71ZV-stop-marking-release-binaries-as-dirty.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-76OB",
+      "directive_title": "fix flaky TestBuildLatencyExcludesAdmissionWait",
+      "source_repo": "milvus-io/milvus",
+      "source_commit": "9f1054c2",
+      "staged_file": "11_INBOX/candidate-directives/CD-76OB-fix-flaky-testbuildlatencyexcludesadmissionwait.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-77HC",
+      "directive_title": "build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275",
+      "source_repo": "dathere/qsv",
+      "source_commit": "faa20a23",
+      "staged_file": "11_INBOX/candidate-directives/CD-77HC-build-deps-bump-anthropics-claude-code-action-from-1-0-271-to-1-0-275.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-2F66F5",
+      "directive_title": "Stop consuming input after streaming sink failures",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pola-rs-polars",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2F66F5-stop-consuming-input-after-streaming-sin.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-077307",
+      "directive_title": "release preferences window content on close to stop idle CPU burn",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "duongductrong-snapzy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-077307-release-preferences-window-content-on-cl.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-7ATG",
+      "directive_title": "build: Stop marking release binaries as dirty",
+      "source_repo": "open-policy-agent-opa-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7ATG-build-stop-marking-release-binaries-as-dirty.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
     }
   ]
 }

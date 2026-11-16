@@ -10272,3 +10272,8 @@
 | `CYCLE-20261116-KT2K` | `2026-11-16T12:53:09.548Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8735` | Yes (`db4aade0...`) |
 | `CYCLE-20261116-MYR3` | `2026-11-16T13:22:49.839Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8736` | Yes (`b3d76c42...`) |
 | `CYCLE-20261116-N26Y` | `2026-11-16T13:22:54.298Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8737` | Yes (`d7f4ffa8...`) |
+| `CYCLE-20261116-6W2F` | `2026-11-16T13:38:19.479Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8738` | Yes (`a8dc1515...`) |
+| `CYCLE-20261116-7014` | `2026-11-16T13:38:24.616Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8739` | Yes (`26acc567...`) |
+| `CYCLE-20261116-71VC` | `2026-11-16T13:38:27.000Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8740` | Yes (`bec2b28b...`) |
+| `CYCLE-20261116-76JM` | `2026-11-16T13:38:33.058Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8741` | Yes (`3c6ea005...`) |
+| `CYCLE-20261116-77CD` | `2026-11-16T13:38:34.093Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8742` | Yes (`04790268...`) |

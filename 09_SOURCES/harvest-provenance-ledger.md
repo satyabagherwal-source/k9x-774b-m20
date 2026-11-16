@@ -10305,3 +10305,8 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `237bba51` | Multi-dimensional audit evidence | 2026-11-16T12:53:09.552Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `82adf363` | Multi-dimensional audit evidence | 2026-11-16T13:22:49.844Z |
 | `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `953a7f42` | Multi-dimensional audit evidence | 2026-11-16T13:22:54.303Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `8c19cc28` | Multi-dimensional audit evidence | 2026-11-16T13:38:19.482Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `92a08dd1` | Multi-dimensional audit evidence | 2026-11-16T13:38:24.620Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `caa6e120` | Multi-dimensional audit evidence | 2026-11-16T13:38:27.003Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `9f1054c2` | Multi-dimensional audit evidence | 2026-11-16T13:38:33.062Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `faa20a23` | Multi-dimensional audit evidence | 2026-11-16T13:38:34.096Z |

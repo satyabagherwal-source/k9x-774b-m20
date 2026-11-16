@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T13:23:00.520Z",
-  "total_verified_learnings": 8773,
+  "last_updated": "2026-11-16T13:38:38.823Z",
+  "total_verified_learnings": 8774,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19065,
+  "total_items": 19081,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112117,10 +112117,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "64e35701",
-      "content_hash": "567d0c69c0f528690a535c3dd58d692e7d8cb46900a49a7d9cbb404cf2012a9a",
+      "source_version": "faa20a23",
+      "content_hash": "c978223272c5b6fc36940fbf7905f8308ad0c2882a7cdb68522f463f20971815",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:36:55.308Z"
+      "persisted_at": "2026-11-16T13:38:34.500Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -114157,10 +114157,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "6893a8c3",
-      "content_hash": "a82c66269ef9b4e0fe100d07c0a570424ef7bd5cc4bbccee0e7ab96247a3f248",
+      "source_version": "9f1054c2",
+      "content_hash": "0b035169a68481fdea9bfff80314f002570615b697b99e243866d0a22f2b67a7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T02:35:15.077Z"
+      "persisted_at": "2026-11-16T13:38:33.344Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
@@ -114169,10 +114169,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "6893a8c3",
-      "content_hash": "fe210689d8b23be3a51c58837f420496a984c8623a6f26a1d30d2dfa2adf0572",
+      "source_version": "9f1054c2",
+      "content_hash": "fbf24202d663c2282bd64b5eb535f2f29fac40550a12dd56ee5b8a22e74d5c28",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T02:35:15.213Z"
+      "persisted_at": "2026-11-16T13:38:33.460Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -213852,14 +213852,19 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "8d10da6e",
-      "content_hash": "e79d69eda2220ffd771870a5a744ec54e764e3b3eff65076a83fe5dadcefb6ab",
+      "source_version": "caa6e120",
+      "content_hash": "bec2b28b7bad4593d8528c38da3f20b13ab259155aacca9cf29b2212f5753a1f",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
         {
           "number": 8370,
           "title": "fix negative number location text (for)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8740,
+          "title": "Stop marking release binaries as dirty",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -213868,7 +213873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:07:20.194Z",
+      "verified_at": "2026-11-16T13:38:26.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213910,10 +213915,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "repository": "open-policy-agent/opa",
-      "source_version": "8d10da6e",
-      "content_hash": "bd67234a8b3075bb2a1f681ef857522a67c27de9296ffea5af30e79ea67d16a7",
+      "source_version": "caa6e120",
+      "content_hash": "5a691369b8c2637dee1d22bb013d20bbb3f3fcad824350c18c0486fd2da41446",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T20:07:20.703Z"
+      "persisted_at": "2026-11-16T13:38:27.280Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa",
@@ -213922,10 +213927,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-opa-verification-protocol-empirical-defect-shield-for-open-pol.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/opa",
       "repository": "open-policy-agent/opa",
-      "source_version": "8d10da6e",
-      "content_hash": "21a886bfb7d3fc0f8e0eb26a7b901cdea78665a1a71ed272cd1832b1e4370e39",
+      "source_version": "caa6e120",
+      "content_hash": "a0c93f1e6bca007043ccac5376955a81c6963f9e3c75fe3cc0e007bf7e935159",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:07:20.815Z"
+      "persisted_at": "2026-11-16T13:38:27.391Z"
     },
     "learn-github-cilium-cilium": {
       "learning_id": "learn-github-cilium-cilium",
@@ -214126,9 +214131,9 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "20e966b1c26d6766d61d3542af35c29c958289bafac4fcfaac75ed5e26ecbad7",
+      "content_hash": "d53c07be87fdfc7bed31ec199c9ef06f3b80752fd6de63b29cf8ab4abb0f4ba9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T20:08:03.831Z"
+      "persisted_at": "2026-11-16T13:38:38.710Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning",
@@ -214138,9 +214143,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-opa-learnings",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d88d7145dae54281dc7f9c8c30a502c699cdfdd54b32ab11cfa36424f0d50ad",
+      "content_hash": "5310d502a2b4d7ac5c7f525189df00dd8c0f03a0f7004459275f0dc93aeecf03",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:08:03.958Z"
+      "persisted_at": "2026-11-16T13:38:38.823Z"
     },
     "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
@@ -218851,8 +218856,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "64e35701",
-      "content_hash": "85266eacf91e58aaf70f16e8f37ed0a77fabad2be590aa0580203aec9534b622",
+      "source_version": "faa20a23",
+      "content_hash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218925,6 +218930,11 @@
           "number": 8676,
           "title": "docs(sqlp): warn that date inference and CAST read dates day-first",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8742,
+          "title": "build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218932,7 +218942,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:36:54.733Z",
+      "verified_at": "2026-11-16T13:38:33.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219782,10 +219792,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "64e35701",
-      "content_hash": "b10f92f4be3a8126f6ab118b5c8ba19f9c1642b0061eeca5e927611a2879a440",
+      "source_version": "faa20a23",
+      "content_hash": "02076f1268305de7d25f7cbe3473943f4aa68d1b8955e95c0d0eb260af0ffbcc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:36:55.194Z"
+      "persisted_at": "2026-11-16T13:38:34.386Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -231921,14 +231931,19 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "2d9938df",
-      "content_hash": "84151206900a16dd4e1aa02b2a5cf3bb1230660df89499a00f993dbcd9db405b",
+      "source_version": "8c19cc28",
+      "content_hash": "a8dc1515a864b2f6484f79302e5d4c21fef28a5f537066b410fffad0be8cd34d",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
         {
           "number": 8512,
           "title": "Return null instead of silent overflow for temporal total_ functions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8738,
+          "title": "Stop consuming input after streaming sink failures",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -231937,7 +231952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:39:55.205Z",
+      "verified_at": "2026-11-16T13:38:19.321Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231979,10 +231994,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "repository": "pola-rs/polars",
-      "source_version": "2d9938df",
-      "content_hash": "c38da01ff476374329397b8f4abbd0f3738e9f84a2b419dd747ba429526cdbf9",
+      "source_version": "8c19cc28",
+      "content_hash": "1a0d98297755461f18d6e81ba7cd4b66ad1a5ed4992e3b7d355c292147c1c01c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T17:39:55.721Z"
+      "persisted_at": "2026-11-16T13:38:19.765Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pola-rs-polars": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pola-rs-polars",
@@ -231991,10 +232006,10 @@
       "relative_path": "08_VERIFICATION/pola-rs-polars-verification-protocol-empirical-defect-shield-for-pola-rs-polars.md",
       "title": "Verification Protocol: Empirical Defect Shield for pola-rs/polars",
       "repository": "pola-rs/polars",
-      "source_version": "2d9938df",
-      "content_hash": "7ce38e14286944921759a5197399d71bd3339dd3828f781d153ee1e921f043c8",
+      "source_version": "8c19cc28",
+      "content_hash": "5374b7aea44c2ec2afcbf56d4db7dbf7ae4f622305c251989028599365ea2354",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:39:55.855Z"
+      "persisted_at": "2026-11-16T13:38:19.880Z"
     },
     "learn-github-yugabyte-yugabyte-db": {
       "learning_id": "learn-github-yugabyte-yugabyte-db",
@@ -232104,9 +232119,9 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "repository": "pola-rs-polars-learnings",
       "source_version": "HEAD",
-      "content_hash": "23e930181087af247bd02ddbf87cb3354e4808664aba432d2f0ca8200336ea35",
+      "content_hash": "6e73ccf3699a97bf07210afa248722311b8808eb72247c83b938144d66857b5c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T17:40:13.440Z"
+      "persisted_at": "2026-11-16T13:38:37.575Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pola-rs-polars-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pola-rs-polars-learnings",
@@ -232116,9 +232131,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pola-rs-polars-learnings",
       "repository": "pola-rs-polars-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d1d4c721b5b6689dbbd48f1e6c54e823a65cbb775216adcf5f8e0d7c10af29b",
+      "content_hash": "884075bd14b52f6372b0e279edc1f3f90c443b31d2b33290d861ec9f203e0032",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:40:13.567Z"
+      "persisted_at": "2026-11-16T13:38:37.691Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv",
@@ -238448,14 +238463,19 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "6893a8c3",
-      "content_hash": "03fb7e4650f98883b2dbb55b1cf9e1c8b6042d15ece8887382dfe3a94d24ba39",
+      "source_version": "9f1054c2",
+      "content_hash": "3c6ea005e2ab721b8da4303fea0c680522d51a77f3d3e33c96c5bd94d1ad7dd7",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
         {
           "number": 8565,
           "title": "bound manifest cgo concurrency process-wide",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8741,
+          "title": "fix flaky TestBuildLatencyExcludesAdmissionWait",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -238464,7 +238484,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T02:35:14.518Z",
+      "verified_at": "2026-11-16T13:38:32.911Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253444,6 +253464,229 @@
       "content_hash": "85b0511400556823368a4162ccad164874026e7dbf51168ae677c59aa231cd23",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T13:22:59.856Z"
+    },
+    "rule-8738": {
+      "learning_id": "rule-8738",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8738,
+      "title": "Stop consuming input after streaming sink failures",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "8c19cc28",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T13:38:19.321Z"
+    },
+    "candidate_directive-stop-consuming-input-after-streaming-sink-failures": {
+      "item_id": "candidate_directive-stop-consuming-input-after-streaming-sink-failures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-79XX-stop-consuming-input-after-streaming-sink-failures.md",
+      "title": "Stop consuming input after streaming sink failures",
+      "repository": "pola-rs-polars-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de1814b659e9ce9b9e6528c92493f65000fa5d803d72b805b4f13866f059d62d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T13:38:37.464Z"
+    },
+    "learn-github-duongductrong-snapzy": {
+      "learning_id": "learn-github-duongductrong-snapzy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "duongductrong/Snapzy",
+      "repository": "duongductrong/Snapzy",
+      "slug": "duongductrong-snapzy",
+      "platform": "github",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "92a08dd1",
+      "content_hash": "26acc567387b88beb218e746f21fdadbcb51f9b60c3464ba1cec0c960d31ee86",
+      "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8739,
+          "title": "release preferences window content on close to stop idle CPU burn",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T13:38:24.469Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8739": {
+      "learning_id": "rule-8739",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8739,
+      "title": "release preferences window content on close to stop idle CPU burn",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "92a08dd1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T13:38:24.469Z"
+    },
+    "candidate_directive-release-preferences-window-content-on-close-to-stop-idle-cpu-burn": {
+      "item_id": "candidate_directive-release-preferences-window-content-on-close-to-stop-idle-cpu-burn",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7AEE-release-preferences-window-content-on-close-to-stop-idle-cpu-burn.md",
+      "title": "release preferences window content on close to stop idle CPU burn",
+      "repository": "duongductrong-snapzy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d658b7bc2eec936d331fc99f2d7b6f3b215c8e19d400209dadc79d4c438def69",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T13:38:38.055Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-duongductrong-snapzy-technical-construction-intelligence-duongductrong-snapzy-co.md",
+      "title": "Technical Construction Intelligence: duongductrong/Snapzy Core Invariants",
+      "repository": "duongductrong/Snapzy",
+      "source_version": "92a08dd1",
+      "content_hash": "d418a903febd83be4f08567a9efb0757298323128c73b09ac31eec32e4311942",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T13:38:24.898Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-duongductrong-snapzy": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duongductrong-snapzy",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/duongductrong-snapzy-verification-protocol-empirical-defect-shield-for-duongduct.md",
+      "title": "Verification Protocol: Empirical Defect Shield for duongductrong/Snapzy",
+      "repository": "duongductrong/Snapzy",
+      "source_version": "92a08dd1",
+      "content_hash": "74ab68fc3e75dddc35847994290fe5a864717e712a6e688718e81dd3d14b232e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T13:38:25.011Z"
+    },
+    "rule-8740": {
+      "learning_id": "rule-8740",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8740,
+      "title": "Stop marking release binaries as dirty",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "caa6e120",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T13:38:26.838Z"
+    },
+    "candidate_directive-stop-marking-release-binaries-as-dirty": {
+      "item_id": "candidate_directive-stop-marking-release-binaries-as-dirty",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-71ZV-stop-marking-release-binaries-as-dirty.md",
+      "title": "Stop marking release binaries as dirty",
+      "repository": "open-policy-agent/opa",
+      "source_version": "caa6e120",
+      "content_hash": "9afd66d3a11c1b2716f7e3e9a4b88d3478ef7d482cc4734fac895ef235ea1cf3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T13:38:27.164Z"
+    },
+    "rule-8741": {
+      "learning_id": "rule-8741",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8741,
+      "title": "fix flaky TestBuildLatencyExcludesAdmissionWait",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "9f1054c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T13:38:32.912Z"
+    },
+    "candidate_directive-fix-flaky-testbuildlatencyexcludesadmissionwait": {
+      "item_id": "candidate_directive-fix-flaky-testbuildlatencyexcludesadmissionwait",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-76OB-fix-flaky-testbuildlatencyexcludesadmissionwait.md",
+      "title": "fix flaky TestBuildLatencyExcludesAdmissionWait",
+      "repository": "milvus-io/milvus",
+      "source_version": "9f1054c2",
+      "content_hash": "51a97dcafcb962eb5b6fcab050fa380d0a3238e43a5cc60e298e44c709a48dd9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T13:38:33.228Z"
+    },
+    "rule-8742": {
+      "learning_id": "rule-8742",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8742,
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "faa20a23",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T13:38:33.941Z"
+    },
+    "candidate_directive-build-deps-bump-anthropics-claude-code-action-from-1-0-271-to-1-0-275": {
+      "item_id": "candidate_directive-build-deps-bump-anthropics-claude-code-action-from-1-0-271-to-1-0-275",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-77HC-build-deps-bump-anthropics-claude-code-action-from-1-0-271-to-1-0-275.md",
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275",
+      "repository": "dathere/qsv",
+      "source_version": "faa20a23",
+      "content_hash": "27a9358e958494638260e557608550ee57f933569f692dfb94ef8ce6ed96679a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T13:38:34.276Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-duongductrong-snapzy-learnings-technical-construction-intelligence-duongductrong.md",
+      "title": "Technical Construction Intelligence: duongductrong-snapzy-learnings Core Invariants",
+      "repository": "duongductrong-snapzy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6617b6e2df89e389d6c17fe48ef626c0cfeb12ee9b183be2c0a7592f09a2bad8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T13:38:38.172Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-duongductrong-snapzy-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duongductrong-snapzy-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/duongductrong-snapzy-learnings-verification-protocol-empirical-defect-shield-for.md",
+      "title": "Verification Protocol: Empirical Defect Shield for duongductrong-snapzy-learnings",
+      "repository": "duongductrong-snapzy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "09013da806da36b5f5904affe4e40fd07b3362fd57edf38d43e168ffd179ea65",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T13:38:38.285Z"
+    },
+    "candidate_directive-build-stop-marking-release-binaries-as-dirty": {
+      "item_id": "candidate_directive-build-stop-marking-release-binaries-as-dirty",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7ATG-build-stop-marking-release-binaries-as-dirty.md",
+      "title": "build: Stop marking release binaries as dirty",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4c2674bd60b271d0168bbd7778e05bb971ee5d6cb694e87d12c9e8ffff1ad92a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T13:38:38.596Z"
     }
   },
   "ai-builder-brain": {

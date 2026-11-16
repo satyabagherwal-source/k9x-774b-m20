@@ -4,24 +4,24 @@
 {
   "source_repository": "milvus-io/milvus",
   "source_url": "https://github.com/milvus-io/milvus",
-  "source_version": "6893a8c3",
+  "source_version": "9f1054c2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T02:35:14.944Z",
+  "timestamp": "2026-11-16T13:38:33.227Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-milvus-io-milvus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `6893a8c3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T02:35:14.944Z`  
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `9f1054c2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T13:38:33.227Z`  
 > **Learning ID**: `learn-github-milvus-io-milvus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from milvus-io/milvus:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T02:35:13.585Z  
+> **Harvest Timestamp**: 2026-11-16T13:38:32.204Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46665 stars
+- **Stars / Engagement**: 46674 stars
 
 ---
 
@@ -1363,14 +1363,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55527** (2026-11-14): **enhance: [cp3.0] Support PBKDF2 password hashing for FIPS deployments**
-  *Symptoms*: issue: #55081 pr: #55084  Cherry-pick of #55084 to 3.0. See #55084 for the design, upgrade notes and limits.  The only conflict was in `pkg/util/paramtable/component_param.go`: 3.0 doesn't have master's `FeatureUsage*` fields, so `PasswordHashAlgorithm` was added to 3.0's field list. The other changes are the same as in #55084.  Default behaviour is unchanged: `common.security.passwordHashAlgorithm` defaults to `bcrypt`.  ## Testing on 3.0  - Unit tests in the builder image: `pkg/util/crypto`, `pkg/util/paramtable`, `internal/util/adminauth`, `internal/proxy` (credential, password and auth filter), `internal/rootcoord` (credential filter, with etcd) and `cmd/tools/config`. - golangci-lint on the changed packages. - A local linux/arm64 3.0 image with this change and other open FIPS PRs, configured with `pbkdf2-sha512`: an end-to-end run passed user creation, login, wrong-password refusal and password change. etcd held only `$pbkdf2-sha512$` hashes, root's included. - Upgrade on that image: users created with `bcrypt` kept logging in after switching to `pbkdf2-sha512`, and updating their passwords stored PBKDF2 hashes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #55561** (2026-11-16): **fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes**
+  *Symptoms*: Cherry-pick from master (PR still open)  pr: #55553 issue: #55552  Backport coordinator retry recovery to 3.0: after a retryable ServerID mismatch, try a successfully acquired connection immediately when its ServerID differs. Preserve fresh acquisition after backoff when discovery remains stale or lookup/dial fails, including recovery during the wait with only one attempt left.  This is a preemptive backport of master PR #55553 at commit 5283826e54dcdfe5678d35c85af0ed1e63d4af42. The original PR is still open; this backport must be updated if it changes.  Verification: - [x] All 6 changed files match the original PR: 700 additions, 9 deletions. - [x] Added/deleted lines match per file, including duplicate counts. - [x] Applied without conflicts; no conflict markers; `git diff --check` passes. - [ ] make static-check (skipped by cherry-pick workflow)  Tests were not rerun locally on 3.0; target-branch validation is left to CI. This patch does not wake an existing backoff or change its maximum. The historical 14.120-second recovery delay is not a measured saving from this change. 
   **Post-Mortem & Fix Analysis**:
-  > /set-milestone 3.0.7
   > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
+  > [INFO] PR Label Summary by Default [FAILED] PR #55553 not merged - Title: fix: Retry coordinator RPCs promptly after ServerID changes - Status: OPEN - Link: https://github.com/milvus-io/milvus/pull/55553   [WARNING] Milestone not set - PR: #55561 - Title: fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes Please set a milestone for better release tracking  You can set milestone by commenting:   /set-milestone <milestone-name> Example:   /set-milestone 2.5.0  Use /refresh-label to update related check and label manually
 
-- **Issue #55508** (2026-11-13): **fix: [2.6] restore AND early exit at null-rejecting filters**
-  *Symptoms*: issue: #51181 pr: #51182  AND conjunctions keep UNKNOWN rows active even when the filter consumer excludes them together with FALSE. Backport #51182 to restore early exit for these rows at FilterBitsNode and IterativeFilterNode, while keeping strict three-valued semantics below NOT. Native iterative filtering now explicitly folds validity before selecting rows.  Preserves the inherited candidate-mask handling from #55058. The master batch-LIKE reserved-slot fix does not apply to 2.6. Includes the five applicable upstream regression tests and retains existing conjunction and mask coverage.  Validation: clang-format 15 and git diff --check pass. Compilation and runtime validation are pending CI; local-source remote test attempts were blocked before compilation by test dependency image startup failures. 
+- **Issue #55560** (2026-11-16): **enhance: [cp3.0]revoke session leases before a forced stop exit**
+  *Symptoms*: Cherry-pick from master  pr: #54556  When graceful stop times out, revoke the session leases this process keeps alive before forced exit so a standby coordinator can take over without waiting for lease expiry. Backports merged master PR #54556 to 3.0 without code changes or conflict resolution.  Verification: - [x] All 3 changed files match the original PR: 77 additions, 0 deletions. - [x] Added/deleted lines match per file, including duplicate counts. - [x] No conflict markers; `git diff --check` passes. - [ ] make static-check (skipped by cherry-pick workflow)  Runtime tests were not run locally; validation is left to CI. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1387,542 +1387,392 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6893a8c3` (2026-11-14)
-**Commit Message**: fix: bound manifest cgo concurrency process-wide (#55182)
+### Incident Patch 1: `86534551` (2026-11-15)
+**Commit Message**: test: fix flaky TestBuildLatencyExcludesAdmissionWait (#55314)
 
-cgo pins a goroutine to an OS thread for the duration of every C call,
-so the blocking milvus-storage manifest FFI calls (transaction
-open/commit, filesystem read/write, external-source explore, and the
-async executor workers) grow one OS thread each while in flight. The
-per-context ManifestIOContext pools bound only their own callers, and
-the synchronous entry points had no process-wide ceiling, so under
-concurrent manifest add-file load mixcoord grew 1500-2000 threads and
-RSS jumped from ~220-277 MB to 3.66-5.27 GB.
+## Problem
 
-Add a process-wide budget, common.storage.manifestFFIConcurrency
-(default 128, clamped [1, 2048]), acquired around every blocking
-manifest FFI call and shared by all components in the process. The
-budget is read once at first manifest I/O and requires a restart to
-change. Worker execution stays deadlock-free because rejected native
-continuations run inline on the submitting worker instead of waiting for
-another slot.
+`TestBuildLatencyExcludesAdmissionWait`
+(`internal/datanode/index/task_test.go`) intermittently fails in CI. It
+was observed failing in `milvus-build-ut-ciloop-pipeline-for-tcus/4060`
+(UT-GO) with:
 
-issue: #55176
-
----------
-
-Signed-off-by: Congqi Xia <[REDACTED_EMAIL]>
-
-**File**: `internal/storagev2/packed/cgo_limit.go` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+// Copyright 2023 Zilliz
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package packed
-+
-+import (
-+	"context"
-+	"sync"
-+
-+	"golang.org/x/sync/semaphore"
-+
-+	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+)
-+
-+// cgo call entry points in this package
-+//
-+// A goroutine that enters a cgo call is pinned to an OS thread for the whole
-+// call, so the number of OS threads the process holds tracks the number of
-+// goroutines simultaneously blocked inside C. Storage v3 routes every manifest
-+// add-file / read / commit through milvus-storage FFI; the per-context
-+// ManifestIOContext pools bound only their own callers, and the synchronous
-+// entry points had no process-wide ceiling at all. Under load (segment change
-+// commit bursts, index/stats publication, L0 compaction, startup manifest
-+// reload, GC, copy-segment and backfill reads) hundreds of callers across many
-+// contexts blocked in cgo at once, growing process threads to 1500-2000 and
-+// inflating RSS by gigabytes. Every *blocking* cgo call below therefore
-+// acquires a shared process-wide slot (manifestFFI) before entering C.
-+//
-+// Blocking manifest transaction I/O (wrapped):
-+//   - openTransaction          (C.loon_transaction_open)   ffi_common.go
-+//   - commitTransaction        (C.loon_transaction_commit) ffi_common.go
-+//   - createMilvusTableManifest
-+//     (C.loon_transaction_open +
-+//      C.loon_milvus_table_append_source_manifests)         manifest_ffi.go
-+//
-+//   Every synchronous manifest mutator funnels through the first two:
-+//   CommitManifestUpdates, CreateManifestForSegment, AppendSegmentManifestColumns,
-+//   AddLobFilesToTransaction, AddDeltaLogsToManifest(Overwrite), AddStatsToManifest.
-+//   Every synchronous manifest reader funnels through openTransaction:
-+//   GetManifestHandle(WithExtfs), GetManifestFieldIDs, ReadFragmentsFromManifest,
-+//   ManifestHasColumns, ResolveManifestSingleWriterFormat, ReadManifestColumnGroups,
-+//   GetManifestIndexInfos, GetManifestLobFiles, GetManifestStats,
-+//   StatsBinlogSizeFromManifest, GetDeltaLogPathsFromManifest,
-+//   GetDeltaLogsFromManifestWithExtfs, ReadMilvusTableSnapshotMetadata.
-+//
-+// Blocking manifest filesystem I/O (wrapped):
-+//   - readFileWithExternalSpec (C.loon_filesystem_read_file_all)  ffi_filesystem.go
-+//   - WriteFile               (C.loon_filesystem_create_dir /
-+//                              C.loon_filesystem_write_file)      ffi_filesystem.go
-+//
-+// Blocking external-source explore I/O (wrapped):
-+//   - GetFileInfoFromExternalSource
-+//     (C.loon_exttable_get_file_info)                             explore_ffi.go
-+//   - ExploreFilesFromExternalSource
-+//     (C.loon_exttable_explore)                                   explore_ffi.go
-+//   - ReadFileInfosFromManifestPath
-+//     (C.loon_exttable_read_manifest)                             explore_ffi.go
-+//
-+// Async manifest executor worker (wrapped):
-+//   - runWorker               (C.milvusRunManifestTask)           manifest_async.go
-+//
-+//   The caller's submitOpen/submitCommit only enqueue to the native async
-+//   engine; the actual blocking manifest I/O runs on these workers, so bounding
-+//   worker execution bounds the async path's threads process-wide. The worker
-+//   never re-enters acquire for native continuations (rejected enqueues run
-+//   inline on the same worker), so this cannot deadlock with the budget.
-+//
-+// Quick staging / parse cgo (not wrapped): these build in-memory column-group /
-+// properties / stat descriptors or copy loaded manifest bytes and do not block
-+// on storage: loon_properties_create/free, loon_properties_inject_external_spec,
-+// loon_column_groups_create, loon_transaction_append_files/add_lob_file/
-+// add_delta_log/drop_column/update_stat, loon_transaction_get_manifest,
-+// loon_manifest_destroy, CString/free, and the result/error helpers.
-+//
-+// Data-plane writer/reader FFI (not wrapped): NewPackedWriter/NewFFIPackedWriter
-+// Close (parquet file write) and NewPackedReader/NewFFISegmentReader run on
-+// DataNode / QueryNode write/read paths, not on coordinators; the coordinator
-+// manifest-add operations they feed are the wrapped ones above.
-+
-+// manifestFFILimit bounds the number of goroutines that may simultaneously run
-+// blocking milvus-storage FFI calls in this process. The budget is read once
-+// from CommonCfg.ManifestFFIConcurrency at first use (the param is
-+// refreshable=false) and is shared by eve
+```
+=== FAIL: internal/datanode/index TestIndexBuildTask/TestBuildLatencyExcludesAdmissionWait (unknown)
+signal: segmentation fault (core dumped)
 ```
 
-**File**: `internal/storagev2/packed/cgo_limit_test.go` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
-+// Copyright 2023 Zilliz
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package packed
-+
-+import (
-+	"context"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"golang.org/x/sync/semaphore"
-+
-+	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+)
-+
-+// TestManifestFFILimiterBoundsConcurrency verifies the limiter caps the number
-+// of simultaneous holders even when more goroutines than the budget request it.
-+func TestManifestFFILimiterBoundsConcurrency(t *testing.T) {
-+	limiter := &manifestFFILimit{slots: semaphore.NewWeighted(2)}
-+	ctx := context.Background()
-+
-+	var held atomic.Int32
-+	var maxHeld atomic.Int32
-+	done := make(chan struct{})
-+	for i := 0; i < 8; i++ {
-+		go func() {
-+			defer func() { done <- struct{}{} }()
-+			for j := 0; j < 20; j++ {
-+				require.NoError(t, limiter.acquire(ctx))
-+				current := held.Add(1)
-+				for maxHeld.Load() < current {
-+					if maxHeld.CompareAndSwap(maxHeld.Load(), current) {
-+						break
-+					}
-+				}
-+				time.Sleep(time.Millisecond)
-+				held.Add(-1)
-+				limiter.release()
-+			}
-+		}()
-+	}
-+	for i := 0; i < 8; i++ {
-+		<-done
-+	}
-+	assert.LessOrEqual(t, int(maxHeld.Load()), 2, "the limiter must never admit more holders than its budget")
-+}
-+
-+// TestManifestFFILimiterContextCancellation verifies a canceled caller is not
-+// admitted and does not consume a slot.
-+func TestManifestFFILimiterContextCancellation(t *testing.T) {
-+	limiter := &manifestFFILimit{slots: semaphore.NewWeighted(1)}
-+	require.NoError(t, limiter.acquire(context.Background()))
-+
-+	canceled, cancel := context.WithCancel(context.Background())
-+	cancel()
-+	require.ErrorIs(t, limiter.acquire(canceled), context.Canceled)
-+
-+	limiter.release()
-+	require.NoError(t, limiter.acquire(context.Background()))
-+	limiter.release()
-+}
-+
-+// TestManifestFFILimiterReadsConfiguredBudget verifies the package-wide budget
-+// is sized from the configured paramtable value and is at least one.
-+func TestManifestFFILimiterReadsConfiguredBudget(t *testing.T) {
-+	paramtable.Init()
-+	require.NoError(t, acquireManifestFFI(context.Background()))
-+	releaseManifestFFI()
-+}
-```
+The test patched the globally-hot `time.Now` with
+`mockey.Mock(time.Now)`. mockey rewrites the target function's machine
+code non-atomically, so concurrent `time.Now` callers (e.g. the
+config-refresh goroutine started by `paramtable.Init` in `TestMain`)
+race with the patch. Under `-race` this surfaces as a data race; without
+`-race` it segfaults.
 
-**File**: `internal/storagev2/packed/explore_ffi.go` (modified, +10/-0)
+## Root cause
+
+`mockey.Mock(time.Now)` in `TestBuildLatencyExcludesAdmissionWait` races
+with background goroutines that call `time.Now` concurrently. Reproduced
+locally with `-race -gcflags="all=-N -l"`:
+
+- `-test.run 'TestIndexBuildTask/TestBuildLatencyExcludesAdmissionWait'
+-test.count=300` → repeated `WARNING: DATA RACE` between goroutine 214
+(test goroutine at `task_test.go:231` `mockey.Mock(time.Now)`) and
+goroutine
+
+**File**: `internal/datanode/index/task_index.go` (modified, +8/-6)
 ```diff
-@@ -128,7 +128,11 @@ func GetFileInfo(
+@@ -61,6 +61,7 @@ type indexBuildTask struct {
+ 	prepareDur     time.Duration // Preparation and input loading, excluding waits between stages.
+ 	manager        *TaskManager
  
- 	var numRows C.uint64_t
++	now           func() time.Time // Injectable clock; defaults to time.Now, tests override it.
+ 	pluginContext *indexcgopb.StoragePluginContext
+ }
  
-+	// GetFileInfo stats an external object; blocking storage I/O on this
-+	// goroutine's OS thread, bounded process-wide like the other FFI calls.
-+	acquireManifestFFI(context.Background())
- 	result := C.loon_exttable_get_file_info(cFormat, cFilePath, cProperties, &numRows)
-+	releaseManifestFFI()
- 	if err := HandleLoonFFIResult(result); err != nil {
- 		return nil, merr.WrapErrStorage(err, "loon_exttable_get_file_info failed")
+@@ -79,6 +80,7 @@ func NewIndexBuildTask(ctx context.Context,
+ 		req:           req,
+ 		tr:            timerecord.NewTimeRecorder(fmt.Sprintf("IndexBuildID: %d, ClusterID: %s", req.GetBuildID(), req.GetClusterID())),
+ 		manager:       manager,
++		now:           time.Now,
+ 		pluginContext: pluginContext,
  	}
-@@ -420,11 +424,15 @@ func ExploreFilesReturnManifestPath(
- 		cColumnsPtr = &cColumns[0]
- 	}
  
-+	// Explore lists/reads the external source and writes an explore manifest;
-+	// blocking storage I/O bounded process-wide like the other FFI calls.
-+	acquireManifestFFI(context.Background())
- 	result := C.loon_exttable_explore(
- 		cColumnsPtr, C.size_t(len(columns)),
- 		cFormat, cBaseDir, cExploreDir, cProperties,
- 		&numFiles, &outColumnGroupsPath,
+@@ -163,7 +165,7 @@ func (it *indexBuildTask) IsVectorIndex() bool {
+ }
+ 
+ func (it *indexBuildTask) PreExecute(ctx context.Context) error {
+-	started := time.Now()
++	started := it.now()
+ 	it.queueDur = it.tr.RecordSpan()
+ 	mlog.Info(ctx, "Begin to prepare indexBuildTask", mlog.FieldBuildID(it.req.GetBuildID()),
+ 		mlog.Int64("Collection", it.req.GetCollectionID()), mlog.Int64("SegmentID", it.req.GetSegmentID()))
+@@ -237,7 +239,7 @@ func (it *indexBuildTask) PreExecute(ctx context.Context) error {
+ 		mlog.Int32("currentIndexVersion", it.req.GetCurrentIndexVersion()),
+ 		mlog.Int32("currentScalarIndexVersion", it.req.GetCurrentScalarIndexVersion()),
  	)
-+	releaseManifestFFI()
- 	if err := HandleLoonFFIResult(result); err != nil {
- 		return nil, "", merr.WrapErrStorage(err, "loon_exttable_explore failed")
- 	}
-@@ -469,7 +477,9 @@ func ReadFileInfosFromManifestPath(
- 	defer C.loon_properties_free(cProperties)
+-	it.prepareDur = time.Since(started)
++	it.prepareDur = it.now().Sub(started)
+ 	return nil
+ }
  
- 	var manifest *C.LoonManifest
-+	acquireManifestFFI(context.Background())
- 	result := C.loon_exttable_read_manifest(cManifestPath, cProperties, &manifest)
-+	releaseManifestFFI()
- 	if err := HandleLoonFFIResult(result); err != nil {
- 		return nil, merr.WrapErrStorage(err, "loon_exttable_read_manifest failed")
+@@ -261,7 +263,7 @@ func redactBuildIndexParamsForLog(params *indexcgopb.BuildIndexInfo) *indexcgopb
+ }
+ 
+ func (it *indexBuildTask) LoadData(ctx context.Context) error {
+-	started := time.Now()
++	started := it.now()
+ 	if it.index == nil {
+ 		if err := it.createBuilder(ctx); err != nil {
+ 			return err
+@@ -270,7 +272,7 @@ func (it *indexBuildTask) LoadData(ctx context.Context) error {
+ 	if err := it.index.LoadData(); err != nil {
+ 		return err
  	}
+-	it.prepareDur += time.Since(started)
++	it.prepareDur += it.now().Sub(started)
+ 	it.tr.RecordSpan()
+ 	return nil
+ }
+@@ -404,11 +406,11 @@ func (it *indexBuildTask) Execute(ctx context.Context) error {
+ 	if it.index == nil {
+ 		return merr.WrapErrServiceInternalMsg("index input has not been prepared")
+ 	}
+-	started := time.Now()
++	started := it.now()
+ 	if err := it.index.Build(); err != nil {
+ 		return err
+ 	}
+-	buildIndexLatency := it.prepareDur + time.Since(started)
++	buildIndexLatency := it.prepareDur + it.now().Sub(started)
+ 	metrics.DataNodeKnowhereBuildIndexLatency.WithLabelValues(strconv.FormatInt(paramtable.GetNodeID(), 10)).Observe(buildIndexLatency.Seconds())
+ 	it.tr.RecordSpan()
+ 	return nil
 ```
 
-**File**: `internal/storagev2/packed/ffi_common.go` (modified, +10/-0)
+**File**: `internal/datanode/index/task_test.go` (modified, +2/-3)
 ```diff
-@@ -13,6 +13,7 @@ package packed
- import "C"
- 
- import (
-+	"context"
- 	"encoding/json"
- 	"fmt"
- 	"strconv"
-@@ -508,6 +509,11 @@ func openTransaction(manifest ManifestJSON, cProperties *C.LoonProperties, resol
- 	cBasePath := C.CString(manifest.BasePath)
- 	defer C.free(unsafe.Pointer(cBasePath))
- 	var handle C.LoonTransactionHandle
-+	// The open reads the manifest revision from storage and blocks the calling
-+	// goroutine's OS thread; bound it process-wide like every other blocking
-+	// manifest FFI call so concurrent commits cannot explode thread count.
-+	acquireManifestFFI(context.Background())
-+	defer releaseManifestFFI()
- 	result := C.loon_transaction_open(cBasePath, cProperties, C.int64_t(manifest.ManifestVersion),
- 		C.int64_t(manifest.Size), resolveID, retryLimit, &handle)
- 	return handle, HandleLoonFFIResult(result)
-@@ -531,6 +537,10 @@ func openManifest(manifest ManifestJSON, cProperties *C.LoonProperties) (*C.Loon
- // revision it wrote on basePath, recording the size of the manifest object.
- func commitTransaction(handle C.LoonTransactionHandle, basePath string, storageConfig *indexpb.StorageConfig) (string, error) {
- 	var version, size C.int64_t
-+	// The commit writes the manifest revision and blocks the calling
-+	// goroutine's OS thread; bound it process-wide like openTransaction.
-+	acquireManifestFFI(context.Background())
-+	defer releaseManifestFFI()
- 	if err := HandleLoonFFIResult(C.loon_transaction_commit(handle, &version, &size)); err != nil {
- 		return "", err
+@@ -228,10 +228,9 @@ func (suite *IndexBuildTaskSuite) TestBuildLatencyExcludesAdmissionWait() {
  	}
-```
-
-**File**: `internal/storagev2/packed/ffi_filesystem.go` (modified, +7/-0)
-```diff
-@@ -23,6 +23,7 @@ package packed
- import "C"
- 
- import (
-+	"context"
- 	"net/url"
- 	"strings"
- 	"unsafe"
-@@ -63,7 +64,9 @@ func WriteFile(
- 			dir := filePath[:idx]
- 			cDir := C.CString(dir)
- 			defer C.free(unsafe.Pointer(cDir))
-+			acquireManifestFFI(context.Background())
- 			result = C.loon_filesystem_create_dir(fsHandle, cDir, C.uint32_t(len(dir)), true)
-+			releaseManifestFFI()
- 			if err := HandleLoonFFIResult(result); err != nil {
- 				return merr.WrapErrStorage(err, "failed to create parent directory %q", dir)
- 			}
-@@ -76,6 +79,8 @@ func WriteFile(
- 		dataPtr = (*C.uint8_t)(unsafe.Pointer(&data[0]))
- 	}
- 
-+	acquireManifestFFI(context.Background())
-+	defer releaseManifestFFI()
- 	result = C.loon_filesystem_write_file(
- 		fsHandle,
- 		cPath, pathLen,
-@@ -148,6 +153,8 @@ func readFileWithExternalSpec(
- 
- 	var outData *C.uint8_t
- 	var outSize C.uint64_t
-+	acquireManifestFFI(context.Background())
-+	defer releaseManifestFFI()
- 	result = C.loon_filesystem_read_file_all(fsHandle, cPath, pathLen, &outData, &outSize)
- 	if err := HandleLoonFFIResult(result); err != nil {
- 		return nil, merr.Wrapf(err, "read file %s via filesystem %s", normalizedFilePath, filesystemPath)
-```
-
-**File**: `internal/storagev2/packed/manifest_async.go` (modified, +6/-0)
-```diff
-@@ -101,7 +101,13 @@ func (io *ManifestIOContext) init() {
- func (io *ManifestIOContext) runWorker() {
- 	defer io.workers.Done()
- 	for task := range io.tasks {
-+		// The native task performs blocking manifest I/O on this goroutine's
-+		// OS thread. Bound worker execution by the process-wide manifest FFI
-+		// budget, not just this context's capacity: many short-lived contexts
-+		// (GC, copy-segment, backfill, index reads) share one process.
-+		acquireManifestFFI(context.Background())
- 		C.milvusRunManifestTask(task.run, task.data)
-+		releaseManifestFFI()
- 		io.taskMu.Lock()
- 		io.pendingTasks--
- 		io.taskMu.Unlock()
-```
-
-**File**: `internal/storagev2/packed/manifest_ffi.go` (modified, +11/-2)
-```diff
-@@ -442,9 +442,12 @@ func createMilvusTableManifest(
- 	// updates append, even with OVERWRITE; opening the old version would retain
- 	// its stale deletes. Version allocation still advances past existing files.
- 	var handle C.LoonTransactionHandle
--	if err := HandleLoonFFIResult(C.loon_transaction_open(cBasePath, cProperties,
-+	acquireManifestFFI(context.Background())
-+	err = HandleLoonFFIResult(C.loon_transaction_open(cBasePath, cProperties,
- 		C.int64_t(ManifestEarliest), C.int64_t(-1), C.LOON_TRANSACTION_RESOLVE_OVERWRITE,
--		getRetryLimit(), &handle)); err != nil {
-+		getRetryLimit(), &handle))
-+	releaseManifestFFI()
-+	if err != nil {
- 		return "", merr.WrapErrStorage(err, "begin milvus-table manifest")
- 	}
- 	defer C.loon_transaction_destroy(handle)
-@@ -457,6 +460,11 @@ func createMilvusTableManifest(
- 	if extfs.MilvusTablePKMode.usesExternalPrimaryKey() {
- 		hasExternalPrimaryKey = C.int(1)
- 	}
-+	// The call reads the source segment manifests and writes the new target
-+	// manifest, blocking this goroutine's OS thread; bound it process-wide.
-+	// Release before commitTransaction, which acquires its own slot: holding
-+	// this one through it would nest and deadlock a budget of one.
-+	acquireManifestFFI(context.Background())
- 	result := C.loon_milvus_table_append_source_manifests(
- 		handle,
- 		cPathsPtr,
-@@ -468,6 +476,7 @@ func createMilvusTableManifest(
- 		cProperties,
- 		hasExternalPrimaryKey,
- 	)
-+	releaseManifestFFI()
- 	if err := HandleLoonFFIResult(result); err != nil {
- 		return "", err
- 	}
-```
-
-**File**: `pkg/util/paramtable/component_param.go` (modified, +18/-0)
-```diff
-@@ -380,6 +380,7 @@ type commonConfig struct {
- 
- 	StorageType                   ParamItem `refreshable:"false"`
- 	ManifestTransactionRetryLimit ParamItem `refreshable:"true"`
-+	ManifestFFIConcurrency        ParamItem `refreshable:"false"`
- 	UseArrowFSChunkManager        ParamItem `refreshable:"false"`
- 	SimdType                      ParamItem `refreshable:"false"`
- 
-@@ -882,6 +883,23 @@ This configuration is only used by querynode and indexnode, it selects CPU instr
- 	}
- 	p.ManifestTransactionRetryLimit.Init(base.mgr)
- 
-+	p.ManifestFFIConcurrency = ParamItem{
-+		Key:          "common.storage.manifestFFIConcurrency",
-+		Version:      "3.0.0",
-+		DefaultValue: "128",
-+		Formatter: func(v string) string {
-+			return strconv.Itoa(min(2048, max(1, getAsInt(v))))
-+		},
-+		Doc: "Maximum number of goroutines that may concurrently execute blocking milvus-storage manifest FFI calls " +
-+			"in one process. cgo pins each such goroutine to an OS thread, so unbounded concurrency across the " +
-+			"synchronous manifest transaction/filesystem entry points and the async manifest executor workers inflates " +
-+			"thread count and process RSS (observed 1500+ cgo threads / multiple GBs on coordinators). The budget is " +
-+			"process-wide and shared by every component in the process. Values are clamped to [1, 2048]; read once at " +
-+			"first manifest I/O, changes require restart.",
-+		Export: false,
+ 	before := readMetric()
+ 	var elapsed atomic.Int64
+-	clock := mockey.Mock(time.Now).To(func() time.Time {
++	task.now = func() time.Time {
+ 		return time.Unix(1000, elapsed.Load())
+-	}).Build()
+-	defer clock.UnPatch()
 +	}
-+	p.ManifestFFIConcurrency.Init(base.mgr)
-+
- 	p.UseArrowFSChunkManager = ParamItem{
- 		Key:          "common.storage.useArrowFileSystemChunkManager",
- 		Version:      "3.0.1",
+ 	prepare := mockey.Mock(getCurrentIndexVersion).To(func(version int32) int32 {
+ 		elapsed.Add(int64(2 * time.Second))
+ 		return version
 ```
 
 ---
 
-### Incident Patch 2: `8f5d5ecc` (2026-11-13)
-**Commit Message**: fix: preserve VARCHAR primary key when building QueryIterator filter (#55426)
+### Incident Patch 2: `e07890ac` (2026-11-16)
+**Commit Message**: fix: restrict default collection lookup fallback to missing keys (#55261)
 
-## What
+## Summary
 
-`composeIteratorExpr` (`client/milvusclient/iterator.go`) builds the
-continuation filter for `QueryIterator` by interpolating the last
-primary key into a double-quoted expression:
+Fix RootCoord default-database collection lookup so legacy metadata is
+used only when the modern default-database key is explicitly absent.
 
-```go
-pkFilter := fmt.Sprintf(`%s > "%s"`, pkName, it.lastPK)
-```
+## Root Cause
 
-For a VARCHAR primary key whose value needs escaping, this produces a
-broken filter. A value such as `a"b` yields `ID > "a"b"`, which fails to
-parse, so the iterator returns the first page and then errors on the
-next request. A trailing backslash or an actual newline fails the same
-way, and a backslash followed by `n` changes the comparison value so the
-iterator returns the same row repeatedly instead of advancing.
+`loadCollectionFromDb` converted every `Load` error and tombstone into
+`ErrCollectionNotFound`. `loadCollectionFromDefaultDb` then treated
+every non-nil error as evidence that the modern key was absent and read
+the legacy `NonDBID` key.
 
-Int64 primary keys are not affected.
+As a result, a valid legacy collection could be returned after a logical
+deletion or a storage I/O failure.
 
-## How
+## Changes
 
-Quote the key as a Go string literal with `strconv.Quote`. The server
-unquotes a filter string literal with `strconv.Unquote` (see
-`planparserv2.convertEscapeSingle` and the `StringLiteral` escape rules
-in `Plan.g4`), so `strconv.Quote` round-trips any value, including one
-that contains a double quote, a backslash, a control character or a
-newline. Iterating valid primary keys now returns each m
+- Preserve typed storage errors and classify untyped load errors as
+`ErrIoFailed`.
+- Fall back to the legacy `NonDBID` key only for `ErrIoKeyNotFound`.
+- Keep tombstones as `ErrCollectionNotFound`.
+- Preserve `ErrCollectionNotFound` when both the default and legacy keys
+are absent.
+- Add regression coverage for tombstones, I/O errors, explicit key
+absence, and both keys being absent.
 
-**File**: `client/milvusclient/iterator.go` (modified, +6/-1)
+## Testing
+
+Passed:
+
+- Focused `GetCollectionByID` regression tests with `-tags dynamic,test
+-gcflags="all=-N -l"`.
+- Catalog-focused RootCoord metastore tests.
+- `go build ./internal/metastore/kv/rootcoord`
+- 
+
+**File**: `internal/metastore/kv/rootcoord/kv_catalog.go` (modified, +18/-3)
 ```diff
-@@ -263,7 +263,12 @@ func (it *queryIterator) composeIteratorExpr() string {
- 		}
- 		return fmt.Sprintf("(%s) and %s", expr, pkFilter)
- 	case entity.FieldTypeVarChar:
--		pkFilter := fmt.Sprintf(`%s > "%s"`, pkName, it.lastPK)
-+		// Quote the primary key as a Go string literal. The server unquotes a
-+		// string literal with strconv.Unquote (see planparserv2.convertEscapeSingle),
-+		// so strconv.Quote round-trips any value, including one that contains a
-+		// double quote, a backslash or a newline. Interpolating the raw value
-+		// instead produced an invalid filter such as `ID > "a"b"`.
-+		pkFilter := fmt.Sprintf("%s > %s", pkName, strconv.Quote(fmt.Sprintf("%v", it.lastPK)))
- 		if len(expr) == 0 {
- 			return pkFilter
- 		}
-```
-
-**File**: `client/milvusclient/iterator_test.go` (modified, +37/-0)
-```diff
-@@ -21,9 +21,12 @@ import (
- 	"fmt"
- 	"io"
- 	"math/rand"
-+	"strconv"
-+	"strings"
- 	"testing"
+@@ -267,7 +267,11 @@ func (kc *Catalog) loadCollectionFromDb(ctx context.Context, dbID int64, collect
+ 	collKey := BuildCollectionKey(dbID, collectionID)
+ 	collVal, err := kc.Txn.Load(ctx, collKey)
+ 	if err != nil {
+-		return nil, merr.WrapErrCollectionNotFound(collectionID, err.Error())
++		// Return the storage error as is. The default-database compatibility
++		// fallback must distinguish a missing key from a tombstone or an I/O
++		// failure, and callers must still see a cancellation or a timeout as
++		// such.
++		return nil, err
+ 	}
  
- 	"github.com/samber/lo"
-+	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/suite"
- 
-@@ -848,3 +851,37 @@ func (s *QueryIteratorSuite) TestQueryIteratorWithFilter() {
- func TestQueryIterator(t *testing.T) {
- 	suite.Run(t, new(QueryIteratorSuite))
+ 	// Legacy SuffixSnapshot deletion with ts!=0 overwrote the plain key with a
+@@ -283,9 +287,13 @@ func (kc *Catalog) loadCollectionFromDb(ctx context.Context, dbID int64, collect
  }
-+
-+func TestComposeIteratorExprVarChar(t *testing.T) {
-+	newIt := func(expr string, pk any) *queryIterator {
-+		return &queryIterator{
-+			expr:    expr,
-+			pkField: entity.NewField().WithName("ID").WithDataType(entity.FieldTypeVarChar),
-+			lastPK:  pk,
-+		}
+ 
+ func (kc *Catalog) loadCollectionFromDefaultDb(ctx context.Context, collectionID typeutil.UniqueID, ts typeutil.Timestamp) (*pb.CollectionInfo, error) {
+-	if info, err := kc.loadCollectionFromDb(ctx, util.DefaultDBID, collectionID, ts); err == nil {
++	info, err := kc.loadCollectionFromDb(ctx, util.DefaultDBID, collectionID, ts)
++	if err == nil {
+ 		return info, nil
+ 	}
++	if !errors.Is(err, merr.ErrIoKeyNotFound) {
++		return nil, err
 +	}
+ 	// get collection from older version.
+ 	return kc.loadCollectionFromDb(ctx, util.NonDBID, collectionID, ts)
+ }
+@@ -294,12 +302,19 @@ func (kc *Catalog) loadCollection(ctx context.Context, dbID int64, collectionID
+ 	if isDefaultDB(dbID) {
+ 		info, err := kc.loadCollectionFromDefaultDb(ctx, collectionID, ts)
+ 		if err != nil {
++			if errors.Is(err, merr.ErrIoKeyNotFound) {
++				return nil, merr.WrapErrCollectionNotFound(collectionID)
++			}
+ 			return nil, err
+ 		}
+ 		kc.fixDefaultDBIDConsistency(ctx, info, ts)
+ 		return info, nil
+ 	}
+-	return kc.loadCollectionFromDb(ctx, dbID, collectionID, ts)
++	info, err := kc.loadCollectionFromDb(ctx, dbID, collectionID, ts)
++	if errors.Is(err, merr.ErrIoKeyNotFound) {
++		return nil, merr.WrapErrCollectionNotFound(collectionID)
++	}
++	return info, err
+ }
+ 
+ func partitionVersionAfter210(collMeta *pb.CollectionInfo) bool {
+```
+
+**File**: `internal/metastore/kv/rootcoord/kv_catalog_test.go` (modified, +2/-1)
+```diff
+@@ -414,9 +414,10 @@ func TestCatalog_GetCollectionByID(t *testing.T) {
+ 	ss := mocks.NewTxnKV(t)
+ 	c := NewCatalog(ss)
+ 
+-	ss.EXPECT().Load(mock.Anything, mock.Anything).Return("", errors.New("load error")).Twice()
++	ss.EXPECT().Load(mock.Anything, mock.Anything).Return("", errors.New("load error")).Once()
+ 	coll, err := c.GetCollectionByID(ctx, 0, 1, 1)
+ 	assert.Error(t, err)
++	assert.False(t, merr.ErrCollectionNotFound.Is(err))
+ 	assert.Nil(t, coll)
+ 
+ 	ss.EXPECT().Load(mock.Anything, mock.Anything).RunAndReturn(func(ctx context.Context, key string) (string, error) {
+```
+
+**File**: `internal/metastore/kv/rootcoord/kv_catalog_tombstone_test.go` (modified, +86/-2)
+```diff
+@@ -72,8 +72,10 @@ func TestCatalog_ListCollections_SkipsTombstone(t *testing.T) {
+ func TestCatalog_GetCollectionByID_TombstoneIsNotFound(t *testing.T) {
+ 	ctx := context.Background()
+ 	kv := mocks.NewTxnKV(t)
+-	// Both default-db attempt and legacy-path attempt return the tombstone.
+-	kv.EXPECT().Load(mock.Anything, mock.Anything).Return(tombstone(), nil)
++	defaultKey := BuildCollectionKey(util.DefaultDBID, 99999)
++	// A tombstone is a logical deletion, not evidence that the modern key is
++	// absent. The legacy key must not be read.
++	kv.EXPECT().Load(mock.Anything, defaultKey).Return(tombstone(), nil).Once()
+ 
+ 	kc := NewCatalog(kv)
+ 	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 99999)
+@@ -82,6 +84,88 @@ func TestCatalog_GetCollectionByID_TombstoneIsNotFound(t *testing.T) {
+ 	assert.Nil(t, got)
+ }
+ 
++func TestCatalog_GetCollectionByID_DefaultLoadErrorDoesNotFallback(t *testing.T) {
++	ctx := context.Background()
++	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
++	kv := mocks.NewTxnKV(t)
++	kv.EXPECT().Load(mock.Anything, defaultKey).
++		Return("", merr.WrapErrIoFailed(defaultKey, context.DeadlineExceeded)).Once()
 +
-+	t.Run("plain value", func(t *testing.T) {
-+		assert.Equal(t, `ID > "abc"`, newIt("", "abc").composeIteratorExpr())
-+	})
-+
-+	t.Run("value with double quote", func(t *testing.T) {
-+		assert.Equal(t, `ID > "a\"b"`, newIt("", `a"b`).composeIteratorExpr())
-+	})
-+
-+	t.Run("special characters round-trip", func(t *testing.T) {
-+		// The emitted literal must unquote back to the original value, the way the
-+		// server parses it, so iteration keeps advancing past such a key.
-+		for _, pk := range []string{`a"b`, `a\b`, "a\nb", "trailing\\", "plain"} {
-+			got := newIt("", pk).composeIteratorExpr()
-+			literal := strings.TrimPrefix(got, "ID > ")
-+			unquoted, err := strconv.Unquote(literal)
-+			assert.NoError(t, err)
-+			assert.Equal(t, pk, unquoted)
-+		}
-+	})
-+
-+	t.Run("combined with base expression", func(t *testing.T) {
-+		assert.Equal(t, `(age > 10) and ID > "a\"b"`, newIt("age > 10", `a"b`).composeIteratorExpr())
-+	})
++	kc := NewCatalog(kv)
++	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
++	assert.Error(t, err)
++	assert.True(t, merr.ErrIoFailed.Is(err))
++	assert.False(t, merr.ErrCollectionNotFound.Is(err))
++	assert.Nil(t, got)
 +}
++
++func TestCatalog_GetCollectionByID_DefaultLoadContextErrorIsPreserved(t *testing.T) {
++	ctx := context.Background()
++	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
++	for _, loadErr := range []error{context.DeadlineExceeded, context.Canceled} {
++		kv := mocks.NewTxnKV(t)
++		// The KV layer returns the context error unwrapped. It must reach the
++		// caller unchanged and must not trigger the legacy fallback.
++		kv.EXPECT().Load(mock.Anything, defaultKey).Return("", loadErr).Once()
++
++		kc := NewCatalog(kv)
++		got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
++		assert.ErrorIs(t, err, loadErr)
++		assert.True(t, merr.IsCanceledOrTimeout(err))
++		assert.False(t, merr.ErrCollectionNotFound.Is(err))
++		assert.Nil(t, got)
++	}
++}
++
++func TestCatalog_GetCollectionByID_DefaultKeyNotFoundFallsBackToLegacy(t *testing.T) {
++	ctx := context.Background()
++	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
++	legacyKey := BuildCollectionKey(util.NonDBID, 42)
++	legacy := &pb.CollectionInfo{
++		ID:    42,
++		DbId:  util.DefaultDBID,
++		State: pb.CollectionState_CollectionCreated,
++		Schema: &schemapb.CollectionSchema{
++			Name:   "legacy-collection",
++			Fields: []*schemapb.FieldSchema{{FieldID: 1, Name: "field"}},
++		},
++		PartitionIDs:               []int64{43},
++		PartitionNames:             []string{"_default"},
++		PartitionCreatedTimestamps: []uint64{1},
++	}
++	legacyValue, err := proto.Marshal(legacy)
++	require.NoError(t, err)
++
++	kv := mocks.NewTxnKV(t)
++	kv.EXPECT().Load(mock.Anything, defaultKey).
++		Return("", merr.WrapErrIoKeyNotFound(defaultKey)).Once()
++	kv.EXPECT().Load(mock.Anything, legacyKey).
++		Return(string(legacyValue), nil).Once()
++
++	kc := NewCatalog(kv)
++	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
++	require.NoError(t, err)
++	require.NotNil(t, got)
++	assert.Equal(t, "legacy-collection", got.Name)
++}
++
++func TestCatalog_GetCollectionByID_DefaultAndLegacyKeysNotFound(t *testing.T) {
++	ctx := context.Background()
++	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
++	legacyKey := BuildCollectionKey(util.NonDBID, 42)
++	kv := mocks.NewTxnKV(t)
++	kv.EXPECT().Load(mock.Anything, defaultKey).
++		Return("", merr.WrapErrIoKeyNotFound(defaultKey)).Once()
++	kv.EXPECT().Load(mock.Anything, legacyKey).
++		Return("", merr.WrapErrIoKeyNotFound(legacyKey)).Once()
++
++	kc := NewCatalog(kv)
++	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
++	assert.Error(t, err)
++	assert.True(t, merr.ErrCollectionNotFound.Is(err))
++	assert.Nil(t, got)
++}
++
+ func TestCatalog_GetCollectionByName_SkipsTombstone(t *testing.T) {
+ 	ctx := context.Background()
+ 	kv := mocks.NewTxnKV(t)
+```
+
+---
+
+### Incident Patch 3: `4d2a35e4` (2026-11-16)
+**Commit Message**: test: fix chaos cleanup hook for pytest 8 (#55501)
+
+When `TestChaosApply` fails after creating a Chaos Mesh Schedule, its
+legacy `teardown` method is ignored by pytest 8.3.4. The Schedule
+remains installed and can keep disrupting the instance while subsequent
+checks run.
+
+Rename the hook to `teardown_method` so pytest executes the existing
+cleanup on both success and failure. Preserve the Schedule visibility
+assertion and existing deletion behavior.
+
+Validation:
+- Replayed the source cleanup method under pytest 8.3.4: the original
+hook left both tracked resources undeleted after an intentional
+assertion failure.
+- With the supported hook, cleanup ran in four local scenarios:
+assertion failure, partial-creation state, failure before configuration,
+and normal completion. The original test outcomes were preserved.
+Kubernetes deletion was replaced with a recorder for this isolated
+lifecycle check.
+- Ruff 0.15.11 check and format check, Python compilation, and `git diff
+--check` passed. The repository's configured license-header scope covers
+`internal/**/*.go`; this Python-only change is outside that scope.
+- Full Kubernetes chaos E2E was not rerun.
+
+Signed-off-by: zhuwenxing <[REDACTED
+
+**File**: `tests/python_client/chaos/test_chaos_apply.py` (modified, +1/-1)
+```diff
+@@ -131,7 +131,7 @@ def reconnect(self):
+         if connections.has_connection("default") is False:
+             raise Exception("no connections")
+ 
+-    def teardown(self):
++    def teardown_method(self):
+         for chaos_config in getattr(self, "chaos_configs", [getattr(self, "chaos_config", {})]):
+             if not chaos_config:
+                 continue
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55527** (2026-11-14): enhance: [cp3.0] Support PBKDF2 password hashing for FIPS deployments (@aleks-s10)
-- **PR #55508** (2026-11-13): fix: [2.6] restore AND early exit at null-rejecting filters (@zhengbuqian)
-- **PR #55499** (2026-11-14): feat: [3.0] Support V2 and mixed V2/V3 snapshot import (@weiliu1031)
-- **PR #55493** (2026-11-13): enhance: reduce broadcast task logger memory (@chyezh)
-- **PR #55485** (2026-11-13): fix: [cp3.0] resolve Azure Germany regions and explicit storage authorities (@xiaofan-luan)
-- **PR #55484** (2026-11-13): fix: resolve Azure Germany regions and explicit storage authorities (@xiaofan-luan)
+- **PR #55561** (2026-11-16): fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes (@bigsheeper)
+- **PR #55560** (2026-11-16): enhance: [cp3.0]revoke session leases before a forced stop exit (@bigsheeper)
+- **PR #55559** (2026-11-16): test: stabilize Base64 vector allocation budget (@chyezh)
+- **PR #55553** (2026-11-16): fix: Retry coordinator RPCs promptly after ServerID changes (@bigsheeper)
+- **PR #55550** (2026-11-16): test: wait for the index before iterating in search_iterator_using_mul_db (@xiaofan-luan)
+- **PR #55548** (2026-11-15): test: fix nil viewFeedback panic in TestQueryViewReleaseRuntimeShutdown (@xiaofan-luan)
 
 ---
 
@@ -1942,63 +1792,43 @@ newline. Iterating valid primary keys now returns each m
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bound manifest cgo concurrency process-wide
+## X. test: fix flaky TestBuildLatencyExcludesAdmissionWait
 
 **RULE**:
-When implementing operations in `internal/storagev2/packed/cgo_limit.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/datanode/index/task_index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6893a8c3`: bound manifest cgo concurrency process-wide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86534551`: test: fix flaky TestBuildLatencyExcludesAdmissionWait. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/storagev2/packed/cgo_limit.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datanode/index/task_index.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// Copyright 2023 Zilliz
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package packed
-
-import (
-	"context"
-	"sync"
-
-	"golang.org/x/sync/semaphore"
-
-	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-)
-
-// cgo call entry points in this package
-//
-// A goroutine that enters a cgo call is pinned to an OS thread for the whole
-// call, so the number of OS threads the process holds tracks the number of
-// goroutines simultaneously blocked inside C. Storage v3 routes every manifest
-// add-file / read / commit through milvus-storage FFI; the per-context
-// ManifestIOContext pools bound only their own callers, and the synchronous
-// entry points had no process-wide ceiling at all. Und
+	now           func() time.Time // Injectable clock; defaults to time.Now, tests override it.
+		now:           time.Now,
+	started := it.now()
+	it.prepareDur = it.now().Sub(started)
+	started := it.now()
+	it.prepareDur += it.now().Sub(started)
+	started := it.now()
+	buildIndexLatency := it.prepareDur + it.now().Sub(started)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	started := time.Now()
+	it.prepareDur = time.Since(started)
+	started := time.Now()
+	it.prepareDur += time.Since(started)
+	started := time.Now()
+	buildIndexLatency := it.prepareDur + time.Since(started)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6893a8c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86534551` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

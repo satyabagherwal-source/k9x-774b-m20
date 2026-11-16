@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T20:08:03.599Z",
+  "timestamp": "2026-11-16T13:38:38.504Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-open-policy-agent-opa-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [open-policy-agent-opa-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T20:08:03.599Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T13:38:38.504Z`  
 > **Learning ID**: `LEARN-EVO-open-policy-agent-opa-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from open-policy-agent-opa-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `8d10da6e`  
+> **Source Version**: `caa6e120`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T20:07:19.363Z  
+> **Timestamp**: 2026-11-16T13:38:26.096Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:07:19.357Z  
+> **Harvest Timestamp**: 2026-11-16T13:38:26.092Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12468 stars
+- **Stars / Engagement**: 12474 stars
 
 ---
 
@@ -995,360 +995,229 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d10da6e` (2026-11-13)
-**Commit Message**: ast: fix negative number location text (for issue #9531) (#9558)
+### Incident Patch 1: `dea4670c` (2026-11-13)
+**Commit Message**: build: Stop marking release binaries as dirty
 
-location text of parser currently captures only `-` sign for
-negative-number terms. This change preserves the full source text while
-leaving the numeric value unchanged, with regression coverage added to
-TestNumberTerms.
-Resolves #9531
+Release binaries since v1.13.0 report a build commit with a "-dirty"
+suffix. Go sets vcs.modified=true when "git status --porcelain" is not
+empty at build time, and the release job leaves an untracked file in
+the checkout: jdx/mise-action writes mise.toml to the repository root.
+(Between v1.13.0 and v1.16.x, this had another cause: mlugg/setup-zig
+put its Zig cache in .zig-cache in the workspace.)
 
-Signed-off-by: devj <[REDACTED_EMAIL]>
+Add mise.toml to .gitignore, so the release builds are clean again.
 
-**File**: `v1/ast/parser.go` (modified, +1/-0)
+To keep this from coming back with another file, check the working
+copy after the build:
+
+- pull-request.yaml: after each PR build. This catches the issue
+    early - today it only appears on the Windows build but in the
+    future who knows.
+- post-merge.yaml: after the edge release build - this prevents
+    regressions.
+- post-tag.yaml: read vcs.modified from every release binary before
+    it is uploaded, and fail if it is not false. Unlike the two checks
+    above, this one has no exceptions for regenerated Wasm files.
+
+Fixes #9552
+
+Signed-off-by: Nedim Srndic <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/post-merge.yaml` (modified, +5/-0)
 ```diff
-@@ -2760,6 +2760,7 @@ func (p *Parser) parseNumber() *Term {
- 		return nil
- 	}
+@@ -127,6 +127,11 @@ jobs:
+         env:
+           GOARCH: arm64
  
-+	loc.Text = p.s.Text(loc.Offset, p.s.tokEnd)
- 	// Note: Use the original string, do *not* round trip from
- 	// the big.Float as it can cause precision loss.
- 	return NumberTerm(json.Number(s)).SetLocation(loc)
-```
-
-**File**: `v1/ast/parser_test.go` (modified, +2/-0)
-```diff
-@@ -61,6 +61,7 @@ func TestNumberTerms(t *testing.T) {
- 		{"0", "0"},
- 		{"100", "100"},
- 		{"-1", "-1"},
-+		{"-1000", "-1000"},
- 		{"1e6", "1e6"},
- 		{"1.1e6", "1.1e6"},
- 		{"-1e-6", "-1e-6"},
-@@ -90,6 +91,7 @@ func TestNumberTerms(t *testing.T) {
- 				if !result.Equal(e) {
- 					t.Errorf("Expected %v for %v but got: %v", e, tc.input, result)
- 				}
-+				assertLocationText(t, tc.input, result.Location)
- 			}
- 		})
- 	}
-```
-
----
-
-### Incident Patch 2: `49d3f9fc` (2026-11-12)
-**Commit Message**: topdown/walk: alloc less when building walk paths (#9554)
-
-walk built each path with Array.Append, then copied again before handing
-it to the caller.
-
-pathAppend now copies into an exactly sized slice. Sibling paths never
-share memory, so the second copy is not needed and is removed.
-
-The existing walkbuiltin/array path not overwritten case (issue #7656)
-fails if pathAppend goes back to Append without the copy, so it guards
-this change.
-
-````
-$ go run golang.org/x/perf/cmd/benchstat@latest /tmp/before.txt /tmp/after.txt
-goos: darwin
-goarch: arm64
-pkg: github.com/open-policy-agent/opa/v1/topdown
-cpu: Apple M4 Max
-                          │ /tmp/before.txt │          /tmp/after.txt           │
-                          │     sec/op      │   sec/op     vs base              │
-ObjectSubsetSlow/10-16          10.16µ ± 3%   10.03µ ± 1%       ~ (p=0.132 n=6)
-ObjectSubsetSlow/100-16         73.14µ ± 1%   73.15µ ± 1%       ~ (p=0.589 n=6)
-ObjectSubsetSlow/1000-16        750.4µ ± 6%   756.7µ ± 1%       ~ (p=0.180 n=6)
-ObjectSubsetSlow/10000-16       7.985m ± 2%   7.851m ± 1%  -1.67% (p=0.004 n=6)
-geomean                         258.3µ        256.9µ       -0.52%
-
-                          │ /
-
-**File**: `v1/topdown/walk.go` (modified, +10/-14)
-```diff
-@@ -29,15 +29,14 @@ func walk(filter, path *ast.Array, input *ast.Term, iter func(*ast.Term) error)
- 				return err
- 			}
- 		} else {
--			// Shallow copy, as while the array is modified, the elements are not
--			pathCopy := copyShallow(path)
--
- 			// TODO(ae): I'd *really* like these terms to be retrieved from a sync.Pool, and
- 			// returned after iter is called. However, all my atttempts to do this have failed
- 			// as there seems to be something holding on to these references after the call,
- 			// leading to modifications that entirely alter the results. Perhaps this is not
- 			// possible to do, but if it is,it would be a huge performance win.
--			if err := iter(ast.ArrayTerm(ast.NewTerm(pathCopy), input)); err != nil {
++      - name: Check working copy is clean
++        # Anything untracked or modified here ends up as "-dirty" in the
++        # build commit of the binaries built above.
++        run: ./build/check-working-copy.sh
 +
-+			// The child paths are built from path after this call, so iter must not modify it.
-+			if err := iter(ast.ArrayTerm(ast.NewTerm(path), input)); err != nil {
- 				return err
- 			}
- 		}
-@@ -126,12 +125,18 @@ func walkNoPath(input *ast.Term, iter func(*ast.Term) error) error {
- 	return nil
- }
+       - name: Upload binaries
+         uses: actions/upload-artifact@v7.0.2
+         if: always()
+```
+
+**File**: `.github/workflows/post-tag.yaml` (modified, +15/-0)
+```diff
+@@ -62,6 +62,21 @@ jobs:
+         env:
+           GOARCH: arm64
  
-+// pathAppend copies into an exactly sized slice, so sibling paths never share spare capacity.
- func pathAppend(path *ast.Array, key *ast.Term) *ast.Array {
- 	if path == nil {
- 		return ast.NewArray(key)
- 	}
- 
--	return path.Append(key)
-+	elems := make([]*ast.Term, path.Len(), path.Len()+1)
-+	for i := range elems {
-+		elems[i] = path.Elem(i)
-+	}
++      - name: Check binaries are not marked dirty
++        run: |
++          fail=0
++          for bin in _release/*/opa_*; do
++            case "$bin" in *.sha256) continue ;; esac
++            if ! go version -m "$bin" | grep -q 'vcs.modified=false'; then
++              echo "::error::$bin was built from a modified working tree"
++              fail=1
++            fi
++          done
++          if [ "$fail" -ne 0 ]; then
++            git status --porcelain --untracked-files=all
++            exit 1
++          fi
 +
-+	return ast.NewArray(append(elems, key)...)
- }
+       - name: Upload binaries
+         uses: actions/upload-artifact@v7.0.2
+         if: always()
+```
+
+**File**: `.github/workflows/pull-request.yaml` (modified, +6/-0)
+```diff
+@@ -170,6 +170,12 @@ jobs:
+         GOARCH: ${{ matrix.arch }}
+       timeout-minutes: 30
  
- func getOutputPath(operands []*ast.Term) *ast.Array {
-@@ -156,15 +161,6 @@ func pathIsWildcard(operands []*ast.Term) bool {
- 	return false
- }
++    - name: Check working copy is clean
++      # A file left behind in the checkout (the windows build installs mise,
++      # which writes mise.toml) would mark release binaries as built from a
++      # dirty tree.
++      run: ./build/check-working-copy.sh
++
+     - name: Upload binaries - No Go tags
+       uses: actions/upload-artifact@v7.0.2
+       if: ${{ matrix.go_tags == '' }}
+```
+
+**File**: `.gitignore` (modified, +4/-0)
+```diff
+@@ -42,6 +42,10 @@ docs/website/data/versions
+ # generated when building windows binary to add icon and product version
+ resource.syso
  
--func copyShallow(arr *ast.Array) *ast.Array {
--	cpy := make([]*ast.Term, arr.Len())
--	for i := range arr.Len() {
--		cpy[i] = arr.Elem(i)
--	}
--
--	return ast.NewArray(cpy...)
--}
--
- func init() {
- 	RegisterBuiltinFunc(ast.WalkBuiltin.Name, evalWalk)
- }
++# written by jdx/mise-action in CI; an untracked file in the checkout makes
++# Go stamp release binaries with vcs.modified=true ("-dirty")
++mise.toml
++
+ # generated when building proto codegen plugin (see Makefile generate-proto)
+ build/tools/bin/
+ 
 ```
 
 ---
 
-### Incident Patch 3: `89f8527b` (2026-11-13)
-**Commit Message**: build(deps): bump the dependencies group across 2 directories with 2 updates
+### Incident Patch 2: `78f9b94a` (2026-11-13)
+**Commit Message**: topdown: fix ceil and floor of negative fractions above -1
 
-Bumps the dependencies group with 1 update in the / directory: [golang.org/x/sync](https://github.com/golang/sync).
-Bumps the dependencies group with 1 update in the /e2e directory: [github.com/testcontainers/testcontainers-go](https://github.com/testcontainers/testcontainers-go).
+big.Float.Int truncates toward zero, so a negative fraction between -1
+and 0 became +0 and lost its sign. ceil(-0.5) returned 1 and floor(-0.5)
+returned 0. Use the accuracy reported by Int to decide the adjustment.
 
+Signed-off-by: Kurt Roekle <[REDACTED_EMAIL]>
 
-Updates `golang.org/x/sync` from 0.24.0 to 0.25.0
-- [Commits](https://github.com/golang/sync/compare/v0.24.0...v0.25.0)
-
-Updates `github.com/testcontainers/testcontainers-go` from 0.44.0 to 0.45.0
-- [Release notes](https://github.com/testcontainers/testcontainers-go/releases)
-- [Commits](https://github.com/testcontainers/testcontainers-go/compare/v0.44.0...v0.45.0)
-
----
-updated-dependencies:
-- dependency-name: github.com/testcontainers/testcontainers-go
-  dependency-version: 0.45.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: dependencies
-- dependency-name: golang.org/x/sync
-  dependency-version: 0.25.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `build/tools/go.mod` (modified, +1/-1)
+**File**: `v1/test/cases/testdata/v1/arithmetic/test-arithmetic-ceil-floor-negative.yaml` (added, +60/-0)
 ```diff
-@@ -25,7 +25,7 @@ require (
- 	github.com/vbauerster/mpb/v8 v8.12.1 // indirect
- 	golang.org/x/mod v0.35.0 // indirect
- 	golang.org/x/perf v0.0.0-20260512194132-3cf34090a3db // indirect
--	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
- 	golang.org/x/sys v0.44.0 // indirect
- 	golang.org/x/telemetry v0.0.0-20260421165255-392afab6f40e // indirect
- 	golang.org/x/tools v0.44.0 // indirect
+@@ -0,0 +1,60 @@
++---
++cases:
++  # Integer-valued results beyond int64 are rendered with sprintf because the
++  # golden-case loader parses expected numbers as float64.
++  - note: "arithmetic/ceil of fractions and integers around zero"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := {
++        	"neg_half": ceil(-0.5),
++        	"neg_tenth": ceil(-0.1),
++        	"neg_fraction": ceil(-1.5),
++        	"pos_half": ceil(0.5),
++        	"pos_fraction": ceil(1.5),
++        	"neg_integer": ceil(-2),
++        	"neg_integer_float": ceil(-2.0),
++        	"zero": ceil(0),
++        	"neg_beyond_int64": sprintf("%v", [ceil(-9223372036854775809)]),
++        }
++    want_result:
++      - x:
++          neg_half: 0
++          neg_tenth: 0
++          neg_fraction: -1
++          pos_half: 1
++          pos_fraction: 2
++          neg_integer: -2
++          neg_integer_float: -2
++          zero: 0
++          neg_beyond_int64: "-9223372036854775809"
++  - note: "arithmetic/floor of fractions and integers around zero"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := {
++        	"neg_half": floor(-0.5),
++        	"neg_seven_tenths": floor(-0.7),
++        	"neg_fraction": floor(-1.5),
++        	"pos_half": floor(0.5),
++        	"pos_fraction": floor(1.5),
++        	"neg_integer": floor(-2),
++        	"neg_integer_float": floor(-2.0),
++        	"zero": floor(0),
++        	"neg_beyond_int64": sprintf("%v", [floor(-9223372036854775809)]),
++        }
++    want_result:
++      - x:
++          neg_half: -1
++          neg_seven_tenths: -1
++          neg_fraction: -2
++          pos_half: 0
++          pos_fraction: 1
++          neg_integer: -2
++          neg_integer_float: -2
++          zero: 0
++          neg_beyond_int64: "-9223372036854775809"
 ```
 
-**File**: `build/tools/go.sum` (modified, +2/-2)
+**File**: `v1/topdown/arithmetic.go` (modified, +8/-14)
 ```diff
-@@ -36,8 +36,8 @@ golang.org/x/mod v0.35.0 h1:Ww1D637e6Pg+Zb2KrWfHQUnH2dQRLBQyAtpr/haaJeM=
- golang.org/x/mod v0.35.0/go.mod h1:+GwiRhIInF8wPm+4AoT6L0FA1QWAad3OMdTRx4tFYlU=
- golang.org/x/perf v0.0.0-20260512194132-3cf34090a3db h1:1EdY5INjhh724sLDk1O/nIzRZ8wmHbmiF8K2cK/mNLw=
- golang.org/x/perf v0.0.0-20260512194132-3cf34090a3db/go.mod h1:vtQ1uZI2nWugeUDAr4i3qjU4fqZ0yZYuruCC4FKahWE=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.44.0 h1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=
- golang.org/x/sys v0.44.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
- golang.org/x/telemetry v0.0.0-20260421165255-392afab6f40e h1:OXgN37M6hqjaAvb7CJK9vJ+7Z/6lvIm5bXho5poo/Wk=
-```
-
-**File**: `e2e/go.mod` (modified, +9/-9)
-```diff
-@@ -13,15 +13,15 @@ require (
- 	github.com/microsoft/go-mssqldb v1.11.2
- 	github.com/open-policy-agent/opa v1.8.0
- 	github.com/rogpeppe/go-internal v1.16.0
--	github.com/testcontainers/testcontainers-go v0.44.0
-+	github.com/testcontainers/testcontainers-go v0.45.0
- 	google.golang.org/protobuf v1.36.12
- 	modernc.org/sqlite v1.61.1
- )
+@@ -210,25 +210,19 @@ func arithRound(a *big.Float) *big.Float {
+ }
  
- require (
- 	dario.cat/mergo v1.0.2 // indirect
- 	filippo.io/edwards25519 v1.2.0 // indirect
--	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
-+	github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
- 	github.com/agnivade/levenshtein v1.2.2 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
-@@ -40,7 +40,7 @@ require (
- 	github.com/dgraph-io/badger/v4 v4.9.6 // indirect
- 	github.com/dgraph-io/ristretto/v2 v2.2.0 // indirect
- 	github.com/distribution/reference v0.6.0 // indirect
--	github.com/docker/go-connections v0.7.0 // indirect
-+	github.com/docker/go-connections v0.8.2 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
- 	github.com/dustin/go-humanize v1.1.0 // indirect
- 	github.com/ebitengine/purego v0.10.1 // indirect
-@@ -70,14 +70,14 @@ require (
- 	github.com/lestrrat-go/jwx/v3 v3.4.0 // indirect
- 	github.com/lestrrat-go/option/v2 v2.0.0 // indirect
- 	github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e // indirect
--	github.com/magiconair/properties v1.8.10 // indirect
-+	github.com/magiconair/properties v1.18.12 // indirect
- 	github.com/mattn/go-colorable v0.1.14 // indirect
- 	github.com/mattn/go-isatty v0.0.24 // indirect
- 	github.com/mattn/go-runewidth v0.0.19 // indirect
- 	github.com/moby/docker-image-spec v1.3.1 // indirect
--	github.com/moby/go-archive v0.3.0 // indirect
--	github.com/moby/moby/api v1.55.0 // indirect
--	github.com/moby/moby/client v0.5.0 // indirect
-+	github.com/moby/go-archive v0.3.3 // indirect
-+	github.com/moby/moby/api v1.56.1 // indirect
-+	github.com/moby/moby/client v0.6.2 // indirect
- 	github.com/moby/patternmatcher v0.6.1 // indirect
- 	github.com/moby/sys/sequential v0.7.0 // indirect
- 	github.com/moby/sys/user v0.4.1 // indirect
-@@ -130,8 +130,8 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
- 	go.yaml.in/yaml/v3 v3.0.6 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
--	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/term v0.47.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
-```
-
-**File**: `e2e/go.sum` (modified, +22/-19)
-```diff
-@@ -14,8 +14,8 @@ github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0 h1:MaKvxE6
- github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0/go.mod h1:i2h9fsTFKZorh8RdV2IcSUf/Qj98GlTkrTvUbX/s8as=
- github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/internal v1.2.0 h1:nCYfgcSyHZXJI8J0IWE5MsCGlb2xp9fJiXyxWgmOFg4=
- github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/internal v1.2.0/go.mod h1:ucUjca2JtSZboY8IoUqyQyuuXvwbMBVwFOm0vdQPNhA=
--github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c h1:udKWzYgxTojEKWjV8V+WSxDXJ4NFATAsZjh8iIbsQIg=
--github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
-+github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4 h1:m2xcjRABtG288vnlV3U/PKh/HnPURxZp50RKNUwBxM8=
-+github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4/go.mod h1:MTUE7ZuZO89FAtAwozGg6AWD83pcdefnEq5gF82MB8s=
- github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/5vCrMONS+g4u4LRHNgOXVSh3O43J2CnI=
- github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
- github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
-@@ -66,8 +66,8 @@ github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54 h1:SG7nF6SRlWhcT7c
- github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
- github.com/distribution/reference v0.6.0 h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5QvfrDyIgxBk=
- github.com/distribution/reference v0.6.0/go.mod h1:BbU0aIcezP1/5jX/8MP0YiH4SdvB5Y4f/wlDRiLyi3E=
--github.com/docker/go-connections v0.7.0 h1:6SsRfJddP22WMrCkj19x9WKjEDTB+ahsdiGYf0mN39c=
--github.com/docker/go-connections v0.7.0/go.mod h1:no1qkHdjq7kLMGUXYAduOhYPSJxxvgWBh7ogVvptn3Q=
-+github.com/docker/go-connections v0.8.2 h1:9d9DEokx5W7qlr0shkFXIxEA7+TTD+llwzcykSlxMNc=
-+github.com/docker/go-connections v0.8.2/go.mod h1:no1qkHdjq7kLMGUXYAduOhYPSJxxvgWBh7ogVvptn3Q=
- github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
- github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
- github.com/dustin/go-humanize v1.1.0 h1:dbKTrvD0klcbBV/h4AWJdMuZogJACoMlvWIWZ5b2xWg=
-@@ -155,8 +155,8 @@ github.com/lib/pq v1.12.3 h1:tTWxr2YLKwIvK90ZXEw8GP7UFHtcbTtty8zsI+YjrfQ=
- github.com/lib/pq v1.12.3/go.mod h1:/p+8NSbOcwzAEI7wiMXFlgydTwcgTr3OSKMsD2BitpA=
- github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e h1:Q6MvJtQK/iRcRtzAscm/zF23XxJlbECiGPyRicsX+Ak=
- github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e/go.mod h1:autxFIvghDt3jPTLoqZ9OZ7s9qTGNAWmYCjVFWPX/zg=
--github.com/magiconair/properties v1.8.10 h1:s31yESBquKXCV9a/ScB3ESkOjUYYv+X0rg8SYxI99mE=
--github.com/magiconair/properties v1.8.10/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
-+github.com/magiconair/properties v1.18.12 h1:sT9zQpvTB3B4gzrX0tmZNTEaGyg8Zw55MFYRE32Mr9I=
-+github.com/magiconair/properties v1.18.12/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
- github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
- github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
- github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=
-@@ -169,14 +169,18 @@ github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
- github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
- github.com/moby/docker-image-spec v1.3.1 h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3Nl2EsFP0=
- github.com/moby/docker-image-spec v1.3.1/go.mod h1:eKmb5VW8vQEh/BAr2yvVNvuiJuY6UIocYsFu/DxxRpo=
--github.com/moby/go-archive v0.3.0 h1:nos4BtzzUIqB406BgQnWGMI4qib9BZ8XUHU+ucv/n1c=
--github.com/moby/go-archive v0.3.0/go.mod h1:Npdv43fFqlhZW7Xo8fbm3ZMYFvAGNviUPqX21VERbcE=
--github.com/moby/moby/api v1.55.0 h1:2/sexvQyqIWS8pRSCFddBfpW2qE7vR7FCL+vN8pxwMc=
--github.com/moby/moby/api v1.55.0/go.mod h1:+RQ6wluLwtYaTd1WnPLykIDPekkuyD/ROWQClE83pzs=
--github.com/moby/moby/client v0.5.0 h1:5XhyPk2fuOWf6RlSFa3MkIIgDZkF25xToXW8Q/BH7cc=
--github.com/moby/moby/client v0.5.0/go.mod h1:rcVpF8ncl9vo5gaIBdol6CnbEtSj1uxMvEV/UrykF/s=
-+github.com/moby/go-archive v0.3.3 h1:OxxR9paxsluYi+zDUEXTTaIxtkK3viymW+Ka7vRhhME=
-+github.com/moby/go-archive v0.3.3/go.mod h1:Npdv43fFqlhZW7Xo8fbm3ZMYFvAGNviUPqX21VERbcE=
-+github.com/moby/moby/api v1.56.1 h1:PpWkvVPB7Fr/No8w+TfyJ/I6rWZ2YPZhT3JorIg+06c=
-+github.com/moby/moby/api v1.56.1/go.mod h1:sZ+THbVWkjOmBPPfbnzdD/G1LuIexWhqlSHHPTDQ1Uk=
-+github.com/moby/moby/client v0.6.2 h1:ekSPlMccrZGcw6Scb8T9D39qE0mB+XupU/yS0zNw9N4=
-+github.com/moby/moby/client v0.6.2/go.mod h1:DGcnO7qmPJrqobx/ggQgQ/AUk+2wgVdQv7uxB0/mEsc=
- github.com/moby/patternmatcher v0.6.1 h1:qlhtafmr6kgMIJjKJMDmMWq7WLkKIo23hsrpR3x084U=
- github.com/moby/patternmatcher v0.6.1/go.mod h1:hDPoyOpDY7OrrMDLaYoY3hf52gNCR/YOUYxkhApJIxc=
-+github.com/moby/sys/mount v0.3.5 h1:eS3fsZTjHaBihwjp4/+5Z3jxqLXYs
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ require (
- 	go.opentelemetry.io/otel/trace v1.47.0
- 	go.opentelemetry.io/proto/otlp v1.11.1
- 	go.yaml.in/yaml/v3 v3.0.6
--	golang.org/x/sync v0.24.0
-+	golang.org/x/sync v0.25.0
- 	golang.org/x/term v0.47.0
- 	golang.org/x/text v0.43.0
- 	golang.org/x/time v0.16.0
-```
-
-**File**: `go.sum` (modified, +2/-4)
-```diff
-@@ -241,8 +241,6 @@ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
- golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
- golang.org/x/net v0.17.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
- golang.org/x/net v0.18.0/go.mod h1:/czyP5RqHAH4odGYxBJ1qz0+CE5WZ+2j1YgoEo8F2jQ=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
- golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-@@ -251,8 +249,8 @@ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.5.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ func arithCeil(a *big.Float) *big.Float {
+-	i, _ := a.Int(nil)
+-	f := new(big.Float).SetInt(i)
+-
+-	if f.Signbit() || a.Cmp(f) == 0 {
+-		return f
++	i, acc := a.Int(nil)
++	if acc == big.Below {
++		i.Add(i, big.NewInt(1))
+ 	}
+-
+-	return new(big.Float).Add(f, big.NewFloat(1.0))
++	return new(big.Float).SetInt(i)
+ }
+ 
+ func arithFloor(a *big.Float) *big.Float {
+-	i, _ := a.Int(nil)
+-	f := new(big.Float).SetInt(i)
+-
+-	if !f.Signbit() || a.Cmp(f) == 0 {
+-		return f
++	i, acc := a.Int(nil)
++	if acc == big.Above {
++		i.Sub(i, big.NewInt(1))
+ 	}
+-
+-	return new(big.Float).Sub(f, big.NewFloat(1.0))
++	return new(big.Float).SetInt(i)
+ }
+ 
+ func builtinMinus(_ BuiltinContext, operands []*ast.Term, iter func(*ast.Term) error) error {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9571** (2026-11-16): topdown: Remove stale comment re sync.Pool (@charlieegan3)
+- **PR #9568** (2026-11-16): Releng: Integrate v1.22.4 (@srenatus)
+- **PR #9563** (2026-11-16): topdown: fix ceil and floor of negative fractions above -1 (@kroekle)
+- **PR #9561** (2026-11-16): build: Stop marking release binaries as dirty (@srndic)
 - **PR #9558** (2026-11-13): ast: fix negative number location text (for issue #9531) (@devjoshi2005)
 - **PR #9557** (2026-11-13): build(deps): bump the dependencies group across 2 directories with 2 updates (@dependabot[bot])
-- **PR #9555** (2026-11-13): build(deps): bump golang.org/x/net v0.60.0 -> v0.62.0 (@anderseknert)
-- **PR #9554** (2026-11-12): topdown/walk: alloc less when building walk paths (@charlieegan3)
-- **PR #9553** (2026-11-12): repl: allow implicit function bodies (for issue #9539) (@devjoshi2005)
-- **PR #9551** (2026-11-12): docs: Amend security reporting docs to cover scanners (@anderseknert)
 
 ---
 
@@ -1368,21 +1237,25 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ast: fix negative number location text (for)
+## X. build: Stop marking release binaries as dirty
 
 **RULE**:
-When implementing operations in `v1/ast/parser.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/post-merge.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d10da6e`: ast: fix negative number location text (for). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dea4670c`: build: Stop marking release binaries as dirty. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/ast/parser.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/post-merge.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	loc.Text = p.s.Text(loc.Offset, p.s.tokEnd)
+      - name: Check working copy is clean
+        # Anything untracked or modified here ends up as "-dirty" in the
+        # build commit of the binaries built above.
+        run: ./build/check-working-copy.sh
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1392,7 +1265,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d10da6e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dea4670c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

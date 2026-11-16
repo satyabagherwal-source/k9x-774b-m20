@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "64e35701",
+    "sourceVersion": "faa20a23",
     "license": "NOASSERTION",
-    "contentHash": "85266eacf91e58aaf70f16e8f37ed0a77fabad2be590aa0580203aec9534b622",
-    "lastHarvestedAt": "2026-11-16T00:36:54.913Z",
+    "contentHash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
+    "lastHarvestedAt": "2026-11-16T13:38:34.096Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "8d10da6e",
+    "sourceVersion": "caa6e120",
     "license": "Apache-2.0",
-    "contentHash": "e79d69eda2220ffd771870a5a744ec54e764e3b3eff65076a83fe5dadcefb6ab",
-    "lastHarvestedAt": "2026-11-13T20:07:20.375Z",
+    "contentHash": "bec2b28b7bad4593d8528c38da3f20b13ab259155aacca9cf29b2212f5753a1f",
+    "lastHarvestedAt": "2026-11-16T13:38:27.003Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "6893a8c3",
+    "sourceVersion": "9f1054c2",
     "license": "Apache-2.0",
-    "contentHash": "03fb7e4650f98883b2dbb55b1cf9e1c8b6042d15ece8887382dfe3a94d24ba39",
-    "lastHarvestedAt": "2026-11-15T02:35:14.715Z",
+    "contentHash": "3c6ea005e2ab721b8da4303fea0c680522d51a77f3d3e33c96c5bd94d1ad7dd7",
+    "lastHarvestedAt": "2026-11-16T13:38:33.062Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "2d9938df",
+    "sourceVersion": "8c19cc28",
     "license": "MIT",
-    "contentHash": "84151206900a16dd4e1aa02b2a5cf3bb1230660df89499a00f993dbcd9db405b",
-    "lastHarvestedAt": "2026-11-14T17:39:55.388Z",
+    "contentHash": "a8dc1515a864b2f6484f79302e5d4c21fef28a5f537066b410fffad0be8cd34d",
+    "lastHarvestedAt": "2026-11-16T13:38:19.482Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -9153,10 +9153,10 @@
     "repository": "duongductrong/Snapzy",
     "platform": "github",
     "sourceUrl": "https://github.com/duongductrong/Snapzy",
-    "sourceVersion": "849a356c",
+    "sourceVersion": "92a08dd1",
     "license": "BSD-3-Clause",
-    "contentHash": "4c557d230ec16c27938506cc1bf155263f3aa3220210f56cfce0d3295766ac54",
-    "lastHarvestedAt": "2026-11-13T02:24:54.641Z",
+    "contentHash": "26acc567387b88beb218e746f21fdadbcb51f9b60c3464ba1cec0c960d31ee86",
+    "lastHarvestedAt": "2026-11-16T13:38:24.620Z",
     "learningId": "learn-github-duongductrong-snapzy"
   },
   "scrapy-plugins-scrapy-deltafetch": {

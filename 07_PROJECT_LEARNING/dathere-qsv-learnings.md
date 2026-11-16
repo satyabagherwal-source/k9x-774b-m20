@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `64e35701`  
+> **Source Version**: `faa20a23`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:36:54.033Z  
+> **Timestamp**: 2026-11-16T13:38:33.231Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:36:54.027Z  
+> **Harvest Timestamp**: 2026-11-16T13:38:33.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2201,89 +2201,57 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64e35701` (2026-11-16)
-**Commit Message**: docs(sqlp): warn that date inference and CAST read dates day-first (#5062)
+### Incident Patch 1: `d22524fa` (2026-11-16)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275 (#5063)
 
-* docs(sqlp): warn that date inference and CAST read dates day-first
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.271 to 1.0.275.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/4fa93a88de49bbef68b10eb15aabedf28ca0e1ed...4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8)
 
-Polars' date inference only tries day-first and year-first patterns, so
-`--try-parsedates` and `CAST(col AS DATE)` read 01/05/2024 as 2024-05-01.
-Point US-date users to STRPTIME(col, '%m/%d/%Y') with --try-parsedates off.
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.275
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* docs(changelog): note the sqlp day-first date warning [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
 ```diff
-@@ -117,7 +117,7 @@
-       {
-         "flag": "--try-parsedates",
-         "type": "flag",
--        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates."
-+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
-       },
-       {
-         "flag": "--wnull-value",
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
++        uses: anthropics/claude-code-action@4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8 # v1.0.275
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
 ```
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
 ```diff
-@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+@@ -34,7 +34,7 @@ jobs:
  
-+## [Unreleased]
-+
-+### Changed
-+- `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
-+
- ## [29.0.0] - 2026-11-15 🛡️ The "Trust the numbers" Release ✅
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
++        uses: anthropics/claude-code-action@4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8 # v1.0.275
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
  
- ### Highlights
-```
-
-**File**: `docs/help/sqlp.md` (modified, +1/-1)
-```diff
-@@ -357,7 +357,7 @@ qsv sqlp --help
- 
- | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
- |--------|------|-------------|--------|
--| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
-+| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
- | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
- | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
-```
-
-**File**: `src/cmd/sqlp.rs` (modified, +4/-0)
-```diff
-@@ -218,6 +218,10 @@ sqlp options:
-                               Note that if dates are not well-formatted in your CSV,
-                               that you may want to try to set `--ignore-errors` to relax
-                               the CSV parsing of dates.
-+                              Polars reads slash, dash and dot dates as day-first, so
-+                              01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE).
-+                              For month-first (US) dates, leave this off and use
-+                              STRPTIME(col, '%m/%d/%Y') in the query instead.
-     --infer-len <arg>         The number of rows to scan when inferring the schema of the CSV.
-                               Set to 0 to do a full table scan (warning: can be slow).
-                               [default: 10000]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5063** (2026-11-16): build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275 (@dependabot[bot])
 - **PR #5062** (2026-11-16): docs(sqlp): warn that date inference and CAST read dates day-first (@jqnatividad)
 - **PR #5061** (2026-11-15): bench: use the long-view chart as the wiki hero image (@jqnatividad)
 - **PR #5060** (2026-11-15): bench: regenerate Benchmarks Data Schematic for the 29.0.0 run (@jqnatividad)
 - **PR #5058** (2026-11-15): fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (@jqnatividad)
 - **PR #5057** (2026-11-15): deps(viz): driver.js 1.14.0 for the Data Schematic Tour (@jqnatividad)
-- **PR #5056** (2026-11-15): fix(stats): a column of only NaN cells has no sum, not 0 (@jqnatividad)
 
 ---
 
@@ -2303,28 +2271,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(sqlp): warn that date inference and CAST read dates day-first
+## X. build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64e35701`: docs(sqlp): warn that date inference and CAST read dates day-first. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d22524fa`: build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+        uses: anthropics/claude-code-action@4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8 # v1.0.275
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates."
+        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64e35701` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d22524fa` are properly handled with clean fallback behavior.

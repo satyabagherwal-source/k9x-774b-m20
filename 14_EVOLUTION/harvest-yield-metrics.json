@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T13:22:54.309Z",
-  "total_cycles_completed": 9863,
-  "total_learnings_persisted": 9863,
-  "total_rules_promoted": 9469,
+  "last_updated": "2026-11-16T13:38:34.101Z",
+  "total_cycles_completed": 9868,
+  "total_learnings_persisted": 9868,
+  "total_rules_promoted": 9474,
   "history": [
-    {
-      "timestamp": "2026-11-15T04:43:56.245Z",
-      "repository": "microsoft/react-native-windows",
-      "learningId": "learn-github-microsoft-react-native-windows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T04:53:13.248Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T04:53:19.400Z",
-      "repository": "CrossPaste/crosspaste-desktop",
-      "learningId": "learn-github-crosspaste-crosspaste-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T05:31:42.187Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T05:31:52.434Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T05:36:45.383Z",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-16T13:22:54.309Z",
       "repository": "scrapy/scrapy",
       "learningId": "learn-github-scrapy-scrapy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T13:38:19.487Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T13:38:24.625Z",
+      "repository": "duongductrong/Snapzy",
+      "learningId": "learn-github-duongductrong-snapzy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T13:38:27.008Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T13:38:33.066Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T13:38:34.101Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

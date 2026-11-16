@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T13:22:54.313Z",
+  "last_updated": "2026-11-16T13:38:34.104Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "85266eacf91e58aaf70f16e8f37ed0a77fabad2be590aa0580203aec9534b622",
-      "verified_at": "2026-11-16T00:36:54.920Z",
+      "content_hash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
+      "verified_at": "2026-11-16T13:38:34.104Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:36:54.920Z"
+      "last_updated": "2026-11-16T13:38:34.104Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "e79d69eda2220ffd771870a5a744ec54e764e3b3eff65076a83fe5dadcefb6ab",
-      "verified_at": "2026-11-13T20:07:20.385Z",
+      "content_hash": "bec2b28b7bad4593d8528c38da3f20b13ab259155aacca9cf29b2212f5753a1f",
+      "verified_at": "2026-11-16T13:38:27.011Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:07:20.385Z"
+      "last_updated": "2026-11-16T13:38:27.011Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "03fb7e4650f98883b2dbb55b1cf9e1c8b6042d15ece8887382dfe3a94d24ba39",
-      "verified_at": "2026-11-15T02:35:14.726Z",
+      "content_hash": "3c6ea005e2ab721b8da4303fea0c680522d51a77f3d3e33c96c5bd94d1ad7dd7",
+      "verified_at": "2026-11-16T13:38:33.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T02:35:14.726Z"
+      "last_updated": "2026-11-16T13:38:33.069Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "84151206900a16dd4e1aa02b2a5cf3bb1230660df89499a00f993dbcd9db405b",
-      "verified_at": "2026-11-14T17:39:55.398Z",
+      "content_hash": "a8dc1515a864b2f6484f79302e5d4c21fef28a5f537066b410fffad0be8cd34d",
+      "verified_at": "2026-11-16T13:38:19.490Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T17:39:55.398Z"
+      "last_updated": "2026-11-16T13:38:19.490Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -13776,14 +13776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duongductrong-snapzy",
-      "content_hash": "4c557d230ec16c27938506cc1bf155263f3aa3220210f56cfce0d3295766ac54",
-      "verified_at": "2026-11-13T02:24:54.675Z",
+      "content_hash": "26acc567387b88beb218e746f21fdadbcb51f9b60c3464ba1cec0c960d31ee86",
+      "verified_at": "2026-11-16T13:38:24.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T02:24:54.675Z"
+      "last_updated": "2026-11-16T13:38:24.627Z"
     },
     "scrapy-plugins/scrapy-deltafetch": {
       "repository": "scrapy-plugins/scrapy-deltafetch",

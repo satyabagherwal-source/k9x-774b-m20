@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T13:23:00.373Z",
-  "total_records": 1253,
+  "last_updated": "2026-11-16T13:38:38.710Z",
+  "total_records": 1255,
   "domains": {
     "A": {
       "total": 7,
@@ -892,7 +892,7 @@
       ]
     },
     "H": {
-      "total": 267,
+      "total": 269,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1160,7 +1160,9 @@
         "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants",
         "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian"
       ]
     },
     "I": {
@@ -8280,8 +8282,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "a82c66269ef9b4e0fe100d07c0a570424ef7bd5cc4bbccee0e7ab96247a3f248",
-      "created_at": "2026-11-15T02:35:15.077Z"
+      "content_hash": "0b035169a68481fdea9bfff80314f002570615b697b99e243866d0a22f2b67a7",
+      "created_at": "2026-11-16T13:38:33.344Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -9285,8 +9287,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "bd67234a8b3075bb2a1f681ef857522a67c27de9296ffea5af30e79ea67d16a7",
-      "created_at": "2026-11-13T20:07:20.703Z"
+      "content_hash": "5a691369b8c2637dee1d22bb013d20bbb3f3fcad824350c18c0486fd2da41446",
+      "created_at": "2026-11-16T13:38:27.280Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -9354,8 +9356,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
       "repository": "open-policy-agent-opa-learnings",
-      "content_hash": "20e966b1c26d6766d61d3542af35c29c958289bafac4fcfaac75ed5e26ecbad7",
-      "created_at": "2026-11-13T20:08:03.831Z"
+      "content_hash": "d53c07be87fdfc7bed31ec199c9ef06f3b80752fd6de63b29cf8ab4abb0f4ba9",
+      "created_at": "2026-11-16T13:38:38.710Z"
     },
     "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
@@ -11310,8 +11312,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "b10f92f4be3a8126f6ab118b5c8ba19f9c1642b0061eeca5e927611a2879a440",
-      "created_at": "2026-11-16T00:36:55.194Z"
+      "content_hash": "02076f1268305de7d25f7cbe3473943f4aa68d1b8955e95c0d0eb260af0ffbcc",
+      "created_at": "2026-11-16T13:38:34.386Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -16135,8 +16137,8 @@
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "repository": "pola-rs/polars",
-      "content_hash": "c38da01ff476374329397b8f4abbd0f3738e9f84a2b419dd747ba429526cdbf9",
-      "created_at": "2026-11-14T17:39:55.721Z"
+      "content_hash": "1a0d98297755461f18d6e81ba7cd4b66ad1a5ed4992e3b7d355c292147c1c01c",
+      "created_at": "2026-11-16T13:38:19.765Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -16153,8 +16155,8 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
       "repository": "pola-rs-polars-learnings",
-      "content_hash": "23e930181087af247bd02ddbf87cb3354e4808664aba432d2f0ca8200336ea35",
-      "created_at": "2026-11-14T17:40:13.440Z"
+      "content_hash": "6e73ccf3699a97bf07210afa248722311b8808eb72247c83b938144d66857b5c",
+      "created_at": "2026-11-16T13:38:37.575Z"
     },
     "DOM-D-A6170DB1": {
       "record_id": "DOM-D-A6170DB1",
@@ -23026,6 +23028,24 @@
       "repository": "scrapy-scrapy-learnings",
       "content_hash": "24331f9f14b3f33818046e07d59ceba519418fb8d5364ddef4a316a8d577d807",
       "created_at": "2026-11-16T13:22:59.710Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: duongductrong/Snapzy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-duongductrong-snapzy-technical-construction-intelligence-duongductrong-snapzy-co.md",
+      "repository": "duongductrong/Snapzy",
+      "content_hash": "d418a903febd83be4f08567a9efb0757298323128c73b09ac31eec32e4311942",
+      "created_at": "2026-11-16T13:38:24.898Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: duongductrong-snapzy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-duongductrong-snapzy-learnings-technical-construction-intelligence-duongductrong.md",
+      "repository": "duongductrong-snapzy-learnings",
+      "content_hash": "6617b6e2df89e389d6c17fe48ef626c0cfeb12ee9b183be2c0a7592f09a2bad8",
+      "created_at": "2026-11-16T13:38:38.172Z"
     }
   }
 }

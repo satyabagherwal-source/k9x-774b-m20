@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source**: github ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
-> **Source Version**: `849a356c`  
+> **Source Version**: `92a08dd1`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T02:24:37.133Z  
+> **Timestamp**: 2026-11-16T13:38:23.760Z  
 > **Learning ID**: `learn-github-duongductrong-snapzy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T02:24:37.124Z  
+> **Harvest Timestamp**: 2026-11-16T13:38:23.755Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source native macOS screenshot and screen recording app. A CleanShot X alternative.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3564 stars
+- **Stars / Engagement**: 3579 stars
 
 ---
 
@@ -930,11 +930,13 @@ struct MeasureOptions: ParsableArguments {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #736** (2026-11-14): **[Bug]: 截图并标注功能启动后，已移动光标但是定位光标位置不改变**
+  *Symptoms*: ### Description  使用截图并标注功能，触发选取页面后，看不到鼠标移动 MAC:27.2.1  ### Steps to Reproduce  1、触发【截图并标注】功能 2、移动鼠标  ### Expected Behavior  定位点根据鼠标移动同步移动  ### Actual Behavior  鼠标移动后定位不到鼠标位置  ### Screenshots / Recordings  https://github.com/user-attachments/assets/cfe4dc83-d7ec-4889-9c9f-f37a270c8b08  ### Snapzy Version  2.1.0  ### macOS Version  Other (specify in description)  ### Installation Method  None  ### Additional Context  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > Hi @l56105878,  感谢反馈！这个问题与 #705 / #597 为同一原因（macOS 27.2 上「截图并标注」的十字准星、坐标气泡和放大镜无法跟随指针移动），已在 #707 中修复并自 **[v2.2.0-beta.3](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.3)** 起发布（目前最新 Beta 为 **[v2.2.0-beta.11](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.11)**）。  获取 Beta 更新的方法：**Settings → About → Update Channel → Beta**，然后点击 **Check for Updates**。  现在先将此 Issue 关闭；如果更新到 Beta 版本后仍然可以复现，欢迎随时回复或重新打开！  ---  Hi @l56105878,  Thanks for reporting this! This is the same macOS 27.2 Capture Markup pointer-tracking issue fixed in #707, available starting in **[v2.2.0-beta.3](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.3)** (latest beta: **[v2.2.0-beta.11](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.11)**).  To update to Beta: **Settings → About → Update Channel → Beta**, then **Check for Updates**.  Closing this as fixed—please feel free to reopen if the issue persists on the latest beta build.
+
 - **Issue #730** (2026-11-10): **[Bug]: Tooltips are massive on macOS 15.8**
   *Symptoms*: ### Description  The tooltips in settings are huuuuge, see screenshot.  ### Steps to Reproduce  1. Open Snapzy Settings. 2. Hover over any `(i)` sign to read the tooltip. 3. The tooltip will fill a massive amount of screen space.  ### Expected Behavior  Tooltips should probably be as large as the text within them.  ### Actual Behavior  The tooltips are massive.  ### Screenshots / Recordings  ![Screenshot](https://github.com/user-attachments/assets/3af50df5-1062-435d-aa8d-566b4080c7a8)  ### Snapzy Version  2.2.0-beta.9  ### macOS Version  macOS 15 (Sequoia)  ### Installation Method  DMG download  ### Additional Context  _No response_
-
-- **Issue #725** (2026-11-09): **[Bug]: 2.2.0-beta.8 crashes on launch on macOS 14.5 (jump to address 0)**
-  *Symptoms*: ### Description  After updating from 2.1.0 to 2.2.0-beta.8 through the beta update channel, Snapzy crashes about one second after every launch. No window and no menu bar icon appear. 2.1.0 worked on the same Mac.  ### Steps to Reproduce  1. Run Snapzy 2.1.0 (Homebrew) on macOS 14.5. 2. Switch the update channel to beta and install 2.2.0-beta.8. 3. Launch Snapzy.  ### Expected Behavior  Snapzy launches and shows its menu bar icon.  ### Actual Behavior  The process exits about one second after launch with EXC_BAD_ACCESS (SIGSEGV). Every launch produces the same crash report.  ### Screenshots / Recordings  _No response_  ### Snapzy Version  2.2.0-beta.8 (224)  ### macOS Version  macOS 14 (Sonoma)  ### Installation Method  Homebrew  ### Additional Context  From the macOS crash report (three launches, identical):  ``` Version:    2.2.0-beta.8 (224) OS:         macOS 14.5 (23F79) Hardware:   MacBookPro18,2 (Apple Silicon) Exception:  EXC_BAD_ACCESS (SIGSEGV), KERN_INVALID_ADDRESS at 0x0             pc = 0x0, ESR: Instruction Abort, translation fault Binary UUID: 6b429b3c-ab87-3343-b7fc-83ff556688d8  Thread 0 (main), crashed: 0   ???                           0x0 1   Snapzy                        + 1609360 2   Snapzy                        + 1532016 3   Snapzy                        + 1485492 4   Snapzy                        + 10390756 5   Snapzy                        + 10383428 6   Snapzy                        + 10356400 7   Snapzy                        + 14720 8   Snapzy      
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,424 +953,81 @@ struct MeasureOptions: ParsableArguments {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `432657c3` (2026-11-09)
-**Commit Message**: fix: Snapzy no longer crashes at launch on macOS 13 and 14 (#725) (#727)
+### Incident Patch 1: `18fe56ad` (2026-11-14)
+**Commit Message**: fix: release preferences window content on close to stop idle CPU burn
 
-Approachable Concurrency makes plain async closure types
-nonisolated(nonsending). Using one generically (Dictionary value,
-Optional) needs swift_getExtendedFunctionTypeMetadata, which exists only
-in the macOS 15+ Swift runtime. Optimized builds call it without a
-fallback, so the weak import resolves to NULL and the app jumps to 0x0
-when the CLI router is built at launch.
-
-- CLIRequestRouter.Route is @concurrent
-- ScreenRulerController.buildRaster and ScrollingCaptureCommitScheduler
-  operation are @MainActor (same isolation they ran with before)
-- Release workflow fails if the archived binary imports the symbol, and
-  keeps the archive dSYMs as a workflow artifact
-
-**File**: `.github/workflows/release-publish.yml` (modified, +15/-0)
+**File**: `Snapzy/Features/Preferences/PreferencesWindowController.swift` (modified, +13/-0)
 ```diff
-@@ -181,6 +181,21 @@ jobs:
-             exit 1
-           fi
- 
-+      # Release-only crash class (#725): optimized builds call macOS 15+ Swift
-+      # runtime symbols without a fallback, so the app dies at launch on 13/14.
-+      - name: Guard Swift runtime imports for deployment target
-+        run: |
-+          set -euo pipefail
-+          bash scripts/check-runtime-weak-imports.sh build/Snapzy.xcarchive/Products/Applications/Snapzy.app
-+
-+      - name: Upload dSYMs
-+        uses: actions/upload-artifact@v7
-+        with:
-+          name: Snapzy-v${{ steps.version.outputs.version }}-dSYMs
-+          path: build/Snapzy.xcarchive/dSYMs
-+          if-no-files-found: warn
-+          retention-days: 90
-+
-       - name: Guard release signing strategy
-         run: |
-           set -euo pipefail
-```
-
-**File**: `Snapzy/Services/Capture/ScreenRuler/ScreenRulerController.swift` (modified, +5/-2)
-```diff
-@@ -24,7 +24,10 @@ final class ScreenRulerController {
-   private let setProcessing: (Bool) -> Void
-   private let preferences: ScreenRulerPreferences
-   private let setsCursorHidden: Bool
--  private let buildRaster: (CGImage) async -> ScreenRulerRaster?
-+  // Not `nonisolated(nonsending)` on purpose: storing a nonsending async closure type
-+  // generically needs `swift_getExtendedFunctionTypeMetadata` (macOS 15+ runtime), which
-+  // Release builds call without a fallback -> launch crash on macOS 13/14 (#725).
-+  private let buildRaster: @MainActor (CGImage) async -> ScreenRulerRaster?
- 
-   private var windows: [ScreenRulerOverlayWindow] = []
-   private var saveHandler: SaveHandler?
-@@ -48,7 +51,7 @@ final class ScreenRulerController {
-     setProcessing: ((Bool) -> Void)? = nil,
-     preferences: ScreenRulerPreferences = ScreenRulerPreferences(),
-     setsCursorHidden: Bool = true,
--    buildRaster: ((CGImage) async -> ScreenRulerRaster?)? = nil
-+    buildRaster: (@MainActor (CGImage) async -> ScreenRulerRaster?)? = nil
-   ) {
-     self.copyToPasteboard = copyToPasteboard ?? { value in
-       let pasteboard = NSPasteboard.general
-```
-
-**File**: `Snapzy/Services/Capture/ScrollingCapture/ScrollingCaptureCommitScheduler.swift` (modified, +5/-2)
-```diff
-@@ -17,7 +17,10 @@ final class ScrollingCaptureCommitScheduler {
-   }
- 
-   private let onRequestCoalesced: () -> Void
--  private let operation: (Request) async -> Void
-+  // Not `nonisolated(nonsending)` on purpose: storing a nonsending async closure type
-+  // generically needs `swift_getExtendedFunctionTypeMetadata` (macOS 15+ runtime), which
-+  // Release builds call without a fallback -> launch crash on macOS 13/14 (#725).
-+  private let operation: @MainActor (Request) async -> Void
- 
-   private var runnerTask: Task<Void, Never>?
-   private var currentRequest: Request?
-@@ -26,7 +29,7 @@ final class ScrollingCaptureCommitScheduler {
- 
-   init(
-     onRequestCoalesced: @escaping () -> Void = {},
--    operation: @escaping (Request) async -> Void
-+    operation: @escaping @MainActor (Request) async -> Void
-   ) {
-     self.onRequestCoalesced = onRequestCoalesced
-     self.operation = operation
-```
-
-**File**: `Snapzy/Services/CommandLine/CLIRequestRouter.swift` (modified, +4/-1)
-```diff
-@@ -27,7 +27,10 @@ nonisolated protocol CLIRequestHandling: Sendable {
- }
- 
- nonisolated struct CLIRequestRouter: Sendable {
--  typealias Route = @Sendable (_ payload: Data, _ id: UInt64, _ context: CLIRequestContext) async -> Data
-+  // Not `nonisolated(nonsending)` on purpose: storing a nonsending async closure type
-+  // generically needs `swift_getExtendedFunctionTypeMetadata` (macOS 15+ runtime), which
-+  // Release builds call without a fallback -> launch crash on macOS 13/14 (#725).
-+  typealias Route = @Sendable @concurrent (_ payload: Data, _ id: UInt64, _ context: CLIRequestContext) async -> Data
- 
-   private var routes: [String: Route] = [:]
- 
-```
-
-**File**: `scripts/check-runtime-weak-imports.sh` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+#!/usr/bin/env bash
-+#
-+# Fails when a built Snapzy binary imports Swift runtime entry points that do
-+# not exist on the deployment target (macOS 13) and that optimized builds call
-+# without a NULL check. On older macOS the weak import resolves to NULL and the
-+# app jumps to address 0 (see issue #725).
-+#
-+# Usage: scripts/check-runtime-weak-imports.sh <path/to/Snapzy.app | Mach-O> [...]
-+#
-+# swift_getExtendedFunctionTypeMetadata is emitted for async closure types that
-+# are `nonisolated(nonsending)` (default under Approachable Concurrency) when
-+# they are used generically: stored in a Dictionary, an Optional, etc. Fix by
-+# marking the closure type `@concurrent` or giving it a global actor
-+# (`@MainActor`).
-+
-+set -euo pipefail
-+
-+FORBIDDEN_SYMBOLS=(
-+  "_swift_getExtendedFunctionTypeMetadata"
-+)
-+
-+if [ "$#" -eq 0 ]; then
-+  echo "usage: $0 <Snapzy.app | binary> [...]" >&2
-+  exit 2
-+fi
-+
-+binaries=()
-+for target in "$@"; do
-+  if [ -d "$target" ]; then
-+    while IFS= read -r -d '' file; do
-+      if file -b "$file" | grep -q "Mach-O"; then
-+        binaries+=("$file")
-+      fi
-+    done < <(find "$target/Contents/MacOS" "$target/Contents/Helpers" -type f -print0 2>/dev/null)
-+  else
-+    binaries+=("$target")
-+  fi
-+done
-+
-+if [ "${#binaries[@]}" -eq 0 ]; then
-+  echo "::error::No Mach-O binaries found in: $*" >&2
-+  exit 1
-+fi
-+
-+failed=0
-+for binary in "${binaries[@]}"; do
-+  imports=$(xcrun dyld_info -imports "$binary")
-+  for symbol in "${FORBIDDEN_SYMBOLS[@]}"; do
-+    if grep -qw -- "$symbol" <<<"$imports"; then
-+      echo "::error::$binary imports $symbol (macOS 15+ runtime only). It crashes on macOS 13/14. Mark the nonsending async closure type @concurrent or @MainActor."
-+      failed=1
-+    fi
-+  done
-+  echo "checked: $binary"
-+done
-+
-+if [ "$failed" -ne 0 ]; then
-+  exit 1
-+fi
-+
-+echo "OK: no forbidden Swift runtime imports"
-```
-
----
-
-### Incident Patch 2: `75a5ce58` (2026-11-10)
-**Commit Message**: fix: Quick Access card buttons no longer ignore the first click (#733)
-
-The Quick Access panel is a fixed 5-card size and lets clicks fall through
-its empty area. It only started accepting clicks after the main thread saw a
-mouse-move over a card, so a quick first click went to the window behind.
-When it did flip, a pointer resting on the card got no hover, so the action
-buttons never appeared.
-
-Pass clicks through only above the top of the card stack, so the panel is
-already clickable when the pointer arrives from the side or from below.
-Replay mouse-moves that went to another window while the pointer is over the
-panel, so hover is always registered, and handle global monitor events
-inline instead of through a Task hop.
-
-Closes #698
-
-**File**: `Snapzy/Features/QuickAccess/QuickAccessPanel.swift` (modified, +67/-5)
-```diff
-@@ -83,6 +83,32 @@ final class QuickAccessPanel: NSPanel {
-     return interactiveRect.contains(screenPoint)
-   }
- 
-+  /// Whether the panel should let mouse events fall through to the window below
-+  /// while the pointer is at `screenPoint`.
-+  ///
-+  /// The window server picks a click's target window the moment the click happens,
-+  /// using whatever `ignoresMouseEvents` is at that instant. Snapzy can only flip it
-+  /// after its main thread has handled a mouse-move, so the panel must already
-+  /// accept clicks *before* the pointer reaches a card. Otherwise a quick first click
-+  /// falls through to the app behind and the card seems to ignore it (#698).
-+  ///
-+  /// The decision therefore depends only on height: pass clicks through only at or
-+  /// above the top of the card stack (the empty area of the fixed-size panel). Beside
-+  /// or below the stack the panel accepts clicks. That costs nothing outside the
-+  /// panel frame (the window cannot receive those clicks anyway), and pointers
-+  /// arriving from the side or from below meet a card that is already clickable.
-+  /// Only a pointer moving straight down out of the empty area still needs a flip.
-+  func shouldPassMouseThrough(at screenPoint: NSPoint) -> Bool {
-+    guard visibleItemCount > 0 else { return true }
-+
-+    let cardsTop = frame.minY + Self.interactiveContentHeight(
-+      itemCount: visibleItemCount,
-+      scale: overlayScale,
-+      panelHeight: frame.height
-+    )
-+    return screenPoint.y >= cardsTop
-+  }
-+
-   static func interactiveContentHeight(itemCount: Int, scale: CGFloat, panelHeight: CGFloat) -> CGFloat {
-     guard itemCount > 0 else { return 0 }
- 
-@@ -139,8 +165,11 @@ final class QuickAccessPanel: NSPanel {
+@@ -137,5 +137,18 @@ final class PreferencesWindowController: NSObject, NSWindowDelegate {
+       didElevateActivationPolicy = false
+       DiagnosticLogger.shared.log(.debug, .ui, "Activation policy restored to accessory after preferences closed")
      }
- 
-     if globalMouseMonitor == nil {
-+      // Global monitor handlers run on the main thread. Handle the event inline:
-+      // hopping through a Task delays the passthrough flip and widens the window
-+      // in which a click is routed to the app behind the panel (#698).
-       globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
--        Task { @MainActor in
-+        MainActor.assumeIsolated {
-           self?.handleGlobalMouseEvent(event)
-         }
-       }
-@@ -158,7 +187,8 @@ final class QuickAccessPanel: NSPanel {
-     }
-   }
- 
--  private func refreshMousePassthrough() {
-+  /// - Parameter missedMove: true when a mouse-move just went to some other window.
-+  private func refreshMousePassthrough(missedMove: Bool = false) {
-     if isMouseInteractionActive && NSEvent.pressedMouseButtons & 1 == 0 {
-       isMouseInteractionActive = false
-     }
-@@ -168,7 +198,38 @@ final class QuickAccessPanel: NSPanel {
-       return
-     }
- 
--    ignoresMouseEvents = !containsInteractivePoint(NSEvent.mouseLocation)
-+    let wasPassingThrough = ignoresMouseEvents
-+    ignoresMouseEvents = shouldPassMouseThrough(at: NSEvent.mouseLocation)
 +
-+    // A move that went elsewhere while the pointer is over this (now clickable)
-+    // panel was routed before the window server applied our flip. Replay it here.
-+    if !ignoresMouseEvents && (wasPassingThrough || missedMove) {
-+      resyncHoverAtPointer()
++    // A closed (ordered-out) window keeps its NSHostingView alive, and SwiftUI does not
++    // fire onDisappear/cancel `.task` for it — so looping work such as the animated
++    // CaptureSettingsPreview kept rendering off-screen (~20–35% CPU while idle).
++    // Tear the hierarchy down; `show()` rebuilds it on demand.
++    guard let closingWindow = notification.object as? NSWindow, closingWindow === window else { return }
++    DispatchQueue.main.async { [weak self] in
++      guard let self, self.window === closingWindow, !closingWindow.isVisible else { return }
++      closingWindow.contentView = nil
++      closingWindow.delegate = nil
++      self.themeObserver = nil
++      self.window = nil
 +    }
-+  }
-+
-+  /// AppKit updates hover tracking (SwiftUI `.onHover`) only when a mouse-move
-+  /// reaches the window. Turning `ignoresMouseEvents` off takes effect in the window
-+  /// server asynchronously, so moves made just before or just after the flip still go
-+  /// to the window behind. If the pointer then stops on a card, the card never sees
-+  /// hover, its action buttons never appear, and every click lands on the card body
-+  /// (#698). Feed the panel one move at the current pointer location so hover is
-+  /// checked right away. No-op while the pointer is outside the panel.
-+  private func resyncHoverAtPointer() {
-+    let screenPoint = NSEvent.mouseLocation
-+    guard frame.contains(screenPoint),
-+          let event = NSEvent.mouseEvent(
-+            with: .mouseMoved,
-+            location: convertPoint(fromScreen: screenPoint),
-+            modifierFlags: [],
-+            timestamp: ProcessInfo.processInfo.systemUptime,
-+            windowNumber: windowNumber,
-+            context: nil,
-+            eventNumber: 0,
-+            clickCount: 0,
-+            pressure: 0
-+          ) else { return }
-+    NSApp.postEvent(event, atStart: false)
    }
- 
-   private func handleLocalMouseEvent(_ event: NSEvent) {
-@@ -183,15 +244,16 @@ final class QuickAccessPanel: NSPanel {
-       }
-     }
- 
--    refreshMousePassthrough()
-+    refreshMousePassthrough(missedMove: event.type == .mouseMoved && event.window !== self)
-   }
- 
-   private func handleGlobalMouseEvent(_ event: NSEvent) {
-     if event.type == .leftMouseUp {
-       isMouseInteractionActive = false
-     }
- 
--    refreshMousePassthrough()
-+    // Global events always went to another app.
-+    refreshMousePassthrough(missedMove: event.type == .mouseMoved)
-   }
- 
-   override var canBecomeKey: Bool { false }
-```
-
-**File**: `SnapzyTests/Features/QuickAccess/QuickAccessCoreTests.swift` (modified, +34/-0)
-```diff
-@@ -1569,6 +1569,40 @@ final class QuickAccessCoreTests: XCTestCase {
-     XCTAssertFalse(panel.containsInteractivePoint(NSPoint(x: 150, y: panel.frame.maxY - 10)))
-   }
- 
-+  /// #698: the panel must already accept clicks before the pointer reaches a card,
-+  /// so passthrough depends only on height. Beside or below the card stack (even
-+  /// outside the panel frame) clicks are accepted. Only the empty area above passes through.
-+  func testQuickAccessPanel_passthroughOnlyAboveCardStack() {
-+    let panelHeight =
-+      QuickAccessLayout.scaledCardHeight(1) * 5
-+      + QuickAccessLayout.cardSpacing * 4
-+      + QuickAccessLayout.containerPadding * 2
-+    let panel = QuickAccessPanel(
-+      contentRect: NSRect(x: 100, y: 100, width: 204, height: panelHeight)
-+    )
-+    defer { panel.close() }
-+
-+    panel.updatePassthroughRegion(itemCount: 1, scale: 1)
-+    let cardsTop = panel.frame.minY + QuickAccessLayout.cardHeight + QuickAccessLayout.containerPadding * 2
-+
-+    // On the card.
-+    XCTAssertFalse(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: 150)))
-+    // Approaching from the side or from below, outside the panel frame.
-+    XCTAssertFalse(panel.shouldPassMouseThrough(at: NSPoint(x: 0, y: 150)))
-+    XCTAssertFalse(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: 10)))
-+    // Empty area above the stack, inside and beside the panel frame.
-+    XCTAssertTrue(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: cardsTop + 1)))
-+    XCTAssertTrue(panel.shouldPassMouseThrough(at: NSPoint(x: 0, y: panel.frame.maxY - 10)))
-+
-+    // The boundary rises as cards are added.
-+    panel.updatePassthroughRegion(itemCount: 2, scale: 1)
-+    XCTAssertFalse(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: cardsTop + 1)))
-+
-+    // No cards: everything passes through.
-+    panel.updatePassthroughRegion(itemCount: 0, scale: 1)
-+    XCTAssertTrue(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: 150)))
-+  }
-+
-   func testQuickAccessActionConfigurationStore_usesDefaultOrderAndEnabledActions() {
-     let defaults = makeIsolatedDefaults()
-     let store = makeActionConfigurationStore(defaults: defaults)
+ }
 ```
 
 ---
 
-### Incident Patch 3: `01fe19e0` (2026-11-10)
-**Commit Message**: fix: Settings tooltips no longer grow huge on macOS 15 (#731)
+### Incident Patch 2: `bba5596b` (2026-11-14)
+**Commit Message**: fix: clear stuck drop preview frame after dropping an image on annotate canvas (#745)
 
-The hint popover only had a max width, so NSPopover on macOS 15 measured
-it at a near-zero width and the text's fixed vertical size produced a
-very tall popover. Measure the text and pin an exact width (capped at
-240pt) so SwiftUI derives the height at that width.
+SwiftUI can re-deliver dropEntered/dropUpdated after a drop finished, which redrew the preview frame with nothing left to clear it. Only show the preview while the mouse button is held.
 
-Fixes #730
-
-**File**: `Snapzy/Shared/Components/TooltipView.swift` (modified, +24/-4)
+**File**: `Snapzy/Features/Annotate/AnnotateState.swift` (modified, +15/-1)
 ```diff
-@@ -77,13 +77,33 @@ private struct HintModifier: ViewModifier {
- private struct HintPopoverContent: View {
-   let text: String
+@@ -575,15 +575,29 @@ final class AnnotateState: ObservableObject {
+   private var isExternalCombineDropActive = false
  
-+  private static let fontSize: CGFloat = 11
-+  private static let maxTextWidth: CGFloat = 240
-+  private static let horizontalPadding: CGFloat = 10
-+  private static let verticalPadding: CGFloat = 6
-+
-   var body: some View {
-+    // NSPopover sizes itself from the hosting view's fitting size. A flexible width lets
-+    // macOS 15 measure the text at a near-zero width, so the popover grows very tall (#730).
-+    // Pin an exact width (the text's own width, capped) and let SwiftUI derive the height at it.
-     Text(text)
--      .font(.system(size: 11))
-+      .font(.system(size: Self.fontSize))
-       .foregroundColor(.primary)
--      .padding(.horizontal, 10)
--      .padding(.vertical, 6)
-+      .lineLimit(nil)
-+      .frame(width: Self.textWidth(for: text), alignment: .leading)
-       .fixedSize(horizontal: false, vertical: true)
--      .frame(maxWidth: 260, alignment: .leading)
-+      .padding(.horizontal, Self.horizontalPadding)
-+      .padding(.vertical, Self.verticalPadding)
-+      .fixedSize()
+   func beginExternalCombineDrop(at point: CGPoint?) {
++    guard isExternalDragInFlight else {
++      endExternalCombineDrop()
++      return
++    }
+     isExternalCombineDropActive = true
+     updateCombineDropPreview(at: point)
+   }
+ 
+   func updateExternalCombineDrop(at point: CGPoint?) {
+-    guard isExternalCombineDropActive else { return }
++    guard isExternalCombineDropActive, isExternalDragInFlight else {
++      endExternalCombineDrop()
++      return
++    }
+     updateCombineDropPreview(at: point)
+   }
+ 
++  /// A drag session always holds a mouse button. SwiftUI can re-deliver `dropEntered`/
++  /// `dropUpdated` after the drop finished (button released); without this check that
++  /// late call leaves the preview frame on the canvas with nothing left to clear it.
++  private var isExternalDragInFlight: Bool {
++    NSEvent.pressedMouseButtons & 1 != 0
 +  }
 +
-+  private static func textWidth(for text: String) -> CGFloat {
-+    let rect = (text as NSString).boundingRect(
-+      with: CGSize(width: maxTextWidth, height: .greatestFiniteMagnitude),
-+      options: [.usesLineFragmentOrigin, .usesFontLeading],
-+      attributes: [.font: NSFont.systemFont(ofSize: fontSize)]
-+    )
-+    // Small slack so SwiftUI never wraps a line AppKit measured as fitting.
-+    return min(ceil(rect.width) + 2, maxTextWidth)
-   }
- }
+   func endExternalCombineDrop() {
+     isExternalCombineDropActive = false
+     clearCombineDropPreview()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #735** (2026-11-10): chore: release v2.2.0-beta.10 (@github-actions[bot])
-- **PR #734** (2026-11-10): feat: Option to copy screenshots as image data only (@duongductrong)
-- **PR #733** (2026-11-10): fix: Quick Access card buttons no longer ignore the first click (@duongductrong)
-- **PR #732** (2026-11-10): feat: Confirm before restarting or deleting a recording in progress (@duongductrong)
-- **PR #731** (2026-11-10): fix: Settings tooltips no longer grow huge on macOS 15 (@duongductrong)
-- **PR #728** (2026-11-09): chore: release v2.2.0-beta.9 (@github-actions[bot])
+- **PR #751** (2026-11-15): chore: release v2.2.0-beta.15 (@github-actions[bot])
+- **PR #750** (2026-11-15): feat: Auto Translate in Annotate (whole image + area) (@duongductrong)
+- **PR #749** (2026-11-15): feat: Added Snip to Translate (OCR + translation card) (@duongductrong)
+- **PR #748** (2026-11-14): chore: release v2.2.0-beta.14 (@github-actions[bot])
+- **PR #747** (2026-11-14): feat: add flip horizontal/vertical and group rotate+flip into one toolbar menu (@duongductrong)
+- **PR #746** (2026-11-14): chore: release v2.2.0-beta.13 (@github-actions[bot])
 
 ---
 
@@ -1388,42 +1047,40 @@ Fixes #730
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Snapzy no longer crashes at launch on macOS 13 and 14 (#725) (#727)
+## X. release preferences window content on close to stop idle CPU burn
 
 **RULE**:
-When implementing operations in `.github/workflows/release-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Snapzy/Features/Preferences/PreferencesWindowController.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `432657c3`: Snapzy no longer crashes at launch on macOS 13 and 14 (#725) (#727). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18fe56ad`: release preferences window content on close to stop idle CPU burn. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-publish.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Preferences/PreferencesWindowController.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-      # Release-only crash class (#725): optimized builds call macOS 15+ Swift
-      # runtime symbols without a fallback, so the app dies at launch on 13/14.
-      - name: Guard Swift runtime imports for deployment target
-        run: |
-          set -euo pipefail
-          bash scripts/check-runtime-weak-imports.sh build/Snapzy.xcarchive/Products/Applications/Snapzy.app
 
-      - name: Upload dSYMs
-        uses: actions/upload-artifact@v7
-        with:
-          name: Snapzy-v${{ steps.version.outputs.version }}-dSYMs
-          path: build/Snapzy.xcarchive/dSYMs
-          if-no-files-found: warn
-          retention-days: 90
-
+    // A closed (ordered-out) window keeps its NSHostingView alive, and SwiftUI does not
+    // fire onDisappear/cancel `.task` for it — so looping work such as the animated
+    // CaptureSettingsPreview kept rendering off-screen (~20–35% CPU while idle).
+    // Tear the hierarchy down; `show()` rebuilds it on demand.
+    guard let closingWindow = notification.object as? NSWindow, closingWindow === window else { return }
+    DispatchQueue.main.async { [weak self] in
+      guard let self, self.window === closingWindow, !closingWindow.isVisible else { return }
+      closingWindow.contentView = nil
+      closingWindow.delegate = nil
+      self.themeObserver = nil
+      self.window = nil
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `432657c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18fe56ad` are properly handled with clean fallback behavior.
