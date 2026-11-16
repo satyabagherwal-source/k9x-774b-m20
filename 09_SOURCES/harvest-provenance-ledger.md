@@ -10270,3 +10270,6 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b9c39f1f` | Multi-dimensional audit evidence | 2026-11-16T03:57:22.202Z |
 | `learn-dom-f-4f38fea1` | `project://ganymedenil-document.ai` | `4e2940ff` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ganymedenil-document.ai-learnings.md` | 2026-11-16T03:57:49.588Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `afcac4f0` | Multi-dimensional audit evidence | 2026-11-16T04:17:56.951Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `4bb39f16` | Multi-dimensional audit evidence | 2026-11-16T04:30:14.611Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6e16dac9` | Multi-dimensional audit evidence | 2026-11-16T04:30:25.183Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `39281811` | Multi-dimensional audit evidence | 2026-11-16T04:30:28.206Z |

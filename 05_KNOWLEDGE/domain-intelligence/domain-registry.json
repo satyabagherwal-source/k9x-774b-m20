@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T04:18:02.448Z",
-  "total_records": 1222,
+  "last_updated": "2026-11-16T04:30:32.964Z",
+  "total_records": 1226,
   "domains": {
     "A": {
       "total": 7,
@@ -657,7 +657,7 @@
       ]
     },
     "G": {
-      "total": 219,
+      "total": 221,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -877,11 +877,13 @@
         "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",
         "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-juullabs-kable-core-invariants",
-        "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
+        "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 254,
+      "total": 256,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1136,7 +1138,9 @@
         "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-crawlcove-xml-sitemap-validator-core-invaria",
-        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni"
+        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni",
+        "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant"
       ]
     },
     "I": {
@@ -7109,8 +7113,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "704c3ba92cc5215783c38926479de66bb37762edd97057a810b46bb8593fc926",
-      "created_at": "2026-11-15T22:58:46.761Z"
+      "content_hash": "f486b01cb352e94e275388d79830b4478ec6b86cafba01d60c4b6113644c6f5b",
+      "created_at": "2026-11-16T04:30:25.455Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -12136,8 +12140,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "a2080a587ffbb83242b266ce848706e8f2b844e3c398bfe51d9135c6b6cc1919",
-      "created_at": "2026-11-15T16:50:39.873Z"
+      "content_hash": "a8a9a136dca40e42e3e169fa9e026e0647fcab0f2e07a0a616f5fe64b28fd245",
+      "created_at": "2026-11-16T04:30:32.417Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -22683,6 +22687,42 @@
       "repository": "juullabs-kable-learnings",
       "content_hash": "f557b1a57592de77a205324ea9805c39651ca05d4778237700b4c58db305e491",
       "created_at": "2026-11-16T03:57:50.567Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
+      "repository": "Folkbench/folkbench",
+      "content_hash": "97b40a878823527a906c7232a081596488b66713c39c073bc21a7f9295bc88c1",
+      "created_at": "2026-11-16T04:30:14.877Z"
+    },
+    "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: MariaDB/server Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
+      "repository": "MariaDB/server",
+      "content_hash": "e2d0b069dc6fd0a0f7643d3f7f444701e562edbff2712bbff75888b2f60ae19d",
+      "created_at": "2026-11-16T04:30:28.479Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
+      "repository": "folkbench-folkbench-learnings",
+      "content_hash": "935ef76f7dfc39f24e2f9912c614bd70b7bcdf406152dbdeadb3db76382d030a",
+      "created_at": "2026-11-16T04:30:31.934Z"
+    },
+    "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mariadb-server-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-learnings-architecture-intelligence-mariadb-server-learnings-core.md",
+      "repository": "mariadb-server-learnings",
+      "content_hash": "f1887e9b7c541b173b6c77fca4d13180ca6e988ae2d75cddec023421784f3ae1",
+      "created_at": "2026-11-16T04:30:32.964Z"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T04:17:56.961Z",
+  "last_updated": "2026-11-16T04:30:28.214Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "540d235719c5aa8d14ff054ff86eda42049874a8d46bf50f157c9e7709bc5032",
-      "verified_at": "2026-11-15T22:58:46.508Z",
+      "content_hash": "8a47637e60c73643a0887aaf04e369242f3531431888ef1c931bd490cb97c69d",
+      "verified_at": "2026-11-16T04:30:25.191Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T22:58:46.508Z"
+      "last_updated": "2026-11-16T04:30:25.191Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "6cf0648c60692011171d1c801d295de6bf1046128328dc9f0ee55f3147085f36",
-      "verified_at": "2026-11-13T13:42:44.695Z",
+      "content_hash": "355ee964bd3fb732d8cd29f168b4f4e4e0249c5e655a017cd4cb1a06d2d8453b",
+      "verified_at": "2026-11-16T04:30:28.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:42:44.695Z"
+      "last_updated": "2026-11-16T04:30:28.214Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",
@@ -19109,6 +19109,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-16T03:57:06.606Z"
+    },
+    "Folkbench/folkbench": {
+      "repository": "Folkbench/folkbench",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-folkbench-folkbench",
+      "content_hash": "120330440dcabef98f5238b386e4581ce12823fe3ec42635b89117e1f8d639d9",
+      "verified_at": "2026-11-16T04:30:14.619Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-16T04:30:14.619Z"
     }
   },
   "repos": {

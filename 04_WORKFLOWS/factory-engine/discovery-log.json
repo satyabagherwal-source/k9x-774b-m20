@@ -21274,5 +21274,20 @@
     "qualityScore": 2177,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-16T03:53:33.080Z"
+  },
+  {
+    "name": "folkbench",
+    "fullName": "Folkbench/folkbench",
+    "url": "https://github.com/Folkbench/folkbench",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "AI API 中转站评测排行与切换工具：实测可用率、延迟与价格 · Open-source AI API relay benchmark, rankings & switcher for Claude Code / Codex",
+    "stars": 3878,
+    "forks": 19,
+    "openIssues": 0,
+    "language": "Rust",
+    "qualityScore": 2195,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-16T04:27:33.512Z"
   }
 ]

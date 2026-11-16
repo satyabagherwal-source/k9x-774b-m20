@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T16:50:39.689Z",
+  "timestamp": "2026-11-16T04:30:32.217Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T16:50:39.689Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T04:30:32.217Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `daf82a50`  
+> **Source Version**: `6e16dac9`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T16:50:31.085Z  
+> **Timestamp**: 2026-11-16T04:30:24.330Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T16:50:31.080Z  
+> **Harvest Timestamp**: 2026-11-16T04:30:24.030Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39155 stars
+- **Stars / Engagement**: 39176 stars
 
 ---
 
@@ -848,92 +848,200 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `daf82a50` (2026-11-14)
-**Commit Message**: prober: deflake TestHTTPBandwidth on coarse-clock machines
+### Incident Patch 1: `6e16dac9` (2026-11-15)
+**Commit Message**: net/netmon: make static monitors work without netlink
 
-The test asserts that a successful probe records a positive transfer
-time, but the transfer is shorter than one clock tick on the Windows CI
-runner: four attempts at 1 MiB plus their connection setups took 2.3ms
-in total, yet every measurement read exactly 0, so the retry loop added
-in #20214 just re-measured zero and then failed with
-"http_bw_transfer_time_seconds_total = 0 after 4 attempts".
+Userspace-only programs like tailcat don't need to watch the OS
+network state, so in sandboxes without netlink access (as in ChatGPT
+Work's) they'd like to use netmon.NewStatic instead of netmon.New,
+which fails there. But two things broke with a static Monitor:
 
-A 1 MiB loopback transfer takes ~0.4ms here, so no payload small enough
-for a unit test is reliably measurable against a millisecond-coarse
-clock. Make the transfer span more than one tick instead: /download now
-writes half the payload, flushes, sleeps 50ms, then writes the rest.
-The probe measures ~52ms, so the >0 assertion holds deterministically
-and the retry loop can be deleted.
+If reading the interface state failed, NewStatic left it nil, and
+callers of InterfaceState don't expect nil.
 
-Fixes #21620
+LinkChangeLogLimiter, used by magicsock, subscribed to the static
+Monitor's nil event bus client and panicked. Static monitors never
+publish link changes, so skip the subscription.
 
-Signed-off-by: Yunus Emre Karaman <[REDACTED_EMAIL]>
+Updates #22412
 
-**File**: `prober/http_test.go` (modified, +14/-21)
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Change-Id: Ifa826c8cbac6a82b8a15f57bc8178b364fc30e54
+
+**File**: `net/netmon/loghelper.go` (modified, +13/-10)
 ```diff
-@@ -55,10 +55,18 @@ func TestHTTPBandwidth(t *testing.T) {
- 	const size = 1 << 20 // 1 MiB
+@@ -23,16 +23,19 @@ const cooldownSeconds = 300
+ func LinkChangeLogLimiter(ctx context.Context, logf logger.Logf, nm *Monitor) logger.Logf {
+ 	var formatLastSeen sync.Map // map[string]int64
  
- 	mux := http.NewServeMux()
--	// /download writes exactly `size` zero bytes.
-+	// /download writes exactly `size` zero bytes, pausing halfway so the
-+	// transfer spans more than one clock tick. A 1 MiB loopback transfer
-+	// takes well under a millisecond, which is below the monotonic clock's
-+	// granularity on the Windows CI runner, so the probe would measure a
-+	// transfer time of exactly 0 there.
-+	// See https://github.com/tailscale/tailscale/issues/21620.
- 	mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
- 		w.WriteHeader(http.StatusOK)
--		io.CopyN(w, zeroReader{}, size)
-+		io.CopyN(w, zeroReader{}, size/2)
-+		w.(http.Flusher).Flush()
-+		time.Sleep(50 * time.Millisecond)
-+		io.CopyN(w, zeroReader{}, size/2)
- 	})
- 	// /bad returns a non-200 status.
- 	mux.HandleFunc("/bad", func(w http.ResponseWriter, r *http.Request) {
-@@ -135,28 +143,13 @@ func TestHTTPBandwidth(t *testing.T) {
- 			}
+-	// The delta is passed by value, but it contains pointers to the old and
+-	// new interface states, which are shared. The delta must not be mutated.
+-	sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
+-		// Any link changes that are flagged as likely require a rebind are
+-		// interesting enough that we should log them.
+-		if cd.RebindLikelyRequired {
+-			formatLastSeen.Clear()
+-		}
+-	})
+-	context.AfterFunc(ctx, sub.Close)
++	// Static monitors never publish link changes and have no event bus client.
++	if !nm.static {
++		// The delta is passed by value, but it contains pointers to the old and
++		// new interface states, which are shared. The delta must not be mutated.
++		sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
++			// Any link changes that are flagged as likely require a rebind are
++			// interesting enough that we should log them.
++			if cd.RebindLikelyRequired {
++				formatLastSeen.Clear()
++			}
++		})
++		context.AfterFunc(ctx, sub.Close)
++	}
+ 	return func(format string, args ...any) {
+ 		// get the current timestamp
+ 		now := time.Now().Unix()
+```
+
+**File**: `net/netmon/netmon.go` (modified, +7/-3)
+```diff
+@@ -403,10 +403,14 @@ func New(bus *eventbus.Bus, logf logger.Logf) (*Monitor, error) {
+ }
  
- 			// On a successful transfer the recorded byte count should equal the
--			// full payload size, and the transfer should take a positive,
--			// finite amount of time.
-+			// full payload size, and the transfer should take a positive
-+			// amount of time.
- 			if got := metricValue(t, metrics, "http_bw_bytes_total"); got != float64(tc.size) {
- 				t.Errorf("http_bw_bytes_total = %v, want %v", got, tc.size)
- 			}
--			// The transfer time counter accumulates across Probe calls.
--			// At 1 MiB over loopback a zero reading means the timing logic
--			// is broken, but retry a few times.
--			if transferTime() <= 0 {
--				const retries = 3
--				for range retries {
--					if err := pc.Probe(ctx); err != nil {
--						t.Fatalf("Probe() = %v, want nil", err)
--					}
--					metrics = pc.Metrics(prometheus.Labels{})
--					if transferTime() > 0 {
--						break
--					}
--				}
--				if transferTime() <= 0 {
--					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
--				}
-+			if got := transferTime(); got <= 0 {
-+				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
- 			}
- 		})
+ // NewStatic returns a Monitor that's a one-time snapshot of the network state
+-// but doesn't actually monitor for changes. It should only be used in tests
+-// and situations like cleanups or short-lived CLI programs.
++// but doesn't actually monitor for changes. It should only be used in tests,
++// situations like cleanups or short-lived CLI programs, and userspace-only
++// programs that don't need to react to network changes.
++//
++// It doesn't fail if the network state can't be read, such as in sandboxes
++// without netlink access. The snapshot is then empty.
+ func NewStatic() *Monitor {
+-	m := &Monitor{static: true}
++	m := &Monitor{static: true, ifState: &State{}} // callers expect non-nil
+ 	if st, err := m.interfaceStateUncached(); err == nil {
+ 		m.ifState = st
+ 	}
+```
+
+**File**: `net/netmon/netmon_static_test.go` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++package netmon
++
++import (
++	"errors"
++	"reflect"
++	"testing"
++
++	"tailscale.com/tstest"
++)
++
++func TestNewStaticInterfaceDiscoveryFailure(t *testing.T) {
++	tstest.Replace(t, &altNetInterfaces, func() ([]Interface, error) {
++		return nil, errors.New("interface enumeration unavailable")
++	})
++	mon := NewStatic()
++	if got := mon.InterfaceState(); !reflect.DeepEqual(got, &State{}) {
++		t.Fatalf("InterfaceState = %#v, want non-nil empty state", got)
++	}
++	mon.Start()
++	if err := mon.Close(); err != nil {
++		t.Fatal(err)
++	}
++}
++
++func TestLinkChangeLogLimiterStatic(t *testing.T) {
++	mon := NewStatic()
++	calls := 0
++	logf := LinkChangeLogLimiter(t.Context(), func(string, ...any) { calls++ }, mon)
++	logf("first format")
++	logf("first format")
++	logf("second format")
++	if calls != 2 {
++		t.Fatalf("logged %d messages, want 2", calls)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `167d05bc` (2026-11-15)
+**Commit Message**: net/netns: honor ALL_PROXY when netns is disabled
+
+netns.SetEnabled(false) is for processes like userspace-only clients
+whose traffic never routes back into themselves, so they don't need
+the namespace setup. But FromDialer also skipped the ALL_PROXY SOCKS
+wrapping when disabled, so such processes couldn't reach the internet
+in environments that only allow egress via a proxy, such as ChatGPT
+Work's sandbox.
+
+Only skip the namespace setup when disabled, and still wrap the dialer
+for the proxy.
+
+Updates #22412
+
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Change-Id: Ic2023a329c640a1e8de32b157ed608ba385000a1
+
+**File**: `net/netns/control_test.go` (modified, +3/-3)
+```diff
+@@ -109,10 +109,10 @@ func TestFromDialerControlContext(t *testing.T) {
+ 						}
+ 					}
+ 					got := FromDialer(t.Logf, netmon.NewStatic(), d)
+-					if want := proxy && !disable; wrapped != want {
+-						t.Errorf("proxy wrapped = %v; want %v", wrapped, want)
++					if wrapped != proxy {
++						t.Errorf("proxy wrapped = %v; want %v", wrapped, proxy)
+ 					}
+-					if disable && got != d {
++					if disable && !proxy && got != d {
+ 						t.Error("disabled FromDialer did not return the original dialer")
+ 					}
+ 					if d.Control != nil {
+```
+
+**File**: `net/netns/netns.go` (modified, +7/-4)
+```diff
+@@ -119,18 +119,21 @@ func NewDialer(logf logger.Logf, netMon *netmon.Monitor) Dialer {
+ //
+ // FromDialer modifies d and may wrap it to use SOCKS if configured by ALL_PROXY.
+ // The hooks apply to the underlying socket (to the proxy when using SOCKS).
+-// When netns is disabled, d is returned unchanged and without proxy wrapping.
++// When netns is disabled, d gets no namespace setup but may still be wrapped
++// to use SOCKS.
+ func FromDialer(logf logger.Logf, netMon *netmon.Monitor, d *net.Dialer) Dialer {
+ 	if netMon == nil {
+ 		panic("netns.FromDialer called with nil netMon")
+ 	}
+ 	if d.Control != nil {
+ 		panic("netns.FromDialer: use ControlContext instead of Control")
+ 	}
+-	if disabled.Load() {
+-		return d
++	// Disabling netns only turns off the namespace setup. Processes that
++	// disable it, such as userspace-only clients that never route traffic
++	// back into themselves, may still need to honor ALL_PROXY.
++	if !disabled.Load() {
++		setNamespaceControl(d, control(logf, netMon))
+ 	}
+-	setNamespaceControl(d, control(logf, netMon))
+ 	if wrapDialer != nil {
+ 		return wrapDialer(d)
  	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22427** (2026-11-15): net/memnet: implement CloseRead and CloseWrite (@emrelab)
+- **PR #22421** (2026-11-16): net/netns: honor ALL_PROXY when netns is disabled (@bradfitz)
+- **PR #22420** (2026-11-16): net/netmon: make static monitors work without netlink (@bradfitz)
 - **PR #22408** (2026-11-15): prober: deflake TestHTTPBandwidth on coarse-clock machines (@emrelab)
 - **PR #22406** (2026-11-14): go.mod: bump golang.org/x/sys (@tailscale-code-updater[bot])
 - **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
-- **PR #22392** (2026-11-13): clientupdate: stop requesting the -winui MSI variant on Windows (@nickkhyl)
-- **PR #22391** (closed): go.mod: bump golang.org/x/sys to v0.50.0 (@wrenix)
-- **PR #22382** (2026-11-13): derp/derpserver: fix data race on sclient.keepAliveTimer (@bradfitz)
 
 ---
 
@@ -953,64 +1061,52 @@ Signed-off-by: Yunus Emre Karaman <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. prober: deflake TestHTTPBandwidth on coarse-clock machines
+## X. net/netmon: make static monitors work without netlink
 
 **RULE**:
-When implementing operations in `prober/http_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `net/netmon/loghelper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `daf82a50`: prober: deflake TestHTTPBandwidth on coarse-clock machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e16dac9`: net/netmon: make static monitors work without netlink. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `prober/http_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/netmon/loghelper.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// /download writes exactly `size` zero bytes, pausing halfway so the
-	// transfer spans more than one clock tick. A 1 MiB loopback transfer
-	// takes well under a millisecond, which is below the monotonic clock's
-	// granularity on the Windows CI runner, so the probe would measure a
-	// transfer time of exactly 0 there.
-	// See https://github.com/tailscale/tailscale/issues/21620.
-		io.CopyN(w, zeroReader{}, size/2)
-		w.(http.Flusher).Flush()
-		time.Sleep(50 * time.Millisecond)
-		io.CopyN(w, zeroReader{}, size/2)
-			// full payload size, and the transfer should take a positive
-			// amount of time.
-			if got := transferTime(); got <= 0 {
-				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
+	// Static monitors never publish link changes and have no event bus client.
+	if !nm.static {
+		// The delta is passed by value, but it contains pointers to the old and
+		// new interface states, which are shared. The delta must not be mutated.
+		sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
+			// Any link changes that are flagged as likely require a rebind are
+			// interesting enough that we should log them.
+			if cd.RebindLikelyRequired {
+				formatLastSeen.Clear()
+			}
+		})
+		context.AfterFunc(ctx, sub.Close)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// /download writes exactly `size` zero bytes.
-		io.CopyN(w, zeroReader{}, size)
-			// full payload size, and the transfer should take a positive,
-			// finite amount of time.
-			// The transfer time counter accumulates across Probe calls.
-			// At 1 MiB over loopback a zero reading means the timing logic
-			// is broken, but retry a few times.
-			if transferTime() <= 0 {
-				const retries = 3
-				for range retries {
-					if err := pc.Probe(ctx); err != nil {
-						t.Fatalf("Probe() = %v, want nil", err)
-					}
-					metrics = pc.Metrics(prometheus.Labels{})
-					if transferTime() > 0 {
-						break
-					}
-				}
-				if transferTime() <= 0 {
-					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
-				}
+	// The delta is passed by value, but it contains pointers to the old and
+	// new interface states, which are shared. The delta must not be mutated.
+	sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
+		// Any link changes that are flagged as likely require a rebind are
+		// interesting enough that we should log them.
+		if cd.RebindLikelyRequired {
+			formatLastSeen.Clear()
+		}
+	})
+	context.AfterFunc(ctx, sub.Close)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `daf82a50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e16dac9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

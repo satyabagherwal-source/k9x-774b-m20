@@ -4,24 +4,24 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "a6baab33",
+  "source_version": "6e16dac9",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-15T22:58:46.659Z",
+  "timestamp": "2026-11-16T04:30:25.348Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `a6baab33`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-15T22:58:46.659Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `6e16dac9`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-16T04:30:25.348Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale/tailscale:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T22:58:45.701Z  
+> **Harvest Timestamp**: 2026-11-16T04:30:24.030Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39162 stars
+- **Stars / Engagement**: 39176 stars
 
 ---
 
@@ -837,107 +837,200 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6baab33` (2026-11-15)
-**Commit Message**: net/memnet: implement CloseRead and CloseWrite
+### Incident Patch 1: `6e16dac9` (2026-11-15)
+**Commit Message**: net/netmon: make static monitors work without netlink
 
-tcpproxy propagates a backend's close to the client by calling CloseWrite
-on the source connection. connHalf did not implement it, so the call was a
-no-op and the client never saw EOF. TestTCPRoundRobinHandler only unblocked
-the proxy's remaining copy goroutine by writing more data after the first
-echo. When the backend closed with that data still buffered in the pipe,
-the write was discarded and the test hung until the 10 minute timeout.
+Userspace-only programs like tailcat don't need to watch the OS
+network state, so in sandboxes without netlink access (as in ChatGPT
+Work's) they'd like to use netmon.NewStatic instead of netmon.New,
+which fails there. But two things broke with a static Monitor:
 
-Implement both halves of the half-close contract on connHalf. A new test
-covers buffered data surviving CloseWrite, EOF on the read after it, and
-writes failing after CloseRead.
+If reading the interface state failed, NewStatic left it nil, and
+callers of InterfaceState don't expect nil.
 
-Fixes #17533
+LinkChangeLogLimiter, used by magicsock, subscribed to the static
+Monitor's nil event bus client and panicked. Static monitors never
+publish link changes, so skip the subscription.
 
-Signed-off-by: Yunus Emre Karaman <[REDACTED_EMAIL]>
+Updates #22412
 
-**File**: `net/memnet/conn.go` (modified, +13/-0)
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Change-Id: Ifa826c8cbac6a82b8a15f57bc8178b364fc30e54
+
+**File**: `net/netmon/loghelper.go` (modified, +13/-10)
 ```diff
-@@ -85,6 +85,19 @@ func (c *connHalf) Close() error {
- 	return c.r.Close()
- }
+@@ -23,16 +23,19 @@ const cooldownSeconds = 300
+ func LinkChangeLogLimiter(ctx context.Context, logf logger.Logf, nm *Monitor) logger.Logf {
+ 	var formatLastSeen sync.Map // map[string]int64
  
-+// CloseWrite closes the write side of the connection. The peer can read
-+// buffered data, then gets io.EOF. It matches net.TCPConn.CloseWrite, which
-+// proxies such as tcpproxy rely on to propagate a backend's close.
-+func (c *connHalf) CloseWrite() error {
-+	return c.w.Close()
-+}
-+
-+// CloseRead closes the read side of the connection. Subsequent reads return
-+// io.EOF and the peer's writes fail.
-+func (c *connHalf) CloseRead() error {
-+	return c.r.Close()
-+}
-+
- func (c *connHalf) SetDeadline(t time.Time) error {
- 	err1 := c.SetReadDeadline(t)
- 	err2 := c.SetWriteDeadline(t)
+-	// The delta is passed by value, but it contains pointers to the old and
+-	// new interface states, which are shared. The delta must not be mutated.
+-	sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
+-		// Any link changes that are flagged as likely require a rebind are
+-		// interesting enough that we should log them.
+-		if cd.RebindLikelyRequired {
+-			formatLastSeen.Clear()
+-		}
+-	})
+-	context.AfterFunc(ctx, sub.Close)
++	// Static monitors never publish link changes and have no event bus client.
++	if !nm.static {
++		// The delta is passed by value, but it contains pointers to the old and
++		// new interface states, which are shared. The delta must not be mutated.
++		sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
++			// Any link changes that are flagged as likely require a rebind are
++			// interesting enough that we should log them.
++			if cd.RebindLikelyRequired {
++				formatLastSeen.Clear()
++			}
++		})
++		context.AfterFunc(ctx, sub.Close)
++	}
+ 	return func(format string, args ...any) {
+ 		// get the current timestamp
+ 		now := time.Now().Unix()
 ```
 
-**File**: `net/memnet/conn_test.go` (modified, +37/-0)
+**File**: `net/netmon/netmon.go` (modified, +7/-3)
 ```diff
-@@ -4,6 +4,8 @@
- package memnet
- 
- import (
-+	"errors"
-+	"io"
- 	"net"
- 	"testing"
- 
-@@ -19,3 +21,38 @@ func TestConn(t *testing.T) {
- 		}, nil
- 	})
+@@ -403,10 +403,14 @@ func New(bus *eventbus.Bus, logf logger.Logf) (*Monitor, error) {
  }
+ 
+ // NewStatic returns a Monitor that's a one-time snapshot of the network state
+-// but doesn't actually monitor for changes. It should only be used in tests
+-// and situations like cleanups or short-lived CLI programs.
++// but doesn't actually monitor for changes. It should only be used in tests,
++// situations like cleanups or short-lived CLI programs, and userspace-only
++// programs that don't need to react to network changes.
++//
++// It doesn't fail if the network state can't be read, such as in sandboxes
++// without netlink access. The snapshot is then empty.
+ func NewStatic() *Monitor {
+-	m := &Monitor{static: true}
++	m := &Monitor{static: true, ifState: &State{}} // callers expect non-nil
+ 	if st, err := m.interfaceStateUncached(); err == nil {
+ 		m.ifState = st
+ 	}
+```
+
+**File**: `net/netmon/netmon_static_test.go` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
 +
-+func TestConnCloseWriteAndCloseRead(t *testing.T) {
-+	a, b := NewConn("test", bufferSize)
-+	// Half-close is not part of the Conn interface, matching net.Conn.
-+	ac := a.(interface{ CloseWrite() error })
-+	bc := b.(interface{ CloseRead() error })
++package netmon
 +
-+	if _, err := a.Write([]byte("hello")); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := ac.CloseWrite(); err != nil {
-+		t.Fatal(err)
-+	}
-+	// Buffered data survives the half-close; the next read is EOF.
-+	buf := make([]byte, 8)
-+	if n, err := b.Read(buf); n != 5 || err != nil {
-+		t.Fatalf("Read = %d, %v; want 5, nil", n, err)
-+	}
-+	if _, err := b.Read(buf); !errors.Is(err, io.EOF) {
-+		t.Fatalf("Read after CloseWrite = %v; want io.EOF", err)
-+	}
-+	if _, err := a.Write([]byte("x")); err == nil {
-+		t.Fatal("Write after CloseWrite succeeded")
-+	}
++import (
++	"errors"
++	"reflect"
++	"testing"
 +
-+	if err := bc.CloseRead(); err != nil {
++	"tailscale.com/tstest"
++)
++
++func TestNewStaticInterfaceDiscoveryFailure(t *testing.T) {
++	tstest.Replace(t, &altNetInterfaces, func() ([]Interface, error) {
++		return nil, errors.New("interface enumeration unavailable")
++	})
++	mon := NewStatic()
++	if got := mon.InterfaceState(); !reflect.DeepEqual(got, &State{}) {
++		t.Fatalf("InterfaceState = %#v, want non-nil empty state", got)
++	}
++	mon.Start()
++	if err := mon.Close(); err != nil {
 +		t.Fatal(err)
-+	}
-+	if _, err := b.Read(buf); !errors.Is(err, io.EOF) {
-+		t.Fatalf("Read after CloseRead = %v; want io.EOF", err)
-+	}
-+	if _, err := a.Write([]byte("x")); err == nil {
-+		t.Fatal("Write after peer CloseRead succeeded")
 +	}
 +}
++
++func TestLinkChangeLogLimiterStatic(t *testing.T) {
++	mon := NewStatic()
++	calls := 0
++	logf := LinkChangeLogLimiter(t.Context(), func(string, ...any) { calls++ }, mon)
++	logf("first format")
++	logf("first format")
++	logf("second format")
++	if calls != 2 {
++		t.Fatalf("logged %d messages, want 2", calls)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `167d05bc` (2026-11-15)
+**Commit Message**: net/netns: honor ALL_PROXY when netns is disabled
+
+netns.SetEnabled(false) is for processes like userspace-only clients
+whose traffic never routes back into themselves, so they don't need
+the namespace setup. But FromDialer also skipped the ALL_PROXY SOCKS
+wrapping when disabled, so such processes couldn't reach the internet
+in environments that only allow egress via a proxy, such as ChatGPT
+Work's sandbox.
+
+Only skip the namespace setup when disabled, and still wrap the dialer
+for the proxy.
+
+Updates #22412
+
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Change-Id: Ic2023a329c640a1e8de32b157ed608ba385000a1
+
+**File**: `net/netns/control_test.go` (modified, +3/-3)
+```diff
+@@ -109,10 +109,10 @@ func TestFromDialerControlContext(t *testing.T) {
+ 						}
+ 					}
+ 					got := FromDialer(t.Logf, netmon.NewStatic(), d)
+-					if want := proxy && !disable; wrapped != want {
+-						t.Errorf("proxy wrapped = %v; want %v", wrapped, want)
++					if wrapped != proxy {
++						t.Errorf("proxy wrapped = %v; want %v", wrapped, proxy)
+ 					}
+-					if disable && got != d {
++					if disable && !proxy && got != d {
+ 						t.Error("disabled FromDialer did not return the original dialer")
+ 					}
+ 					if d.Control != nil {
+```
+
+**File**: `net/netns/netns.go` (modified, +7/-4)
+```diff
+@@ -119,18 +119,21 @@ func NewDialer(logf logger.Logf, netMon *netmon.Monitor) Dialer {
+ //
+ // FromDialer modifies d and may wrap it to use SOCKS if configured by ALL_PROXY.
+ // The hooks apply to the underlying socket (to the proxy when using SOCKS).
+-// When netns is disabled, d is returned unchanged and without proxy wrapping.
++// When netns is disabled, d gets no namespace setup but may still be wrapped
++// to use SOCKS.
+ func FromDialer(logf logger.Logf, netMon *netmon.Monitor, d *net.Dialer) Dialer {
+ 	if netMon == nil {
+ 		panic("netns.FromDialer called with nil netMon")
+ 	}
+ 	if d.Control != nil {
+ 		panic("netns.FromDialer: use ControlContext instead of Control")
+ 	}
+-	if disabled.Load() {
+-		return d
++	// Disabling netns only turns off the namespace setup. Processes that
++	// disable it, such as userspace-only clients that never route traffic
++	// back into themselves, may still need to honor ALL_PROXY.
++	if !disabled.Load() {
++		setNamespaceControl(d, control(logf, netMon))
+ 	}
+-	setNamespaceControl(d, control(logf, netMon))
+ 	if wrapDialer != nil {
+ 		return wrapDialer(d)
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #22427** (2026-11-15): net/memnet: implement CloseRead and CloseWrite (@emrelab)
+- **PR #22421** (2026-11-16): net/netns: honor ALL_PROXY when netns is disabled (@bradfitz)
+- **PR #22420** (2026-11-16): net/netmon: make static monitors work without netlink (@bradfitz)
 - **PR #22408** (2026-11-15): prober: deflake TestHTTPBandwidth on coarse-clock machines (@emrelab)
 - **PR #22406** (2026-11-14): go.mod: bump golang.org/x/sys (@tailscale-code-updater[bot])
 - **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
-- **PR #22392** (2026-11-13): clientupdate: stop requesting the -winui MSI variant on Windows (@nickkhyl)
-- **PR #22391** (closed): go.mod: bump golang.org/x/sys to v0.50.0 (@wrenix)
 
 ---
 
@@ -957,43 +1050,52 @@ Signed-off-by: Yunus Emre Karaman <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. net/memnet: implement CloseRead and CloseWrite
+## X. net/netmon: make static monitors work without netlink
 
 **RULE**:
-When implementing operations in `net/memnet/conn.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `net/netmon/loghelper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6baab33`: net/memnet: implement CloseRead and CloseWrite. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e16dac9`: net/netmon: make static monitors work without netlink. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/memnet/conn.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/netmon/loghelper.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// CloseWrite closes the write side of the connection. The peer can read
-// buffered data, then gets io.EOF. It matches net.TCPConn.CloseWrite, which
-// proxies such as tcpproxy rely on to propagate a backend's close.
-func (c *connHalf) CloseWrite() error {
-	return c.w.Close()
-}
-
-// CloseRead closes the read side of the connection. Subsequent reads return
-// io.EOF and the peer's writes fail.
-func (c *connHalf) CloseRead() error {
-	return c.r.Close()
-}
-
+	// Static monitors never publish link changes and have no event bus client.
+	if !nm.static {
+		// The delta is passed by value, but it contains pointers to the old and
+		// new interface states, which are shared. The delta must not be mutated.
+		sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
+			// Any link changes that are flagged as likely require a rebind are
+			// interesting enough that we should log them.
+			if cd.RebindLikelyRequired {
+				formatLastSeen.Clear()
+			}
+		})
+		context.AfterFunc(ctx, sub.Close)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	// The delta is passed by value, but it contains pointers to the old and
+	// new interface states, which are shared. The delta must not be mutated.
+	sub := eventbus.SubscribeFunc(nm.b, func(cd ChangeDelta) {
+		// Any link changes that are flagged as likely require a rebind are
+		// interesting enough that we should log them.
+		if cd.RebindLikelyRequired {
+			formatLastSeen.Clear()
+		}
+	})
+	context.AfterFunc(ctx, sub.Close)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6baab33` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e16dac9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

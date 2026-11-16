@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T04:18:02.311Z",
+  "last_updated": "2026-11-16T04:30:32.854Z",
   "directives": [
     {
       "id": "CD-001",
@@ -18091,6 +18091,66 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ED53DB-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-MF7Z",
+      "directive_title": "ci(release): retry flaky Apple stapler/notarytool during Beta builds",
+      "source_repo": "folkbench-folkbench-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MF7Z-ci-release-retry-flaky-apple-stapler-notarytool-during-beta-builds.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-MFLF",
+      "directive_title": "net/netmon: make static monitors work without netlink",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MFLF-net-netmon-make-static-monitors-work-without-netlink.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MG0M",
+      "directive_title": "remove two deprecated hashicorp_key_management_* variables",
+      "source_repo": "mariadb-server-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MG0M-remove-two-deprecated-hashicorp_key_management_-variables.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-DFF739",
+      "directive_title": "ci(release): retry flaky Apple stapler/notarytool during Beta builds",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "folkbench-folkbench",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DFF739-ci-release-retry-flaky-apple-stapler-not.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-BB98DA",
+      "directive_title": "net/netmon: make static monitors work without netlink",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB98DA-net-netmon-make-static-monitors-work-wit.md",
+      "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-REV-70A3B3",
+      "directive_title": "remove two deprecated hashicorp_key_management_* variables",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mariadb-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-70A3B3-remove-two-deprecated-hashicorp-key-mana.md",
       "staged_date": "2026-11-16"
     }
   ]

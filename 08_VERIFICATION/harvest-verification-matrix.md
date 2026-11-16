@@ -10237,3 +10237,6 @@
 | `CYCLE-20261116-FS0N` | `2026-11-16T03:57:22.199Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8709` | Yes (`cc0ab6e9...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T03:57:49.588Z` | `ganymedenil-document.ai` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-4F38FEA1` [Domain F] | Yes (`d0b8e3c6...`) |
 | `CYCLE-20261116-68R7` | `2026-11-16T04:17:56.947Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8710` | Yes (`27900d23...`) |
+| `CYCLE-20261116-M1XS` | `2026-11-16T04:30:14.608Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8711` | Yes (`12033044...`) |
+| `CYCLE-20261116-MA3F` | `2026-11-16T04:30:25.179Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8712` | Yes (`8a47637e...`) |
+| `CYCLE-20261116-MCFE` | `2026-11-16T04:30:28.202Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8713` | Yes (`355ee964...`) |

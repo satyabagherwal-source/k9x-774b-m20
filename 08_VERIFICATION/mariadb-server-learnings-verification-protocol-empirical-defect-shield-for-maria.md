@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:10.402Z",
+  "timestamp": "2026-11-16T04:30:32.762Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-mariadb-server-learnings",
+  "learning_id": "LEARN-EVO-mariadb-server-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mariadb-server-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:10.402Z`  
-> **Learning ID**: `LEARN-REEXTRACT-mariadb-server-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T04:30:32.762Z`  
+> **Learning ID**: `LEARN-EVO-mariadb-server-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `ef4c7459`  
+> **Source Version**: `39281811`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:38:01.591Z  
+> **Timestamp**: 2026-11-16T04:30:27.360Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:38:01.584Z  
+> **Harvest Timestamp**: 2026-11-16T04:30:27.355Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8577 stars
+- **Stars / Engagement**: 8594 stars
 
 ---
 
@@ -1638,14 +1638,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6123** (2026-11-11): **Fix mdev_31342 test case by disabling test on protocol tests**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > [bb-13.2-mdev_31342_kill](https://buildbot.mariadb.org/#/grid?branch=bb-13.2-mdev_31342_kill) as effective too [54d860e94e9](https://github.com/MariaDB/server/commit/54d860e94e9bef188df8de6eab50119217654304))
-  > sorry @janlindstrom , Sanja merge his own fix - 54d860e94e9bef188df8de6eab50119217654304
+- **Issue #6154** (2026-11-16): **MDEV-40520 SHOW STATUS triggers MSAN use-of-uninitialized-value in ge…**
+  *Symptoms*: Jira: [MDEV-40520](https://jira.mariadb.org/browse/MDEV-40520)  `init_simple_key_cache()` reset the key cache statistics counters except `warm_blocks`, which was only set when the cache got at least 8 blocks. With a too small `key_buffer_size` (12 or 0) the cache is disabled, `warm_blocks` stays uninitialized and `SHOW STATUS` prints it as `Key_blocks_warm`. Reset it together with the other counters.  Test: `./mtr main.key_cache_disabled`, which starts the server with `--key-buffer-size=0`. Under MSAN it fails without the fix and passes with it.
 
-- **Issue #6122** (2026-11-11): **MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre…**
-  *Symptoms*: MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unreachable  STOP SLAVE could take up to slave_net_timeout to stop the slave IO thread when the primary accepts the connection but does not answer, e.g. when its host is frozen or its packets are dropped. The IO thread is blocked in mysql_real_connect(), waiting for the server greeting, and THD::awake() could not interrupt it: until the connect succeeds, the vio is not THD::active_vio.  Let the client tell the owner of the connection about its vio. A new MYSQL_OPT_VIO_CALLBACK (and MYSQL_OPT_VIO_CALLBACK_ARG, its first argument) is called with the new vio as soon as it is created, and with NULL right before it is deleted. It is kept in options.extension, so mysql_reconnect() carries it over to its temporary MYSQL object.  The slave IO thread sets it up in connect_to_master(). The callback makes the vio THD::active_vio, so STOP SLAVE shuts the socket down with vio_shutdown(), which wakes up the blocked wait. If STOP SLAVE has already set abort_slave, the vio is shut down right away. This works on all platforms, no signals are needed.  The test does not need SIGSTOP and runs on Windows too. The "primary" is a socket that listens and never accepts or answers. It fails without the fix (STOP SLAVE waits for most of slave_net_timeout), and passes in about a second with it.  The idea of the test, to freeze the primary and check that STOP SLAVE does not wait for slave_net_timeout, is reused f
+- **Issue #6145** (2026-11-13): **MDEV-40423 use-of-uninitialized-value in Gis_point::get_data_as_wkt(String*, char const**) const**
+  *Symptoms*: Jira: [MDEV-40423](https://jira.mariadb.org/browse/MDEV-40423)  ## Description  `read_point_from_json()` returned success for a GeoJSON position with fewer than two numbers, so `"coordinates":[]` left `x` and `y` uninitialized and `[1]` left `y` uninitialized. The values were stored in the WKB and read by `ST_AsText()`, which MSAN reports in `my_gcvt()`.  Reject such positions as incorrect GeoJSON, since RFC 7946 requires at least two numbers, the same way non-numeric coordinates are rejected. `ST_GeomFromGeoJSON()` now returns NULL with the `ER_GEOJSON_INCORRECT` warning. Positions nested in other types, such as a LineString, are covered too.  ## How can this PR be tested?  ```sh ./mtr main.gis-json ./mtr --do-test=gis ```  In an MSAN build, the regression fails without the fix and passes with it. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,37 +1659,293 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54d860e9` (2026-11-10)
-**Commit Message**: fix main.mdev_31342_kill with view and cursor protocol
+### Incident Patch 1: `39281811` (2026-11-14)
+**Commit Message**: remove two deprecated hashicorp_key_management_* variables
 
-**File**: `mysql-test/main/mdev_31342_kill.test` (modified, +4/-0)
+hashicorp_key_management_use_cache_on_timeout
+- was default to enabled, now enabled always
+
+hashicorp_key_management_cache_timeout
+- was default to INT64_MAX, now no timeout
+
+**File**: `plugin/hashicorp_key_management/hashicorp_key_management_plugin.cc` (modified, +3/-39)
 ```diff
-@@ -5,6 +5,8 @@
- --echo # MDEV-41165: KILL / max_statement_time arriving after the WHERE
- --echo # condition was evaluated must not be lost on the I_S fast path
- --echo #
-+--disable_view_protocol
-+--disable_cursor_protocol
- CREATE TABLE t1 (a INT);
- let $q= SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='test';
+@@ -178,7 +178,6 @@ class HCData
+ static HCData data;
+ static bool loaded= true;
  
-@@ -36,5 +38,7 @@ eval SET STATEMENT max_statement_time=0.5 FOR $q;
+-static std::chrono::milliseconds cache_max_time;
+ static std::chrono::milliseconds cache_max_ver_time;
  
- SET debug_sync='RESET';
- DROP TABLE t1;
-+--enable_view_protocol
-+--enable_cursor_protocol
+ void HCData::cache_add (const KEY_INFO& info, bool update_version)
+@@ -261,10 +260,6 @@ unsigned int
+                   (long long) elapsed_ms(info.timestamp, current_time).count());
+ #endif
+   unsigned int length= info.length;
+-  if (with_timeouts && elapsed_ms(info.timestamp, current_time) > cache_max_time)
+-  {
+-    return ENCRYPTION_KEY_VERSION_INVALID;
+-  }
+   unsigned int max_length = *buflen;
+   *buflen = length;
+   if (max_length >= length)
+@@ -351,10 +346,6 @@ static int timeout;
+ static int max_retries;
+ static char caching_enabled;
+ static char check_kv_version;
+-#if MYSQL_VERSION_ID < 130300
+-static long long cache_timeout;         // for KEY_MAP key_info_cache
+-static char use_cache_on_timeout;
+-#endif
+ static long cache_version_timeout;      // for VER_MAP latest_version_cache
  
- --echo # End of 13.2 tests
+ static MYSQL_SYSVAR_STR(vault_ca, vault_ca,
+@@ -396,21 +387,6 @@ static MYSQL_SYSVAR_BOOL(check_kv_version, check_kv_version,
+   "Enable kv storage version check during plugin initialization",
+   NULL, NULL, 1);
+ 
+-static void cache_timeout_update (MYSQL_THD thd,
+-                                  struct st_mysql_sys_var *var,
+-                                  void *var_ptr,
+-                                  const void *save)
+-{
+-  long long timeout = * (long long *) save;
+-  * (long long *) var_ptr = timeout;
+-  cache_max_time = std::chrono::milliseconds(timeout);
+-}
+-
+-static MYSQL_SYSVAR_LONGLONG(cache_timeout, cache_timeout,
+-  PLUGIN_VAR_RQCMDARG | PLUGIN_VAR_DEPRECATED,
+-  "Cache timeout for key data (in milliseconds)",
+-  NULL, cache_timeout_update, INT64_MAX, 0, INT64_MAX, 1);
+-
+ static void
+   cache_version_timeout_update (MYSQL_THD thd,
+                                 struct st_mysql_sys_var *var,
+@@ -427,22 +403,14 @@ static MYSQL_SYSVAR_LONG(cache_version_timeout, cache_version_timeout,
+   "Cache timeout for key version (in milliseconds)",
+   NULL, cache_version_timeout_update, 60*1000, 0, LONG_MAX, 1);
+ 
+-static MYSQL_SYSVAR_BOOL(use_cache_on_timeout, use_cache_on_timeout,
+-  PLUGIN_VAR_RQCMDARG | PLUGIN_VAR_DEPRECATED,
+-  "In case of an error when accessing the vault server "
+-  "use the value taken from the cache",
+-  NULL, NULL, 1);
+-
+ static struct st_mysql_sys_var *settings[] = {
+   MYSQL_SYSVAR(vault_url),
+   MYSQL_SYSVAR(token),
+   MYSQL_SYSVAR(vault_ca),
+   MYSQL_SYSVAR(timeout),
+   MYSQL_SYSVAR(max_retries),
+   MYSQL_SYSVAR(caching_enabled),
+-  MYSQL_SYSVAR(cache_timeout),
+   MYSQL_SYSVAR(cache_version_timeout),
+-  MYSQL_SYSVAR(use_cache_on_timeout),
+   MYSQL_SYSVAR(check_kv_version),
+   NULL
+ };
+@@ -757,9 +725,8 @@ unsigned int HCData::get_latest_version (unsigned int key_id)
+   size_t buf_len = vault_url_len + (20 + 6 + 1);
+   char *url = (char *) alloca(buf_len);
+   snprintf(url, buf_len, "%s%u", vault_url_data, key_id);
+-  bool use_cache= caching_enabled && use_cache_on_timeout;
+   int rc;
+-  if ((rc= curl_run(url, &response_str, use_cache)) != OPERATION_OK)
++  if ((rc= curl_run(url, &response_str, caching_enabled)) != OPERATION_OK)
+   {
+     if (rc == OPERATION_TIMEOUT)
+     {
+@@ -839,9 +806,8 @@ unsigned int HCData::get_key_from_vault (unsigned int key_id,
+              vault_url_data, key_id, key_version);
+   else
+     snprintf(url, buf_len, "%s%u", vault_url_data, key_id);
+-  bool use_cache= caching_enabled && use_cache_on_timeout;
+   int rc;
+-  if ((rc= curl_run(url, &response_str, use_cache)) != OPERATION_OK)
++  if ((rc= curl_run(url, &response_str, caching_enabled)) != OPERATION_OK)
+   {
+     if (rc == OPERATION_TIMEOUT)
+     {
+@@ -865,8 +831,7 @@ unsigned int HCData::get_key_from_vault (unsigned int key_id,
+   unsigned long version;
+ #else
+   unsigned long version= key_version;
+-  if (caching_enabled &&
+-      key_version == ENCRYPTION_KEY_VERSION_INVALID)
++  if (caching_enabled && key_version == ENCRYPTION_KEY_VERSION_INVALID)
+ #endif
+   {
+     int rc;
+@@ -1160,7 +1125,6 @@ int HCData::init ()
+   }
+   memcpy(vault_url_data, vault_url, vault_url_len);
+   memcpy(vault_url_data + vault_url_len, "/data/", 7);
+-  cache_max_time = std::chrono::milliseconds(cache_timeout);
+   cache_max_ver_time = std::chrono::milliseconds(cache_version_timeout);
+   /* Initialize curl: */
+   CURLcode curl_res = curl_global_init(CURL_GLOBAL_ALL);
+```
+
+**File**: `plugin/hashicorp_key_management/mysql-test/vault/r/hashicorp_cache_after_recreate.result` (modified, +3/-3)
+```diff
+@@ -1,9 +1,9 @@
+ # restart: with restart_parameters
+ CREATE TABLE t1 (a VARCHAR(8)) ENGINE=InnoDB ENCRYPTED=YES ENCRYPTION_KEY_ID=4;
+ INSERT INTO t1 VALUES ('foo'),('bar');
+-select @@hashicorp_key_management_caching_enabled, @@hashicorp_key_management_cache_timeout;
+-@@hashicorp_key_management_caching_enabled	@@hashicorp_key_management_cache_timeout
+-1	180000
++select @@hashicorp_key_management_caching_enabled;
++@@hashicorp_key_management_caching_enabled
++1
+ CREATE TABLE t2 (a VARCHAR(8)) ENGINE=InnoDB ENCRYPTED=YES ENCRYPTION_KEY_ID=4;
+ DROP TABLE IF EXISTS t1, t2;
+ # restart
+```
+
+**File**: `plugin/hashicorp_key_management/mysql-test/vault/r/hashicorp_cache_timeout_update.result` (modified, +11/-23)
+```diff
+@@ -1,23 +1,11 @@
+-SELECT
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT,
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT;
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT	@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT
+-0	180000
+-SET GLOBAL
+-HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT= 1,
+-HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT= 1;
+-Warnings:
+-Warning	1287	'@@hashicorp_key_management_cache_timeout' is deprecated and will be removed in a future release
+-SELECT
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT,
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT;
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT	@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT
+-1	1
+-SET GLOBAL HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT=0, HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT=180000;
+-Warnings:
+-Warning	1287	'@@hashicorp_key_management_cache_timeout' is deprecated and will be removed in a future release
+-SELECT
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT,
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT;
+-@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT	@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT
+-0	180000
++SELECT @@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT;
++@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT
++0
++SET GLOBAL HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT= 1;
++SELECT @@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT;
++@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT
++1
++SET GLOBAL HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT=0;
++SELECT @@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT;
++@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT
++0
+```
+
+**File**: `plugin/hashicorp_key_management/mysql-test/vault/r/hashicorp_encode.result` (modified, +0/-2)
+```diff
+@@ -1,12 +1,10 @@
+ SHOW GLOBAL variables LIKE "hashicorp%";
+ Variable_name	Value
+-hashicorp_key_management_cache_timeout	9223372036854775807
+ hashicorp_key_management_cache_version_timeout	60000
+ hashicorp_key_management_caching_enabled	ON
+ hashicorp_key_management_check_kv_version	OFF
+ hashicorp_key_management_max_retries	3
+ hashicorp_key_management_timeout	60
+-hashicorp_key_management_use_cache_on_timeout	ON
+ hashicorp_key_management_vault_ca	
+ hashicorp_key_management_vault_url	VAULT_ADDR/v1/mariadbtest/
+ create table t1(c1 bigint not null, b char(200)) engine=innodb encrypted=yes encryption_key_id=1;
+```
+
+**File**: `plugin/hashicorp_key_management/mysql-test/vault/r/hashicorp_key_rotation_age.result` (modified, +0/-2)
+```diff
+@@ -1,12 +1,10 @@
+ SHOW GLOBAL variables LIKE "hashicorp%";
+ Variable_name	Value
+-hashicorp_key_management_cache_timeout	9223372036854775807
+ hashicorp_key_management_cache_version_timeout	0
+ hashicorp_key_management_caching_enabled	ON
+ hashicorp_key_management_check_kv_version	OFF
+ hashicorp_key_management_max_retries	3
+ hashicorp_key_management_timeout	60
+-hashicorp_key_management_use_cache_on_timeout	ON
+ hashicorp_key_management_vault_ca	
+ hashicorp_key_management_vault_url	VAULT_ADDR/v1/mariadbtest/
+ # Restart the server with encryption
+```
+
+**File**: `plugin/hashicorp_key_management/mysql-test/vault/t/hashicorp_cache_after_recreate.opt` (modified, +0/-1)
+```diff
+@@ -1,2 +1 @@
+---loose-hashicorp-key-management-cache-timeout=180000
+ --loose-hashicorp-key-management-cache-version-timeout=180000
+```
+
+**File**: `plugin/hashicorp_key_management/mysql-test/vault/t/hashicorp_cache_after_recreate.test` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@
+ CREATE TABLE t1 (a VARCHAR(8)) ENGINE=InnoDB ENCRYPTED=YES ENCRYPTION_KEY_ID=4;
+ INSERT INTO t1 VALUES ('foo'),('bar');
+ 
+-select @@hashicorp_key_management_caching_enabled, @@hashicorp_key_management_cache_timeout;
++select @@hashicorp_key_management_caching_enabled;
+ 
+ --exec vault secrets disable bug > /dev/null
+ --exec vault secrets enable -path /bug -version=2 kv > /dev/null
+```
+
+**File**: `plugin/hashicorp_key_management/mysql-test/vault/t/hashicorp_cache_timeout_update.opt` (modified, +0/-1)
+```diff
+@@ -1,2 +1 @@
+---loose-hashicorp-key-management-cache-timeout=180000
+ --loose-hashicorp-key-management-cache-version-timeout=0
+```
+
+---
+
+### Incident Patch 2: `c4cf9302` (2026-11-14)
+**Commit Message**: 13.3 branch
+
+**File**: `VERSION` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+ MYSQL_VERSION_MAJOR=13
+-MYSQL_VERSION_MINOR=2
++MYSQL_VERSION_MINOR=3
+ MYSQL_VERSION_PATCH=0
+ SERVER_MATURITY=alpha
+```
+
+**File**: `debian/additions/mariadb.conf.d/50-server.cnf` (modified, +1/-1)
+```diff
+@@ -115,4 +115,4 @@ expire_logs_days        = 10
+ # This group is only read by MariaDB servers of the specific version.
+ # If you use the same .cnf file for MariaDB of different versions,
+ # use this group for options that older servers don't understand
+-[mariadb-13.2]
++[mariadb-13.3]
+```
+
+**File**: `debian/changelog` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-mariadb (1:13.2.0) unstable; urgency=medium
++mariadb (1:13.3.0) unstable; urgency=medium
+ 
+   * Initial Release
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6123** (closed): Fix mdev_31342 test case by disabling test on protocol tests (@janlindstrom)
-- **PR #6122** (closed): MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre… (@andrelkin)
-- **PR #6119** (closed): MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre… (@andrelkin)
-- **PR #6118** (2026-11-11): MDEV-42078:  Map macOS errno 63 in main.create_notembedded (@DaveGosselin-MariaDB)
-- **PR #6117** (2026-11-11): MDEV-42175: use uint128 WolfSSL optimizations where available (@gkodinov)
-- **PR #6113** (2026-11-10): MDEV-41165: use I_S fast path with max_statement_time (@janlindstrom)
+- **PR #6154** (2026-11-16): MDEV-40520 SHOW STATUS triggers MSAN use-of-uninitialized-value in ge… (@MooSayed1)
+- **PR #6145** (2026-11-13): MDEV-40423 use-of-uninitialized-value in Gis_point::get_data_as_wkt(String*, char const**) const (@MooSayed1)
+- **PR #6144** (2026-11-13): MDEV-42258: Windows ignores large --back-log, simultaneous connects are refused (@vaintroub)
+- **PR #6140** (2026-11-13): MDEV-42234 : Galera test failure on galera.galera_ws_datatypes (@janlindstrom)
+- **PR #6139** (2026-11-13): MDEV-42231: galera_sst_check_port_ancestry fails on noexec vardir (@hemantdangi-gc)
+- **PR #6133** (closed): MDEV-41388: Avoid causal-wait timeout in galera.MDEV-34117 (@hemantdangi-gc)
 
 ---
 
@@ -1712,34 +1965,65 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. main.mdev_31342_kill with view and cursor protocol
+## X. remove two deprecated hashicorp_key_management_* variables
 
 **RULE**:
-When implementing operations in `mysql-test/main/mdev_31342_kill.test`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/hashicorp_key_management/hashicorp_key_management_plugin.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54d860e9`: main.mdev_31342_kill with view and cursor protocol. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39281811`: remove two deprecated hashicorp_key_management_* variables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/main/mdev_31342_kill.test`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/hashicorp_key_management/hashicorp_key_management_plugin.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
---disable_view_protocol
---disable_cursor_protocol
---enable_view_protocol
---enable_cursor_protocol
+  if ((rc= curl_run(url, &response_str, caching_enabled)) != OPERATION_OK)
+  if ((rc= curl_run(url, &response_str, caching_enabled)) != OPERATION_OK)
+  if (caching_enabled && key_version == ENCRYPTION_KEY_VERSION_INVALID)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+static std::chrono::milliseconds cache_max_time;
+  if (with_timeouts && elapsed_ms(info.timestamp, current_time) > cache_max_time)
+  {
+    return ENCRYPTION_KEY_VERSION_INVALID;
+  }
+#if MYSQL_VERSION_ID < 130300
+static long long cache_timeout;         // for KEY_MAP key_info_cache
+static char use_cache_on_timeout;
+#endif
+static void cache_timeout_update (MYSQL_THD thd,
+                                  struct st_mysql_sys_var *var,
+                                  void *var_ptr,
+                                  const void *save)
+{
+  long long timeout = * (long long *) save;
+  * (long long *) var_ptr = timeout;
+  cache_max_time = std::chrono::milliseconds(timeout);
+}
+
+static MYSQL_SYSVAR_LONGLONG(cache_timeout, cache_timeout,
+  PLUGIN_VAR_RQCMDARG | PLUGIN_VAR_DEPRECATED,
+  "Cache timeout for key data (in milliseconds)",
+  NULL, cache_timeout_update, INT64_MAX, 0, INT64_MAX, 1);
+
+static MYSQL_SYSVAR_BOOL(use_cache_on_timeout, use_cache_on_timeout,
+  PLUGIN_VAR_RQCMDARG | PLUGIN_VAR_DEPRECATED,
+  "In case of an error when accessing the vault server "
+  "use the value taken from the cache",
+  NULL, NULL, 1);
+
+  MYSQL_SYSVAR(cache_timeout),
+  MYSQL_SYSVAR(use_cache_on_timeout),
+  boo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54d860e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39281811` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

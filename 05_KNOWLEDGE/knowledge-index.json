@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T04:18:02.591Z",
-  "total_verified_learnings": 8761,
+  "last_updated": "2026-11-16T04:30:33.073Z",
+  "total_verified_learnings": 8763,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18932,
+  "total_items": 18948,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112393,10 +112393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "a6baab33",
-      "content_hash": "704c3ba92cc5215783c38926479de66bb37762edd97057a810b46bb8593fc926",
+      "source_version": "6e16dac9",
+      "content_hash": "f486b01cb352e94e275388d79830b4478ec6b86cafba01d60c4b6113644c6f5b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:58:46.761Z"
+      "persisted_at": "2026-11-16T04:30:25.455Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112405,10 +112405,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "a6baab33",
-      "content_hash": "fa3b4d74bff91f2243c402a8197afe9222cbea3a16454edc21d9265b9f60725e",
+      "source_version": "6e16dac9",
+      "content_hash": "5c8c80d592e3125554e64d54efbc0634136d7123be812b94d04d6defa8682245",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:58:46.860Z"
+      "persisted_at": "2026-11-16T04:30:25.561Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -221803,8 +221803,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "a6baab33",
-      "content_hash": "540d235719c5aa8d14ff054ff86eda42049874a8d46bf50f157c9e7709bc5032",
+      "source_version": "6e16dac9",
+      "content_hash": "8a47637e60c73643a0887aaf04e369242f3531431888ef1c931bd490cb97c69d",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -221827,6 +221827,11 @@
           "number": 8664,
           "title": "net/memnet: implement CloseRead and CloseWrite",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8712,
+          "title": "net/netmon: make static monitors work without netlink",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221834,7 +221839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T22:58:46.361Z",
+      "verified_at": "2026-11-16T04:30:25.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221925,9 +221930,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "a2080a587ffbb83242b266ce848706e8f2b844e3c398bfe51d9135c6b6cc1919",
+      "content_hash": "a8a9a136dca40e42e3e169fa9e026e0647fcab0f2e07a0a616f5fe64b28fd245",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T16:50:39.873Z"
+      "persisted_at": "2026-11-16T04:30:32.417Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -221937,9 +221942,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd17ab664cdd9b003e69f7d69334557916a0baab107c9578aebb666c4357172f",
+      "content_hash": "209260cabf255902b67e34d41926721772837478da95d74d2115c5113efb5f84",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T16:50:39.970Z"
+      "persisted_at": "2026-11-16T04:30:32.525Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -251467,6 +251472,246 @@
       "content_hash": "d4f7466505a71a31b147362fed54b8d1946c748706841edb78fe4c0fedc05b05",
       "domain_letter": "H",
       "persisted_at": "2026-11-16T04:18:00.831Z"
+    },
+    "learn-github-folkbench-folkbench": {
+      "learning_id": "learn-github-folkbench-folkbench",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Folkbench/folkbench",
+      "repository": "Folkbench/folkbench",
+      "slug": "folkbench-folkbench",
+      "platform": "github",
+      "source_url": "https://github.com/Folkbench/folkbench",
+      "source_version": "4bb39f16",
+      "content_hash": "120330440dcabef98f5238b386e4581ce12823fe3ec42635b89117e1f8d639d9",
+      "dossier_path": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8711,
+          "title": "ci(release): retry flaky Apple stapler/notarytool during Beta builds",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T04:30:14.466Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8711": {
+      "learning_id": "rule-8711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8711,
+      "title": "ci(release): retry flaky Apple stapler/notarytool during Beta builds",
+      "source_url": "https://github.com/Folkbench/folkbench",
+      "source_version": "4bb39f16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T04:30:14.466Z"
+    },
+    "candidate_directive-ci-release-retry-flaky-apple-stapler-notarytool-during-beta-builds": {
+      "item_id": "candidate_directive-ci-release-retry-flaky-apple-stapler-notarytool-during-beta-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MF7Z-ci-release-retry-flaky-apple-stapler-notarytool-during-beta-builds.md",
+      "title": "ci(release): retry flaky Apple stapler/notarytool during Beta builds",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7e88977ec635697dfefa0392aff2eef604f2b0d23b492ad3ace19170c3f97627",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T04:30:31.824Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
+      "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
+      "repository": "Folkbench/folkbench",
+      "source_version": "4bb39f16",
+      "content_hash": "97b40a878823527a906c7232a081596488b66713c39c073bc21a7f9295bc88c1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T04:30:14.877Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/folkbench-folkbench-verification-protocol-empirical-defect-shield-for-folkbench-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Folkbench/folkbench",
+      "repository": "Folkbench/folkbench",
+      "source_version": "4bb39f16",
+      "content_hash": "f07d6772f72b96adaa8425db75c97246bcb5a60237e1133c5394028ff449c079",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T04:30:14.980Z"
+    },
+    "rule-8712": {
+      "learning_id": "rule-8712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8712,
+      "title": "net/netmon: make static monitors work without netlink",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "6e16dac9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T04:30:25.010Z"
+    },
+    "candidate_directive-net-netmon-make-static-monitors-work-without-netlink": {
+      "item_id": "candidate_directive-net-netmon-make-static-monitors-work-without-netlink",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MFLF-net-netmon-make-static-monitors-work-without-netlink.md",
+      "title": "net/netmon: make static monitors work without netlink",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5fbcd68163da3ca9a05827b7e19d23994df387a5f563fb5e156c8926bc88780d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T04:30:32.307Z"
+    },
+    "learn-github-mariadb-server": {
+      "learning_id": "learn-github-mariadb-server",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MariaDB/server",
+      "repository": "MariaDB/server",
+      "slug": "mariadb-server",
+      "platform": "github",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "39281811",
+      "content_hash": "355ee964bd3fb732d8cd29f168b4f4e4e0249c5e655a017cd4cb1a06d2d8453b",
+      "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8713,
+          "title": "remove two deprecated hashicorp_key_management_* variables",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T04:30:28.047Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8713": {
+      "learning_id": "rule-8713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8713,
+      "title": "remove two deprecated hashicorp_key_management_* variables",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "39281811",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T04:30:28.047Z"
+    },
+    "candidate_directive-remove-two-deprecated-hashicorp_key_management_-variables": {
+      "item_id": "candidate_directive-remove-two-deprecated-hashicorp_key_management_-variables",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MG0M-remove-two-deprecated-hashicorp_key_management_-variables.md",
+      "title": "remove two deprecated hashicorp_key_management_* variables",
+      "repository": "mariadb-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca20187bf14f71100b6ee15f896618c06a15c87825e5de0abbae2b7b1f707e2c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T04:30:32.854Z"
+    },
+    "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
+      "title": "Architecture Intelligence: MariaDB/server Core Invariants",
+      "repository": "MariaDB/server",
+      "source_version": "39281811",
+      "content_hash": "e2d0b069dc6fd0a0f7643d3f7f444701e562edbff2712bbff75888b2f60ae19d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T04:30:28.479Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mariadb-server-verification-protocol-empirical-defect-shield-for-mariadb-server.md",
+      "title": "Verification Protocol: Empirical Defect Shield for MariaDB/server",
+      "repository": "MariaDB/server",
+      "source_version": "39281811",
+      "content_hash": "427867aceb8ef5c2a55a9f1a5126040b14a540dcb062530de06bbe620c9e821c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T04:30:28.592Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
+      "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "935ef76f7dfc39f24e2f9912c614bd70b7bcdf406152dbdeadb3db76382d030a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T04:30:31.934Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/folkbench-folkbench-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for folkbench-folkbench-learnings",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8050df53f95c54c83205f8dc9c602ce92c5cdb3f50b5a3b129569d3bb30ff1c1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T04:30:32.044Z"
+    },
+    "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-learnings-architecture-intelligence-mariadb-server-learnings-core.md",
+      "title": "Architecture Intelligence: mariadb-server-learnings Core Invariants",
+      "repository": "mariadb-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f1887e9b7c541b173b6c77fca4d13180ca6e988ae2d75cddec023421784f3ae1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T04:30:32.964Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mariadb-server-learnings-verification-protocol-empirical-defect-shield-for-maria.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mariadb-server-learnings",
+      "repository": "mariadb-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9790f38dc4a01afa56e2c2b1c2226823a9a27c19ea19927d09973f92b83e2a9b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T04:30:33.073Z"
     }
   },
   "ai-builder-brain": {

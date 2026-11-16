@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T04:18:00.609Z",
+  "updated_at": "2026-11-16T04:30:32.705Z",
   "stats": {
-    "total_discovered": 4097,
-    "approved_pending_harvest": 3848,
+    "total_discovered": 4114,
+    "approved_pending_harvest": 3865,
     "harvested_count": 0,
     "rejected_count": 249,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3846,
+      "COMMUNITY_AND_EXPERT": 3862,
       "OFFICIAL_DOCUMENTATION": 134,
-      "STANDARDS_AND_SPECIFICATIONS": 94,
+      "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 15,
       "LEGAL_AND_REGULATORY": 1,
@@ -88412,6 +88412,380 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
         "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-B20ED8DEBFA3": {
+      "id": "SRC-B20ED8DEBFA3",
+      "url": "https://github.com/Folkbench/folkbench",
+      "title": "https://github.com/Folkbench/folkbench",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.343Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-4A55307AB6AC": {
+      "id": "SRC-4A55307AB6AC",
+      "url": "https://github.com/$%7Brepo",
+      "title": "https://github.com/$%7Brepo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-9447BE285A81": {
+      "id": "SRC-9447BE285A81",
+      "url": "https://hugeicons.com/docs/faqs/license-questions",
+      "title": "https://hugeicons.com/docs/faqs/license-questions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.395Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-B5E3D0683D82": {
+      "id": "SRC-B5E3D0683D82",
+      "url": "https://www.npmjs.com/package/$%7Bpkg.name",
+      "title": "https://www.npmjs.com/package/$%7Bpkg.name",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.419Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-D7EAB09569C0": {
+      "id": "SRC-D7EAB09569C0",
+      "url": "https://crates.io/api/v1/crates/$%7Bpkg.name",
+      "title": "https://crates.io/api/v1/crates/$%7Bpkg.name",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-96C1FBF05768": {
+      "id": "SRC-96C1FBF05768",
+      "url": "https://crates.io/api/v1/crates/$%7Bentry.package.name",
+      "title": "https://crates.io/api/v1/crates/$%7Bentry.package.name",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.465Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-B064276A4754": {
+      "id": "SRC-B064276A4754",
+      "url": "https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/LICENSE.md",
+      "title": "https://github.com/shadcn-ui/ui/blob/c257f688cf4de7ec10cc1be84cad29cd4631182c/LICENSE.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.489Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-3A1F0CCE2FD5": {
+      "id": "SRC-3A1F0CCE2FD5",
+      "url": "https://apiniuma.com/",
+      "title": "https://apiniuma.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.511Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-98283EBF7BE6": {
+      "id": "SRC-98283EBF7BE6",
+      "url": "https://apiniuma.com/pricing",
+      "title": "https://apiniuma.com/pricing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.535Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-D34328AFA114": {
+      "id": "SRC-D34328AFA114",
+      "url": "https://jqm6hiro8q.apifox.cn/",
+      "title": "https://jqm6hiro8q.apifox.cn/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-5A641282EEF5": {
+      "id": "SRC-5A641282EEF5",
+      "url": "https://apiniuma.com/v1",
+      "title": "https://apiniuma.com/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.581Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-A82FB1F1B974": {
+      "id": "SRC-A82FB1F1B974",
+      "url": "https://apiniuma.com/register",
+      "title": "https://apiniuma.com/register",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.604Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-110B9974FAC7": {
+      "id": "SRC-110B9974FAC7",
+      "url": "https://folkbench.com/go/fluxlane?source=readme_en",
+      "title": "https://folkbench.com/go/fluxlane?source=readme_en",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.627Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-92E6D1DA634C": {
+      "id": "SRC-92E6D1DA634C",
+      "url": "https://folkbench.com/go/fluxlane?source=readme",
+      "title": "https://folkbench.com/go/fluxlane?source=readme",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:31.653Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-76A3934B5557": {
+      "id": "SRC-76A3934B5557",
+      "url": "https://jira.mariadb.org/browse/MDEV-40520",
+      "title": "https://jira.mariadb.org/browse/MDEV-40520",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:32.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mariadb-server-learnings.md",
+        "fileName": "mariadb-server-learnings.md"
+      }
+    },
+    "SRC-32DF7A2E149C": {
+      "id": "SRC-32DF7A2E149C",
+      "url": "https://jira.mariadb.org/browse/MDEV-40423",
+      "title": "https://jira.mariadb.org/browse/MDEV-40423",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:32.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mariadb-server-learnings.md",
+        "fileName": "mariadb-server-learnings.md"
+      }
+    },
+    "SRC-F746BC602AFE": {
+      "id": "SRC-F746BC602AFE",
+      "url": "https://www.rfc-editor.org/rfc/rfc7946",
+      "title": "IETF RFC 7946",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T04:30:32.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mariadb-server-learnings.md",
+        "fileName": "mariadb-server-learnings.md"
       }
     }
   }
