@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T16:00:18.864Z",
+  "last_updated": "2026-11-16T16:09:22.025Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9861,14 +9861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stakater-reloader",
-      "content_hash": "9127a0f987cde3bd4288e223b24111e354ad497c438d4d165461512dd9590375",
-      "verified_at": "2026-11-11T12:03:33.722Z",
+      "content_hash": "5aff2201e1ace9bc3f256e5add2958930706152065a496ef2b40a0b231ae312e",
+      "verified_at": "2026-11-16T16:08:59.595Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T12:03:33.722Z"
+      "last_updated": "2026-11-16T16:08:59.595Z"
     },
     "amir1376/ab-download-manager": {
       "repository": "amir1376/ab-download-manager",
@@ -19139,6 +19139,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-16T14:34:41.077Z"
+    },
+    "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF": {
+      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+      "content_hash": "c6ae4f8a676f9ed5249876a581a2b747d04082690736a6eed5c62cab0b405aea",
+      "verified_at": "2026-11-16T16:09:22.025Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-16T16:09:22.025Z"
     }
   },
   "repos": {

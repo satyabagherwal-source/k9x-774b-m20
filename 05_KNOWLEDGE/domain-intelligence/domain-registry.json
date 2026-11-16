@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T16:00:23.233Z",
-  "total_records": 1279,
+  "last_updated": "2026-11-16T16:09:26.086Z",
+  "total_records": 1283,
   "domains": {
     "A": {
       "total": 7,
@@ -40,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 585,
+      "total": 587,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -626,7 +626,9 @@
         "DOM-D-3870AF12",
         "domain_intelligence-research-knowledge-intelligence-hf-ifm-pan2-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-zyphra-zonos3-mini-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-zyphra-zonos3-mini-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggress",
+        "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr"
       ]
     },
     "E": {
@@ -904,7 +906,7 @@
       ]
     },
     "H": {
-      "total": 275,
+      "total": 277,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1180,7 +1182,9 @@
         "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants",
         "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-core-invariants",
         "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-stakater-reloader-learnings-core-invariants"
       ]
     },
     "I": {
@@ -16929,8 +16933,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "b350fbb5562aaa40bfccd2167bd51786db3489a5bf8992ae95a8f6f3f9a62815",
-      "created_at": "2026-11-16T06:59:45.807Z"
+      "content_hash": "7cb7ea3a69f765123324733a96ec892321b08bf244a317a6806333a10c6da673",
+      "created_at": "2026-11-16T16:09:26.086Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -23344,6 +23348,42 @@
       "repository": "prometheus-prometheus-learnings",
       "content_hash": "58f5f8e18b80faa5decc244e37d3b5df0a9ea2021afefa67be38e0f2a1dbb6e8",
       "created_at": "2026-11-16T16:00:23.233Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: stakater/Reloader Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-stakater-reloader-technical-construction-intelligence-stakater-reloader-core-inv.md",
+      "repository": "stakater/Reloader",
+      "content_hash": "4a8de839e541bbd3b12685e1a2d955cf93c41ba5c06dc6af1b6210ad4421e0b7",
+      "created_at": "2026-11-16T16:08:59.841Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggress": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggress",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-research-knowled.md",
+      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "content_hash": "72d3d0c97f142f7b635f1c316105e484f825f459482d4cc6b045dcee61e0233c",
+      "created_at": "2026-11-16T16:09:22.164Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings-resear.md",
+      "repository": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings",
+      "content_hash": "cbfe0ae0f16b0f83c5ceb0bd7959bbdb91ca7d06558ab573b84f879791a57a2a",
+      "created_at": "2026-11-16T16:09:25.077Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stakater-reloader-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: stakater-reloader-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-stakater-reloader-learnings-technical-construction-intelligence-stakater-reloade.md",
+      "repository": "stakater-reloader-learnings",
+      "content_hash": "22aa8db5c96b3784f6d4003dbe6d3a6cf04e883b145df5ca6a28233708be0c3c",
+      "created_at": "2026-11-16T16:09:25.481Z"
     }
   }
 }

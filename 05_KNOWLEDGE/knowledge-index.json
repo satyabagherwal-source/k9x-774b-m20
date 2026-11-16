@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T16:00:23.358Z",
-  "total_verified_learnings": 8784,
+  "last_updated": "2026-11-16T16:09:26.086Z",
+  "total_verified_learnings": 8786,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19169,
+  "total_items": 19179,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -234170,9 +234170,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "b350fbb5562aaa40bfccd2167bd51786db3489a5bf8992ae95a8f6f3f9a62815",
+      "content_hash": "7cb7ea3a69f765123324733a96ec892321b08bf244a317a6806333a10c6da673",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:59:45.807Z"
+      "persisted_at": "2026-11-16T16:09:26.086Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -255012,6 +255012,164 @@
       "content_hash": "b6611bf286f48f44ca982d5443cc6cec6dca75d32e1ee4d655976a6efd140ee5",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T16:00:23.358Z"
+    },
+    "learn-github-stakater-reloader": {
+      "learning_id": "learn-github-stakater-reloader",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "stakater/Reloader",
+      "repository": "stakater/Reloader",
+      "slug": "stakater-reloader",
+      "platform": "github",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "45f478d2",
+      "content_hash": "5aff2201e1ace9bc3f256e5add2958930706152065a496ef2b40a0b231ae312e",
+      "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8759,
+          "title": "Empirical Invariant Guard in podmonitor.yaml",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T16:08:59.415Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8759": {
+      "learning_id": "rule-8759",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8759,
+      "title": "Empirical Invariant Guard in podmonitor.yaml",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "45f478d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T16:08:59.416Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-podmonitor-yaml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-podmonitor-yaml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L7D7-empirical-invariant-guard-in-podmonitor-yaml.md",
+      "title": "Empirical Invariant Guard in podmonitor.yaml",
+      "repository": "stakater-reloader-learnings",
+      "source_version": "HEAD",
+      "content_hash": "47f8f9ea4f4488f56cf2c21fb20490fd19dc494ddb940c343b1ac2cc512e38cf",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T16:09:25.387Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-stakater-reloader-technical-construction-intelligence-stakater-reloader-core-inv.md",
+      "title": "Technical Construction Intelligence: stakater/Reloader Core Invariants",
+      "repository": "stakater/Reloader",
+      "source_version": "45f478d2",
+      "content_hash": "4a8de839e541bbd3b12685e1a2d955cf93c41ba5c06dc6af1b6210ad4421e0b7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T16:08:59.841Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-stakater-reloader": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-stakater-reloader",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/stakater-reloader-verification-protocol-empirical-defect-shield-for-stakater-rel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for stakater/Reloader",
+      "repository": "stakater/Reloader",
+      "source_version": "45f478d2",
+      "content_hash": "faf40feb850540382baa8c7fe6263d1451a686cb2ca63ee70c50cac868da7811",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T16:08:59.943Z"
+    },
+    "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf": {
+      "learning_id": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "slug": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "source_version": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+      "content_hash": "c6ae4f8a676f9ed5249876a581a2b747d04082690736a6eed5c62cab0b405aea",
+      "dossier_path": "07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T16:09:21.843Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggress": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggress",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-research-knowled.md",
+      "title": "Research & Knowledge Intelligence: HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF Core Invariants",
+      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "source_version": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+      "content_hash": "72d3d0c97f142f7b635f1c316105e484f825f459482d4cc6b045dcee61e0233c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T16:09:22.164Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings-resear.md",
+      "title": "Research & Knowledge Intelligence: hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings Core Invariants",
+      "repository": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cbfe0ae0f16b0f83c5ceb0bd7959bbdb91ca7d06558ab573b84f879791a57a2a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T16:09:25.077Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stakater-reloader-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-stakater-reloader-learnings-technical-construction-intelligence-stakater-reloade.md",
+      "title": "Technical Construction Intelligence: stakater-reloader-learnings Core Invariants",
+      "repository": "stakater-reloader-learnings",
+      "source_version": "HEAD",
+      "content_hash": "22aa8db5c96b3784f6d4003dbe6d3a6cf04e883b145df5ca6a28233708be0c3c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T16:09:25.481Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-stakater-reloader-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-stakater-reloader-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/stakater-reloader-learnings-verification-protocol-empirical-defect-shield-for-st.md",
+      "title": "Verification Protocol: Empirical Defect Shield for stakater-reloader-learnings",
+      "repository": "stakater-reloader-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e1865ddaed252684b8a360efc985207fb358c61ac49bb2d6cfb825b7e6b19757",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T16:09:25.578Z"
     }
   },
   "ai-builder-brain": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T16:00:18.860Z",
-  "total_cycles_completed": 9888,
-  "total_learnings_persisted": 9888,
-  "total_rules_promoted": 9491,
+  "last_updated": "2026-11-16T16:09:22.022Z",
+  "total_cycles_completed": 9890,
+  "total_learnings_persisted": 9890,
+  "total_rules_promoted": 9492,
   "history": [
-    {
-      "timestamp": "2026-11-15T08:09:26.280Z",
-      "repository": "SimonSchubert/LinuxCommandLibrary",
-      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T08:48:55.294Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T08:52:24.057Z",
       "repository": "MelnixDev/seo-crawl-audit",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T16:00:18.860Z",
       "repository": "Zyphra/ZONOS3-Mini",
       "learningId": "learn-huggingface-zyphra-zonos3-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T16:08:59.592Z",
+      "repository": "stakater/Reloader",
+      "learningId": "learn-github-stakater-reloader",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T16:09:22.022Z",
+      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

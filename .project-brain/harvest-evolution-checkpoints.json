@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T16:00:23.471Z",
+  "last_updated": "2026-11-16T16:09:26.180Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T15:33:28.860Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-16T06:59:45.335Z",
+      "processed_at": "2026-11-16T16:09:25.677Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -263,7 +263,7 @@
       "staged_for_review": 1
     },
     "stakater-reloader-learnings.md": {
-      "processed_at": "2026-11-11T12:08:41.381Z",
+      "processed_at": "2026-11-16T16:09:25.181Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3186,9 +3186,14 @@
       "processed_at": "2026-11-16T15:51:46.347Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md": {
+      "processed_at": "2026-11-16T16:09:24.907Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1314,
+  "total_dossiers_evaluated": 1317,
   "total_canonical_promoted": 289,
-  "total_staged_for_review": 1017
+  "total_staged_for_review": 1020
 }

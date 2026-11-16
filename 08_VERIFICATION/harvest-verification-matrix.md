@@ -10299,3 +10299,5 @@
 | `CYCLE-20261116-9BJD` | `2026-11-16T16:00:10.921Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8757` | Yes (`499c6a7a...`) |
 | `CYCLE-20261116-9DEW` | `2026-11-16T16:00:13.352Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8758` | Yes (`5160ad3e...`) |
 | `CYCLE-20261116-9HNM` | `2026-11-16T16:00:18.850Z` | `Zyphra/ZONOS3-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md` | Yes (`a961c138...`) |
+| `CYCLE-20261116-KNGH` | `2026-11-16T16:08:59.585Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8759` | Yes (`5aff2201...`) |
+| `CYCLE-20261116-L4RH` | `2026-11-16T16:09:22.013Z` | `HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md` | Yes (`c6ae4f8a...`) |

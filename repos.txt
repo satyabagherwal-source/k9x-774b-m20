@@ -5126,3 +5126,7 @@ https://github.com/Folkbench/folkbench
 # --- Automatically Discovered by AI Scout Engine [2026-11-16T14:34:34.562Z] ---
 # [HUGGINGFACE-AI-MODELS] IFM/PAN2 (2084 score) - Verified Hugging Face Model: IFM/PAN2 (171 likes, 374 downloads)
 https://huggingface.co/IFM/PAN2
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-16T16:08:38.880Z] ---
+# [HUGGINGFACE-AI-MODELS] HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF (28200 score) - Verified Hugging Face Model: HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive
+https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF

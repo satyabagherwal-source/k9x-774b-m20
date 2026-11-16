@@ -21301,5 +21301,17 @@
     "downloads": 374,
     "qualityScore": 2084,
     "discoveredAt": "2026-11-16T14:32:25.970Z"
+  },
+  {
+    "name": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "fullName": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "url": "https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF (2620 likes, 1718332 downloads)",
+    "likes": 2620,
+    "downloads": 1718332,
+    "qualityScore": 28200,
+    "discoveredAt": "2026-11-16T16:06:30.499Z"
   }
 ]

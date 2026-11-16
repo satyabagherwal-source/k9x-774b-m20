@@ -10332,3 +10332,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `05bbd304` | Multi-dimensional audit evidence | 2026-11-16T16:00:10.925Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `c160c4ff` | Multi-dimensional audit evidence | 2026-11-16T16:00:13.356Z |
 | `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-16T16:00:18.854Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `45f478d2` | Multi-dimensional audit evidence | 2026-11-16T16:08:59.588Z |
+| `learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf` | `https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | `hf-hauhauc` | Multi-dimensional audit evidence | 2026-11-16T16:09:22.016Z |

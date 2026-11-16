@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:09.272Z",
+  "timestamp": "2026-11-16T16:09:25.311Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-stakater-reloader-learnings",
+  "learning_id": "LEARN-EVO-stakater-reloader-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [stakater-reloader-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:09.272Z`  
-> **Learning ID**: `LEARN-REEXTRACT-stakater-reloader-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T16:09:25.311Z`  
+> **Learning ID**: `LEARN-EVO-stakater-reloader-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source**: github ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
-> **Source Version**: `e0d1aa05`  
+> **Source Version**: `45f478d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T12:03:24.046Z  
+> **Timestamp**: 2026-11-16T16:08:58.807Z  
 > **Learning ID**: `learn-github-stakater-reloader`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T12:03:23.875Z  
+> **Harvest Timestamp**: 2026-11-16T16:08:56.190Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling upgrades on Pods with their associated Deployment, StatefulSet, DaemonSet and DeploymentConfig – [✩Star] if you're using it!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10563 stars
+- **Stars / Engagement**: 10574 stars
 
 ---
 
@@ -1483,14 +1483,11 @@ func GenerateSHA(data string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1281** (2026-11-16): **fix: bump golang.org/x/net to v0.62.0 on v2**
+  *Symptoms*: #1273 fixed #1272 on `master`, but `v2` is still on `golang.org/x/net` v0.58.0. This is the same bump for `v2`: `golang.org/x/net` to v0.62.0, and the other `golang.org/x` modules to exactly the versions `master` has now. Only `go.mod` and `go.sum` change.  ```console $ go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...   # before Your code is affected by 7 vulnerabilities from 1 module and the Go standard library. $ go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...   # after Your code is affected by 2 vulnerabilities from the Go standard library. ```  The two left are in my local Go 1.27.2 toolchain, not in a module. `go build ./...` and the unit tests in `internal/` and `pkg/` pass; I did not run the e2e suites, which need a cluster. 
+
 - **Issue #1280** (2026-11-11): **chore: bump Helm chart to 2.2.20 (appVersion v1.4.24)**
   *Symptoms*: `v1.4.24` ships the golang.org/x/net v0.62.0 bump for CVE-2026-78661 and CVE-2026-97045 (#1273), the pause-resume retry fix (#1266), the webhook non-2xx handling fix (#1269) and the configurable NetworkPolicy egress (#1262). The chart still deploys `v1.4.23`.  Point the chart at `v1.4.24` and bump the chart version. The `release/helm-chart` label publishes it on merge.  ## Before/After | | Before | After | |---|---|---| | Chart `version` | `2.2.19` | `2.2.20` | | `appVersion`, `image.tag`, version label | `v1.4.23` | `v1.4.24` |  Example: `helm upgrade reloader stakater/reloader --version 2.2.20` deploys `ghcr.io/stakater/reloader:v1.4.24`. 
-
-- **Issue #1279** (2026-11-11): **Release v1.4.24**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- pr-title-freeze --> Thank you for your contribution. The `master` branch is in feature freeze and accepts only `fix:` and `chore:` pull requests.  - For a bug fix or maintenance change, update the title to begin with `fix:` or `chore:`, for example `fix(chart): correct probe port`. - For a new feature, change the base branch of this pull request to `v2`, the active development branch.  For more details, see [Branches and PR titles](https://github.com/stakater/Reloader/blob/master/README.md#branches-and-pr-titles). 
-  > ## :white_check_mark: Load Test Results (quick)  ## ✅ Load Test Results: ALL TESTS PASSED  > 🚀 **Quick Test** (S1, S4, S6) — Use `/loadtest` for full suite  **3/3 passed** (100%)  | | Scenario | Description | Actions | Errors | |:-:|:--------:|-------------|:-------:|:------:| | ✅ | **S1** | S1: 143 burst updates, each triggers 1 dep... | 143/143 | 0 | | ✅ | **S4** | S4: 143 no-op updates, all should be skipped | 0 | 0 | | ✅ | **S6** | S6: Restart test - 142 updates during restart | 146 | 0 |  📦 **[Download detailed results](../artifacts)**   --- **Artifacts:** [Download](https://github.com/stakater/Reloader/actions/runs/42974427840)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1507,788 +1504,244 @@ func GenerateSHA(data string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd3c40e7` (2026-11-10)
-**Commit Message**: Merge pull request #1269 from lbarrosby/fix/webhook-http-status
+### Incident Patch 1: `45f478d2` (2026-11-16)
+**Commit Message**: Merge pull request #1275 from lbarrosby/fix/chart-monitor-namespace-selector
 
-fix(handler): treat non-2xx --webhook-url responses as failures
+fix(chart): point monitor namespaceSelector at the namespace value
 
-**File**: `internal/pkg/controller/controller.go` (modified, +9/-0)
+**File**: `deployments/kubernetes/chart/reloader/templates/podmonitor.yaml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,7 @@
- package controller
- 
- import (
-+	"errors"
- 	"fmt"
- 	"sync"
- 	"sync/atomic"
-@@ -421,6 +422,14 @@ func (c *Controller) handleErr(err error, key interface{}) {
- 		return
- 	}
- 
-+	if errors.Is(err, handler.ErrNotRetryable) {
-+		c.queue.Forget(key)
-+		c.collectors.RecordError("webhook_non_retryable")
-+		c.collectors.RecordEventProcessed("unknown", c.resource, "dropped")
-+		logrus.Errorf("Dropping key, not retryable: %v", err)
-+		return
-+	}
-+
- 	// Record error
- 	c.collectors.RecordError("handler_error")
- 
+@@ -53,7 +53,7 @@ spec:
+   jobLabel: {{ template "reloader-fullname" . }}
+   namespaceSelector:
+     matchNames:
+-    - {{ .Release.Namespace }}
++    - {{ .Values.namespace | default .Release.Namespace }}
+   selector:
+     matchLabels:
+       {{ include "reloader-match-labels.chart" . | nindent 6 }}
 ```
 
-**File**: `internal/pkg/controller/controller_test.go` (modified, +69/-0)
+**File**: `deployments/kubernetes/chart/reloader/templates/servicemonitor.yaml` (modified, +1/-1)
 ```diff
-@@ -2,9 +2,11 @@ package controller
- 
- import (
- 	"errors"
-+	"fmt"
- 	"testing"
- 	"time"
- 
-+	"github.com/prometheus/client_golang/prometheus"
- 	"github.com/stretchr/testify/assert"
- 	v1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-@@ -811,6 +813,73 @@ func TestProcessNextItem(t *testing.T) {
- 	}
- }
- 
-+func TestProcessNextItemRecordsHandlerErrorsOnce(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		handleErr     error
-+		wantErrorType string
-+		wantResult    string
-+		wantRetries   float64
-+		wantRequeues  int
-+	}{
-+		{
-+			name:          "retryable error is requeued",
-+			handleErr:     errors.New("webhook returned status 503 Service Unavailable"),
-+			wantErrorType: "handler_error",
-+			wantRetries:   1,
-+			wantRequeues:  1,
-+		},
-+		{
-+			name:          "non-retryable error is dropped",
-+			handleErr:     fmt.Errorf("%w: webhook returned status 401 Unauthorized", handler.ErrNotRetryable),
-+			wantErrorType: "webhook_non_retryable",
-+			wantResult:    "dropped",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			resetGlobalState()
-+			c := newTestController([]string{}, "")
-+			h := &mockResourceHandler{handleErr: tt.handleErr, enqueueTime: time.Now()}
-+			c.queue.Add(h)
-+
-+			assert.True(t, c.processNextItem())
-+
-+			for _, errorType := range []string{"handler_error", "webhook_non_retryable"} {
-+				want := 0.0
-+				if errorType == tt.wantErrorType {
-+					want = 1
-+				}
-+				assert.Equal(t, want, counterValue(t, c.collectors.ErrorsTotal.WithLabelValues(errorType)), errorType)
-+			}
-+			for _, result := range []string{"success", "dropped"} {
-+				want := 0.0
-+				if result == tt.wantResult {
-+					want = 1
-+				}
-+				assert.Equal(t, want, counterValue(t, c.collectors.EventsProcessed.WithLabelValues("unknown", "configmaps", result)), result)
-+			}
-+			assert.Equal(t, 1.0, counterValue(t, c.collectors.ReconcileTotal.WithLabelValues("error")))
-+			assert.Equal(t, 0.0, counterValue(t, c.collectors.ReconcileTotal.WithLabelValues("success")))
-+			assert.Equal(t, tt.wantRetries, counterValue(t, c.collectors.RetriesTotal))
-+			assert.Equal(t, tt.wantRequeues, c.queue.NumRequeues(h))
-+		})
-+	}
-+}
-+
-+func counterValue(t *testing.T, c prometheus.Counter) float64 {
-+	t.Helper()
-+	registry := prometheus.NewRegistry()
-+	registry.MustRegister(c)
-+	families, err := registry.Gather()
-+	assert.NoError(t, err)
-+	if len(families) == 0 {
-+		return 0
-+	}
-+	return families[0].GetMetric()[0].GetCounter().GetValue()
-+}
-+
- func TestProcessNextItemQueueShutdown(t *testing.T) {
- 	resetGlobalState()
- 	c := newTestController([]string{}, "")
+@@ -53,7 +53,7 @@ spec:
+   jobLabel: {{ template "reloader-fullname" . }}
+   namespaceSelector:
+     matchNames:
+-    - {{ .Release.Namespace }}
++    - {{ .Values.namespace | default .Release.Namespace }}
+   selector:
+     matchLabels:
+       {{ include "reloader-match-labels.chart" . | nindent 6 }}
 ```
 
-**File**: `internal/pkg/handler/upgrade.go` (modified, +12/-1)
+**File**: `deployments/kubernetes/chart/reloader/tests/monitor_test.yaml` (added, +71/-0)
 ```diff
-@@ -7,6 +7,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"io"
-+	"net/http"
- 	"os"
- 	"strings"
- 	"time"
-@@ -143,6 +144,10 @@ func GetArgoRolloutRollingUpgradeFuncs() callbacks.RollingUpgradeFuncs {
- 	}
- }
- 
-+// ErrNotRetryable marks a failure that a retry will not fix, such as a
-+// webhook 4xx other than 429. The controller drops it instead of requeueing.
-+var ErrNotRetryable = errors.New("not retryable")
+@@ -0,0 +1,71 @@
++suite: ServiceMonitor and PodMonitor
 +
- func sendUpgradeWebhook(config common.Config, webhookUrl string) error {
- 	logrus.Infof("Changes detected in '%s' of type '%s' in namespace '%s', Sending webhook to '%s'",
- 		config.ResourceName, config.Type, config.Namespace, webhookUrl)
-@@ -176,7 +181,13 @@ func sendWebhook(url string) (string, []error) {
- 	if bufferErr != nil {
- 		logrus.Error(bufferErr)
- 	}
--	return buffer.String(), nil
-+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-+		return buffer.String(), nil
-+	}
-+	if resp.StatusCode >= 500 || resp.StatusCode == http.StatusTooManyRequests {
-+		return buffer.String(), []error{fmt.Errorf("webhook returned status %s", resp.Status)}
-+	}
-+	return buffer.String(), []error{fmt.Errorf("%w: webhook returned status %s", ErrNotRetryable, resp.Status)}
- }
- 
- func doRollingUpgrade(config common.Config, collectors metrics.Collectors, recorder record.EventRecorder, invoke invokeStrategy) error {
-```
-
-**File**: `internal/pkg/handler/webhook_test.go` (added, +123/-0)
-```diff
-@@ -0,0 +1,123 @@
-+package handler
++templates:
++  - servicemonitor.yaml
++  - podmonitor.yaml
 +
-+import (
-+	"errors"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
++capabilities:
++  apiVersions:
++    - monitoring.coreos.com/v1
 +
-+	"github.com/prometheus/client_golang/prometheus"
-+	"github.com/stretchr/testify/assert"
-+	v1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++release:
++  namespace: release-ns
 +
-+	"github.com/stakater/Reloader/internal/pkg/metrics"
-+	"github.com/stakater/Reloader/internal/pkg/options"
-+	"github.com/stakater/Reloader/pkg/common"
-+)
++tests:
++  - it: ServiceMonitor selects the release namespace by default
++    template: servicemonitor.yaml
++    set:
++      reloader:
++        serviceMonitor:
++          enabled: true
++    asserts:
++      - equal:
++          path: spec.namespaceSelector.matchNames
++          value:
++            - release-ns
 +
-+func TestSendUpgradeWebhookReturnsErrorOnNon2xxStatus(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.WriteHeader(http.StatusInternalServerError)
-+		_, _ = w.Write([]byte("boom"))
-+	}))
-+	defer server.Close()
++  - it: ServiceMonitor selects the namespace value when it is set
++    template: servicemonitor.yaml
++    set:
++      namespace: reloader-ns
++      reloader:
++        serviceMonitor:
++          enabled: true
++          namespace: monitoring
++    asserts:
++      - equal:
++          path: metadata.namespace
++          value: monitoring
++      - equal:
++          path: spec.namespaceSelector.matchNames
++          value:
++            - reloader-ns
 +
-+	err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
-+	assert.Error(t, err)
-+}
++  - it: PodMonitor selects the release namespace by default
++    template: podmonitor.yaml
++    set:
++      reloader:
++        podMonitor:
++          enabled: true
++    asserts:
++      - equal:
++          path: spec.namespaceSelector.matchNames
++          value:
++            - release-ns
 +
-+func TestSendUpgradeWebhookSucceedsOn2xxStatus(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.WriteHeader(http.StatusAccepted)
-+	}))
-+	defer server.Close()
-+
-+	err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
-+	assert.NoError(t, err)
-+}
-+
-+func TestSendUpgradeWebhookRetriesOnlyOn5xxAnd429(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		status    int
-+		wantRetry bool
-+	}{
-+		{name: "500", status: http.StatusInternalServerError, wantRetry: true},
-+		{name: "503", status: http.StatusServiceUnavailable, wantRetry: true},
-+		{name: "429", status: http.StatusTooManyRequests, wantRetry: true},
-+		{name: "400", status: http.StatusBadRequest, wantRetry: false},
-+		{name: "401", status: http.StatusUnauthorized, wantRetry: false},
-+		{name: "404", status: http.StatusNotFound, wantRetry: false},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				w.WriteHeader(tt.status)
-+			}))
-+			defer server.Close()
-+
-+			err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
-+			assert.Error(t, err)
-+			assert.Equal(t, !tt.wantRetry, errors.Is(err, ErrNotRetryable))
-+		})
-+	}
-+}
-+
-+func TestResourceCreatedHandlerWebhookStatus(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		status    int
-+		wantRetry bool
-+	}{
-+		{name: "4xx is not requeued", status: http.StatusUnauthorized, wantRetry: false},
-+		{name: "429 is requeued", status: http.StatusTooManyRequests, wantRetry: true},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				w.WriteHeader(tt.status)
-+			}))
-+			defer server.Close()
-+
-+			oldURL := options.WebhookUrl
-+			options.WebhookUrl = server.URL
-+			defer func() { options.WebhookUrl = oldURL }()
-+
-+			collectors := metrics.NewCollectors()
-+			handler := ResourceCreatedHandler{
-+				Resource: &v1.ConfigMap{
-+					ObjectMeta: metav1.ObjectMeta{Name: "my-cm", Namespace: "default"},
-+					Data:       map[string]string{"key": "value"},
-+				},
-+				Collectors: collectors,
-+			}
-+
-+			err := handler.Handle()
-+			assert.Error(t, err)
-+			assert.Equal(t, !tt.wantRetry, errors.Is(err, ErrNotRetryable))
-+			assert.Equal(t, float64(1), reconcileCount(t, collectors, "error"))
-+			assert.Equal(t, float64(0), reconcileCount(t, collectors, "success"))
-+		})
-+	}
-+}
-+
-+func reconcileCount(t *testing.T, collectors metrics.Collectors, result string) float64 {
-+	t.Helper()
-+	registry := prometheus.NewRegistry()
-+	registry.MustRegister(collectors.ReconcileTotal)
-+	families, err := registry.Gather()
-+	assert.NoError(t, err)
-+	for _, family := range families {
-+		for _, metric := range family.GetMetric() {
-+			for _, label := range metric.GetLabel() {
-+				if label.GetName() == "result" && label.GetValue() == result {
-+					return metric.GetCounter().GetValue()
-+				}
-+			}
-+		}
-+	}
-+	return 0
-+}
++  - it: PodMonitor selects the namespace value when it is set
++    template: podmonitor.yaml
++    set:
++      namespace: reloader-ns
++      reloader:
++        podMonitor:
++          enabled: true
++          namespace: monitoring
++    asserts:
++      - equal:
++          path: metadata.namespace
++          value: monitoring
++      - equal:
++          path: spec.namespaceSelector.matchNames
++          value:
++            - reloader-ns
 ```
 
 ---
 
-### Incident Patch 2: `b4ccd0da` (2026-11-09)
-**Commit Message**: fix(controller): drop non-retryable webhook failures in handleErr
+### Incident Patch 2: `8ece2c74` (2026-11-16)
+**Commit Message**: Merge pull request #1274 from lbarrosby/fix/pod-template-exclude-annotations
 
-The handler returned nil for a non-retryable 4xx after recording the
-error, so the controller also counted a successful reconcile and a
-successful event for the same item.
+fix: honor exclude annotations set on the pod template
 
-sendWebhook now wraps ErrNotRetryable and the handlers return the error
-as is. handleErr forgets the key, records webhook_non_retryable and a
-dropped event, and does not requeue it.
-
-Signed-off-by: Lucas Barros <[REDACTED_EMAIL]>
-
-**File**: `internal/pkg/controller/controller.go` (modified, +9/-0)
+**File**: `pkg/common/common.go` (modified, +12/-0)
 ```diff
-@@ -1,6 +1,7 @@
- package controller
- 
- import (
-+	"errors"
- 	"fmt"
- 	"sync"
- 	"sync/atomic"
-@@ -421,6 +422,14 @@ func (c *Controller) handleErr(err error, key interface{}) {
- 		return
- 	}
- 
-+	if errors.Is(err, handler.ErrNotRetryable) {
-+		c.queue.Forget(key)
-+		c.collectors.RecordError("webhook_non_retryable")
-+		c.collectors.RecordEventProcessed("unknown", c.resource, "dropped")
-+		logrus.Errorf("Dropping key, not retryable: %v", err)
-+		return
-+	}
-+
- 	// Record error
- 	c.collectors.RecordError("handler_error")
- 
-```
-
-**File**: `internal/pkg/controller/controller_test.go` (modified, +69/-0)
-```diff
-@@ -2,9 +2,11 @@ package controller
- 
- import (
- 	"errors"
-+	"fmt"
- 	"testing"
- 	"time"
- 
-+	"github.com/prometheus/client_golang/prometheus"
- 	"github.com/stretchr/testify/assert"
- 	v1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-@@ -811,6 +813,73 @@ func TestProcessNextItem(t *testing.T) {
- 	}
- }
- 
-+func TestProcessNextItemRecordsHandlerErrorsOnce(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		handleErr     error
-+		wantErrorType string
-+		wantResult    string
-+		wantRetries   float64
-+		wantRequeues  int
-+	}{
-+		{
-+			name:          "retryable error is requeued",
-+			handleErr:     errors.New("webhook returned status 503 Service Unavailable"),
-+			wantErrorType: "handler_error",
-+			wantRetries:   1,
-+			wantRequeues:  1,
-+		},
-+		{
-+			name:          "non-retryable error is dropped",
-+			handleErr:     fmt.Errorf("%w: webhook returned status 401 Unauthorized", handler.ErrNotRetryable),
-+			wantErrorType: "webhook_non_retryable",
-+			wantResult:    "dropped",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			resetGlobalState()
-+			c := newTestController([]string{}, "")
-+			h := &mockResourceHandler{handleErr: tt.handleErr, enqueueTime: time.Now()}
-+			c.queue.Add(h)
-+
-+			assert.True(t, c.processNextItem())
-+
-+			for _, errorType := range []string{"handler_error", "webhook_non_retryable"} {
-+				want := 0.0
-+				if errorType == tt.wantErrorType {
-+					want = 1
-+				}
-+				assert.Equal(t, want, counterValue(t, c.collectors.ErrorsTotal.WithLabelValues(errorType)), errorType)
-+			}
-+			for _, result := range []string{"success", "dropped"} {
-+				want := 0.0
-+				if result == tt.wantResult {
-+					want = 1
-+				}
-+				assert.Equal(t, want, counterValue(t, c.collectors.EventsProcessed.WithLabelValues("unknown", "configmaps", result)), result)
-+			}
-+			assert.Equal(t, 1.0, counterValue(t, c.collectors.ReconcileTotal.WithLabelValues("error")))
-+			assert.Equal(t, 0.0, counterValue(t, c.collectors.ReconcileTotal.WithLabelValues("success")))
-+			assert.Equal(t, tt.wantRetries, counterValue(t, c.collectors.RetriesTotal))
-+			assert.Equal(t, tt.wantRequeues, c.queue.NumRequeues(h))
-+		})
-+	}
-+}
-+
-+func counterValue(t *testing.T, c prometheus.Counter) float64 {
-+	t.Helper()
-+	registry := prometheus.NewRegistry()
-+	registry.MustRegister(c)
-+	families, err := registry.Gather()
-+	assert.NoError(t, err)
-+	if len(families) == 0 {
-+		return 0
-+	}
-+	return families[0].GetMetric()[0].GetCounter().GetValue()
-+}
-+
- func TestProcessNextItemQueueShutdown(t *testing.T) {
- 	resetGlobalState()
- 	c := newTestController([]string{}, "")
-```
-
-**File**: `internal/pkg/handler/create.go` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ func (r ResourceCreatedHandler) Handle() error {
- 		if err == nil {
- 			result = "success"
- 		}
--		return webhookRequeueError(err, r.Collectors)
-+		return err
- 	}
- 	// process resource based on its type
- 	err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeReloadStrategy)
-```
-
-**File**: `internal/pkg/handler/delete.go` (modified, +1/-1)
-```diff
-@@ -54,7 +54,7 @@ func (r ResourceDeleteHandler) Handle() error {
- 		if err == nil {
- 			result = "success"
- 		}
--		return webhookRequeueError(err, r.Collectors)
-+		return err
- 	}
- 	// process resource based on its type
- 	err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeDeleteStrategy)
-```
-
-**File**: `internal/pkg/handler/update.go` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ func (r ResourceUpdatedHandler) Handle() error {
- 			if err == nil {
- 				result = "success"
- 			}
--			return webhookRequeueError(err, r.Collectors)
-+			return err
- 		}
- 		// process resource based on its type
- 		err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeReloadStrategy)
-```
-
-**File**: `internal/pkg/handler/upgrade.go` (modified, +4/-19)
-```diff
-@@ -144,20 +144,16 @@ func GetArgoRolloutRollingUpgradeFuncs() callbacks.RollingUpgradeFuncs {
- 	}
- }
- 
--// errWebhookNotRetryable marks a webhook response that a retry will not fix,
--// such as a 4xx other than 429.
--var errWebhookNotRetryable = errors.New("webhook returned a non-retryable status")
-+// ErrNotRetryable marks a failure that a retry will not fix, such as a
-+// webhook 4xx other than 429. The controller drops it instead of requeueing.
-+var ErrNotRetryable = errors.New("not retryable")
- 
- func sendUpgradeWebhook(config common.Config, webhookUrl string) error {
- 	logrus.Infof("Changes detected in '%s' of type '%s' in namespace '%s', Sending webhook to '%s'",
- 		config.ResourceName, config.Type, config.Namespace, webhookUrl)
- 
- 	body, errs := sendWebhook(webhookUrl)
- 	if errs != nil {
--		if errors.Is(errs[0], errWebhookNotRetryable) {
--			logrus.Errorf("Webhook for '%s' of type '%s' in namespace '%s' failed and will not be retried: %v",
--				config.ResourceName, config.Type, config.Namespace, errs[0])
--		}
- 		// return the first error
- 		return errs[0]
- 	} else {
-@@ -191,18 +187,7 @@ func sendWebhook(url string) (string, []error) {
- 	if resp.StatusCode >= 500 || resp.StatusCode == http.StatusTooManyRequests {
- 		return buffer.String(), []error{fmt.Errorf("webhook returned status %s", resp.Status)}
- 	}
--	return buffer.String(), []error{fmt.Errorf("%w: %s", errWebhookNotRetryable, resp.Status)}
--}
--
--// webhookRequeueError returns the error the controller should requeue on.
--// Failures that a retry will not fix are recorded and dropped, so the
--// reconcile still counts as an error but the event is not requeued.
--func webhookRequeueError(err error, collectors metrics.Collectors) error {
--	if errors.Is(err, errWebhookNotRetryable) {
--		collectors.RecordError("webhook_non_retryable")
--		return nil
--	}
--	return err
-+	return buffer.String(), []error{fmt.Errorf("%w: webhook returned status %s", ErrNotRetryable, resp.Status)}
- }
- 
- func doRollingUpgrade(config common.Config, collectors metrics.Collectors, recorder record.EventRecorder, invoke invokeStrategy) error {
-```
-
-**File**: `internal/pkg/handler/webhook_test.go` (modified, +4/-12)
-```diff
-@@ -1,6 +1,7 @@
- package handler
- 
- import (
-+	"errors"
- 	"net/http"
- 	"net/http/httptest"
- 	"testing"
-@@ -59,13 +60,7 @@ func TestSendUpgradeWebhookRetriesOnlyOn5xxAnd429(t *testing.T) {
- 
- 			err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
- 			assert.Error(t, err)
--
--			requeueErr := webhookRequeueError(err, metrics.NewCollectors())
--			if tt.wantRetry {
--				assert.Error(t, requeueErr)
--			} else {
--				assert.NoError(t, requeueErr)
--			}
-+			assert.Equal(t, !tt.wantRetry, errors.Is(err, ErrNotRetryable))
- 		})
- 	}
- }
-@@ -101,11 +96,8 @@ func TestResourceCreatedHandlerWebhookStatus(t *testing.T) {
- 			}
- 
- 			err := handler.Handle()
--			if tt.wantRetry {
--				assert.Error(t, err)
--			} else {
--				assert.NoError(t, err)
--			}
-+			assert.Error(t, err)
-+			assert.Equal(t, !tt.wantRetry, errors.Is(err, ErrNotRetryable))
- 			assert.Equal(t, float64(1), reconcileCount(t, collectors, "error"))
- 			assert.Equal(t, float64(0), reconcileCount(t, collectors, "success"))
- 		})
-```
-
----
-
-### Incident Patch 3: `5470fd1d` (2026-11-06)
-**Commit Message**: fix(handler): only requeue webhook failures on 5xx and 429
-
-A 4xx other than 429 will not succeed on retry, so requeueing it just
-burns the five attempts. Log it, record a webhook_non_retryable error and
-count the reconcile as failed without returning an error to the queue.
-5xx and 429 still return an error and are retried.
-
-Signed-off-by: Lucas Barros <[REDACTED_EMAIL]>
-
-**File**: `internal/pkg/handler/create.go` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ func (r ResourceCreatedHandler) Handle() error {
- 		if err == nil {
- 			result = "success"
- 		}
--		return err
-+		return webhookRequeueError(err, r.Collectors)
- 	}
- 	// process resource based on its type
- 	err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeReloadStrategy)
-```
-
-**File**: `internal/pkg/handler/delete.go` (modified, +1/-1)
-```diff
-@@ -54,7 +54,7 @@ func (r ResourceDeleteHandler) Handle() error {
- 		if err == nil {
- 			result = "success"
- 		}
--		return err
-+		return webhookRequeueError(err, r.Collectors)
- 	}
- 	// process resource based on its type
- 	err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeDeleteStrategy)
-```
-
-**File**: `internal/pkg/handler/update.go` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ func (r ResourceUpdatedHandler) Handle() error {
- 			if err == nil {
- 				result = "success"
- 			}
--			return err
-+			return webhookRequeueError(err, r.Collectors)
- 		}
- 		// process resource based on its type
- 		err := doRollingUpgrade(config, r.Collectors, r.Recorder, invokeReloadStrategy)
-```
-
-**File**: `internal/pkg/handler/upgrade.go` (modified, +25/-2)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"io"
-+	"net/http"
- 	"os"
- 	"strings"
- 	"time"
-@@ -143,12 +144,20 @@ func GetArgoRolloutRollingUpgradeFuncs() callbacks.RollingUpgradeFuncs {
- 	}
- }
- 
-+// errWebhookNotRetryable marks a webhook response that a retry will not fix,
-+// such as a 4xx other than 429.
-+var errWebhookNotRetryable = errors.New("webhook returned a non-retryable status")
-+
- func sendUpgradeWebhook(config common.Config, webhookUrl string) error {
- 	logrus.Infof("Changes detected in '%s' of type '%s' in namespace '%s', Sending webhook to '%s'",
- 		config.ResourceName, config.Type, config.Namespace, webhookUrl)
- 
- 	body, errs := sendWebhook(webhookUrl)
- 	if errs != nil {
-+		if errors.Is(errs[0], errWebhookNotRetryable) {
-+			logrus.Errorf("Webhook for '%s' of type '%s' in namespace '%s' failed and will not be retried: %v",
-+				config.ResourceName, config.Type, config.Namespace, errs[0])
+@@ -255,6 +255,18 @@ func ShouldReload(config Config, resourceType string, annotations Map, podAnnota
+ 		searchAnnotationValue = annotations[reloaderOpts.AutoSearchAnnotation]
+ 		reloaderEnabledValue = annotations[reloaderOpts.ReloaderAutoAnnotation]
+ 		typedAutoAnnotationEnabledValue = annotations[config.TypedAutoAnnotation]
++		// The exclude annotations can sit on the pod template next to the auto
++		// annotation they refine, so read them from there too. One set on the
++		// workload itself still wins.
++		if !foundExcludeConfigmap {
++			excludeConfigmapAnnotationValue, foundExcludeConfigmap = annotations[reloaderOpts.ConfigmapExcludeReloaderAnnotation]
 +		}
- 		// return the first error
- 		return errs[0]
- 	} else {
-@@ -176,10 +185,24 @@ func sendWebhook(url string) (string, []error) {
- 	if bufferErr != nil {
- 		logrus.Error(bufferErr)
++		if !foundExcludeSecret {
++			excludeSecretAnnotationValue, foundExcludeSecret = annotations[reloaderOpts.SecretExcludeReloaderAnnotation]
++		}
++		if !foundExcludeSecretProviderClass {
++			excludeSecretProviderClassProviderAnnotationValue, foundExcludeSecretProviderClass = annotations[reloaderOpts.SecretProviderClassExcludeReloaderAnnotation]
++		}
  	}
--	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-+		return buffer.String(), nil
-+	}
-+	if resp.StatusCode >= 500 || resp.StatusCode == http.StatusTooManyRequests {
- 		return buffer.String(), []error{fmt.Errorf("webhook returned status %s", resp.Status)}
- 	}
--	return buffer.String(), nil
-+	return buffer.String(), []error{fmt.Errorf("%w: %s", errWebhookNotRetryable, resp.Status)}
-+}
-+
-+// webhookRequeueError returns the error the controller should requeue on.
-+// Failures that a retry will not fix are recorded and dropped, so the
-+// reconcile still counts as an error but the event is not requeued.
-+func webhookRequeueError(err error, collectors metrics.Collectors) error {
-+	if errors.Is(err, errWebhookNotRetryable) {
-+		collectors.RecordError("webhook_non_retryable")
-+		return nil
-+	}
-+	return err
- }
  
- func doRollingUpgrade(config common.Config, collectors metrics.Collectors, recorder record.EventRecorder, invoke invokeStrategy) error {
+ 	isResourceExcluded := false
 ```
 
-**File**: `internal/pkg/handler/webhook_test.go` (modified, +99/-0)
+**File**: `pkg/common/common_test.go` (modified, +79/-0)
 ```diff
-@@ -5,8 +5,13 @@ import (
- 	"net/http/httptest"
+@@ -5,6 +5,7 @@ import (
  	"testing"
+ 	"time"
  
-+	"github.com/prometheus/client_golang/prometheus"
- 	"github.com/stretchr/testify/assert"
-+	v1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 
-+	"github.com/stakater/Reloader/internal/pkg/metrics"
-+	"github.com/stakater/Reloader/internal/pkg/options"
- 	"github.com/stakater/Reloader/pkg/common"
++	"github.com/stakater/Reloader/internal/pkg/constants"
+ 	"github.com/stakater/Reloader/internal/pkg/options"
  )
  
-@@ -30,3 +35,97 @@ func TestSendUpgradeWebhookSucceedsOn2xxStatus(t *testing.T) {
- 	err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
- 	assert.NoError(t, err)
+@@ -310,3 +311,81 @@ func TestGetCommandLineOptions_LeaderElectionTimingsAreDurationStrings(t *testin
+ 		}
+ 	}
  }
 +
-+func TestSendUpgradeWebhookRetriesOnlyOn5xxAnd429(t *testing.T) {
++// The auto and exclude annotations can both be set on the pod template instead
++// of the workload. The exclude list there must still skip the excluded
++// resource, and an exclude list on the workload must keep applying when the
++// auto annotation sits on the pod template.
++func TestShouldReload_ExcludeAnnotationOnPodTemplate(t *testing.T) {
++	opts := &ReloaderOptions{
++		ReloaderAutoAnnotation:                       "reloader.stakater.com/auto",
++		ConfigmapExcludeReloaderAnnotation:           "configmaps.exclude.reloader.stakater.com/reload",
++		SecretExcludeReloaderAnnotation:              "secrets.exclude.reloader.stakater.com/reload",
++		SecretProviderClassExcludeReloaderAnnotation: "secretproviderclasses.exclude.reloader.stakater.com/reload",
++	}
++
 +	tests := []struct {
-+		name      string
-+		status    int
-+		wantRetry bool
++		name           string
++		configType     string
++		resourceName   string
++		annotations    Map
++		podAnnotations Map
++		wantReload     bool
 +	}{
-+		{name: "500", status: http.StatusInternalServerError, wantRetry: true},
-+		{name: "503", status: http.StatusServiceUnavailable, wantRetry: true},
-+		{name: "429", status: http.StatusTooManyRequests, wantRetry: true},
-+		{name: "400", status: http.StatusBadRequest, wantRetry: false},
-+		{name: "401", status: http.StatusUnauthorized, wantRetry: false},
-+		{name: "404", status: http.StatusNotFound, wantRetry: false},
++		{
++			name:         "configmap excluded on pod template",
++			configType:   constants.ConfigmapEnvVarPostfix,
++			resourceName: "app-config",
++			podAnnotations: Map{
++				"reloader.stakater.com/auto":                      "true",
++				"configmaps.exclude.reloader.stakater.com/reload": "app-config",
++			},
++			wantReload: false,
++		},
++		{
++			name:         "secret excluded on pod template",
++			configType:   constants.SecretEnvVarPostfix,
++			resourceName: "app-secret",
++			podAnnotations: Map{
++				"reloader.stakater.com/auto":                   "true",
++				"secrets.exclude.reloader.stakater.com/reload": "other, app-secret",
++			},
++			wantReload: false,
++		},
++		{
++			name:         "other configmap still reloads",
++			configType:   constants.ConfigmapEnvVarPostfix,
++			resourceName: "other-config",
++			podAnnotations: Map{
++				"reloader.stakater.com/auto":                      "true",
++				"configmaps.exclude.reloader.stakater.com/reload": "app-config",
++			},
++			wantReload: true,
++		},
++		{
++			name:         "exclude on workload with auto on pod template",
++			configType:   constants.ConfigmapEnvVarPostfix,
++			resourceName: "app-config",
++			annotations: Map{
++				"configmaps.exclude.reloader.stakater.com/reload": "app-config",
++			},
++			podAnnotations: Map{
++				"reloader.stakater.com/auto": "true",
++			},
++			wantReload: false,
++		},
 +	}
 +
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				w.WriteHeader(tt.status)
-+			}))
-+			defer server.Close()
-+
-+			err := sendUpgradeWebhook(common.Config{ResourceName: "my-cm", Namespace: "default"}, server.URL)
-+			assert.Error(t, err)
-+
-+			requeueErr := webhookRequeueError(err, metrics.NewCollectors())
-+			if tt.wantRetry {
-+				assert.Error(t, requeueErr)
-+			} else {
-+				assert.NoError(t, requeueErr)
++			config := Config{
++				ResourceName: tt.resourceName,
++				Type:         tt.configType,
++			}
++			result := ShouldReload(config, "Deployment", tt.annotations, tt.podAnnotations, opts)
++			if result.ShouldReload != tt.wantReload {
++				t.Errorf("ShouldReload = %v, want %v", result.ShouldReload, tt.wantReload)
 +			}
 +		})
 +	}
-+}
-+
-+func TestResourceCreatedHandlerWebhookStatus(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		status    int
-+		wantRetry bool
-+	}{
-+		{name: "4xx is not requeued", status: http.StatusUnauthorized, wantRetry: false},
-+		{name: "429 is requeued", status: http.StatusTooManyRequests, wantRetry: true},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				w.WriteHeader(tt.status)
-+			}))
-+			defer server.Close()
-+
-+			oldURL := options.WebhookUrl
-+			options.WebhookUrl = server.URL
-+			defer func() { options.WebhookUrl = oldURL }()
-+
-+			collectors := metrics.NewCollectors()
-+			handler := ResourceCreatedHandler{
-+				Resource: &v1.ConfigMap{
-+					ObjectMeta: metav1.ObjectMeta{Name: "my-cm", Namespace: "default"},
-+					Data:       map[string]string{"key": "value"},
-+				},
-+				Collectors: collectors,
-+			}
-+
-+			err := handler.Handle()
-+			if tt.wantRetry {
-+				assert.Error(t, err)
-+			} else {
-+				assert.NoError(t, err)
-+			}
-+			assert.Equal(t, float64(1), reconcileCount(t, collectors, "error"))
-+			assert.Equal(t, float64(0), reconcileCount(t, collectors, "success"))
-+		})
-+	}
-+}
-+
-+func reconcileCount(t *testing.T, collectors metrics.Collectors, result string) float64 {
-+	t.Helper()
-+	registry := prometheus.NewRegistry()
-+	registry.MustRegister(collectors.ReconcileTotal)
-+	families, err := registry.Gather()
-+	assert.NoError(t, err)
-+	for _, family := range families {
-+		for _, metric := range family.GetMetric() {
-+			for _, label := range metric.GetLabel() {
-+				if label.GetName() == "result" && label.GetValue() == result {
-+					return metric.GetCounter().GetValue()
-+				}
-+			}
-+		}
-+	}
-+	return 0
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1281** (2026-11-16): fix: bump golang.org/x/net to v0.62.0 on v2 (@egezamb)
 - **PR #1280** (2026-11-11): chore: bump Helm chart to 2.2.20 (appVersion v1.4.24) (@SyedaFatimaKazmi)
 - **PR #1279** (closed): Release v1.4.24 (@SyedaFatimaKazmi)
 - **PR #1278** (2026-11-11): Bump version to 1.4.24 on release-v1.4.24 branch (@github-actions[bot])
-- **PR #1273** (2026-11-06): fix: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (@SyedaFatimaKazmi)
-- **PR #1271** (2026-11-09): fix(chart): grant update on cronjobs/finalizers (@egezamb)
-- **PR #1269** (2026-11-10): fix(handler): treat non-2xx --webhook-url responses as failures (@lbarrosby)
+- **PR #1275** (2026-11-16): fix(chart): point monitor namespaceSelector at the namespace value (@lbarrosby)
+- **PR #1274** (2026-11-16): fix: honor exclude annotations set on the pod template (@lbarrosby)
 
 ---
 
@@ -2308,39 +1761,31 @@ Signed-off-by: Lucas Barros <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1269 from lbarrosby/fix/webhook-http-status
+## X. Empirical Invariant Guard in podmonitor.yaml
 
 **RULE**:
-When implementing operations in `internal/pkg/controller/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deployments/kubernetes/chart/reloader/templates/podmonitor.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd3c40e7`: Merge pull request #1269 from lbarrosby/fix/webhook-http-status. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `45f478d2`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pkg/controller/controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deployments/kubernetes/chart/reloader/templates/podmonitor.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-	if errors.Is(err, handler.ErrNotRetryable) {
-		c.queue.Forget(key)
-		c.collectors.RecordError("webhook_non_retryable")
-		c.collectors.RecordEventProcessed("unknown", c.resource, "dropped")
-		logrus.Errorf("Dropping key, not retryable: %v", err)
-		return
-	}
-
+    - {{ .Values.namespace | default .Release.Namespace }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    - {{ .Release.Namespace }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd3c40e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `45f478d2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

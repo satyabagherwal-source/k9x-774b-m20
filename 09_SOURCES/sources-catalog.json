@@ -6513,10 +6513,10 @@
     "repository": "stakater/Reloader",
     "platform": "github",
     "sourceUrl": "https://github.com/stakater/Reloader",
-    "sourceVersion": "e0d1aa05",
+    "sourceVersion": "45f478d2",
     "license": "Apache-2.0",
-    "contentHash": "9127a0f987cde3bd4288e223b24111e354ad497c438d4d165461512dd9590375",
-    "lastHarvestedAt": "2026-11-11T12:03:33.700Z",
+    "contentHash": "5aff2201e1ace9bc3f256e5add2958930706152065a496ef2b40a0b231ae312e",
+    "lastHarvestedAt": "2026-11-16T16:08:59.588Z",
     "learningId": "learn-github-stakater-reloader"
   },
   "pathwaycom-llm-app": {
@@ -12698,5 +12698,15 @@
     "contentHash": "46281bc9b876236b9be7cb1d3d133f5ce3f422f0a218b6523b8413f4a01adef2",
     "lastHarvestedAt": "2026-11-16T14:34:41.069Z",
     "learningId": "learn-huggingface-ifm-pan2"
+  },
+  "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf": {
+    "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "sourceVersion": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+    "license": "Open-Source",
+    "contentHash": "c6ae4f8a676f9ed5249876a581a2b747d04082690736a6eed5c62cab0b405aea",
+    "lastHarvestedAt": "2026-11-16T16:09:22.016Z",
+    "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf"
   }
 }
