@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T13:38:38.823Z",
+  "last_updated": "2026-11-16T14:07:07.137Z",
   "total_verified_learnings": 8774,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19081,
+  "total_items": 19084,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d8c7e5a7eed3690e5538000e9f4d51b96abf59a16b2dfb7cc9e10969658026e",
+      "content_hash": "b09e687be1a66b89086857beeec46b0543060ce2c3bd286c312a19bbf7f16b0a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T08:53:33.001Z"
+      "persisted_at": "2026-11-16T14:07:07.021Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ee395e188ce6af61601a6b63eb420de5d3fdbb810e9296ce2c830e6e10a45dd",
+      "content_hash": "68e783999a4bc3dfe6f948d3d015579e8abc1a106c67fff30fedea63dcbeb71b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T08:53:33.109Z"
+      "persisted_at": "2026-11-16T14:07:07.137Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0NL8-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7WJF-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "411859043a6c3494f6cdbf80aecf81549ef1a02fe35b063e4387ebbcaf6249ef",
+      "content_hash": "3d5f9a003e6ecc55226cf5c5d42608198c3f5feacc0d4d4936d6792dac8147eb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T08:53:32.399Z"
+      "persisted_at": "2026-11-16T14:07:06.366Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "46fc570f60b78f4e2895dfeaa546c0e2f4cff307ef3d50c117b04dced72c7045",
+      "content_hash": "dd09f14515bef7b51e2ecd3c7b5cad9bd81e57b353395d8c528da24dcc1b6349",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T08:53:32.508Z"
+      "persisted_at": "2026-11-16T14:07:06.476Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e19c8b67d558281b259d3493c6e9f240a5e86b6109c13bb7522d65587e5316cd",
+      "content_hash": "91f2a1b0640da9197287f6b56d5c6fce6521a44b50ff07138327ee66e09fe273",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T08:53:32.615Z"
+      "persisted_at": "2026-11-16T14:07:06.593Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214861,13 +214861,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0NYZ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7WYK-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "696042a4d2427a424eb243ff1ee8e0b1ab95b34b671f96ae684ea8d973791478",
+      "content_hash": "9e2ec9b93033bfd35502d8e23b2874cf31b65740f9e4da2eb790dd12ad845405",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T08:53:32.894Z"
+      "persisted_at": "2026-11-16T14:07:06.911Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -232230,14 +232230,19 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "ab5b4223",
-      "content_hash": "f420d583df88f4e9997a00c7e7f8211c1878d99abf3c17b2b74e95110de3b98f",
+      "source_version": "ffcdfcfa",
+      "content_hash": "ecedefc29c9af079a224ae5fdced58a2ae84c498b3d0e035dccd5a5719d7afaa",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
         {
           "number": 8514,
           "title": "[Python] Reject null required Arrow objects",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8743,
+          "title": "[Python] Reject a null Expression in two public APIs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -232246,7 +232251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:51:07.632Z",
+      "verified_at": "2026-11-16T14:06:57.728Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232288,10 +232293,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "repository": "apache/arrow",
-      "source_version": "ab5b4223",
-      "content_hash": "ac991daf6e4ca3c1afe8a4e19e4cba295da05be64a88de056ffd3e94e374150b",
+      "source_version": "ffcdfcfa",
+      "content_hash": "537adbf1fe0b868c507749c5ee293c1392f6c5e9db9929a6ad1e9d67cd4c7dde",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T17:51:08.037Z"
+      "persisted_at": "2026-11-16T14:06:58.184Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow",
@@ -232300,10 +232305,10 @@
       "relative_path": "08_VERIFICATION/apache-arrow-verification-protocol-empirical-defect-shield-for-apache-arrow.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/arrow",
       "repository": "apache/arrow",
-      "source_version": "ab5b4223",
-      "content_hash": "343ee33d62996c4436e41da7b4f3951c521c6ce415c6a2b67c1b4d4978e660ce",
+      "source_version": "ffcdfcfa",
+      "content_hash": "02ebfb57aada67ce549c63cb1db8e62cc09dca379fc9006775cb16a2ce6f1839",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:51:08.137Z"
+      "persisted_at": "2026-11-16T14:06:58.305Z"
     },
     "learn-github-greptimeteam-greptimedb": {
       "learning_id": "learn-github-greptimeteam-greptimedb",
@@ -232413,9 +232418,9 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "0dea475f5567e9f07a3771662774e0ed0de49a1960e23fbe39dbc734516bcb0e",
+      "content_hash": "82dc8e61a9d771609c4690aea35f9d014c35c13addcdde06bd5d7bff8693042f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T17:51:27.052Z"
+      "persisted_at": "2026-11-16T14:07:05.826Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings",
@@ -232425,9 +232430,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-arrow-learnings",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "2b9e5d1d392eb84aee4f112efa5c3d730401531ef643aea3293b7ac6b88cd352",
+      "content_hash": "dc59cbbd51efb880dbbede4dc0ad9e4077a6c3f8369c07bc106ab0b3d41a9092",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:51:27.152Z"
+      "persisted_at": "2026-11-16T14:07:05.942Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-",
@@ -253687,6 +253692,44 @@
       "content_hash": "4c2674bd60b271d0168bbd7778e05bb971ee5d6cb694e87d12c9e8ffff1ad92a",
       "domain_letter": "H",
       "persisted_at": "2026-11-16T13:38:38.596Z"
+    },
+    "rule-8743": {
+      "learning_id": "rule-8743",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8743,
+      "title": "[Python] Reject a null Expression in two public APIs",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "ffcdfcfa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T14:06:57.728Z"
+    },
+    "candidate_directive-python-reject-a-null-expression-in-two-public-apis": {
+      "item_id": "candidate_directive-python-reject-a-null-expression-in-two-public-apis",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7Q4X-python-reject-a-null-expression-in-two-public-apis.md",
+      "title": "[Python] Reject a null Expression in two public APIs",
+      "repository": "apache/arrow",
+      "source_version": "ffcdfcfa",
+      "content_hash": "87356f7e1096e46026a48d4427398a479a266bedc3ceddd89711751558f1cc72",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T14:06:58.067Z"
+    },
+    "candidate_directive-gh-51293-python-reject-a-null-expression-in-two-public-apis": {
+      "item_id": "candidate_directive-gh-51293-python-reject-a-null-expression-in-two-public-apis",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7W1C-gh-51293-python-reject-a-null-expression-in-two-public-apis.md",
+      "title": "GH-51293: [Python] Reject a null Expression in two public APIs",
+      "repository": "apache-arrow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b744de891ce6260cabc1d01191e8818916a6dbbac64c56389425598f81df4c4",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T14:07:05.713Z"
     }
   },
   "ai-builder-brain": {

@@ -10277,3 +10277,4 @@
 | `CYCLE-20261116-71VC` | `2026-11-16T13:38:27.000Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8740` | Yes (`bec2b28b...`) |
 | `CYCLE-20261116-76JM` | `2026-11-16T13:38:33.058Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8741` | Yes (`3c6ea005...`) |
 | `CYCLE-20261116-77CD` | `2026-11-16T13:38:34.093Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8742` | Yes (`04790268...`) |
+| `CYCLE-20261116-7Q02` | `2026-11-16T14:06:57.890Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8743` | Yes (`ecedefc2...`) |

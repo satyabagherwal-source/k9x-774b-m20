@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T13:38:34.101Z",
-  "total_cycles_completed": 9868,
-  "total_learnings_persisted": 9868,
-  "total_rules_promoted": 9474,
+  "last_updated": "2026-11-16T14:06:57.899Z",
+  "total_cycles_completed": 9869,
+  "total_learnings_persisted": 9869,
+  "total_rules_promoted": 9475,
   "history": [
-    {
-      "timestamp": "2026-11-15T05:36:45.383Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T06:00:00.574Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T13:38:34.101Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T14:06:57.899Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

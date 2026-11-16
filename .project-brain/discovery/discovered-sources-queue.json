@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T13:38:37.885Z",
+  "updated_at": "2026-11-16T14:07:05.533Z",
   "stats": {
-    "total_discovered": 4202,
-    "approved_pending_harvest": 3949,
+    "total_discovered": 4205,
+    "approved_pending_harvest": 3952,
     "harvested_count": 0,
     "rejected_count": 253,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3950,
+      "COMMUNITY_AND_EXPERT": 3953,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -90694,6 +90694,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
         "fileName": "duongductrong-snapzy-learnings.md"
+      }
+    },
+    "SRC-1803F9C215E6": {
+      "id": "SRC-1803F9C215E6",
+      "url": "https://github.com/simdjson/simdjson/pull/3031",
+      "title": "https://github.com/simdjson/simdjson/pull/3031",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T14:07:05.464Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-35D31ABE95BC": {
+      "id": "SRC-35D31ABE95BC",
+      "url": "https://github.com/apache/arrow/issues/51293",
+      "title": "https://github.com/apache/arrow/issues/51293",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T14:07:05.506Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-C6BC673ABFD1": {
+      "id": "SRC-C6BC673ABFD1",
+      "url": "https://github.com/apache/arrow/commit/1f789ffd70f96907698e93ef99f4e034caf0788b",
+      "title": "https://github.com/apache/arrow/commit/1f789ffd70f96907698e93ef99f4e034caf0788b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T14:07:05.533Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
       }
     }
   }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-6UKQ",
-    "timestamp": "2026-11-13T20:47:10.922Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "c05640832794c2ce471502994377c80d91c498b6e0592067383251833db01afb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-6YYK",
     "timestamp": "2026-11-13T20:47:16.604Z",
     "repository": "alibaba/zvec",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-7Q02",
+    "timestamp": "2026-11-16T14:06:57.890Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "ecedefc29c9af079a224ae5fdced58a2ae84c498b3d0e035dccd5a5719d7afaa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

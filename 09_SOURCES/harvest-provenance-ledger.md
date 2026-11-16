@@ -10310,3 +10310,4 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `caa6e120` | Multi-dimensional audit evidence | 2026-11-16T13:38:27.003Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `9f1054c2` | Multi-dimensional audit evidence | 2026-11-16T13:38:33.062Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `faa20a23` | Multi-dimensional audit evidence | 2026-11-16T13:38:34.096Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `ffcdfcfa` | Multi-dimensional audit evidence | 2026-11-16T14:06:57.894Z |

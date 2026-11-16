@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/arrow",
   "source_url": "https://github.com/apache/arrow",
-  "source_version": "ab5b4223",
+  "source_version": "ffcdfcfa",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T17:51:07.938Z",
+  "timestamp": "2026-11-16T14:06:58.066Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-arrow",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `ab5b4223`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T17:51:07.938Z`  
+> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `ffcdfcfa`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T14:06:58.066Z`  
 > **Learning ID**: `learn-github-apache-arrow`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/arrow:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T17:51:06.930Z  
+> **Harvest Timestamp**: 2026-11-16T14:06:56.665Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17295 stars
+- **Stars / Engagement**: 17303 stars
 
 ---
 
@@ -1391,11 +1391,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #55631** (2026-11-16): **GH-55630: [C++][CI] Append expected prefix on ResolveSimdjsonResult error**
+  *Symptoms*: ### Rationale for this change  Currently MinGW tests are failing for simdjson. This seems to be related to simdjson 5.2.0 adding the following fix: - https://github.com/simdjson/simdjson/pull/3031  It seems an invalid document failed at a different stage on our codebase where we were appending the error prefix but now it fails on simdjson and we are not appending the prefix.  ### What changes are included in this PR?  Use our `JSON parse error:` prefix for other logs.  ### Are these changes tested?  Yes via CI  ### Are there any user-facing changes?  Yes, users might get a log with a slightly different prefix now but we were missing it in the first place.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55630
+
 - **Issue #55610** (2026-11-14): **GH-55503: [C++] Fix Float16 memo table keys built from raw bits**
   *Symptoms*: ### Rationale for this change  Float16 dictionary unification and `count_distinct` produce incorrect results because raw `uint16_t` storage values are interpreted as numeric values instead of Float16 bit patterns.  For example, the Float16 bit pattern `0x3C00`, representing `1.0`, is interpreted as `15360.0` when passed through the converting constructor.  This causes dictionary values to be corrupted during dictionary unification and distinct Float16 values to be incorrectly merged by `count_distinct`.  ### What changes are included in this PR?  - Use `Float16::FromBits()` when constructing memo table keys from raw Float16 values in `DictionaryUnifierImpl::Unify`. - Fix Float16 handling in the array path of `CountDistinctImpl::Consume`. - Fix Float16 scalar unboxing to preserve the original bit representation in `UnboxScalar<HalfFloatType>::Unbox`.  ### Are these changes tested?  Added regression tests:  - `TestDictionaryUnifier.HalfFloat`: verifies unified dictionary values and transpose maps. - `TestCountDistinctKernel.HalfFloat`: covers distinct Float16 values, duplicates, nulls, chunked arrays, and scalar input.  Verified that both new regression tests fail with the original implementation and pass with the fix.  Validation performed:  - `arrow-array-test`: 346 tests passed (2 disabled). - `arrow-compute-aggregate-test`: 346 tests passed. - `clang-format --dry-run --Werror`: passed. - `git diff --check`: passed.  ### Are there any user-facing changes?  Fixes incorrect Fl
-
-- **Issue #55584** (2026-11-13): **[Python] c/driver/sqlite: re-executing a prepared statement fails with "no more rows available" on macOS system SQLite**
-  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  SQLite driver fails to re-execute a prepared statement when SQLite is built with `SQLITE_OMIT_AUTORESET`.  ## Description  Executing the same prepared statement a second time fails if the SQLite driver is linked against a SQLite built with [`SQLITE_OMIT_AUTORESET`](https://www.sqlite.org/compile.html#omit_autoreset).  Apple's system SQLite (`/usr/lib/libsqlite3.dylib`) is built that way, and CMake picks it up by default on macOS.  On my own macOS:  ```console $ echo "pragma compile_options;" | /usr/bin/sqlite3 | grep AUTORESET OMIT_AUTORESET ```  This shows up in the Python DB-API, which skips `set_sql_query()` and `prepare()` when the same SQL is executed twice in a row. As a result, `python/adbc_driver_manager/tests/test_dbapi.py::test_query_fetch_py` fails locally on macOS but passes in CI.  ## Minimal reproducible example  Build the SQLite driver on macOS with the default SQLite:  ```shell cmake -S c -B build -G Ninja -DADBC_DRIVER_SQLITE=ON cmake --build build --target adbc_driver_sqlite_shared otool -L build/driver/sqlite/libadbc_driver_sqlite.dylib | grep sqlite3 # /usr/lib/libsqlite3.dylib (compatibility version 9.0.0, current version 371.0.0) ```  ```python # mre.py import adbc_driver_manager.dbapi as dbapi  with dbapi.connect(driver="adbc_driver_sqlite") as conn:     with conn.cursor() as cur:         for i in range(2):             cur.execute("SELECT 1")             print(
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1412,559 +1412,102 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0974e94e` (2026-11-13)
-**Commit Message**: GH-51043: [Python] Reject null required Arrow objects (#51161)
+### Incident Patch 1: `dc7ee12b` (2026-11-16)
+**Commit Message**: GH-51293: [Python] Reject a null Expression in two public APIs (#51294)
 
 ### Rationale for this change
 
-Passing None where pyarrow requires an object can abort the Python process or raise an unrelated AttributeError, because the value reaches native Arrow code that cannot handle it. The original report covered some constructors, and later comments found the same failure in ScanNodeOptions, ParquetSchema, ColumnSchema, SubTreeFileSystem and ProjectNodeOptions, so this PR fixes those too.
+Passing None to partition-key extraction or expression equality terminates Python instead of raising an exception. Applications cannot catch that failure.
 
-Fixes https://github.com/apache/arrow/issues/51043.
-
-get_partition_keys(None) is in https://github.com/apache/arrow/pull/51294.
+Fixes https://github.com/apache/arrow/issues/51293.
 
 ### What changes are included in this PR?
 
-The Python layer now checks required arguments before native code runs, so None raises a TypeError that names the argument instead of crashing. This covers schemas, formats, types, dictionaries, fragments, filesystems and child arrays, plus the classes listed above. Array buffer constructors also require a data type.
+Both expression parameters reject None at the Cython boundary. Regression tests cover these two entry points.
 
 ### Are these changes tested?
 
-A native Arrow 26.0.0-SNAPSHOT build reproduced the failures. The same commands then raised TypeError.
+Built from source on macOS arm64 with Python 3.12.14. Both calls crash on [upstream main](https://github.com/apache/arrow/commit/1f789ffd70f96907698e93ef99f4e034caf0788b) and raise TypeError on the rebased branch.
 
 ```console
-$ python -c 'from pyarrow import acero; acero.ScanNodeOptions(None)'
-Before: p
+$ python -c 'import pyarrow.dataset as ds; ds.get_partition_keys(None)'
+Before:
+returncode=-10
+After:
+TypeError: Argument 'partition_expression' has incorrect type (expected pyarrow._compute.Expression, got NoneType)
+returncode=1
 
-**File**: `python/pyarrow/_acero.pyx` (modified, +2/-0)
-```diff
-@@ -141,6 +141,8 @@ cdef class _ProjectNodeOptions(ExecNodeOptions):
-             vector[c_string] c_names
- 
-         for expr in expressions:
-+            if expr is None:
-+                raise TypeError("Expression must not be None")
-             c_expressions.push_back(expr.unwrap())
- 
-         if names is not None:
+$ python -c "import pyarrow.compute as pc; pc.field('a').equals(None)"
+Before:
+returncode=-10
+After:
+TypeError: Argument 'other' has incorrect type (expected pyarrow._compute.Expression, got NoneType)
+returncode=1
 ```
 
-**File**: `python/pyarrow/_dataset.pyx` (modified, +5/-2)
+### Are there any user-fac
+
+**File**: `python/pyarrow/_compute.pyx` (modified, +1/-1)
 ```diff
-@@ -1121,7 +1121,8 @@ cdef class FileSystemDataset(Dataset):
-     cdef:
-         CFileSystemDataset* filesystem_dataset
+@@ -2686,7 +2686,7 @@ cdef class Expression(_Weakrefable):
+     cdef inline CExpression unwrap(self):
+         return self.expr
  
--    def __init__(self, fragments, Schema schema, FileFormat format,
-+    def __init__(self, fragments, Schema schema not None,
-+                 FileFormat format not None,
-                  FileSystem filesystem=None, root_partition=None):
-         cdef:
-             FileFragment fragment=None
-@@ -1138,6 +1139,8 @@ cdef class FileSystemDataset(Dataset):
-             )
+-    def equals(self, Expression other):
++    def equals(self, Expression other not None):
+         """
+         Parameters
+         ----------
+```
+
+**File**: `python/pyarrow/_dataset.pyx` (modified, +1/-1)
+```diff
+@@ -4055,7 +4055,7 @@ cdef class Scanner(_Weakrefable):
+         return reader
  
-         for fragment in fragments:
-+            if fragment is None:
-+                raise TypeError("Fragment must not be None")
-             c_fragments.push_back(
-                 static_pointer_cast[CFileFragment, CFragment](
-                     fragment.unwrap()))
-@@ -4236,5 +4239,5 @@ class ScanNodeOptions(_ScanNodeOptions):
-         Preserve implicit ordering of data.
+ 
+-def get_partition_keys(Expression partition_expression):
++def get_partition_keys(Expression partition_expression not None):
      """
- 
--    def __init__(self, Dataset dataset, **kwargs):
-+    def __init__(self, Dataset dataset not None, **kwargs):
-         self._set_options(dataset, kwargs)
+     Extract partition keys (equality constraints between a field and a scalar)
+     from an expression as a dict mapping the field's name to its value.
 ```
 
-**File**: `python/pyarrow/_fs.pyx` (modified, +1/-1)
+**File**: `python/pyarrow/tests/test_compute.py` (modified, +3/-0)
 ```diff
-@@ -1205,7 +1205,7 @@ cdef class SubTreeFileSystem(FileSystem):
-     For usage of the methods see examples for :func:`~pyarrow.fs.LocalFileSystem`.
-     """
- 
--    def __init__(self, base_path, FileSystem base_fs):
-+    def __init__(self, base_path, FileSystem base_fs not None):
-         cdef:
-             c_string pathstr
-             shared_ptr[CSubTreeFileSystem] wrapped
-```
-
-**File**: `python/pyarrow/_parquet.pyx` (modified, +5/-4)
-```diff
-@@ -755,7 +755,8 @@ cdef class SortingColumn:
-         self.nulls_first = nulls_first
- 
-     @classmethod
--    def from_ordering(cls, Schema schema, sort_keys, null_placement='at_end'):
-+    def from_ordering(cls, Schema schema not None, sort_keys,
-+                      null_placement='at_end'):
-         """
-         Create a tuple of SortingColumn objects from the same arguments as
-         :class:`pyarrow.compute.SortOptions`.
-@@ -816,7 +817,7 @@ cdef class SortingColumn:
-         return tuple(sorting_columns)
- 
-     @staticmethod
--    def to_ordering(Schema schema, sorting_columns):
-+    def to_ordering(Schema schema not None, sorting_columns):
-         """
-         Convert a tuple of SortingColumn objects to the same format as
-         :class:`pyarrow.compute.SortOptions`.
-@@ -1247,7 +1248,7 @@ cdef class FileMetaData(_Weakrefable):
- cdef class ParquetSchema(_Weakrefable):
-     """A Parquet schema."""
- 
--    def __cinit__(self, FileMetaData container):
-+    def __cinit__(self, FileMetaData container not None):
-         self.parent = container
-         self.schema = container._metadata.schema()
- 
-@@ -1336,7 +1337,7 @@ cdef class ColumnSchema(_Weakrefable):
-         ParquetSchema parent
-         const ColumnDescriptor* descr
- 
--    def __cinit__(self, ParquetSchema schema, int index):
-+    def __cinit__(self, ParquetSchema schema not None, int index):
-         self.parent = schema
-         self.index = index  # for pickling support
-         self.descr = schema.schema.Column(index)
-```
-
-**File**: `python/pyarrow/array.pxi` (modified, +9/-6)
-```diff
-@@ -1329,8 +1329,8 @@ cdef class Array(_PandasConvertible):
-             (_reduce_array_data(self.sp_array.get().data().get()),)
- 
-     @staticmethod
--    def from_buffers(DataType type, length, buffers, null_count=-1, offset=0,
--                     children=None):
-+    def from_buffers(DataType type not None, length, buffers, null_count=-1,
-+                     offset=0, children=None):
-         """
-         Construct an Array from a sequence of buffers.
- 
-@@ -1386,6 +1386,8 @@ cdef class Array(_PandasConvertible):
-             c_buffers.push_back(pyarrow_unwrap_buffer(buf))
- 
-         for child in children:
-+            if child is None:
-+                raise TypeError("Array child must not be None")
-             c_child_data.push_back(child.ap.data())
- 
-         array_data = CArrayData.MakeWithChildren(type.sp_type, length,
-@@ -4328,8 +4330,9 @@ cdef class DictionaryArray(Array):
-         return self._indices
- 
-     @staticmethod
--    def from_buffers(DataType type, int64_t length, buffers, Array dictionary,
--                     int64_t null_count=-1, int64_t offset=0):
-+    def from_buffers(DataType type not None, int64_t length, buffers,
-+                     Array dictionary not None, int64_t null_count=-1,
-+                     int64_t offset=0):
-         """
-         Construct a DictionaryArray from buffers.
- 
-@@ -4745,8 +4748,8 @@ cdef class RunEndEncodedArray(Array):
-                                                run_ends, values, 0)
- 
-     @staticmethod
--    def from_buffers(DataType type, length, buffers, null_count=-1, offset=0,
--                     children=None):
-+    def from_buffers(DataType type not None, length, buffers, null_count=-1,
-+                     offset=0, children=None):
-         """
-         Construct a RunEndEncodedArray from all the parameters that make up an
-         Array.
-```
-
-**File**: `python/pyarrow/tests/parquet/test_metadata.py` (modified, +12/-0)
-```diff
-@@ -351,6 +351,12 @@ def test_parquet_sorting_column():
-     with pytest.raises(ValueError):
-         pq.SortingColumn.from_ordering(schema, (("a", "not a valid sort order")))
- 
-+    with pytest.raises(TypeError, match="Argument 'schema' has incorrect type"):
-+        pq.SortingColumn.from_ordering(None, ())
-+
-+    with pytest.raises(TypeError, match="Argument 'schema' has incorrect type"):
-+        pq.SortingColumn.to_ordering(None, ())
-+
-     with pytest.raises(ValueError, match="inconsistent null placement"):
-         sorting_cols = (
-             pq.SortingColumn(1, nulls_first=True),
-@@ -871,6 +877,12 @@ def msg(c):
-     with pytest.raises(TypeError, match=msg("FileMetaData")):
-         pq.FileMetaData()
- 
-+    with pytest.raises(TypeError, match="Argument 'container'"):
-+        pq.ParquetSchema(None)
-+
-+    with pytest.raises(TypeError, match="Argument 'schema'"):
-+        pq.ColumnSchema(None, 0)
-+
- 
- def test_read_schema_uuid_extension_type(tmp_path):
-     # These are the raw 16-byte payloads for
-```
-
-**File**: `python/pyarrow/tests/test_acero.py` (modified, +5/-0)
-```diff
-@@ -247,6 +247,8 @@ def test_project(table_source):
-     # input validation
-     with pytest.raises(ValueError):
-         ProjectNodeOptions([pc.multiply(field("a"), 2)], ["a2", "b2"])
-+    with pytest.raises(TypeError, match="Expression must not be None"):
-+        ProjectNodeOptions([None])
- 
-     # no scalar expression
-     decl = Declaration.from_sequence([
-@@ -597,3 +599,6 @@ def test_scan(tempdir):
-     assert result["a"].to_pylist() == [1, 2, 3]
-     # "b" is still included, but without data as it will be removed by the projection
-     assert pc.all(result["b"].is_null()).as_py()
-+
-+    with pytest.raises(TypeError, match="Argument 'dataset'"):
-+        ScanNodeOptions(None)
-```
-
-**File**: `python/pyarrow/tests/test_array.py` (modified, +17/-0)
-```diff
-@@ -784,6 +784,9 @@ def test_array_from_buffers():
+@@ -4371,6 +4371,9 @@ def test_expression_construction():
      with pytest.raises(TypeError):
-         pa.Array.from_buffers(pa.int16(), 3, ['', ''], offset=1)
+         field.isin(1)
  
-+    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
-+        pa.Array.from_buffers(type=None, length=0, buffers=[])
++    with pytest.raises(TypeError, match="Argument 'other' has incorrect type"):
++        field.equals(None)
++
+     with pytest.raises(pa.ArrowInvalid):
+         field != object()
+ 
+```
+
+**File**: `python/pyarrow/tests/test_dataset.py` (modified, +3/-0)
+```diff
+@@ -952,6 +952,9 @@ def test_partition_keys():
+     null = ds.field('a').is_null()
+     assert ds.get_partition_keys(null) == {'a': None}
+ 
++    with pytest.raises(TypeError, match="Argument 'partition_expression'"):
++        ds.get_partition_keys(None)
 +
  
- def test_string_binary_from_buffers():
-     array = pa.array(["a", None, "b", "c"])
-@@ -868,6 +871,10 @@ def test_list_from_buffers(list_type_factory):
-         pa.Array.from_buffers(ty, 4, buffers[:ty.num_buffers],
-                               children=[child, child])
- 
-+    with pytest.raises(TypeError, match="Array child must not be None"):
-+        pa.Array.from_buffers(
-+            type=ty, length=4, buffers=buffers[:ty.num_buffers], children=[None])
-+
- 
- def test_struct_from_buffers():
-     ty = pa.struct([pa.field('a', pa.int16()), pa.field('b', pa.utf8())])
-@@ -987,6 +994,13 @@ def test_dictionary_from_buffers(offset):
-                                         offset=offset)
-     assert a[offset:] == b
- 
-+    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
-+        pa.DictionaryArray.from_buffers(
-+            None, len(a), a.indices.buffers(), a.dictionary)
-+    with pytest.raises(TypeError, match="Argument 'dictionary' has incorrect type"):
-+        pa.DictionaryArray.from_buffers(
-+            a.type, len(a), a.indices.buffers(), None)
-+
- 
- @pytest.mark.numpy
- def test_dictionary_from_numpy():
-@@ -4275,6 +4289,9 @@ def test_run_end_encoded_from_buffers():
-         pa.RunEndEncodedArray.from_buffers(ree_type, length, buffers,
-                                            1, offset, children)
- 
-+    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
-+        pa.RunEndEncodedArray.from_buffers(type=None, length=0, buffers=[])
-+
- 
- @pytest.mark.numpy
- def test_run_end_encoded_from_array_with_type():
-```
-
----
-
-### Incident Patch 2: `48e4abf5` (2026-11-13)
-**Commit Message**: GH-47329: [Packaging][Python][C++] Build and test PyArrow against Pyodide 314 (`2026_0` ABI) (#47330)
-
-### Rationale for this change
-
-This PR allows PyArrow to be built and tested against our Pyodide `2026_0` ABI introduced with [the Pyodide 314.0.0 release](https://blog.pyodide.org/posts/314-release/).
-
-Closes #47329
-
-### What changes are included in this PR?
-
-This PR updates the Pyodide version in the build scripts to 314.0.7 and the Emscripten version to 5.0.3, along with associated build-time changes to fix compilation issues.
-
-This PR updates the `conda-python-emscripten` job to Pyodide 314.0.7, Python 3.14, Node 24, and pyodide-build 0.39.2 and later. The Emscripten version for this job is gathered from the Pyodide distribution, which renders it to be 5.0.3. That matches the version the C++ job uses, since #55417.
-
-The build changes are as follows:
-
-- Emscripten builds now use native WebAssembly exceptions and WebAssembly-based `setjmp`/`longjmp` (`-fwasm-exceptions -sSUPPORT_LONGJMP=wasm`), as our `2026_0` ABI requires.
-- `libarrow_python.so` and the Cython extension modules are linked with an `$ORIGIN` RPATH, in order for us to find `libarrow_python.so` next to the modules 
-
-**File**: `ci/docker/conda-python-emscripten.dockerfile` (modified, +15/-8)
-```diff
-@@ -18,32 +18,39 @@
- ARG repo
- ARG arch
- ARG arch_short
--ARG python="3.12"
-+ARG python="3.14"
- FROM --platform=linux/${arch} ${repo}:${arch_short}-conda-python-${python}
- 
- ARG selenium_version="4.41.0"
--ARG pyodide_version="0.27.1"
-+ARG pyodide_version="314.0.7"
-+# pyodide-build is versioned independently of Pyodide
-+ARG pyodide_build_version="0.39.2"
- ARG chrome_version="latest"
--ARG required_python_min="(3,12)"
--# fail if python version < 3.12
-+ARG required_python_min="(3,14)"
-+# fail if python version < 3.14
- RUN echo "check PYTHON>=${required_python_min}" && python -c "import sys;sys.exit(0 if sys.version_info>=${required_python_min} else 1)"
- 
--# install selenium and recent pyodide-build and recent python
-+RUN apt-get update -y -q && \
-+    apt-get install -y -q --no-install-recommends \
-+        libatomic1 && \
-+    apt-get clean && \
-+    rm -rf /var/lib/apt/lists/*
- 
- # needs to be a login shell so ~/.profile is read
- SHELL ["/bin/bash", "--login", "-c", "-o", "pipefail"]
- 
-+# install selenium and recent pyodide-build and recent python
- RUN python -m pip install --no-cache-dir selenium==${selenium_version} && \
--    python -m pip install --no-cache-dir --upgrade pyodide-build>=${pyodide_version}
-+    python -m pip install --no-cache-dir --upgrade "pyodide-build>=${pyodide_build_version}"
- 
- # install pyodide dist directory to /pyodide
- RUN pyodide_dist_url="https://github.com/pyodide/pyodide/releases/download/${pyodide_version}/pyodide-${pyodide_version}.tar.bz2" && \
-     wget -q "${pyodide_dist_url}" -O- | tar -xj -C /
- 
--# install node 20 (needed for async call support)
-+# install node 24 (needed for async call support and JSPI)
- # and pthread-stubs for build, and unzip needed for chrome build to work
- # xz is needed by emsdk to extract node tarballs
--RUN conda install nodejs=20 unzip pthread-stubs make xz -c conda-forge
-+RUN conda install nodejs=24 unzip pthread-stubs make xz -c conda-forge
- 
- # install correct version of emscripten for this pyodide
- COPY ci/scripts/install_emscripten.sh /arrow/ci/scripts/
-```
-
-**File**: `compose.yaml` (modified, +3/-2)
-```diff
-@@ -982,10 +982,11 @@ services:
-         arch_short: ${ARCH_SHORT}
-         clang_tools: ${CLANG_TOOLS}
-         llvm: ${LLVM}
--        pyodide_version: "0.27.1"
-+        pyodide_version: "314.0.7"
-+        pyodide_build_version: "0.39.2"
-         chrome_version: "latest"
-         selenium_version: "4.41.0"
--        required_python_min: "(3,12)"
-+        required_python_min: "(3,14)"
-         python: ${PYTHON}
-     shm_size: *shm-size
-     volumes: *ubuntu-volumes
-```
-
-**File**: `cpp/cmake_modules/SetupCxxFlags.cmake` (modified, +20/-11)
-```diff
-@@ -714,26 +714,35 @@ if(MSVC)
- endif()
- 
- if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
--  # flags are:
-+  # For the Pyodide 2026_0 ABI, the flags are:
-   # 1) We force *everything* to build as position independent
--  # 2) And with support for C++ exceptions
--  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fexceptions")
-+  # 2) We support C++ WASM exceptions, using the native WebAssembly
-+  #    exception handling proposal and WebAssembly-based setjmp/longjmp
-+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fwasm-exceptions -sSUPPORT_LONGJMP=wasm")
-   # deprecated-literal-operator error is thrown in datetime (vendored lib in arrow)
-   set(CMAKE_CXX_FLAGS
--      "${CMAKE_CXX_FLAGS} -fPIC -fexceptions -Wno-error=deprecated-literal-operator")
-+      "${CMAKE_CXX_FLAGS} -fPIC -fwasm-exceptions -sSUPPORT_LONGJMP=wasm -Wno-error=deprecated-literal-operator"
-+  )
- 
-   # flags for creating shared libraries (only used in pyarrow, because
-   # Emscripten builds libarrow as static)
-   # flags are:
-   # 1) Tell it to use JavaScript / WebAssembly 64 bit number support.
--  # 2) Tell it to build with support for C++ exceptions
-+  # 2) Tell it to build with support for C++ exceptions (see above)
-   # 3) Skip linker flags error which happens with -soname parameter
--  set(ARROW_EMSCRIPTEN_LINKER_FLAGS "-sWASM_BIGINT=1 -fexceptions -Wno-error=linkflags")
--  set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS
--      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
--  set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS
--      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
--  set(CMAKE_SHARED_LINKER_FLAGS "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
-+  # 4) Record $ORIGIN as an RPATH, so that Pyodide can locate
-+  #    libarrow_python.so next to the extension modules needing it
-+  # Note: the CMAKE_SHARED_LIBRARY_CREATE_<LANG>_FLAGS and
-+  # CMAKE_SHARED_MODULE_CREATE_<LANG>_FLAGS variables are not used by the
-+  # Ninja generator, so the flags must go through the linker-flags
-+  # variables, which apply to SHARED (libarrow_python) and MODULE (Cython
-+  # extension) targets respectively.
-+  set(ARROW_EMSCRIPTEN_LINKER_FLAGS
-+      "-sWASM_BIGINT=1 -fwasm-exceptions -sSUPPORT_LONGJMP=wasm -Wno-error=linkflags")
-+  set(ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS
-+      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS} '-Wl,-rpath,$ORIGIN'")
-+  set(CMAKE_SHARED_LINKER_FLAGS "${ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS}")
-+  set(CMAKE_MODULE_LINKER_FLAGS "${ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS}")
-   if(ARROW_TESTING)
-     # Deeply nested tests need a larger stack (1 MiB).
-     set(ARROW_EMSCRIPTEN_TEST_STACK_SIZE 1048576)
-```
-
-**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +4/-0)
-```diff
-@@ -2171,6 +2171,10 @@ function(build_protobuf)
-     set(PROTOBUF_HOST_CMAKE_ARGS
-         "-DCMAKE_CXX_FLAGS="
-         "-DCMAKE_C_FLAGS="
-+        # Explicitly set the C++ standard for the host build. Without this,
-+        # Abseil may be compiled with the host compiler's default standard,
-+        # which can be older than C++17.
-+        "-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}"
-         "-DCMAKE_INSTALL_PREFIX=${PROTOBUF_HOST_PREFIX}"
-         -Dprotobuf_BUILD_TESTS=OFF
-         -Dprotobuf_DEBUG_POSTFIX=
-```
-
-**File**: `dev/tasks/tasks.yml` (modified, +1/-1)
-```diff
-@@ -493,7 +493,7 @@ tasks:
-     params:
-       env:
-         UBUNTU: 22.04
--        PYTHON: 3.12
-+        PYTHON: 3.14
-       image: conda-python-emscripten
- 
-   test-conda-python-3.11-hypothesis:
-```
-
-**File**: `docs/source/developers/cpp/emscripten.rst` (modified, +5/-4)
-```diff
-@@ -34,9 +34,9 @@ activate it using the commands below (see https://emscripten.org/docs/getting_st
-    git clone https://github.com/emscripten-core/emsdk.git
-    cd emsdk
-    # replace <version> with the desired EMSDK version.
--   # e.g. for Pyodide 0.26, you need EMSDK version 3.1.58
-+   # e.g. for Pyodide 314.0.x, you need EMSDK version 5.0.3
-    # the versions can be found in the Makefile.envs file in the Pyodide repo:
--   # https://github.com/pyodide/pyodide/blob/10b484cfe427e076c929a55dc35cfff01ea8d3bc/Makefile.envs
-+   # https://github.com/pyodide/pyodide/blob/314.0.7/Makefile.envs
-    ./emsdk install <version>
-    ./emsdk activate <version>
-    source ./emsdk_env.sh
-@@ -49,8 +49,9 @@ versions of emsdk tools.
- .. code:: shell
- 
-    # install Pyodide build tools.
--   # e.g., for version 0.26 of Pyodide, pyodide-build 0.26 and later work
--   pip install "pyodide-build>=0.26"
-+   # pyodide-build is versioned independently of Pyodide.
-+   # For Pyodide 314.0.x, pyodide-build 0.39.2 and later work well
-+   pip install "pyodide-build>=0.39.2"
- 
- Then build with the ``ninja-release-emscripten`` CMake preset,
- like below:
-```
-
-**File**: `python/CMakeLists.txt` (modified, +3/-1)
-```diff
-@@ -111,7 +111,9 @@ if("$ENV{CMAKE_EXPORT_COMPILE_COMMANDS}" STREQUAL "1")
-   set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
- endif()
- 
--if(UNIX)
-+# On Emscripten, the equivalent $ORIGIN runtime path is added
-+# through the linker flags in SetupCxxFlags.cmake instead
-+if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
-   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-   # In the event that we are bundling the shared libraries (e.g. in a
-   # manylinux1 wheel), we need to set the RPATH of the extensions to the
-```
-
-**File**: `python/pyarrow/tests/test_csv.py` (modified, +1/-0)
-```diff
-@@ -2202,6 +2202,7 @@ def test_write_csv_decimal(tmpdir, type_factory):
-     assert out.column('col').cast(type) == table.column('col')
- 
- 
-+@pytest.mark.threading
- def test_read_csv_gil_deadlock():
-     # GH-38676
-     # This test depends on several preconditions:
-```
-
----
-
-### Incident Patch 3: `b5dd1041` (2026-11-13)
-**Commit Message**: MINOR: [Docs] Fix compatibility spelling (#55574)
-
-### Rationale for this change
-
-While I was going through the Apache Arrow codebase as someone who is new to open source, I came across a small spelling mistake in the R packaging documentation. I thought I'd take the opportunity to fix it.
-
-### What changes are included in this PR?
-
-A minor spelling correction in the R packaging documentation. No functional changes.
-
-### Are these changes tested?
-
-Not applicable. This is a documentation-only change.
-
-### Are there any user-facing changes?
-
-No functional user-facing changes. Only a documentation correction.
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [O] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [O] Human
-- [ ] AI
-- [ ] Not reviewed
-
-This might be a very small contribution, but it's my first ever open-source contribution, so it means quite a lot to me. I'm looking forward to continuing to explore the codebase, learn more about the project, and hopefully contribute more in the future.
-
-Thanks for maintaining Apache Arrow and for making it welcoming to new contributors like me!
-
-Authored-by: Sumedh Pimplikar <[REDACTED_EMAIL]>
-Signed-off-by: N
-
-**File**: `r/PACKAGING.md` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ _This step must be done by the current package maintainer._
- 
- - [ ] CRAN has accepted the submission.
- - [ ] Tag the tip of the CRAN-specific release branch with `r-universe-release`; e.g. `git tag -f r-universe-release maint-X.Y.Z-r && git push upstream r-universe-release --force`
--- [ ] Add a new line to the matrix in the [backwards compatability job](https://github.com/apache/arrow/blob/main/dev/tasks/r/github.linux.arrow.version.back.compat.yml).
-+- [ ] Add a new line to the matrix in the [backwards compatibility job](https://github.com/apache/arrow/blob/main/dev/tasks/r/github.linux.arrow.version.back.compat.yml).
- - [ ] (patch releases only) Update the package version in `ci/scripts/PKGBUILD`, `r/DESCRIPTION`, and `r/NEWS.md`.
- - [ ] (CRAN-only releases) Rebuild news page with `pkgdown::build_news()` and submit a PR to the asf-site branch of the docs site with the contents of `arrow/r/docs/news/index.html` replacing the current contents of `arrow-site/docs/r/news/index.html`.
- - [ ] (CRAN-only releases) Bump the version number in `r/pkgdown/assets/versions.json`, and update this on the [the `asf-site` branch of the docs site](https://github.com/apache/arrow-site) too..
+ @pytest.mark.parquet
+ def test_parquet_read_options():
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55631** (closed): GH-55630: [C++][CI] Append expected prefix on ResolveSimdjsonResult error (@raulcd)
 - **PR #55610** (closed): GH-55503: [C++] Fix Float16 memo table keys built from raw bits (@AnuragRaut08)
+- **PR #55589** (2026-11-16): GH-55587: Install Node 24 for latest Azurite on Ubuntu 24.04 dockerfile (@raulcd)
 - **PR #55574** (2026-11-13): MINOR: [Docs] Fix compatibility spelling (@Sumdiboii)
-- **PR #55496** (2026-11-12): GH-55495: [Packaging][deb] Extract source archive like dpkg-source in apt/build.sh (@kou)
-- **PR #55492** (closed): GH-55478: [R] Vendored dependencies to enable parquet (biggest change, smallest tarball) (@jonkeane)
-- **PR #55485** (2026-11-12): GH-38983: [Python] Bug in pyarrow.from_pandas() when input has MultiIndex index columns having non-string names (@thisisnic)
-- **PR #55482** (2026-11-11): MINOR: [CI] Bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #55572** (closed): GH-55571: [C++][Parquet] Honor configured column encoding on dictionary fallback (@ryanvickr)
+- **PR #55498** (2026-11-16): GH-55497: [C++] Avoid reusing simdjson values after failed get() (@wgtmac)
 
 ---
 
@@ -1984,32 +1527,31 @@ Signed-off-by: N
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-51043: [Python] Reject null required Arrow objects
+## X. GH-51293: [Python] Reject a null Expression in two public APIs
 
 **RULE**:
-When implementing operations in `python/pyarrow/_acero.pyx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/pyarrow/_compute.pyx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0974e94e`: GH-51043: [Python] Reject null required Arrow objects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc7ee12b`: GH-51293: [Python] Reject a null Expression in two public APIs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/_acero.pyx`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/_compute.pyx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            if expr is None:
-                raise TypeError("Expression must not be None")
+    def equals(self, Expression other not None):
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    def equals(self, Expression other):
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0974e94e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc7ee12b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

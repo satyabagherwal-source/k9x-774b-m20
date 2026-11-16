@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T13:38:37.135Z",
-    "lastVerified": "2026-11-16T13:38:37.135Z",
+    "lastChecked": "2026-11-16T14:07:05.313Z",
+    "lastVerified": "2026-11-16T14:07:05.313Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -371,8 +371,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T11:45:06.343Z",
-    "lastVerified": "2026-11-16T11:45:06.343Z",
+    "lastChecked": "2026-11-16T14:07:05.304Z",
+    "lastVerified": "2026-11-16T14:07:05.304Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -585,8 +585,8 @@
     "officialUrl": "https://github.com/surrealdb/surrealdb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T02:55:45.115Z",
-    "lastVerified": "2026-11-15T02:55:45.115Z",
+    "lastChecked": "2026-11-16T14:07:03.107Z",
+    "lastVerified": "2026-11-16T14:07:03.107Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-surrealdb-surrealdb",
@@ -1604,9 +1604,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-16T02:25:51.520Z",
+    "lastChecked": "2026-11-16T14:07:00.496Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-16T02:25:51.520Z"
+    "lastVerified": "2026-11-16T14:07:00.496Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -7472,9 +7472,9 @@
   "kubeshark-kubeshark": {
     "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
-    "lastChecked": "2026-11-15T04:43:54.621Z",
+    "lastChecked": "2026-11-16T14:06:57.798Z",
     "revisionIdentifier": "b79aa01a",
-    "lastVerified": "2026-11-15T04:43:54.621Z"
+    "lastVerified": "2026-11-16T14:06:57.798Z"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -9133,14 +9133,14 @@
     "officialUrl": "https://github.com/apache/arrow",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-14T17:51:06.930Z",
-    "lastVerified": "2026-11-14T17:51:06.930Z",
+    "lastChecked": "2026-11-16T14:06:56.665Z",
+    "lastVerified": "2026-11-16T14:06:56.665Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-arrow",
-    "contentHash": "f420d583df88f4e9997a00c7e7f8211c1878d99abf3c17b2b74e95110de3b98f",
+    "contentHash": "ecedefc29c9af079a224ae5fdced58a2ae84c498b3d0e035dccd5a5719d7afaa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11364,9 +11364,9 @@
   "scrapy-plugins-scrapy-splash": {
     "name": "scrapy-splash",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-splash",
-    "lastChecked": "2026-11-11T19:53:27.481Z",
+    "lastChecked": "2026-11-16T14:06:52.764Z",
     "revisionIdentifier": "72a87882",
-    "lastVerified": "2026-11-11T19:53:27.481Z"
+    "lastVerified": "2026-11-16T14:06:52.764Z"
   },
   "oblador-hush": {
     "name": "hush",
@@ -11519,12 +11519,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "signerlabs-shipswift": {
-    "name": "signerlabs/ShipSwift",
+    "name": "ShipSwift",
     "officialUrl": "https://github.com/signerlabs/ShipSwift",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-13T02:31:57.733Z",
-    "lastVerified": "2026-11-13T02:31:57.733Z",
+    "lastChecked": "2026-11-16T14:06:55.264Z",
+    "lastVerified": "2026-11-16T14:06:55.264Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-signerlabs-shipswift",
@@ -11533,7 +11533,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d05d75e7"
   },
   "hf-liquidai-lfm3-audio-2b": {
     "name": "LiquidAI/LFM3-Audio-2B",
