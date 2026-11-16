@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T15:33:29.310Z",
-  "total_verified_learnings": 8779,
+  "last_updated": "2026-11-16T15:51:48.505Z",
+  "total_verified_learnings": 8782,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19131,
+  "total_items": 19152,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111973,10 +111973,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "ba8940f6",
-      "content_hash": "922c96e8fa194470555a2082b7c2b9ec918bb0d9df287b5929fe7aaea74b5e81",
+      "source_version": "f7254f67",
+      "content_hash": "abef2f7b2be93bd7a6ea3048ffea0fc11f8daf88f1f32a5ad90474592c35da17",
       "domain_letter": "B",
-      "persisted_at": "2026-11-15T05:31:52.778Z"
+      "persisted_at": "2026-11-16T15:51:12.898Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -111985,10 +111985,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "d3bfd511",
-      "content_hash": "9b747dcdda7164241905f576c9b25d51bd09cf5aa55bc165c35aa0b5a75944d0",
+      "source_version": "f7254f67",
+      "content_hash": "f0175ed555e29bf2cdb3c9b11d0e0ecf362b4386ba5cc1f62ccd7475d2540f03",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:45:49.776Z"
+      "persisted_at": "2026-11-16T15:51:13.010Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -114997,10 +114997,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "repository": "weaviate/weaviate",
-      "source_version": "927ec35c",
-      "content_hash": "525f4cbc311f4186b253080e5c7f2fd3c57b450ab4ea4194bc4f168e963dc5bc",
+      "source_version": "ca73857d",
+      "content_hash": "ebded646727ec43d1afb77911df9f663a817a12a60a5f551d0259b5849cd6030",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T18:52:34.649Z"
+      "persisted_at": "2026-11-16T15:51:14.736Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate",
@@ -115009,10 +115009,10 @@
       "relative_path": "08_VERIFICATION/weaviate-weaviate-verification-protocol-empirical-defect-shield-for-weaviate-wea.md",
       "title": "Verification Protocol: Empirical Defect Shield for weaviate/weaviate",
       "repository": "weaviate/weaviate",
-      "source_version": "927ec35c",
-      "content_hash": "ebfd8f8b89943fc59269e01da573ae86dab3c7afbb8437fde7217732aa78994a",
+      "source_version": "ca73857d",
+      "content_hash": "ded7fad6c7d9c8e8ac25e9ec0ccc6c1ca3de397dbd1bd1230f8d2336b1646512",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:52:34.713Z"
+      "persisted_at": "2026-11-16T15:51:14.846Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
@@ -213940,8 +213940,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "d3bfd511",
-      "content_hash": "1066cef6500a06b45da95fb8a68f2a4793b34373c4344ecfefe7369b630bf411",
+      "source_version": "f7254f67",
+      "content_hash": "807e9e43dbf8cee760a1f8a9045ca01f60da9053e145bf289d7f1d383eebd4f5",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -213952,7 +213952,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "update all go dependencies main",
+          "title": "update cilium-{runtime,builder}",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -213976,7 +213976,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T03:45:49.049Z",
+      "verified_at": "2026-11-16T15:51:12.460Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233332,14 +233332,19 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "6498b4d7",
-      "content_hash": "02cbae7b6441cc980dfad1f730d2c9fd10b226f814e7d5403d048d66bbe684f0",
+      "source_version": "3d2d59b5",
+      "content_hash": "82d2d7901fd831d2752a8b46c970d12d0f9366855ca56a0ac86562d799724d0f",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
         {
           "number": 8522,
           "title": "ship the .icns when Assets.car cannot be compiled",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8753,
+          "title": "built-in ad and tracker blocking for runtime templates",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -233348,7 +233353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:03:10.949Z",
+      "verified_at": "2026-11-16T15:51:00.194Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233390,10 +233395,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "repository": "tw93/Pake",
-      "source_version": "6498b4d7",
-      "content_hash": "8012f8f870342ee1636df9384b4b0bdf9ac91fd58b665cdfefd02715e95faa9e",
+      "source_version": "3d2d59b5",
+      "content_hash": "845bfe29986f5e1e31b085bce23cd4cfaf31a79ba8f845f269e22f0c8eaa61a3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:03:11.371Z"
+      "persisted_at": "2026-11-16T15:51:00.622Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake",
@@ -233402,10 +233407,10 @@
       "relative_path": "08_VERIFICATION/tw93-pake-verification-protocol-empirical-defect-shield-for-tw93-pake.md",
       "title": "Verification Protocol: Empirical Defect Shield for tw93/Pake",
       "repository": "tw93/Pake",
-      "source_version": "6498b4d7",
-      "content_hash": "ffb1d31c05637f2105a3d4e53c2cd4dbf0071dcf78e7bca98be36d230ba082ee",
+      "source_version": "3d2d59b5",
+      "content_hash": "4bd97747aacd68957336049d68d0912351a7cfd2c98b77e8091ce5848f8f504a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:03:11.473Z"
+      "persisted_at": "2026-11-16T15:51:00.730Z"
     },
     "learn-github-aquasecurity-trivy": {
       "learning_id": "learn-github-aquasecurity-trivy",
@@ -233536,9 +233541,9 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "1804c10c77714d4a1fe6c00d960cefa8a9daee4b17560a9f0f03ed5acf225497",
+      "content_hash": "85d53bac871a57c5d63307c8d0754866d925e1d13bd547e65adeb2e60f337011",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:03:30.418Z"
+      "persisted_at": "2026-11-16T15:51:46.083Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings",
@@ -233548,9 +233553,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tw93-pake-learnings",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "aaf259d92191ebc7f749bcc1f46df0f4aef9dd10e5f94e67816bb12152612e13",
+      "content_hash": "a97e28276262bd0d24f9de3d48ba20fcbc5ae695de0fb56d8cfe88c7dc53de9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:03:30.541Z"
+      "persisted_at": "2026-11-16T15:51:46.215Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -254436,6 +254441,329 @@
       "content_hash": "7147346481659a9b7c4906af288479a980d213cbde764fb9b2f302984b01df8d",
       "domain_letter": "H",
       "persisted_at": "2026-11-16T15:33:28.491Z"
+    },
+    "rule-8753": {
+      "learning_id": "rule-8753",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8753,
+      "title": "built-in ad and tracker blocking for runtime templates",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "3d2d59b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:51:00.194Z"
+    },
+    "candidate_directive-built-in-ad-and-tracker-blocking-for-runtime-templates": {
+      "item_id": "candidate_directive-built-in-ad-and-tracker-blocking-for-runtime-templates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YHWH-built-in-ad-and-tracker-blocking-for-runtime-templates.md",
+      "title": "built-in ad and tracker blocking for runtime templates",
+      "repository": "tw93-pake-learnings",
+      "source_version": "HEAD",
+      "content_hash": "617d0b7d734ee382e564bb44317f763de5b1ff9abb5f7a4c97831274a4c5e01d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:51:45.954Z"
+    },
+    "learn-github-webrecorder-pywb": {
+      "learning_id": "learn-github-webrecorder-pywb",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "webrecorder/pywb",
+      "repository": "webrecorder/pywb",
+      "slug": "webrecorder-pywb",
+      "platform": "github",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "876fff4c",
+      "content_hash": "00d76bf3c206cbd064ea7e391e82b5b5ff316f19c7e6bbc328ebbdf1f55713fd",
+      "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8754,
+          "title": "Empirical Invariant Guard in http.py",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T15:51:03.772Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8754": {
+      "learning_id": "rule-8754",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8754,
+      "title": "Empirical Invariant Guard in http.py",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "876fff4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:51:03.772Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-http-py": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-http-py",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YIKJ-empirical-invariant-guard-in-http-py.md",
+      "title": "Empirical Invariant Guard in http.py",
+      "repository": "webrecorder-pywb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "15755b8728b7cf1eace28c0f8d4b0c1ee19ebce38ca63473137473fa31750252",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T15:51:46.831Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-pywb-technical-construction-intelligence-webrecorder-pywb-core-invar.md",
+      "title": "Technical Construction Intelligence: webrecorder/pywb Core Invariants",
+      "repository": "webrecorder/pywb",
+      "source_version": "876fff4c",
+      "content_hash": "b446a515fbacff32a8dcc966332a3df12671d5da7474c5444bdf5074eacb08f1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:51:04.202Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/webrecorder-pywb-verification-protocol-empirical-defect-shield-for-webrecorder-p.md",
+      "title": "Verification Protocol: Empirical Defect Shield for webrecorder/pywb",
+      "repository": "webrecorder/pywb",
+      "source_version": "876fff4c",
+      "content_hash": "7c5da5face64e1d447ad697f21bbc3fc52546987d36db7e7099ac1284268e028",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T15:51:04.308Z"
+    },
+    "learn-github-0xcub3-wblock": {
+      "learning_id": "learn-github-0xcub3-wblock",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "0xCUB3/wBlock",
+      "repository": "0xCUB3/wBlock",
+      "slug": "0xcub3-wblock",
+      "platform": "github",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "03e46e4a",
+      "content_hash": "528710f73deb94446f1c6aa4751d938d9f1340055bd28b458d3d6ef3cc897768",
+      "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8755,
+          "title": "Respect Spotify music exceptions across blockers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T15:51:08.330Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8755": {
+      "learning_id": "rule-8755",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8755,
+      "title": "Respect Spotify music exceptions across blockers",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "03e46e4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:51:08.330Z"
+    },
+    "candidate_directive-respect-spotify-music-exceptions-across-blockers": {
+      "item_id": "candidate_directive-respect-spotify-music-exceptions-across-blockers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XP4Y-respect-spotify-music-exceptions-across-blockers.md",
+      "title": "Respect Spotify music exceptions across blockers",
+      "repository": "0xCUB3/wBlock",
+      "source_version": "03e46e4a",
+      "content_hash": "b47685efdcbb6effd15462aca5c3bbcbc95a3c9409cd6805c240e59766296f17",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:51:08.678Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-technical-construction-intelligence-0xcub3-wblock-core-invariants.md",
+      "title": "Technical Construction Intelligence: 0xCUB3/wBlock Core Invariants",
+      "repository": "0xCUB3/wBlock",
+      "source_version": "03e46e4a",
+      "content_hash": "03b8c23fa4ea214d1e381d47b5f55821bfb5b57e357debe0c4b1426b6698ecdc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:51:08.790Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/0xcub3-wblock-verification-protocol-empirical-defect-shield-for-0xcub3-wblock.md",
+      "title": "Verification Protocol: Empirical Defect Shield for 0xCUB3/wBlock",
+      "repository": "0xCUB3/wBlock",
+      "source_version": "03e46e4a",
+      "content_hash": "95806d85f7d106eab4ace9801b48b0b5ba5b572fbff09f73cd7bee51fae864ac",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T15:51:08.899Z"
+    },
+    "candidate_directive-update-cilium-runtime-builder": {
+      "item_id": "candidate_directive-update-cilium-runtime-builder",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XSB5-update-cilium-runtime-builder.md",
+      "title": "update cilium-{runtime,builder}",
+      "repository": "cilium/cilium",
+      "source_version": "f7254f67",
+      "content_hash": "da7b3f7599c21d27650d7285a3fe6495b2fe142806110a04ecbaa64acf2c8785",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:51:12.786Z"
+    },
+    "learn-github-weaviate-weaviate": {
+      "learning_id": "learn-github-weaviate-weaviate",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "weaviate/weaviate",
+      "repository": "weaviate/weaviate",
+      "slug": "weaviate-weaviate",
+      "platform": "github",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "ca73857d",
+      "content_hash": "c813ade6f401d1b29c6f15fa8be85cb4a4ad4c9444ebac3d697e13abcbf251e8",
+      "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8756,
+          "title": "Empirical Invariant Guard in manager_finalize_refusal_test.go",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T15:51:14.293Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8756": {
+      "learning_id": "rule-8756",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8756,
+      "title": "Empirical Invariant Guard in manager_finalize_refusal_test.go",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "ca73857d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T15:51:14.293Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-manager_finalize_refusal_test-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-manager_finalize_refusal_test-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XTQ7-empirical-invariant-guard-in-manager_finalize_refusal_test-go.md",
+      "title": "Empirical Invariant Guard in manager_finalize_refusal_test.go",
+      "repository": "weaviate/weaviate",
+      "source_version": "ca73857d",
+      "content_hash": "fa8097887fdded20148d380427b6344fe6d6c1dc03b84f3419bb5d62a6e3d56c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T15:51:14.626Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-pywb-learnings-technical-construction-intelligence-webrecorder-pywb-.md",
+      "title": "Technical Construction Intelligence: webrecorder-pywb-learnings Core Invariants",
+      "repository": "webrecorder-pywb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2241849f22d6cfe0ee0ebc81fb496bd5e18b6a49f3c8d316dcd8fcf79f2a5fdc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:51:46.946Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/webrecorder-pywb-learnings-verification-protocol-empirical-defect-shield-for-web.md",
+      "title": "Verification Protocol: Empirical Defect Shield for webrecorder-pywb-learnings",
+      "repository": "webrecorder-pywb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e0f991fd0d8750c506d0c4b8e1638413960b557cafb16171fa7c1db5d9f53f7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T15:51:47.074Z"
+    },
+    "candidate_directive-engine-respect-spotify-music-exceptions-across-blockers": {
+      "item_id": "candidate_directive-engine-respect-spotify-music-exceptions-across-blockers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YJO1-engine-respect-spotify-music-exceptions-across-blockers.md",
+      "title": "engine): Respect Spotify music exceptions across blockers",
+      "repository": "0xcub3-wblock-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a5d98321e3f09cb5e386c3783b22c451b445a31ec5a1bc328d2e6085a5ed6f9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:51:48.252Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-learnings-technical-construction-intelligence-0xcub3-wblock-learni.md",
+      "title": "Technical Construction Intelligence: 0xcub3-wblock-learnings Core Invariants",
+      "repository": "0xcub3-wblock-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ba3bf6cf64d2d2cfebc9a2b1c3fd76ffe319ff8966e3576f3b2b1bb6f96146f0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T15:51:48.370Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/0xcub3-wblock-learnings-verification-protocol-empirical-defect-shield-for-0xcub3.md",
+      "title": "Verification Protocol: Empirical Defect Shield for 0xcub3-wblock-learnings",
+      "repository": "0xcub3-wblock-learnings",
+      "source_version": "HEAD",
+      "content_hash": "927b7da8004de9b235bf635524ff377c65bae13dee11b33a8011c635b378ea21",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T15:51:48.505Z"
     }
   },
   "ai-builder-brain": {

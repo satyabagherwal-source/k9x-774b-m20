@@ -10322,3 +10322,9 @@ Every entry in this ledger must capture:
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `5870f15d` | Multi-dimensional audit evidence | 2026-11-16T15:10:08.494Z |
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `2b007740` | Multi-dimensional audit evidence | 2026-11-16T15:33:14.133Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `573ca53b` | Multi-dimensional audit evidence | 2026-11-16T15:33:23.278Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `3d2d59b5` | Multi-dimensional audit evidence | 2026-11-16T15:51:00.349Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `876fff4c` | Multi-dimensional audit evidence | 2026-11-16T15:51:03.926Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `03e46e4a` | Multi-dimensional audit evidence | 2026-11-16T15:51:08.503Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f7254f67` | Multi-dimensional audit evidence | 2026-11-16T15:51:12.615Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `ca73857d` | Multi-dimensional audit evidence | 2026-11-16T15:51:14.450Z |
+| `learn-dom-l-497d3321` | `project://tw93-pake` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md` | 2026-11-16T15:51:45.334Z |

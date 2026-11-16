@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source**: github ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
-> **Source Version**: `6cd9c5b8`  
+> **Source Version**: `03e46e4a`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:48:12.792Z  
+> **Timestamp**: 2026-11-16T15:51:07.592Z  
 > **Learning ID**: `learn-github-0xcub3-wblock`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:48:12.786Z  
+> **Harvest Timestamp**: 2026-11-16T15:51:07.585Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3230 stars
+- **Stars / Engagement**: 3241 stars
 
 ---
 
@@ -576,10 +576,11 @@ pub struct Plan {
     text_hashes: Vec<u64>,
     /// Where the blocks exceptions can reach go, when they go to one blocker.
     wide: Option<Wide>,
+    capacity_error: Option<String>,
 }
 
 /// What one blocker may hold. The wide blocker gains rules from every list,
-/// so a plan has one only while its estimated output stays within these.
+/// so a plan has one only while its measured output stays within these.
 #[derive(Debug, Clone, Copy, Deserialize)]
 #[serde(default)]
 pub struct Limits {
@@ -593,10 +594,7 @@ pub struct Limits {
 impl Default for Limits {
     fn default() -> Self {
         Limits { rules: 150_000, bytes: 19_000_000 }
-    }
-}
 
-/// Where a plan's blocks 
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/ast.rs`
@@ -940,6 +938,7 @@ fn plan_cmd(args: &[String]) {
     }
     let start = Instant::now();
     let plan = Plan::new(request);
+    plan.check_capacity().unwrap_or_else(|error| panic!("{error}"));
     let plan_ms = start.elapsed().as_secs_f64() * 1000.0;
     for target in 0..plan.target_count() {
         let start = Instant::now();
@@ -2199,11 +2198,11 @@ impl Seen {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1113** (2026-11-12): **[BUG] massive desync and bugs**
-  *Symptoms*: ### Describe the bug  I am on claude, i click the button to show the wblock popup, and first of all it shows for a completely different tab (uguu.se)(its the newest tab in private window) also i cant turn off the zapper. Also i have diff profiles so it might be the cause of desync too.  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  [wBlock_logs_12-11-2026.txt](https://github.com/user-attachments/files/34745465/wBlock_logs_12-11-2026.txt)  ### Environment  - OS: [e.g. iOS 26.2.1 - wBlock Version: 3.2.3 - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1115** (2026-11-16): **[BUG] wBlock alpha breaks Spotify**
+  *Symptoms*: ### Describe the bug  When opening open.spotify.com, playback does not work, it just skips around songs and puts up the message Spotify can’t play this now. I was hoping the new alpha might fix this and be better than uBOL in this way, since it can run more scriptlets from my understanding.  ### To reproduce  Steps to reproduce the behavior: 1. Go to 'open.spotify.com’ 2. Play a song or album. 3. See it skip around and error out.   ### Expected behavior  It would allow playback and skip audio ads in the player like uBO. Thanks for all the great work! You’re amazing!  ### Screenshot or video  _No response_  ### Environment  - OS: [iPadOS 27.3 beta] - wBlock Version: [4.0.0 alpha]   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  Logs attached  [wBlock_logs_11-15-2026.txt](https://github.com/user-attachments/files/34896152/wBlo
 
-- **Issue #1111** (2026-11-11): **[BUG]: UI glitches in blocler list**
-  *Symptoms*: ### Describe the bug  - when activate an entry, list is "hopping" - the gear symbol in the on/off switch missplaced  ### To reproduce  see video  ### Expected behavior  _No response_  ### Screenshot or video  https://github.com/user-attachments/assets/973b4b49-6d68-4414-8be0-e6bdcfd2925c  ### Environment  - OS: [e.g. iOS 27.2] - wBlock Version:  3.2.3   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [ ] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [ ] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1114** (2026-11-14): **[BUG] [iOS - wBlock] Bypass Paywalls Clean fails on Télérama and Courrier International (works on Le Monde)**
+  *Symptoms*: ### Describe the bug  ### Describe the bug The **Bypass Paywalls Clean** userscript fails to bypass paywalls on certain French news websites—specifically **Télérama** and **Courrier International**—when running through the **wBlock** app on iOS.   However, the paywall bypass works properly on **Le Monde** (`lemonde.fr`) with the exact same setup.  ### Active wBlock Configuration - **Filter enabled:** `Bypass Paywalls Clean Filter` - **Userscripts enabled:**    - `Bypass Paywalls Clean`   - `Bypass Paywalls Clean - fr`  ### Context & Comparison - **App/Extension:** wBlock (iOS) - **Affected websites (not working):**    - https://www.telerama.fr   - https://www.courrierinternational.com - **Working website:**    - https://www.lemonde.fr (works as expected) - **Browser/App Comparison:** This issue does **not** occur when using *Stay for Safari* on the same iOS device with the exact same userscripts. Both Télérama and Courrier International are bypassed properly in Safari via Stay.    ### To reproduce  Steps to reproduce the behavior: 1. In wBlock on iOS, enable the `Bypass Paywalls Clean Filter` as well as both `Bypass Paywalls Clean` and `Bypass Paywalls Clean - fr` userscripts. 2. Open a paywalled article on `lemonde.fr` and observe that it unlocks properly. 3. Navigate to a paywalled article on `telerama.fr` or `courrierinternational.com`. 4. Observe that the paywall remains active and the full article content stays locked/hidden.   ### Expected behavior  _No response_  ### S
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2220,702 +2219,871 @@ impl Seen {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `990783e2` (2026-11-10)
-**Commit Message**: fix(engine): leave more room when packing blocks into the fewest blockers
+### Incident Patch 1: `03e46e4a` (2026-11-16)
+**Commit Message**: fix(engine): Respect Spotify music exceptions across blockers
 
-The size estimate is calibrated on two setups and nothing re-plans a
-blocker that compiles over Safari's limit, so cap an estimate at 70% of
-the limit instead of 85%.
-
-**File**: `Packages/wblock-engine/crates/wbe/src/apply.rs` (modified, +6/-4)
+**File**: `extension-src/background.js` (modified, +4/-2)
 ```diff
-@@ -375,8 +375,10 @@ impl Size {
-     const SHARED: (f64, f64, f64) = (1.5, 100.0, 8.5);
-     const TAKEN: (f64, f64, f64) = (1.7, 100.0, 3.0);
-     const REST: (f64, f64, f64) = (1.0, 100.0, 1.5);
--    /// The part of a limit an estimate may fill.
--    const ROOM: f64 = 0.85;
-+    /// The part of a limit an estimate may fill. The estimate is calibrated on
-+    /// two setups and nothing re-plans a blocker that compiles over its limit,
-+    /// so leave room for list mixes that compile fatter than estimated.
-+    const ROOM: f64 = 0.7;
- 
-     fn add(&mut self, line: &str, (rules, each, bytes): (f64, f64, f64)) {
-         self.rules += rules;
-@@ -2088,7 +2090,7 @@ mod tests {
-     fn blocks_exceptions_reach_share_one_blocker() {
-         // Room in the wide blocker for what it takes and no more.
-         let plan = plan_within(
--            9,
-+            11,
-             json!([{ "id":"left", "text":"||plain.example^\n@@||cdn.ads.example/ok.js" },
-                    { "id":"right", "text":"||ads.example^\n/banner.\n||other.example^\n||com/track.js" }]),
-             json!([{"slot":1,"lists":[{"list":0}]},{"slot":2,"lists":[{"list":1}]}]),
-@@ -2124,7 +2126,7 @@ mod tests {
-         assert_eq!(held(&one), [302, 0, 0, 0, 0]);
-         assert!((1..5).all(|t| actions(&one, t).is_empty()));
-         // Room for 170 rules each: two blockers, as full as each other.
--        let two = plan_within(200, lists.clone(), targets.clone());
-+        let two = plan_within(243, lists.clone(), targets.clone());
-         let counts = held(&two);
-         assert_eq!(counts.iter().sum::<usize>(), 302);
-         assert!(counts[..2].iter().all(|c| (130..170).contains(c)) && counts[2..] == [0, 0, 0], "{counts:?}");
+@@ -2000,7 +2000,8 @@
+   // supported dynamic DNR but did not expose their quota, so keep a
+   // conservative compatibility ceiling only for that legacy tier.
+   const REMOVE_PARAM_DNR_OLD_SAFARI_FALLBACK_LIMIT = 5000;
+-  const REDIRECT_DNR_STATUS_REPORT_KEY = "wblockRedirectDNRStatusReport";
++  // Old entries could claim success after native rejected the report.
++  const REDIRECT_DNR_STATUS_REPORT_KEY = "wblockRedirectDNRStatusReportV2";
+   const REDIRECT_DNR_STATUS_REPORT_THROTTLE_MS = 6 * 60 * 60 * 1000;
+   let removeParamDNRInstallPromise = null;
+   let removeParamDNRRulesCache = null;
+@@ -2163,12 +2164,13 @@
+       if (shouldReport) {
+         // Priority path: a slow queued request (script updates wait up to
+         // two minutes) must not hold this report until the page suspends.
+-        await sendPriorityNativeMessage({
++        const response = await sendPriorityNativeMessage({
+           action: "reportRedirectDNRStatus",
+           installedRedirects,
+           hostAccess,
+           privateAccess
+         });
++        if (response?.ok !== true) throw new Error("Native host did not save redirect status");
+         await browser.storage.local.set({ [REDIRECT_DNR_STATUS_REPORT_KEY]: status });
+       }
+     } catch (error) {
 ```
 
-**File**: `Packages/wblock-engine/crates/wbe/src/lib.rs` (modified, +1/-1)
+**File**: `scripts/test_redirect_dnr_rules.swift` (modified, +145/-0)
 ```diff
-@@ -19,7 +19,7 @@ pub use parse::parse_line;
- /// Version of everything the engine writes: Safari JSON, runtime rules, and
- /// the serialized per-page engine. Bump it whenever any of them changes for
- /// the same input, so callers discard outputs cached by an older engine.
--pub const OUTPUT_VERSION: u32 = 29;
-+pub const OUTPUT_VERSION: u32 = 30;
- 
- /// The registrable domain (eTLD+1) of `host`, or `None` for a public suffix
- /// or an invalid name.
-```
-
----
-
-### Incident Patch 2: `3a5a91b3` (2026-11-11)
-**Commit Message**: fix(engine): keep a custom blocker's blocks when no list has exceptions
-
-A blocker built outside the shared plan sends a zero rule limit to turn the wide blocker off. A plan with no exceptions still fit that limit, so its blocks went to blockers nobody compiled.
-
-**File**: `Packages/wblock-engine/crates/wbe/src/apply.rs` (modified, +16/-4)
-```diff
-@@ -302,7 +302,8 @@ pub struct Plan {
- #[derive(Debug, Clone, Copy, Deserialize)]
- #[serde(default)]
- pub struct Limits {
--    /// Safari's rule limit per content blocker.
-+    /// Safari's rule limit per content blocker. 0 for a blocker built outside
-+    /// the shared plan: every blocker then keeps its own lists' blocks.
-     pub rules: usize,
-     /// The app's budget for a blocker's JSON.
-     pub bytes: usize,
-@@ -453,9 +454,13 @@ impl Plan {
+@@ -73,9 +73,154 @@ struct RedirectDNRRuleTests {
+         expect(!RemoveParamDNRRuleGenerator.carveOutsAllowed(status: bad, redirectCount: 4, now: now), "fewer installed than planned")
+         expect(!RemoveParamDNRRuleGenerator.carveOutsAllowed(status: good, redirectCount: 4, now: now.addingTimeInterval(4 * 86_400)), "stale report")
+         expect(!RemoveParamDNRRuleGenerator.carveOutsAllowed(status: nil, redirectCount: 4, now: now), "never reported")
++
++        plainExceptions()
++        try savedRules()
+         print("redirect DNR rule tests passed")
      }
  
-     /// The wide blocker: the first of those with the fewest rules assigned.
--    /// None for a single blocker, or when the blocks it would gain do not
--    /// fit it.
-+    /// None for a single blocker, for a zero rule limit, or when the blocks
-+    /// it would gain do not fit it.
-     fn wide(&self) -> Option<Wide> {
-+        // Nothing fits a zero limit, not even a plan with no exceptions.
-+        if self.limits.rules == 0 {
-+            return None;
-+        }
-         let load = |t: &TargetSpec| -> usize {
-             t.lists.iter().map(|a| self.parsed[a.list].count() / a.shard.map_or(1, |(_, n)| n as usize)).sum()
-         };
-@@ -2201,9 +2206,16 @@ mod tests {
-         }))
-         .unwrap();
-         request.limits.rules = 1;
--        let plan = Plan::new(request);
-+        let plan = Plan::new(request.clone());
-         assert!(serde_json::to_string(&rules(&plan, 0)).unwrap().contains("plain"));
-         assert!(serde_json::to_string(&rules(&plan, 1)).unwrap().contains("banner"));
-+        // A zero limit marks a blocker built outside the plan, even when no
-+        // block would go to the wide blocker.
-+        request.lists[1].text = "||other.example^".into();
-+        request.limits.rules = 0;
-+        let plan = Plan::new(request);
-+        assert!(serde_json::to_string(&rules(&plan, 0)).unwrap().contains("plain"));
-+        assert!(serde_json::to_string(&rules(&plan, 1)).unwrap().contains("other"));
-     }
- 
-     #[test]
++    typealias Rule = RemoveParamDNRRuleGenerator.DeclarativeRule
++
++    /// Redirect rules resolved from `lists`, each extracted as its own list, by URL filter.
++    static func redirects(_ lists: String...) -> [String: Rule] {
++        let sources = lists.map { RemoveParamDNRRuleGenerator.extractRedirectLines(from: $0) }
++        let rules = RemoveParamDNRRuleGenerator.generateRules(from: "", redirectSources: sources).rules
++        return Dictionary(
++            rules.filter { $0.action.redirect?.extensionPath != nil }.map { ($0.condition.urlFilter ?? "", $0) },
++            uniquingKeysWith: { first, _ in first }
++        )
++    }
++
++    /// A blocking exception stops the redirect of the requests it covers, and nothing else.
++    static func plainExceptions() {
++        let directives = """
++        ||cdn.example/lib.js$script,redirect=noopjs
++        ||media.example/audio/$media,redirect=noop-1s.mp4,domain=player.example
++        ||media.example/audio/$script,redirect=noopjs,domain=player.example
++        ||media.example/mp3/$media,redirect=noop-1s.mp4,domain=player.example
++        ||ads.media.example^$media,redirect=noop-1s.mp4,domain=player.example
++        ||tags.example/gpt.js$script,redirect=noopjs
++        ||typeless.example/a.js$redirect=noopjs
++        ||party.example/t.js$script,redirect=noopjs
++        ||adhost.example/tag.js$script,redirect=noopjs
++        ||static.site.example/app.js$script,redirect=noopjs
++        ||firm.example/x.js$script,redirect=noopjs,important
++        ||firmer.example/x.js$script,redirect=noopjs,important
++        ||revived.example/x.js$script,redirect=noopjs
++        ||cosmetic.example/x.js$script,redirect=noopjs
++        ||wide.example^$script,redirect=noopjs
++        ||wild.example/v2/sdk.js$script,redirect=noopjs
++        ||wild.example/v2/other.js$script,redirect=noopjs
++        ||hit.metrics.example/g.js$script,redirect=noopjs
++        """
++        let exceptions = """
++        @@||cdn.example^
++        @@||media.example/audio/$media,domain=player.example
++        @@||tags.example/gpt.js$script,domain=news.example
++        @@||typeless.example/a.js$script
++        @@||party.example/t.js$third-party
++        @@*$script,1p,domain=site.example
++        @@*$script,domain=entity.*
++        @@||firm.example^$script
++        @@||firmer.example^$script,important
++        @@||revived.example^$script
++        @@||cosmetic.example^$elemhide
++        @@||cosmetic.example^$document
++        @@||cosmetic.example^$csp=script-src 'self'
++        @@||wide.example/keep.js$script
++        @@||wild.example/*/sdk.js$script
++        @@||metrics.example/g.js
++        """
++        let kept = RemoveParamDNRRuleGenerator.extractRedirectLines(from: exceptions)
++        expect(kept.contains("@@||cdn.example^\n"), "extraction keeps an exception from a list with no redirect")
++        expect(!kept.contains("elemhide") && !kept.contains("csp"), "extraction drops exceptions from other than blocking")
++
++        let rules = redirects(directives, exceptions, "@@||revived.example^$script,badfilter")
++        expectEqual(Set(rules.keys), [
++            "||media.example/audio/", "||media.example/mp3/", "||ads.media.example^", "||tags.example/gpt.js",
++            "||typeless.example/a.js", "||party.example/t.js", "||adhost.example/tag.js",
++            "||static.site.example/app.js", "||firm.example/x.js", "||revived.example/x.js",
++            "||cosmetic.example/x.js", "||wide.example^", "||wild.example/v2/other.js",
++        ], "exceptions drop only the directives they cover")
++        expectEqual(redirects(directives).count, 17, "every directive resolves without the exceptions")
++        expectEqual(redirects(directives)["||media.example/audio/"]!.condition.resourceTypes, ["media"], "the media directive resolves without its exception")
++        expectEqual(rules["||media.example/audio/"]!.condition.resourceTypes, ["script"], "a media exception leaves the script directive")
++
++        let tags = rules["||tags.example/gpt.js"]!
++        expectEqual(tags.condition.excludedDomains, ["news.example"], "a scoped exception is subtracted")
++        expectEqual(RemoveParamDNRRuleGenerator.carveOutLine(for: tags), "@@||tags.example/gpt.js$script,domain=~news.example,important", "the carve-out leaves the excepted site blocked")
++        expectEqual(rules["||typeless.example/a.js"]!.condition.resourceTypes, ["xmlhttprequest"], "an excepted t
 ```
 
-**File**: `Packages/wblock-engine/crates/wbe/src/lib.rs` (modified, +1/-1)
+**File**: `scripts/test_redirect_dnr_status_report.mjs` (modified, +40/-4)
 ```diff
-@@ -19,7 +19,7 @@ pub use parse::parse_line;
- /// Version of everything the engine writes: Safari JSON, runtime rules, and
- /// the serialized per-page engine. Bump it whenever any of them changes for
- /// the same input, so callers discard outputs cached by an older engine.
--pub const OUTPUT_VERSION: u32 = 30;
-+pub const OUTPUT_VERSION: u32 = 31;
+@@ -125,6 +125,7 @@ const loadBackground = ({
+           { id: 1500001, priority: 15100, action: { type: "redirect", redirect: { extensionPath: "/redirects/noop.html" } }, condition: {} }
+         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
+       }
++      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
+       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
+     },
+     permissions: { '{\"origins\":[\"*://*/*\"]}': true },
+@@ -139,7 +140,7 @@ const loadBackground = ({
+   check("report has correct installedRedirects count", statusReport && statusReport.installedRedirects === 2);
+   check("report has correct hostAccess", statusReport && statusReport.hostAccess === true);
+   check("report has correct privateAccess", statusReport && statusReport.privateAccess === false);
+-  check("status is persisted in storage", state.storage.wblockRedirectDNRStatusReport && state.storage.wblockRedirectDNRStatusReport.installedRedirects === 2);
++  check("status is persisted in storage", state.storage.wblockRedirectDNRStatusReportV2 && state.storage.wblockRedirectDNRStatusReportV2.installedRedirects === 2);
+ }
  
- /// The registrable domain (eTLD+1) of `host`, or `None` for a public suffix
- /// or an invalid name.
-```
-
----
-
-### Incident Patch 3: `0ca7fd10` (2026-11-12)
-**Commit Message**: fix(ios): hold off suspension while an app group lock is held
-
-3.2.3 on iOS was killed with 0xDEAD10CC when background time ran out
-mid-update: the auto-update shield waited for the whole run to unwind,
-so a short lock taken during that unwind (a downloaded list being swapped
-in) could still be held when the app suspended.
-
-Every app group flock now goes through FileLock, whose SuspensionGuard
-keeps an expiring activity open while any lock is held. Once suspension
-is imminent it refuses new locks and lets go as soon as the held ones
-are released. macOS has no such API, so the guard is iOS only. The five
-hand-rolled flock loops are gone.
-
-**File**: `scripts/run-ci-tests.sh` (modified, +6/-1)
-```diff
-@@ -137,6 +137,8 @@ compile_direct_test popover-window-shield \
-   wBlock/InfoPresentation.swift wBlock/MacReorderableList.swift scripts/test_popover_window_shield.swift
- compile_direct_test info-popover-state \
-   wBlock/InfoPresentation.swift scripts/test_info_popover_state.swift
-+compile_direct_test file-lock-suspension \
-+  wBlockCoreService/FileLock.swift scripts/test_file_lock_suspension.swift
- compile_direct_test main-window-frame-restore \
-   wBlock/MainWindowFrameRestorer.swift scripts/test_main_window_frame_restore.swift
- compile_direct_test retired-userscript-sources \
-@@ -147,7 +149,7 @@ compile_direct_test userscript-update-operation \
- compile_direct_test userscript-world-isolation scripts/test_userscript_world_isolation.swift
- compile_direct_test tab-selection-isolation wBlock/AppTabView.swift scripts/test_tab_selection_isolation.swift
- compile_direct_test shared-auto-update-lease \
--  wBlockCoreService/SharedAutoUpdateLease.swift scripts/test_shared_auto_update_lease.swift
-+  wBlockCoreService/FileLock.swift wBlockCoreService/SharedAutoUpdateLease.swift scripts/test_shared_auto_update_lease.swift
- compile_direct_test foreground-run-gate \
-   wBlockCoreService/ForegroundRunGate.swift scripts/test_foreground_run_gate.swift
- 
-@@ -215,6 +217,7 @@ compile_core_test tube-cleaner-dearrow scripts/test_tube_cleaner_dearrow_prefere
- compile_core_test sponsorblock-settings-transfer scripts/test_sponsorblock_settings_transfer.swift
- compile_core_test disabled-sites-normalization scripts/test_disabled_sites_normalization.swift
- compile_direct_test filter-update-popup-status \
-+  wBlockCoreService/FileLock.swift \
-   wBlockCoreService/FilterUpdatePopupStatus.swift \
-   scripts/test_filter_update_popup_status.swift
- compile_core_test filter-list-setup scripts/test_filter_list_setup.swift wBlock/FilterListSetup.swift \
-@@ -416,11 +419,13 @@ compile_direct_test pause-store \
- 
- compile_direct_test pending-filter-update-revisions \
-   wBlockCoreService/GroupIdentifier.swift \
-+  wBlockCoreService/FileLock.swift \
-   wBlockCoreService/PendingFilterUpdateRevisions.swift \
-   scripts/test_pending_filter_update_revisions.swift
- 
- compile_direct_test staged-filter-downloads \
-   wBlockCoreService/GroupIdentifier.swift \
-+  wBlockCoreService/FileLock.swift \
-   wBlockCoreService/StagedFilterDownloads.swift \
-   scripts/test_staged_filter_downloads.swift
- 
-```
-
-**File**: `scripts/test_file_lock_suspension.swift` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+import Foundation
-+
-+// App group locks and suspension (0xDEAD10CC in 3.2.3 on iOS and macOS):
-+// a held lock keeps the process from suspending, imminent suspension refuses
-+// new locks, and the process suspends as soon as held ones are released.
-+
-+/// Stands in for performExpiringActivity: runs each activity on its own
-+/// thread and lets the test expire it, as the system does before suspending.
-+final class FakeSystem: @unchecked Sendable {
-+    let condition = NSCondition()
-+    var bodies: [@Sendable (Bool) -> Void] = []
-+    var openActivities = 0
-+    var noBackgroundTime = false
-+
-+    func begin(_ body: @escaping @Sendable (Bool) -> Void) {
-+        condition.lock()
-+        let expiredAtOnce = noBackgroundTime
-+        bodies.append(body)
-+        openActivities += 1
-+        condition.unlock()
-+        Thread.detachNewThread { [self] in
-+            body(expiredAtOnce)
-+            condition.lock(); openActivities -= 1; condition.broadcast(); condition.unlock()
-+        }
-+    }
-+
-+    /// Calls the latest activity's expiration handler alongside its body.
-+    func expire() {
-+        condition.lock()
-+        let body = bodies.last!
-+        openActivities += 1
-+        condition.unlock()
-+        Thread.detachNewThread { [self] in
-+            body(true)
-+            condition.lock(); openActivities -= 1; condition.broadcast(); condition.unlock()
-+        }
-+    }
-+
-+    func waitForActivities(_ count: Int, timeout: TimeInterval = 2) -> Bool {
-+        condition.lock(); defer { condition.unlock() }
-+        let deadline = Date().addingTimeInterval(timeout)
-+        while openActivities != count { if !condition.wait(until: deadline) { return false } }
-+        return true
-+    }
-+}
-+
-+func expect(_ condition: Bool, _ message: String) {
-+    if !condition { print("FAIL: \(message)"); exit(1) }
-+}
-+
-+@main
-+struct FileLockSuspensionTest {
-+    static func main() {
-+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("file-lock-\(UUID())")
-+        try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-+        defer { try? FileManager.default.removeItem(at: directory) }
-+        let path = directory.appendingPathComponent("a.lock").path
-+        let otherPath = directory.appendingPathComponent("b.lock").path
-+
-+        // A held lock keeps the activity open until it is released.
-+        let system = FakeSystem()
-+        let guardian = SuspensionGuard(beginActivity: system.begin)
-+        let lock = FileLock(filePath: path, suspension: guardian)!
-+        expect(lock.tryLock(), "takes a free lock")
-+        expect(system.waitForActivities(1), "holding a lock opens one activity")
-+        lock.unlock()
-+        expect(system.waitForActivities(0), "releasing the last lock ends the activity")
-+
-+        // Imminent suspension refuses new locks and lets go once held ones are released.
-+        expect(lock.tryLock(), "locks again after the activity ended")
-+        system.expire()
-+        Thread.sleep(forTimeInterval: 0.1)
-+        let other = FileLock(filePath: otherPath, suspension: guardian)!
-+        expect(!other.tryLock(), "refuses a new lock once suspension is imminent")
-+        expect(!other.lock(before: Date().addingTimeInterval(5)), "a waiting lock gives up instead of polling on")
-+        let start = Date()
-+        lock.unlock()
-+        expect(system.waitForActivities(0), "releasing the held lock ends the expired activity")
-+        expect(Date().timeIntervalSince(start) < 1, "suspends as soon as the lock is released, not after the unwind timeout")
-+
-+        // Without background time a lock is never taken.
-+        system.noBackgroundTime = true
-+        expect(!other.tryLock(), "no lock without background time")
-+        expect(system.waitForActivities(0), "the refused attempt leaves no activity open")
-+
-+        // After resuming, locks work again.
-+        system.noBackgroundTime = false
-+        expect(other.tryLock(), "locks again after resuming")
-+        other.unlock()
-+        expect(system.waitForActivities(0), "and lets go again")
-+
-+        // The kernel lock itself still excludes another holder.
-+        let first = FileLock(filePath: path, suspension: guardian)!
-+        let second = FileLock(filePath: path, suspension: guardian)!
-+        expect(first.tryLock(), "first holder")
-+        expect(!second.tryLock(), "second holder waits")
-+        first.unlock()
-+        expect(second.tryLock(), "second holder gets it after release")
-+        second.unlock()
-+        expect(system.waitForActivities(0), "every attempt was balanced")
-+
-+        print("file lock suspension: ok")
-+    }
-+}
-```
-
-**File**: `wBlockCoreService/FileLock.swift` (modified, +132/-8)
-```diff
-@@ -1,28 +1,152 @@
- import Foundation
- 
- /// An exclusive `flock` on a file, shared across the app and its extensions
--/// through the app group. Each instance is one lock holder.
-+/// through the app group. Each instance is one lock holder, and every app
-+/// group lock goes through this type.
-+///
-+/// iOS kills a process that suspends while holding one (0xDEAD10CC). So on
-+/// iOS, while any lock is held, `SuspensionGuard.shared` keeps the process
-+/// from suspending. Once suspension is imminent it refuses new locks, and the
-+/// process suspends as soon as the held ones are released. macOS has no API
-+/// for this, so there the guard is nil.
- final class FileLock {
-     private let fileDescriptor: Int32
-+    private let suspension: SuspensionGuard?
-+    private var isLocked = false
- 
--    init?(filePath: String) {
-+    init?(filePath: String, suspension: SuspensionGuard? = SuspensionGuard.shared) {
-         fileDescriptor = open(filePath, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
-         if fileDescriptor == -1 { return nil }
-+        self.suspension = suspension
-     }
- 
--    deinit { close(fileDescriptor) }
-+    deinit {
-+        unlock()
-+        close(fileDescriptor)
-+    }
-+
-+    /// One attempt; false when another holder has it or suspension is imminent.
-+    func tryLock() -> Bool {
-+        if isLocked { return true }
-+        guard suspension?.enter() ?? true else { return false }
-+        var result: Int32
-+        repeat { result = flock(fileDescriptor, LOCK_EX | LOCK_NB) } while result == -1 && errno == EINTR
-+        guard result == 0 else {
-+            suspension?.leave()
-+            return false
-+        }
-+        isLocked = true
-+        return true
-+    }
- 
-     /// Waits for the lock until `limit`; false when it was not acquired.
-     func lock(before limit: Date) -> Bool {
--        while flock(fileDescriptor, LOCK_EX | LOCK_NB) == -1 {
--            guard errno == EWOULDBLOCK || errno == EINTR, Date() < limit else { return false }
-+        while !tryLock() {
-+            guard Date() < limit, suspension?.isRefusing != true else { return false }
-             usleep(10_000)
+ // Scenario B: second run within 6 hours with unchanged values sends nothing
+@@ -148,7 +149,7 @@ const loadBackground = ({
+   const state = loadBackground({
+     storage: {
+       wblockRemoveParamDNRVersion: { version: "test", count: 2 },
+-      wblockRedirectDNRStatusReport: previousReport
++      wblockRedirectDNRStatusReportV2: previousReport
+     },
+     nativeHandler: message => {
+       if (message && message.action === "getRemoveParamDNRRules") {
+@@ -157,6 +158,7 @@ const loadBackground = ({
+           { id: 1500001, priority: 15100, action: { type: "redirect", redirect: { extensionPath: "/redirects/noop.html" } }, condition: {} }
+         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
+       }
++      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
+       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
+     },
+     permissions: { '{\"origins\":[\"*://*/*\"]}': true },
+@@ -179,7 +181,7 @@ const loadBackground = ({
+   const state = loadBackground({
+     storage: {
+       wblockRemoveParamDNRVersion: { version: "test", count: 2 },
+-      wblockRedirectDNRStatusReport: previousReport
++      wblockRedirectDNRStatusReportV2: previousReport
+     },
+     nativeHandler: message => {
+       if (message && message.action === "getRemoveParamDNRRules") {
+@@ -188,6 +190,7 @@ const loadBackground = ({
+           { id: 1500001, priority: 15100, action: { type: "redirect", redirect: { extensionPath: "/redirects/noop.html" } }, condition: {} }
+         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
+       }
++      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
+       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
+     },
+     permissions: { '{\"origins\":[\"*://*/*\"]}': false },
+@@ -214,6 +217,7 @@ const loadBackground = ({
+           { id: 1500000, priority: 15000, action: { type: "redirect", redirect: { extensionPath: "/redirects/noopjs.js" } }, condition: {} }
+         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
+       }
++      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
+       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
+     },
+     permissions: { '{\"origins\":[\"*://*/*\"]}': true },
+@@ -240,7 +244,8 @@ const loadBackground = ({
+             { id: 1500000, priority: 15000, action: { type: "redirect", redirect: { extensionPath: "/redirects/noopjs.js" } }, condition: {} }
+           ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
          }
-         return true
-     }
+-        return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
++        if (message?.action === "reportRedirectDNRStatus") return { ok: true };
++      return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
+       },
+       onMessage: { addListener: () => {} },
+       connectNative: () => ({ onMessage: { addListener: () => {} }, onDisconnect: { addListener: () => {} } }),
+@@ -305,6 +310,7 @@ const loadBackground = ({
+           { id: 1500003, priority: 1, action: { type: "allow" }, condition: {} }
+         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
+       }
++      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
+       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
+     },
+     permissions: { '{\"origins\":[\"*://*/*\"]}': true },
+@@ -318,6 +324,36 @@ const loadBackground = ({
+   check("counts only extension path redirects", statusReport && statusReport.installedRedirects === 2);
+ }
  
--    @discardableResult
--    func unlock() -> Bool {
--        flock(fileDescriptor, LOCK_UN) == 0
-+    func unlock() {
-+        guard isLocked else { return }
-+        isLocked = false
-+        _ = flock(fileDescriptor, LOCK_UN)
-+        suspension?.leave()
++// A rejected or missing acknowledgement must not throttle the next attempt.
++for (const acknowledgement of [{ ok: false }, undefined]) {
++  let response = acknowledgement;
++  const redirect = { id: 1500000, priority: 15000,
+```
+
+**File**: `wBlock Scripts (iOS)/Resources/background.js` (modified, +41/-41)
+```diff
+@@ -5,12 +5,12 @@ const i=o.slice(Me.length);if(i==="js")return z({target:t,world:"MAIN",injectImm
+ AIN",injectImmediately:!0,func:Tt,args:[o]}))n.push(o);else for(const l of new Set(o.map(([p])=>p))){const p=await z({target:t,world:"MAIN",injectImmediately:!0,files:[`scriptlets/${l}.js`]});n.push(p?[]:o.filter(u=>u[0]===l))}return(await Promise.all(n)).flat()},Pt=t=>{if(t instanceof Error)return t.stack||t.message||String(t);if(typeof t=="string")return t;try{return JSON.stringify(t)}catch{return String(t)}},B=(...t)=>console.error(t.map(Pt).join(" ")),Ft=["permission","not allowed","denied",
+ "cannot access","not granted","not permitted","does not have access","not found"],ge=t=>{const e=String(t&&t.message||t||"").toLowerCase();return Ft.some(r=>e.includes(r))},z=async t=>{let e;try{e=await s.scripting.executeScript(t)}catch(r){ge(r)||B("[wBlock] Failed to execute script in target",t.target,"error",r);return}if(e?.[0]?.error){ge(e[0].error)||B("[wBlock] Failed to execute script in target",t.target,"error",e[0].error);return}return e?.[0]},xt=(t,e,r)=>{const o={tabId:t,frameIds:[e]},
+ n=r.css||[],i=r.procedural||[],l=[Ve(o,r.scriptlets||[])],p=[...r.styles||[],...n.map(u=>`${u} { display: none !important; }`)];for(let u=0;u<p.length;u+=je)l.push(s.scripting.insertCSS({target:o,origin:"USER",css:p.slice(u,u+je).join(`
+-`)}));for(const u of["ISOLATED","MAIN"]){const g=i.filter(m=>/"type"\s*:\s*"matches-(?:prop|property)"/.test(m)===(u==="MAIN"));g.length&&l.push((async()=>{(await z({target:o,world:u,func:y=>globalThis.wbeProcedural?(globalThis.wbeProcedural.apply(y),!0):!1,args:[g]}))?.result||(await z({target:o,world:u,files:["procedural.js"],injectImmediately:!0}),await z({target:o,world:u,func:y=>wbeProcedural.apply(y),args:[g]}))})())}return Promise.allSettled(l).then(u=>{for(const g of u)g.status==="reject\
+-ed"&&!ge(g.reason)&&B("[wBlock] Failed to apply configuration in target",o,"error",g.reason);return u[0].status==="fulfilled"?u[0].value:r.scriptlets||[]})},k=new Map,Bt=128,ye="wblockConfigCacheV2",Ke=40,Ut=1e3;let K=null;const Lt=()=>{if(K!==null)return;const t=G;K=setTimeout(async()=>{if(K=null,t===G)try{const e=[];for(const[r,o]of k)r.endsWith("#")&&e.push([r,o]);await s.storage.local.set({[ye]:{engineTimestamp:V,entries:e.slice(-Ke)}})}catch(e){console.warn("[wBlock] Failed to persist confi\
+-g cache:",e)}},Ut)},qt=()=>(K!==null&&(clearTimeout(K),K=null),s.storage.local.remove(ye).catch(t=>{console.warn("[wBlock] Failed to clear persisted config cache:",t)})),We=(async()=>{const t=G;try{const e=await s.storage.local.get(ye);if(t!==G)return;const r=e&&e[ye];if(!r||typeof r.engineTimestamp!="number"||!Array.isArray(r.entries)||k.size>0||V!==0)return;V=r.engineTimestamp;for(const o of r.entries.slice(-Ke))Array.isArray(o)&&typeof o[0]=="string"&&o[1]&&typeof o[1]=="object"&&k.set(o[0],o[1])}catch(e){
++`)}));for(const u of["ISOLATED","MAIN"]){const g=i.filter(m=>/"type"\s*:\s*"matches-(?:prop|property)"/.test(m)===(u==="MAIN"));g.length&&l.push((async()=>{(await z({target:o,world:u,func:h=>globalThis.wbeProcedural?(globalThis.wbeProcedural.apply(h),!0):!1,args:[g]}))?.result||(await z({target:o,world:u,files:["procedural.js"],injectImmediately:!0}),await z({target:o,world:u,func:h=>wbeProcedural.apply(h),args:[g]}))})())}return Promise.allSettled(l).then(u=>{for(const g of u)g.status==="reject\
++ed"&&!ge(g.reason)&&B("[wBlock] Failed to apply configuration in target",o,"error",g.reason);return u[0].status==="fulfilled"?u[0].value:r.scriptlets||[]})},k=new Map,Bt=128,he="wblockConfigCacheV2",Ke=40,Ut=1e3;let K=null;const Lt=()=>{if(K!==null)return;const t=G;K=setTimeout(async()=>{if(K=null,t===G)try{const e=[];for(const[r,o]of k)r.endsWith("#")&&e.push([r,o]);await s.storage.local.set({[he]:{engineTimestamp:V,entries:e.slice(-Ke)}})}catch(e){console.warn("[wBlock] Failed to persist confi\
++g cache:",e)}},Ut)},qt=()=>(K!==null&&(clearTimeout(K),K=null),s.storage.local.remove(he).catch(t=>{console.warn("[wBlock] Failed to clear persisted config cache:",t)})),We=(async()=>{const t=G;try{const e=await s.storage.local.get(he);if(t!==G)return;const r=e&&e[he];if(!r||typeof r.engineTimestamp!="number"||!Array.isArray(r.entries)||k.size>0||V!==0)return;V=r.engineTimestamp;for(const o of r.entries.slice(-Ke))Array.isArray(o)&&typeof o[0]=="string"&&o[1]&&typeof o[1]=="object"&&k.set(o[0],o[1])}catch(e){
+ console.warn("[wBlock] Failed to hydrate config cache:",e)}})(),te=async()=>{if(!(!s.tabs||typeof s.tabs.query!="function"))try{const t=await s.tabs.query({});await Promise.all(t.map(e=>!e||typeof e.id!="number"?Promise.resolve():s.tabs.sendMessage(e.id,{type:"wblock:clearDocumentStartSessionCache"}).catch(()=>{})))}catch{}};let Ze=Promise.resolve();const Xe=t=>{const e=t&&typeof t.action=="string"?t.action:"";return e==="syncZapperRules"||e==="getZapperRules"?3500:e==="startFilterUpdate"||e==="\
+-getFilterUpdateStatus"?1e4:e==="maybeUpdateUserScripts"||e==="maybeStageFilterUpdates"?12e4:e==="getBlockingSta
+```
+
+**File**: `wBlockCoreService/RedirectDNRRules.swift` (modified, +312/-91)
+```diff
+@@ -1,4 +1,5 @@
+ import Foundation
++internal import WBEngine
+ 
+ // `$redirect` support: a matching request is served a bundled stand-in from
+ // wBlock Scripts instead of failing. Safari content blockers cannot redirect,
+@@ -9,7 +10,17 @@ import Foundation
+ // pattern, domains, or resource are not exactly representable. `$redirect-rule`
+ // (replace only if something else blocks) has no DNR form; it is used only when
+ // the same list blocks the request's whole host and excepts nothing there.
++//
++// A blocking exception (`@@||host/path$script`) from any list also stops a
++// redirect of the requests it covers, as it stops the block they stand in for.
+ extension RemoveParamDNRRuleGenerator {
++    /// Bump when `extractRedirectLines` changes, so cached lists rescan.
++    static let redirectExtractionFormat = 2
++    /// The built-in compatibility rules reach every content blocker, so their
++    /// exceptions are weighed against every list's redirects too.
++    static let compatibilityRedirectLines = extractRedirectLines(
++        from: ContentBlockerService.embeddedCompatibilityRules
++    )
+     static let redirectPriority = 15_000
+     static let importantRedirectPriority = 15_100
+     public static let redirectCarveOutsFilename = "redirect_carveouts.txt"
+@@ -37,6 +48,19 @@ extension RemoveParamDNRRuleGenerator {
+         "gif": ["image"], "png": ["image"], "mp3": ["media"], "mp4": ["media"],
+     ]
+ 
++    /// DNR type of a resource-type option, including types no stand-in serves.
++    private static func requestType(_ option: String) -> String? {
++        redirectTypeMap[option] ?? resourceTypeMap[option]?.first
 +    }
 +
-+    /// Runs `body` holding the lock at `url`, creating its directory if needed.
-+    static func withLock<T>(at url: URL, timeout: TimeInterval, _ body: () throws -> T) throws -> T {
-+        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-+        guard let lock = FileLock(filePath: url.path) else {
-+            throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
++    private static func domainType(_ option: String) -> String? {
++        switch option {
++        case "third-party", "3p", "~first-party", "~1p": return "thirdParty"
++        case "~third-party", "~3p", "first-party", "1p": return "firstParty"
++        default: return nil
 +        }
-+        let limit = timeout.isFinite ? Date().addingTimeInterval(timeout) : .distantFuture
-+        guard lock.lock(before: limit) else { throw POSIXError(.ETIMEDOUT) }
-+        defer { lock.unlock() }
-+        return try body()
 +    }
++
+     struct RedirectLine {
+         var isException: Bool
+         var pattern: String
+@@ -47,22 +71,26 @@ extension RemoveParamDNRRuleGenerator {
+         var token: String?
+         var isConditional: Bool
+         var isBadfilter: Bool
++        /// A blocking exception with no redirect option, such as `@@||host^$script`.
++        var isPlain: Bool
+ 
+         init?(_ rawLine: Substring) {
+-            var line = rawLine.trimmingCharacters(in: .whitespaces)
++            let line = rawLine.trimmingCharacters(in: .whitespaces)
++            // The byte check spares the five searches: few network rules have a `#`.
+             guard !line.isEmpty, !line.hasPrefix("!"), !line.hasPrefix("["),
+-                  !line.contains("##"), !line.contains("#@#"), !line.contains("#%#"),
+-                  !line.contains("#$#"), !line.contains("#?#"),
+-                  let dollar = line.lastIndex(of: "$")
++                  !line.utf8.contains(UInt8(ascii: "#"))
++                    || !["##", "#@#", "#%#", "#$#", "#?#"].contains(where: line.contains)
+             else { return nil }
+             isException = line.hasPrefix("@@")
+-            pattern = String(line[..<dollar])
++            let dollar = line.lastIndex(of: "$")
++            pattern = String(line[..<(dollar ?? line.endIndex)])
+             if isException { pattern.removeFirst(2) }
+-            line = String(line[line.index(after: dollar)...])
+             var token: String?
+             var kind: String?
+             var rest: [(name: String, value: String?)] = []
+-            for option in RemoveParamDNRRuleGenerator.splitOptions(line) {
++            for option in RemoveParamDNRRuleGenerator.splitOptions(
++                dollar.map { String(line[line.index(after: $0)...]) } ?? ""
++            ) {
+                 let pair = RemoveParamDNRRuleGenerator.optionNameAndValue(option)
+                 if pair.name == "redirect" || pair.name == "redirect-rule" {
+                     guard kind == nil else { return nil }
+@@ -79,17 +107,34 @@ extension RemoveParamDNRRuleGenerator {
+                     rest.append(pair)
+                 }
+             }
+-            guard let kind else { return nil }
++            isPlain = kind == nil
+             isConditional = kind == "redirect-rule"
+             isBadfilter = rest.contains { $0.name == "badfilter" }
+             options = rest.filter { $0.name != "badfilter" }
+             self.token = token.flatMap { $0.isEmpty ? nil : $0 }
++            // Any other option makes it an exception from something other than
++            // blocking (`$elemhide`, `$csp`), or narrows it in a way not modelled
++            // here (`$to`). A regex pattern cannot be compared with a directive.
++            if isPlain {
++                guard isException, !(pattern.hasPrefix("/") && pattern.hasSuffix("/") && pattern.count > 1),
++                      options.allSatisfy({ option in
++                          switch option.name {
++                          case "domain": return option.value != nil
++                          case "
+```
+
+**File**: `wBlockCoreService/RemoveParamDNRRuleGenerator.swift` (modified, +17/-7)
+```diff
+@@ -213,9 +213,10 @@ public enum RemoveParamDNRRuleGenerator {
+     public static func generateRules(
+         from rulesText: String,
+         redirectSources: [String] = [],
++        scopedRedirectSources: Set<Int> = [],
+         disabledSites: [String] = []
+     ) -> (rules: [DeclarativeRule], summary: Summary) {
+-        let resolvedRedirects = resourceRedirectRules(fromSources: redirectSources)
++        let resolvedRedirects = resourceRedirectRules(fromSources: redirectSources, scopedSources: scopedRedirectSources)
+         let disabledRules = makeDisabledSiteAllowRules(
+             disabledSites,
+             startingID: ruleIDBase,
+@@ -357,6 +358,7 @@ public enum RemoveParamDNRRuleGenerator {
+         let generated = generateRules(
+             from: extracted.removeParam,
+             redirectSources: extracted.redirectSources,
++            scopedRedirectSources: extracted.scopedRedirectSources,
+             disabledSites: disabledSites
+         )
+         try? FileManager.default.removeItem(at: containerURL.appendingPathComponent(generationStateFilename))
+@@ -411,7 +413,7 @@ public enum RemoveParamDNRRuleGenerator {
+     }
+ 
+     /// Bump when the generator's output changes for the same inputs.
+-    private static let generationSchema = 8
++    private static let generationSchema = 9
+     private static let generationStateFilename = "dnr-generation-state.json"
+ 
+     private final class BuildMarker {}
+@@ -427,6 +429,7 @@ public enum RemoveParamDNRRuleGenerator {
+         var canonical = "schema=\(generationSchema)\nbuild=\(bundle.infoDictionary?["CFBundleShortVersionString"] ?? "")"
+         canonical += "|\(bundle.infoDictionary?["CFBundleVersion"] ?? "")\n"
+         canonical += "blocked=\(blockedCount ? blockedCountExtractionFormat : 0)\n"
++        canonical += "redirect=\(redirectExtractionFormat)|\(compatibilityRedirectLines)\n"
+         canonical += "disabled=\(disabledSites.joined(separator: "\n"))\n"
+         for filter in filters {
+             guard let sourceURL = ContentBlockerIncrementalCache.existingLocalFileURL(
+@@ -470,6 +473,8 @@ public enum RemoveParamDNRRuleGenerator {
+         var fingerprint: String
+         var lines: String
+         var redirectLines: String
++        /// Missing in caches written before plain exceptions were kept.
++        var redirectFormat: Int?
+         /// Missing in caches written before the blocked-request count.
+         var blockedCountLines: String?
+         var blockedCountFormat: Int?
+@@ -482,7 +487,7 @@ public enum RemoveParamDNRRuleGenerator {
+         for filters: [FilterList],
+         containerURL: URL,
+         includeBlockedCount: Bool
+-    ) -> (removeParam: String, redirectSources: [String], blockedCount: String, pageRules: [PageRule]) {
++    ) -> (removeParam: String, redirectSources: [String], scopedRedirectSources: Set<Int>, blockedCount: String, pageRules: [PageRule]) {
+         try? FileManager.default.removeItem(
+             at: containerURL.appendingPathComponent(legacyExtractionCacheFilename)
+         )
+@@ -504,7 +509,7 @@ public enum RemoveParamDNRRuleGenerator {
+             let key = sourceURL.lastPathComponent
+             let fingerprint = fileFingerprint(at: sourceURL) ?? "missing"
+             let cached = cache[key].flatMap { entry in
+-                entry.fingerprint == fingerprint
++                entry.fingerprint == fingerprint && entry.redirectFormat == redirectExtractionFormat
+                     && (!includeBlockedCount || entry.blockedCountFormat == blockedCountExtractionFormat)
+                     ? entry : nil
+             }
+@@ -518,6 +523,7 @@ public enum RemoveParamDNRRuleGenerator {
+                     fingerprint: sources[index].fingerprint,
+                     lines: extractRemoveParamLines(from: contents),
+                     redirectLines: extractRedirectLines(from: contents),
++                    redirectFormat: redirectExtractionFormat,
+                     blockedCountLines: includeBlockedCount ? extractBlockedCountLines(from: contents) : nil,
+                     blockedCountFormat: includeBlockedCount ? blockedCountExtractionFormat : nil
+                 )
+@@ -529,7 +535,8 @@ public enum RemoveParamDNRRuleGenerator {
+         var pageRules: [PageRule] = []
+         var scopedExceptions = Set<String>()
+         var blockedCount = ""
+-        var redirectSources: [String] = []
++        var redirectSources = [compatibilityRedirectLines].filter { !$0.isEmpty }
++        var scopedRedirectSources = Set<Int>()
+         var updated: [String: ExtractionEntry] = [:]
+         var cacheChanged = false
+         for (index, source) in sources.enumerated() {
+@@ -548,7 +555,10 @@ public enum RemoveParamDNRRuleGenerator {
+                 return page
+             }
+             if includeBlockedCount { blockedCount.append(entry.blockedCountLines ?? "") }
+-            if !entry.redirectLines.isEmpty { redirectSources.append(entry.redirectLines) }
++            if !entry.redirectLines.isEmpty {
++                if 
+```
+
+**File**: `wBlockCoreService/wBlockCoreService.swift` (modified, +9/-2)
+```diff
+@@ -152,7 +152,8 @@ private struct StoredTargetSourceRuleProvenance: Codable {
+     // 11: collapse Pornhub's mobile top ad slot, whose padding outlives a hidden ad.
+     // 12: hide Pornhub's ad boxes, from AdGuard Base and Mobile Ads.
+     // 13: restore mobile YouTube request timing and guard initial backoff recovery.
+-    public static let embeddedCompatibilityRulesVersion = "13"
++    // 14: keep Spotify FairPlay song segments out of media ad replacements.
++    public static let embeddedCompatibilityRulesVersion = "14"
+     /// The engine and Safari level outputs are compiled for; see SafariVersionDetection.
+     public static var compilerIdentity: String { SafariVersionDetection.compilerIdentity }
+     public static var upgradeSignature: String {
+@@ -184,7 +185,13 @@ private struct StoredTargetSourceRuleProvenance: Codable {
+     ///
+     /// Diagnostic-site rules are scoped to their hostnames so they do not affect
+     /// normal browsing.
+-    private static let embeddedCompatibilityRules = """
++    static let embeddedCompatibilityRules = """
++! Spotify FairPlay uses native HLS media for songs, unlike Chromium's fetch/MSE path.
++! These audio paths carry music in Safari and must not become silent ad replacements.
++@@||scdn.co/audio/$media,domain=open.spotify.com
++@@||spotifycdn.com/audio/$media,domain=open.spotify.com
++@@||akamaized.net/audio/$media,domain=open.spotify.com
++
+ ! Common synthetic ad bait paths
+ /js/widget/ads.js$script
+ /js/pagead.js$script
+```
+
+---
+
+### Incident Patch 2: `56856362` (2026-11-14)
+**Commit Message**: fix(extension): Retry scriptlets after failed Safari injections
+
+**File**: `extension-src/background.js` (modified, +38/-26)
+```diff
+@@ -33,7 +33,10 @@
+   // page script element. Runs as a function, so it must not close over anything.
+   const queueScriptletCalls = calls => {
+     const queue = globalThis.__wbeScriptletCalls || (globalThis.__wbeScriptletCalls = {});
+-    for (const [name, ...args] of calls) (queue[name] || (queue[name] = [])).push(args);
++    for (const [name, ...args] of calls) {
++      const pending = queue[name] || (queue[name] = []);
++      if (!pending.some(call => call.length === args.length && call.every((value, i) => value === args[i]))) pending.push(args);
++    }
+   };
+   // AdGuard-syntax rules with no uBO equivalent arrive as `adg:<name>` calls,
+   // raw `#%#` scripts as `adg:js`; both run the way AdGuard runs them.
+@@ -63,7 +66,7 @@
+   };
+   const runAdguardCalls = async (target, calls) => {
+     const library = calls.some(([name]) => name !== 'adg:js') ? await loadAdguardScriptlets() : null;
+-    await Promise.all(calls.map(([prefixed, ...args]) => {
++    return Promise.all(calls.map(([prefixed, ...args]) => {
+       const name = prefixed.slice(ADGUARD_PREFIX.length);
+       if (name === 'js') return executeInFrame({ target, world: 'MAIN', injectImmediately: true, func: runPageScript, args });
+       const func = library && library.getScriptletFunction(name);
+@@ -75,16 +78,19 @@
+   const runScriptlets = async (target, calls) => {
+     const adguard = calls.filter(([name]) => name.startsWith(ADGUARD_PREFIX));
+     const ubo = adguard.length > 0 ? calls.filter(([name]) => !name.startsWith(ADGUARD_PREFIX)) : calls;
+-    const pending = [];
+-    if (adguard.length > 0) pending.push(runAdguardCalls(target, adguard));
++    const pending = adguard.map(async call => {
++      const [result] = await runAdguardCalls(target, [call]);
++      return result ? [] : [call];
++    });
+     if (ubo.length > 0) {
+-      pending.push((async () => {
+-        await executeInFrame({ target, world: 'MAIN', injectImmediately: true, func: queueScriptletCalls, args: [ubo] });
+-        const files = [...new Set(ubo.map(([name]) => `scriptlets/${name}.js`))];
+-        await executeInFrame({ target, world: 'MAIN', injectImmediately: true, files });
+-      })());
++      const queued = await executeInFrame({ target, world: 'MAIN', injectImmediately: true, func: queueScriptletCalls, args: [ubo] });
++      if (!queued) pending.push(ubo);
++      else for (const name of new Set(ubo.map(([name]) => name))) {
++        const result = await executeInFrame({ target, world: 'MAIN', injectImmediately: true, files: [`scriptlets/${name}.js`] });
++        pending.push(result ? [] : ubo.filter(call => call[0] === name));
++      }
+     }
+-    await Promise.all(pending);
++    return (await Promise.all(pending)).flat();
+   };
+   // Safari's extension error summary shows only the first console argument, so
+   // each line is one string with its details folded in.
+@@ -115,10 +121,13 @@
+       }
+       return;
+     }
+-    if (results && results.length > 0 && results[0].error) {
+-      logError('[wBlock] Failed to execute script in target', injection.target, 'error', results[0].error);
++    if (results?.[0]?.error) {
++      if (!isSkippedTarget(results[0].error)) {
++        logError('[wBlock] Failed to execute script in target', injection.target, 'error', results[0].error);
++      }
++      return;
+     }
+-    return results && results.length > 0 ? results[0].result : undefined;
++    return results?.[0];
+   };
+   /**
+    * Applies a per-page payload to one frame. Scriptlets are queued first so
+@@ -127,17 +136,13 @@
+    * @param tabId ID of the tab to apply the configuration to.
+    * @param frameId ID of the frame to apply the configuration to.
+    * @param configuration Payload from the native handler.
+-   * @returns Promise that resolves when the injections have settled.
++   * @returns Promise resolving to the scriptlets that still need injection.
+    */
+   const applyConfiguration = (tabId, frameId, configuration) => {
+     const target = { tabId, frameIds: [frameId] };
+     const selectors = configuration.css || [];
+     const procedural = configuration.procedural || [];
+-    const pending = [];
+-    const scriptlets = configuration.scriptlets || [];
+-    if (scriptlets.length > 0) {
+-      pending.push(runScriptlets(target, scriptlets));
+-    }
++    const pending = [runScriptlets(target, configuration.scriptlets || [])];
+     // One stylesheet for the page's styles and hides, which include the hides
+     // scoped to its site. One rule per selector: a selector the engine
+     // rejects drops only itself.
+@@ -154,12 +159,19 @@
+           globalThis.wbeProcedural.apply(filters);
+           return true;
+         }, args: [filters] });
+-        if (applied) return;
++        if (applied?.result) return;
+         await executeInFrame({ target, world, files: ['procedural.js'], injectImmediately: true });
+         await executeInFrame({ target, world, func: filters => wbeProcedural.apply(filters), args: [filters] });
+       })());
+     }
+-    return Promise.all(pen
+```
+
+**File**: `extension-src/content.js` (modified, +2/-1)
+```diff
+@@ -124,7 +124,8 @@
+     for (const delay of SCRIPTLET_RETRY_DELAYS_MS) {
+       if (delay) await new Promise(resolve => setTimeout(resolve, delay));
+       const response = await browser.runtime.sendMessage({ action: 'wblock:injectScriptlets', scriptlets }).catch(() => null);
+-      if (response && response.injected) return;
++      if (response?.injected) return;
++      if (Array.isArray(response?.failedScriptlets)) scriptlets = response.failedScriptlets;
+     }
+   };
+   const applyConfiguration = configuration => {
+```
+
+**File**: `scripts/test_background_config_cache.mjs` (modified, +59/-3)
+```diff
+@@ -9,6 +9,7 @@
+ import { readFileSync } from "node:fs";
+ import { runtimeMessageListener } from "./helpers/runtime-message.mjs";
+ import assert from "node:assert/strict";
++import vm from "node:vm";
+ import path from "node:path";
+ import { fileURLToPath } from "node:url";
+ 
+@@ -551,20 +552,22 @@ const runScriptInjectionScenario = async executeScript => {
+   const errors = [];
+   const originalConsoleError = console.error;
+   let rejected = false;
++  let response;
+   console.error = (...args) => { errors.push(args); };
+   try {
+-    await state.onMessage({ type: "InitContentScript" }, topFrameSender(pageUrl));
++    response = await state.onMessage({ type: "InitContentScript" }, topFrameSender(pageUrl));
+   } catch {
+     rejected = true;
+   } finally {
+     console.error = originalConsoleError;
+   }
+-  return { errors, rejected };
++  return { errors, rejected, response };
+ };
+ 
+ {
+   const outcome = await runScriptInjectionScenario(async () => []);
+   check("empty executeScript results are skipped without an error", !outcome.rejected && outcome.errors.length === 0);
++  check("empty execution results keep scriptlets pending", outcome.response?.payload?.scriptlets.length === 1);
+ }
+ 
+ for (const message of [
+@@ -575,6 +578,9 @@ for (const message of [
+     throw new Error(message);
+   });
+   check(`executeScript rejection "${message}" is skipped without an error`, !outcome.rejected && outcome.errors.length === 0);
++  check(`executeScript rejection "${message}" keeps scriptlets pending`, outcome.response?.payload?.scriptlets.length === 1);
++  const result = await runScriptInjectionScenario(async () => [{ error: message }]);
++  check(`executeScript result "${message}" stays pending without an error log`, !result.rejected && result.errors.length === 0 && result.response?.payload?.scriptlets.length === 1);
+ }
+ 
+ {
+@@ -599,6 +605,56 @@ for (const message of [
+   );
+ }
+ 
++// A failed file must remain retryable without replaying completed scriptlets.
++{
++  const scriptlets = [["set-constant", "probe", "1"], ["prevent-fetch", "adsbygoogle"]];
++  const page = vm.createContext({});
++  const installed = [];
++  let firstCompleted = false;
++  let secondStartedAfterFirst;
++  let unavailable = true;
++  const state = loadBackground({
++    nativeHandler: () => ({ payload: makeConfig([], 19, [], scriptlets) }),
++    executeScript: async injection => {
++      if (injection.func) vm.runInContext(`(${injection.func})(...${JSON.stringify(injection.args)})`, page);
++      if (injection.files?.includes("scriptlets/set-constant.js")) {
++        await sleep(5);
++        firstCompleted = true;
++      }
++      if (injection.files?.includes("scriptlets/prevent-fetch.js")) secondStartedAfterFirst ??= firstCompleted;
++      if (unavailable && injection.files?.includes("scriptlets/prevent-fetch.js")) {
++        return [{ error: "Script execution target not found" }];
++      }
++      for (const file of injection.files || []) {
++        const name = file.slice("scriptlets/".length, -3);
++        for (const args of page.__wbeScriptletCalls?.[name] || []) installed.push([name, ...args]);
++        delete page.__wbeScriptletCalls?.[name];
++      }
++      return [{}];
++    }
++  });
++  const sender = topFrameSender("https://injection.example/");
++  const response = await state.onMessage({ type: "InitContentScript" }, sender);
++  check("scriptlet files retain their execution order", secondStartedAfterFirst === true);
++  check("normal frame hands back only failed scriptlets", JSON.stringify(response?.payload?.scriptlets) === JSON.stringify([scriptlets[1]]));
++  const failed = await state.onMessage({ action: "wblock:injectScriptlets", scriptlets: [scriptlets[1]] }, sender);
++  check("failed scriptlet execution is not acknowledged", failed?.injected === false && JSON.stringify(failed.failedScriptlets) === JSON.stringify([scriptlets[1]]));
++  unavailable = false;
++  const recovered = await state.onMessage({ action: "wblock:injectScriptlets", scriptlets: [scriptlets[1]] }, sender);
++  check("scriptlet injection recovers when its target becomes available", recovered?.injected === true);
++  check("retries neither duplicate pending arguments nor replay successful files", JSON.stringify(installed) === JSON.stringify(scriptlets));
 +}
 +
-+/// Counts the app group locks this process holds and keeps a
-+/// suspension-deferring activity open while the count is above zero.
-+final class SuspensionGuard: @unchecked Sendable {
-+    /// Starts an expiring activity and calls `body(false)` on another thread,
-+    /// holding its assertion until that call returns. `body(true)` comes
-+    /// instead, or concurrently, when suspension is imminent.
-+    typealias BeginActivity = (_ body: @escaping @Sendable (_ expired: Bool) -> Void) -> Void
++{
++  const calls = [["adg:js", "window.first = true"], ["adg:js", "window.second = true"]];
++  const state = loadBackground({
++    nativeHandler: () => ({ payload: makeConfig([], 19) }),
++    executeScript: async injection => injection.args?.[0] === calls[1][1] ? [] : [{}]
++  });
++  const response = await state.onMessage({ action: "wblock:injectScriptlets", scriptlets: calls }, topFrameSender("https://injection.example/"));
++  check("AdGuard calls report only failed injections", response?.injected === false && JSON.stringify(response.failedScriptlets) === JSON.stringify([calls[1]]));
++}
 +
-+    #if os(iOS)
-+    static let shared: SuspensionGuard? = SuspensionGuard { body in
-+        ProcessInfo.processInfo.performExpiringActivity(withReason: "wBlock app group lock", using: body)
-+    }
-+    #else
-+    static let shared: SuspensionGuard? = nil
-+    #endif
-+
-+    private static let startTimeout: TimeInterval = 1
-+    /// How long an expired activity waits for held locks before letting go.
-+    private static let unwindTimeout: TimeInterval = 3
-+
-+    private let beginActivity: BeginActivity
-+    private let condition = NSCondition()
-+    private var held = 0
-+    private var activityOpen = false
-+    private var activityStarted = false
-+    private var expired = false
-+
-+    init(beginActivity: @escaping BeginActivity) {
-+        self.beginActivity = beginActivity
-+    }
-+
-+    /// Whether new locks are refused because suspension is imminent.
-+    var isRefusing: Bool {
-+        condition.lock()
-+        defer { condition.unlock() }
-+        return activityOpen && expired
-+    }
-+
-+    /// Counts a lock about to be taken; false when suspension is imminent.
-+    func enter() -> Bool {
-+        condition.lock()
-+        defer { condition.unlock() }
-+        // Counted first, so a newly started activity sees the lock it covers.
-+        held += 1
-+        if !activityOpen {
-+            activityOpen = true
-+            activityStarted 
+ // Scenario I: blank frames receive the payload back so the content script can
+ // apply it; normal HTTP frames are applied by the backgroun
 ```
 
-**File**: `wBlockCoreService/FilterUpdatePopupStatus.swift` (modified, +1/-11)
+**File**: `scripts/test_content_scriptlet_injection.mjs` (modified, +27/-2)
 ```diff
-@@ -255,18 +255,8 @@ public enum FilterUpdatePopupStatus {
-         let directory = lockDirectory
-             ?? FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier)
-         guard let directory else { return nil }
--        do {
--            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
--        } catch {
--            return nil
--        }
-         let lockURL = directory.appendingPathComponent(lockFilename, isDirectory: false)
--        let descriptor = open(lockURL.path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
--        guard descriptor >= 0 else { return nil }
--        defer { close(descriptor) }
--        guard flock(descriptor, LOCK_EX) == 0 else { return nil }
--        defer { _ = flock(descriptor, LOCK_UN) }
--        return operation()
-+        return try? FileLock.withLock(at: lockURL, timeout: .infinity, operation)
-         #else
-         return operation()
-         #endif
-```
-
-**File**: `wBlockCoreService/HeadlessLaunch.swift` (modified, +1/-36)
-```diff
-@@ -38,7 +38,6 @@ public enum HeadlessLaunch {
-     public static let autoRebuildGateFilename = "headless-auto-rebuild-gate.json"
-     private static let autoRebuildGateLockFilename = "headless-auto-rebuild-gate.lock"
-     private static let autoRebuildGateLockTimeoutSeconds: TimeInterval = 2
--    private static let autoRebuildGateLockRetryMicroseconds: UInt32 = 20_000
- 
-     public enum Reason: String, Sendable {
-         case popupUpdate = "popup-update"
-@@ -225,42 +224,8 @@ public enum HeadlessLaunch {
-         gateDirectory: URL,
-         _ operation: () throws -> T
-     ) throws -> T {
--        let fileManager = FileManager.default
--        try fileManager.createDirectory(at: gateDirectory, withIntermediateDirectories: true)
-         let lockURL = gateDirectory.appendingPathComponent(autoRebuildGateLockFilename, isDirectory: false)
--        let descriptor = open(lockURL.path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
--        guard descriptor >= 0 else {
--            let error = errno
--            throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
--        }
--        do {
--            try lockAutoRebuildGate(descriptor: descriptor)
--        } catch {
--            close(descriptor)
--            throw error
--        }
--        defer {
--            _ = flock(descriptor, LOCK_UN)
--            close(descriptor)
--        }
--        return try operation()
--    }
--
--    private static func lockAutoRebuildGate(descriptor: Int32) throws {
--        let deadline = Date().timeIntervalSince1970 + autoRebuildGateLockTimeoutSeconds
--        while true {
--            if flock(descriptor, LOCK_EX | LOCK_NB) == 0 {
--                return
--            }
--            let error = errno
--            guard error == EWOULDBLOCK || error == EAGAIN else {
--                throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
--            }
--            guard Date().timeIntervalSince1970 < deadline else {
--                throw POSIXError(.ETIMEDOUT)
--            }
--            usleep(autoRebuildGateLockRetryMicroseconds)
--        }
-+        return try FileLock.withLock(at: lockURL, timeout: autoRebuildGateLockTimeoutSeconds, operation)
-     }
- 
-     public static func isContainingAppRunning() -> Bool {
-```
-
-**File**: `wBlockCoreService/PendingFilterUpdateRevisions.swift` (modified, +1/-38)
-```diff
-@@ -64,7 +64,6 @@ public enum PendingFilterUpdateRevisions {
- 
-     private static let lock = NSLock()
-     private static let fileLockTimeoutSeconds: TimeInterval = 2
--    private static let fileLockRetryMicroseconds: useconds_t = 20_000
- 
-     public static func storeURL(groupIdentifier: String = GroupIdentifier.shared.value) -> URL? {
-         FileManager.default
-@@ -373,43 +372,7 @@ public enum PendingFilterUpdateRevisions {
-     private static func withFileLock<T>(for storeURL: URL, _ body: () throws -> T) throws -> T {
-         let lockURL = storeURL.deletingLastPathComponent()
-             .appendingPathComponent(".\(filename).lock", isDirectory: false)
--        try FileManager.default.createDirectory(
--            at: lockURL.deletingLastPathComponent(),
--            withIntermediateDirectories: true
--        )
--        let descriptor = open(lockURL.path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
--        guard descriptor >= 0 else {
--            let error = errno
--            throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
--        }
--        do {
--            try lockDescriptor(descriptor)
--        } catch {
--            close(descriptor)
--            throw error
--        }
--        defer {
--            _ = flock(descriptor, LOCK_UN)
--            close(descriptor)
--        }
--        return try body()
--    }
--
--    private static func lockDescriptor(_ descriptor: Int32) throws {
--        let deadline = Date().timeIntervalSince1970 + fileLockTimeoutSeconds
--        while true {
--            if flock(descriptor, LOCK_EX | LOCK_NB) == 0 {
--                return
--            }
--            let error = errno
--            guard error == EWOULDBLOCK || error == EAGAIN else {
--                throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
--            }
--            guard Date().timeIntervalSince1970 < deadline else {
--                throw POSIXError(.ETIMEDOUT)
--            }
--            usleep(fileLockRetryMicroseconds)
--        }
-+        return try FileLock.withLock(at: lockURL, timeout: fileLockTimeoutSeconds, body)
-     }
- 
-     private static func loadStateUnlocked(from url: URL) -> State {
-```
-
-**File**: `wBlockCoreService/SharedAutoUpdateLease.swift` (modified, +13/-62)
-```diff
-@@ -6,17 +6,10 @@ import Darwin
- /// A kernel-backed, process-lifetime lease for shared auto-update work.
- /// `flock` releases the lease automatically when the owning process exits.
- public final class SharedAutoUpdateLease: @unchecked Sendable {
--    private let fileDescriptor: Int32
-+    private let lock: FileLock
- 
--    private init(fileDescriptor: Int32) {
--        self.fileDescriptor = fileDescriptor
--    }
--
--    deinit {
--        #if canImport(Darwin)
--        _ = flock(fileDescriptor, LOCK_UN)
--        _ = close(fileDescriptor)
--        #endif
-+    private init(lock: FileLock) {
-+        self.lock = lock
-     }
- 
-     /// Blocks the calling thread while polling. Use from actors that own their
-@@ -25,17 +18,10 @@ public final class SharedAutoUpdateLease: @unchecked Sendable {
-         groupIdentifier: String,
-         timeout: TimeInterval = 0.25
-     ) -> SharedAutoUpdateLease? {
--        #if canImport(Darwin)
--        guard let descriptor = openLockFile(groupIdentifier: groupIdentifier) else { return nil }
--        let deadline = Date().addingTimeInterval(max(0, timeout))
--        repeat {
--            if let lease = tryLock(descriptor) { return lease }
--            if Date() >= deadline { break }
--            usleep(pollIntervalMicroseconds)
--        } while true
--        closeLockFile(descriptor)
--        #endif
--        return nil
-+        guard let lock = openLock(groupIdentifier: groupIdentifier),
-+              lock.lock(before: Date().addingTimeInterval(max(0, timeout)))
-+        else { return nil }
-+        return SharedAutoUpdateLease(lock: lock)
-     }
- 
-     /// Suspends instead of blocking while polling, so the main actor stays
-@@ -44,60 +30,25 @@ public final class SharedAutoUpdateLease: @unchecked Sendable {
-         groupIdentifier: String,
-         timeout: TimeInterval
-     ) async -> SharedAutoUpdateLease? {
--        #if canImport(Darwin)
--        guard let descriptor = openLockFile(groupIdentifier: groupIdentifier) else { return nil }
-+        guard let lock = openLock(groupIdentifier: groupIdentifier) else { return nil }
-         let deadline = Date().addingTimeInterval(max(0, timeout))
-         repeat {
--            if let lease = tryLock(descriptor) { return lease }
-+            if lock.tryLock() { return SharedAutoUpdateLease(lock: lock) }
-             if Date() >= deadline || Task.isCancelled { break }
-             do {
--                try await Task.sleep(nanoseconds: UInt64(pollIntervalMicroseconds) * 1_000)
-+                try await Task.sleep(nanoseconds: 10_000_000)
-             } catch {
-                 break
-             }
-         } while true
--        closeLockFile(descriptor)
--        #endif
-         return nil
-     }
- 
--    private static let pollIntervalMicroseconds: UInt32 = 10_000
--
--    private static func openLockFile(groupIdentifier: String) -> Int32? {
--        #if canImport(Darwin)
-+    private static func openLock(groupIdentifier: String) -> FileLock? {
-         guard let containerURL = FileManager.default.containerURL(
-             forSecurityApplicationGroupIdentifier: groupIdentifier
-         ) else { return nil }
--
--        do {
--            try FileManager.default.createDirectory(
--                at: containerURL,
--                withIntermediateDirectories: true
--            )
--        } catch {
--            return nil
--        }
--
--        let lockURL = containerURL.appendingPathComponent("auto-update.run.lock")
--        let descriptor = open(lockURL.path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR)
--        return descriptor >= 0 ? descriptor : nil
--        #else
--        return nil
--        #endif
--    }
--
--    private static func tryLock(_ descriptor: Int32) -> SharedAutoUpdateLease? {
--        #if canImport(Darwin)
--        guard flock(descriptor, LOCK_EX | LOCK_NB) == 0 else { return nil }
--        return SharedAutoUpdateLease(fileDescriptor: descriptor)
--        #else
--        return nil
--        #endif
--    }
--
--    private static func closeLockFile(_ descriptor: Int32) {
--        #if canImport(Darwin)
--        _ = close(descriptor)
--        #endif
-+        try? FileManager.default.createDirectory(at: containerURL, withIntermediateDirectories: true)
-+        return FileLock(filePath: containerURL.appendingPathComponent("auto-update.run.lock").path)
-     }
+@@ -109,7 +109,7 @@ const frameGlobals = document => ({
+   MutationObserver: class { observe() {} disconnect() {} },
+   getComputedStyle: () => ({}),
+   navigator: { userAgent: "test" },
+-  location: { href: "about:blank", hostname: "" },
++  location: { href: "about:blank", hostname: "", protocol: "about:" },
+   Event: class Event { constructor(name) { this.name = name; } },
+   CustomEvent: class CustomEvent { constructor(name) { this.name = name; } },
+   CSS: { supports: () => false },
+@@ -124,7 +124,7 @@ const runBlankFrameWithPayload = async payload => {
+     addEventListener() {},
+     removeEventListener() {},
+     dispatchEvent() { return true; },
+-    location: { href: "about:blank", hostname: "" },
++    location: { href: "about:blank", hostname: "", protocol: "about:" },
+     wbeProcedural: { apply: filters => applied.push(filters) },
+   };
+   const browserPayload = {
+@@ -596,6 +596,31 @@ try {
+   console.error(error);
  }
+ 
++// Retry only the scriptlets that the background could not execute.
++{
++  const calls = [["set-constant", "probe", "1"], ["prevent-fetch", "adsbygoogle"]];
++  const requests = [];
++  const location = { href: "https://example.com/", hostname: "example.com", protocol: "https:" };
++  const win = { ...windowStub, location };
++  win.top = win;
++  await withGlobals({ ...frameGlobals(documentStub), location }, async () => {
++    new Function("browser", "window", "self", source)({ runtime: {
++      onMessage: { addListener() {} },
++      sendMessage: async message => {
++        if (message.type === "InitContentScript") return { disabled: false, paused: false, payload: { scriptlets: calls } };
++        if (message.action === "wblock:injectScriptlets") {
++          requests.push(message.scriptlets);
++          return requests.length === 1 ? { injected: false, failedScriptlets: [calls[1]] } : { injected: true };
++        }
++        return {};
++      }
++    } }, win, win);
++    await sleep(100);
++  });
++  check("failed scriptlet handoff retries until acknowledged", requests.length === 2);
++  check("scriptlet retry excludes already successful calls", JSON.stringify(requests[1]) === JSON.stringify([calls[1]]));
++}
++
+ if (failures > 0) {
+   console.error(`\n${failures} content scriptlet injection check(s) failed`);
+   process.exit(1);
 ```
 
-**File**: `wBlockCoreService/StagedFilterDownloads.swift` (modified, +1/-14)
+**File**: `wBlock Scripts (iOS)/Resources/background.js` (modified, +94/-94)
 ```diff
-@@ -121,19 +121,6 @@ public enum StagedFilterDownloads {
-         defer { lock.unlock() }
-         let lockURL = storeURL.deletingLastPathComponent()
-             .appendingPathComponent(".\(filename).lock", isDirectory: false)
--        try? FileManager.default.createDirectory(
--            at: lockURL.deletingLastPathComponent(),
--            withIntermediateDirectories: true
--        )
--        let descriptor = open(lockURL.path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
--        guard descriptor >= 0, flock(descriptor, LOCK_EX) == 0 else {
--            if descriptor >= 0 { close(descriptor) }
--            return nil
--        }
--        defer {
--            _ = flock(descriptor, LOCK_UN)
--            close(descriptor)
--        }
--        return try? operation()
-+        return try? FileLock.withLock(at: lockURL, timeout: .infinity, operation)
+@@ -1,96 +1,96 @@
+ /*! Generated artifact — do not edit. Edit extension-src/background.js and run scripts/minify-extension-js.sh */
+-(function(s){"use strict";var x;(function(t){t.InitContentScript="InitContentScript"})(x||(x={}));let V=0,O=0;const $e=1e3,Tt=t=>{const e=globalThis.__wbeScriptletCalls||(globalThis.__wbeScriptletCalls={});for(const[r,...o]of t)(e[r]||(e[r]=[])).push(o)},Ee="adg:";let je;const Dt=()=>je||(je=import("./scriptlets/adguard.js").then(()=>globalThis.wbeAdguardScriptlets||null).catch(t=>(G("[wBlock] Failed to load AdGuard scriptlets",t),null))),Et=t=>{const e=Symbol.for("wBlock.pageScriptPolicy");let r=window[e];
+-if(r===void 0){try{r=window.trustedTypes?window.trustedTypes.createPolicy("wblock-scripts",{createScript:n=>n}):null}catch{r=null}Object.defineProperty(window,e,{value:r})}const o=document.createElement("script");o.textContent=r?r.createScript(t):t,(document.head||document.documentElement).appendChild(o),o.remove()},Mt=async(t,e)=>{const r=e.some(([o])=>o!=="adg:js")?await Dt():null;await Promise.all(e.map(([o,...n])=>{const c=o.slice(Ee.length);if(c==="js")return z({target:t,world:"MAIN",injectImmediately:!0,
+-func:Et,args:n});const l=r&&r.getScriptletFunction(c);return l?z({target:t,world:"MAIN",injectImmediately:!0,func:l,args:[{name:c,args:n,engine:"extension",version:"",verbose:!1},n]}):void 0}))},He=async(t,e)=>{const r=e.filter(([c])=>c.startsWith(Ee)),o=r.length>0?e.filter(([c])=>!c.startsWith(Ee)):e,n=[];r.length>0&&n.push(Mt(t,r)),o.length>0&&n.push((async()=>{await z({target:t,world:"MAIN",injectImmediately:!0,func:Tt,args:[o]});const c=[...new Set(o.map(([l])=>`scriptlets/${l}.js`))];await z(
+-{target:t,world:"MAIN",injectImmediately:!0,files:c})})()),await Promise.all(n)},Pt=t=>{if(t instanceof Error)return t.stack||t.message||String(t);if(typeof t=="string")return t;try{return JSON.stringify(t)}catch{return String(t)}},G=(...t)=>console.error(t.map(Pt).join(" ")),Ft=["permission","not allowed","denied","cannot access","not granted","not permitted","does not have access","not found"],Ve=t=>{const e=String(t&&t.message||t||"").toLowerCase();return Ft.some(r=>e.includes(r))},z=async t=>{
+-let e;try{e=await s.scripting.executeScript(t)}catch(r){Ve(r)||G("[wBlock] Failed to execute script in target",t.target,"error",r);return}return e&&e.length>0&&e[0].error&&G("[wBlock] Failed to execute script in target",t.target,"error",e[0].error),e&&e.length>0?e[0].result:void 0},xt=(t,e,r)=>{const o={tabId:t,frameIds:[e]},n=r.css||[],c=r.procedural||[],l=[],f=r.scriptlets||[];f.length>0&&l.push(He(o,f));const d=[...r.styles||[],...n.map(g=>`${g} { display: none !important; }`)];for(let g=0;g<
+-d.length;g+=$e)l.push(s.scripting.insertCSS({target:o,origin:"USER",css:d.slice(g,g+$e).join(`
+-`)}));for(const g of["ISOLATED","MAIN"]){const m=c.filter(h=>/"type"\s*:\s*"matches-(?:prop|property)"/.test(h)===(g==="MAIN"));m.length&&l.push((async()=>{await z({target:o,world:g,func:R=>globalThis.wbeProcedural?(globalThis.wbeProcedural.apply(R),!0):!1,args:[m]})||(await z({target:o,world:g,files:["procedural.js"],injectImmediately:!0}),await z({target:o,world:g,func:R=>wbeProcedural.apply(R),args:[m]}))})())}return Promise.all(l)},v=new Map,Bt=128,ge="wblockConfigCacheV2",Ke=40,Ut=1e3;let K=null;
+-const Lt=()=>{if(K!==null)return;const t=O;K=setTimeout(async()=>{if(K=null,t===O)try{const e=[];for(const[r,o]of v)r.endsWith("#")&&e.push([r,o]);await s.storage.local.set({[ge]:{engineTimestamp:V,entries:e.slice(-Ke)}})}catch(e){console.warn("[wBlock] Failed to persist config cache:",e)}},Ut)},qt=()=>(K!==null&&(clearTimeout(K),K=null),s.storage.local.remove(ge).catch(t=>{console.warn("[wBlock] Failed to clear persisted config cache:",t)})),We=(async()=>{const t=O;try{const e=await s.storage.local.
+-get(ge);if(t!==O)return;const r=e&&e[ge];if(!r||typeof r.engineTimestamp!="number"||!Array.isArray(r.entries)||v.size>0||V!==0)return;V=r.engineTimestamp;for(const o of r.entries.slice(-Ke))Array.isArray(o)&&typeof o[0]=="string"&&o[1]&&typeof o[1]=="object"&&v.set(o[0],o[1])}catch(e){console.warn("[wBlock] Failed to hydrate config cache:",e)}})(),ee=async()=>{if(!(!s.tabs||typeof s.tabs.query!="function"))try{const t=await s.tabs.query({});await Promise.all(t.map(e=>!e||typeof e.id!="number"?Promise.
+-resolve():s.tabs.sendMessage(e.id,{type:"wblock:clearDocumentStartSessionCache"}).catch(()=>{})))}catch{}};let Ze=Promise.resolve();const Xe=t=>{const e=t&&typeof t.action=="string"?t.action:"";return e==="syncZapperRules"||e==="getZapperRules"?3500:e==="startFilterUpdate"||e==="getFilterUpdateStatus"?1e4:e==="maybeUpdateUserScripts"||e==="maybeStageFilterUpdates"?12e4:e==="getBlockingState"?1e4:3e4},Ye=(t,e,r)=>{let o=null;return Promise.race([Promise.resolve(t).finally(()=>{o!==null&&clearTimeout(
+-o)}),new Promise((n,c)=>{o=setTimeout(()=>c(new Error(`Native message timed out: ${r||"unknown"}`)),e)})])},he=5e3,te=new Map,D=new Map,Ot=t=>Date.now()-(te.get(t)||0)<he;let ne=0;const $=()=>{ne+=1,te
+```
+
+**File**: `wBlock Scripts (iOS)/Resources/content.js` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ (function(s){"use strict";const h=e=>{const{MutationObserver:t}=window;if(!t)return;new t(r=>{for(let o=0;o<r.length;o+=1){const i=r[o];if(e.hasAttribute("mod")&&e.getAttribute("mod")==="inner"){e.removeAttribute("mod");break}e.setAttribute("mod","inner");let a=!1;if(i.removedNodes.length>0)for(let f=0;f<i.removedNodes.length;f+=1)a=!0,e.appendChild(i.removedNodes[f]);else i.oldValue&&(a=!0,e.textContent=i.oldValue);a||e.removeAttribute("mod")}}).observe(e,{childList:!0,characterData:!0,subtree:!0,
+ characterDataOldValue:!0})};var c;if((function(e){e.InitContentScript="InitContentScript"})(c||(c={})),!s||!s.runtime||!s.runtime.sendMessage)return;let d=!1;const m=/just a moment|verifying you are human|attention required|enable cookies/i,w=e=>m.test(e||""),g=()=>{d||(d=!0,console.info("[wBlock] Cloudflare challenge context detected \u2014 skipping content script."))},y=()=>{try{const e=window.location&&typeof window.location.hostname=="string"?window.location.hostname:"",t=window.location&&typeof window.
+ location.pathname=="string"?window.location.pathname:"";if(e==="challenges.cloudflare.com"||t.startsWith("/cdn-cgi/challenge-platform")||t.startsWith("/cdn-cgi/challenge"))return!0}catch{}return!1},l=(e=!1)=>(!d&&(y()||w(document.title)||e&&document.querySelector('script[src^="/cdn-cgi/challenge-platform"],script[src*="challenges.cloudflare.com"],#challenge-form,#challenge-stage,#challenge-runner'))&&g(),d),C=[0,50,150,400,1e3,2500],b=async e=>{for(const t of C){t&&await new Promise(r=>setTimeout(
+-r,t));const n=await s.runtime.sendMessage({action:"wblock:injectScriptlets",scriptlets:e}).catch(()=>null);if(n&&n.injected)return}},k=e=>{try{const t=e.css||[],n=e.styles||[];if(t.length>0||n.length>0){const o=document.createElement("style");o.setAttribute("type","text/css"),o.textContent=[...n,...t.map(i=>`${i} { display: none !important; }`)].join(`
++r,t));const n=await s.runtime.sendMessage({action:"wblock:injectScriptlets",scriptlets:e}).catch(()=>null);if(n?.injected)return;Array.isArray(n?.failedScriptlets)&&(e=n.failedScriptlets)}},k=e=>{try{const t=e.css||[],n=e.styles||[];if(t.length>0||n.length>0){const o=document.createElement("style");o.setAttribute("type","text/css"),o.textContent=[...n,...t.map(i=>`${i} { display: none !important; }`)].join(`
+ `),(document.head||document.documentElement).appendChild(o),h(o)}e.procedural&&e.procedural.length>0&&window.wbeProcedural.apply(e.procedural.filter(o=>!/"type"\s*:\s*"matches-(?:prop|property)"/.test(o)));const r=e.scriptlets||[];r.length>0&&location.protocol.startsWith("http")&&b(r)}catch(t){console.error(`[wBlock] Failed to apply configuration in content script: ${t&&t.stack||t}`)}};let u;const p=[250,1e3,3e3],v=e=>e&&e.state==="error"?Promise.resolve(!0):Promise.resolve(!(e&&typeof e.disabled==
+ "boolean"&&typeof e.paused=="boolean")||e.disabled||e.paused);(async()=>{if(l())return;const e={type:c.InitContentScript,includeUserScripts:window.top!==window&&/^https?:$/.test(location.protocol)},n=(async()=>{for(let o=0;;o+=1){const i=await s.runtime.sendMessage(e).catch(a=>({type:c.InitContentScript,state:"error",error:String(a&&a.message?a.message:a)}));if(!(i&&i.state==="error")||o>=p.length||l())return i;await new Promise(a=>setTimeout(a,p[o]))}})();e.includeUserScripts&&(globalThis.__wblockFrameInitialization=
+ n,globalThis.__wblockZapperInitialization=n.then(o=>o?.zapper)),u=n.then(v);const r=await n;await u||r?.payload&&!l(!0)&&k(r.payload)})().catch(e=>{console.error(`[wBlock] Error in content script: ${e&&e.stack||e}`)}),(async()=>{try{if(window.top!==window||await(u||Promise.resolve(!1))||l()||!/^https?:/i.test(window.location.href)||typeof s>"u"||!s.runtime||!s.runtime.sendMessage)return;const e=window.location.href,t=await s.runtime.sendMessage({action:"wblock:getCleanURL",url:e}),n=t&&typeof t.
+```
+
+---
+
+### Incident Patch 3: `2fe4eb87` (2026-11-14)
+**Commit Message**: fix(userscripts): let GM requests reach the page's own site (#1114)
+
+Bypass Paywalls Clean - fr fetches Télérama and Courrier International
+articles from apps.<site> APIs it never lists in @connect, so wBlock
+blocked them while Stay, which ignores @connect, let them through. A
+script that declares any @connect may now also reach the page's
+registrable domain and its subdomains. Empty declarations still fail
+closed, and IP or public suffix pages keep the exact-host self.
+
+**File**: `scripts/test_userscript_matching_and_payload.swift` (modified, +19/-4)
+```diff
+@@ -226,23 +226,38 @@ struct UserScriptMatchingAndPayloadTests {
+             (["example.org"], "https://evil-example.org/x", false),
+             (["example.org"], "https://example.org.evil/x", false),
+             (["self"], "https://page.invalid:8443/x", true),
+-            (["self"], "https://sub.page.invalid/x", false),
++            (["self"], "https://sub.page.invalid/x", true),
++            (["mediafin.be"], "https://apps.page.invalid/x", true),
++            (["mediafin.be"], "https://otherpage.invalid/x", false),
++            (["mediafin.be"], "https://invalid/x", false),
+             (["localhost"], "http://localhost:8080/x", true),
+             (["*"], "file:///etc/passwd", false),
+             (["*"], "https://user:secret@example.org/", false),
+             (["*"], "https://anywhere.invalid/", true),
+             (["https://example.org"], "https://example.org/", false),
+             ([String](), "https://page.invalid/", false)
+         ] {
+-            expectEqual(UserScriptConnectPolicy(entries: entries, pageURL: page).allows(URL(string: target)!), allowed, "connect policy for \(target) with \(entries)")
++            expectEqual(UserScriptConnectPolicy(entries: entries, pageURL: page, pageSite: "page.invalid").allows(URL(string: target)!), allowed, "connect policy for \(target) with \(entries)")
++        }
++        // Sites as WBEngine.registrableDomain resolves them; nil is a public suffix.
++        for (pageURL, site, target, allowed) in [
++            ("https://www.telerama.fr/a", "telerama.fr", "https://apps.telerama.fr/tlr/v1", true),
++            ("https://news.bbc.co.uk/", "bbc.co.uk", "https://www.bbc.co.uk/", true),
++            ("https://news.bbc.co.uk/", "bbc.co.uk", "https://evil.co.uk/", false),
++            ("https://github.io/", nil, "https://me.github.io/", false),
++            ("https://github.io/", nil, "https://github.io/x", true),
++            ("http://10.0.1.1/", "1.1", "http://10.0.1.1/x", true),
++            ("http://10.0.1.1/", "1.1", "http://192.168.1.1/x", false)
++        ] as [(String, String?, String, Bool)] {
++            expectEqual(UserScriptConnectPolicy(entries: ["mediafin.be"], pageURL: URL(string: pageURL)!, pageSite: site).allows(URL(string: target)!), allowed, "same-site connect for \(target) from \(pageURL)")
+         }
+ 
+         let session = URLSession(configuration: .ephemeral)
+         defer { session.invalidateAndCancel() }
+         let redirectResponse = HTTPURLResponse(url: page, statusCode: 302, httpVersion: nil, headerFields: nil)!
+         for (mode, target, allowed) in [("follow", page, true), ("follow", URL(string: "https://outside.invalid/")!, false), ("manual", page, false), ("error", page, false)] {
+             let task = session.dataTask(with: page)
+-            let delegate = GMRedirectPolicyDelegate(policy: UserScriptConnectPolicy(entries: ["self"], pageURL: page), redirect: mode)
++            let delegate = GMRedirectPolicyDelegate(policy: UserScriptConnectPolicy(entries: ["self"], pageURL: page, pageSite: "page.invalid"), redirect: mode)
+             var called = false
+             delegate.urlSession(session, task: task, willPerformHTTPRedirection: redirectResponse, newRequest: URLRequest(url: target)) { request in
+                 called = true
+@@ -257,7 +272,7 @@ struct UserScriptMatchingAndPayloadTests {
+         authenticated.setValue("secret", forHTTPHeaderField: "Authorization")
+         authenticated.setValue("session=secret", forHTTPHeaderField: "Cookie")
+         let redirectTask = session.dataTask(with: page)
+-        GMRedirectPolicyDelegate(policy: UserScriptConnectPolicy(entries: ["*"], pageURL: page), redirect: "follow")
++        GMRedirectPolicyDelegate(policy: UserScriptConnectPolicy(entries: ["*"], pageURL: page, pageSite: "page.invalid"), redirect: "follow")
+             .urlSession(session, task: redirectTask, willPerformHTTPRedirection: redirectResponse, newRequest: authenticated) { request in
+                 expectEqual(request?.url, crossHost, "approved cross-host redirect may proceed")
+                 expect(request?.value(forHTTPHeaderField: "Authorization") == nil, "native redirect strips cross-host authorization")
+```
+
+**File**: `wBlockCoreService/UserScript.swift` (modified, +11/-2)
+```diff
+@@ -267,8 +267,17 @@ public struct UserScriptConnectPolicy: Sendable {
+     public let entries: [String]
+     public let pageURL: URL
+ 
+-    public init(entries: [String], pageURL: URL) {
+-        self.entries = entries
++    /// A script that declares any `@connect` may also reach the page's own
++    /// site (`pageSite`, its registrable domain, and subdomains), so `self`
++    /// covers the whole site. Paywall scripts fetch `apps.<site>` APIs they
++    /// don't declare, and Stay allows them (#1114). An empty declaration still fails closed, and IP
++    /// or public suffix pages (nil `pageSite`) keep the exact-host `self`.
++    public init(entries: [String], pageURL: URL, pageSite: String?) {
++        let declared = entries.filter { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() != "self" }
++        let host = pageURL.host ?? ""
++        let isIP = host.contains(":") || host.allSatisfy { $0.isNumber || $0 == "." }
++        let site = isIP ? nil : pageSite?.lowercased()
++        self.entries = entries.isEmpty ? [] : declared + [site ?? "self"]
+         self.pageURL = pageURL
      }
- }
+ 
+```
+
+**File**: `wBlockCoreService/WebExtensionRequestHandler.swift` (modified, +5/-1)
+```diff
+@@ -6,6 +6,7 @@
+ //
+ 
+ import Foundation
++internal import WBEngine
+ #if os(macOS)
+ import AppKit
+ #endif
+@@ -1518,7 +1519,10 @@ public enum WebExtensionRequestHandler {
+         guard let script = manager.userScript(withId: scriptID),
+               !script.isUserStyle, script.allowsGMXMLHttpRequest,
+               scriptAllowsFrame(script, message: message, manager: manager) else { return nil }
+-        return UserScriptConnectPolicy(entries: script.connect, pageURL: page)
++        return UserScriptConnectPolicy(
++            entries: script.connect, pageURL: page,
++            pageSite: page.host.flatMap { WBEngine.registrableDomain(of: $0) }
++        )
+     }
+ 
+     private static func handleUserScriptRequestPolicy(message: [String: Any?], context: NSExtensionContext) {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2944,36 +3112,32 @@ hand-rolled flock loops are gone.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): leave more room when packing blocks into the fewest blockers
+## X. engine): Respect Spotify music exceptions across blockers
 
 **RULE**:
-When implementing operations in `Packages/wblock-engine/crates/wbe/src/apply.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `extension-src/background.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `990783e2`: engine): leave more room when packing blocks into the fewest blockers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `03e46e4a`: engine): Respect Spotify music exceptions across blockers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Packages/wblock-engine/crates/wbe/src/apply.rs`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `extension-src/background.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// The part of a limit an estimate may fill. The estimate is calibrated on
-    /// two setups and nothing re-plans a blocker that compiles over its limit,
-    /// so leave room for list mixes that compile fatter than estimated.
-    const ROOM: f64 = 0.7;
-            11,
-        let two = plan_within(243, lists.clone(), targets.clone());
+  // Old entries could claim success after native rejected the report.
+  const REDIRECT_DNR_STATUS_REPORT_KEY = "wblockRedirectDNRStatusReportV2";
+        const response = await sendPriorityNativeMessage({
+        if (response?.ok !== true) throw new Error("Native host did not save redirect status");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-    /// The part of a limit an estimate may fill.
-    const ROOM: f64 = 0.85;
-            9,
-        let two = plan_within(200, lists.clone(), targets.clone());
+// Induced defect failure mode:
+  const REDIRECT_DNR_STATUS_REPORT_KEY = "wblockRedirectDNRStatusReport";
+        await sendPriorityNativeMessage({
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `990783e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `03e46e4a` are properly handled with clean fallback behavior.

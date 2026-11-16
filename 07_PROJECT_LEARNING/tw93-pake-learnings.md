@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `6498b4d7`  
+> **Source Version**: `3d2d59b5`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T19:03:10.230Z  
+> **Timestamp**: 2026-11-16T15:50:59.503Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T19:03:10.222Z  
+> **Harvest Timestamp**: 2026-11-16T15:50:59.229Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 63595 stars
+- **Stars / Engagement**: 63678 stars
 
 ---
 
@@ -938,576 +938,605 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec5af5c3` (2026-11-14)
-**Commit Message**: fix(icon): ship the .icns when Assets.car cannot be compiled
+### Incident Patch 1: `79396657` (2026-11-15)
+**Commit Message**: feat: built-in ad and tracker blocking for runtime templates
 
-Tauri runs actool itself for a .icon in bundle.icon and fails the whole
-build when actool errors, so handing it the .icon after our own compile
-failed turned a missing Liquid Glass icon into a failed build. Now only a
-precompiled Assets.car goes into bundle.icon, with the .icns; otherwise
-the .icns alone. The pkill ibtoold retry is gone: it ended a process that
-belongs to the user's Xcode, and the compile passed on its first try on
-Xcode 27.2. bundle.resources keeps only the .icns, as the plain .icns path
-does, instead of storing the 1 MB Assets.car a second time.
+Pake desktop asked for per-app ad blocking chosen while configuring an
+app. Runtime templates built with `runtime-template` (which now turns on
+the new `content-blocking` feature) embed EasyList, EasyPrivacy, AdGuard
+Cookie Notices and EasyList China, gzipped under filters/, plus uBO
+Unbreak, which is always added. `content_blocking` in pake.json picks the
+groups (ads, trackers, cookies, china); it defaults to empty, so existing
+apps and CLI builds are unchanged, and the CLI never enables the feature.
 
-Verified on macOS 27.2 with Xcode 27.2: pake.icon built an app whose
-Assets.car holds the light, dark and tinted appearances with
-CFBundleIconName = Icon and one Assets.car; a broken .icon built an app
-with the .icns only. npx vitest run (815), format:check and cli:build pass;
-the new resources test fails on the old merge.ts.
+Lists are matched by Brave's adblock-rust (MPL-2.0):
+- macOS and Linux compile WebKit content rule lists once per selection
+  (network and cosmetic units, cached by a fingerprint of the list bytes)
+  and the main window waits on about:blank until they are attached, with
+  a 10 s fail-open; popups get the same lists.
+- Windows answers matched WebView2 subresource requests with 403 and
+  injects the cosmetic CSS; documents and *.localhost are never blocked.
 
-**File**: `bin/helpers/icon-composer.ts` (modified, +7/-16)
+Verified: cargo test --lib 102 without and 107 with runtime-template on
+macOS; clippy -D warnings with the feature on macOS, Linux (devbox) and
+Windows ARM64; content_bl
+
+**File**: `filters/README.md` (added, +15/-0)
 ```diff
-@@ -202,21 +202,8 @@ export async function precompileIconComposerAssets(
-     return dest;
-   }
- 
--  // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
-   logger.warn(
--    '✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).',
--  );
--  await execa('pkill', ['-x', 'ibtoold'], {
--    stdin: 'ignore',
--    reject: false,
--  });
--
--  if (await compileAssetsCar(iconPackagePath, dest)) {
--    return dest;
--  }
--
--  logger.warn(
--    '✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.',
-+    '✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.',
-   );
-   return null;
- }
-@@ -281,15 +268,19 @@ export async function applyDarwinIconComposerPackage(options: {
-     destIconsDir,
-   );
- 
-+  // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
-+  // build when actool errors, so only a precompiled Assets.car goes in; when
-+  // that could not be built, the app ships with the .icns alone.
-   const bundleIcon: string[] = [];
-   if (compiledCar) {
-     logger.info('✼ Precompiled Assets.car from the Icon Composer package.');
-     bundleIcon.push('icons/Assets.car');
--  } else {
--    bundleIcon.push(`icons/${safeAppName}.icon`);
-   }
-   if (hasIcns) {
-     bundleIcon.push(`icons/${safeAppName}.icns`);
-   }
-+  if (bundleIcon.length === 0) {
-+    bundleIcon.push(`icons/${safeAppName}.icon`);
-+  }
-   return { bundleIcon };
- }
-```
-
-**File**: `bin/helpers/merge.ts` (modified, +5/-1)
-```diff
-@@ -436,7 +436,11 @@ export async function mergeIcons(
-           defaultIcnsPath,
-         });
-         tauriConf.bundle.icon = bundleIcon;
--        tauriConf.bundle.resources = bundleIcon;
-+        // Assets.car is read from bundle.icon; copying it into resources too
-+        // would store it twice. Keep the .icns resource the plain path ships.
-+        tauriConf.bundle.resources = bundleIcon.filter((icon) =>
-+          icon.endsWith('.icns'),
-+        );
-         composerIconApplied = true;
-       }
-     } else if (customIconExt !== iconInfo.fileExt) {
-```
-
-**File**: `dist/cli.js` (modified, +10/-14)
-```diff
-@@ -1099,16 +1099,7 @@ async function precompileIconComposerAssets(iconPackagePath, destIconsDir) {
-     if (await compileAssetsCar(iconPackagePath, dest)) {
-         return dest;
-     }
--    // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
--    logger.warn('✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).');
--    await execa('pkill', ['-x', 'ibtoold'], {
--        stdin: 'ignore',
--        reject: false,
--    });
--    if (await compileAssetsCar(iconPackagePath, dest)) {
--        return dest;
--    }
--    logger.warn('✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.');
-+    logger.warn('✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.');
-     return null;
- }
- /**
-@@ -1147,17 +1138,20 @@ async function applyDarwinIconComposerPackage(options) {
-     }
-     await warnIfActoolUnavailable();
-     const compiledCar = await precompileIconComposerAssets(destIconPackage, destIconsDir);
-+    // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
-+    // build when actool errors, so only a precompiled Assets.car goes in; when
-+    // that could not be built, the app ships with the .icns alone.
-     const bundleIcon = [];
-     if (compiledCar) {
-         logger.info('✼ Precompiled Assets.car from the Icon Composer package.');
-         bundleIcon.push('icons/Assets.car');
-     }
--    else {
--        bundleIcon.push(`icons/${safeAppName}.icon`);
--    }
-     if (hasIcns) {
-         bundleIcon.push(`icons/${safeAppName}.icns`);
-     }
-+    if (bundleIcon.length === 0) {
-+        bundleIcon.push(`icons/${safeAppName}.icon`);
-+    }
-     return { bundleIcon };
- }
- 
-@@ -1462,7 +1456,9 @@ async function mergeIcons(options, name, tauriConf, platform, safeAppName) {
-                     defaultIcnsPath,
-                 });
-                 tauriConf.bundle.icon = bundleIcon;
--                tauriConf.bundle.resources = bundleIcon;
-+                // Assets.car is read from bundle.icon; copying it into resources too
-+                // would store it twice. Keep the .icns resource the plain path ships.
-+                tauriConf.bundle.resources = bundleIcon.filter((icon) => icon.endsWith('.icns'));
-                 composerIconApplied = true;
-             }
-         }
-```
-
-**File**: `docs/cli-usage.md` (modified, +1/-1)
-```diff
-@@ -132,7 +132,7 @@ Supports both local and remote files, automatically converts to platform-specifi
- 
- If you pass a `.icon`, also put a sibling `.icns` of the same basename for macOS versions before 26. If there isn't one, Pake uses its default `icon.icns`. A `.icon` is a local package, not a URL. Compiling Liquid Glass appearances needs Xcode 26+ (`actool` short version 26 or newer) on the machine that runs `pake`. If `actool` is missing or too old, Pake warns and uses the `.icns` fallback.
- 
--On some Xcode 27 setups, Tauri's bundler fails when it runs `actool` (tauri-apps/tauri#15315, #16386). Pake tries to precompile `Assets.car` itself first, with stdin closed, and retries once after stopping `ibtoold`. If that fails, the `.icon` is still passed to Tauri, and the `.icns` fallback stays in `bundle.icon`.
-+On some Xcode 27 setups, Tauri's bundler fails when it runs `actool` itself (tauri-apps/tauri#15315, #16386), so Pake compiles `Assets.car` first, with stdin closed, and hands Tauri the compiled file. If that compile fails, the build goes on with the `.icns` alone.
- 
- ```shell
- --icon <path>
-```
-
-**File**: `docs/cli-usage_CN.md` (modified, +1/-1)
-```diff
-@@ -132,7 +132,7 @@ pake ./dist --name MyTool
- 
- 传入 `.icon` 时，请在同目录放一个同名的 `.icns`，给 macOS 26 以下的系统做回退；没有的话会用 Pake 自带的默认 `icon.icns`。`.icon` 只能是本地包，不能通过 URL 下载。编译 Liquid Glass 外观需要打包机器上有 Xcode 26+（`actool` 主版本不低于 26）；找不到或版本过低时，会给出警告并使用 `.icns` 回退。
- 
--在部分 Xcode 27 环境里，Tauri 打包过程调用 `actool` 可能失败（tauri-apps/tauri#15315、#16386）。Pake 会先自行预编译 `Assets.car`（关闭 stdin），失败时停掉 `ibtoold` 再试一次；仍失败就把 `.icon` 交给 Tauri，同时保留 `.icns` 回退。
-+在部分 Xcode 27 环境里，Tauri 打包时自己调用 `actool` 可能失败（tauri-apps/tauri#15315、#16386），所以 Pake 会先自行编译 `Assets.car`（关闭 stdin），再把编译好的文件交给 Tauri，编译失败时只用 `.icns` 继续打包。
- 
- ```shell
- --icon <path>
-```
-
-**File**: `llms.txt` (modified, +1/-1)
-```diff
-@@ -38,6 +38,6 @@ Do not recommend Pake as a replacement for a fully native application when deep
- ## Notes
- 
- - Output formats: dmg/app (macOS), msi (Windows), deb/AppImage/rpm/zst (Linux); pick with `--targets`.
--- Icons auto-fetch from the site favicon when `--icon` is omitted. On macOS, `--icon` also accepts a local Icon Composer `.icon` package, which is passed to Tauri together with an `.icns` fallback (a sibling file of the same basename, or Pake's default). A `.icon` cannot be fetched from a URL. Compiling appearance variants needs Xcode 26+ `actool`.
-+- Icons auto-fetch from the site favicon when `--icon` is omitted. On macOS, `--icon` also accepts a local Icon Composer `.icon` package, compiled into the app's `Assets.car` with an `.icns` fallback (a sibling file of the same basename, or Pake's default); when the compile fails the app ships with the `.icns` alone. A `.icon` cannot be fetched from a URL. Compiling appearance variants needs Xcode 26+ `actool`.
- - `--proxy-url` is baked into the app webview at build time; it does not proxy the icon download itself.
- - Google OAuth and similar providers may reject embedded webviews regardless of flags; `--new-window` and `--safe-domain` help with most SSO flows.
-```
-
-**File**: `tests/unit/icon-composer.test.ts` (modified, +112/-48)
-```diff
-@@ -44,7 +44,10 @@ async function makeIconPackage(
-     fill: 'automatic',
-     groups: [],
-   });
--  await fsExtra.writeFile(path.join(pkg, 'Assets', 'icon.png'), Buffer.from([1, 2, 3, 4]));
-+  await fsExtra.writeFile(
-+    path.join(pkg, 'Assets', 'icon.png'),
-+    Buffer.from([1, 2, 3, 4]),
-+  );
-   return pkg;
- }
- 
-@@ -137,7 +140,7 @@ describe('parseActoolVersion', () => {
- });
- 
- describe('applyDarwinIconComposerPackage', () => {
--  it('sets bundle.icon to the .icon package and a sibling .icns', async () => {
-+  it('ships only a sibling .icns when Assets.car could not be precompiled', async () => {
-     const root = await makeTempDir();
-     const pkg = await makeIconPackage(root);
-     await fsExtra.writeFile(path.join(root, 'AppIcon.icns'), 'sibling-icns');
-@@ -152,16 +155,15 @@ describe('applyDarwinIconComposerPackage', () => {
-       defaultIcnsPath: defaultIcns,
-     });
- 
--    expect(bundleIcon).toEqual([
--      'icons/weekly.icon',
--      'icons/weekly.icns',
--    ]);
--    expect(await fsExtra.pathExists(path.join(destIconsDir, 'weekly.icon', 'icon.json'))).toBe(
--      true,
--    );
--    expect(await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8')).toBe(
--      'sibling-icns',
--    );
-+    expect(bundleIcon).toEqual(['icons/weekly.icns']);
-+    expect(
-+      await fsExtra.pathExists(
-+        path.join(destIconsDir, 'weekly.icon', 'icon.json'),
-+      ),
-+    ).toBe(true);
-+    expect(
-+      await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8'),
-+    ).toBe('sibling-icns');
-   });
- 
-   it('uses the default .icns when there is no sibling file', async () => {
-@@ -178,13 +180,10 @@ describe('applyDarwinIconComposerPackage', () => {
-       defaultIcnsPath: defaultIcns,
-     });
- 
--    expect(bundleIcon).toEqual([
--      'icons/weekly.icon',
--      'icons/weekly.icns',
--    ]);
--    expect(await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8')).toBe(
--      'default-icns',
--    );
-+    expect(bundleIcon).toEqual(['icons/weekly.icns']);
-+    expect(
-+      await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8'),
-+    ).toBe('default-icns');
-   });
- });
- 
-@@ -207,10 +206,16 @@ describe('precompileIconComposerAssets', () => {
-       if (compileAt >= 0) {
-         const outputPath = args[compileAt + 1];
-         await fsExtra.ensureDir(outputPath);
--        await fsExtra.writeFile(path.join(outputPath, 'Assets.car'), 'compiled-car');
-+        await fsExtra.writeFile(
-+          path.join(outputPath, 'Assets.car'),
-+          'compiled-car',
-+        );
-         return { exitCode: 0, stdout: '', stderr: '' };
-       }
--      if (args.includes('--version') || args.includes('--output-format=human-readable-text')) {
-+      if (
-+        args.includes('--version') ||
-+        args.includes('--output-format=human-readable-text')
-+      ) {
-         return actoolVersionResult('26.1');
-       }
-       return { exitCode: 0, stdout: '', stderr: '' };
-@@ -244,36 +249,57 @@ describe('precompileIconComposerAssets', () => {
-     expect(compiled).toBe(false);
-   });
- 
--  it('retries once after pkill ibtoold when the first compile fails', async () => {
-+  it('gives up after one failed compile without stopping other processes', async () => {
-     const root = await makeTempDir();
-     const pkg = await makeIconPackage(root);
--    const destIconsDir = path.join(root, 'dest');
-     let compileAttempts = 0;
- 
--    execaMock.mockImplementation(async (file: string, args: string[] = []) => {
--      if (file === 'pkill') {
--        return { exitCode: 0, stdout: '', stderr: '' };
-+    execaMock.mockImplementation(async (_file: string, args: string[] = []) => {
-+      if (args.includes('--compile')) {
-+        compileAttempts += 1;
-+        return { exitCode: 1, stdout: '', stderr: 'failed to run actool' };
-       }
-+      return actoolVersionResult('27.2');
-+    });
+@@ -0,0 +1,15 @@
++# Filter lists
 +
-+    await expect(
-+      precompileIconComposerAssets(pkg, path.join(root, 'dest')),
-+    ).resolves.toBeNull();
-+    expect(compileAttempts).toBe(1);
-+    expect(execaMock.mock.calls.some((call) => call[0] === 'pkill')).toBe(
-+      false,
-+    );
-+  });
++Runtime templates built with the `content-blocking` feature (which `runtime-template` turns on) embed these lists, unmodified and gzipped, for the `content_blocking` groups in `pake.json`. The npm package does not ship this folder, and the CLI never enables the feature.
 +
-+  it('puts the precompiled Assets.car and the .icns in bundle.icon, never the .icon', async () => {
-+    const root = await makeTempDir();
-+    const pkg = await makeIconPackage(root);
-+    const destIconsDir = path.join(root, 'dest');
-+    const defaultIcns = path.join(root, 'icon.icns');
-+    await fsExtra.writeFile(defaultIcns, 'default-icns');
++| Group | List | Authors | License |
++| --- | --- | --- | --- |
++| `ads` | EasyList | The EasyList authors (https://easylist.to/) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
++| `trackers` | EasyPrivacy | The EasyList authors (https://easylist.to/) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
++| `cookies` | AdGuard Cookie Notices filter | AdGuard (https://github.com/AdguardTeam/AdguardFilters) | GPL-3.0 |
++| `china` | EasyList China | The EasyList China authors (https://github.com/easylist/easylistchina) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
++| always | uBlock filters – Unbreak | uBlock Origin contributors (https://github.com/uBlockOrigin/uAssets) | GPL-3.0 |
 +
-+    execaMock.mockImplementation(async (_file: string, args: string[] = []) => {
-       const compileAt = args.indexOf('--compile');
-       if (compileAt >= 0) {
--        compileAttempts += 1;
--        if (compileAttempts === 1) {
--          return { exitCode: 1, stdout: '', stderr: 'failed to run actool' };
--        }
-         const outputPath = args[compileAt + 1];
-         await fsExtra.ensureDir(outputPath);
--        await fsExtra.writeFile(path.join(outputPath, 'Assets.car'), 'retry-car');
-+ 
++`sources.json` records each list's download URL, version and date. Refresh them with `node scripts/update-filter-lists.mjs` before a runtime release; `cargo test --features content-blocking content_blocking` then checks that every list unpacks and that all groups together still fit WebKit's 150,000-rule limit.
++
++The lists are matched by Brave's adblock-rust (https://github.com/brave/adblock-rust, MPL-2.0).
 ```
 
----
-
-### Incident Patch 2: `3d6f2ddd` (2026-11-13)
-**Commit Message**: docs: record icon download cancellation regression
-
-**File**: `docs/incidents.md` (modified, +1/-0)
+**File**: `filters/sources.json` (added, +45/-0)
 ```diff
-@@ -33,3 +33,4 @@ When a review skill, its prompt or the model running it changes, rerun it on the
- | I-10 | 2026-10-15 | On macOS the Enter that confirms a Chinese input method candidate reached the page and sent the message early (#1415)                                                                       | unknown    | f4b4e3cb | field  | `keeps the candidate-confirming Enter (keyCode 229) away from the page`                                                                   |
- | I-11 | 2026-10-28 | After one failed Windows build, every later build refused to start with "A previous Pake process left a compilation cache lock" until the lock was deleted by hand                          | 5d66c330   | 16d79b66 | native | `a failed Windows build whose taskkill exits %i keeps the workspace %i times`                                                             |
- | I-12 | 2026-08-31 | `--enable-drag-drop`, documented as enabling drag-and-drop uploads, kept Tauri's handler instead, so file drops never reached the page and Windows HTML5 drag and drop broke (#1030, #1132) | bd764f5f   | f62e7225 | native | `forwards window/zoom/wasm/new_window flags verbatim`                                                                                     |
-+| I-13 | 2026-11-13 | During a stalled remote `--icon` download, SIGINT/SIGTERM waited for the 10-second timeout and logged "Icon download timed out!" before cancelling                                          | 5d66c330   | 891521b4 | unit   | `tests/unit/icon.test.ts`, `does not try another favicon source after the build is cancelled`                                             |
-```
-
----
-
-### Incident Patch 3: `99a50d41` (2026-11-14)
-**Commit Message**: Merge pull request #1435 from yuxino/fix/icon-download-cancellation
-
-**File**: `bin/options/icon.ts` (modified, +16/-2)
-```diff
-@@ -16,6 +16,10 @@ import {
- } from '@/utils/icon-source';
- import { generateLinuxPackageName, getSafeAppName } from '@/utils/name';
- import { PakeAppOptions } from '@/types';
-+import {
-+  getBuildCancellationSignal,
-+  throwIfBuildCancelled,
-+} from '@/utils/build-workspace';
- import {
-   ensureMultiResolutionIco,
-   writeIcoWithPreferredSize,
-@@ -609,6 +613,7 @@ async function tryResolveIconSource(
-         return resolvedPath;
-       }
-     } catch (error: unknown) {
-+      throwIfBuildCancelled();
-       if (error instanceof Error) {
-         const label =
-           source === 'dashboard' ? 'Dashboard icon' : 'Icon service';
-@@ -627,9 +632,10 @@ async function tryGetFavicon(
-   url: string,
-   appName: string,
- ): Promise<string | null> {
-+  let spinner: ReturnType<typeof getSpinner> | undefined;
-   try {
-     const domain = new URL(url).hostname;
--    const spinner = getSpinner(`Fetching icon from ${domain}...`);
-+    spinner = getSpinner(`Fetching icon from ${domain}...`);
- 
-     const isCI =
-       process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
-@@ -662,10 +668,13 @@ async function tryGetFavicon(
-     spinner.warn(`No favicon found for ${domain}. Using default.`);
-     return null;
-   } catch (error) {
-+    throwIfBuildCancelled();
-     if (error instanceof Error) {
-       logger.warn(`Failed to fetch favicon: ${error.message}`);
-     }
-     return null;
-+  } finally {
-+    spinner?.stop();
-   }
- }
- 
-@@ -677,14 +686,18 @@ export async function downloadIcon(
-   showSpinner = true,
-   customTimeout?: number,
- ): Promise<string | null> {
-+  throwIfBuildCancelled();
-+  const buildSignal = getBuildCancellationSignal();
-   const controller = new AbortController();
-   const timeoutId = setTimeout(() => {
-     controller.abort();
-   }, customTimeout || 10000);
- 
-   try {
-     const response = await fetch(iconUrl, {
--      signal: controller.signal,
-+      signal: buildSignal
-+        ? AbortSignal.any([controller.signal, buildSignal])
-+        : controller.signal,
-     });
- 
-     if (!response.ok) {
-@@ -710,6 +723,7 @@ export async function downloadIcon(
- 
-     return await saveIconFile(arrayBuffer, extension);
-   } catch (error: unknown) {
-+    throwIfBuildCancelled();
-     if (showSpinner) {
-       if (error instanceof Error && error.name === 'AbortError') {
-         logger.error('Icon download timed out!');
-```
-
-**File**: `dist/cli.js` (modified, +13/-2)
-```diff
-@@ -3291,6 +3291,7 @@ async function tryResolveIconSource(source, domain, appName, downloadTimeout) {
-             }
-         }
-         catch (error) {
-+            throwIfBuildCancelled();
-             if (error instanceof Error) {
-                 const label = source === 'dashboard' ? 'Dashboard icon' : 'Icon service';
-                 logger.debug(`${label} ${iconUrl} failed: ${error.message}`);
-@@ -3303,9 +3304,10 @@ async function tryResolveIconSource(source, domain, appName, downloadTimeout) {
-  * Attempts to fetch favicon from website
-  */
- async function tryGetFavicon(url, appName) {
-+    let spinner;
-     try {
-         const domain = new URL(url).hostname;
--        const spinner = getSpinner(`Fetching icon from ${domain}...`);
-+        spinner = getSpinner(`Fetching icon from ${domain}...`);
-         const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
-         const downloadTimeout = isCI
-             ? ICON_CONFIG.downloadTimeout.ci
-@@ -3325,23 +3327,31 @@ async function tryGetFavicon(url, appName) {
-         return null;
-     }
-     catch (error) {
-+        throwIfBuildCancelled();
-         if (error instanceof Error) {
-             logger.warn(`Failed to fetch favicon: ${error.message}`);
-         }
-         return null;
-     }
-+    finally {
-+        spinner?.stop();
+@@ -0,0 +1,45 @@
++{
++  "fetched": "2026-11-15",
++  "lists": [
++    {
++      "group": "ads",
++      "title": "EasyList",
++      "version": "202611150427",
++      "url": "https://easylist.to/easylist/easylist.txt",
++      "license": "https://easylist.to/pages/licence.html",
++      "lines": 78503
++    },
++    {
++      "group": "trackers",
++      "title": "EasyPrivacy",
++      "version": "202611150427",
++      "url": "https://easylist.to/easylist/easyprivacy.txt",
++      "license": "https://easylist.to/pages/licence.html",
++      "lines": 57428
++    },
++    {
++      "group": "cookies",
++      "title": "AdGuard Cookie Notices filter",
++      "version": "2.0.99.53",
++      "url": "https://filters.adtidy.org/extension/ublock/filters/18.txt",
++      "license": "https://github.com/AdguardTeam/AdguardFilters/blob/master/LICENSE",
++      "lines": 23869
++    },
++    {
++      "group": "china",
++      "title": "EasyList China",
++      "version": "202611150422",
++      "url": "https://easylist-downloads.adblockplus.org/easylistchina.txt",
++      "license": "https://easylist.to/pages/licence.html",
++      "lines": 17961
++    },
++    {
++      "group": "unbreak",
++      "title": "uBlock filters – Unbreak",
++      "version": "Sat, 14 Nov 2026 04:57:45 +0000",
++      "url": "https://ublockorigin.github.io/uAssets/filters/unbreak.txt",
++      "license": "https://github.com/uBlockOrigin/uAssets/blob/master/LICENSE",
++      "lines": 6116
 +    }
- }
- /**
-  * Downloads icon from URL
-  */
- async function downloadIcon(iconUrl, showSpinner = true, customTimeout) {
-+    throwIfBuildCancelled();
-+    const buildSignal = getBuildCancellationSignal();
-     const controller = new AbortController();
-     const timeoutId = setTimeout(() => {
-         controller.abort();
-     }, customTimeout || 10000);
-     try {
-         const response = await fetch(iconUrl, {
--            signal: controller.signal,
-+            signal: buildSignal
-+                ? AbortSignal.any([controller.signal, buildSignal])
-+                : controller.signal,
-         });
-         if (!response.ok) {
-             if (response.status === 404 && !showSpinner) {
-@@ -3359,6 +3369,7 @@ async function downloadIcon(iconUrl, showSpinner = true, customTimeout) {
-         return await saveIconFile(arrayBuffer, extension);
-     }
-     catch (error) {
-+        throwIfBuildCancelled();
-         if (showSpinner) {
-             if (error instanceof Error && error.name === 'AbortError') {
-                 logger.error('Icon download timed out!');
++  ]
++}
 ```
 
-**File**: `docs/incidents.md` (modified, +1/-0)
+**File**: `scripts/update-filter-lists.mjs` (added, +63/-0)
 ```diff
-@@ -33,3 +33,4 @@ When a review skill, its prompt or the model running it changes, rerun it on the
- | I-10 | 2026-10-15 | On macOS the Enter that confirms a Chinese input method candidate reached the page and sent the message early (#1415)                                                                       | unknown    | f4b4e3cb | field  | `keeps the candidate-confirming Enter (keyCode 229) away from the page`                                                                   |
- | I-11 | 2026-10-28 | After one failed Windows build, every later build refused to start with "A previous Pake process left a compilation cache lock" until the lock was deleted by hand                          | 5d66c330   | 16d79b66 | native | `a failed Windows build whose taskkill exits %i keeps the workspace %i times`                                                             |
- | I-12 | 2026-08-31 | `--enable-drag-drop`, documented as enabling drag-and-drop uploads, kept Tauri's handler instead, so file drops never reached the page and Windows HTML5 drag and drop broke (#1030, #1132) | bd764f5f   | f62e7225 | native | `forwards window/zoom/wasm/new_window flags verbatim`                                                                                     |
-+| I-13 | 2026-11-13 | During a stalled remote `--icon` download, SIGINT/SIGTERM waited for the 10-second timeout and logged "Icon download timed out!" before cancelling                                          | 5d66c330   | 891521b4 | unit   | `tests/unit/icon.test.ts`, `does not try another favicon source after the build is cancelled`                                             |
-```
-
-**File**: `tests/unit/icon.test.ts` (modified, +66/-1)
-```diff
-@@ -11,8 +11,10 @@ vi.mock('execa', () => ({
-   execa: execaMock,
- }));
- 
--import { downloadIcon, generateMacOSIcns } from '@/options/icon';
-+import { downloadIcon, generateMacOSIcns, handleIcon } from '@/options/icon';
- import { getIconSourcePriority } from '@/utils/icon-source';
-+import { beginBuildCancellation } from '@/utils/build-workspace';
-+import { DEFAULT_PAKE_OPTIONS } from '@/defaults';
- 
- const downloadedIconPaths: string[] = [];
- const generatedIconDirs: string[] = [];
-@@ -41,6 +43,69 @@ it('keeps the download deadline active until the response body completes', async
-   }
- });
- 
-+it.each(['SIGINT', 'SIGTERM'] as const)(
-+  'cancels an in-flight icon response on %s',
-+  async (signal) => {
-+    let requestStarted!: () => void;
-+    const started = new Promise<void>((resolve) => {
-+      requestStarted = resolve;
-+    });
-+    const server = http.createServer((_request, response) => {
-+      response.writeHead(200, { 'content-type': 'image/png' });
-+      response.flushHeaders();
-+      requestStarted();
-+    });
-+    await new Promise<void>((resolve) =>
-+      server.listen(0, '127.0.0.1', resolve),
-+    );
-+    const endCancellation = beginBuildCancellation();
-+    try {
-+      const port = (server.address() as import('net').AddressInfo).port;
-+      const download = downloadIcon(
-+        `http://127.0.0.1:${port}/icon`,
-+        false,
-+        2000,
-+      );
-+      const cancelled = expect(download).rejects.toThrow(
-+        `Build cancelled (${signal}).`,
-+      );
-+      await started;
-+      const cancelledAt = performance.now();
-+      process.emit(signal, signal);
-+      await cancelled;
-+      expect(performance.now() - cancelledAt).toBeLessThan(1000);
-+    } finally {
-+      endCancellation();
-+      server.closeAllConnections();
-+      await new Promise<void>((resolve) => server.close(() => resolve()));
-+    }
+@@ -0,0 +1,63 @@
++#!/usr/bin/env node
++// Downloads the filter lists that runtime templates built with the
++// `content-blocking` feature embed, and stores them gzipped under filters/.
++// Run it before a runtime release; the lists age within days of a download.
++import { gzipSync } from 'node:zlib';
++import { writeFileSync, mkdirSync } from 'node:fs';
++import { dirname, join } from 'node:path';
++import { fileURLToPath } from 'node:url';
++
++const root = join(dirname(fileURLToPath(import.meta.url)), '..');
++const out = join(root, 'filters');
++
++// Group names are the values of `content_blocking` in pake.json.
++export const LISTS = [
++  { file: 'ads', url: 'https://easylist.to/easylist/easylist.txt' },
++  { file: 'trackers', url: 'https://easylist.to/easylist/easyprivacy.txt' },
++  {
++    file: 'cookies',
++    url: 'https://filters.adtidy.org/extension/ublock/filters/18.txt',
 +  },
-+);
++  {
++    file: 'china',
++    url: 'https://easylist-downloads.adblockplus.org/easylistchina.txt',
++  },
++  // Always added to any selection: fixes for sites the other lists break.
++  {
++    file: 'unbreak',
++    url: 'https://ublockorigin.github.io/uAssets/filters/unbreak.txt',
++  },
++];
 +
-+it('does not try another favicon source after the build is cancelled', async () => {
-+  const endCancellation = beginBuildCancellation();
-+  const fetchMock = vi.fn(async () => {
-+    process.emit('SIGINT', 'SIGINT');
-+    throw new Error('Request interrupted');
-+  });
-+  vi.stubGlobal('fetch', fetchMock);
-+  try {
-+    await expect(
-+      handleIcon(
-+        {
-+          ...DEFAULT_PAKE_OPTIONS,
-+          name: 'CancelProbe',
-+          identifier: 'com.pake.cancelprobe',
-+        },
-+        'https://example.com',
-+      ),
-+    ).rejects.toThrow('Build cancelled (SIGINT).');
-+    expect(fetchMock).toHaveBeenCalledTimes(1);
-+  } finally {
-+    endCancellation();
++function header(text, key) {
++  const line = text
++    .split('\n', 40)
++    .find((l) => l.toLowerCase().startsWith(`! ${key.toLowerCase()}:`));
++  return line ? line.slice(line.indexOf(':') + 1).trim() : '';
++}
++
++mkdirSync(out, { recursive: true });
++const sources = [];
++for (const { file, url } of LISTS) {
++  const response = await fetch(url);
++  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
++  const text = await response.text();
++  if (!text.includes('##') && !text.includes('||')) {
++    throw new Error(`${url} does not look like a filter list`);
 +  }
-+});
++  // mtime 0 keeps the gzip bytes stable for the same text.
++  writeFileSync(join(out, `${file}.txt.gz`), gzipSync(text, { level: 9 }));
++  sources.push({
++    group: file,
++    title: header(text, 'Title'),
++    version: header(text, 'Version') || header(text, 'Last modified'),
++    url,
++    license: header(text, 'Licence') || header(text, 'License'),
++    lines: text.split('\n').length,
++  });
++  console.log(`${file}: ${text.length} bytes`);
++}
++writeFileSync(
++  join(out, 'sources.json'),
++  JSON.stringify({ fetched: new Date().toISOString().slice(0, 10), lists: sources }, null, 2) + '\n',
++);
+```
+
+**File**: `src-tauri/Cargo.lock` (modified, +89/-7)
+```diff
+@@ -2,6 +2,39 @@
+ # It is not intended for manual editing.
+ version = 4
+ 
++[[package]]
++name = "adblock"
++version = "0.13.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7a4c8558f27608dec74695c866f9a8ef897ec7a77cb826f8a5baf0b8ba461d2a"
++dependencies = [
++ "addr",
++ "arrayvec",
++ "base64 0.22.1",
++ "bitflags 2.11.0",
++ "flatbuffers",
++ "idna",
++ "itertools",
++ "memchr",
++ "percent-encoding",
++ "regex",
++ "rustc-hash",
++ "seahash",
++ "serde",
++ "serde_json",
++ "thiserror 1.0.69",
++]
 +
- afterEach(() => {
-   vi.unstubAllGlobals();
-   vi.restoreAllMocks();
++[[package]]
++name = "addr"
++version = "0.15.6"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a93b8a41dbe230ad5087cc721f8d41611de654542180586b315d9f4cf6b72bef"
++dependencies = [
++ "psl",
++ "psl-types",
++]
++
+ [[package]]
+ name = "adler2"
+ version = "2.0.1"
+@@ -47,6 +80,12 @@ version = "1.0.102"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
+ 
++[[package]]
++name = "arrayvec"
++version = "0.7.8"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
++
+ [[package]]
+ name = "async-broadcast"
+ version = "0.7.2"
+@@ -767,7 +806,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users",
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -865,6 +904,12 @@ version = "1.0.20"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d0881ea181b1df73ff77ffaaf9c7544ecc11e82fba9b5f27b262a3c73a332555"
+ 
++[[package]]
++name = "either"
++version = "1.19.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
++
+ [[package]]
+ name = "embed-resource"
+ version = "3.0.6"
+@@ -945,7 +990,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -1000,6 +1045,16 @@ version = "0.1.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582"
+ 
++[[package]]
++name = "flatbuffers"
++version = "25.12.19"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "35f6839d7b3b98adde531effaf34f0c2badc6f4735d26fe74709d8e513a96ef3"
++dependencies = [
++ "bitflags 2.11.0",
++ "rustc_version",
++]
++
+ [[package]]
+ name = "flate2"
+ version = "1.1.9"
+@@ -1905,6 +1960,15 @@ dependencies = [
+  "once_cell",
+ ]
+ 
++[[package]]
++name = "itertools"
++version = "0.14.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285"
++dependencies = [
++ "either",
++]
++
+ [[package]]
+ name = "itoa"
+ version = "1.0.17"
+@@ -2580,15 +2644,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
+ dependencies = [
+  "libc",
+- "windows-sys 0.45.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+ name = "pake"
+ version = "3.19.0"
+ dependencies = [
++ "adblock",
+  "block2",
+  "dispatch",
++ "flate2",
+  "gtk",
+  "objc2",
+  "objc2-app-kit",
+@@ -2608,6 +2674,7 @@ dependencies = [
+  "tauri-plugin-window-state",
+  "tokio",
+  "webkit2gtk",
++ "webkit2gtk-sys",
+  "webview2-com",
+  "windows-core 0.61.2",
+  "windows-sys 0.61.2",
+@@ -3004,6 +3071,15 @@ dependencies = [
+  "unicode-ident",
+ ]
+ 
++[[package]]
++name = "psl"
++version = "2.1.254"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cb958e602bc5c9e07a3bdb78ce240402a490cd08f01e51deacfe637ed903d743"
++dependencies = [
++ "psl-types",
++]
++
+ [[package]]
+ name = "psl-types"
+ version = "2.0.11"
+@@ -3091,7 +3167,7 @@ dependencies = [
+  "once_cell",
+  "socket2",
+  "tracing",
+- "windows-sys 0.59.0",
++ "windows-sys 0.60.2",
+ ]
+ 
+ [[package]]
+@@ -3436,7 +3512,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -3552,6 +3628,12 @@ version = "1.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+ 
++[[package]]
++name = "seahash"
++version = "4.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1c107b6f4780854c8b126e228ea8869f4d7b71260f962fefb57b996b8959ba6b"
++
+ [[package]]
+ name = "selectors"
+ version = "0.24.0"
+@@ -4506,7 +4588,7 @@ dependencies = [
+  "getrandom 0.4.1",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -5320,7 +5402,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.59.0",
++ "windows-s
+```
+
+**File**: `src-tauri/Cargo.toml` (modified, +19/-1)
+```diff
+@@ -21,6 +21,14 @@ tauri-build = { version = "2.5.5", features = [] }
+ serde_json = "1.0.149"
+ serde = { version = "1.0.228", features = ["derive"] }
+ tokio = { version = "1.49.0", features = ["time", "fs"] }
++# Content blocking (feature `content-blocking`): Brave's filter engine, MPL-2.0.
++# Without single-thread its Engine is Send + Sync for the WebView2 handler.
++adblock = { version = "0.13.5", default-features = false, features = [
++  "content-blocking",
++  "embedded-domain-resolver",
++  "full-regex-handling",
++], optional = true }
++flate2 = { version = "1.1", optional = true }
+ tauri = { version = "2.10.2", features = [
+   "tray-icon",
+   "image-ico",
+@@ -42,12 +50,17 @@ objc2 = "0.6"
+ objc2-app-kit = { version = "0.3", features = ["NSApplication", "NSDockTile", "NSWindow"] }
+ objc2-foundation = { version = "0.3", features = [
+   "NSArray",
++  "NSEnumerator",
++  "NSError",
+   "NSLocale",
+   "NSString",
+   "NSUserNotification",
+ ] }
+ objc2-web-kit = { version = "0.3", default-features = false, features = [
+   "std",
++  "block2",
++  "WKContentRuleList",
++  "WKContentRuleListStore",
+   "WKUserContentController",
+   "WKWebViewConfiguration",
+ ] }
+@@ -63,6 +76,8 @@ gtk = "0.18"
+ # Reads the freedesktop color-scheme from the settings portal. Same version
+ # and features that tauri-plugin-opener and single-instance already lock.
+ zbus = "5.14"
++# WebKitGTK's content filter store, which the safe webkit2gtk crate leaves out.
++webkit2gtk-sys = { version = "=2.0.2", features = ["v2_40"], optional = true }
+ 
+ [target.'cfg(windows)'.dependencies]
+ windows-sys = { version = "0.61.2", features = [
+@@ -84,7 +99,10 @@ native-download-probe = []
+ cli-build = []
+ # Prebuilt template that reads a pake-runtime folder at launch: Contents/Resources
+ # on macOS, next to the executable elsewhere. The CLI never enables it.
+-runtime-template = []
++runtime-template = ["content-blocking"]
++# Ad, tracker and cookie-notice blocking with the lists in ../filters, which the
++# npm package does not ship; the CLI never enables it.
++content-blocking = ["dep:adblock", "dep:flate2", "dep:webkit2gtk-sys"]
+ # Tauri's macOS proxy APIs require macOS 14 or later. The CLI enables this
+ # feature only after checking the host Darwin version.
+ macos-proxy = ["tauri/macos-proxy"]
+```
+
+**File**: `src-tauri/src/app/config.rs` (modified, +4/-0)
+```diff
+@@ -133,6 +133,10 @@ pub struct PakeConfig {
+     /// login item in step at every start (see `autostart.rs`).
+     #[serde(default)]
+     pub launch_at_login: bool,
++    /// Built-in filter lists to block with: `ads`, `trackers`, `cookies`,
++    /// `china`. Only builds with the `content-blocking` feature read it.
++    #[serde(default)]
++    pub content_blocking: Vec<String>,
+     /// Replaces the compiled custom.js when a runtime override supplies one.
+     #[serde(skip)]
+     pub runtime_custom_js: Option<String>,
+```
+
+**File**: `src-tauri/src/app/content_blocking.rs` (added, +881/-0)
+```diff
+@@ -0,0 +1,881 @@
++//! Blocks ads, trackers and cookie notices with filter lists built into the
++//! runtime (the `content-blocking` feature, which `runtime-template` turns on).
++//!
++//! `content_blocking` in pake.json names the groups; none means off. macOS and
++//! Linux hand WebKit content rule lists converted from the filters, Windows
++//! matches each WebView2 request in process. Blocking fails open: an app whose
++//! lists cannot load runs unblocked and logs one line.
++
++use adblock::lists::{FilterSet, ParseOptions, RuleTypes};
++use std::io::Read;
++
++macro_rules! filter_list {
++    ($name:literal) => {
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../filters/",
++            $name,
++            ".txt.gz"
++        ))
++    };
++}
++
++/// The groups pake.json may name, in the order they are applied. The sources
++/// and licences of each list are in `filters/sources.json`.
++const GROUPS: [(&str, &[u8]); 4] = [
++    ("ads", filter_list!("ads")),
++    ("trackers", filter_list!("trackers")),
++    ("cookies", filter_list!("cookies")),
++    ("china", filter_list!("china")),
++];
++
++/// Fixes for sites the other lists break, added to every selection.
++const UNBREAK: &[u8] = filter_list!("unbreak");
++
++/// The known groups among `names`, in `GROUPS` order and without duplicates.
++pub fn selected_groups(names: &[String]) -> Vec<&'static str> {
++    GROUPS
++        .iter()
++        .map(|(group, _)| *group)
++        .filter(|group| names.iter().any(|name| name.trim() == *group))
++        .collect()
++}
++
++fn list_bytes(groups: &[&str]) -> Vec<&'static [u8]> {
++    GROUPS
++        .iter()
++        .filter(|(group, _)| groups.contains(group))
++        .map(|(_, bytes)| *bytes)
++        .chain(std::iter::once(UNBREAK))
++        .collect()
++}
++
++fn gunzip(bytes: &[u8]) -> Option<String> {
++    let mut text = String::new();
++    flate2::read::GzDecoder::new(bytes)
++        .read_to_string(&mut text)
++        .ok()?;
++    Some(text)
++}
++
++fn filter_set(groups: &[&str], rule_types: RuleTypes, debug: bool) -> FilterSet {
++    let mut set = FilterSet::new(debug);
++    for bytes in list_bytes(groups) {
++        match gunzip(bytes) {
++            Some(text) => {
++                set.add_filter_list(
++                    text,
++                    ParseOptions {
++                        rule_types,
++                        ..ParseOptions::default()
++                    },
++                );
++            }
++            None => eprintln!("[Pake] A built-in filter list could not be read"),
++        }
++    }
++    set
++}
++
++/// FNV-1a, enough to tell one selection of embedded lists from another.
++#[cfg(any(target_os = "macos", target_os = "linux", test))]
++fn fingerprint(groups: &[&str]) -> u64 {
++    let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
++    let mut feed = |bytes: &[u8]| {
++        for byte in bytes {
++            hash ^= u64::from(*byte);
++            hash = hash.wrapping_mul(0x0000_0100_0000_01b3);
++        }
++    };
++    feed(env!("CARGO_PKG_VERSION").as_bytes());
++    for group in groups {
++        feed(group.as_bytes());
++    }
++    for bytes in list_bytes(groups) {
++        feed(bytes);
++    }
++    hash
++}
++
++/// WebKit compiles at most this many rules into one content rule list.
++#[cfg(any(target_os = "macos", target_os = "linux", test))]
++pub const WEBKIT_MAX_RULES: usize = 150_000;
++
++/// Each selection becomes two WebKit lists: requests to block with their
++/// exceptions, and elements to hide. `ignore-previous-rules` only reaches rules
++/// of its own list, so every list carries its own exceptions.
++#[cfg(any(target_os = "macos", target_os = "linux", test))]
++const WEBKIT_UNITS: [(&str, RuleTypes); 2] = [
++    ("network", RuleTypes::NetworkOnly),
++    ("cosmetic", RuleTypes::CosmeticOnly),
++];
++
++/// Identifiers start with this, so lists from older selections can be removed.
++#[cfg(any(target_os = "macos", target_os = "linux", test))]
++const IDENTIFIER_PREFIX: &str = "pake-blocking-";
++
++#[cfg(any(target_os = "macos", target_os = "linux", test))]
++fn webkit_identifier(groups: &[&str], unit: &str) -> String {
++    format!("{IDENTIFIER_PREFIX}{unit}-{:016x}", fingerprint(groups))
++}
++
++/// The rules of one WebKit unit, ready to serialize.
++#[cfg(any(target_os = "macos", target_os = "linux", test))]
++fn webkit_rules(groups: &[&str], rule_types: RuleTypes) -> Vec<adblock::content_blocking::CbRule> {
++    filter_set(groups, rule_types, true)
++        .into_content_blocking()
++        .map(|(rules, _)| rules)
++        .unwrap_or_default()
++}
++
++/// The JSON of one WebKit unit, or `None` when it has no rules or is too large.
++#[cfg(any(target_os = "macos", target_os = "linux"))]
++fn webkit_json(groups: &[&str], unit: &str) -> Option<String> {
++    let rule_types = WEBKIT_UNITS
++        .iter()
++        .find(|(name, _)| *name == unit)
++        .map(|(_, types)| *types)?;
++    let rules = webkit_rules(groups, rule_types);
++    if rules.is_empty() || rules.len() > WEBKIT_MAX_RULES {
+```
+
+**File**: `src-tauri/src/app/mod.rs` (modified, +2/-0)
+```diff
+@@ -4,6 +4,8 @@ pub mod autostart;
+ #[cfg(any(target_os = "linux", test))]
+ pub mod color_scheme;
+ pub mod config;
++#[cfg(feature = "content-blocking")]
++pub mod content_blocking;
+ #[cfg(target_os = "windows")]
+ pub mod download;
+ pub mod invoke;
 ```
 
 #### Recent Merged Pull Requests:
@@ -1536,49 +1565,40 @@ the new resources test fails on the old merge.ts.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. icon): ship the .icns when Assets.car cannot be compiled
+## X. built-in ad and tracker blocking for runtime templates
 
 **RULE**:
-When implementing operations in `bin/helpers/icon-composer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `filters/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec5af5c3`: icon): ship the .icns when Assets.car cannot be compiled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79396657`: built-in ad and tracker blocking for runtime templates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/helpers/icon-composer.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `filters/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    '✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.',
-  // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
-  // build when actool errors, so only a precompiled Assets.car goes in; when
-  // that could not be built, the app ships with the .icns alone.
-  if (bundleIcon.length === 0) {
-    bundleIcon.push(`icons/${safeAppName}.icon`);
-  }
+# Filter lists
+
+Runtime templates built with the `content-blocking` feature (which `runtime-template` turns on) embed these lists, unmodified and gzipped, for the `content_blocking` groups in `pake.json`. The npm package does not ship this folder, and the CLI never enables the feature.
+
+| Group | List | Authors | License |
+| --- | --- | --- | --- |
+| `ads` | EasyList | The EasyList authors (https://easylist.to/) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
+| `trackers` | EasyPrivacy | The EasyList authors (https://easylist.to/) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
+| `cookies` | AdGuard Cookie Notices filter | AdGuard (https://github.com/AdguardTeam/AdguardFilters) | GPL-3.0 |
+| `china` | EasyList China | The EasyList China authors (https://github.com/easylist/easylistchina) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
+| always | uBlock filters – Unbreak | uBlock Origin contributors (https://github.com/uBlockOrigin/uAssets) | GPL-3.0 |
+
+`sources.json` records each list's download URL, version and date. Refresh them with `node scripts/update-filter-lists.mjs` before a runtime re
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
-    '✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).',
-  );
-  await execa('pkill', ['-x', 'ibtoold'], {
-    stdin: 'ignore',
-    reject: false,
-  });
-
-  if (await compileAssetsCar(iconPackagePath, dest)) {
-    return dest;
-  }
-
-  logger.warn(
-    '✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.',
-  } else {
-    bundleIcon.push(`icons/${safeAppName}.icon`);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec5af5c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79396657` are properly handled with clean fallback behavior.

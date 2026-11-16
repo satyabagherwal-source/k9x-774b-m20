@@ -4,24 +4,24 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "ba8940f6",
+  "source_version": "f7254f67",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T05:31:52.649Z",
+  "timestamp": "2026-11-16T15:51:12.786Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `ba8940f6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T05:31:52.649Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `f7254f67`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T15:51:12.786Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 84%
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cilium/cilium:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T05:31:51.735Z  
+> **Harvest Timestamp**: 2026-11-16T15:51:12.029Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25837 stars
+- **Stars / Engagement**: 25852 stars
 
 ---
 
@@ -1273,11 +1273,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50028** (2026-11-15): **fix(deps): update all go dependencies main (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | Type | Update | Pending | |---|---|---|---|---|---|---| | [github.com/aws/aws-sdk-go-v2/config](https://redirect.github.com/aws/aws-sdk-go-v2) | `v1.33.16` → `v1.33.17` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2faws%2faws-sdk-go-v2%2fconfig/v1.33.17?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2faws%2faws-sdk-go-v2%2fconfig/v1.33.16/v1.33.17?slim=true) | require | patch | `v1.33.18` | | [github.com/aws/smithy-go](https://redirect.github.com/aws/smithy-go) | `v1.28.8` → `v1.28.9` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2faws%2fsmithy-go/v1.28.9?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2faws%2fsmithy-go/v1.28.8/v1.28.9?slim=true) | require | patch |  | | [github.com/klauspost/compress](https://redirect.github.com/klauspost/compress) | `v1.20.3` → `v1.20.4` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.4?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.20.3/v1.20.4?slim=true) | require | patch |  | | [github.com/tidwall/gjson](https://redirect.github.com/tidwall/gjson) | `v1.20.1` → `v1.20.2` | ![age](https://developer.mend.io/api/mc/ba
+- **Issue #50045** (2026-11-16): **v1.20 Backports 2026-11-16**
+  *Symptoms*:  * [x] #49942 (@mhofstetter)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  49942 ``` 
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
-- **Issue #50027** (2026-11-14): **fix(deps): update security updates to v1.47.0 [security] (v1.19) - autoclosed**
-  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [go.opentelemetry.io/otel/sdk](https://redirect.github.com/open-telemetry/opentelemetry-go) | `v1.45.0` → `v1.47.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2fsdk/v1.47.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2fsdk/v1.45.0/v1.47.0?slim=true) | | [go.opentelemetry.io/otel/trace](https://redirect.github.com/open-telemetry/opentelemetry-go) | `v1.45.0` → `v1.47.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2ftrace/v1.47.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2ftrace/v1.45.0/v1.47.0?slim=true) |  ---  ### opentelemetry-go: AttributeValueLengthLimit is fully bypassed by attribute values composed of valid U+FFFD runes [CVE-2026-128085](https://nvd.nist.gov/vuln/detail/CVE-2026-128085) / [GHSA-q7gw-24fr-5p69](https://redirect.github.com/advisories/GHSA-q7gw-24fr-5p69)  <details> <summary>More information</summary>  #### Details ##### Summary  The `AttributeValueLengthLimit` span/log-record limit can be bypassed entirely with attribute values that consist of valid U+FFFD (REPLACEMENT CHARACTER) runes. The
+- **Issue #50042** (2026-11-16): **v1.18 Backports 2026-11-16**
+  *Symptoms*:  * [ ] #49961 (@darox)  * [ ] #49592 (@christarazi) :warning: resolved conflicts (testhelpers missing on v1.18)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  49961 49592 ``` 
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1294,353 +1298,113 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba8940f6` (2026-11-15)
-**Commit Message**: fix(deps): update all go dependencies main
+### Incident Patch 1: `3daf9b0d` (2026-11-14)
+**Commit Message**: images: update cilium-{runtime,builder}
 
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +10/-10)
+**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
 ```diff
-@@ -11,10 +11,10 @@ require (
- 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.1.0
- 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
- 	github.com/aws/aws-sdk-go-v2 v1.47.8
--	github.com/aws/aws-sdk-go-v2/config v1.33.16
-+	github.com/aws/aws-sdk-go-v2/config v1.33.17
- 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8
- 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.344.2
--	github.com/aws/smithy-go v1.28.8
-+	github.com/aws/smithy-go v1.28.9
- 	github.com/blang/semver/v4 v4.0.0
- 	github.com/cespare/xxhash/v2 v2.3.0
- 	github.com/cilium/charts v0.0.0-20261102232526-70208ce5a396
-@@ -68,7 +68,7 @@ require (
- 	github.com/jeremywohl/flatten v1.0.1
- 	github.com/json-iterator/go v1.1.12
- 	github.com/kevinburke/ssh_config v1.6.0
--	github.com/klauspost/compress v1.20.3
-+	github.com/klauspost/compress v1.20.4
- 	github.com/lthibault/jitterbug/v2 v2.2.2
- 	github.com/mackerelio/go-osstat v0.2.8
- 	github.com/mattn/go-shellwords v1.0.16
-@@ -100,9 +100,9 @@ require (
- 	github.com/spiffe/go-spiffe/v2 v2.9.0
- 	github.com/spiffe/spire-api-sdk v1.16.0
- 	github.com/stretchr/testify v1.12.1
--	github.com/tidwall/gjson v1.20.1
--	github.com/tidwall/sjson v1.2.7
--	github.com/vishvananda/netlink v1.3.2-0.20261108183553-e0e26cd6138f
-+	github.com/tidwall/gjson v1.20.2
-+	github.com/tidwall/sjson v1.2.9
-+	github.com/vishvananda/netlink v1.3.2-0.20261113171447-5a89637be57b
- 	github.com/vishvananda/netns v0.0.5
- 	go.etcd.io/etcd/api/v3 v3.7.3
- 	go.etcd.io/etcd/client/pkg/v3 v3.7.3
-@@ -115,7 +115,7 @@ require (
- 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb
- 	golang.org/x/crypto v0.59.0
- 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e
--	golang.org/x/mod v0.42.0
-+	golang.org/x/mod v0.43.0
- 	golang.org/x/net v0.62.0
- 	golang.org/x/sync v0.25.0
- 	golang.org/x/sys v0.50.0
-@@ -169,13 +169,13 @@ require (
- 	github.com/alecthomas/participle/v2 v2.1.0 // indirect
- 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
- 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.16 // indirect
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.17 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.11 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.11 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 // indirect
-@@ -293,7 +293,7 @@ require (
- 	github.com/tetratelabs/wabin v0.0.0-20230304001439-f6f874872834 // indirect
- 	github.com/tetratelabs/wazero v1.12.0 // indirect
- 	github.com/tidwall/match v1.1.1 // indirect
--	github.com/tidwall/pretty v1.2.1 // indirect
-+	github.com/tidwall/pretty v1.3.0 // indirect
- 	github.com/weppos/publicsuffix-go v0.30.0 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
- 	github.com/xlab/treeprint v1.2.0 // indirect
+@@ -1,6 +1,6 @@
+ {
+   "name": "Cilium",
+-  "image": "quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c",
++  "image": "quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509",
+   "workspaceFolder": "/go/src/github.com/cilium/cilium",
+   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
+   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
 ```
 
-**File**: `go.sum` (modified, +20/-20)
+**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
 ```diff
-@@ -76,10 +76,10 @@ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3d
- github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
- github.com/aws/aws-sdk-go-v2 v1.47.8 h1:fuClo7Un+Bi0EDTnSIPWxVEoJcze+wkGzNA4Vo3jRcQ=
- github.com/aws/aws-sdk-go-v2 v1.47.8/go.mod h1:I8lFSH4MGrZiw2m7miCrRYHsgpC1+HW8uiVGOiPYPcw=
--github.com/aws/aws-sdk-go-v2/config v1.33.16 h1:fKRsu9Pj2IPIHzTcUdWB7JHY34q9+4XEGCy7WfZaLV4=
--github.com/aws/aws-sdk-go-v2/config v1.33.16/go.mod h1:wdEdQ9RBH3fnD/vicCDUIJqv8Ck3zOpxNz8e3/NtkG8=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.16 h1:cqRWTY4fcctJGqZedMC1Khu4h2VsgRODUOIZwn39n3Y=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.16/go.mod h1:x8JgCOAnbnEVQOLVX6lOtsyTrG2EHgiRNqzku9jiVxA=
-+github.com/aws/aws-sdk-go-v2/config v1.33.17 h1:5/Ahj9/efRCbHhZx0swd+rC2EqC8a2CE6/JnzYsJB70=
-+github.com/aws/aws-sdk-go-v2/config v1.33.17/go.mod h1:H0TQmatulB8yoemlckKQrPDn8aMHqpMyO5QCkYaQH0w=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.17 h1:n76tvnpRJUk/jwDBijhnuwHSus6VQuC8XXD1hB30F/0=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.17/go.mod h1:Hzlq1/HGNzNpw1qP+5otW3+EwXhMrQdRnBYLBeJKEBU=
- github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8 h1:1bCo9/cf7dlTlbrZnz7g1Bki72b5thfuzFZCjdWCfVk=
- github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8/go.mod h1:mzPw75GydqddJpfuwYO/ZDIl6xNxKjK86apitdLmvV0=
- github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 h1:LTxHSJ/rwTFfaXqi5mlKKHJOW+shFB+HQ7NrCa4OQ48=
-@@ -94,16 +94,16 @@ github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 h1:jGzHjc
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24/go.mod h1:uJt75pK2cEyY80F5C+DK9YkCkJWsMkJViHxLYZRHl8Y=
- github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 h1:PO7Tx443ecMI00nIxDrT99DVcbeMBQ6BUtJlDMRnY24=
- github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11/go.mod h1:n/9RixikO12YvNomZLP8k4TgUSoEkT1W23QIrpFAPvw=
--github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 h1:uo84u6f6YatFOBwk3DKM+ToqgVEB0cDjHQLsfrRm44A=
--github.com/aws/aws-sdk-go-v2/service/signin v1.12.4/go.mod h1:PCRJucC12nFWle7wRGhSj0cw3OKB84M0EBwTrv34dhg=
-+github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 h1:1cHBtZSsEEvghtDyjtRoYZ4GdjJy9Sh45GglOWEEm5Q=
-+github.com/aws/aws-sdk-go-v2/service/signin v1.13.0/go.mod h1:PCRJucC12nFWle7wRGhSj0cw3OKB84M0EBwTrv34dhg=
- github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 h1:qQ97XqrlFGRRhhrcDbeqUVeezamo1a1F7lH4HczU7EA=
- github.com/aws/aws-sdk-go-v2/service/sso v1.39.4/go.mod h1:mPM3sWIm0iUGl5OWkR9cG23PRFQ0Ir6y+3Hg0lKBAAE=
- github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 h1:tbsL9+L+1SlD2W+9RjL7wD9ZVsxel7QXdQlIWt5tEi8=
- github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4/go.mod h1:3L2pKVr2e3jaz9C26RXgjBIktSW1D7S0O38LhCdsAYc=
- github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 h1:soG/8YBczEJwckK+e4HLt0RzfkvopGrdBjmbghG99Cc=
- github.com/aws/aws-sdk-go-v2/service/sts v1.51.9/go.mod h1:We33qfrD3dQRAetZ+9qUH9w+ZjL1gwP2Qvp1YqQDdsk=
--github.com/aws/smithy-go v1.28.8 h1:aEmdAq7gVCoGCnvf1NnELlu3I6D/nhqrC321FyFiQkQ=
--github.com/aws/smithy-go v1.28.8/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
-+github.com/aws/smithy-go v1.28.9 h1:zkZ058OpNX0iGTK24b+ZUEQSMc11CBA6oO7xtKZfzkY=
-+github.com/aws/smithy-go v1.28.9/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
- github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
- github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
- github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
-@@ -473,8 +473,8 @@ github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRt
- github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
--github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
-+github.com/klauspost/compress v1.20.4 h1:dD0v/bvxtjCBqQu6sx1TNWkalEY5lNTIe+HY9w8TeNI=
-+github.com/klauspost/compress v1.20.4/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/knqyf263/go-plugin v0.9.0 h1:CQs2+lOPIlkZVtcb835ZYDEoyyWJWLbSTWeCs0EwTwI=
- github.com/knqyf263/go-plugin v0.9.0/go.mod h1:2z5lCO1/pez6qGo8CvCxSlBFSEat4MEp1DrnA+f7w8Q=
- github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
-@@ -701,20 +701,20 @@ github.com/tetratelabs/wabin v0.0.0-20230304001439-f6f874872834 h1:ZF+QBjOI+tILZ
- github.com/tetratelabs/wabin v0.0.0-20230304001439-f6f874872834/go.mod h1:m9ymHTgNSEjuxvw8E7WWe4Pl4hZQHXONY8wE6dMLaRk=
- github.com/tetratelabs/wazero v1.12.0 h1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=
- github.com/tetratelabs/wazero v1.1
+@@ -1 +1 @@
+-quay.io/cilium/cilium-runtime:e88c16905ce2239d93f5927c440f0f81710a6686@sha256:ce094ce66806312e15667bbdc5717c09c53fded904b7c4c1c2a74b29c9c0b705
+\ No newline at end of file
++quay.io/cilium/cilium-runtime:4ce28a8f0e05d2224ad5ee81282b65f32602ce39@sha256:5792b6da9487c2b1520a8f394a6a41765d9536673df5d0531e34c23f8cf3e282
+\ No newline at end of file
 ```
 
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/config/CHANGELOG.md` (modified, +4/-0)
+**File**: `images/cilium/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -1,3 +1,7 @@
-+# v1.33.17 (2026-11-09)
-+
-+* **Dependency Update**: Updated to the latest SDK module versions
-+
- # v1.33.16 (2026-11-06)
+@@ -3,8 +3,8 @@
+ # Copyright Authors of Cilium
+ # SPDX-License-Identifier: Apache-2.0
  
- * **Dependency Update**: Updated to the latest SDK module versions
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
+-ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:e88c16905ce2239d93f5927c440f0f81710a6686@sha256:ce094ce66806312e15667bbdc5717c09c53fded904b7c4c1c2a74b29c9c0b705
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
++ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:4ce28a8f0e05d2224ad5ee81282b65f32602ce39@sha256:5792b6da9487c2b1520a8f394a6a41765d9536673df5d0531e34c23f8cf3e282
+ #
+ # cilium-envoy from github.com/cilium/proxy
+ #
 ```
 
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/config/go_module_metadata.go` (modified, +1/-1)
+**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -3,4 +3,4 @@
- package config
+@@ -7,7 +7,7 @@
+ # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
+ ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:5e8afd493a7124a8586e134d9b532731161d4b9becf9dee5a5956b107426f93d
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
  
- // goModuleVersion is the tagged release for this module
--const goModuleVersion = "1.33.16"
-+const goModuleVersion = "1.33.17"
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
 ```
 
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/credentials/CHANGELOG.md` (modified, +4/-0)
+**File**: `images/operator/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,7 @@
-+# v1.20.17 (2026-11-09)
-+
-+* **Dependency Update**: Updated to the latest SDK module versions
-+
- # v1.20.16 (2026-11-06)
+@@ -6,7 +6,7 @@
+ ARG BASE_IMAGE=scratch
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:5e8afd493a7124a8586e134d9b532731161d4b9becf9dee5a5956b107426f93d
+ ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
  
- * **Dependency Update**: Updated to the latest SDK module versions
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
 ```
 
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/credentials/go_module_metadata.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `647aef78` (2026-11-14)
+**Commit Message**: ci: update docs-builder
+
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
 ```diff
-@@ -3,4 +3,4 @@
- package credentials
+@@ -70,7 +70,7 @@ jobs:
+         uses: ./.github/actions/disk-cleanup
  
- // goModuleVersion is the tagged release for this module
--const goModuleVersion = "1.20.16"
-+const goModuleVersion = "1.20.17"
+       - name: Build HTML
+-        uses: docker://quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
++        uses: docker://quay.io/cilium/docs-builder:2eb8d1105065246f2a708a65ef0000d68acebd36@sha256:590bf3487639f1828ddaed8cf3cbe0fdb8cd14bb40db0e3cb98804d2eb504240
+         with:
+           entrypoint: ./Documentation/check-build.sh
+           args: html
 ```
 
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/signin/CHANGELOG.md` (modified, +4/-0)
+**File**: `Documentation/Makefile` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,7 @@
-+# v1.13.0 (2026-11-09)
-+
-+* **Feature**: Adds the CreateBearerToken API, which exchanges your IAM credentials for a bearer token that can be used to access supported AWS services.
-+
- # v1.12.4 (2026-11-06)
+@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
  
- * **Dependency Update**: Updated to the latest SDK module versions
-```
-
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/signin/api_op_CreateBearerToken.go` (added, +171/-0)
-```diff
-@@ -0,0 +1,171 @@
-+// Code generated by smithy-go-codegen DO NOT EDIT.
-+
-+package signin
-+
-+import (
-+	"context"
-+	"github.com/aws/aws-sdk-go-v2/service/signin/schemas"
-+	smithy "github.com/aws/smithy-go"
-+	"github.com/aws/smithy-go/middleware"
-+	"github.com/aws/smithy-go/ptr"
-+)
-+
-+// Creates a bearer token that represents your IAM credentials and can be used to
-+// access a supported AWS service. By default, the token is valid for 12 hours.
-+func (c *Client) CreateBearerToken(ctx context.Context, params *CreateBearerTokenInput, optFns ...func(*Options)) (*CreateBearerTokenOutput, error) {
-+	if params == nil {
-+		params = &CreateBearerTokenInput{}
-+	}
-+
-+	result, metadata, err := c.invokeOperation(ctx, "CreateBearerToken", params, optFns, c.addOperationCreateBearerTokenMiddlewares)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	out := result.(*CreateBearerTokenOutput)
-+	out.ResultMetadata = metadata
-+	return out, nil
-+}
-+
-+// Input structure for CreateBearerToken operation
-+type CreateBearerTokenInput struct {
-+
-+	// The grant type. Must be "client_credentials".
-+	//
-+	// This member is required.
-+	GrantType *string
-+
-+	// The AWS service the bearer token is for. Example: "ecr.amazonaws.com".
-+	//
-+	// This member is required.
-+	Resource *string
-+
-+	// The requested token lifetime in seconds, from 300 (5 minutes) up to the maximum
-+	// allowed for the service, currently 43200 (12 hours). If omitted, the token is
-+	// valid for 12 hours.
-+	DurationSeconds *int32
-+
-+	noSmithyDocumentSerde
-+}
-+
-+func (v *CreateBearerTokenInput) Serialize(s smithy.ShapeSerializer) {
-+	s.WriteStruct(schemas.CreateBearerTokenRequest)
-+	v.SerializeMembers(s)
-+	s.CloseStruct()
-+}
-+
-+func (v *CreateBearerTokenInput) SerializeMembers(s smithy.ShapeSerializer) {
-+	if v.DurationSeconds != nil {
-+		s.WriteInt32(schemas.CreateBearerTokenRequest_durationSeconds, *v.DurationSeconds)
-+	}
-+	if v.GrantType != nil {
-+		s.WriteString(schemas.CreateBearerTokenRequest_grantType, *v.GrantType)
-+	}
-+	if v.Resource != nil {
-+		s.WriteString(schemas.CreateBearerTokenRequest_resource, *v.Resource)
-+	}
-+}
-+func (in *CreateBearerTokenInput) bindEndpointParams(p *EndpointParameters) {
-+
-+	p.IsOAuthEndpoint = ptr.Bool(true)
-+}
-+
-+// Output structure for CreateBearerToken operation
-+//
-+// Contains the bearer token, its type, and its lifetime.
-+type CreateBearerTokenOutput struct {
-+
-+	// The bearer token. Present it to the AWS service named in the request.
-+	//
-+	// This member is required.
-+	AccessToken *string
-+
-+	// Token lifetime in seconds.
-+	//
-+	// This member is required.
-+	ExpiresIn *int32
-+
-+	// The token type. Always "Bearer".
-+	//
-+	// This member is required.
-+	TokenType *string
-+
-+	// Metadata pertaining to the operation's result.
-+	ResultMetadata middleware.Metadata
-+
-+	noSmithyDocumentSerde
-+}
-+
-+func (v *CreateBearerTokenOutput) Serialize(s smithy.ShapeSerializer) {
-+	s.WriteStruct(schemas.CreateBearerTokenResponse)
-+	v.SerializeMembers(s)
-+	s.CloseStruct()
-+}
-+
-+func (v *CreateBearerTokenOutput) SerializeMembers(s smithy.ShapeSerializer) {
-+	if v.AccessToken != nil {
-+		s.WriteString(schemas.CreateBearerTokenResponse_accessToken, *v.AccessToken)
-+	}
-+	if v.ExpiresIn != nil {
-+		s.WriteInt32(schemas.CreateBearerTokenResponse_expiresIn, *v.ExpiresIn)
-+	}
-+	if v.TokenType != nil {
-+		s.WriteString(schemas.CreateBearerTokenResponse_tokenType, *v.TokenType)
-+	}
-+}
-+func (v *CreateBearerTokenOutput) Deserialize(d smithy.ShapeDeserializer) error {
-+	return smithy.ReadStruct(d, schemas.CreateBearerTokenResponse, func(s *smithy.Schema) error {
-+		switch s {
-+		case schemas.CreateBearerTokenResponse_accessToken:
-+			v.AccessToken = new(string)
-+			return d.ReadString(schemas.CreateBearerTokenResponse_accessToken, v.AccessToken)
-+		case schemas.CreateBearerTokenResponse_expiresIn:
-+			v.ExpiresIn = new(int32)
-+			return d.ReadInt32(schemas.CreateBearerTokenResponse_expiresIn, v.ExpiresIn)
-+		case schemas.CreateBearerTokenResponse_tokenType:
-+			v.TokenType = new(string)
-+			return d.ReadString(schemas.CreateBearerTokenResponse_tokenType, v.TokenType)
-+		}
-+		return nil
-+	})
-+}
-+func (c *Client) addOperationCreateBearerTokenMiddlewares(stack *middleware.Stack, options Options) (err error) {
-+	if err := stack.Serialize.Add(&serializeRequestMiddleware{options: &options, operationSchema: smithy.NewOperationSchema(schemas.CreateBearerToken, schemas.CreateBearerTokenRequest, schemas.CreateBearerTokenResponse)}, middleware.After); err != nil {
-+		return err
-+	}
-+	if err := stack.Deserialize.Add(&deserializeResponseMiddleware{options: &options, operationSchema: smithy.NewOperationSchema(schemas.CreateBearerToken, schemas.CreateBearerTokenRequest, schemas.CreateBearerTokenResponse), output: &CreateBearerTokenOutput{}}, middleware.After); err != nil {
-+		return err
-+	}
-+
-+	if err = addResolveEndpointMiddleware(stack, options); err != nil {
-+		return err
-+	}
-+	if err = addComputePayloadSHA256(stack); err != nil {
-+		return err
-+	}
-+	if err = addRecordResponseT
+ .PHONY: default clean help cilium-build cmdref epub latex html
+ 
+-DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
++DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:2eb8d1105065246f2a708a65ef0000d68acebd36@sha256:590bf3487639f1828ddaed8cf3cbe0fdb8cd14bb40db0e3cb98804d2eb504240
+ 
+ .PHONY: update-docs-builder-image
+ update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #50028** (2026-11-15): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
-- **PR #50027** (closed): fix(deps): update security updates to v1.47.0 [security] (v1.19) - autoclosed (@cilium-renovate[bot])
-- **PR #50026** (2026-11-14): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
-- **PR #50025** (2026-11-14): chore(deps): update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
-- **PR #50020** (2026-11-14): fix(deps): update security updates to v1.47.0 [security] (v1.18) (@cilium-renovate[bot])
-- **PR #50019** (2026-11-14): fix(deps): update security updates to v1.47.0 [security] (v1.19) (@cilium-renovate[bot])
+- **PR #50045** (2026-11-16): v1.20 Backports 2026-11-16 (@mhofstetter)
+- **PR #50042** (2026-11-16): v1.18 Backports 2026-11-16 (@mhofstetter)
+- **PR #50041** (2026-11-16): v1.19 Backports 2026-11-16 (@mhofstetter)
+- **PR #50034** (2026-11-15): fix(deps): update google.golang.org/genproto/googleapis/rpc digest to 09e21b2 (main) (@cilium-renovate[bot])
+- **PR #50033** (2026-11-16): chore(deps): update all-dependencies (v1.18) (@cilium-renovate[bot])
+- **PR #50032** (2026-11-16): chore(deps): update all-dependencies (v1.19) (@cilium-renovate[bot])
 
 ---
 
@@ -1660,49 +1424,31 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update all go dependencies main
+## X. images: update cilium-{runtime,builder}
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.devcontainer/devcontainer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba8940f6`: deps): update all go dependencies main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3daf9b0d`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/devcontainer.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/aws/aws-sdk-go-v2/config v1.33.17
-	github.com/aws/smithy-go v1.28.9
-	github.com/klauspost/compress v1.20.4
-	github.com/tidwall/gjson v1.20.2
-	github.com/tidwall/sjson v1.2.9
-	github.com/vishvananda/netlink v1.3.2-0.20261113171447-5a89637be57b
-	golang.org/x/mod v0.43.0
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.17 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
-	github.com/tidwall/pretty v1.3.0 // indirect
+  "image": "quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/aws/aws-sdk-go-v2/config v1.33.16
-	github.com/aws/smithy-go v1.28.8
-	github.com/klauspost/compress v1.20.3
-	github.com/tidwall/gjson v1.20.1
-	github.com/tidwall/sjson v1.2.7
-	github.com/vishvananda/netlink v1.3.2-0.20261108183553-e0e26cd6138f
-	golang.org/x/mod v0.42.0
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.16 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 // indirect
-	github.com/tidwall/pretty v1.2.1 // indirect
+  "image": "quay.io/cilium/cilium-builder:02152b3103a67f0eef8d2f908eed4a13208b0a48@sha256:780d702c09fe56902610ab28606a9a4ee3e7929a4f562e7a2ea4efa237703c4c",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba8940f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3daf9b0d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

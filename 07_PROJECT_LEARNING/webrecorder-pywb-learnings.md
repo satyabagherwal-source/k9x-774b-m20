@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
-> **Source Version**: `73e13e0c`  
+> **Source Version**: `876fff4c`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:41:09.286Z  
+> **Timestamp**: 2026-11-16T15:51:03.071Z  
 > **Learning ID**: `learn-github-webrecorder-pywb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:41:09.075Z  
+> **Harvest Timestamp**: 2026-11-16T15:51:03.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Core Python Web Archiving Toolkit for replay and recording of web archives
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: Dockerfile
-- **Stars / Engagement**: 1718 stars
+- **Stars / Engagement**: 1720 stars
 
 ---
 
@@ -615,6 +615,317 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 function e(t){if(!(this instanceof e))return new e(t);this.info=t,this.prefixMod=this.info.prefixMod?this.info.prefixMod:this.info.prefix+(this.info.mod||"wkrf_")+"/",this.initImportScriptsRewrite(),this.initHTTPOverrides(),this.initClientApisOverride(),this.initCacheApisOverride(),this.initSelfOverrides()}e.prototype.noRewrite=function(e){return!e||0===e.indexOf("blob:")||0===e.indexOf("javascript:")||0===e.indexOf("data:")||0===e.indexOf(this.info.prefix)},e.prototype.isRelURL=function(e){return 0===e.indexOf("/")||!e.startsWith("http:")&&!e.startsWith("https:")},e.prototype.maybeResolveURL=function(e,t){if(!t)return e;try{return new URL(e,t).href}catch(e){}return e},e.prototype.ensureURL=function(e,t){if(!e)return e;var r;switch(typeof e){case"string":r=e;break;case"object":r=e.toString();break;default:return null}return this.noRewrite(r)?null:this.isRelURL(r)?this.maybeResolveURL(r,t):0===r.indexOf(self.location.origin)?this.maybeResolveURL(r.slice(self.location.origin.length),t):r},e.prototype.rewriteURL=function(e){var t=this.ensureURL(e,this.info.originalURL);return t?this.prefixMod?this.prefixMod+t:t:e},e.prototype.extractOriginalURL=function(e){return e&&e.startsWith(this.prefixMod)?e.slice(this.prefixMod.length):e},e.prototype.rewriteClientWindowURL=function(e,t){var r=this.ensureURL(e,t?t.url:this.info.originalURL);return r?this.info.prefix?this.info.prefix+"mp_/"+r:r:e},e.prototype.rewriteWSURL=function(e){if(!e)return e;var t=typeof e,r=e;if("object"===t)r=e.toString();else if("string"!==t)return e;if(!r)return r;var i="https://",o=0===this.info.prefix.indexOf(i);return this.info.prefix.replace(o?i:"http://",o?"wss://":"ws://")+"ws_/"+r},e.prototype.rewriteArgs=function(e){for(var t=new Array(e.length),r=0;r<t.length;r++)t[r]=this.rewriteURL(e[r]);return t},e.prototype.rewriteFetchApi=function(e){var t=e;switch(typeof e){case"string":t=this.rewriteURL(e);break;case"object":if(e.url){var r=this.rewriteURL(e.url);r!==e.url&&(t=new Request(r,e))}else e.href&&(t=this.rewriteURL(e.href))}return t},e.prototype.rewriteCacheApi=function(e){var t=e;return"string"==typeof e&&(t=this.rewriteURL(e)),t},e.prototype.initImportScriptsRewrite=function(){if(self.importScripts){var e=this,t=self.importScripts;self.importScripts=function(){var r=e.rewriteArgs(arguments);return t.apply(this,r)}}},e.prototype.initSelfOverrides=function(){var e=this;self._WB_wombat_location=new Proxy(self.location,{get:(t,r,i)=>"href"===r?e.extractOriginalURL(t[r]):t[r]}),self.____wb_rewrite_import__=function(t,r){return t&&(t=e.extractOriginalURL(t)),r&&t?r=new URL(r,t).href:t&&void 0===r&&(r=t),import(e.rewriteURL(r))};var t=function(e){return this.__WB_source=e,this};try{self.Object.defineProperty(self.Object.prototype,"__WB_pmw",{get:function(){return t},set:function(){},configurable:!0,enumerable:!1})}catch(e){}self.Object.defineProperty(self.Object.prototype,"_____WB$wombat$check$this$function_____",{configutable:!1,enumerable:!1,value:function(e){try{return e&&e._WB_wombat_obj_proxy?e._WB_wombat_obj_proxy:e}catch(t){return e}}})},e.prototype.initHTTPOverrides=function(){var e,t,r,i=this;if(self.XMLHttpRequest&&self.XMLHttpRequest.prototype&&self.XMLHttpRequest.prototype.open){var o=self.XMLHttpRequest.prototype.open;self.XMLHttpRequest.prototype.open=function(e,t,r,n,s){var p=i.rewriteURL(t),f=!0;null==r||r||(f=!1),o.call(this,e,p,f,n,s),-1===p.indexOf("data:")&&this.setRequestHeader("X-Pywb-Requested-With","XMLHttpRequest")}}if(null!=self.fetch){var n=self.fetch;self.fetch=function(e,t){var r=i.rewriteFetchApi(e),o=t||{};return o.credentials="include",n.call(this,r,o)}}if(self.Request&&self.Request.prototype){var s=self.Request;self.Request=(e=self.Request,function(t,r){var o=r||{},n=i.rewriteFetchApi(t);return o.credentials="include",new e(n,o)}),self.Request.prototype=s.prototype}if(self.Response&&self.Response.prototype){var p=self.Response.prototype.redirect;self.Response.prototype.redirect=function(e,t){var r=i.rewriteURL(e);return p.call(this,r,t)}}if(self.EventSource&&self.EventSource.prototype){var f=self.EventSource;self.EventSource=(t=self.EventSource,function(e,r){var o=e;return null!=e&&(o=i.rewriteURL(e)),new t(o,r)}),self.EventSource.prototype=f.prototype,Object.defineProperty(self.EventSource.prototype,"constructor",{value:self.EventSource})}if(self.WebSocket&&self.WebSocket.prototype){var l=self.WebSocket;self.WebSocket=(r=self.WebSocket,function(e,t){var o=e;return null!=e&&(o=i.rewriteWSURL(e)),new r(o,t)}),self.WebSocket.prototype=l.prototype,Object.defineProperty(self.WebSocket.prototype,"constructor",{value:self.WebSocket})}},e.prototype.initClientApisOverride=function(){var e=this;if(self.Clients&&self.Clients.prototype&&self.Clients.prototype.openWindow){var t=self.Clients.prototype.openWindow;self.Clients.prototype.openWindow=function(r){var i=e.rewriteClientWindowURL(r);return t.call(this,i)}}if(self.WindowClient&&self.WindowClient.prototype&&self.WindowClient.prototype.navigate){var r=self.WindowClient.prototype.navigate;self.WindowClient.prototype.navigate=function(t){var i=e.rewriteClientWindowURL(t,this);return r.call(this,i)}}},e.prototype.initCacheApisOverride=function(){var e=this;if(self.CacheStorage&&self.CacheStorage.prototype&&self.CacheStorage.prototype.match){var t=self.CacheStorage.prototype.match;self.CacheStorage.prototype.match=function(r,i){var o=e.rewriteCacheApi(r);return t.call(this,o,i)}}if(self.Cache&&self.Cache.prototype){if(self.Cache.prototype.match){var r=self.Cache.prototype.match;self.Cache.prototype.match=function(t,i){var o=e.rewriteCacheApi(t);return r.call(this,o,i)}}if(self.Cache.prototype.matchAll){var i=self.Cache.prototype.matchAll;self.Cache.prototype.matchAll=function(t,r){var o=e.rewriteCacheApi(t);return i.call(this,o,r)}}if(self.Cache.prototype.add){var o=self.Cache.prototype.add;self.Cache.prototype.add=function(t,r){var i=e.rewriteCacheApi(t);return o.call(this,i,r)}}if(self.Cache.prototype.addAll){var n=self.Cache.prototype.addAll;self.Cache.prototype.addAll=function(t){var r=t;if(Array.isArray(t)){r=new Array(t.length);for(var i=0;i<t.length;i++)r[i]=e.rewriteCacheApi(t[i])}return n.call(this,r)}}if(self.Cache.prototype.put){var s=self.Cache.prototype.put;self.Cache.prototype.put=function(t,r){var i=e.rewriteCacheApi(t);return s.call(this,i,r)}}if(self.Cache.prototype.delete){var p=self.Cache.prototype.delete;self.Cache.prototype.delete=function(t,r){var i=e.rewriteCacheApi(t);return p.call(this,i,r)}}if(self.Cache.prototype.keys){var f=self.Cache.prototype.keys;self.Cache.prototype.keys=function(t,r){var i=e.rewriteCacheApi(t);return f.call(this,i,r)}}}},self.WBWombat=e;
 
+```
+
+### Core Architecture Module: `pywb/utils/amf_decoder.py`
+```
+# Parts of this module are derived from PyAMF / py3AMF
+# (https://github.com/StdCarrot/Py3AMF), used under the following licenses:
+#
+# Forked License (MIT License)
+# Copyright (c) 2017 StdCarrot. Some rights reserved.
+#
+# Original License (MIT License)
+# Copyright (c) 2007-2010 The PyAMF Project. All rights reserved.
+#   - Arnar Birgisson
+#   - Thijs Triemstra
+#   - Nick Joyce
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+A small, data-only decoder for AMF (Action Message Format) remoting requests.
+"""
+
+import datetime
+import struct
+import uuid
+
+
+MAX_DEPTH = 256
+# Limits how many values a request may expand to through shared references,
+# in addition to a few values per input byte
+MAX_EXPANDED_VALUES = 100000
+
+RESPONSE_SUFFIXES = ('/onResult', '/onStatus', '/onDebugEvents')
+
+ARRAY_COLLECTION = 'flex.messaging.io.ArrayCollection'
+OBJECT_PROXY = 'flex.messaging.io.ObjectProxy'
+
+ABSTRACT = ('body', 'clientId', 'destination', 'headers', 'messageId', 'timestamp', 'timeToLive')
+ASYNC = ABSTRACT + ('correlationId',)
+COMMAND = ASYNC + ('operation',)
+REMOTING = ABSTRACT + ('operation', 'source')
+ERROR = ASYNC + ('extendedData', 'faultCode', 'faultDetail', 'faultString', 'rootCause')
+SEQUENCED = ASYNC + ('sequenceId', 'sequenceProxies', 'sequenceSize', 'dataMessage')
+
+# Flex message aliases:
+# (class name, attributes, attributes required when decoded as a regular
+# object, which parts of the externalized "small message" format it reads)
+FLEX_MESSAGES = {
+    'flex.messaging.messages.AbstractMessage': ('AbstractMessage', ABSTRACT, ABSTRACT, 'abstract'),
+    'flex.messaging.messages.AsyncMessage': ('AsyncMessage', ASYNC, ASYNC, 'async'),
+    'flex.messaging.messages.AcknowledgeMessage': ('AcknowledgeMessage', ASYNC, ASYNC, 'ack'),
+    'flex.messaging.messages.CommandMessage': ('CommandMessage', COMMAND, COMMAND, 'command'),
+    'flex.messaging.messages.ErrorMessage': ('ErrorMessage', ERROR, ERROR, 'ack'),
+    'flex.messaging.messages.RemotingMessage': ('RemotingMessage', REMOTING, REMOTING, 'abstract'),
+    'flex.data.messages.DataMessage': ('DataMessage', ASYNC + ('identity', 'operation'), ASYNC, 'async'),
+    'flex.data.messages.SequencedMessage': ('SequencedMessage', SEQUENCED, ASYNC, 'ack'),
+    'flex.data.messages.PagedMessage': ('PagedMessage', SEQUENCED + ('pageCount', 'pageIndex'), ASYNC, 'ack'),
+    'flex.data.messages.DataErrorMessage': ('DataErrorMessage', ERROR + ('cause', 'propertyNames', 'serverObject'),
+                                            ERROR, 'ack'),
+    'DSK': ('AcknowledgeMessageExt', ASYNC, (), 'ack'),
+    'DSC': ('CommandMessageExt', COMMAND, (), 'command'),
+    'DSA': ('AsyncMessageExt', ASYNC, (), 'async'),
+}
+
+
+class AMFError(Exception):
+    pass
+
+
+# ============================================================================
+class Envelope(object):
+    def __init__(self, version):
+        self.version = version
+        # (response name, Request) pairs
+        self.bodies = []
+
+
+class Request(object):
+    def __init__(self, target, body):
+        self.target = target
+        self.body = body or []
+
+
+class AMFObject(object):
+    """ A typed object: a class name and a dict of properties, which is all
+    that its representation uses """
+    def __init__(self, class_name, props):
+        self.class_name = class_name
+        self.props = props
+
+
+class UndefinedType(AMFObject):
+    def __init__(self):
+        AMFObject.__init__(self, 'UndefinedType', {})
+
+    def __repr__(self):
+        return 'pyamf.Undefined'
+
+
+UNDEFINED = UndefinedType()
+
+
+class ASObject(dict):
+    """ An anonymous object: a dict that is hashable by identity """
+    __hash__ = object.__hash__
+
+
+class ArrayCollection(list):
+    def __repr__(self):
+        return '<flex.messaging.io.ArrayCollection %s>' % list.__repr__(self)
+
+
+class ObjectProxy(AMFObject):
+    def __init__(self):
+        AMFObject.__init__(self, 'ObjectProxy', {'_amf_object': None})
+
+    def __repr__(self):
+        return '<flex.messaging.io.ObjectProxy %r>' % (self.props['_amf_object'],)
+
+
+class FlexMessage(AMFObject):
+    def __init__(self, alias):
+        class_name, attr_names, self.required, self.small_format = FLEX_MESSAGES[alias]
+        props = {}
+        for name in attr_names:
+            props[name] = {} if name in ('headers', 'extendedData', 'rootCause') else None
+
+        AMFObject.__init__(self, class_name, props)
+
+    def __repr__(self):
+        return '<%s %s />' % (self.class_name, ''.join(' %s=%r' % item for item in self.props.items()))
+
+
+def _to_datetime(secs):
+    return datetime.datetime.fromtimestamp(secs, datetime.timezone.utc).replace(tzinfo=None)
+
+
+def _to_uuid(value):
+    # Flex sends uuids as 16 byte ByteArrays
+    if not isinstance(value, bytearray):
+        raise AMFError('Expected a ByteArray for a uuid')
+
+    return uuid.UUID(bytes=bytes(value))
+
+
+def _new_object(alias):
+    if alias in FLEX_MESSAGES:
+        return FlexMessage(alias)
+    if alias == ARRAY_COLLECTION:
+        return ArrayCollection()
+    if alias == OBJECT_PROXY:
+        return ObjectProxy()
+
+    return {}
+
+
+def _set_properties(obj, props):
+    """ Set the properties of an object that was not externalized """
+    if isinstance(obj, FlexMessage):
+        missing = set(obj.required) - set(props)
+        if missing:
+            raise AMFError('Missing properties %r for %s' % (sorted(missing), obj.class_name))
+
+        obj.props.update(props)
+
+    elif isinstance(obj, ArrayCollection):
+        if set(props) - {'length'}:
+            raise AMFError('Unexpected ArrayCollection properties')
+
+    elif isinstance(obj, ObjectProxy):
+        raise AMFError('ObjectProxy must be externalized')
+
+    else:
+        obj.update(props)
+
+
+def _collection_items(value):
+    """ The items of an externalized ArrayCollection """
+    inner = value
+    while isinstance(inner, ObjectProxy):
+        inner = inner.props['_amf_object']
+
+    if isinstance(inner, FlexMessage) and 'source' in inner.props:
+        return inner.props['source']
+
+    if isinstance(value, ASObject) and 'source' in value:
+        return value['source']
+
+    if isinstance(value, (list, str, dict, tuple)):
+        return value
+
+    raise AMFError('Unable to read a list for ArrayCollection')
+
+
+# ============================================================================
+class _Stream(object):
+    """ The input, shared by the AMF0 and AMF3 decoders """
+    def __init__(self, data):
+        self.data = bytes(data)
+        self.pos = 0
+        self.depth = 0
+
+    def read(self, length):
+        if self.pos + length > len(self.data):
+            raise AMFError('Unexpected end of data')
+
+        self.pos += length
+        return self.data[self.pos - length:self.pos]
+
+    def peek(self):
+        return self.data[self.pos:self.pos + 1]
+
+    def unpack(self, fmt):
+        return struct.unpack(fmt, self.read(struct.calcsize(fmt)))[0]
+
+
+class _BaseDecoder(object):
+    READERS = {}
+
+    def __init__(self, stream):
+        self.stream = stream
+        self.read = stream.read
+        self.peek = stream.peek
+        self.unpack = stream.unpack
+        self.reset()
+
+    def read_value(self):
+        self.stream.depth += 1
+        try:
+            if self.stream.depth > MAX_DEPTH:
+                raise AMFError('Maximum nesting depth exceeded')
+
+            marker = self.read(1)[0]
+            reader = self.READERS.get(marker)
+            if not reader:
+                raise AMFError('Unsupported type 0x%02x' % marker)
+
+            return reader(self)
+        finally:
+            self.stream.depth -= 1
+
+
+# ============================================================================
+class _AMF0Decoder(_BaseDecoder):
+    def __init__(self, stream):
+        self.amf3 = _AMF3Decoder(stream)
+        _BaseDecoder.__init__(self, stream)
+
+    def reset(self):
+        self.refs = []
+        self.amf3.reset()
+
+    def read_string(self, length_format='>H'):
+        return self.read(self.unpack(length_format)).decode('utf-8')
+
+    def read_number(self):
+        # AMF0 does not distinguish integers and floats
+        value = self.unpack('>d')
+        try:
+            if value == int(value):
+                return int(value)
+        except (OverflowError, ValueError):
+            pass
+
+        return value
+
+    def read_properties(self):
+        props = {}
+        key = self.read_string()
+        while self.peek() != b'\x09':
+            props[key] = self.read_value()
+            key = self.read_string()
+
+        self.read(1)
+        return props
+
+    def read_object(self, obj):
+        self.refs.append(obj)
+        _set_properties(obj, self.read_properties())
+        return obj
+
+    def read_reference(self):
+        index = self.unpack('>H')
+        if index >= len(self.refs):
+            raise AMFError('Unknown reference')
+
+        return self.refs[index]
+
+    def read_ecma_array(self):
+        self.read(4)
+        obj = {}
+        self.refs.append(obj)
+        for key, value in self.read_properties().items():
+            try:
+                key = int
 ```
 
 ### Core Architecture Module: `pywb/utils/binsearch.py`
@@ -1236,146 +1547,6 @@ class RequestURIWSGIHandler(WSGIHandler):
 
 ```
 
-### Core Architecture Module: `pywb/utils/io.py`
-```
-import zlib
-from contextlib import closing, contextmanager
-from tempfile import SpooledTemporaryFile
-
-from warcio.limitreader import LimitReader
-from warcio.utils import BUFF_SIZE
-
-
-# =============================================================================
-def no_except_close(closable):
-    """Attempts to call the close method of the
-    supplied object catching all exceptions.
-    Also tries to call release_conn() in case a requests raw stream
-
-    :param closable: The object to be closed
-    :rtype: None
-    """
-    try:
-        closable.close()
-    except Exception:
-        pass
-
-    try:
-        closable.release_conn()
-    except Exception:
-        pass
-
-
-# =============================================================================
-def StreamIter(stream, header1=None, header2=None, size=BUFF_SIZE, closer=closing):
-    with closer(stream):
-        if header1:
-            yield header1
-
-        if header2:
-            yield header2
-
-        while True:
-            buff = stream.read(size)
-            if not buff:
-                break
-            yield buff
-
-
-# =============================================================================
-@contextmanager
-def call_release_conn(stream):
-    try:
-        yield stream
-    finally:
-        no_except_close(stream)
-
-
-# =============================================================================
-def chunk_encode_iter(orig_iter):
-    for chunk in orig_iter:
-        if not len(chunk):
-            continue
-        chunk_len = b'%X\r\n' % len(chunk)
-        yield chunk_len
-        yield chunk
-        yield b'\r\n'
-
-    yield b'0\r\n\r\n'
-
-
-# =============================================================================
-def buffer_iter(status_headers, iterator, buff_size=BUFF_SIZE * 4):
-    out = SpooledTemporaryFile(buff_size)
-    size = 0
-
-    for buff in iterator:
-        size += len(buff)
-        out.write(buff)
-
-    content_length_str = str(size)
-    # remove existing content length
-    status_headers.replace_header('Content-Length',
-                                  content_length_str)
-
-    out.seek(0)
-    return StreamIter(out)
-
-
-# =============================================================================
-def compress_gzip_iter(orig_iter):
-    compressobj = zlib.compressobj(9, zlib.DEFLATED, zlib.MAX_WBITS + 16)
-    for chunk in orig_iter:
-        buff = compressobj.compress(chunk)
-        if len(buff) == 0:
-            continue
-
-        yield buff
-
-    yield compressobj.flush()
-
-
-# ============================================================================
-class OffsetLimitReader(LimitReader):
-    def __init__(self, stream, offset, length):
-        super(OffsetLimitReader, self).__init__(stream, length)
-        self.offset = offset
-        if offset > 0:
-            self._skip_reader = LimitReader(stream, offset)
-        else:
-            self._skip_reader = None
-
-    def _skip(self):
-        while self._skip_reader:
-            buff = self._skip_reader.read()
-            if not buff:
-                self._skip_reader = None
-
-    def read(self, length=None):
-        self._skip()
-        return super(OffsetLimitReader, self).read(length)
-
-    def readline(self, length=None):
-        self._skip()
-        return super(OffsetLimitReader, self).readline(length)
-
-
-# ============================================================================
-class StreamClosingReader(object):
-    def __init__(self, stream):
-        self.stream = stream
-
-    def read(self, length=None):
-        return self.stream.read(length)
-
-    def readline(self, length=None):
-        return self.stream.readline(length)
-
-    def close(self):
-        no_except_close(self.stream)
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1403,28 +1574,278 @@ class StreamClosingReader(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73e13e0c` (2026-11-04)
-**Commit Message**: Remove version number from README
+### Incident Patch 1: `876fff4c` (2026-11-16)
+**Commit Message**: Merge pull request #1071 from arquivo/igobranco/default-upstream-timeout
 
-**File**: `README.rst` (modified, +2/-2)
+Set a default timeout for live web and remote index requests
+
+**File**: `pywb/warcserver/http.py` (modified, +3/-0)
 ```diff
-@@ -1,5 +1,5 @@
--Webrecorder pywb 2.9
--====================
-+Webrecorder pywb
-+================
+@@ -49,6 +49,9 @@ class DefaultAdapters(object):
+     live_adapter = PywbHttpAdapter(max_retries=Retry(3))
+     remote_adapter = PywbHttpAdapter(max_retries=Retry(3))
  
- .. image:: https://raw.githubusercontent.com/webrecorder/pywb/main/pywb/static/pywb-logo.png
++    # default timeout (seconds) to connect and between reads
++    timeout = 30
++
+ 
+ requests.packages.urllib3.disable_warnings()
  
 ```
 
+**File**: `pywb/warcserver/index/indexsource.py` (modified, +10/-6)
+```diff
+@@ -194,7 +194,7 @@ def _get_api_url(self, params):
+     def load_index(self, params):
+         api_url = self._get_api_url(params)
+         try:
+-            r = self.sesh.get(api_url, timeout=params.get('_timeout'))
++            r = self.sesh.get(api_url, timeout=params.get('_timeout', DefaultAdapters.timeout))
+             r.raise_for_status()
+         except Exception as e:
+             self.logger.debug('FAILED: ' + str(e))
+@@ -315,7 +315,8 @@ def load_index(self, params):
+             # TODO: add option to not double escape if needed
+             query_url = self.query_api_url + '?q=' + quote_plus(query + quote_plus(url))
+             self.logger.debug("Running query: %s" % query_url)
+-            response = self.session.get(query_url)
++            response = self.session.get(query_url,
++                                        timeout=params.get('_timeout', DefaultAdapters.timeout))
+             response.raise_for_status()
+ 
+             results = etree.fromstring(response.content)
+@@ -447,7 +448,8 @@ def load_index(self, params):
+ 
+         if params.get('filter') and not mime:
+             try:
+-                res = self.sesh.head(cdx['load_url'])
++                res = self.sesh.head(cdx['load_url'],
++                                     timeout=params.get('_timeout', DefaultAdapters.timeout))
+                 if res.status_code != 405:
+                     cdx['status'] = str(res.status_code)
+ 
+@@ -645,7 +647,8 @@ def get_timegate_links(self, params, timestamp):
+         try:
+             headers = self._get_headers(params)
+             headers['Accept-Datetime'] = accept_dt
+-            res = self.sesh.head(url, headers=headers)
++            res = self.sesh.head(url, headers=headers,
++                                 timeout=params.get('_timeout', DefaultAdapters.timeout))
+             res.raise_for_status()
+         except Exception as e:
+             self.logger.debug('FAILED: ' + str(e))
+@@ -668,7 +671,7 @@ def handle_timemap(self, params):
+         try:
+             res = self.sesh.get(url,
+                                 headers=headers,
+-                                timeout=params.get('_timeout'))
++                                timeout=params.get('_timeout', DefaultAdapters.timeout))
+ 
+             res.raise_for_status()
+             assert(res.text)
+@@ -787,7 +790,8 @@ def handle_timegate(self, params, timestamp):
+         res = None
+         try:
+             headers = self._get_headers(params)
+-            res = self.sesh.head(load_url, headers=headers)
++            res = self.sesh.head(load_url, headers=headers,
++                                 timeout=params.get('_timeout', DefaultAdapters.timeout))
+         except Exception as e:
+             no_except_close(res)
+             raise NotFoundException(url)
+```
+
+**File**: `pywb/warcserver/index/test/test_xmlquery_indexsource.py` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@
+ 
+ 
+ # ============================================================================
+-def mock_get(self, url):
++def mock_get(self, url, timeout=None):
+     string = ''
+     global query_url
+     query_url = url
+```
+
+**File**: `pywb/warcserver/resource/responseloader.py` (modified, +1/-1)
+```diff
+@@ -555,7 +555,7 @@ def _do_request(self, method, load_url, data, req_headers, params, is_live):
+                                            preload_content=False,
+                                            decode_content=False,
+                                            retries=max_retries,
+-                                           timeout=params.get('_timeout'))
++                                           timeout=params.get('_timeout', DefaultAdapters.timeout))
+ 
+             return upstream_res
+ 
+```
+
+**File**: `pywb/warcserver/test/test_handlers.py` (modified, +8/-0)
+```diff
+@@ -27,6 +27,8 @@
+ from pywb.warcserver.index.aggregator import DirectoryIndexSource
+ 
+ from pywb.warcserver.basewarcserver import BaseWarcServer
++from pywb.warcserver.http import DefaultAdapters
++from pywb.warcserver.resource.responseloader import LiveWebLoader
+ from pywb.utils.memento import MementoUtils
+ from pywb.utils.geventserver import GeventServer
+ 
+@@ -575,3 +577,9 @@ def test_error_invalid(self):
+         assert resp.text == resp.headers['ResErrors']
+ 
+ 
++# ============================================================================
++def test_live_request_default_timeout():
++    with patch.object(DefaultAdapters.live_adapter.poolmanager, 'urlopen') as urlopen:
++        LiveWebLoader()._do_request('GET', 'http://example.com/', None, {}, {}, True)
++
++    assert urlopen.call_args[1]['timeout'] == DefaultAdapters.timeout
+```
+
+---
+
+### Incident Patch 2: `4b9ba4e0` (2026-11-13)
+**Commit Message**: Set a default timeout for live web and remote index requests
+
+Requests to the live web and to remote indexes could hang indefinitely
+when no timeout was set. Default to 30 seconds.
+
+Generated-with: Claude Opus 5.5 (claude-opus-5-5)
+
+**File**: `pywb/warcserver/http.py` (modified, +3/-0)
+```diff
+@@ -49,6 +49,9 @@ class DefaultAdapters(object):
+     live_adapter = PywbHttpAdapter(max_retries=Retry(3))
+     remote_adapter = PywbHttpAdapter(max_retries=Retry(3))
+ 
++    # default timeout (seconds) to connect and between reads
++    timeout = 30
++
+ 
+ requests.packages.urllib3.disable_warnings()
+ 
+```
+
+**File**: `pywb/warcserver/index/indexsource.py` (modified, +10/-6)
+```diff
+@@ -194,7 +194,7 @@ def _get_api_url(self, params):
+     def load_index(self, params):
+         api_url = self._get_api_url(params)
+         try:
+-            r = self.sesh.get(api_url, timeout=params.get('_timeout'))
++            r = self.sesh.get(api_url, timeout=params.get('_timeout', DefaultAdapters.timeout))
+             r.raise_for_status()
+         except Exception as e:
+             self.logger.debug('FAILED: ' + str(e))
+@@ -315,7 +315,8 @@ def load_index(self, params):
+             # TODO: add option to not double escape if needed
+             query_url = self.query_api_url + '?q=' + quote_plus(query + quote_plus(url))
+             self.logger.debug("Running query: %s" % query_url)
+-            response = self.session.get(query_url)
++            response = self.session.get(query_url,
++                                        timeout=params.get('_timeout', DefaultAdapters.timeout))
+             response.raise_for_status()
+ 
+             results = etree.fromstring(response.content)
+@@ -447,7 +448,8 @@ def load_index(self, params):
+ 
+         if params.get('filter') and not mime:
+             try:
+-                res = self.sesh.head(cdx['load_url'])
++                res = self.sesh.head(cdx['load_url'],
++                                     timeout=params.get('_timeout', DefaultAdapters.timeout))
+                 if res.status_code != 405:
+                     cdx['status'] = str(res.status_code)
+ 
+@@ -645,7 +647,8 @@ def get_timegate_links(self, params, timestamp):
+         try:
+             headers = self._get_headers(params)
+             headers['Accept-Datetime'] = accept_dt
+-            res = self.sesh.head(url, headers=headers)
++            res = self.sesh.head(url, headers=headers,
++                                 timeout=params.get('_timeout', DefaultAdapters.timeout))
+             res.raise_for_status()
+         except Exception as e:
+             self.logger.debug('FAILED: ' + str(e))
+@@ -668,7 +671,7 @@ def handle_timemap(self, params):
+         try:
+             res = self.sesh.get(url,
+                                 headers=headers,
+-                                timeout=params.get('_timeout'))
++                                timeout=params.get('_timeout', DefaultAdapters.timeout))
+ 
+             res.raise_for_status()
+             assert(res.text)
+@@ -787,7 +790,8 @@ def handle_timegate(self, params, timestamp):
+         res = None
+         try:
+             headers = self._get_headers(params)
+-            res = self.sesh.head(load_url, headers=headers)
++            res = self.sesh.head(load_url, headers=headers,
++                                 timeout=params.get('_timeout', DefaultAdapters.timeout))
+         except Exception as e:
+             no_except_close(res)
+             raise NotFoundException(url)
+```
+
+**File**: `pywb/warcserver/index/test/test_xmlquery_indexsource.py` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@
+ 
+ 
+ # ============================================================================
+-def mock_get(self, url):
++def mock_get(self, url, timeout=None):
+     string = ''
+     global query_url
+     query_url = url
+```
+
+**File**: `pywb/warcserver/resource/responseloader.py` (modified, +1/-1)
+```diff
+@@ -555,7 +555,7 @@ def _do_request(self, method, load_url, data, req_headers, params, is_live):
+                                            preload_content=False,
+                                            decode_content=False,
+                                            retries=max_retries,
+-                                           timeout=params.get('_timeout'))
++                                           timeout=params.get('_timeout', DefaultAdapters.timeout))
+ 
+             return upstream_res
+ 
+```
+
+**File**: `pywb/warcserver/test/test_handlers.py` (modified, +8/-0)
+```diff
+@@ -27,6 +27,8 @@
+ from pywb.warcserver.index.aggregator import DirectoryIndexSource
+ 
+ from pywb.warcserver.basewarcserver import BaseWarcServer
++from pywb.warcserver.http import DefaultAdapters
++from pywb.warcserver.resource.responseloader import LiveWebLoader
+ from pywb.utils.memento import MementoUtils
+ from pywb.utils.geventserver import GeventServer
+ 
+@@ -575,3 +577,9 @@ def test_error_invalid(self):
+         assert resp.text == resp.headers['ResErrors']
+ 
+ 
++# ============================================================================
++def test_live_request_default_timeout():
++    with patch.object(DefaultAdapters.live_adapter.poolmanager, 'urlopen') as urlopen:
++        LiveWebLoader()._do_request('GET', 'http://example.com/', None, {}, {}, True)
++
++    assert urlopen.call_args[1]['timeout'] == DefaultAdapters.timeout
+```
+
 #### Recent Merged Pull Requests:
-- **PR #1070** (2026-11-02): Update to wombat 3.11.0 and wabac 2.27.4 (@ato)
-- **PR #1069** (2026-11-02): Python 3.15 support (@ato)
-- **PR #1068** (2026-11-02): Remove dependency on six (@ato)
-- **PR #1066** (2026-11-02): Bump the minor-and-patch group in /pywb/vueui with 5 updates (@dependabot[bot])
-- **PR #1065** (2026-10-27): Workaround Python 3.9 gevent CI hang (@ato)
-- **PR #1063** (2026-10-29): Replace brotlipy with brotlicffi>=1.2.1.0 (@ato)
+- **PR #1082** (2026-11-14): Replace py3AMF with a data-only AMF decoder (@ato)
+- **PR #1081** (closed): [SECURITY] Disable shared live cookie tracking by default (@ANJALI-SAVANT)
+- **PR #1079** (closed): [SECURITY] Require opt-in for HTTP ACL user headers (@ANJALI-SAVANT)
+- **PR #1077** (closed): [SECURITY] Block non-public live and remote URLs by default (@ANJALI-SAVANT)
+- **PR #1075** (closed): [SECURITY] Disable AMF by default and restrict class decoding (@ANJALI-SAVANT)
+- **PR #1071** (2026-11-16): Set a default timeout for live web and remote index requests (@igobranco)
 
 ---
 
@@ -1444,30 +1865,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove version number from README
+## X. Empirical Invariant Guard in http.py
 
 **RULE**:
-When implementing operations in `README.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pywb/warcserver/http.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73e13e0c`: Remove version number from README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `876fff4c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pywb/warcserver/http.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Webrecorder pywb
-================
+    # default timeout (seconds) to connect and between reads
+    timeout = 30
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-Webrecorder pywb 2.9
-====================
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73e13e0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `876fff4c` are properly handled with clean fallback behavior.

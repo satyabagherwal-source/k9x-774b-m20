@@ -4,24 +4,24 @@
 {
   "source_repository": "weaviate/weaviate",
   "source_url": "https://github.com/weaviate/weaviate",
-  "source_version": "927ec35c",
+  "source_version": "ca73857d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-13T18:52:34.567Z",
+  "timestamp": "2026-11-16T15:51:14.623Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-weaviate-weaviate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `927ec35c`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-13T18:52:34.567Z`  
+> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `ca73857d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-16T15:51:14.623Z`  
 > **Learning ID**: `learn-github-weaviate-weaviate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from weaviate/weaviate:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:52:33.993Z  
+> **Harvest Timestamp**: 2026-11-16T15:51:13.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16944 stars
+- **Stars / Engagement**: 16952 stars
 
 ---
 
@@ -1747,14 +1747,14 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `473e7c80` (2026-11-13)
-**Commit Message**: Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-panic
+### Incident Patch 1: `3032ae85` (2026-11-16)
+**Commit Message**: Merge pull request #13893 from weaviate/fix/reindex-finalize-refusal-test
 
-Schema update: reject a changed vector index type of a named vector instead of panicking
+reindex: test that a failed reindex can never be reported as finished
 
-**File**: `test/acceptance_with_go_client/collection_config_tests/update_named_vector_index_type_test.go` (added, +106/-0)
+**File**: `cluster/distributedtask/manager_finalize_refusal_test.go` (added, +53/-0)
 ```diff
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,53 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -1766,753 +1766,252 @@ Schema update: reject a changed vector index type of a named vector instead of p
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+package collection_config_tests
++package distributedtask
 +
 +import (
-+	"context"
-+	"net"
-+	"net/http"
 +	"testing"
++	"time"
 +
-+	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate-go-client/v6"
-+	"github.com/weaviate/weaviate-go-client/v6/collections"
-+	"github.com/weaviate/weaviate-go-client/v6/collections/vectorindex"
-+	"github.com/weaviate/weaviate-go-client/v6/modules/selfprovided"
-+	"github.com/weaviate/weaviate/test/docker"
++	cmd "github.com/weaviate/weaviate/cluster/proto/api"
 +)
 +
-+func TestUpdateNamedVectorIndexType_SingleNode(t *testing.T) {
-+	c := newClient(t, docker.New().WithWeaviateWithGRPC())
-+	testUpdateNamedVectorIndexType(t, c)
-+}
-+
-+func TestUpdateNamedVectorIndexType_Cluster(t *testing.T) {
-+	c := newClient(t, docker.New().WithWeaviateCluster(3).WithWeaviateExposeGRPCPort())
-+	testUpdateNamedVectorIndexType(t, c)
-+}
-+
-+// testUpdateNamedVectorIndexType checks that changing the vector index type of
-+// a named vector is rejected with 422. The server used to panic on this update
-+// and answer 500.
-+func testUpdateNamedVectorIndexType(t *testing.T, c *weaviate.Client) {
-+	ctx := context.Background()
-+	indexes := map[string]collections.VectorIndex{
-+		"hnsw": vectorindex.HNSW{},
-+		"flat": vectorindex.Flat{},
-+	}
-+	for _, tt := range []struct{ from, to string }{
-+		{from: "hnsw", to: "flat"},
-+		{from: "flat", to: "hnsw"},
++// A peer's failure committing before a slower node's finalize must not flip the task to FINISHED.
++func TestManager_MarkTaskFinalizedLeavesEndedTasksUnchanged(t *testing.T) {
++	for _, tc := range []struct {
++		status  TaskStatus
++		wantErr error
++	}{
++		{status: TaskStatusFailed, wantErr: ErrTaskNotInFinalizingState},
++		{status: TaskStatusFinished},
 +	} {
-+		t.Run(tt.from+" to "+tt.to, func(t *testing.T) {
-+			name := "UpdateNamedVectorIndexType"
-+			require.NoError(t, c.Collections.Delete(ctx, name))
-+			t.Cleanup(func() { require.NoError(t, c.Collections.Delete(ctx, name)) })
++		t.Run(string(tc.status), func(t *testing.T) {
++			h := newTestHarness(t).init(t)
++			ns, id, version := fixtureInStatus(t, h, tc.status)
++			finishedAt := h.manager.tasks[ns][id].FinishedAt
++			h.clock.Advance(time.Minute)
 +
-+			h, err := c.Collections.Create(ctx, collections.Collection{
-+				Name:       name,
-+				Properties: []collections.Property{{Name: "name", DataType: collections.DataTypeText}},
-+				Vectors: map[string]collections.VectorConfig{
-+					"v": {Vectorizer: selfprovided.Vectorizer, Index: indexes[tt.from]},
-+				},
-+			})
-+			require.NoError(t, err)
++			err := h.manager.MarkTaskFinalized(toCmd(t, &cmd.MarkTaskFinalizedRequest{
++				Namespace:             ns,
++				Id:                    id,
++				Version:               version,
++				FinalizedAtUnixMillis: h.clock.Now().UnixMilli(),
++			}))
 +
-+			// The stored compression settings belong to the old index type. Without
-+			// clearing them the server rejects them before it checks the type change.
-+			err = h.Config.UpdateVectorConfig(ctx, "v", func(vc *collections.VectorConfig) {
-+				vc.Index = indexes[tt.to]
-+				vc.Compression = nil
-+			})
-+			require.Error(t, err, "changing the index type of a named vector must be rejected")
-+			var httpErr *weaviate.HTTPError
-+			require.ErrorAs(t, err, &httpErr, "expected an HTTP error, got: %v", err)
-+			assert.Equal(t, http.StatusUnprocessableEntity, httpErr.Code, "body: %s", httpErr.Body)
-+			assert.Contains(t, httpErr.Body, `vector index type of vector \"v\" is immutable`)
-+
-+			got, err := c.Collections.GetConfig(ctx, name)
-+			require.NoError(t, err)
-+			require.NotNil(t, got.Vectors["v"].Index)
-+			assert.Equal(t, vectorindex.Type(tt.from), got.Vectors["v"].Index.Name())
++			if tc.wantErr != nil {
++				require.ErrorIs(t, err, tc.wantErr)
++			} else {
++				require.NoError(t, err)
++			}
++			require.Equal(t, tc.status, h.manager.tasks[ns][id].Status)
++			require.Equal(t, finishedAt, h.manager.tasks[ns][id].FinishedAt)
 +		})
 +	}
 +}
-+
-+func newClient(t *testing.T, compose *docker.Compose) *weaviate.Client {
-+	t.Helper()
-+	ctx := context.Background()
-+	env, err := compose.Start(ctx)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, env.Terminate(ctx)) })
-+
-+	host, httpPort, err := net.SplitHostPort(env.GetWeaviate().URI())
-+	require.NoError(t, err)
-+	_, grpcPort, err := net.SplitHostPort(env.GetWeaviate().GrpcURI())
-+	require.NoError(t, err)
-+
-+	c, err := weaviate.NewLocal(ctx,
-+		weaviate.WithHost(host),
-+		weaviate.WithHTTPPort(httpPort),
-+		weaviate.WithGRPCPort(grpcPort),
-+	)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, c.Close()) })
-+	return c
-+}
 ```
 
-**File**: `usecases/schema/class.go` (modified, +12/-3)
-```diff
-@@ -2147,17 +2147,26 @@ func validateImmutableFields(initial, updated *models.Class, modulesProvider mod
- 		// without enforcing that on the client. We just set these fields to their initial values.
- 		switch cfg := v.VectorIndexConfig.(type) {
- 		case hnsw.UserConfig:
--			cfgInitial := initial.VectorConfig[k].VectorIndexConfig.(hnsw.UserConfig)
-+			cfgInitial, ok := initialVecCfg.VectorIndexConfig.(hnsw.UserConfig)
-+			if !ok {
-+				return errVectorIndexTypeImmutable(k, initialVecCfg.VectorIndexType, v.VectorIndexType)
-+			}
- 			cfg.SkipDefaultQuantization = cfgInitial.SkipDefaultQuantization
- 			cfg.TrackDefaultQuantization = cfgInitial.TrackDefaultQuantization
- 			v.VectorIndexConfig = cfg
- 		case flat.UserConfig:
--			cfgInitial := initial.VectorConfig[k].VectorIndexConfig.(flat.UserConfig)
-+			cfgInitial, ok := initialVecCfg.VectorIndexConfig.(flat.UserConfig)
-+			if !ok {
-+				return errVectorIndexTypeImmutable(k, initialVecCfg.VectorIndexType, v.VectorIndexType)
-+			}
- 			cfg.SkipDefaultQuantization = cfgInitial.SkipDefaultQuantization
- 			cfg.TrackDefaultQuantization = cfgInitial.TrackDefaultQuantization
- 			v.VectorIndexConfig = cfg
- 		case dynamic.UserConfig:
--			cfgInitial := initial.VectorConfig[k].VectorIndexConfig.(dynamic.UserConfig)
-+			cfgInitial, ok := initialVecCfg.VectorIndexConfig.(dynamic.UserConfig)
-+			if !ok {
-+				return errVectorIndexTypeImmutable(k, initialVecCfg.VectorIndexType, v.VectorIndexType)
-+			}
- 			cfg.HnswUC.SkipDefaultQuantization = cfgInitial.HnswUC.SkipDefaultQuantization
- 			cfg.HnswUC.TrackDefaultQuantization = cfgInitial.HnswUC.TrackDefaultQuantization
- 			cfg.FlatUC.SkipDefaultQuantization = cfgInitial.FlatUC.SkipDefaultQuantization
-```
+---
 
-**File**: `usecases/schema/class_test.go` (modified, +37/-0)
-```diff
-@@ -36,6 +36,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/schema"
- 	"github.com/weaviate/weaviate/entities/vectorindex/dynamic"
- 	"github.com/weaviate/weaviate/entities/vectorindex/flat"
-+	"github.com/weaviate/weaviate/entities/vectorindex/hfresh"
- 	"github.com/weaviate/weaviate/entities/vectorindex/hnsw"
- 	"github.com/weaviate/weaviate/usecases/cluster/mocks"
- 	"github.com/weaviate/weaviate/usecases/config"
-@@ -1539,6 +1540,42 @@ func Test_UpdateClass(t *testing.T) {
- 		}
- 	})
- 
-+	t.Run("changing the vector index type of a named vector is rejected", func(t *testing.T) {
-+		configs := map[string]any{
-+			"hnsw":    hnsw.NewDefaultUserConfig(),
-+			"flat":    flat.NewDefaultUserConfig(),
-+			"dynamic": dynamic.NewDefaultUserConfig(),
-+			"hfresh":  hfresh.NewDefaultUserConfig(),
-+		}
-+		for _, tt := range []struct{ from, to string }{
-+			{from: "hnsw", to: "flat"},
-+			{from: "hnsw", to: "dynamic"},
-+			{from: "flat", to: "hnsw"},
-+			{from: "flat", to: "dynamic"},
-+			{from: "dynamic", to: "hnsw"},
-+			{from: "dynamic", to: "flat"},
-+			{from: "hfresh", to: "hnsw"},
-+			{from: "hfresh", to: "flat"},
-+			{from: "hfresh", to: "dynamic"},
-+		} {
-+			t.Run(tt.from+" to "+tt.to, func(t *testing.T) {
-+				vectorConfig := func(indexType string) map[string]models.VectorConfig {
-+					return map[string]models.VectorConfig{"example": {
-+						VectorIndexType:   indexType,
-+						VectorIndexConfig: configs[indexType],
-+						Vectorizer:        map[string]any{"none": map[string]any{}},
-+					}}
-+				}
-+				initial := &models.Class{Class: "Immutable", VectorConfig: vectorConfig(tt.from)}
-+				updated := &models.Class{Class: "Immutable", VectorConfig: vectorConfig(tt.to)}
-+
-+				var err error
-+				require.NotPanics(t, func() { err = validateImmutableFields(initial, updated, nil, nil) })
-+				require.Error(t, err, "validation should fail")
-+			})
-+		}
-+	})
-+
- 	t.Run("fields validation", func(t *testing.T) {
- 		tests := []struct {
- 			name          string
-```
+### Incident Patch 2: `54eac5f8` (2026-11-16)
+**Commit Message**: Merge pull request #13895 from weaviate/fix/reindex-empty-records-early-return
 
-**File**: `usecases/schema/parser.go` (modified, +5/-2)
+reindex: remove reindex overhead from tenant loads when no reindex ever ran
+
+**File**: `adapters/repos/db/inverted_reindex_load_overlay.go` (modified, +9/-2)
 ```diff
-@@ -613,8 +613,7 @@ func (p *Parser) validateNamedVectorConfigsParityAndImmutables(initial, updated
- 
- 		// immutable vector type
- 		if initialCfg.VectorIndexType != updatedCfg.VectorIndexType {
--			return fmt.Errorf("vector index type of vector %q is immutable: attempted change from %q to %q",
--				vecName, initialCfg.VectorIndexType, updatedCfg.VectorIndexType)
-+			return errVectorIndexTypeImmutable(vecName, initialCfg.VectorIndexType, updatedCfg.VectorIndexType)
- 		}
- 
- 		// immutable vectorizer
-@@ -686,3 +685,7 @@ func validateShardingConfig(current, update *models.Class, mtEnabled bool) error
+@@ -58,8 +58,11 @@ func (s *Shard) restoreMigratedOverlays(class *models.Class, unbuildableFaults *
+ 	if s.migrationRecords == nil || class == nil {
+ 		return
  	}
- 	return nil
+-	tasks, readable := s.migrations().LocalTasks()
+ 	all := s.migrationRecords.Records()
++	if len(all) == 0 {
++		return
++	}
++	tasks, readable := s.migrations().LocalTasks()
+ 	records := slices.SortedFunc(slices.Values(all), func(a, b MigrationRecord) int {
+ 		return cmp.Compare(a.Subject().Key.TaskVersion, b.Subject().Key.TaskVersion)
+ 	})
+@@ -128,8 +131,12 @@ func (s *Shard) migratedIndexStands(propName, indexType string) bool {
+ 	if s.migrationRecords == nil {
+ 		return false
+ 	}
++	records := s.migrationRecords.Records()
++	if len(records) == 0 {
++		return false
++	}
+ 	tasks, readable := s.migrations().LocalTasks()
+-	return migratedIndexStandsIn(s.migrationRecords.Records(), tasks, readable, propName, indexType)
++	return migratedIndexStandsIn(records, tasks, readable, propName, indexType)
  }
+ 
+ func migratedIndexStandsIn(records []MigrationRecord, tasks []distributedtask.TaskStatusEntry, readable bool,
+```
+
+**File**: `adapters/repos/db/inverted_reindex_load_overlay_test.go` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
 +
-+func errVectorIndexTypeImmutable(vector, from, to string) error {
-+	return fmt.Errorf("vector index type of vector %q is immutable: attempted change from %q to %q", vector, from, to)
++package db
++
++import (
++	"testing"
++
++	"github.com/sirupsen/logrus/hooks/test"
++	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/cluster/distributedtask"
++	"github.com/weaviate/weaviate/entities/models"
++)
++
++// Reading the task list takes the task manager's lock, which RAFT applies wait on.
++func TestAnEmptyRecordStoreSkipsTheTaskListRead(t *testing.T) {
++	tests := []struct {
++		name string
++		ask  func(s *Shard)
++	}{
++		{"restore overlays on load", func(s *Shard) { s.restoreMigratedOverlays(&models.Class{Class: "Books"}, nil) }},
++		{"migrated index stands", func(s *Shard) { s.migratedIndexStands("title", "filterable") }},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			logger, _ := test.NewNullLogger()
++			reads := 0
++			db := &DB{logger: logger}
++			db.migrationCluster.local = func(string) ([]distributedtask.TaskStatusEntry, bool) {
++				reads++
++				return nil, true
++			}
++			s := &Shard{
++				name:             "shard",
++				index:            &Index{db: db, logger: logger},
++				migrationRecords: NewMigrationRecordStore(t.TempDir(), logger),
++			}
++
++			tt.ask(s)
++
++			require.Zero(t, reads)
++		})
++	}
 +}
 ```
 
 ---
 
-### Incident Patch 2: `927ec35c` (2026-11-13)
-**Commit Message**: Merge pull request #13850 from weaviate/fix/ssb-beacon
+### Incident Patch 3: `bbe85a7c` (2026-11-16)
+**Commit Message**: Merge pull request #13874 from weaviate/fix/reindex-567-shard-lookup
 
-fix(ssb): Use UUIDv3 as reference ID in Acks and Results messages
+reindex: speed up shard lookups at 1M tenants from ~45 hours to ~0.02 s per phase
 
-**File**: `adapters/handlers/grpc/v1/batch/stream.go` (modified, +1/-1)
+**File**: `adapters/repos/db/reindex_provider.go` (modified, +5/-31)
 ```diff
-@@ -696,7 +696,7 @@ func uuidsAndBeacons(objs []*pb.BatchObject, refs []*pb.BatchReference) (uuids,
- 		uuids = append(uuids, obj.GetUuid())
+@@ -1903,20 +1903,6 @@ func (p *ReindexProvider) hasLocalPostMergeState(ctx context.Context, payload *R
+ 	if len(shards) == 0 {
+ 		return false
  	}
- 	for _, ref := range refs {
--		beacons = append(beacons, toBeacon(ref))
-+		beacons = append(beacons, ReferenceUUID(ref))
- 	}
- 	return uuids, beacons
- }
-```
-
-**File**: `adapters/handlers/grpc/v1/batch/stream_test.go` (modified, +23/-11)
-```diff
-@@ -649,7 +649,13 @@ func TestOutOfMemoryReply(t *testing.T) {
- 			{Collection: collection, Uuid: uuid.New().String()},
+-	// One walk for the whole payload: a per-name lookup walks the shard map
+-	// again for every tenant the payload names.
+-	hosted := make(map[string]bool, len(shards))
+-	for _, shardName := range shards {
+-		hosted[shardName] = false
+-	}
+-	if err := idx.ForEachShard(func(name string, _ ShardLike) error {
+-		if _, wanted := hosted[name]; wanted {
+-			hosted[name] = true
+-		}
+-		return nil
+-	}); err != nil {
+-		return false
+-	}
+ 	recordReads := 0
+ 	// Faults are accumulated, not logged per shard: a per-shard line would follow the tenant count.
+ 	unreadable := map[string]struct{}{}
+@@ -1935,7 +1921,7 @@ func (p *ReindexProvider) hasLocalPostMergeState(ctx context.Context, payload *R
+ 		if ctx.Err() != nil {
+ 			return false
  		}
- 		refs := []*pb.BatchReference{
--			{FromCollection: collection, FromUuid: uuid.New().String(), ToUuid: uuid.New().String(), Name: "ref"},
-+			{
-+				FromCollection: collection,
-+				FromUuid:       uuid.New().String(),
-+				ToCollection:   new("TargetCollection"),
-+				ToUuid:         uuid.New().String(),
-+				Name:           "ref",
-+			},
- 		}
- 
- 		checker, _ := newAdmissionChecker(t, 0, admitNone)
-@@ -664,9 +670,7 @@ func TestOutOfMemoryReply(t *testing.T) {
- 		require.NotEqual(t, -1, oom, "a rejected message must produce an OutOfMemory message")
- 		got := sent.all()[oom].GetOutOfMemory()
- 		require.Equal(t, []string{objs[0].GetUuid(), objs[1].GetUuid()}, got.GetUuids())
--		require.Equal(t, []string{
--			batch.BEACON_START + refs[0].GetFromCollection() + "/" + refs[0].GetFromUuid() + "/" + refs[0].GetName(),
--		}, got.GetBeacons())
-+		require.Equal(t, []string{batch.ReferenceUUID(refs[0])}, got.GetBeacons())
- 		require.EqualValues(t, batch.OOM_WAIT_TIME, got.GetWaitTime())
- 	})
- }
-@@ -1110,7 +1114,13 @@ func Test_receiver_ackForDelay(t *testing.T) {
- 			{Collection: collection, Uuid: uuid.New().String()},
- 		}
- 		refs := []*pb.BatchReference{
--			{FromCollection: collection, FromUuid: uuid.New().String(), ToUuid: uuid.New().String(), Name: "ref"},
-+			{
-+				FromCollection: collection,
-+				FromUuid:       uuid.New().String(),
-+				ToCollection:   new("TargetCollection"),
-+				ToUuid:         uuid.New().String(),
-+				Name:           "ref",
-+			},
- 		}
- 
- 		cfg := config.NewBatchStream(new(0.9), new(0.5), new(400*time.Millisecond), nil, nil)
-@@ -1127,9 +1137,7 @@ func Test_receiver_ackForDelay(t *testing.T) {
- 		require.NotEqual(t, -1, acks)
- 		got := sent.all()[acks].GetAcks()
- 		require.Equal(t, []string{objs[0].GetUuid(), objs[1].GetUuid()}, got.GetUuids())
--		require.Equal(t, []string{
--			batch.BEACON_START + refs[0].GetFromCollection() + "/" + refs[0].GetFromUuid() + "/" + refs[0].GetName(),
--		}, got.GetBeacons())
-+		require.Equal(t, []string{batch.ReferenceUUID(refs[0])}, got.GetBeacons())
- 	})
- 
- 	t.Run("no delay at or below the engage ratio", func(t *testing.T) {
-@@ -1377,7 +1385,12 @@ func TestStreamHandlerReportsSchemaResolutionFailures(t *testing.T) {
- 				{Collection: tc.collection, Uuid: uuid.New().String()},
- 			}
- 			refs := []*pb.BatchReference{
--				{FromCollection: tc.collection, FromUuid: uuid.New().String(), ToUuid: uuid.New().String(), Name: "ref"},
-+				{
-+					FromCollection: tc.collection,
-+					FromUuid:       uuid.New().String(),
-+					ToCollection:   new("TargetCollection"),
-+					ToUuid:         uuid.New().String(), Name: "ref",
-+				},
- 			}
- 
- 			mockBatcher := mocks.NewMockBatcher(t)
-@@ -1438,8 +1451,7 @@ func TestStreamHandlerReportsSchemaResolutionFailures(t *testing.T) {
- 			defer sentMu.Unlock()
- 			require.ElementsMatch(t, []string{objs[0].GetUuid(), objs[1].GetUuid()}, reportedUuids,
- 				"every object of the rejected message must be reported to the client")
--			expectedBeacon := batch.BEACON_START + refs[0].GetFromCollection() + "/" + refs[0].GetFromUuid() + "/" + refs[0].GetName()
--			require.ElementsMatch(t, []string{expectedBeacon}, reportedBeacons,
-+			require.ElementsMatch(t, []string{batch.ReferenceUUID(refs[0])}, reportedBeacons,
- 				"every reference of the rejected message must be reported to the client")
- 			require.Len(t, reportedErrors, 3, "one error per object and per reference")
- 			for _, e := range reportedErrors {
-```
-
-**File**: `adapters/handlers/grpc/v1/batch/worker.go` (modified, +26/-8)
-```diff
-@@ -12,13 +12,14 @@
- package batch
- 
- import (
-+	"bytes"
- 	"context"
--	"fmt"
- 	"math"
- 	"strings"
- 	"sync"
- 	"time"
- 
-+	"github.com/google/uuid"
- 	"github.com/sirupsen/logrus"
- 	enterrors "github.com/weaviate/weaviate/entities/errors"
- 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-@@ -283,8 +284,25 @@ func (w *worker) fanInReplies(
- 	return errs, retriable
- }
- 
--func toBeacon(ref *pb.BatchReference) string {
--	return fmt.Sprintf("%s%s/%s/%s", BEACON_START, ref.FromCollection, ref.FromUuid, ref.Name)
-+// ReferenceUUID creates a universally unique reference ID.
-+// It's a UUIDv3 (MD5 hash), that includes information
-+// about both the source and the target of a cross-reference.
-+//
-+// The MD5 hash is a bit faster for having a higher collision rate.
-+// Still, it's 2^64 to have a 50% probability of collision, an unlikely
-+// number of references to be processed by a single stream.
-+func ReferenceUUID(ref *pb.BatchReference) string {
-+	var buf bytes.Buffer
-+	buf.WriteString(ref.GetName())
-+	buf.WriteString(ref.GetFromCollection())
-+	buf.WriteString(ref.GetFromUuid())
-+	buf.WriteString(ref.GetToCollection())
-+	buf.WriteString(ref.GetToUuid())
-+	buf.WriteString(ref.GetTenant())
-+
-+	// The ID is only relevant in the scope a single stream and doesn't need a namespace.
-+	id := uuid.NewMD5(uuid.Nil, buf.Bytes())
-+	return id.String()
- }
- 
- func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb.BatchReference, cl *pb.ConsistencyLevel, retries int) ([]*pb.BatchStreamReply_Results_Success, []*pb.BatchStreamReply_Results_Error) {
-@@ -294,7 +312,7 @@ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb
- 		for _, ref := range refs {
- 			errors = append(errors, &pb.BatchStreamReply_Results_Error{
- 				Error:  ctx.Err().Error(),
--				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: toBeacon(ref)},
-+				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: ReferenceUUID(ref)},
- 			})
- 		}
- 		return nil, errors
-@@ -309,7 +327,7 @@ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb
- 		for _, ref := range refs {
- 			errors = append(errors, &pb.BatchStreamReply_Results_Error{
- 				Error:  enterrors.MessageWithDocsLink(err),
--				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: toBeacon(ref)},
-+				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: ReferenceUUID(ref)},
- 			})
- 		}
- 		return nil, errors
-@@ -334,13 +352,13 @@ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb
- 			}
- 			failed[err.Index] = struct{}{}
- 			if w.isTransientReplicationError(err.Error) && retries < MAX_RETRIES {
--				w.logger.WithField("streamId", streamId).Infof("transient replication error for reference %s: %s", toBeacon(refs[err.Index]), err.Error)
-+				w.logger.WithField("streamId", streamId).Infof("transient replication error for reference %s: %s", ReferenceUUID(refs[err.Index]), err.Error)
- 				retriable = append(retriable, refs[err.Index])
- 				continue
- 			}
- 			errors = append(errors, &pb.BatchStreamReply_Results_Error{
- 				Error:  err.Error,
--				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: toBeacon(refs[err.Index])},
-+				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: ReferenceUUID(refs[err.Index])},
- 			})
- 		}
- 		if len(retriable) > 0 {
-@@ -361,7 +379,7 @@ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb
+-		if !hosted[shardName] {
++		if idx.shards.Load(shardName) == nil {
  			continue
  		}
- 		successes = append(successes, &pb.BatchStreamReply_Results_Success{
--			Detail: &pb.BatchStreamReply_Results_Success_Beacon{Beacon: toBeacon(ref)},
-+			Detail: &pb.BatchStreamReply_Results_Success_Beacon{Beacon: ReferenceUUID(ref)},
+ 		recordReads++
+@@ -2642,23 +2628,11 @@ func (db *DB) ShardReplicaOwnership(ctx context.Context, className string) (map[
+ 	return result, nil
+ }
+ 
+-// lookupShardByName returns the named shard from the index, or an error
+-// describing why the lookup failed. There is no Index.GetShardByName, so
+-// callers walk ForEachShard; centralise that walk here so the two call
+-// sites (processOneUnit and OnGroupCompleted) report the same shape of
+-// error.
+ func lookupShardByName(idx *Index, shardName string) (ShardLike, error) {
+-	var found ShardLike
+-	if err := idx.ForEachShard(func(name string, s ShardLike) error {
+-		if name == shardName {
+-			found = s
++	if idx.closeCause() == nil {
++		if s := idx.shards.Load(shardName); s != nil {
++			return s, nil
+ 		}
+-		return nil
+-	}); err != nil {
+-		return nil, fmt.Errorf("iterating shards: %w", err)
+-	}
+-	if found == nil {
+-		return nil, fmt.Errorf("shard %q not found", shardName)
+ 	}
+-	return found, nil
++	return nil, fmt.Errorf("shard %q not found", shardName)
+ }
+```
+
+**File**: `adapters/repos/db/reindex_provider_test.go` (modified, +22/-0)
+```diff
+@@ -647,3 +647,25 @@ func TestADropNeverUndoesAClaimItDoesNotHold(t *testing.T) {
  		})
  	}
- 	return successes, errors
-```
-
-**File**: `adapters/handlers/grpc/v1/batch/worker_test.go` (modified, +4/-4)
-```diff
-@@ -109,7 +109,7 @@ func TestWorkerLoop(t *testing.T) {
- 		require.NotNil(t, report.Stats, "Expected stats to be returned")
- 		require.Len(t, report.Successes, 1, "Expected one result to be returned")
- 
--		require.Equal(t, toBeacon(ref1), report.Successes[0].GetBeacon(), "Expected second result's beacon to match")
-+		require.Equal(t, ReferenceUUID(ref1), report.Successes[0].GetBeacon(), "Expected second result's beacon to match")
- 
- 		require.Empty(t, rq, "Expected reporting queue to be empty after reading all messages")
- 		close(processingQueue) // Allow the draining logic to exit naturally
-@@ -207,12 +207,12 @@ func TestWorkerLoop(t *testing.T) {
- 
- 		require.Equal(t, UUID0, report.Successes[0].GetUuid(), "Expected first success' UUID to match")
- 		require.Equal(t, UUID2, report.Successes[1].GetUuid(), "Expected second success' UUID to match")
--		require.Equal(t, toBeacon(ref2), report.Successes[2].GetBeacon(), "Expected third success' beacon to match")
-+		require.Equal(t, ReferenceUUID(ref2), report.Successes[2].GetBeacon(), "Expected third success' beacon to match")
- 
- 		require.Equal(t, "objs error", report.Errors[0].GetError(), "Expected first error to be first non-retriable object error")
- 		require.Equal(t, UUID1, report.Errors[0].GetUuid(), "Expected first error's UUID to match")
- 		require.Equal(t, "refs error", report.Errors[1].GetError(), "Expected second error to be first non-retriable reference error")
--		require.Equal(t, toBeacon(ref1), report.Errors[1].GetBeacon(), "Expected second error's beacon to match")
-+		require.Equal(t, ReferenceUUID(ref1), report.Errors[1].GetBeacon(), "Expected second error's beacon to match")
- 
- 		require.Empty(t, rq, "Expected reporting queue to be empty after reading all messages")
- 		close(processingQueue) // Allow the draining logic to exit naturally
-@@ -575,7 +575,7 @@ func TestSendReferencesReplyIndexGuards(t *testing.T) {
- 	beaconsOf := func(idxs ...int) []string {
- 		out := make([]string, 0, len(idxs))
- 		for _, i := range idxs {
--			out = append(out, toBeacon(refs[i]))
-+			out = append(out, ReferenceUUID(refs[i]))
- 		}
- 		return out
- 	}
-```
-
-**File**: `test/acceptance/grpc/batching_test.go` (modified, +3/-6)
-```diff
-@@ -28,6 +28,7 @@ import (
- 	"github.com/google/uuid"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate/adapters/handlers/grpc/v1/batch"
- 	"github.com/weaviate/weaviate/entities/models"
- 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
- 	"github.com/weaviate/weaviate/test/acceptance/replication/common"
-@@ -184,10 +185,10 @@ func TestGRPC_Batching(t *testing.T) {
- 
- 		require.Equal(t, uuid0, msg.GetResults().GetSuccesses()[0].GetUuid(), "First object UUID should match")
- 		require.Equal(t, objects[1].Uuid, msg.GetResults().GetSuccesses()[1].GetUuid(), "Second object UUID should match")
--		require.Equal(t, toBeacon(references[0]), msg.GetResults().GetSuccesses()[2].GetBeacon(), "First reference beacon should match")
-+		require.Equal(t, batch.ReferenceUUID(references[0]), msg.GetResults().GetSuccesses()[2].GetBeacon(), "First reference beacon should match")
- 
- 		require.Equal(t, "property hasParagraphss does not exist for class Article", msg.GetResults().GetErrors()[0].GetError())
--		require.Equal(t, toBeacon(references[1]), msg.GetResults().GetErrors()[0].GetBeacon(), "Second reference beacon should match")
-+		require.Equal(t, batch.ReferenceUUID(references[1]), msg.GetResults().GetErrors()[0].GetBeacon(), "Second reference beacon should match")
- 
- 		obj, err := helper.GetObject(t, clsA.Class, strfmt.UUID(uuid0))
- 		require.NoError(t, err, "ListObjects should not return an error")
-@@ -969,10 +970,6 @@ func stop(stream pb.Weaviate_BatchStreamClient) {
- 	require.NoError(nil, err, "sending Stop over the stream should not return an error")
  }
- 
--func toBeacon(ref *pb.BatchReference) string {
--	return fmt.Sprintf("weaviate://localhost/%s/%s/%s", ref.FromCollection, ref.FromUuid, ref.Name)
--}
--
- func randomByteVector(dim int) []byte {
- 	vector := make([]byte, dim*4)
- 
-```
-
----
-
-### Incident Patch 3: `ea6d860b` (2026-11-13)
-**Commit Message**: Merge pull request #13863 from weaviate/jose/fix-update-rejects-unknown-module
-
-Schema update: reject a class-level module that does not exist
-
-**File**: `test/acceptance_with_go_client/collection_config_tests/update_unknown_module_test.go` (added, +118/-0)
-```diff
-@@ -0,0 +1,118 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
 +
-+package collection_config_tests
++func TestLookupShardByName(t *testing.T) {
++	open := &Index{}
++	open.shards.Store("tenant-a", &Shard{})
++	closing, closingTenant := closingIndexWithAnUnvisitedShard(t)
 +
-+import (
-+	"context"
-+	"net"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate-go-client/v6"
-+	"github.com/weaviate/weaviate-go-client/v6/collections"
-+	"github.com/weaviate/weaviate-go-client/v6/modules"
-+	"github.com/weaviate/weaviate-go-client/v6/modules/selfprovided"
-+	clschema "github.com/weaviate/weaviate/client/schema"
-+	"github.com/weaviate/weaviate/test/docker"
-+	"github.com/weaviate/weaviate/test/helper"
-+)
-+
-+func TestUpdateWithUnknownModule_SingleNode(t *testing.T) {
-+	c := connect(t, docker.New().WithWeaviateWithGRPC().WithWeaviateEnv("ENABLE_MODULES", "reranker-dummy"))
-+	testUpdateWithUnknownModule(t, c)
-+}
-+
-+func TestUpdateWithUnknownModule_Cluster(t *testing.T) {
-+	c := connect(t, docker.New().WithWeaviateCluster(3).WithWeaviateExposeGRPCPort().
-+		WithWeaviateEnv("ENABLE_MODULES", "reranker-dummy"))
-+	testUpdateWithUnknownModule(t, c)
-+}
-+
-+// rerankerDummy names the reranker-dummy module, which the Go client has no type for.
-+type rerankerDummy struct{}
-+
-+func (rerankerDummy) Name() string { return "reranker-dummy" }
-+
-+// The client registry must know every module in a collection's moduleConfig:
-+// api.Collection.UnmarshalJSON loops until it has matched every key against the
-+// registry, so an unregistered key makes GetConfig spin forever.
-+func init() { modules.Register(rerankerDummy{}) }
-+
-+// testUpdateWithUnknownModule checks that a class update naming a module the
-+// node does not have is rejected with 422 and leaves the module config as it
-+// was. The server used to accept the update and store the unknown module.
-+//
-+// The Go client v6 has no call that changes the module config of a
-+// collection, so the update goes through the REST client of this repository.
-+func testUpdateWithUnknownModule(t *testing.T, c *weaviate.Client) {
-+	ctx := context.Background()
-+	name := "UpdateWithUnknownModule"
-+	require.NoError(t, c.Collections.Delete(ctx, name))
-+	t.Cleanup(func() { require.NoError(t, c.Collections.Delete(ctx, name)) })
-+
-+	_, err := c.Collections.Create(ctx, collections.Collection{
-+		Name:            name,
-+		Properties:      []collections.Property{{Name: "name", DataType: collections.DataTypeText}},
-+		Vectors:         map[string]collections.VectorConfig{"v": {Vectorizer: selfprovided.Vectorizer}},
-+		RerankerModules: []modules.Module{rerankerDummy{}},
-+	})
-+	require.NoError(t, err)
-+
-+	update := helper.GetClass(t, name)
-+	require.NotNil(t, update)
-+	moduleConfig, ok := update.ModuleConfig.(map[string]any)
-+	require.True(t, ok, "module config of the stored class: %#v", update.ModuleConfig)
-+	moduleConfig["rerankr-openai"] = map[string]any{}
-+
-+	_, err = helper.Client(t).Schema.SchemaObjectsUpdate(
-+		clschema.NewSchemaObjectsUpdateParams().WithClassName(name).WithObjectClass(update), nil)
-+	require.Error(t, err, "an update naming a module that does not exist must be rejected")
-+	var unprocessable *clschema.SchemaObjectsUpdateUnprocessableEntity
-+	require.ErrorAs(t, err, &unprocessable, "expected 422, got: %v", err)
-+	assert.Contains(t, unprocessable.Payload.Error[0].Message, "module with name rerankr-openai doesn't exist")
-+
-+	got, err := c.Collections.GetConfig(ctx, name)
-+	require.NoError(t, err)
-+	var rerankers []string
-+	for _, m := range got.RerankerModules {
-+		rerankers = append(rerankers, m.Name())
++	tests := []struct {
++		name    string
++		idx     *Index
++		shard   string
++		wantErr string
++	}{
++		{name: "missing shard", idx: open, shard: "tenant-b", wantErr: `shard "tenant-b" not found`},
++		{name: "index closing", idx: closing, shard: closingTenant, wantErr: fmt.Sprintf("shard %q not found", closingTenant)},
 +	}
-+	assert.Equal(t, []string{"reranker-dummy"}, rerankers)
-+}
-+
-+// connect starts the containers, points the REST client of this repository at
-+// Weaviate and returns a Go client v6 for the same node.
-+func connect(t *testing.T, compose *docker.Compose) *weaviate.Client {
-+	t.Helper()
-+	ctx := context.Background()
-+	env, err := compose.Start(ctx)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, env.Terminate(ctx)) })
-+
-+	helper.SetupClient(env.GetWeaviate().URI())
-+	t.Cleanup(helper.ResetClient)
-+
-+	host, httpPort, err := net.SplitHostPort(env.GetWeaviate().URI())
-+	require.NoError(t, err)
-+	_, grpcPort, err := net.SplitHostPort(env.GetWeaviate().GrpcURI())
-+	require.NoError(t, err)
-+
-+	c, err := weaviate.NewLocal(ctx,
-+		weaviate.WithHost(host),
-+		weaviate.WithHTTPPort(httpPort),
-+		weaviate.WithGRPCPort(grpcPort),
-+	)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, c.Close()) })
-+	return c
-+}
-```
-
-**File**: `usecases/schema/class.go` (modified, +26/-0)
-```diff
-@@ -30,6 +30,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/vectorindex/flat"
- 	enthfresh "github.com/weaviate/weaviate/entities/vectorindex/hfresh"
- 	"github.com/weaviate/weaviate/entities/vectorindex/hnsw"
-+	"golang.org/x/exp/maps"
- 	"golang.org/x/text/unicode/norm"
- 
- 	"github.com/weaviate/weaviate/adapters/repos/db/inverted/stopwords"
-@@ -669,6 +670,10 @@ func UpdateClassInternal(h *Handler, ctx context.Context, className string, upda
- 			}
- 		}
- 
-+		if err := rejectUnknownModules(h.parser.modules, initial, updated); err != nil {
-+			return err
-+		}
-+
- 		allowed, err := mutableSettingsChanges(h.parser.modules, initial, updated, func(module, targetVector string) error {
- 			return h.moduleConfig.ValidateModuleConfig(ctx, updated, module, targetVector)
- 		})
-@@ -2096,6 +2101,27 @@ func validateUpdatingMT(current, update *models.Class) (enabled bool, err error)
- 	return enabled, err
- }
- 
-+// rejectUnknownModules fails when the update adds a class-level module this
-+// node does not have, as class create does. A module already stored passes,
-+// so a class still updates after one of its modules is disabled. It runs
-+// before the RAFT command and not in the apply, where nodes with different
-+// modules would disagree.
-+func rejectUnknownModules(modules modulesProvider, initial, updated *models.Class) error {
-+	updatedConfig, _ := updated.ModuleConfig.(map[string]any)
-+	initialConfig, _ := initial.ModuleConfig.(map[string]any)
-+	added := maps.Keys(updatedConfig)
-+	slices.Sort(added)
-+	for _, module := range added {
-+		if _, stored := initialConfig[module]; stored {
-+			continue
-+		}
-+		if !modules.HasModule(module) {
-+			return fmt.Errorf("module with name %s doesn't exist", module)
-+		}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			_, err := lookupShardByName(tt.idx, tt.shard)
++			require.EqualError(t, err, tt.wantErr)
++		})
 +	}
-+	return nil
 +}
-+
- func validateImmutableFields(initial, updated *models.Class, modulesProvider modulesProvider, allowed map[string][]string) error {
- 	immutableFields := []immutableText{
- 		{
-```
-
-**File**: `usecases/schema/module_config_update_test.go` (added, +68/-0)
-```diff
-@@ -0,0 +1,68 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package schema
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestUpdateClass_ModuleConfigNamesOnlyEnabledModules(t *testing.T) {
-+	const missing = "rerankr-openai"
-+
-+	t.Run("rejects a module that does not exist", func(t *testing.T) {
-+		s := newSchemaWithModules(t)
-+		stored := s.create(t, namedVectorClass(mutableModule, moduleSettings("a", "m")))
-+		stored.ModuleConfig = map[string]any{generativeModule: map[string]any{"setting": "a"}}
-+
-+		update := namedVectorClass(mutableModule, moduleSettings("a", "m"))
-+		update.ModuleConfig = map[string]any{
-+			generativeModule: map[string]any{"setting": "a"},
-+			missing:          map[string]any{"model": "x"},
-+		}
-+		require.EqualError(t, s.update(update), "module with name "+missing+" doesn't exist")
-+		require.Equal(t, map[string]any{generativeModule: map[string]any{"setting": "a"}}, stored.ModuleConfig)
-+	})
-+
-+	t.Run("rejects a module that does not exist on a class without module config", func(t *testing.T) {
-+		s := newSchemaWithModules(t)
-+		s.create(t, namedVectorClass(mutableModule, moduleSettings("a", "m")))
-+
-+		update := namedVectorClass(mutableModule, moduleSettings("a", "m"))
-+		update.ModuleConfig = map[string]any{missing: map[string]any{}}
-+		require.EqualError(t, s.update(update), "module with name "+missing+" doesn't exist")
-+	})
-+
-+	t.Run("accepts a module that exists", func(t *testing.T) {
-+		s := newSchemaWithModules(t)
-+		stored := s.create(t, namedVectorClass(mutableModule, moduleSettings("a", "m")))
-+
-+		update := namedVectorClass(mutableModule, moduleSettings("a", "m"))
-+		update.ModuleConfig = map[string]any{"reranker-fake": map[string]any{"model": "x"}}
-+		require.NoError(t, s.update(update))
-+		require.Equal(t, "x", storedModuleSettings(t, stored, "reranker-fake", "")["model"])
-+	})
-+
-+	t.Run("keeps a stored module that is no longer enabled", func(t *testing.T) {
-+		// A module disabled after the class was created stays in its config;
-+		// an update that carries it unchanged must still pass.
-+		s := newSchemaWithModules(t)
-+		stored := s.create(t, namedVectorClass(mutableModule, moduleSettings("a", "m")))
-+		stored.ModuleConfig = map[string]any{missing: map[string]any{"model": "x"}}
-+
-+		update := namedVectorClass(mutableModule, moduleSettings("a", "m"))
-+		update.ModuleConfig = map[string]any{missing: map[string]any{"model": "x"}}
-+		update.Description = "new description"
-+		require.NoError(t, s.update(update))
-+	})
-+}
-```
-
-**File**: `usecases/schema/parser_test.go` (modified, +2/-1)
-```diff
-@@ -305,7 +305,8 @@ func (m fakeModulesProvider) IsMultiVector(name string) bool {
- }
- 
- func (m fakeModulesProvider) HasModule(name string) bool {
--	return name == "none" || strings.Contains(name, "colbert") || strings.Contains(name, "text2vec") || strings.Contains(name, "multi2vec")
-+	return name == "none" || strings.Contains(name, "colbert") || strings.Contains(name, "text2vec") || strings.Contains(name, "multi2vec") ||
-+		m.IsGenerative(name) || m.IsReranker(name) || strings.HasPrefix(name, "my-module")
- }
- 
- func (m fakeModulesProvider) MigrateVectorizerSettings(any, any) bool {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13891** (2026-11-13): Return an error body with the GET /v1/tasks 403 (@etiennedi)
-- **PR #13883** (2026-11-13): Allow hfresh with multi-vector vectorizers; MUVERA implied and required for hfresh multi-vectors (stable/v1.40) (@rlmanrique)
-- **PR #13877** (closed): Cover /tasks in the RBAC no-permissions endpoint sweep (@etiennedi)
-- **PR #13873** (2026-11-12): fix(lsmkv): return an error for damaged RoaringSet WAL record lengths (@jfrancoa)
-- **PR #13870** (2026-11-12): fix(auto_schema): fix description of a collection generated by auto-schema (@bevzzz)
-- **PR #13869** (2026-11-12): replication: allow async replication while a node is in maintenance mode (@jeroiraz)
+- **PR #13923** (2026-11-16): prepare release v1.41.0-rc.0 (@antas-marcin)
+- **PR #13920** (2026-11-16): Merge stable/v1.40 into main (@antas-marcin)
+- **PR #13919** (2026-11-16): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
+- **PR #13917** (2026-11-16): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13912** (2026-11-16): Speed up inactive shard backups by ~40% with flat staging folder structure (@dirkkul)
+- **PR #13898** (2026-11-16): Speed up object listing by ~50% by decoding properties without reflection (@dirkkul)
 
 ---
 
@@ -2532,16 +2031,16 @@ Schema update: reject a class-level module that does not exist
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-
+## X. Empirical Invariant Guard in manager_finalize_refusal_test.go
 
 **RULE**:
-When implementing operations in `test/acceptance_with_go_client/collection_config_tests/update_named_vector_index_type_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cluster/distributedtask/manager_finalize_refusal_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `473e7c80`: Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3032ae85`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/acceptance_with_go_client/collection_config_tests/update_named_vector_index_type_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cluster/distributedtask/manager_finalize_refusal_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
@@ -2557,45 +2056,45 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 //  CONTACT: hello@weaviate.io
 //
 
-package collection_config_tests
+package distributedtask
 
 import (
-	"context"
-	"net"
-	"net/http"
 	"testing"
+	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/weaviate/weaviate-go-client/v6"
-	"github.com/weaviate/weaviate-go-client/v6/collections"
-	"github.com/weaviate/weaviate-go-client/v6/collections/vectorindex"
-	"github.com/weaviate/weaviate-go-client/v6/modules/selfprovided"
-	"github.com/weaviate/weaviate/test/docker"
+	cmd "github.com/weaviate/weaviate/cluster/proto/api"
 )
 
-func TestUpdateNamedVectorIndexType_SingleNode(t *testing.T) {
-	c := newClient(t, docker.New().WithWeaviateWithGRPC())
-	testUpdateNamedVectorIndexType(t, c)
-}
+// A peer's failure committing before a slower node's finalize must not flip the task to FINISHED.
+func TestManager_MarkTaskFinalizedLeavesEndedTasksUnchanged(t *testing.T) {
+	for _, tc := range []struct {
+		status  TaskStatus
+		wantErr error
+	}{
+		{status: TaskStatusFailed, wantErr: ErrTaskNotInFinalizingState},
+		{status: TaskStatusFinished},
+	} {
+		t.Run(string(tc.status), func(t *testing.T) {
+			h := newTestHarness(t).init(t)
+			ns, id, version := fixtureInStatus(t, h, tc.status)
+			finishedAt := h.manager.tasks[ns][id].FinishedAt
+			h.clock.Advance(time.Minute)
 
-func TestUpdateNamedVectorIndexType_Cluster(t *testing.T) {
-	c := newClient(t, docker.New().WithWeaviateCluster(3).WithWeaviateExposeGRPCPort())
-	testUpdateNamedVectorIndexType(t, c)
-}
-
-// testUpdateNamedVectorIndexType checks that changing the vector index type of
-// 
+			err := h.manager.MarkTaskFinalized(toCmd(t, &cmd.MarkTaskFinalizedRequest{
+				Namespace:             ns,
+				Id:                    id,
+				Versio
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `473e7c80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3032ae85` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

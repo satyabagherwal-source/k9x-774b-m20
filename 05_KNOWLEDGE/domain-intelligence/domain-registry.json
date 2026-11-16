@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T15:33:29.181Z",
-  "total_records": 1269,
+  "last_updated": "2026-11-16T15:51:48.370Z",
+  "total_records": 1274,
   "domains": {
     "A": {
       "total": 7,
@@ -900,7 +900,7 @@
       ]
     },
     "H": {
-      "total": 271,
+      "total": 275,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1172,7 +1172,11 @@
         "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants",
         "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian",
         "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants"
       ]
     },
     "I": {
@@ -1316,7 +1320,7 @@
       ]
     },
     "L": {
-      "total": 12,
+      "total": 13,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -1329,7 +1333,8 @@
         "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
-        "DOM-L-817D65B4"
+        "DOM-L-817D65B4",
+        "DOM-L-497D3321"
       ]
     },
     "M": {
@@ -7012,8 +7017,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "922c96e8fa194470555a2082b7c2b9ec918bb0d9df287b5929fe7aaea74b5e81",
-      "created_at": "2026-11-15T05:31:52.778Z"
+      "content_hash": "abef2f7b2be93bd7a6ea3048ffea0fc11f8daf88f1f32a5ad90474592c35da17",
+      "created_at": "2026-11-16T15:51:12.898Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8803,8 +8808,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "525f4cbc311f4186b253080e5c7f2fd3c57b450ab4ea4194bc4f168e963dc5bc",
-      "created_at": "2026-11-13T18:52:34.649Z"
+      "content_hash": "ebded646727ec43d1afb77911df9f663a817a12a60a5f551d0259b5849cd6030",
+      "created_at": "2026-11-16T15:51:14.736Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -16622,8 +16627,8 @@
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "repository": "tw93/Pake",
-      "content_hash": "8012f8f870342ee1636df9384b4b0bdf9ac91fd58b665cdfefd02715e95faa9e",
-      "created_at": "2026-11-14T19:03:11.371Z"
+      "content_hash": "845bfe29986f5e1e31b085bce23cd4cfaf31a79ba8f845f269e22f0c8eaa61a3",
+      "created_at": "2026-11-16T15:51:00.622Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
@@ -16640,8 +16645,8 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
       "repository": "tw93-pake-learnings",
-      "content_hash": "1804c10c77714d4a1fe6c00d960cefa8a9daee4b17560a9f0f03ed5acf225497",
-      "created_at": "2026-11-14T19:03:30.418Z"
+      "content_hash": "85d53bac871a57c5d63307c8d0754866d925e1d13bd547e65adeb2e60f337011",
+      "created_at": "2026-11-16T15:51:46.083Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -23219,6 +23224,76 @@
       "repository": "nguyenphutrong-quotio-learnings",
       "content_hash": "4a73a493304f83a903c7bf006ee843c4d98322a5fd301cbb818b1176c4b5f519",
       "created_at": "2026-11-16T15:33:27.003Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: webrecorder/pywb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-pywb-technical-construction-intelligence-webrecorder-pywb-core-invar.md",
+      "repository": "webrecorder/pywb",
+      "content_hash": "b446a515fbacff32a8dcc966332a3df12671d5da7474c5444bdf5074eacb08f1",
+      "created_at": "2026-11-16T15:51:04.202Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: 0xCUB3/wBlock Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-technical-construction-intelligence-0xcub3-wblock-core-invariants.md",
+      "repository": "0xCUB3/wBlock",
+      "content_hash": "03b8c23fa4ea214d1e381d47b5f55821bfb5b57e357debe0c4b1426b6698ecdc",
+      "created_at": "2026-11-16T15:51:08.790Z"
+    },
+    "DOM-L-497D3321": {
+      "record_id": "DOM-L-497D3321",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [],
+      "title": "The EasyList authors (https://easylist.to/): GPL-30-or-later or CC BY-SA 30 httpseasylisttopageslicencehtml",
+      "content": "GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html)",
+      "content_hash": "ddb92a2ff765a6f4375649f456edb601cfae5c7fa4a0d141a56a87909713291d",
+      "summary": "GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) -> GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html)",
+      "provenance": {
+        "source_uri": "project://tw93-pake/tw93-pake-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`ads`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tw93-pake)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of tw93-pake"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T15:51:45.309Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: webrecorder-pywb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-pywb-learnings-technical-construction-intelligence-webrecorder-pywb-.md",
+      "repository": "webrecorder-pywb-learnings",
+      "content_hash": "2241849f22d6cfe0ee0ebc81fb496bd5e18b6a49f3c8d316dcd8fcf79f2a5fdc",
+      "created_at": "2026-11-16T15:51:46.946Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: 0xcub3-wblock-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-learnings-technical-construction-intelligence-0xcub3-wblock-learni.md",
+      "repository": "0xcub3-wblock-learnings",
+      "content_hash": "ba3bf6cf64d2d2cfebc9a2b1c3fd76ffe319ff8966e3576f3b2b1bb6f96146f0",
+      "created_at": "2026-11-16T15:51:48.370Z"
     }
   }
 }

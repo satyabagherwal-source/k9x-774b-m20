@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T15:33:29.468Z",
+  "last_updated": "2026-11-16T15:51:48.625Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T15:33:28.860Z",
@@ -183,8 +183,8 @@
       "staged_for_review": 1
     },
     "tw93-pake-learnings.md": {
-      "processed_at": "2026-11-14T19:03:30.061Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-16T15:51:45.334Z",
+      "promoted_canonical": 1,
       "staged_for_review": 1
     },
     "caviraoss-longmemory-learnings.md": {
@@ -1503,7 +1503,7 @@
       "staged_for_review": 1
     },
     "0xcub3-wblock-learnings.md": {
-      "processed_at": "2026-11-13T03:48:36.419Z",
+      "processed_at": "2026-11-16T15:51:47.203Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3181,9 +3181,14 @@
       "processed_at": "2026-11-16T15:10:12.262Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "webrecorder-pywb-learnings.md": {
+      "processed_at": "2026-11-16T15:51:46.347Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1308,
-  "total_canonical_promoted": 288,
-  "total_staged_for_review": 1012
+  "total_dossiers_evaluated": 1311,
+  "total_canonical_promoted": 289,
+  "total_staged_for_review": 1015
 }

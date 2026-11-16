@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "6498b4d7",
+    "sourceVersion": "3d2d59b5",
     "license": "GPL-3.0",
-    "contentHash": "02cbae7b6441cc980dfad1f730d2c9fd10b226f814e7d5403d048d66bbe684f0",
-    "lastHarvestedAt": "2026-11-14T19:03:11.095Z",
+    "contentHash": "82d2d7901fd831d2752a8b46c970d12d0f9366855ca56a0ac86562d799724d0f",
+    "lastHarvestedAt": "2026-11-16T15:51:00.349Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "d3bfd511",
+    "sourceVersion": "f7254f67",
     "license": "Apache-2.0",
-    "contentHash": "1066cef6500a06b45da95fb8a68f2a4793b34373c4344ecfefe7369b630bf411",
-    "lastHarvestedAt": "2026-11-16T03:45:49.215Z",
+    "contentHash": "807e9e43dbf8cee760a1f8a9045ca01f60da9053e145bf289d7f1d383eebd4f5",
+    "lastHarvestedAt": "2026-11-16T15:51:12.615Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "927ec35c",
+    "sourceVersion": "ca73857d",
     "license": "NOASSERTION",
-    "contentHash": "e4ed48be14ce83ce16d3d5351f67867a9250869c1c93c3d085ea4177def2a47b",
-    "lastHarvestedAt": "2026-11-13T18:52:34.422Z",
+    "contentHash": "c813ade6f401d1b29c6f15fa8be85cb4a4ad4c9444ebac3d697e13abcbf251e8",
+    "lastHarvestedAt": "2026-11-16T15:51:14.450Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -9233,10 +9233,10 @@
     "repository": "webrecorder/pywb",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/pywb",
-    "sourceVersion": "73e13e0c",
+    "sourceVersion": "876fff4c",
     "license": "GPL-3.0",
-    "contentHash": "cbf73159fdac90cd90bbe4bcc12f1d6f0b4110fd261c9c5e73c5d8192c5880dc",
-    "lastHarvestedAt": "2026-11-07T02:41:10.643Z",
+    "contentHash": "00d76bf3c206cbd064ea7e391e82b5b5ff316f19c7e6bbc328ebbdf1f55713fd",
+    "lastHarvestedAt": "2026-11-16T15:51:03.926Z",
     "learningId": "learn-github-webrecorder-pywb"
   },
   "kruszoneq-macusb": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "6cd9c5b8",
+    "sourceVersion": "03e46e4a",
     "license": "GPL-3.0",
-    "contentHash": "e9d63bd438a29df7c1b2db926ad1e5a26403045d11736a77f0182acca3374957",
-    "lastHarvestedAt": "2026-11-13T03:48:27.003Z",
+    "contentHash": "528710f73deb94446f1c6aa4751d938d9f1340055bd28b458d3d6ef3cc897768",
+    "lastHarvestedAt": "2026-11-16T15:51:08.503Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {

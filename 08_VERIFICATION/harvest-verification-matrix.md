@@ -10289,3 +10289,9 @@
 | `CYCLE-20261116-GYUI` | `2026-11-16T15:10:08.490Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8750` | Yes (`314216ef...`) |
 | `CYCLE-20261116-AO0H` | `2026-11-16T15:33:14.129Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8751` | Yes (`8cf90511...`) |
 | `CYCLE-20261116-AV2J` | `2026-11-16T15:33:23.275Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8752` | Yes (`14b8cde1...`) |
+| `CYCLE-20261116-XIPM` | `2026-11-16T15:51:00.346Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8753` | Yes (`82d2d790...`) |
+| `CYCLE-20261116-XLGY` | `2026-11-16T15:51:03.922Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8754` | Yes (`00d76bf3...`) |
+| `CYCLE-20261116-XP04` | `2026-11-16T15:51:08.500Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8755` | Yes (`528710f7...`) |
+| `CYCLE-20261116-XS6B` | `2026-11-16T15:51:12.611Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`807e9e43...`) |
+| `CYCLE-20261116-XTLB` | `2026-11-16T15:51:14.447Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8756` | Yes (`c813ade6...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T15:51:45.334Z` | `tw93-pake` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-497D3321` [Domain L] | Yes (`ddb92a2f...`) |
