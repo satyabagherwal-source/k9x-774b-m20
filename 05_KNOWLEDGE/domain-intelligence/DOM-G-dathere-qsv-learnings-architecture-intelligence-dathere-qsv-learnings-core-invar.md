@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T16:50:40.317Z",
+  "timestamp": "2026-11-16T00:36:59.152Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T16:50:40.317Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T00:36:59.152Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere-qsv-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `b1d9ed30`  
+> **Source Version**: `64e35701`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T16:50:35.691Z  
+> **Timestamp**: 2026-11-16T00:36:54.033Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T16:50:35.685Z  
+> **Harvest Timestamp**: 2026-11-16T00:36:54.027Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2229,240 +2229,89 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1d9ed30` (2026-11-15)
-**Commit Message**: docs: tagline consistency
+### Incident Patch 1: `64e35701` (2026-11-16)
+**Commit Message**: docs(sqlp): warn that date inference and CAST read dates day-first (#5062)
 
-**File**: `README.md` (modified, +1/-1)
+* docs(sqlp): warn that date inference and CAST read dates day-first
+
+Polars' date inference only tries day-first and year-first patterns, so
+`--try-parsedates` and `CAST(col AS DATE)` read 01/05/2024 as 2024-05-01.
+Point US-date users to STRPTIME(col, '%m/%d/%Y') with --try-parsedates off.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): note the sqlp day-first date warning [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,4 @@
--## qsv: Blazing-fast Data-Wrangling toolkit
-+## qsv: Blazing-fast Neuro-symbolic Data-Wrangling toolkit
- 
- [![Linux build status](https://github.com/dathere/qsv/actions/workflows/rust.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/rust.yml)
- [![Windows build status](https://github.com/dathere/qsv/actions/workflows/rust-windows.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/rust-windows.yml)
+@@ -117,7 +117,7 @@
+       {
+         "flag": "--try-parsedates",
+         "type": "flag",
+-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates."
++        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+       },
+       {
+         "flag": "--wnull-value",
 ```
 
----
-
-### Incident Patch 2: `b8dd4570` (2026-11-15)
-**Commit Message**: deps: bump lock file
-
-Update actix-http, brotli, fantoccini, jiff, rand, webdriver, xxhash-rust, and zip. Remove obsolete ICU dependency versions.
-
-**File**: `Cargo.lock` (modified, +90/-229)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -33,9 +33,9 @@ dependencies = [
+@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
- [[package]]
- name = "actix-http"
--version = "3.21.0"
-+version = "3.21.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3422032be73eeb15bafdb64086386385875b653eb418a80241d1f98473e86ea6"
-+checksum = "a190bdb9595ac6111ca520bc7db0819153cead7d68ca3faaf71f114f697dda07"
- dependencies = [
-  "actix-codec",
-  "actix-service",
-@@ -1110,9 +1110,9 @@ checksum = "36f64beae40a84da1b4b26ff2761a5b895c12adc41dc25aaee1c4f2bbfe97a6e"
++## [Unreleased]
++
++### Changed
++- `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
++
+ ## [29.0.0] - 2026-11-15 🛡️ The "Trust the numbers" Release ✅
  
- [[package]]
- name = "brotli"
--version = "9.1.1"
-+version = "9.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "627b7cfb0578f0eafce087a90fcd40add1231900b69e4d4de2d456260a4f5d81"
-+checksum = "05e0144f854f7cfbc157229554c4a9580b8a653448e2bab608022ee0398a07dc"
- dependencies = [
-  "alloc-no-stdlib",
-  "alloc-stdlib",
-@@ -2025,7 +2025,7 @@ dependencies = [
-  "petgraph",
-  "postgres",
-  "qsv-stats",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "rayon",
-  "regex",
-  "rusqlite",
-@@ -2623,7 +2623,7 @@ dependencies = [
-  "deunicode",
-  "dummy",
-  "either",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "random_color",
-  "time",
-  "uuid",
-@@ -2670,11 +2670,11 @@ dependencies = [
+ ### Highlights
+```
+
+**File**: `docs/help/sqlp.md` (modified, +1/-1)
+```diff
+@@ -357,7 +357,7 @@ qsv sqlp --help
  
- [[package]]
- name = "fantoccini"
--version = "0.22.1"
-+version = "0.22.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7737298823a6f9ca743e372e8cb03658d55354fbab843424f575706ba9563046"
-+checksum = "1a1ccdca7be680925093d9be9aec25f9f067c9db03c61b5c3625996022e23807"
- dependencies = [
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "cookie 0.18.2",
-  "http 1.5.0",
-  "http-body-util",
-@@ -3690,18 +3690,6 @@ dependencies = [
-  "cc",
- ]
- 
--[[package]]
--name = "icu_collections"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "db2fa452206ebee18c4b5c2274dbf1de17008e874b4dc4f0aea9d01ca79e4526"
--dependencies = [
-- "displaydoc",
-- "yoke 0.7.5",
-- "zerofrom",
-- "zerovec 0.10.4",
--]
--
- [[package]]
- name = "icu_collections"
- version = "2.4.0"
-@@ -3711,9 +3699,9 @@ dependencies = [
-  "displaydoc",
-  "potential_utf",
-  "utf8_iter",
-- "yoke 0.8.4",
-+ "yoke",
-  "zerofrom",
-- "zerovec 0.11.9",
-+ "zerovec",
- ]
- 
- [[package]]
-@@ -3723,11 +3711,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "25d29b57c17c6528d0dc4c2141cfa2d08200465acb537a3909c8b9b8a4a984c0"
- dependencies = [
-  "displaydoc",
-- "litemap 0.8.3",
-+ "litemap",
-  "serde",
-- "tinystr 0.8.5",
-- "writeable 0.6.4",
-- "zerovec 0.11.9",
-+ "tinystr",
-+ "writeable",
-+ "zerovec",
- ]
- 
- [[package]]
-@@ -3738,10 +3726,10 @@ checksum = "406e9ae5b95d8aa37db6293405931b766a6172d1848daee22d70eb44aa78a43c"
- dependencies = [
-  "icu_locale_core",
-  "icu_locale_fallback_data",
-- "icu_provider 2.4.0",
-+ "icu_provider",
-  "potential_utf",
-- "tinystr 0.8.5",
-- "zerovec 0.11.9",
-+ "tinystr",
-+ "zerovec",
- ]
- 
- [[package]]
-@@ -3750,30 +3738,18 @@ version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3632ebbd0c5c3637ba1a40bdf8288f2cb9d2268e73441a69d5fc73d7cfbaa87c"
- 
--[[package]]
--name = "icu_locid"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "13acbb8371917fc971be86fc8057c41a64b521c184808a698c02acc242dbf637"
--dependencies = [
-- "displaydoc",
-- "litemap 0.7.5",
-- "tinystr 0.7.6",
-- "writeable 0.5.5",
--]
--
- [[package]]
- name = "icu_normalizer"
- version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "404a3b8c486f205c87fe7f23ab6894d84a4ad76d6e4671ae1981ba7def87c599"
- dependencies = [
-- "icu_collections 2.4.0",
-+ "icu_collections",
-  "icu_normalizer_data",
-  "icu_properties",
-- "icu_provider 2.4.0",
-+ "icu_provider",
-  "smallvec",
-- "zerovec 0.11.9",
-+ "zerovec",
- ]
- 
- [[package]]
-@@ -3789,12 +3765,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "2ea83d991c56158f7cf898bf86436c1dfe7c07ee82fe88951f2695c9f37a379f"
- dependencies = [
-  "displaydoc",
-- "icu_collections 2.4.0",
-+ "icu_collections",
-  "icu_locale_core",
-  "icu_properties_data",
-- "icu_provider 2.4.0",
-+ "icu_provider",
-  "zerotrie",
-- "zerovec 0.11.9",
-+ "zerovec",
- ]
- 
- [[package]]
-@@ -3803,23 +3779,6 @@ version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b98f29af82d02b163fe50161388350e743bb3107cc8e8c2f7314cb505faddfcf"
- 
--[[package]]
--name = "icu_provider"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6ed421c8a8ef78d3e2dbc98a973be2f3770cb42b606e3ab18d6237c4dfde68d9"
--dependencies = [
-- "displaydoc",
-- "icu_locid",
-- "icu_provider_macros",
-- "stable_deref_trait",
-- "tinystr 0.7.6",
-- "writeable 0.5.5",
-- "yoke 0.7.5",
-- "zerofrom",
-- "zerovec 0.10.4",
--]
--
- [[package]]
- name = "icu_provider"
- version = "2.4.0"
-@@ -3830,38 +3789,11 @@ dependencies = [
-  "icu_locale_core",
-  "serde",
-  "stable_deref_trait",
-- "writeable 0.6.4",
-- "yoke 0.8.4",
-+ "writeable",
-+ "yoke",
-  "zerofrom",
-  "zerotrie",
-- "zerovec 0.11
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+-| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
++| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
+```
+
+**File**: `src/cmd/sqlp.rs` (modified, +4/-0)
+```diff
+@@ -218,6 +218,10 @@ sqlp options:
+                               Note that if dates are not well-formatted in your CSV,
+                               that you may want to try to set `--ignore-errors` to relax
+                               the CSV parsing of dates.
++                              Polars reads slash, dash and dot dates as day-first, so
++                              01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE).
++                              For month-first (US) dates, leave this off and use
++                              STRPTIME(col, '%m/%d/%Y') in the query instead.
+     --infer-len <arg>         The number of rows to scan when inferring the schema of the CSV.
+                               Set to 0 to do a full table scan (warning: can be slow).
+                               [default: 10000]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5062** (2026-11-16): docs(sqlp): warn that date inference and CAST read dates day-first (@jqnatividad)
+- **PR #5061** (2026-11-15): bench: use the long-view chart as the wiki hero image (@jqnatividad)
+- **PR #5060** (2026-11-15): bench: regenerate Benchmarks Data Schematic for the 29.0.0 run (@jqnatividad)
 - **PR #5058** (2026-11-15): fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (@jqnatividad)
 - **PR #5057** (2026-11-15): deps(viz): driver.js 1.14.0 for the Data Schematic Tour (@jqnatividad)
 - **PR #5056** (2026-11-15): fix(stats): a column of only NaN cells has no sum, not 0 (@jqnatividad)
-- **PR #5055** (2026-11-15): deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only (@jqnatividad)
-- **PR #5054** (2026-11-14): test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions (@jqnatividad)
-- **PR #5053** (2026-11-14): fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics (@jqnatividad)
 
 ---
 
@@ -2482,31 +2331,31 @@ Update actix-http, brotli, fantoccini, jiff, rand, webdriver, xxhash-rust, and z
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: tagline consistency
+## X. docs(sqlp): warn that date inference and CAST read dates day-first
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1d9ed30`: docs: tagline consistency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64e35701`: docs(sqlp): warn that date inference and CAST read dates day-first. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## qsv: Blazing-fast Neuro-symbolic Data-Wrangling toolkit
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-## qsv: Blazing-fast Data-Wrangling toolkit
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1d9ed30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64e35701` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

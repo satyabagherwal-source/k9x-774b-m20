@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T00:28:37.165Z",
-  "total_records": 1173,
+  "last_updated": "2026-11-16T00:36:59.368Z",
+  "total_records": 1175,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 566,
+      "total": 568,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -604,7 +604,9 @@
         "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants",
         "DOM-D-B67F40D8",
-        "domain_intelligence-research-knowledge-intelligence-hf-liconstudio-minimax-h3-vbvr-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-liconstudio-minimax-h3-vbvr-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor"
       ]
     },
     "E": {
@@ -11230,8 +11232,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "0f8041132bf1fae8aeb4babe0c8d8d456e594347a1b4787adeff7b80f8192795",
-      "created_at": "2026-11-15T16:50:36.294Z"
+      "content_hash": "b10f92f4be3a8126f6ab118b5c8ba19f9c1642b0061eeca5e927611a2879a440",
+      "created_at": "2026-11-16T00:36:55.194Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11299,8 +11301,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "d0a2addb202f9f094564927b98e88ba430657e21ef877fa3f8fbd88f13e1e479",
-      "created_at": "2026-11-15T16:50:40.502Z"
+      "content_hash": "44b5f84aaafb01434ad0a93e1099c9ffed62ad1211b7564eb385bfbe79061b47",
+      "created_at": "2026-11-16T00:36:59.368Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -15197,8 +15199,8 @@
       "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
       "repository": "apple/foundationdb",
-      "content_hash": "4b9252fc7465190e127de2c0f6b67252290a0e040dc38639bcc1b25480249dd5",
-      "created_at": "2026-11-14T15:25:50.836Z"
+      "content_hash": "b151e32c6bb0da1564755fa2e713de5afcf903c05310d08c6a65e6f25e2cabda",
+      "created_at": "2026-11-16T00:36:52.592Z"
     },
     "DOM-F-0C4992D6": {
       "record_id": "DOM-F-0C4992D6",
@@ -15299,8 +15301,8 @@
       "title": "Quality & Verification Intelligence: apple-foundationdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-learnings-quality-verification-intelligence-apple-foundationd.md",
       "repository": "apple-foundationdb-learnings",
-      "content_hash": "76a7245c5ce70a18d8954b3f3f084eb527116b8437c480d646b1cdf631189216",
-      "created_at": "2026-11-14T15:26:59.405Z"
+      "content_hash": "ed0f50330ee8ba99aaf6b9f9bfa31adbc9ce013e2642b53e7014c739bbac3420",
+      "created_at": "2026-11-16T00:36:58.705Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants",
@@ -22052,6 +22054,24 @@
       "repository": "rqlite-rqlite-learnings",
       "content_hash": "65e8e3931810940a4d77b266737f19e043f6a7d860925f528fc8043d5cb20d8e",
       "created_at": "2026-11-16T00:28:37.165Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-Flash-Next-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-flash-next-gguf-research-knowledge-intelligence-unsloth-qwen3.md",
+      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "content_hash": "5285b71aa94896723f9b292b03fed909500a97c6bc77ff091e203ba220f0c291",
+      "created_at": "2026-11-16T00:36:38.454Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-flash-next-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-flash-next-gguf-learnings-research-knowledge-intelligence-hf-.md",
+      "repository": "hf-unsloth-qwen3.8-flash-next-gguf-learnings",
+      "content_hash": "c2c3d109e43e575c83ea11f96848edd3a7b2d952ef9d0e24c85270c0c7eeb0cb",
+      "created_at": "2026-11-16T00:36:58.229Z"
     }
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T19:45:49.427Z",
+  "timestamp": "2026-11-16T00:36:59.152Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T19:45:49.427Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T00:36:59.152Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `6aa325ba`  
+> **Source Version**: `64e35701`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T19:45:44.707Z  
+> **Timestamp**: 2026-11-16T00:36:54.033Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T19:45:44.698Z  
+> **Harvest Timestamp**: 2026-11-16T00:36:54.027Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2226,61 +2226,18 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6aa325ba` (2026-11-15)
-**Commit Message**: docs(changelog): 29.0.0 Performance section from the benchmark run
+### Incident Patch 1: `64e35701` (2026-11-16)
+**Commit Message**: docs(sqlp): warn that date inference and CAST read dates day-first (#5062)
 
-Same text as the Performance section in the 29.0.0 release notes:
-stats --everything, searchset, luau, joinp and to ods gains, and plain
-stats about 4% slower, measured against 28.0.0 on the same benchmark box.
+* docs(sqlp): warn that date inference and CAST read dates day-first
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +10/-0)
-```diff
-@@ -32,6 +32,16 @@ Also in this release:
- 
- This is a major release because some `sqlp`, `validate`, `profile --strict`, `luau` and `stats` results and exit codes change. See [Breaking Changes](#v29-breaking-changes). The MSRV is now Rust 1.100.
- 
-+### ⚡ Performance
-+
-+Measured with qsv's benchmark suite, using the same machine, dataset and build type as 28.0.0: a Mac mini (M2 Pro, 12 cores, 32 GiB), 1M rows × 41 columns of NYC 311 data (520 MB), and the prebuilt PGO binary. Across 305 benchmarks, the median one is 1.2% faster, 69 are more than 5% faster, and 6 are more than 5% slower. Full results are in the [Benchmarks Data Schematic](https://dathere.github.io/qsv/benchmarks/).
-+
-+- **`stats --everything` is 12–28% faster and uses 13–24% less memory** ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)). A full pass over the dataset drops from 2.41 s to 2.02 s, and from 0.55 s to 0.39 s with an index. `stats --cardinality` is 15% faster and uses 20% less memory. Commands that run `stats` internally gain as well: `schema` is 11% faster and `synthesize` 13% faster. Plain `stats` (without `--everything` or `--cardinality`) is about 4% slower: 1.04 s → 1.08 s.
-+- **`searchset` is 11–12% faster, uses half the CPU time, and peaks at 22 MiB instead of ~990 MiB** ([#5012](https://github.com/dathere/qsv/pull/5012)). It no longer counts every row up front unless the progress bar is on.
-+- **`luau` scripts are 9–11% faster** with Luau 0.745 ([#5026](https://github.com/dathere/qsv/pull/5026)). `luau filter` is unchanged.
-+- **`joinp` is 5–12% faster** with the newer Polars ([#5055](https://github.com/dathere/qsv/pull/5055) and earlier bumps).
-+- **`to ods` is 41% faster**, taking 16.2 s instead of 27.6 s.
-+
- ### 🙏 Contributors
- 
- Thanks to everyone who made 29.0.0 possible:
-```
-
----
-
-### Incident Patch 2: `359c4b36` (2026-11-15)
-**Commit Message**: bench: use the long-view chart as the wiki hero image (#5061)
-
-* bench: use the long-view chart as the wiki hero image
-
-hero.png was the index-advantage bar chart. It is now a headless-Chrome
-screenshot of the rendered "long view" chart (trend.html), which shows
-throughput across every release on a log axis. It is a screenshot
-rather than a `qsv viz -o hero.png` render because the trend chart's
-log y-axis is patched into its HTML after rendering (set_log_y), and
-`viz line` has no flag for it. Chrome is found via BROWSER_PATH, the
-macOS app bundle, then PATH; without one the hero is skipped as before.
-
-index.html changes only in its "view on GitHub" source-line links,
-which moved with the script.
+Polars' date inference only tries day-first and year-first patterns, so
+`--try-parsedates` and `CAST(col AS DATE)` read 01/05/2024 as 2024-05-01.
+Point US-date users to STRPTIME(col, '%m/%d/%Y') with --try-parsedates off.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* bench: link the wiki hero image to the live long-view chart (#trend)
-
-GitHub's wiki strips <script> and <iframe>, so the live Plotly chart
-can't be embedded there. Clicking the thumbnail now opens the
-interactive long view directly instead of the top of the Data Schematic.
+* docs(changelog): note the sqlp day-first date warning [skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2288,156 +2245,70 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `benchmarks/Benchmarks.wiki.md` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
 ```diff
-@@ -20,7 +20,7 @@ schema-cache knob, throughput across every release, deep-dives into four flagshi
- commands (`stats`, `frequency`, `validate` and `moarstats`) showing they grew features
- without losing speed, and this release's biggest speedups.
- 
--[![qsv benchmark Data Schematic](https://dathere.github.io/qsv/benchmarks/hero.png)](https://dathere.github.io/qsv/benchmarks/)
-+[![qsv benchmark Data Schematic](https://dathere.github.io/qsv/benchmarks/hero.png)](https://dathere.github.io/qsv/benchmarks/#trend)
- 
- > **Note:** cross-version numbers are not strictly apples-to-apples — commands gain features
- > over time. Treat the historical trend as a broad trajectory, not an exact speedup.
+@@ -117,7 +117,7 @@
+       {
+         "flag": "--try-parsedates",
+         "type": "flag",
+-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates."
++        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+       },
+       {
+         "flag": "--wnull-value",
 ```
 
-**File**: `benchmarks/index.html` (modified, +13/-13)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -64,7 +64,7 @@ <h2 id=index_advantage>The index advantage<a class=anchor href='#index_advantage
-                 &quot;Build an index once and qsv can skip the opening scan on every run after. &quot;
-                 f&quot;The payoff is lopsided — {ip_span} on this run, and next to nothing for &quot;
-                 &quot;streaming commands, so only the pairs where an index actually moves the &quot;
--                &quot;needle are shown here.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L794-L801' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 794–801)</a></details>
-+                &quot;needle are shown here.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L810-L817' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 810–817)</a></details>
- </section>
- <section>
- <h2 id=count_callout>count with an index is effectively instant<a class=anchor href='#count_callout' aria-label='Permalink to “count with an index is effectively instant”'>#</a></h2>
-@@ -78,7 +78,7 @@ <h2 id=count_callout>count with an index is effectively instant<a class=anchor h
-                 f&quot;it reads a row count qsv already stored, {c_jump}. It sits on its own axis &quot;
-                 &quot;precisely because that number would flatten every other bar on the page. The &quot;
-                 &quot;un-indexed bar scans the file to count it, so it tracks whatever the current &quot;
--                &quot;scan path costs; the indexed bar reads the stored count and does not.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L809-L817' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 809–817)</a></details>
-+                &quot;scan path costs; the indexed bar reads the stored count and does not.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L825-L833' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 825–833)</a></details>
- </section>
- <section>
- <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_superpowers' aria-label='Permalink to “The index superpowers”'>#</a></h2>
-@@ -94,7 +94,7 @@ <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_super
-                 f&quot;cached statistics. That&#x27;s a different order of magnitude: {sp_top_cmd} leads at &quot;
-                 f&quot;{sp_top_x:.0f}x faster, with the rest of the seek-and-reuse tier &quot;
-                 f&quot;{min(sp_rest):.0f}x to {max(sp_rest):.0f}x faster — versus the low single &quot;
--                &quot;digits for the scan-skippers above.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L823-L833' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 823–833)</a></details>
-+                &quot;digits for the scan-skippers above.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L839-L849' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 839–849)</a></details>
- </section>
- <section>
- <h2 id=sqlp_tuning>sqlp tuning: the schema-cache knob<a class=anchor href='#sqlp_tuning' aria-label='Permalink to “sqlp tuning: the schema-cache knob”'>#</a></h2>
-@@ -107,7 +107,7 @@ <h2 id=sqlp_tuning>sqlp tuning: the schema-cache knob<a class=anchor href='#sqlp
-                 &quot;sqlp_tuning&quot;, &quot;sqlp tuning: the schema-cache knob&quot;,
-                 &quot;sqlp infers a schema before it runs. Cache that schema and the re-inference &quot;
-                 &quot;cost disappears on the next query — worth about a third more throughput on &quot;
--                &quot;these aggregations, for a one-line option.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L834-L841' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 834–841)</a></details>
-+                &quot;these aggregations, for a one-line option.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L850-L857' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 850–857)</a></details>
- </section>
- <section>
- <h2 id=trend>The long view — every release<a class=anchor href='#trend' aria-label='Permalink to “The long view — every release”'>#</a></h2>
-@@ -133,7 +133,7 @@ <h2 id=trend>The long view — every release<a class=anchor href='#trend' aria-l
-                 &quot;on a log axis a constant multiple reads as a constant vertical gap. Broad &quot;
-                 &quot;trajectory only (see the note above); count and moarstats are omitted for &quot;
-            
+@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
++## [Unreleased]
++
++### Changed
++- `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
++
+ ## [29.0.0] - 2026-11-15 🛡️ The "Trust the numbers" Release ✅
+ 
+ ### Highlights
 ```
 
-**File**: `scripts/gen_benchmark_viz.py` (modified, +34/-18)
+**File**: `docs/help/sqlp.md` (modified, +1/-1)
 ```diff
-@@ -21,8 +21,9 @@
- Set QSV_BIN to point at a specific binary; otherwise target/{debug,release}/qsv or a
- `qsv` on PATH is used.
+@@ -357,7 +357,7 @@ qsv sqlp --help
  
--A static PNG (benchmarks/hero.png) for the Wiki thumbnail is rendered best-effort via the
--`viz_static` feature (needs a local Chrome/Firefox); it's skipped gracefully if unavailable.
-+A static PNG (benchmarks/hero.png) for the Wiki thumbnail — the "long view" chart — is a
-+best-effort headless-Chrome screenshot of benchmarks/trend.html (set BROWSER_PATH for a
-+non-default Chrome/Chromium); it's skipped gracefully if no browser is found.
- 
- Publishing the Wiki "Benchmarks" page is a separate MANUAL step (the wiki is its own
- repo and interactive Plotly can't render in wiki markdown, which strips <script>):
-@@ -697,7 +698,7 @@ def build_index(figs, info):
- commands (`stats`, `frequency`, `validate` and `moarstats`) showing they grew features
- without losing speed, and this release's biggest speedups.
- 
--[![qsv benchmark Data Schematic]({url}hero.png)]({url})
-+[![qsv benchmark Data Schematic]({url}hero.png)]({url}#trend)
- 
- > **Note:** cross-version numbers are not strictly apples-to-apples — commands gain features
- > over time. Treat the historical trend as a broad trajectory, not an exact speedup.
-@@ -716,22 +717,37 @@ def write_wiki_stub(info, total):
-         fh.write(md)
- 
- 
--def render_hero(index_src):
--    """Best-effort static PNG (benchmarks/hero.png) for the Wiki thumbnail — the index-advantage
--    chart. Needs the `viz_static` feature + a local Chrome/Firefox (webdriver auto-downloads), so
--    it is skipped gracefully if unavailable (the interactive Data Schematic never needs it)."""
-+def find_chrome():
-+    """BROWSER_PATH (the same override `qsv viz` honors), the macOS app bundle, then PATH."""
-+    candidates = [os.environ.get("BROWSER_PATH"),
-+                  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-+                  *(shutil.which(n) for n in ("google-chrome", "google-chrome-stable",
-+                                              "chromium", "chromium-browser", "chrome"))]
-+    return next((c for c in candidates if c and os.access(c, os.X_OK)), None)
-+
-+
-+def render_hero():
-+    """Best-effort static PNG (benchmarks/hero.png) for the Wiki thumbnail — a headless-Chrome
-+    screenshot of the rendered "long view" chart (trend.html). A screenshot rather than a
-+    `qsv viz ... -o hero.png` render, because the trend chart's log y-axis is patched into its HTML
-+    after rendering (see set_log_y) and `viz line` has no flag for it. Skipped gracefully when no
-+    Chrome/Chromium is found (the interactive Data Schematic never needs it)."""
-     out = os.path.join(OUT, "hero.png")
--    env = {**os.environ, "QSV_PROGRESSBAR": "0"}
-+    chrome = find_chrome()
-+    if not chrome:
-+        print("NOTE: skipped hero.png (no Chrome/Chromium found; set BROWSER_PATH)")
-+        return
-+    # 470 px tall stops just below the x-axis title, leaving out the page's notices footer.
-+    # trend.html loads plotly.js from its CDN, so the budget covers that fetch plus the render.
-+    cmd = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
-+           "--window-size=1200,470", "--virtual-time-budget=15000", f"--screenshot={out}",
-+           "file://" + os.path.abspath(os.path.join(OUT, "trend.html"))]
-     try:
--        subprocess.run([QSV, "viz", "bar", index_src, "--x", "command", "--y", "recs_per_sec",
--                        "--series", "index_status", "--width", "1200", "--height", "600",
--                        "--title", "The index advantage — qsv throughput with vs without an index",
--                        "--y-title", "records/sec", "-o", out],
--                       check=True, capture_output=True, text=True, env=env)
--        print("Wrote hero.png (static PNG for the Wiki)")
--    except subprocess.CalledProcessError as e:
--        print(f"NOTE: skipped hero.png (viz_static/browser unavailable): "
--              f"{(e.stderr or '').strip().splitlines()[-1] if e.stderr else e}")
-+        subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=120)
-+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-+        print(f"NOTE: skipped hero.png (headless Chrome screenshot failed): {e}")
-+        return
-+    print("Wrote hero.png (static PNG of the long-view chart for the Wiki)")
- 
- 
- def count_rows(path):
-@@ -993,7 +1009,7 @@ def main():
-                     "every point charted here is visible."))
- 
-     build_index(figs, info)
--    render_hero(index_src)
-+    render_hero()
-     write_wiki_stub(info, total)
-     shutil.rmtree(TMP, ignore_errors=True)
-     print(f"Wrote {len(figs)} charts + index.html to {OUT}")
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+-| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
++| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
+```
+
+**File**: `src/cmd/sqlp.rs` (modified, +4/-0)
+```diff
+@@ -218,6 +218,10 @@ sqlp options:
+                               Note that if dates are not well-formatted in your CSV,
+                               that you may want to try to set `--ignore-errors` to relax
+                               the CSV parsing of dates.
++                              Polars reads slash, dash and dot dates as day-first, so
++                              01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE).
++                              For month-first (US) dates, leave this off and use
++                              STRPTIME(col, '%m/%d/%Y') in the query instead.
+     --infer-len <arg>         The number of rows to scan when inferring the schema of the CSV.
+                               Set to 0 to do a full table scan (warning: can be slow).
+                               [default: 10000]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5062** (2026-11-16): docs(sqlp): warn that date inference and CAST read dates day-first (@jqnatividad)
 - **PR #5061** (2026-11-15): bench: use the long-view chart as the wiki hero image (@jqnatividad)
 - **PR #5060** (2026-11-15): bench: regenerate Benchmarks Data Schematic for the 29.0.0 run (@jqnatividad)
 - **PR #5058** (2026-11-15): fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (@jqnatividad)
 - **PR #5057** (2026-11-15): deps(viz): driver.js 1.14.0 for the Data Schematic Tour (@jqnatividad)
 - **PR #5056** (2026-11-15): fix(stats): a column of only NaN cells has no sum, not 0 (@jqnatividad)
-- **PR #5055** (2026-11-15): deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only (@jqnatividad)
 
 ---
 
@@ -2457,37 +2328,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): 29.0.0 Performance section from the benchmark run
+## X. docs(sqlp): warn that date inference and CAST read dates day-first
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6aa325ba`: docs(changelog): 29.0.0 Performance section from the benchmark run. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64e35701`: docs(sqlp): warn that date inference and CAST read dates day-first. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### ⚡ Performance
-
-Measured with qsv's benchmark suite, using the same machine, dataset and build type as 28.0.0: a Mac mini (M2 Pro, 12 cores, 32 GiB), 1M rows × 41 columns of NYC 311 data (520 MB), and the prebuilt PGO binary. Across 305 benchmarks, the median one is 1.2% faster, 69 are more than 5% faster, and 6 are more than 5% slower. Full results are in the [Benchmarks Data Schematic](https://dathere.github.io/qsv/benchmarks/).
-
-- **`stats --everything` is 12–28% faster and uses 13–24% less memory** ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)). A full pass over the dataset drops from 2.41 s to 2.02 s, and from 0.55 s to 0.39 s with an index. `stats --cardinality` is 15% faster and uses 20% less memory. Commands that run `stats` internally gain as well: `schema` is 11% faster and `synthesize` 13% faster. Plain `stats` (without `--everything` or `--cardinality`) is about 4% slower: 1.04 s → 1.08 s.
-- **`searchset` is 11–12% faster, uses half the CPU time, and peaks at 22 MiB instead of ~990 MiB** ([#5012](https://github.com/dathere/qsv/pull/5012)). It no longer counts every row up front unless the progress bar is on.
-- *
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6aa325ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64e35701` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

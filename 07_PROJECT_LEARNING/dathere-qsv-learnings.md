@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `3af21c2b`  
+> **Source Version**: `64e35701`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T20:51:04.510Z  
+> **Timestamp**: 2026-11-16T00:36:54.033Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:51:04.504Z  
+> **Harvest Timestamp**: 2026-11-16T00:36:54.027Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2201,63 +2201,89 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3af21c2b` (2026-11-15)
-**Commit Message**: docs(changelog): link the SARIF example, wiki walk-through and sample repo
+### Incident Patch 1: `64e35701` (2026-11-16)
+**Commit Message**: docs(sqlp): warn that date inference and CAST read dates day-first (#5062)
 
-Same links as the 29.0.0 release notes: the example workflow, the wiki's
-#sarif walk-through, and jqnatividad/qsv-sarif-test with its PR #1.
+* docs(sqlp): warn that date inference and CAST read dates day-first
 
-[skip ci]
+Polars' date inference only tries day-first and year-first patterns, so
+`--try-parsedates` and `CAST(col AS DATE)` read 01/05/2024 as 2024-05-01.
+Point US-date users to STRPTIME(col, '%m/%d/%Y') with --try-parsedates off.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+* docs(changelog): note the sqlp day-first date warning [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that. Thanks to their generosity, we have free access to their platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy!
- 
--- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
-+- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an [example GitHub Actions workflow](https://github.com/dathere/qsv/tree/master/resources/examples/validate-sarif) that uploads them to GitHub code scanning. See the [wiki walk-through](https://github.com/dathere/qsv/wiki/Validation-and-Schema#sarif) and the [sample repo](https://github.com/jqnatividad/qsv-sarif-test) where the workflow raised code scanning alerts, including on a [pull request](https://github.com/jqnatividad/qsv-sarif-test/pull/1). This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
- - **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). If you run `stats` on data written by pandas or numpy, upgrade. In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panicked on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So did `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for `nullcount`, `sparsity` and `cardinality`.
- 
- Also in this release:
+@@ -117,7 +117,7 @@
+       {
+         "flag": "--try-parsedates",
+         "type": "flag",
+-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates."
++        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+       },
+       {
+         "flag": "--wnull-value",
 ```
 
----
-
-### Incident Patch 2: `3b7b3f04` (2026-11-15)
-**Commit Message**: docs(validate): --fail-fast still writes the SARIF log
-
-The SARIF notes said any run that stops early writes no SARIF file.
-Only a run that stops with an error does (a CSV read error, or a ragged
-row without --split-ragged). --fail-fast breaks out of the batch loop
-and still writes the results for the rows it validated. roborev 6531.
-
-[skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/Validate.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -163,7 +163,7 @@ The usual `sales.csv.validation-errors.tsv` report is still written. The SARIF l
- * `startLine` is the file line where the row starts, not the row number. Row 2's quoted `notes` field spans two lines, so row 3 starts on line 5.
- * `uri` is relative to the root of the git checkout the CSV is in (here, the qsv repo), so results point at the right file wherever qsv runs. Outside a checkout, it is relative to the current directory.
- * The log is written even when every row is valid (with no results), so a CI run clears earlier alerts.
--* A run that stops early writes no SARIF file, and removes one left by an earlier run. Without `--split-ragged`, a row with the wrong number of fields stops validation, which is why the example uses it.
-+* A run that stops with an error writes no SARIF file, and removes one left by an earlier run. That happens on a CSV read error, or on a row with the wrong number of fields when `--split-ragged` isn't set, which is why the example uses it. `--fail-fast` is different: it stops after the first batch with an invalid row, but still writes the results for the rows it validated.
- * Output stops at 25,000 results by default, GitHub code scanning's limit per run. `--sarif-max-results <n>` sets another cap, and 0 means no limit.
- * `--sarif` works only in JSON Schema mode with a file input. RFC 4180 mode and stdin reject it.
+@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
++## [Unreleased]
++
++### Changed
++- `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
++
+ ## [29.0.0] - 2026-11-15 🛡️ The "Trust the numbers" Release ✅
+ 
+ ### Highlights
+```
+
+**File**: `docs/help/sqlp.md` (modified, +1/-1)
+```diff
+@@ -357,7 +357,7 @@ qsv sqlp --help
+ 
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+-| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
++| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
+```
+
+**File**: `src/cmd/sqlp.rs` (modified, +4/-0)
+```diff
+@@ -218,6 +218,10 @@ sqlp options:
+                               Note that if dates are not well-formatted in your CSV,
+                               that you may want to try to set `--ignore-errors` to relax
+                               the CSV parsing of dates.
++                              Polars reads slash, dash and dot dates as day-first, so
++                              01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE).
++                              For month-first (US) dates, leave this off and use
++                              STRPTIME(col, '%m/%d/%Y') in the query instead.
+     --infer-len <arg>         The number of rows to scan when inferring the schema of the CSV.
+                               Set to 0 to do a full table scan (warning: can be slow).
+                               [default: 10000]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5062** (2026-11-16): docs(sqlp): warn that date inference and CAST read dates day-first (@jqnatividad)
 - **PR #5061** (2026-11-15): bench: use the long-view chart as the wiki hero image (@jqnatividad)
 - **PR #5060** (2026-11-15): bench: regenerate Benchmarks Data Schematic for the 29.0.0 run (@jqnatividad)
 - **PR #5058** (2026-11-15): fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (@jqnatividad)
 - **PR #5057** (2026-11-15): deps(viz): driver.js 1.14.0 for the Data Schematic Tour (@jqnatividad)
 - **PR #5056** (2026-11-15): fix(stats): a column of only NaN cells has no sum, not 0 (@jqnatividad)
-- **PR #5055** (2026-11-15): deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only (@jqnatividad)
 
 ---
 
@@ -2277,28 +2303,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): link the SARIF example, wiki walk-through and sample repo
+## X. docs(sqlp): warn that date inference and CAST read dates day-first
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3af21c2b`: docs(changelog): link the SARIF example, wiki walk-through and sample repo. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64e35701`: docs(sqlp): warn that date inference and CAST read dates day-first. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an [example GitHub Actions workflow](https://github.com/dathere/qsv/tree/master/resources/examples/validate-sarif) that uploads them to GitHub code scanning. See the [wiki walk-through](https://github.com/dathere/qsv/wiki/Validation-and-Schema#sarif) and the [sample repo](https://github.com/jqnatividad/qsv-sarif-test) where the workflow raised code scanning alerts, including on a [pull request](https://github.com/jqnatividad/qsv-sarif-test/pull/1). This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. So does CAST(col AS DATE). For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3af21c2b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64e35701` are properly handled with clean fallback behavior.

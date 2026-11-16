@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T00:28:02.255Z",
-  "total_cycles_completed": 9792,
-  "total_learnings_persisted": 9792,
-  "total_rules_promoted": 9403,
+  "last_updated": "2026-11-16T00:36:54.918Z",
+  "total_cycles_completed": 9795,
+  "total_learnings_persisted": 9795,
+  "total_rules_promoted": 9405,
   "history": [
-    {
-      "timestamp": "2026-11-14T20:52:01.017Z",
-      "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
-      "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T20:52:03.202Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T20:52:10.819Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T21:20:50.494Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-16T00:28:02.255Z",
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:36:38.295Z",
+      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:36:52.319Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T00:36:54.918Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

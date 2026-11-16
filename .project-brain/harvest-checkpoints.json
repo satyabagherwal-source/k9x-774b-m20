@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T00:28:02.259Z",
+  "last_updated": "2026-11-16T00:36:54.921Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "2b7eaf82263b8d8d5143f87bfee8e6e274407f98a13e6216b10ae92352482c1c",
-      "verified_at": "2026-11-15T20:51:05.398Z",
+      "content_hash": "85266eacf91e58aaf70f16e8f37ed0a77fabad2be590aa0580203aec9534b622",
+      "verified_at": "2026-11-16T00:36:54.920Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T20:51:05.398Z"
+      "last_updated": "2026-11-16T00:36:54.920Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "31188ca886a93b9de907de236b206bbda2eb9e212203dc472065096dd0f96037",
-      "verified_at": "2026-11-14T15:25:50.561Z",
+      "content_hash": "3b872964c15e736fbc08afcc645c9dd173030e8202b97a7aca77b9415ef5646e",
+      "verified_at": "2026-11-16T00:36:52.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:25:50.561Z"
+      "last_updated": "2026-11-16T00:36:52.322Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -18171,14 +18171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-      "content_hash": "cbbe10604f74de7ac3a87b9c31e0d09b665b7cc2a5ef3cdbc3deb7e24b29a97d",
-      "verified_at": "2026-11-11T10:17:11.245Z",
+      "content_hash": "55c1c95bd5fd1c68859a1a02813665189f8849cb7301cea9033d1533a538564e",
+      "verified_at": "2026-11-16T00:36:38.298Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:17:11.245Z"
+      "last_updated": "2026-11-16T00:36:38.298Z"
     },
     "baidu/ERNIE-5.5-Flash-Base": {
       "repository": "baidu/ERNIE-5.5-Flash-Base",

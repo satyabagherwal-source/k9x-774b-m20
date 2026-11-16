@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T00:28:36.834Z",
+  "updated_at": "2026-11-16T00:36:59.089Z",
   "stats": {
-    "total_discovered": 4017,
-    "approved_pending_harvest": 3773,
+    "total_discovered": 4019,
+    "approved_pending_harvest": 3775,
     "harvested_count": 0,
     "rejected_count": 244,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3770,
+      "COMMUNITY_AND_EXPERT": 3772,
       "OFFICIAL_DOCUMENTATION": 132,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
@@ -86687,6 +86687,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
         "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-1549A63BAF38": {
+      "id": "SRC-1549A63BAF38",
+      "url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
+      "title": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:36:58.068Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
+        "fileName": "hf-unsloth-qwen3.8-flash-next-gguf-learnings.md"
+      }
+    },
+    "SRC-9286DC8181AF": {
+      "id": "SRC-9286DC8181AF",
+      "url": "https://github.com/dathere/qsv/pull/5062",
+      "title": "https://github.com/dathere/qsv/pull/5062",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T00:36:59.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

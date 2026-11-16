@@ -10228,3 +10228,6 @@ Every entry in this ledger must capture:
 | `learn-github-alexpasmantier-television` | `https://github.com/alexpasmantier/television` | `d91ab5b6` | Multi-dimensional audit evidence | 2026-11-16T00:27:49.887Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `4e9a2e59` | Multi-dimensional audit evidence | 2026-11-16T00:28:02.250Z |
 | `learn-dom-d-b67f40d8` | `project://hf-liconstudio-minimax-h3-vbvr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md` | 2026-11-16T00:28:36.241Z |
+| `learn-huggingface-unsloth-qwen3-8-flash-next-gguf` | `https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-16T00:36:38.290Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `04c62ec9` | Multi-dimensional audit evidence | 2026-11-16T00:36:52.314Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `64e35701` | Multi-dimensional audit evidence | 2026-11-16T00:36:54.913Z |

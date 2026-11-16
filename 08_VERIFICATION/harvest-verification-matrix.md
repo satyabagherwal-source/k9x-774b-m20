@@ -10195,3 +10195,6 @@
 | `CYCLE-20261116-YB5N` | `2026-11-16T00:27:49.883Z` | `alexpasmantier/television` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8673` | Yes (`ae542bd2...`) |
 | `CYCLE-20261116-YKP2` | `2026-11-16T00:28:02.246Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8674` | Yes (`8ccc4d5c...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T00:28:36.241Z` | `hf-liconstudio-minimax-h3-vbvr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B67F40D8` [Domain D] | Yes (`e0855e75...`) |
+| `CYCLE-20261116-9MVI` | `2026-11-16T00:36:38.286Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | Yes (`55c1c95b...`) |
+| `CYCLE-20261116-9XP2` | `2026-11-16T00:36:52.310Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8675` | Yes (`3b872964...`) |
+| `CYCLE-20261116-9ZP9` | `2026-11-16T00:36:54.909Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8676` | Yes (`85266eac...`) |
