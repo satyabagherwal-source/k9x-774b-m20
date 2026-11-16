@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "3ea984cf",
+    "sourceVersion": "2b007740",
     "license": "MIT",
-    "contentHash": "bae832341744f328b89ea8e72f08f82e6c373f7ef0bcac0a94beddd16dbc995e",
-    "lastHarvestedAt": "2026-11-11T10:35:10.373Z",
+    "contentHash": "8cf905111d40d62f44b62280e4ad9de37b4a58f8f9c2848f1ca4efd8b113c161",
+    "lastHarvestedAt": "2026-11-16T15:33:14.133Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "2c6ea77a",
+    "sourceVersion": "573ca53b",
     "license": "Apache-2.0",
-    "contentHash": "19e6fb586854d3110ccb7b456f85ed9684d472b2218928469388acda95835133",
-    "lastHarvestedAt": "2026-11-15T06:18:19.324Z",
+    "contentHash": "14b8cde10666b0b0e2b23bbb74f10d94c5a24948d34ff505a8a2190fb9b2cefe",
+    "lastHarvestedAt": "2026-11-16T15:33:23.278Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {

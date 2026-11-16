@@ -10320,3 +10320,5 @@ Every entry in this ledger must capture:
 | `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `23065a0b` | Multi-dimensional audit evidence | 2026-11-16T15:00:47.090Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `c2f1eaba` | Multi-dimensional audit evidence | 2026-11-16T15:09:59.068Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `5870f15d` | Multi-dimensional audit evidence | 2026-11-16T15:10:08.494Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `2b007740` | Multi-dimensional audit evidence | 2026-11-16T15:33:14.133Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `573ca53b` | Multi-dimensional audit evidence | 2026-11-16T15:33:23.278Z |

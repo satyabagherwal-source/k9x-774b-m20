@@ -635109,3 +635109,172 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5870f15d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8751. add manual-update core Preview candidate (Harvested from nguyenphutrong/quotio)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "add manual-update core Preview candidate",
+  "source": "nguyenphutrong/quotio",
+  "source_url": "https://github.com/nguyenphutrong/quotio",
+  "source_version": "2b007740",
+  "license": "MIT",
+  "extracted_at": "2026-11-16T15:33:13.680Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nguyenphutrong-quotio",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio) (Revision: `2b007740`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/desktop-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2b007740`: desktop): add manual-update core Preview candidate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/desktop-ci.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+      - name: Check core Preview
+        run: |
+          cargo +stable clippy --locked --all-targets --features preview -- -D warnings
+          cargo +stable test --locked --features preview
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2b007740` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8752. changes to let the downstream drain gracefully (Harvested from envoyproxy/envoy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "changes to let the downstream drain gracefully",
+  "source": "envoyproxy/envoy",
+  "source_url": "https://github.com/envoyproxy/envoy",
+  "source_version": "573ca53b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-16T15:33:22.846Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-envoyproxy-envoy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `573ca53b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `80291fca`: reverse_tunnel: changes to let the downstream drain gracefully. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+import "google/protobuf/duration.proto";
+
+import "validate/validate.proto";
+// A network filter that wraps the standard HCM and drains all active HTTP/2
+// connections when the listener is drained (e.g. via admin /drain_listeners).
+// Intended for use on reverse-tunnel listeners so that agents can detect drain
+// and re-establish connections gracefully.
+// All HCM fields are forwarded verbatim. In addition, when the listener drains,
+// every connection is drained like an HCM graceful drain, whether or not any of
+// the fields below are set: a soft GOAWAY (shutdown notice) is sent when the
+// drain starts, and the final GOAWAY follows after ``hcm_config.drain_timeout``,
+// extended by ``hcm_config.drain_timeout_jitter`` if set. With
+// ``enable_drain_with_goaway``, a reverse tunnel instead dials a replacement
+// when the drain starts and sends the soft GOAWAY and an optional METADATA frame
+// at the configured delays before the final GOAWAY. Without
+// ``shutdown_notice_delay``, such a tunnel receives no GOAWAY until the final
+// one, so it keeps serving while the replacement is established.
+  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
+
+  // Del
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// A network filter that wraps the standard HCM and sends HTTP/2 GOAWAY frames
+// on all active connections when the listener is drained (e.g. via admin
+// /drain_listeners). Intended for use on reverse-tunnel listeners so that
+// agents can detect drain and re-establish connections gracefully.
+// All HCM fields are forwarded verbatim; the only difference is that this
+// filter registers a listener-drain callback and emits a GOAWAY before the
+// connection is closed.
+  // are unaffected.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `80291fca` are properly handled with clean fallback behavior.

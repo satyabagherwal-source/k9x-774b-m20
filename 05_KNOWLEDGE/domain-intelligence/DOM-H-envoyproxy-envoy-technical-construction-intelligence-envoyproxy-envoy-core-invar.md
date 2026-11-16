@@ -4,24 +4,24 @@
 {
   "source_repository": "envoyproxy/envoy",
   "source_url": "https://github.com/envoyproxy/envoy",
-  "source_version": "2c6ea77a",
+  "source_version": "573ca53b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T06:18:19.496Z",
+  "timestamp": "2026-11-16T15:33:23.463Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-envoyproxy-envoy",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `2c6ea77a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T06:18:19.496Z`  
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `573ca53b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T15:33:23.463Z`  
 > **Learning ID**: `learn-github-envoyproxy-envoy`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from envoyproxy/envoy:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:18:18.963Z  
+> **Harvest Timestamp**: 2026-11-16T15:33:22.321Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29237 stars
+- **Stars / Engagement**: 29243 stars
 
 ---
 
@@ -1061,468 +1061,555 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `073a9f6c` (2026-11-13)
-**Commit Message**: test/sds_dynamic: Stop waiting out the SDS initial fetch timeout (#49073)
+### Incident Patch 1: `80291fca` (2026-11-16)
+**Commit Message**: reverse_tunnel: changes to let the downstream drain gracefully (#48236)
 
-All four `SdsDynamicClusterIntegrationTest` cases that start a dynamic
-cluster whose transport socket uses SDS spent 15s in `initialize()`,
-waiting for the SDS `initial_fetch_timeout` to let the cluster warm:
+## Commit Message 
+reverse_tunnel: changes to let the downstream drain gracefully
 
-- `BasicSuccess` and `EdsBootStrapCluster` only serve the secret after
-`initialize()` returns, so the cluster could not warm on it. Defer
-listener finalization (as `ClusterWarmingWhileHealthCheckBlocksOnSds`
-already does) so the secret is served while the cluster warms.
-- `ClusterRefersNonExistentSdsCluster` and `CdsSdsCyclicDependency` are
-about starting when the secret can never be fetched, i.e. the fetch
-timeout is the path under test. Set it to 100ms for those.
+## Description
+As described in: https://github.com/envoyproxy/envoy/pull/47717 this PR
+makes the changes to let the downstream side drain gracefully.
+We hook in the changes for the downstream drain and the upstream to send
+the data to the reporter via the connection metadata hooks added.
 
-That is 32 cases at 15-20s each per run. Drop the test size.
+## Testing
+Unit + integ tests
+
+## Risk Level
+Medium. On listener drain, every connection on the drain-aware HTTP
+connection manager now drains gradually instead of receiving an
+immediate GOAWAY, even when none of the new fields are set. This only
+affects the reverse tunnel extensions, which are marked
+work-in-progress.
+
+## Docs Changes
+API docs updated in `drain_aware_hcm.proto` (the drain sequence and the
+new `metadata_delay` and `shutdown_notice_delay` fields) and
+`reverse_tunnel_codec.proto` (`enable_drain_with_goaway` also notifies
+the reverse tunnel reporter through the METADATA frame).
+
+## Release Notes
+Added
+`changelogs/current/new_features/reverse_tunnel__connection-metadata-drain.rst`.
 
 ---------
 
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+Signed-off-by: aakugan <[REDACTED_EMAI
 
-**File**: `test/integration/BUILD` (modified, +0/-1)
+**File**: `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto` (modified, +31/-8)
 ```diff
-@@ -2391,7 +2391,6 @@ envoy_cc_test(
+@@ -4,7 +4,10 @@ package envoy.extensions.filters.network.reverse_tunnel.v3;
  
- envoy_cc_test(
-     name = "sds_dynamic_integration_test",
--    size = "large",
-     srcs = [
-         "sds_dynamic_integration_test.cc",
-     ],
-```
-
-**File**: `test/integration/sds_dynamic_integration_test.cc` (modified, +40/-3)
-```diff
-@@ -1570,6 +1570,10 @@ class SdsDynamicClusterIntegrationTest : public SdsDynamicIntegrationBaseTest {
-       auto* secret_config =
-           tls_context.mutable_common_tls_context()->add_tls_certificate_sds_secret_configs();
-       setUpSdsConfig(secret_config, "client_cert", sds_cluster_name_);
-+      if (sds_initial_fetch_timeout_.has_value()) {
-+        secret_config->mutable_sds_config()->mutable_initial_fetch_timeout()->MergeFrom(
-+            ProtobufUtil::TimeUtil::MillisecondsToDuration(sds_initial_fetch_timeout_->count()));
-+      }
+ import "envoy/extensions/filters/network/http_connection_manager/v3/http_connection_manager.proto";
  
-       transport_socket->set_name("envoy.transport_sockets.tls");
-       std::ignore = transport_socket->mutable_typed_config()->PackFrom(tls_context);
-@@ -1644,6 +1648,9 @@ class SdsDynamicClusterIntegrationTest : public SdsDynamicIntegrationBaseTest {
-   envoy::config::cluster::v3::Cluster sds_cluster_;
-   bool valid_sds_cluster_{true};
-   bool use_bootstrap_eds_{false};
-+  // Tests where the secret can never be fetched warm the dynamic cluster on this timeout (15s by
-+  // default) rather than on a secret.
-+  std::optional<std::chrono::milliseconds> sds_initial_fetch_timeout_;
-   std::string sds_cluster_name_;
-   FakeHttpConnectionPtr sds_connection_;
-   FakeStreamPtr sds_stream_;
-@@ -1667,6 +1674,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, BasicSuccess) {
-     }
-   };
-   sds_cluster_name_ = "sds_dynamic_cluster.lyft.com";
-+  // The dynamic cluster warms on the secret served below, so initialize() must not wait for the
-+  // server to finish initializing (it would only return once the SDS initial_fetch_timeout fired).
-+  defer_listener_finalization_ = true;
-   initialize();
- 
-   {
-@@ -1680,6 +1690,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, BasicSuccess) {
-     sendSdsResponse2(getClientSecret(), *sds_stream_);
-   }
- 
-+  // The cluster warms on that secret and the listeners come up: the wait initialize() skipped.
-+  test_server_->waitUntilListenersReady();
++import "google/protobuf/duration.proto";
 +
-   // Validate that Envoy accepts SDS as dynamic cluster and moves to Live state.
-   test_server_->waitForGauge("server.state", Ge(0));
-   test_server_->waitForGauge("server.live", Ge(1));
-@@ -1711,6 +1724,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, EdsBootStrapCluster) {
-   };
-   sds_cluster_name_ = "sds_bootstrap_cluster";
-   use_bootstrap_eds_ = true;
-+  // The dynamic cluster warms on the secret served below, so initialize() must not wait for the
-+  // server to finish initializing (it would only return once the SDS initial_fetch_timeout fired).
-+  defer_listener_finalization_ = true;
-   initialize();
+ import "udpa/annotations/status.proto";
++import "validate/validate.proto";
  
-   {
-@@ -1724,6 +1740,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, EdsBootStrapCluster) {
-     sendSdsResponse2(getClientSecret(), *sds_stream_);
-   }
+ option java_package = "io.envoyproxy.envoy.extensions.filters.network.reverse_tunnel.v3";
+ option java_outer_classname = "DrainAwareHcmProto";
+@@ -13,23 +16,43 @@ option go_package = "github.com/envoyproxy/go-control-plane/envoy/extensions/fil
+ option (udpa.annotations.file_status).package_version_status = ACTIVE;
  
-+  // The cluster warms on that secret and the listeners come up: the wait initialize() skipped.
-+  test_server_->waitUntilListenersReady();
+ // [#protodoc-title: Drain-Aware HTTP Connection Manager]
+-// A network filter that wraps the standard HCM and sends HTTP/2 GOAWAY frames
+-// on all active connections when the listener is drained (e.g. via admin
+-// /drain_listeners). Intended for use on reverse-tunnel listeners so that
+-// agents can detect drain and re-establish connections gracefully.
++// A network filter that wraps the standard HCM and drains all active HTTP/2
++// connections when the listener is drained (e.g. via admin /drain_listeners).
++// Intended for use on reverse-tunnel listeners so that agents can detect drain
++// and re-establish connections gracefully.
+ // [#extension: envoy.filters.network.reverse_tunnel_drain_aware_http_connection_manager]
+ 
+ // Configuration for the drain-aware HTTP Connection Manager.
+-// All HCM fields are forwarded verbatim; the only difference is that this
+-// filter registers a listener-drain callback and emits a GOAWAY before the
+-// connection is closed.
++// All HCM fields are forwarded verbatim. In addition, when the listener drains,
++// every connection is drained like an HCM graceful drain, whether or not any of
++// the fields below are set: a soft GOAWAY (shutdown notice) is sent when the
++// drain starts, and the final GOAWAY follows after ``hcm_config.drain_timeout``,
++// extended by ``hcm_config.drain_timeout_jitter`` if set. With
++// ``enable_drain_with_goaway``, a reverse tunnel instead dials a replacement
++// when the drain starts and sends the soft GOAWAY and an optional METADATA frame
++// at the configured delays before the final GOAWAY. Without
++// ``shutdown_notice_delay``, such a tunnel receives no GOAWAY until the final
++// one, so it keeps serving while the replacement is established.
+ message DrainAwareHttpConnectionManager {
+   // The underlying HCM configuration to apply.
+   http_connection_manager.v3.HttpConnectionManager hcm_config = 1;
+ 
+   // When true, a peer-initiated GOAWAY on a reverse tunnel makes the initiator drop the draining
+   // tunnel and dial a replacement, so capacity is restored before the old tunnel closes while its
+   // in-flight streams finish. Default false, so the behavior is opt-in and unconfigured listeners
+-  // are unaffected.
++  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
+   bool enable_drain_with_goaway = 2;
 +
-   // Validate that Envoy accepts SDS as dynamic cluster and moves to Live state.
-   test_server_->waitForGauge("server.state", Ge(0));
-   test_server_->waitForGauge("server.live", Ge(1));
-@@ -1755,14 +1774,23 @@ TEST_P(SdsDynamicClusterIntegrationTest, ClusterRefersNonExistentSdsCluster) {
-   };
-   sds_cluster_name_ = "non_existent_sds_cluster.lyft.com";
-   valid_sds_cluster_ = false;
-+  // The secret can never be fetched: the dynamic cluster warms once the SDS initial fetch times
-+  // out, which is what lets the server start. Keep that short.
-+  sds_initial_fetch_timeout_ = std::chrono::milliseconds(100);
-   initialize();
- 
-   // Validate that Envoy accepts SDS as dynamic cluster and moves to Live state.
-   test_server_->waitForGauge("server.state", Ge(0));
-   test_server_->waitForGauge("server.live", Ge(1));
- 
--  // Validate that the secret update failed because SDS cluster is not found.
--  test_server_->waitForCounter("sds.client_cert.update_failure", Ge(1));
-+  // The secret is never fetched, so the cluster warms on the fetch timeout. With Envoy gRPC the
-+  // SDS stream goes to the non-existent cluster and fails. Google gRPC has no cluster to look up:
-+  // it targets the fake upstream directly, which never answers, so there is no stream failure.
-+  test_server_->waitForCounter("sds.client_cert.init_fetch_timeout", Ge(1));
-+  if (clientType() == Grpc::ClientType::EnvoyGrpc) {
-+    // Validate that the secret update failed because SDS cluster is not found.
-+    test_server_->waitForCounter("sds.client_cert.update_failure", Ge(1));
-+  }
- 
-   // The 3 clusters are CDS, static and dynamic cluster.
-   test_server_->waitForGauge("cluster_manager.active_clusters", Ge(3));
-@@ -1789,12 +1817,21 @@ TEST_P(SdsDynamicClusterIntegrationTest, CdsSdsCyclicDependency) {
-   };
-   sds_cluster_name_ = "dynamic";
-   valid_sds_cluster_ = false;
-+  // The secret can never be fetched: the dynamic cluster warms once the SDS initial fetch times
-+  // out, which is what lets the server start. Keep that short.
-+  sds_initial_fetch_timeout_ = std::chrono::milliseconds(100);
-   initialize();
- 
-   // Validate that Envoy accepts SDS
-```
-
----
-
-### Incident Patch 2: `f5f97e66` (2026-11-14)
-**Commit Message**: docs: Build the html on a large RBE pool (#49263)
-
- 
-Sphinx builds the html in parallel (`-j auto`), but the `SphinxHtml`
-action sets no pool, so on EngFlow RBE it runs on the default pool
-(`linux_x64_xsmall`), where an action gets a single core and 3GiB. This
-is most of the docs job.
-
-Set `linux_x64_large` on both `sphinx_html` targets with
-`envoy_exec_properties` (so only for EngFlow RBE builds; local and other
-builds are unchanged).
-
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
-
-**File**: `docs/BUILD` (modified, +10/-0)
-```diff
-@@ -1,4 +1,5 @@
- load("@bazel_skylib//rules:common_settings.bzl", "bool_flag", "string_flag")
-+load("@envoy//bazel:envoy_rbe.bzl", "envoy_exec_properties")
- load("@envoy_toolshed//dependency:macros.bzl", "module_deps_json", "module_updater")
- load("@rules_pkg//pkg:mappings.bzl", "pkg_filegroup", "pkg_files")
- load("@rules_pkg//pkg:pkg.bzl", "pkg_tar")
-@@ -293,10 +294,18 @@ pkg_tar(
-     ],
- )
- 
-+# Sphinx builds in parallel (`-j auto`), which needs more than the single core (and 3GiB) of an
-+# action on the default pool.
-+SPHINX_EXEC_PROPERTIES = envoy_exec_properties(
-+    rbe_pool = "linux_x64_large",
-+    test = False,
-+)
++  // Delay from the start of a reverse tunnel drain until a METADATA frame carrying
++  // ``envoy.reverse_tunnel.drain: true`` is sent. Requires ``enable_drain_with_goaway`` and
++  // ``hcm_config.http2_protocol_options.allow_metadata``. Must be less than
++  // ``hcm_config.drain_timeout`` and, if set, ``shutdown_notice_delay``; otherwise the config is
++  // rejected. Default: 0s (not sent).
++  google.protobuf.Duration metadata_delay = 3 [(validate.rules).duration = {gte {}}];
 +
- sphinx_html(
-     name = "html_release",
-     out = "html_release.tar.gz",
-     descriptor_path = "@envoy_api//:v3_proto_set",
-+    exec_properties = SPHINX_EXEC_PROPERTIES,
-     link_suffix_env = _LINK_SUFFIX_ENV,
-     # Build sha/tag may be supplied with --@envoy-docs//:build_sha=<sha> and
-     # --@envoy-docs//:docs_tag=<tag>. When unset, stamped builds fall back to workspace status
-@@ -314,6 +323,7 @@ sphinx_html(
-     name = "html",
-     out = "html.tar.gz",
-     descriptor_path = "@envoy_api//:v3_proto_set",
-+    exec_properties = SPHINX_EXEC_PROPERTIES,
-     link_suffix_env = _LINK_SUFFIX_ENV,
-     rst = ":rst",
-     sphinx_runner = "//tools:sphinx_runner",
++  // Delay from the start of a reverse tunnel drain until the soft GOAWAY (shutdown notice) is
++  // sent, telling the peer to stop opening new streams on this tunnel. Requires
++  // ``enable_drain_with_goaway``. Must be less than ``hcm_config.drain_timeout``; otherwise the
++  // config is rejected. Default: 0s (not sent).
++  google.protobuf.Duration shutdown_notice_delay = 4 [(validate.rules).duration = {gte {}}];
+ }
 ```
 
----
-
-### Incident Patch 3: `cacf8e23` (2026-11-14)
-**Commit Message**: Fix/tcp proxy close empty fin on downstream data (#49149)
-
-Commit Message: tcp_proxy: close downstream on empty FIN in
-ON_DOWNSTREAM_DATA before upstream connect
-
-In upstream_connect_mode ON_DOWNSTREAM_DATA, a client that half-closes
-(FIN / end_stream)
-without sending any data never triggers the upstream connection, by
-design. Because half-close is
-enabled on the downstream connection, that FIN is not reported as
-RemoteClose, so nothing closed the
-session. It stayed open until idle_timeout, or indefinitely if
-idle_timeout is unset.
-
-This change closes the downstream connection in that case, with the
-local close reason
-tcp_proxy_downstream_closed_without_data. Other upstream connect modes
-are unchanged.
-
-Additional Description:
-- Behaviour before: in ON_DOWNSTREAM_DATA, an empty FIN before any data
-left the downstream connection
-  open until idle_timeout.
-- Behaviour after: the same input closes the downstream connection
-immediately (FlushWrite).
-- Scope: only when connect_mode is ON_DOWNSTREAM_DATA, no data has been
-received yet
-(initial_data_received_ is false), and the buffer is empty with
-end_stream set. IMMEDIATE and
-ON_DOWNSTREAM_TLS_HANDSHAKE are excluded, because they may ha
-
-**File**: `changelogs/current/bug_fixes/tcp_proxy__close-empty-fin-before-upstream.rst` (added, +6/-0)
+**File**: `api/envoy/extensions/upstreams/http/reverse_tunnel/v3/reverse_tunnel_codec.proto` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+Fixed :ref:`tcp_proxy <config_network_filters_tcp_proxy>` in ``upstream_connect_mode: ON_DOWNSTREAM_DATA``
-+leaving a downstream connection open until ``idle_timeout`` when the client half-closed without
-+sending any data. Envoy now closes such a connection at once and records
-+``tcp_proxy_downstream_closed_without_data`` as its downstream local close reason, shown by
-+``%DOWNSTREAM_LOCAL_CLOSE_REASON%``, and counts it in ``downstream_cx_closed_without_data``. These
-+connections no longer reach ``idle_timeout``. Other connect modes are unchanged.
+@@ -22,5 +22,8 @@ option (udpa.annotations.file_status).package_version_status = ACTIVE;
+ message ReverseTunnelUpstreamCodecOptions {
+   // When true, the upstream HTTP/2 client codec emits a GOAWAY when the reverse tunnel begins
+   // draining. Defaults to false, in which case the stock HTTP/2 client codec is used unchanged.
++  // When true, a connection-level METADATA frame carrying ``envoy.reverse_tunnel.drain: true``
++  // also notifies the reverse tunnel reporter; this requires the cluster's
++  // ``http2_protocol_options.allow_metadata``.
+   bool enable_drain_with_goaway = 1;
+ }
 ```
 
-**File**: `docs/root/configuration/listeners/network_filters/tcp_proxy_filter.rst` (modified, +3/-0)
+**File**: `changelogs/current/new_features/reverse_tunnel__connection-metadata-drain.rst` (added, +17/-0)
 ```diff
-@@ -69,6 +69,8 @@ and how early data is buffered.
- * ``ON_DOWNSTREAM_DATA``: Wait for initial data from the downstream connection before establishing the upstream
-   connection. This allows preceding filters to inspect the initial data before the upstream connection is established.
-   This mode **requires** ``max_early_data_bytes`` to be set.
-+  If the downstream half-closes without sending any data, the connection is closed immediately, without connecting upstream.
-+  The close reason is ``tcp_proxy_downstream_closed_without_data``, and the connection is counted in ``downstream_cx_closed_without_data``.
- * ``ON_DOWNSTREAM_TLS_HANDSHAKE``: Wait for the downstream TLS handshake to complete before establishing the upstream
-   connection. This allows access to the full TLS connection information, including client certificates and negotiated
-   parameters. This mode is only effective when the downstream connection uses TLS. For non-TLS connections, it behaves
-@@ -228,6 +230,7 @@ The downstream statistics are rooted at *tcp.<stat_prefix>.* with the following
-   downstream_cx_total, Counter, Total number of connections handled by the filter
-   downstream_cx_no_route, Counter, Number of connections for which no matching route was found or the cluster for the route was not found
-   downstream_cx_drain_close, Counter, Total number of connections closed due to drain close
-+  downstream_cx_closed_without_data, Counter, "Total number of connections closed because the downstream half-closed without sending any data in ``ON_DOWNSTREAM_DATA`` mode before any upstream connection was attempted"
-   downstream_cx_overload_close, Counter, Total number of connections closed due to overload manager load shedding
-   downstream_cx_tx_bytes_total, Counter, Total bytes written to the downstream connection
-   downstream_cx_tx_bytes_buffered, Gauge, Total bytes currently buffered to the downstream connection
+@@ -0,0 +1,17 @@
++Added a gradual drain for reverse tunnels on the drain-aware HTTP connection manager. On listener
++drain, every connection now drains like an HCM graceful drain instead of receiving an immediate
++GOAWAY, whether or not the new fields are set: a soft GOAWAY at drain start, then the final GOAWAY
++after ``hcm_config.drain_timeout``, extended by ``hcm_config.drain_timeout_jitter`` if set. When
++:ref:`enable_drain_with_goaway
++<envoy_v3_api_field_extensions.filters.network.reverse_tunnel.v3.DrainAwareHttpConnectionManager.enable_drain_with_goaway>`
++is set, a draining tunnel instead redials a replacement at drain start and then sends, at offsets
++from drain start: a connection-level METADATA frame carrying ``envoy.reverse_tunnel.drain: true`` at
++:ref:`metadata_delay
++<envoy_v3_api_field_extensions.filters.network.reverse_tunnel.v3.DrainAwareHttpConnectionManager.metadata_delay>`,
++and a soft GOAWAY at :ref:`shutdown_notice_delay
++<envoy_v3_api_field_extensions.filters.network.reverse_tunnel.v3.DrainAwareHttpConnectionManager.shutdown_notice_delay>`,
++before the final GOAWAY. Unset delays skip that step, so without ``shutdown_notice_delay`` such a
++tunnel receives no GOAWAY until the final one and keeps serving while the replacement is
++established. Configs where a step cannot be sent in order are rejected. The upstream reverse-tunnel codec notifies the reverse tunnel reporter when it
++receives the METADATA frame. Both sides require ``http2_protocol_options.allow_metadata`` for the
++METADATA frame.
 ```
 
-**File**: `envoy/stream_info/stream_info.h` (modified, +4/-0)
+**File**: `contrib/reverse_tunnel_reporter/test/clients/grpc_client_integration_test.cc` (modified, +102/-2)
 ```diff
-@@ -287,6 +287,10 @@ struct LocalCloseReasonValues {
-   const std::string TriggeredDelayedCloseTimeout = "triggered_delayed_close_timeout";
-   const std::string TcpProxyInitializationFailure = "tcp_initializion_failure:";
-   const std::string TcpProxyDrainClose = "tcp_proxy_drain_close";
-+  // Downstream half-closed with no data while tcp_proxy had not yet established (and will not
-+  // establish) an upstream connection, e.g. ON_DOWNSTREAM_DATA with an empty FIN.
-+  const std::string TcpProxyDownstreamClosedWithoutData =
-+      "tcp_proxy_downstream_closed_without_data";
-   const std::string TcpSessionIdleTimeout = "tcp_session_idle_timeout";
-   const std::string MaxConnectionDurationReached = "max_connection_duration_reached";
-   const std::string ClosingUpstreamTcpDueToDownstreamRemoteClose =
-```
-
-**File**: `source/common/tcp_proxy/tcp_proxy.cc` (modified, +17/-0)
-```diff
-@@ -1163,6 +1163,23 @@ Network::FilterStatus Filter::onData(Buffer::Instance& data, bool end_stream) {
-           return Network::FilterStatus::StopIteration;
-         }
-       }
-+    } else if (connect_mode_ == UpstreamConnectMode::ON_DOWNSTREAM_DATA &&
-+               !initial_data_received_ && end_stream && early_data_buffer_.length() == 0) {
-+      // ON_DOWNSTREAM_DATA never connects upstream for a downstream that half-closes before
-+      // sending data. Half-close is enabled, so that FIN is not a RemoteClose, and the session
-+      // would otherwise stay open until idle_timeout or max_downstream_connection_duration ends
-+      // it, or indefinitely when idle_timeout is 0s and no duration is set.
-+      //
-+      // Other modes have already started or scheduled an upstream connect, and they flush the
-+      // buffered end_stream to it once it connects.
-+      ENVOY_CONN_LOG(debug,
-+                     "Downstream closed without data before upstream connect; closing connection",
-+                     read_callbacks_->connection());
-+      config_->stats().downstream_cx_closed_without_data_.inc();
-+      read_callbacks_->connection().close(
-+          Network::ConnectionCloseType::FlushWrite,
-+          StreamInfo::LocalCloseReasons::get().TcpProxyDownstreamClosedWithoutData);
-+      return Network::FilterStatus::StopIteration;
-     }
+@@ -157,8 +157,9 @@ class GrpcClientIntegrationTest : public testing::TestWithParam<Network::Address
  
-     // Read-disable downstream when receiving early data to prevent excessive buffering.
-```
-
-**File**: `source/common/tcp_proxy/tcp_proxy.h` (modified, +1/-0)
-```diff
-@@ -62,6 +62,7 @@ constexpr absl::string_view ReceiveBeforeConnectKey = "envoy.tcp_proxy.receive_b
-  */
- #define ALL_TCP_PROXY_STATS(COUNTER, GAUGE)                                                        \
-   COUNTER(downstream_cx_drain_close)                                                               \
-+  COUNTER(downstream_cx_closed_without_data)                                                       \
-   COUNTER(downstream_cx_no_route)                                                                  \
-   COUNTER(downstream_cx_overload_close)                                                            \
-   COUNTER(downstream_cx_rx_bytes_total)                                                            \
-```
-
-**File**: `test/common/tcp_proxy/tcp_proxy_test.cc` (modified, +112/-5)
-```diff
-@@ -1045,9 +1045,11 @@ TEST_P(TcpProxyTest, ReceiveBeforeConnectEarlyDataWithEndStream) {
- TEST_P(TcpProxyTest, ReceiveBeforeConnectDownstreamClosesWithoutData) {
-   setup(/*connections=*/1, /*set_redirect_records=*/false, /*receive_before_connect=*/true);
+     auto cluster = getUpstreamCluster(localhost);
+     addCluster(getHttp2Cluster(cluster), config_helper_);
+-    addCluster(getRevConnCluster(enable_tenant_isolation_), config_helper_);
+-
++    addCluster(enable_drain_metadata_ ? getRevConnClusterWithMetadata(enable_tenant_isolation_)
++                                      : getRevConnCluster(enable_tenant_isolation_),
++               config_helper_);
+     HttpIntegrationTest::initialize();
  
--  // Downstream closes without sending any data.
-+  // Downstream closes without sending any data. The upstream connect is already in flight
-+  // (IMMEDIATE), so the downstream must not be closed here; the FIN is buffered for the upstream.
-   Buffer::OwnedImpl empty_buffer;
-   EXPECT_CALL(*upstream_connections_.at(0), write(_, _)).Times(0);
-+  EXPECT_CALL(filter_callbacks_.connection_, close(_, _)).Times(0);
-   filter_->onData(empty_buffer, /*end_stream=*/true);
+     current_config_ = ConfigHelper{version_, config_helper_.bootstrap()};
+@@ -311,6 +312,9 @@ class GrpcClientIntegrationTest : public testing::TestWithParam<Network::Address
  
-   // When upstream connection is established, the end_stream signal should be sent even though
-@@ -2485,6 +2487,82 @@ TEST_P(TcpProxyTest, OdcdsClusterMissingCauseConnectionClose) {
-   ASSERT_FALSE(upstream_connection_establishment_latency.has_value());
+   ConfigHelper current_config_{version_, config_helper_.bootstrap()};
+   bool enable_tenant_isolation_{false};
++  // When true, initialize() enables metadata on the reverse-connection cluster's upstream codec, so
++  // a received drain metadata frame triggers a redial + reporter event.
++  bool enable_drain_metadata_{false};
+ };
+ 
+ INSTANTIATE_TEST_SUITE_P(IpVersions, GrpcClientIntegrationTest,
+@@ -602,6 +606,102 @@ TEST_P(GrpcClientIntegrationTest, ListenerDrainMaxDuration) {
+   completeReq(std::chrono::milliseconds((slowRouteDelay.count() + 1) * 1000), resp);
  }
  
-+// An empty FIN that arrives while an on demand cluster lookup is pending in IMMEDIATE mode must not
-+// close the downstream. It is buffered as end_stream and flushed upstream once the connection is
-+// established. The close is limited to ON_DOWNSTREAM_DATA, which is the only mode that never
-+// connects upstream on its own.
-+TEST_P(TcpProxyTest, ImmediateEmptyFinWhileOnDemandClusterPendingIsFlushedUpstream) {
-+  auto config = onDemandConfig();
-+  config.mutable_max_early_data_bytes()->set_value(1024);
-+  mock_odcds_api_handle_ = Upstream::MockOdCdsApiHandle::create().release();
-+
-+  // The first lookup finds no cluster and triggers on demand discovery. The second lookup, after
-+  // discovery completes, finds the cluster.
-+  EXPECT_CALL(factory_context_.server_factory_context_.cluster_manager_,
-+              getThreadLocalCluster("fake_cluster"))
-+      .WillOnce(Return(nullptr))
-+      .WillOnce(
-+          Return(&factory_context_.server_factory_context_.cluster_manager_.thread_local_cluster_))
-+      .RetiresOnSaturation();
-+
-+  Upstream::ClusterDiscoveryCallbackPtr cluster_discovery_callback;
-+  EXPECT_CALL(*mock_odcds_api_handle_, requestOnDemandClusterDiscovery("fake_cluster", _, _))
-+      .WillOnce([&](auto&&, auto&& cb, auto&&) {
-+        cluster_discovery_callback = std::move(cb);
-+        return std::make_unique<Upstream::MockClusterDiscoveryCallbackHandle>();
-+      });
-+
-+  // Use connections=0 so setup() does not call onNewConnection(). With ODCDS missing the cluster,
-+  // onNewConnection returns StopIteration even though max_early_data_bytes enables
-+  // receive_before_connect, so setup(1, ...) cannot reconcile those expectations.
-+  setup(0, /*set_redirect_records=*/false, /*receive_before_connect=*/true, config);
-+
-+  upstream_connections_.push_back(std::make_unique<NiceMock<Network::MockClientConnection>>());
-+  upstream_connection_data_.push_back(
-+      std::make_unique<NiceMock<Tcp::ConnectionPool::MockConnectionData>>());
-+  ON_CALL(*upstream_connection_data_.back(), connection())
-+      .WillByDefault(ReturnRef(*upstream_connections_.back()));
-+  upstream_hosts_.push_back(std::make_shared<NiceMock<Upstream::MockHost>>());
-+  conn_pool_handles_.push_back(
-+      std::make_unique<NiceMock<Envoy::ConnectionPool::MockCancellable>>());
-+  ON_CALL(*upstream_hosts_.at(0), address())
-+      .WillByDefault(Return(*Network::Utility::resolveUrl("tcp://127.0.0.1:80")));
-+  EXPECT_CALL(*upstream_connections_.at(0), dispatcher())
-+      .WillRepeatedly(ReturnRef(filter_callbacks_.connection_.dispatcher_));
-+
-+  {
-+    testing::InSequence sequence;
-+    EXPECT_CALL(factory_context_.server_factory_context_.cluster_manager_.thread_local_cluster_,
-+                tcpConnPool(_, _, _))
-+        .WillOnce(Return(Upstream::TcpPoolData([]() {}, &conn_pool_)))
-+        .RetiresOnSaturation();
-+    EXPECT_CALL(conn_pool_, newConnection(_))
-+        .WillOnce(
-+            [=, this](Tcp::ConnectionPool::Callbacks& cb) -> Tcp::ConnectionPool::Cancellable* {
-+              conn_pool_callbacks_.push_back(&cb);
-+              return onNewConnection(conn_pool_handles_.at(0).get());
-+            })
-+        .RetiresOnSaturation();
-+    EXPECT_CALL(factory_context_.server_factory_context_.cluster_manager_.thread_local_cluster_,
-+                tcpConnPool(_, _, _))
-+        .WillRepeatedly(Return(std::nullopt));
-+  }
-+
-+  // ODCDS is pending, so onNewConnection stops iteration even with receive_before_connect.
-+  EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onNewConnection());
-+
-+  // The downstream half-closes while the lookup is still pending. Nothing may close it.
-+  EXPECT_CALL(filter_callbacks_.connection_, close(_, _)).Times(0);
-+  Buffer::OwnedImpl empty_data;
-+  EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onData(empty_data, true));
-+
-+  // Discovery completes. The buffered end_stream must reach the upstream on connect.
-+  std::invoke(*cluster_discovery_callback, Upstream::ClusterDiscoveryStatus::Availabl
-```
-
-**File**: `test/integration/tcp_proxy_integration_test.cc` (modified, +43/-0)
-```diff
-@@ -2974,6 +2974,49 @@ TEST_P(TcpProxyIntegrationTest, NoDataDoesNotTriggerConnection) {
-   tcp_client->close();
- }
- 
-+// Verifies that a client which half-closes without sending any data is closed at once in
-+// ON_DOWNSTREAM_DATA mode, without an upstream connection, and that the close reason is logged.
-+TEST_P(TcpProxyIntegrationTest, OnDownstreamDataEmptyFinClosesWithoutUpstream) {
-+  std::string access_log_path = TestEnvironment::temporaryPath(
-+      fmt::format("access_log{}{}.txt", version_ == Network::Address::IpVersion::v4 ? "v4" : "v6",
-+                  TestUtility::uniqueFilename()));
-+  config_helper_.addConfigModifier([&](envoy::config::bootstrap::v3::Bootstrap& bootstrap) -> void {
-+    auto* listener = bootstrap.mutable_static_resources()->mutable_listeners(0);
-+    auto* filter_chain = listener->mutable_filter_chains(0);
-+    auto* config_blob = filter_chain->mutable_filters(0)->mutable_typed_config();
-+    ASSERT_TRUE(config_blob->Is<envoy::extensions::filters::network::tcp_proxy::v3::TcpProxy>());
-+    auto tcp_proxy_config =
-+        MessageUtil::anyConvert<envoy::extensions::filters::network::tcp_proxy::v3::TcpProxy>(
-+            *config_blob);
-+    tcp_proxy_config.set_upstream_connect_mode(
-+        envoy::extensions::filters::network::tcp_proxy::v3::ON_DOWNSTREAM_DATA);
-+    tcp_proxy_config.mutable_max_early_data_bytes()->set_value(8192);
-+    auto* access_log = tcp_proxy_config.add_access_log();
-+    access_log->set_name("accesslog");
-+    envoy::extensions::access_loggers::file::v3::FileAccessLog access_log_config;
-+    access_log_config.set_path(access_log_path);
-+    access_log_config.mutable_log_format()->mutable_text_format_source()->set_inline_string(
-+        "%DOWNSTREAM_LOCAL_CLOSE_REASON%");
-+    std::ignore = access_log->mutable_typed_config()->PackFrom(access_log_config);
-+    std::ignore = config_blob->PackFrom(tcp_proxy_config);
-+  });
++// Three-phase metadata drain, validated as a gradual cutover: METADATA -> soft GOAWAY /
++// shutdownNotice -> final GOAWAY, driven by max_connection_duration. The replacement tunnel is
++// redialed at drain start. The test asserts the migration is gradual by issuing a real request
++// and checking stats at each phase:
++//   (1) tunnel established, nothing closed yet (reverse_tunnel_closed == 0);
++//   (2) replacement tunnel established (established_total == 2): no GOAWAYs and no metadata yet
++//       (close_notify == 0, goaway_sent == 0, reverse_tunnel_closed == 0), traffic still flows;
++//   (3) METADATA received: the upstream codec matches the drain key and notifies the reporter
++//       (reverse_tunnel_closed == 1), but no GOAWAY yet (close_notify == 0, goaway_sent == 0);
++//   (4) soft GOAWAY received (close_notify == 1): final GOAWAY not yet (goaway_sent == 0), and
++//       new traffic routes to the replacement tunnel;
++//   (5) final GOAWAY sent (goaway_sent == 1): the replacement still serves traffic, and the
++//       request still in flight on the old tunnel completes.
++// A request is held in flight on the old tunnel from (3) onward. Without it the peer's pool closes
++// the idle old tunnel right after the soft GOAWAY, before drain_timeout, and the final GOAWAY is
++// never sent.
++TEST_P(GrpcClientIntegrationTest, ListenerDrainMetadataThreePhase) {
++  enable_drain_metadata_ = true;
 +  initialize();
++  makeNewServer();
 +
-+  IntegrationTcpClientPtr tcp_client = makeTcpConnection(lookupPort("tcp_proxy"));
-+  // Half-close the downstream without sending any data.
-+  ASSERT_TRUE(tcp_client->write("", /*end_stream=*/true));
-+  // Envoy closes the downstream connection instead of leaving it open until idle_timeout.
-+  tcp_client->waitForDisconnect();
++  // max_connection_duration=20s triggers the drain at ~20s. Phase delays are 1s/5s/10s:
++  // replacement tunnel redialed at ~20s (established_total==2), METADATA sent ~21s
++  // (reverse_tunnel_closed==1), soft GOAWAY ~25s (close_notify==1), final GOAWAY ~30s
++  // (goaway_sent==1). 20s is long enough that the request lands on a stable tunnel and the
++  // redialed tunnel (up ~20s) does not re-drain before the test observes the full cycle (it would
++  // drain at ~40s, after the test ends).
++  // The in-flight request started at ~21s must outlive the final GOAWAY at ~30s. 15s leaves ~6s
++  // of margin for slow CI machines.
++  constexpr std::chrono::seconds inFlightRequestDelay{15};
++  addListenerLds(getDownstreamListenerWithMetadata(
++      "node-1", 1, std::chrono::seconds(20), std::chrono::milliseconds(1000),
++      std::chrono::milliseconds(5000), std::chrono::seconds(10), inFlightRequestDelay));
++  waitForActiveTunnels(1);
++  validateEqual(std::chrono::milliseconds(sendInterval * 3), getConns({"node-1"}));
 +
-+  // No upstream connection is made for a connection that never sent data.
-+  FakeRawConnectionPtr fake_upstream_connection;
-+  ASSERT_FALSE(fake_upstreams_[0]->waitForRawConnection(fake_upstream_connection,
-+                                                        std::chrono::milliseconds(1000)));
++  // Issue a /direct request through the egress listener -> reverse_connection cluster -> node-1
++  // tunnel and expect 200. completeReq asserts the status.
++  auto sendDirectRequest = [&]() {
++    auto client = makeHttpConnection(egressPort);
++    auto resp = makeClientRequest("/direct", client);
++    completeReq(std::chrono::milliseconds(1000), resp);
++  };
 +
-+  EXPECT_EQ(waitForAccessLog(access_log_path), "tcp_proxy_downstream_closed_without_data");
-+  test_server_->waitForCounter("tcp.tcpproxy_stats.downstream_cx_closed_without_data", Eq(1));
++  // Convenience aliases for the long stat names.
++  const std::string closed_total =
++      "envoy.extensions.reverse_tunnel.reverse_tunnel_reporting_service.reporters.event_reporter."
++      "reverse_tunnel_closed_total";
++  const std::string established_total =
++      "envoy.extensions.reverse_tunnel.reverse_tunnel_reporting_service.reporters.event_reporter."
++      "reverse_tunnel_established_total";
++  const std::string close_notify = "cluster.reverse_connection_cluster.upstream_cx_close_notify";
++  const std::string goaway_sent = "http2.goaway_sent";
++
++  // (1) Tunnel established, nothing closed yet. Baseline: the tunnel is routable.
++  EXPECT_EQ(0, test_server_->counter(closed_total)->value());
++  sendDirectRequest();
++
++  // (2) Drain starts at ~20s and redials a replacement tunnel (established_total==2). The
++  // meta
+```
+
+**File**: `contrib/reverse_tunnel_reporter/test/clients/integration_test_utils.h` (modified, +134/-16)
+```diff
+@@ -163,6 +163,44 @@ inline Cluster getRevConnCluster(bool enable_tenant_isolation = false) {
+   return cluster;
+ }
+ 
++// Same as getRevConnCluster but enables metadata on the upstream (client) codec so a received drain
++// metadata frame triggers a redial + reporter event.
++inline Cluster getRevConnClusterWithMetadata(bool enable_tenant_isolation = false) {
++  Cluster cluster;
++  cluster.set_name(revConnCluster);
++  cluster.set_lb_policy(Cluster::CLUSTER_PROVIDED);
++
++  auto* cluster_type = cluster.mutable_cluster_type();
++  cluster_type->set_name("envoy.clusters.reverse_connection");
++  ReverseConnectionClusterConfig rc_config;
++  rc_config.mutable_cleanup_interval()->set_seconds(60);
++  rc_config.set_host_id_format("%REQ(x-computed-host-id)%");
++  if (enable_tenant_isolation) {
++    rc_config.set_tenant_id_format("%REQ(x-tenant-id)%");
++  }
++  std::ignore = cluster_type->mutable_typed_config()->PackFrom(rc_config);
++
++  ConfigHelper::HttpProtocolOptions http_options;
++  // The upstream (client) codec must opt into metadata frame support so it decodes and delivers
++  // the stream-0 METADATA frame the draining downstream sends (the drain signal). Without
++  // allow_metadata the adapter drops the METADATA frame and onMetadata never fires, so the
++  // reporter is never notified at metadata time.
++  auto* h2 = http_options.mutable_explicit_http_config()->mutable_http2_protocol_options();
++  h2->set_allow_metadata(true);
++  std::ignore = (*cluster.mutable_typed_extension_protocol_options())
++                    ["envoy.extensions.upstreams.http.v3.HttpProtocolOptions"]
++                        .PackFrom(http_options);
++
++  ReverseTunnelUpstreamCodecOptions codec_options;
++  codec_options.set_enable_drain_with_goaway(true);
++  std::ignore = (*cluster.mutable_typed_extension_protocol_options())
++                    ["envoy.extensions.upstreams.http.reverse_tunnel.v3."
++                     "ReverseTunnelUpstreamCodecOptions"]
++                        .PackFrom(codec_options);
++
++  return cluster;
 +}
 +
- // Test edge case where max_buffered_bytes=0 with ON_DOWNSTREAM_DATA mode.
- TEST_P(TcpProxyIntegrationTest, ZeroBufferWithOnDownstreamData) {
-   config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
+ inline Listener getUpstreamListener(absl::string_view anyhost) {
+   Listener listener;
+   listener.set_name(upstreamListener);
+@@ -183,6 +221,33 @@ inline Listener getUpstreamListener(absl::string_view anyhost) {
+   return listener;
+ }
+ 
++// Adds a ``/slow`` route that answers 200 after `delay`, plus the fault filter that injects the
++// delay. Tests use it to hold a stream open on a tunnel across a drain, so the tunnel stays up
++// until the HCM's final GOAWAY instead of closing as soon as the peer's pool drains it. Must be
++// called before the router filter is added, because the fault filter has to run ahead of it.
++inline void addSlowRoute(
++    envoy::config::route::v3::VirtualHost& vh,
++    envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager& hcm,
++    std::chrono::seconds delay) {
++  auto* slow_route = vh.add_routes();
++  slow_route->mutable_match()->set_prefix("/slow");
++  auto* slow_resp = slow_route->mutable_direct_response();
++  slow_resp->set_status(200);
++  slow_resp->mutable_body()->set_inline_string("slow reverse connection listener OK");
++  envoy::extensions::filters::http::fault::v3::HTTPFault fault_cfg;
++  fault_cfg.mutable_delay()->mutable_fixed_delay()->set_seconds(delay.count());
++  fault_cfg.mutable_delay()->mutable_percentage()->set_numerator(100);
++  std::ignore =
++      (*slow_route->mutable_typed_per_filter_config())["envoy.filters.http.fault"].PackFrom(
++          fault_cfg);
++
++  // Per-route fault config above only applies if the filter is in the chain (empty default here).
++  auto* fault_filter = hcm.add_http_filters();
++  fault_filter->set_name("envoy.filters.http.fault");
++  envoy::extensions::filters::http::fault::v3::HTTPFault default_fault_cfg;
++  std::ignore = fault_filter->mutable_typed_config()->PackFrom(default_fault_cfg);
++}
++
+ inline Listener
+ getDownstreamListener(const std::string& name, int num_listeners,
+                       std::chrono::seconds max_conn_duration = std::chrono::seconds(120)) {
+@@ -222,23 +287,72 @@ getDownstreamListener(const std::string& name, int num_listeners,
+   direct_response->set_status(200);
+   direct_response->mutable_body()->set_inline_string("reverse connection listener OK");
+ 
+-  auto* slow_route = vh->add_routes();
+-  slow_route->mutable_match()->set_prefix("/slow");
+-  auto* slow_resp = slow_route->mutable_direct_response();
+-  slow_resp->set_status(200);
+-  slow_resp->mutable_body()->set_inline_string("slow reverse connection listener OK");
+-  envoy::extensions::filters::http::fault::v3::HTTPFault fault_cfg;
+-  fault_cfg.mutable_delay()->mutable_fixed_delay()->set_seconds(slowRouteDelay.count());
+-  fault_cfg.mutable_delay()->mutable_percentage()->set_numerator(100);
+-  std::ignore =
+-      (*slow_route->mutable_typed_per_filter_config())["envoy.filters.http.fault"].PackFrom(
+-          fault_cfg);
++  addSlowRoute(*vh, hcm, slowRouteDelay);
+ 
+-  // Per-route fault config above only applies if the f
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.h` (modified, +2/-0)
+```diff
+@@ -27,6 +27,8 @@ class ReverseConnectionUtility : public Logger::Loggable<Logger::Id::connection>
+   static constexpr absl::string_view DEFAULT_REVERSE_TUNNEL_REQUEST_PATH =
+       "/reverse_connections/request";
+   static constexpr absl::string_view TENANT_SCOPE_DELIMITER = ":";
++  static constexpr absl::string_view DRAIN_METADATA_KEY = "envoy.reverse_tunnel.drain";
++  static constexpr absl::string_view DRAIN_METADATA_VALUE = "true";
+ 
+   // Upgrade token advertised when the handshake is negotiated as an HTTP/1.1 Upgrade.
+   // Used by both the initiator (request `Upgrade:` header) and responder (`101` response).
+```
+
+**File**: `source/extensions/filters/network/http_connection_manager/config.h` (modified, +3/-0)
+```diff
+@@ -168,6 +168,9 @@ class HttpConnectionManagerConfig : Logger::Loggable<Logger::Id::config>,
+                                         Server::OverloadManager& overload_manager) override;
+   Http::DateProvider& dateProvider() override { return date_provider_; }
+   std::chrono::milliseconds drainTimeout() const override;
++  // The configured drain_timeout before drain_timeout_jitter is applied, for static config checks.
++  // drainTimeout() returns a freshly jittered value on every call.
++  std::chrono::milliseconds baseDrainTimeout() const { return drain_timeout_; }
+   FilterChainFactory& filterFactory() override { return *this; }
+   bool generateRequestId() const override { return generate_request_id_; }
+   bool preserveExternalRequestId() const override { return preserve_external_request_id_; }
+```
+
+**File**: `source/extensions/filters/network/reverse_tunnel/drain_aware_hcm/BUILD` (modified, +4/-0)
+```diff
+@@ -24,11 +24,15 @@ envoy_cc_extension(
+         "//envoy/server:factory_context_interface",
+         "//source/common/http:conn_manager_lib",
+         "//source/common/network:drain_close_util_lib",
++        "//source/common/protobuf:utility_lib",
+         "//source/common/runtime:runtime_features_lib",
++        "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_includes",
+         "//source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface:reverse_connection_io_handle_lib",
+         "//source/extensions/filters/network:well_known_names",
+         "//source/extensions/filters/network/common:factory_base_lib",
+         "//source/extensions/filters/network/http_connection_manager:config",
++        "@abseil-cpp//absl/status",
++        "@abseil-cpp//absl/status:statusor",
+         "@envoy_api//envoy/extensions/filters/network/http_connection_manager/v3:pkg_cc_proto",
+         "@envoy_api//envoy/extensions/filters/network/reverse_tunnel/v3:pkg_cc_proto",
+     ],
+```
+
+---
+
+### Incident Patch 2: `33ff6385` (2026-11-02)
+**Commit Message**: build(deps): bump mypy from 2.4.0 to 2.4.1 in /mobile/tools/python
+
+Bumps [mypy](https://github.com/python/mypy) from 2.4.0 to 2.4.1.
+- [Changelog](https://github.com/python/mypy/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/python/mypy/compare/v2.4.0...v2.4.1)
+
+---
+updated-dependencies:
+- dependency-name: mypy
+  dependency-version: 2.4.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+
+**File**: `mobile/MODULE.bazel.lock` (modified, +52/-52)
+```diff
+@@ -9796,58 +9796,58 @@
+             "https://files.pythonhosted.org/packages/ff/c0/a70c32ea3299ebe00f44533740cb46905717c51faf29bbd3ce8bb5886d9d/multidict-6.9.1-cp312-cp312-win32.whl": "sha256:f9dad513626a33670f17cddc6078e30e311f444c957e8dbfc5b2b4603c8b4edb"
+           },
+           "mypy": {
+-            "https://files.pythonhosted.org/packages/04/09/dce2e8f6c1b31053c430ef6963f6f7a38ccb49b90c5e01e37ed0129b7d5a/mypy-2.4.0-cp315-cp315-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl": "sha256:7f38f57d344f8b6accb40e01c3d83cfc590498231724d16c07ffb7940f157818",
+-            "https://files.pythonhosted.org/packages/05/af/b4978a5566cb829ca563dc08e3ad8d944f116078786ad54ba3dff2bcb64d/mypy-2.4.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl": "sha256:a96b07a49b7b1d025ce59c1b3acbcf24bead9a83da4523c4a6bde1bb94e7a0e1",
+-            "https://files.pythonhosted.org/packages/10/f3/863365f7997a76a5a1dd42d7902ab05afa4124e8419089cbca1ce2554db1/mypy-2.4.0-cp315-cp315t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "sha256:9f459f0b4f0596d9d51fe7716b404b35287b99e77da98a7af90a65dd5fd61141",
+-            "https://files.pythonhosted.org/packages/18/37/1482fdc49332b145828912b15f16eee0c4ca70a8bce0f6514ece79b14680/mypy-2.4.0-cp315-cp315-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "sha256:fb443e81057896132d3642d6be219e6efd158691ac7883e3ba8fcb469865f05d",
+-            "https://files.pythonhosted.org/packages/1c/bc/697e9e26fc2a86c094ad67ee1e419971b7f01ded66ee66231b09e9f3e12e/mypy-2.4.0-cp315-cp315t-win_arm64.whl": "sha256:5786ef987b3767e51aaa53f20aec104c0252b42ecda7aef8e8b4cbae279b05c5",
+-            "https://files.pythonhosted.org/packages/26/67/e53965e67d23d48e78dd603aa7525a8d77e7818c23954cc217ccde5cd5c0/mypy-2.4.0-cp311-cp311-macosx_11_0_arm64.whl": "sha256:5d20e6c7c35fcbf2a0ebdd0eaeacfbc243009dfd33ab7822d54e213912e6dbbd",
+-            "https://files.pythonhosted.org/packages/2b/43/e62d8d5c1dd737aa248968302ff7d6eabf997c3301773ed8bcb64932ca77/mypy-2.4.0-cp314-cp314t-win_arm64.whl": "sha256:3bd0e340f0ebe65c548210f53be3fd8192e83964760caf0c28bef368e68b0d37",
+-            "https://files.pythonhosted.org/packages/2e/5f/335b8980055118dc131355155883fb676bb2161a0d97e08658e479c776fb/mypy-2.4.0-cp315-cp315-macosx_11_0_arm64.whl": "sha256:afa89837d9be67e0cadfa33bca3bb7efdda98c3b07e74dc3b635ebfb1c8a926a",
+-            "https://files.pythonhosted.org/packages/2f/05/f1afa303c678be24cf7a266d38fb24b3de4599a024c2f9ba0d5905a3efa3/mypy-2.4.0-cp314-cp314t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "sha256:86d616fe84c6eab8026f8c50ab5bcb90db780d2ccd233d971e34e92bede9b359",
+-            "https://files.pythonhosted.org/packages/30/7d/12d994886a922f0f1997becc9c6625198d61eeb5962558a886af7dd38d54/mypy-2.4.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "sha256:29243242cf72582b65f9582ad9e56e8cb281566ed3519f4cd70bb8b9f2977e90",
+-            "https://files.pythonhosted.org/packages/31/9c/9e4b049f0ecefbfd6817ca2a16eea55dd74a07950268edc6cffd29ccfe98/mypy-2.4.0-cp314-cp314-musllinux_1_2_x86_64.whl": "sha256:9f03a7828cca2b0adcd6662aee8f2711ff8830e1027641fdea3ab0b787483566",
+-            "https://files.pythonhosted.org/packages/34/4e/64300736cf0a0373a27b94a91b664ee7382e36f77b0621bae6381da3e180/mypy-2.4.0.tar.gz": "sha256:77bdaebd452f43fcfc4cc3ba94352a3ea537cd01e3f2d0879f48673d2ec00d6e",
+-            "https://files.pythonhosted.org/packages/3a/87/61ffee58b25a956532a6006fae84918a2de849ed25f397492b2e815fe7b3/mypy-2.4.0-cp314-cp314-win_amd64.whl": "sha256:2106b55105ba5ea9be4f53a24517fc5fa927ff1585edc9bc1a975abb72caef89",
+-            "https://files.pythonhosted.org/packages/3e/08/32703c117e134c02efa2a82705bb40cee91eaedea10b6530e20eba651b1f/mypy-2.4.0-cp315-cp315-win_amd64.whl": "sha256:970b221ed5842213d98e3c480c08f795ace4b1f81fb21e1b126bd0476bce1c34",
+-            "https://files.pythonhosted.org/packages/43/8b/5b2bbfc69e84800b78fa2dba16d995b003f93b573558e412c5490d6e6c37/mypy-2.4.0-cp315-cp315t-musllinux_1_2_x86_64.whl": "sha256:cb734b2668c1f40d07ce093bbeb4407e9527c67901627b0e1679825be3f09975",
+-            "https://files.pythonhosted.org/packages/43/c5/91b68306da4cd280cb15be35dbb5ffc343cabd67c4b121b6625bf2d13177/mypy-2.4.0-cp315-cp315-musllinux_1_2_x86_64.whl": "sha256:e76172710bd4e5eeae061abfd68347e5264632e02778be61784671ae3a2132f5",
+-            "https://files.pythonhosted.org/packages/44/f2/eb15183c97c69d7cbfac990a6efd33a19ecfd97dab9e714c742fa78a784f/mypy-2.4.0-cp313-cp313-macosx_11_0_arm64.whl": "sha256:7da85fbcff6dac1abcc636707bed38b45598131fb7a605d9719c70b5cc733af8",
+-            "https://files.pythonhosted.org/packages/47/c0/4f7daa73270dced8e86c6f4a911c68082d03a84e6c1ec9bd916028d66131/mypy-2.4.0-cp314-cp314t-macosx_11_0_arm64.whl": "sha256:0bb95cf34899e4619c61ab0a8667804e139e580b30d5df12af2102dfe44d0c97",
+-            "https://files.pythonhosted.org/packages/49/41/17b60df2d946792ef6af43
+```
+
+**File**: `mobile/tools/python/requirements.txt` (modified, +53/-53)
+```diff
+@@ -400,59 +400,59 @@ librt==0.16.0 \
+     --hash=sha256:fe52bf4641069e7978a14253b036cb9002def1926317e710f2e249f8a8c47742 \
+     --hash=sha256:ff7baa55f8e7c69851419e50a666015d02a74198716fd45c0125a2112e0a389f
+     # via mypy
+-mypy==2.4.0 \
+-    --hash=sha256:058165f564ccf559c68c70fec2091fca5891110480210c22594635e3f6683437 \
+-    --hash=sha256:0bb95cf34899e4619c61ab0a8667804e139e580b30d5df12af2102dfe44d0c97 \
+-    --hash=sha256:13fa24f439c0e48a290a3922fa14ccd22f2762bae99d2142931b3e40a9055080 \
+-    --hash=sha256:172e30b8fea631fe310f0c665477f52d9ea40bb4e99e0c81dc30118563b13710 \
+-    --hash=sha256:1dc0f64b0a92ae27a49d2175f0bacfa56e15bdc5b420cf92e0c1f79292219cbb \
+-    --hash=sha256:20e9a5cd875837520c43db98dea0b6d0c2197833d95c30127d8f570fb9b1f00b \
+-    --hash=sha256:2106b55105ba5ea9be4f53a24517fc5fa927ff1585edc9bc1a975abb72caef89 \
+-    --hash=sha256:236e0d68f6941992b0811128e652590f590db444ab29ad8f1324765b9298b946 \
+-    --hash=sha256:29243242cf72582b65f9582ad9e56e8cb281566ed3519f4cd70bb8b9f2977e90 \
+-    --hash=sha256:295ecf2e57542cd836ca537486951289678c8c7d1ee6ad74ebe29b2168a003cf \
+-    --hash=sha256:29eb0b9427a6b11b992e452f6cceb8af724f4dceb47e779d0b35e405e996ea5e \
+-    --hash=sha256:3011537be6cf1de4511c0255a324362a812b58184bbe61e15f59c8b31033bd74 \
+-    --hash=sha256:3adef556a19eb3b630bf86a79c29d7da3d61e541472d0d897ca01b171c0abf8f \
+-    --hash=sha256:3bd0e340f0ebe65c548210f53be3fd8192e83964760caf0c28bef368e68b0d37 \
+-    --hash=sha256:4209da39d85cf240f762af622d8180fcdfcb4727d021f44ade62d613a1a43324 \
+-    --hash=sha256:4a378fc15fb33e321f04652c166ce73eeb8833a97c3d218132844e938cd93220 \
+-    --hash=sha256:502b94b0b331f7dafe32fd6b151797ddbb4f32385b362e722c783a025e5954a3 \
+-    --hash=sha256:528c8744b8b5e3ecb8774f86af38d2376216816e9908317ad055f3c9c2d74799 \
+-    --hash=sha256:5786ef987b3767e51aaa53f20aec104c0252b42ecda7aef8e8b4cbae279b05c5 \
+-    --hash=sha256:5d20e6c7c35fcbf2a0ebdd0eaeacfbc243009dfd33ab7822d54e213912e6dbbd \
+-    --hash=sha256:615b03922d40e186fd1df73156473db0ba525c639bb4fd1cf28e1694879c9b23 \
+-    --hash=sha256:6306086b87cf7f8a29aa618d9fd9bffb56c59247166b9660fdb54d86d7714ecd \
+-    --hash=sha256:6be721bd4bd57576193653b75b4af3461c9d0bf7dd8b528f782e9be210dc75bb \
+-    --hash=sha256:720434d48542ecfe84d32d287b727569d3fc8f5769acd39051130e490a5c295c \
+-    --hash=sha256:77bdaebd452f43fcfc4cc3ba94352a3ea537cd01e3f2d0879f48673d2ec00d6e \
+-    --hash=sha256:7c4f8f8d1d1c0e2832d8ee7113dd08f6df6c7aad9e863fcbed9f25832be0b8c4 \
+-    --hash=sha256:7da85fbcff6dac1abcc636707bed38b45598131fb7a605d9719c70b5cc733af8 \
+-    --hash=sha256:7f38f57d344f8b6accb40e01c3d83cfc590498231724d16c07ffb7940f157818 \
+-    --hash=sha256:82d0f94c8587ccb472622ee7795280aaa38a06640d5f45b3f16909d6dd86a989 \
+-    --hash=sha256:86d616fe84c6eab8026f8c50ab5bcb90db780d2ccd233d971e34e92bede9b359 \
+-    --hash=sha256:9279488933040b638c0ab739084c0ca100efeea6db581bf5d7628d8e89de53fe \
+-    --hash=sha256:970b221ed5842213d98e3c480c08f795ace4b1f81fb21e1b126bd0476bce1c34 \
+-    --hash=sha256:9f03a7828cca2b0adcd6662aee8f2711ff8830e1027641fdea3ab0b787483566 \
+-    --hash=sha256:9f459f0b4f0596d9d51fe7716b404b35287b99e77da98a7af90a65dd5fd61141 \
+-    --hash=sha256:9fa247e02b505a45a2775f69df38d360d197e3790bc60f717595db9eda358b6e \
+-    --hash=sha256:a3f86fd1313dd69d013e265f1fdcd12ea7a9d606f9875b2a3db946cd334555f3 \
+-    --hash=sha256:a6e851b82c0661f69f1630fc16172c68787a6a9cf0991e7c6437d60976cdcd76 \
+-    --hash=sha256:a96b07a49b7b1d025ce59c1b3acbcf24bead9a83da4523c4a6bde1bb94e7a0e1 \
+-    --hash=sha256:afa89837d9be67e0cadfa33bca3bb7efdda98c3b07e74dc3b635ebfb1c8a926a \
+-    --hash=sha256:ba05652540bf12828e52abae807b024b09ca144ff4f75e2450a81d69c376425b \
+-    --hash=sha256:bc378bdad4e9f12b5bd96466083d1e71acf00594ec9c7b2bdb5e02816f77f303 \
+-    --hash=sha256:c9de622fd397495695d0598ddc789222bfcfec9d7c9ec3a1e385c855e3bc5e01 \
+-    --hash=sha256:cb734b2668c1f40d07ce093bbeb4407e9527c67901627b0e1679825be3f09975 \
+-    --hash=sha256:d01c5d26a352acc6d5cf3128225477e1e8465e8d3029d4c345807fbf7f3cf093 \
+-    --hash=sha256:e05ff2925d8b37ad26c80c1b9dc43ae5d455da2df1e23c24c095a6425917c57e \
+-    --hash=sha256:e1fde197ae65be856a034a91b70ed747a16562ca69577785f06c661548424bf1 \
+-    --hash=sha256:e3ebe2f72a2a1156065a9851570ffbf50c0a93cdccadef9c6e05c508a4fd10b1 \
+-    --hash=sha256:e76172710bd4e5eeae061abfd68347e5264632e02778be61784671ae3a2132f5 \
+-    --hash=sha256:f83353e47ab520bf6fd4df8f5897d9fe081211f2fbc4b7d37736a3e3c166cbcf \
+-    --hash=sha256:f9b028548b3af480e2b1ed8df14ccaac86f99c9f600d1580770ab7ba3dcd40f0 \
+-    --hash=sha256:fb443e81057896132d3642d6be219e6efd158691ac7883e3ba8fcb469865f05d \
+-    --hash=sha256:ffda5244fd1ad71a1e54405e35f50d09b80c3978efa120f58bd1252ae32c62d2
++mypy==2.4.1 \
++    --hash=sha256:01b7718552d017f88d1151f3cc9d6556d778a90bd58060a2c3d87d070f9099fb \
++    --hash=sha256:0724cf95fabc87ca4a2d5b7f276b43f51afce8a3804bde704490b008e377e50b \
++    --hash=sha256:080cf64a60b90a73435542feecf4171904cc5710658165b40c6869115d4aa100 \
++    --hash=sha256
+```
+
+---
+
+### Incident Patch 3: `7bf8c4a4` (2026-11-02)
+**Commit Message**: build(deps): bump pytest from 9.0.3 to 9.2.0 in /mobile/tools/python
+
+Bumps [pytest](https://github.com/pytest-dev/pytest) from 9.0.3 to 9.2.0.
+- [Release notes](https://github.com/pytest-dev/pytest/releases)
+- [Changelog](https://github.com/pytest-dev/pytest/blob/main/CHANGELOG.rst)
+- [Commits](https://github.com/pytest-dev/pytest/compare/9.0.3...9.2.0)
+
+---
+updated-dependencies:
+- dependency-name: pytest
+  dependency-version: 9.2.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+
+**File**: `mobile/MODULE.bazel.lock` (modified, +2/-2)
+```diff
+@@ -10366,8 +10366,8 @@
+             "https://files.pythonhosted.org/packages/51/ad/2cf6d3fa2fae5c79e1ed9960c0d42badd0f94d81dd12b50604cdc839e648/pyopenssl-26.4.0-py3-none-any.whl": "sha256:f0eb0cb2d581d3ad2b9c489468485e7f2ab6727d08401bcf9d824c3caddf3c1c"
+           },
+           "pytest": {
+-            "https://files.pythonhosted.org/packages/7d/0d/549bd94f1a0a402dc8cf64563a117c0f3765662e2e668477624baeec44d5/pytest-9.0.3.tar.gz": "sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c",
+-            "https://files.pythonhosted.org/packages/d4/24/a372aaf5c9b7208e7112038812994107bc65a84cd00e0354a88c2c77a617/pytest-9.0.3-py3-none-any.whl": "sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9"
++            "https://files.pythonhosted.org/packages/51/39/1f5d8c8877a0fa327db959c19341d4be61660de1ab6b7391f9eb805bcd67/pytest-9.2.0-py3-none-any.whl": "sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588",
++            "https://files.pythonhosted.org/packages/79/42/bb4641652e58dedeac2ec51abc1f8cae4fee4ec63899a0999016229a0f2a/pytest-9.2.0.tar.gz": "sha256:97c4f3b1f3c7414aa36465e09b8220f1d03627993bd51b1282e193753c80557b"
+           },
+           "pytest-asyncio": {
+             "https://files.pythonhosted.org/packages/27/2d/e600d8f47597a803641704aba367c7266cd621f86561ec36da9888f160ec/pytest_asyncio-1.5.0-py3-none-any.whl": "sha256:557f255ee03cc84f84a8d5f438bc9c6e0f714bf86970ae743c7ecb5a38d7e07d",
+```
+
+**File**: `mobile/tools/python/requirements.txt` (modified, +3/-3)
+```diff
+@@ -488,9 +488,9 @@ pygments==2.20.0 \
+     --hash=sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f \
+     --hash=sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
+     # via pytest
+-pytest==9.0.3 \
+-    --hash=sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9 \
+-    --hash=sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c
++pytest==9.2.0 \
++    --hash=sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588 \
++    --hash=sha256:97c4f3b1f3c7414aa36465e09b8220f1d03627993bd51b1282e193753c80557b
+     # via
+     #   -r requirements.in
+     #   pytest-asyncio
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49281** (2026-11-15): admin: Parse config dump field masks once (@gavinbunney)
-- **PR #49271** (2026-11-14): deps: Bump `bazel-registry` -> 174de77 (+envoy_toolshed) (@dependency-envoy[bot])
-- **PR #49268** (2026-11-14): protobuf: add a helper for deterministic serialization (@agrawroh)
-- **PR #49267** (2026-11-14): deps: Bump toolshed actions -> actions-v0.4.31 (@dependency-envoy[bot])
-- **PR #49266** (closed): deps: Bump toolshed actions -> actions-v0.4.31 (@dependency-envoy[bot])
-- **PR #49265** (2026-11-14): deps: Bump `bazel-registry` -> 8504117 (+envoy_toolshed) (@dependency-envoy[bot])
+- **PR #49319** (2026-11-16): deps: Bump dependabot updates (@phlax)
+- **PR #49313** (2026-11-16): bazel: Add RBE pool keys for links and more configurations (@phlax)
+- **PR #49312** (closed): build(deps): bump pytest-asyncio from 1.4.0 to 1.5.0 in /mobile/tools/python (@dependabot[bot])
+- **PR #49310** (closed): build(deps): bump moby/buildkit from v0.34.1 to v0.35.0 in /ci (@dependabot[bot])
+- **PR #49308** (2026-11-16): stats: skip tag extraction for existing histograms (@stephenamar-db)
+- **PR #49305** (2026-11-16): github/ci: Dry-run the dev publish alongside the container images (@phlax)
 
 ---
 
@@ -1536,6 +1623,63 @@ ON_DOWNSTREAM_TLS_HANDSHAKE are excluded, because they may ha
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. reverse_tunnel: changes to let the downstream drain gracefully
+
+**RULE**:
+When implementing operations in `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `80291fca`: reverse_tunnel: changes to let the downstream drain gracefully. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+import "google/protobuf/duration.proto";
+
+import "validate/validate.proto";
+// A network filter that wraps the standard HCM and drains all active HTTP/2
+// connections when the listener is drained (e.g. via admin /drain_listeners).
+// Intended for use on reverse-tunnel listeners so that agents can detect drain
+// and re-establish connections gracefully.
+// All HCM fields are forwarded verbatim. In addition, when the listener drains,
+// every connection is drained like an HCM graceful drain, whether or not any of
+// the fields below are set: a soft GOAWAY (shutdown notice) is sent when the
+// drain starts, and the final GOAWAY follows after ``hcm_config.drain_timeout``,
+// extended by ``hcm_config.drain_timeout_jitter`` if set. With
+// ``enable_drain_with_goaway``, a reverse tunnel instead dials a replacement
+// when the drain starts and sends the soft GOAWAY and an optional METADATA frame
+// at the configured delays before the final GOAWAY. Without
+// ``shutdown_notice_delay``, such a tunnel receives no GOAWAY until the final
+// one, so it keeps serving while the replacement is established.
+  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
+
+  // Del
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// A network filter that wraps the standard HCM and sends HTTP/2 GOAWAY frames
+// on all active connections when the listener is drained (e.g. via admin
+// /drain_listeners). Intended for use on reverse-tunnel listeners so that
+// agents can detect drain and re-establish connections gracefully.
+// All HCM fields are forwarded verbatim; the only difference is that this
+// filter registers a listener-drain callback and emits a GOAWAY before the
+// connection is closed.
+  // are unaffected.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `80291fca` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

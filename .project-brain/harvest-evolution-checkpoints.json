@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T15:10:13.674Z",
+  "last_updated": "2026-11-16T15:33:29.468Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-16T14:07:06.724Z",
+      "processed_at": "2026-11-16T15:33:28.860Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -168,7 +168,7 @@
       "staged_for_review": 1
     },
     "nguyenphutrong-quotio-learnings.md": {
-      "processed_at": "2026-11-11T10:35:34.154Z",
+      "processed_at": "2026-11-16T15:33:26.609Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -228,9 +228,9 @@
       "staged_for_review": 0
     },
     "envoyproxy-envoy-learnings.md": {
-      "processed_at": "2026-11-15T06:19:33.120Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-16T15:33:27.249Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "sxyazi-yazi-learnings.md": {
       "processed_at": "2026-11-13T05:23:46.615Z",
@@ -3183,7 +3183,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1305,
+  "total_dossiers_evaluated": 1308,
   "total_canonical_promoted": 288,
-  "total_staged_for_review": 1009
+  "total_staged_for_review": 1012
 }

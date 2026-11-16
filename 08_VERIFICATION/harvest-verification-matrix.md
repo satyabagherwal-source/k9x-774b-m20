@@ -10287,3 +10287,5 @@
 | `CYCLE-20261116-4XNY` | `2026-11-16T15:00:47.086Z` | `qdrant/qdrant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8748` | Yes (`2fdda9e3...`) |
 | `CYCLE-20261116-GRKO` | `2026-11-16T15:09:59.064Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8749` | Yes (`c2a7a096...`) |
 | `CYCLE-20261116-GYUI` | `2026-11-16T15:10:08.490Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8750` | Yes (`314216ef...`) |
+| `CYCLE-20261116-AO0H` | `2026-11-16T15:33:14.129Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8751` | Yes (`8cf90511...`) |
+| `CYCLE-20261116-AV2J` | `2026-11-16T15:33:23.275Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8752` | Yes (`14b8cde1...`) |

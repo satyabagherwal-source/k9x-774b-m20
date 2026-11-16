@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-WPQ9",
-    "timestamp": "2026-11-13T21:07:17.697Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "a312f8b12054c88ec6429bd94f4143ecbb7bca1acd1ea3c8e669f1230922c5c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-7ZO3",
-    "timestamp": "2026-11-13T21:16:03.795Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "fd73b4c7a675c3c30051a79610e39a7b378e3d2c44d8d2b48ce8d1a650cc6fd4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-81WS",
     "timestamp": "2026-11-13T21:16:06.700Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7490,6 +7460,36 @@
     "repository": "topoteretes/cognee",
     "learningId": "learn-github-topoteretes-cognee",
     "contentHash": "314216efa4368f94afa850a3f1557ff68a24616621622ef65a4a3b76e4db9e62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-AO0H",
+    "timestamp": "2026-11-16T15:33:14.129Z",
+    "repository": "nguyenphutrong/quotio",
+    "learningId": "learn-github-nguyenphutrong-quotio",
+    "contentHash": "8cf905111d40d62f44b62280e4ad9de37b4a58f8f9c2848f1ca4efd8b113c161",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-AV2J",
+    "timestamp": "2026-11-16T15:33:23.275Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "14b8cde10666b0b0e2b23bbb74f10d94c5a24948d34ff505a8a2190fb9b2cefe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

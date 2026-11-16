@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T15:10:13.440Z",
-  "total_records": 1267,
+  "last_updated": "2026-11-16T15:33:29.181Z",
+  "total_records": 1269,
   "domains": {
     "A": {
       "total": 7,
@@ -900,7 +900,7 @@
       ]
     },
     "H": {
-      "total": 269,
+      "total": 271,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1170,7 +1170,9 @@
         "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants",
         "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian"
+        "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria"
       ]
     },
     "I": {
@@ -7082,8 +7084,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "b09e687be1a66b89086857beeec46b0543060ce2c3bd286c312a19bbf7f16b0a",
-      "created_at": "2026-11-16T14:07:07.021Z"
+      "content_hash": "35dbf5cad18e7c17298739284d71791387f64a3627d7d83fee6a370110ea1a84",
+      "created_at": "2026-11-16T15:33:29.181Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9719,8 +9721,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "0dcd0ccaf7d93444820310c6f8c3b6d44e1c62c16a099943e3c9ea01af93193f",
-      "created_at": "2026-11-15T06:18:19.497Z"
+      "content_hash": "2d7f0a974cda020271b4521b73bdf19b28b6629bb937b1696ef216370102f0df",
+      "created_at": "2026-11-16T15:33:23.588Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -9839,8 +9841,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "227ea8193702840253538d9cc40d84a7ed208159c7fdaa3100a47b715ab207b3",
-      "created_at": "2026-11-15T06:19:33.338Z"
+      "content_hash": "3adc4c1cc7bce63712d5a8a9b1ada9ee66745079a7d7b50bf6bac2b0d8d1d87e",
+      "created_at": "2026-11-16T15:33:28.609Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -23199,6 +23201,24 @@
       "repository": "topoteretes-cognee-learnings",
       "content_hash": "921a2110cc60ceb84b53f774a4469cd5314971c434e1b0f566d58b3a8eaa2d3f",
       "created_at": "2026-11-16T15:10:12.759Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nguyenphutrong/quotio Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nguyenphutrong-quotio-technical-construction-intelligence-nguyenphutrong-quotio-.md",
+      "repository": "nguyenphutrong/quotio",
+      "content_hash": "8b802e1d6101354b570ecd9ab67504d7f356a3c46b544a68c67d290d63efb959",
+      "created_at": "2026-11-16T15:33:14.487Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nguyenphutrong-quotio-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nguyenphutrong-quotio-learnings-technical-construction-intelligence-nguyenphutro.md",
+      "repository": "nguyenphutrong-quotio-learnings",
+      "content_hash": "4a73a493304f83a903c7bf006ee843c4d98322a5fd301cbb818b1176c4b5f519",
+      "created_at": "2026-11-16T15:33:27.003Z"
     }
   }
 }

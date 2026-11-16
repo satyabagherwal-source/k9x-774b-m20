@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T15:10:08.499Z",
-  "total_cycles_completed": 9877,
-  "total_learnings_persisted": 9877,
-  "total_rules_promoted": 9482,
+  "last_updated": "2026-11-16T15:33:23.284Z",
+  "total_cycles_completed": 9879,
+  "total_learnings_persisted": 9879,
+  "total_rules_promoted": 9484,
   "history": [
-    {
-      "timestamp": "2026-11-15T06:36:51.624Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T06:36:57.844Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T06:45:03.748Z",
       "repository": "tencent/Hy-Memory-30B-A3B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-16T15:10:08.499Z",
       "repository": "topoteretes/cognee",
       "learningId": "learn-github-topoteretes-cognee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T15:33:14.139Z",
+      "repository": "nguyenphutrong/quotio",
+      "learningId": "learn-github-nguyenphutrong-quotio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T15:33:23.284Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
