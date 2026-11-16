@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T04:53:30.454Z",
-  "total_cycles_completed": 9835,
-  "total_learnings_persisted": 9835,
-  "total_rules_promoted": 9446,
+  "last_updated": "2026-11-16T05:10:45.630Z",
+  "total_cycles_completed": 9836,
+  "total_learnings_persisted": 9836,
+  "total_rules_promoted": 9447,
   "history": [
-    {
-      "timestamp": "2026-11-15T01:32:38.674Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T01:32:39.585Z",
       "repository": "FalkorDB/FalkorDB",
@@ -1403,6 +1396,13 @@
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T05:10:45.630Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

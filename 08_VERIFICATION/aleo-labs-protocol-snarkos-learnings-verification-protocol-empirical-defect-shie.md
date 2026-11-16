@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:33:06.865Z",
+  "timestamp": "2026-11-16T05:10:48.806Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-aleo-labs-protocol-snarkos-learnings",
+  "learning_id": "LEARN-EVO-aleo-labs-protocol-snarkos-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aleo-labs-protocol-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:33:06.865Z`  
-> **Learning ID**: `LEARN-REEXTRACT-aleo-labs-protocol-snarkos-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T05:10:48.806Z`  
+> **Learning ID**: `LEARN-EVO-aleo-labs-protocol-snarkos-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `b2bfa52b`  
+> **Source Version**: `2299a19b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:17:22.604Z  
+> **Timestamp**: 2026-11-16T05:10:45.071Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:17:22.594Z  
+> **Harvest Timestamp**: 2026-11-16T05:10:44.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4528 stars
+- **Stars / Engagement**: 4526 stars
 
 ---
 
@@ -1995,8 +1995,8 @@ mod tests {
 - **Issue #4615** (2026-11-06): **Gateway handshake has no genesis binding**
   *Symptoms*: The gateway handshake never checks that a peer shares our genesis, and the first authenticated holder of an address keeps its slot. This requires the committee key; we found no path without it. We have only seen this on a devnet.  The code below is from `staging` at `395f79781`.  **Observed**  Two devnets sharing deterministic dev keys could reach each other, with different genesis blocks: a prover logged `failed (incorrect block header)` against every foreign node. While two of five validators restarted, foreign nodes with those keys connected to the other three. The returning validators were refused with `already connected to the given Aleo address`.  The returning validators then accepted foreign nodes holding the other keys, refusing their real peers too. The chain stopped permanently, while each validator logged `Connected to 4 validators (of 4 bonded validators)`. A rerun of the same commit without the second devnet passed.  The foreign nodes sent no proposals, signatures or primary pings, so no consensus check rejected them. Their traffic kept the connections alive, and the connected-quorum check in `propose_batch` counted them.  **Why**  - `verify_peer_info` in `node/bft/src/gateway.rs` checks version, trusted peers, committee membership, the existing connection and the restrictions ID, but not genesis. - The router handshake does compare genesis headers (`node/router/src/handshake.rs`), which is why only the router side refused these nodes.  **Suggested fix**  Add th
 
-- **Issue #4588** (2026-10-29): **Re-issue block requests that a responsive peer skipped**
-  *Symptoms*: ## Motivation  Fixes #4585. Block sync can stall for good when a validator peer drops block requests.  - A validator drops each `BlockRequest` beyond `max_cache_duplicates()` (the committee size squared) per peer within `CACHE_REQUESTS_INTERVAL` (2 s). It sends no reply. - Since 71f5f74c0, `handle_block_request_timeouts` keeps a timed-out request if its peer sent any block response within `BLOCK_REQUEST_TIMEOUT` (60 s). - The peer keeps answering newer requests. So a dropped request never times out, and it is never re-issued. The syncing node stops below the gap.  ### Fix  - For each peer, `last_response_at` also holds the latest timestamp of any request that the peer answered. - A timed-out request is exempt only while an assigned peer is responsive and has answered no request sent after it. Requests are stamped and queued to each peer in send order. So a peer that answered a later request skipped this one. - A skipped request is marked as failed and re-issued. Its peer stays in the sync pool, because the peer still responds. - A backlogged peer that answers requests in order stays exempt, as 71f5f74c0 intends. - The gateway logs each dropped block request at trace level.  ### Commits  - `fix(node/sync): time out block requests that a responsive peer skipped`: the fix, the log line, and three unit tests.  ## Test Plan  - New unit tests in `node/sync/src/block_sync.rs`:   - `test_reissue_skipped_block_request`: a timed-out request whose peer answered a later request is remove
+- **Issue #4603** (2026-11-13): **Skip a transaction that fails to deserialize when proposing, instead of dropping the batch**
+  *Symptoms*: ## Motivation  In `propose_batch`, the loop that drains transmissions from the workers has two `?` that return from the function:  - `spawn_blocking!(deserialize_transaction_strict(transaction))?` - `N::CONSENSUS_VERSION(current_block_height)?`  When the first one fails, every transmission already drained in that call is dropped. It is in neither the workers nor a proposal, and nothing logs it. The second one does not fail in practice, because the first consensus version starts at height 0. But it also returns after transmissions are drained.  This PR:  - Skips a transaction that fails strict deserialization, and logs it with the error at `debug`, like the spend-cost branch below it. - Reads the block height and consensus version once, before anything is drained.  As a result, the proposal's spend limit uses the block height read once per proposal, not once per transaction. This is local proposer policy, not consensus.  Peer fetches and unconfirmed transactions are deserialized strictly before they reach the workers. So the first `?` fails only on a buffer that skipped that check. One example is a cached proposal that is reloaded after a restart, when the cache file is corrupt or the binary's maximum transaction size is lower.  This touches the same loop as #4594. Whichever PR merges second needs a small rebase.  ## Test Plan  - New test `test_propose_batch_skips_an_undeserializable_transaction`. It queues a valid transaction, a transaction buffer with one trailing byte, and 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2013,528 +2013,70 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2bfa52b` (2026-11-11)
-**Commit Message**: Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging
+### Incident Patch 1: `2299a19b` (2026-11-15)
+**Commit Message**: Merge pull request #4667 from aleo-labs-protocol/test/lower-iteration-counts
 
-Merge testnet into staging
+Lower iteration counts in randomized round-trip tests
 
-**File**: `.cargo/release-version` (modified, +1/-1)
+**File**: `cli/src/commands/developer/decrypt.rs` (modified, +1/-1)
 ```diff
-@@ -1 +1 @@
--v4.12.1
-\ No newline at end of file
-+v4.13.0
-\ No newline at end of file
+@@ -82,7 +82,7 @@ mod tests {
+ 
+     type CurrentNetwork = MainnetV0;
+ 
+-    const ITERATIONS: usize = 1000;
++    const ITERATIONS: usize = 100;
+ 
+     fn construct_ciphertext<N: Network>(
+         view_key: ViewKey<N>,
 ```
 
-**File**: `Cargo.lock` (modified, +22/-22)
+**File**: `node/bft/src/helpers/proposal.rs` (modified, +1/-1)
 ```diff
-@@ -5381,7 +5381,7 @@ dependencies = [
+@@ -265,7 +265,7 @@ pub(crate) mod tests {
  
- [[package]]
- name = "snarkos"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "built",
-  "clap",
-@@ -5407,15 +5407,15 @@ dependencies = [
+     type CurrentNetwork = MainnetV0;
  
- [[package]]
- name = "snarkos-account"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "colored 3.1.1",
-  "snarkvm",
- ]
+-    const ITERATIONS: usize = 100;
++    const ITERATIONS: usize = 10;
  
- [[package]]
- name = "snarkos-cli"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "aleo-std",
-  "anstyle",
-@@ -5459,7 +5459,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-display"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "crossterm",
-@@ -5472,7 +5472,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-ledger-distribution"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "aleo-std",
-  "anyhow",
-@@ -5501,7 +5501,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "aleo-std",
-  "anyhow",
-@@ -5545,7 +5545,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-bft"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "aleo-std",
-  "anyhow",
-@@ -5598,7 +5598,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-bft-events"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -5621,7 +5621,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-bft-ledger-service"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5640,7 +5640,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-bft-storage-service"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "aleo-std",
-  "anyhow",
-@@ -5655,7 +5655,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-cdn"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "bincode",
-@@ -5677,7 +5677,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-consensus"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "aleo-std",
-  "anyhow",
-@@ -5703,7 +5703,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-metrics"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "built",
-  "locktick",
-@@ -5719,7 +5719,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-network"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "built",
-@@ -5741,7 +5741,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-rest"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "aleo-std",
-  "anyhow",
-@@ -5781,7 +5781,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-router"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5816,7 +5816,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-router-messages"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "bytes",
-  "indexmap 2.14.2",
-@@ -5833,7 +5833,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-sync"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "futures",
-@@ -5859,15 +5859,15 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-sync-communication-service"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "async-trait",
-  "tokio",
- ]
- 
- [[package]]
- name = "snarkos-node-sync-locators"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "indexmap 2.14.2",
-@@ -5878,7 +5878,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-tcp"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5896,7 +5896,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-utilities"
--version = "4.12.0"
-+version = "4.13.0"
- dependencies = [
-  "anyhow",
-  "locktick",
+     pub(crate) fn sample_proposal(rng: &mut TestRng) -> Proposal<CurrentNetwork> {
+         let certificate = snarkvm::ledger::narwhal::batch_certificate::test_helpers::sample_batch_certificate(rng);
 ```
 
-**File**: `Cargo.toml` (modified, +21/-21)
+**File**: `node/bft/src/helpers/proposal_cache.rs` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos"
--version = "4.12.0"
-+version = "4.13.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "A decentralized operating system"
- homepage = "https://aleo.org"
-@@ -194,84 +194,84 @@ version = "0.2"
+@@ -179,7 +179,7 @@ mod tests {
  
- [workspace.dependencies.snarkos-account]
- path = "account"
--version = "=4.12.0"
-+version = "=4.13.0"
+     type CurrentNetwork = MainnetV0;
  
- [workspace.dependencies.snarkos-cli]
- path = "cli"
--version = "=4.12.0"
-+version = "=4.13.0"
+-    const ITERATIONS: usize = 100;
++    const ITERATIONS: usize = 10;
  
- [workspace.dependencies.snarkos-display]
- path = "display"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node]
- path = "node"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-bft]
- path = "node/bft"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-bft-events]
- path = "node/bft/events"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-bft-storage-service]
- path = "node/bft/storage-service"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-bft-ledger-service]
- path = "node/bft/ledger-service"
--version = "=4.12.0"
-+version = "=4.13.0"
- default-features = false
- 
- [workspace.dependencies.snarkos-node-consensus]
- path = "node/consensus"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-cdn]
- path = "node/cdn"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-metrics]
- path = "node/metrics"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-network]
- path = "node/network"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-router]
- path = "node/router"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-router-messages]
- path = "node/router/messages"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-rest]
- path = "node/rest"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-sync]
- path = "node/sync"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-sync-communication-service]
- path = "node/sync/communication-service"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-sync-locators]
- path = "node/sync/locators"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-node-tcp]
- path = "node/tcp"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [workspace.dependencies.snarkos-utilities]
- path = "utilities"
--version = "=4.12.0"
-+version = "=4.13.0"
- 
- [[bin]]
- name = "snarkos"
+     pub(crate) fn sample_proposal_cache(
+         signer: &PrivateKey<CurrentNetwork>,
 ```
 
-**File**: `account/Cargo.toml` (modified, +1/-1)
+**File**: `node/bft/src/helpers/signed_proposals.rs` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-account"
--version = "4.12.0"
-+version = "4.13.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "Account for a decentralized operating system"
- homepage = "https://aleo.org"
-```
-
-**File**: `cli/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-cli"
--version = "4.12.0"
-+version = "4.13.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "Command-line interface for snarkOS"
- homepage = "https://aleo.org"
-```
-
-**File**: `display/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-display"
--version = "4.12.0"
-+version = "4.13.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "A display for a decentralized operating system"
- homepage = "https://aleo.org"
-```
-
-**File**: `ledger-distribution/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-ledger-distribution"
--version = "4.12.0"
-+version = "4.13.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "Uploads the ledger's blocks to the bucket that serves the snarkOS block CDN"
- homepage = "https://aleo.org"
-```
-
-**File**: `node/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-node"
--version = "4.12.0"
-+version = "4.13.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "A node for a decentralized operating system"
- homepage = "https://aleo.org"
-```
-
----
-
-### Incident Patch 2: `186f199a` (2026-11-11)
-**Commit Message**: Resolve Cargo.lock: keep staging's snarkVM and bump the workspace crates to 4.13.0
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +0/-244)
-```diff
-@@ -5908,11 +5908,7 @@ dependencies = [
- [[package]]
- name = "snarkvm"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
- dependencies = [
-  "anyhow",
-  "dotenvy",
-@@ -5934,11 +5930,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
- dependencies = [
-  "ahash",
-  "aleo-std",
-@@ -5966,11 +5958,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms-cuda"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
- dependencies = [
-  "blst",
-  "cc",
-@@ -5983,11 +5971,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
- dependencies = [
-  "snarkvm-circuit-account",
-  "snarkvm-circuit-algorithms",
-@@ -6001,11 +5985,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-account"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
- dependencies = [
-  "snarkvm-circuit-network",
-  "snarkvm-circuit-types",
-@@ -6015,11 +5995,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-algorithms"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
- dependencies = [
-  "snarkvm-circuit-types",
-  "snarkvm-console-algorithms",
-@@ -6029,11 +6005,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-collections"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-types",
-@@ -6043,11 +6015,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
- dependencies = [
-  "anyhow",
-  "indexmap 2.14.2",
-@@ -6067,20 +6035,12 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment-witness"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3#a78dd20b33a5f4d898400d1d6e80e6c1745813b3"
--=======
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=8d4ca1b931845c2c0655e2f65be86e7d95813638#8d4ca1b931845c2c0655e2f65be86e7d95813638"
-->>>>>>> 59ac175493b798be409b140158d59c042a037819
+@@ -114,7 +114,7 @@ pub(crate) mod tests {
  
- [[package]]
- name = "snarkvm-circuit-network"
- version = "4.13.0"
--<<<<<<< HEAD
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d89
+     type CurrentNetwork = MainnetV0;
+ 
+-    const ITERATIONS: usize = 100;
++    const ITERATIONS: usize = 10;
+ 
+     pub(crate) fn sample_signed_proposals(
+         signer: &PrivateKey<CurrentNetwork>,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4669** (closed): test: do not merge - documentation-only CI probe (@cbeck88)
+- **PR #4667** (2026-11-15): Lower iteration counts in randomized round-trip tests (@cbeck88)
+- **PR #4666** (2026-11-13): Bump snarkVM to aleo-labs-protocol/snarkVM@5c39efdc1 (@aleo-labs-merge-bot[bot])
+- **PR #4665** (2026-11-13): Open the snarkVM bump pull request with gh-actions' bump-pr (@cbeck88)
+- **PR #4663** (2026-11-12): Bump snarkVM to aleo-labs-protocol/snarkVM@dc6863ed3 (@aleo-labs-merge-bot[bot])
 - **PR #4661** (2026-11-11): Merge testnet into staging (@aleo-labs-merge-bot[bot])
-- **PR #4660** (2026-11-11): Relock only the snarkVM crates when bumping snarkVM (@cbeck88)
-- **PR #4659** (2026-11-11): Bump snarkVM to aleo-labs-protocol/snarkVM@a78dd20b3 (@aleo-labs-merge-bot[bot])
-- **PR #4658** (2026-11-10): [Release] Testnet v4.13.0 (@snarkworld)
-- **PR #4657** (2026-11-10): Gauntlet workflows: rename secrets and variables to GAUNTLET_* (@cbeck88-ai-dev)
-- **PR #4656** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@aa342cfe7 (@aleo-labs-merge-bot[bot])
 
 ---
 
@@ -2554,31 +2096,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging
+## X. Empirical Invariant Guard in decrypt.rs
 
 **RULE**:
-When implementing operations in `.cargo/release-version`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/src/commands/developer/decrypt.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2bfa52b`: Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2299a19b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/release-version`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/src/commands/developer/decrypt.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-v4.13.0
+    const ITERATIONS: usize = 100;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-v4.12.1
+// Induced defect failure mode:
+    const ITERATIONS: usize = 1000;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2bfa52b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2299a19b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

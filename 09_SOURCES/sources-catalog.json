@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "1f0ceab5",
+    "sourceVersion": "2299a19b",
     "license": "Apache-2.0",
-    "contentHash": "496e828588f077f8f0de650a17a53a07c3f502d8a45be017fc92ad2aa6be84a9",
-    "lastHarvestedAt": "2026-11-13T20:54:30.712Z",
+    "contentHash": "bdf37aa45793ffaeaf74ce0677c971cfd7c2b1ee542bd36f8046dfd1b4e492f1",
+    "lastHarvestedAt": "2026-11-16T05:10:45.625Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {

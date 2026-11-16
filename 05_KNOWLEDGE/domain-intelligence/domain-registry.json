@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T04:53:37.102Z",
-  "total_records": 1228,
+  "last_updated": "2026-11-16T05:10:50.045Z",
+  "total_records": 1229,
   "domains": {
     "A": {
       "total": 7,
@@ -657,7 +657,7 @@
       ]
     },
     "G": {
-      "total": 221,
+      "total": 222,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -879,7 +879,8 @@
         "domain_intelligence-architecture-intelligence-juullabs-kable-core-invariants",
         "domain_intelligence-architecture-intelligence-juullabs-kable-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
-        "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7332,10 +7333,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "0b80ea4ef92ad8359bc2234c6b4ae3db73e962286e370c0e60ab1b936b768c19",
-      "created_at": "2026-11-16T01:45:22.458Z"
+      "content_hash": "5e428c87669b09dbe8990a2b485183f27b2af521a90dae8c510e728778a3b4aa",
+      "created_at": "2026-11-16T05:10:45.891Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -14019,8 +14020,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "06bc74eb0ac84eb3515713e968b5389a853c6ca1ffee3b54f465452c85425202",
-      "created_at": "2026-11-16T03:23:27.902Z"
+      "content_hash": "e9c9875bf48330cd39275287eed71c6cace11a8fa2aa1778b43d7a9d225970fa",
+      "created_at": "2026-11-16T05:10:50.045Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -22399,8 +22400,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "6dc702b74d94956fa4af8a78b03156a8e589434f3830bbabe031c6b35efef26d",
-      "created_at": "2026-11-16T03:48:44.226Z"
+      "content_hash": "bd15becb5178143444221e7e1bfd2ef81ad7c07c2cee46a62c437215df05816b",
+      "created_at": "2026-11-16T05:10:49.468Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -22743,6 +22744,15 @@
       "repository": "mikepenz-multiplatform-markdown-renderer-learnings",
       "content_hash": "2dd3598b969f12e805813208c5814af52833ce757ef83d65a459aaf63be78b0a",
       "created_at": "2026-11-16T04:53:35.715Z"
+    },
+    "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "content_hash": "e6b0e9d862f1c9543f8ab65525b7fe0410778cc77ccb02e1bc865c79986e8e02",
+      "created_at": "2026-11-16T05:10:49.006Z"
     }
   }
 }

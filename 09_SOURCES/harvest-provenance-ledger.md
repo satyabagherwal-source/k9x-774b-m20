@@ -10276,3 +10276,4 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `53b7f598` | Multi-dimensional audit evidence | 2026-11-16T04:53:17.305Z |
 | `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `8077f612` | Multi-dimensional audit evidence | 2026-11-16T04:53:22.657Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `149cd0ad` | Multi-dimensional audit evidence | 2026-11-16T04:53:30.434Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `2299a19b` | Multi-dimensional audit evidence | 2026-11-16T05:10:45.625Z |
