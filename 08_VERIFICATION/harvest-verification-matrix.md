@@ -10255,3 +10255,4 @@
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T05:42:06.332Z` | `joreilly-confetti` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-925AEC0F` [Domain F] | Yes (`148b1764...`) |
 | `CYCLE-20261116-G1C0` | `2026-11-16T06:17:32.352Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8721` | Yes (`d8cd0526...`) |
 | `CYCLE-20261116-GAVV` | `2026-11-16T06:17:44.731Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8722` | Yes (`34a25854...`) |
+| `CYCLE-20261116-Y8CQ` | `2026-11-16T06:59:40.874Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8723` | Yes (`b770a9b8...`) |

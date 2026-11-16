@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:01.741Z",
+  "timestamp": "2026-11-16T06:59:44.175Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-tursodatabase-limbo-learnings",
+  "learning_id": "LEARN-EVO-tursodatabase-limbo-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-limbo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:01.741Z`  
-> **Learning ID**: `LEARN-REEXTRACT-tursodatabase-limbo-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T06:59:44.175Z`  
+> **Learning ID**: `LEARN-EVO-tursodatabase-limbo-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `719fcc41`  
+> **Source Version**: `323ddd36`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:55:11.717Z  
+> **Timestamp**: 2026-11-16T06:59:39.957Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:55:11.698Z  
+> **Harvest Timestamp**: 2026-11-16T06:59:39.848Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25229 stars
+- **Stars / Engagement**: 25267 stars
 
 ---
 
@@ -81,7 +81,9 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use std::sync::Arc;
 use std::time::Duration;
 use tempfile::TempDir;
-use turso_core::{ConnectOpts, Connection, Database, PlatformIO, Statement, StepResult, Value};
+use turso_core::{
+    ConnectOpts, Connection, Database, PlatformIO, SessionRole, Statement, StepResult, Value,
+};
 use turso_sqlite::SqliteDialect;
 
 #[cfg(not(target_family = "wasm"))]
@@ -102,7 +104,9 @@ fn seed_db() -> Fixture {
     #[allow(clippy::arc_with_non_send_sync)]
     let io = Arc::new(PlatformIO::new().unwrap());
     let db = Database::open_file(io, path.to_str().unwrap(), Arc::new(SqliteDialect)).unwrap();
-    let conn = db.connect(ConnectOpts::new()).unwrap();
+    let conn = db
+        .connect(ConnectOpts::new(SessionRole::Superuser))
+        .unwrap();
 
     conn.execute("PRAGMA cache_size=-65536").unwrap(); //negative means kibibytes (https://sqlite.org/pragma.html#pragma_cache_size)
     conn.execute(
@@ -1453,13 +1457,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11737** (2026-11-12): **postgres: drop SQL functions with DROP FUNCTION**
-  *Symptoms*: ## Description  **This PR is part of #11725 now.** Its two commits (`DROP FUNCTION`, and `DROP SCHEMA ... CASCADE` with functions) moved to the branch of #11725, because `CREATE FUNCTION` without `DROP FUNCTION` is not a complete change: a stored function could not be removed. GitHub shows this PR as merged for that reason. It is not merged into `main`.  See #11725 for the description and the stack order.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_01SLcVSJFZw3qJhrS7iwMo88
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Review cancelled: the pull request was closed. 
+- **Issue #11866** (2026-11-16): **tests: move the WAL tests that need only the pager's WAL out of core**
+  *Symptoms*: 13 WAL tests in `core/storage/wal.rs` create tables and insert rows with SQL, so they need a dialect. Core is to stop having one (#11816). This moves them to `tests/integration/wal/test_checkpoint.rs`, which already has the same fixtures.  ## New public API  One method, in its own commit:  ```rust /// The write-ahead log of this pager, or `None` if there is no WAL. pub fn wal(&self) -> Option<&Arc<dyn Wal>> ```  `Connection::get_pager()` and the `Wal` trait are already public; only the pager's `wal` field was not. The tests call `Wal` methods such as `begin_read_tx`, `begin_write_tx`, `checkpoint` and `holds_read_lock` directly.  ## How the test bodies change  Only where they reached private state:  - `conn.pager.load()` becomes `conn.get_pager()`. - `pager.wal.as_ref()` becomes `pager.wal()`. - Six reads of `Database.shared_wal` (the last frame number and the number of backfilled frames) become `Pager::wal_max_frame()` and `Pager::wal_backfill_frame()`, which already exist. Before the move I asserted in core, at each of these six places, that the getter returns the same value as the private read; the tests passed with those assertions. The assertions are not part of this PR.  ## What stays in core  11 WAL tests that open a database stay, because they need more than this one method: the read-mark slots (5), the WAL header salts (1), the WAL file handle (1), a test-only frame counter (1), a private field of `WalFile` (1), and two tests compiled only with `cfg(host_shared_wal)`
 
-- **Issue #11724** (2026-11-11): **limbo_sim: DeleteSelect fails in MVCC mode when a forced COMMIT ends the deleting transaction before the SELECT**
-  *Symptoms*: ## Summary  In MVCC mode, the `DeleteSelect` property of `limbo_sim` fails with this assertion:  ``` Assertion '`SELECT * FROM t WHERE (p)` should return no values for table `t`' failed: expected no rows but got N rows ```  The engine is correct. The property is wrong. The rows that the `SELECT` finds were not visible to the snapshot of the `DELETE`.  ## Reproduction  On `main` at d5fdf4d8, each of these seeds fails with this assertion:  ```bash cargo run --release -p limbo_sim -- --disable-bugbase --mvcc true --seed 1 ```  ```bash cargo run --release -p limbo_sim -- --disable-bugbase --mvcc true --seed 26134076604605 ```  ```bash cargo run --release -p limbo_sim -- --disable-bugbase --mvcc true --seed 17106953217057 ```  ```bash cargo run --release -p limbo_sim -- --disable-bugbase --mvcc true --profile write_stress --seed 7115677748372 ```  In a loop of random seeds with `--mvcc true`, about 1 run in 12 failed this way.  ## Root cause  `DeleteSelect` runs these steps on one connection:  1. `DELETE FROM t WHERE p` 2. 0 to 2 random queries 3. `SELECT * FROM t WHERE p`, which must return no rows  The filter for step 2 rejects queries that insert or update rows of `t` (`testing/simulator/generation/property.rs`, `Property::DeleteSelect`). The filter does not know about the writes of other connections.  In MVCC mode, the simulator opens only `BEGIN CONCURRENT` transactions. Before a statement that needs an exclusive transaction (DDL, `PRAGMA auto_vacuum`, `setval`), `PlanGenerat
+- **Issue #11859** (2026-11-15): **postgres: give an integer primary key its default and reject NULL, with a flag on the INSERT statement**
+  *Symptoms*: A single-column `INTEGER PRIMARY KEY` is the rowid of its table. The PostgreSQL frontend translates `int`, `integer` and the serial types to `INTEGER`, so its keys are rowids too, and INSERT treated them the way SQLite does. The two systems differ in two cases:  | | Key not given | Key is NULL when the row is written | |---|---|---| | SQLite | the key becomes NULL | a new rowid is generated | | PostgreSQL | the key takes the column `DEFAULT`, NULL if there is none | the INSERT fails with 23502 |  In SQLite a key that is not given is one more way for the key to be NULL, and a NULL key always gets a new rowid: `VALUES (NULL)`, `SELECT NULL` and a NULL parameter all do. That is why the generated rowid is not an ordinary default, which applies only to a column that is not given. So in the PostgreSQL frontend a `serial` key never called its sequence, and a NULL key was accepted.  The column cannot say which row of the table applies, because SQLite ignores both `DEFAULT` and `NOT NULL` on an integer primary key:  ```sql CREATE TABLE t (id INTEGER PRIMARY KEY NOT NULL DEFAULT 7, v); INSERT INTO t (v) VALUES ('x');      -- id is 1 INSERT INTO t VALUES (NULL, 'y');    -- id is 2 ```  ## Who decides  The statement: `ast::Stmt::Insert` gets a field, `integer_primary_key_takes_default`. The SQLite parser sets it to false, so SQLite is unchanged, and the PostgreSQL translator sets it to true on every INSERT it builds.  The field has no SQL text, so code that builds an INSERT from another 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1476,1401 +1478,1291 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `719fcc41` (2026-11-12)
-**Commit Message**: Merge 'postgres: Add row-level security policies' from Pekka Enberg
+### Incident Patch 1: `7f0bfbef` (2026-11-15)
+**Commit Message**: Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pekka Enberg
 
-This PR adds row-level security policies to the PostgreSQL frontend, so
-that a table can be protected with policies such as:
+Most b-tree unit tests need only a pager. Their fixtures opened a whole
+database to get one. Opening a database needs a dialect, so these tests
+used `EngineDialect` although they never pass SQL to it. This is one
+step towards removing `EngineDialect` from core (#11816).
 
-```sql
-ALTER TABLE docs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY own_docs ON docs USING (owner = (SELECT auth.uid()));
-```
+## What changes
 
-On `main`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` works, but
-`CREATE POLICY` does not, so a table with row-level security hides every
-row from every role except superusers and the table's owner. With this
-PR, the table's policies decide which rows each role reads, updates and
-deletes, and which new rows it may write, following PostgreSQL's rules.
+Only test code in `core/storage/btree.rs`:
 
-It builds on #11678, which lets roles write the tables they have
-`GRANT`ed privileges on, and #11703, which allows only superusers to
-access the engine's internal tables.
+- New fixture `empty_pager()` builds a pager over an in-memory file,
+with no `Database` and no `Connection`. `setup_test_env()` already did
+this and now shares the code.
+- `empty_btree()` uses it and returns only the pager and the root page
+(39 callers).
+- `get_database()` is removed. Its 17 callers connected only to hand a
+connection to `add_record()`, which used nothing but the connection's
+pager; `add_record()` now takes the pager.
+- `btree_with_virtual_page_1` uses `empty_pager()` too.
 
-### Storing policies
+## What stays
 
-`CREATE POLICY` and `DROP POLICY` are parsed into the syntax tree. The
-engine checks a policy's conditions when it is created, as PostgreSQL
-does. A condition may use the table's columns and call scalar functions
-such as `current_user` or `auth.uid()`. Subqueries with `FROM`,
-parameters, aggregate and window functions are refused,
+- Four fuzz tests commit through `Pager::commit_tx`, which takes a
+connection. They still open a database, through a fixture now named
+`empty_btree_in_database()`.
+- Tests in the file that execute SQL still open a database.
 
-**File**: `cli/mcp_server.rs` (modified, +2/-0)
+## Differences in what the tests exercis
+
+**File**: `core/storage/btree.rs` (modified, +142/-212)
 ```diff
-@@ -87,6 +87,8 @@ impl StmtClass {
-             | Stmt::CreateSequence { .. }
-             | Stmt::CreateSchema { .. }
-             | Stmt::DropSchema { .. }
-+            | Stmt::CreatePolicy(_)
-+            | Stmt::DropPolicy { .. }
-             | Stmt::DropIndex { .. }
-             | Stmt::DropTable { .. }
-             | Stmt::DropTrigger { .. }
-```
-
-**File**: `core/dialect/mod.rs` (modified, +36/-5)
-```diff
-@@ -21,12 +21,14 @@ use crate::{
-     function::ScalarFunc,
-     namespace::NamespaceId,
-     schema::{BTreeTable, RelationKind, Schema},
--    security::roles::RoleId,
-+    security::{policy::RowPolicy, roles::RoleId},
-     vdbe::{builder::ProgramBuilder, Register},
-     Clock, CollationSeq, Connection, Func, LimboError, OpenOptions, Result, Value, IO,
- };
- use std::{any::Any, sync::Arc};
--use turso_parser::ast::{Cmd, CreateTableBody, Grantee, Privilege, QualifiedName, RoleSpec, Stmt};
-+use turso_parser::ast::{
-+    self, Cmd, CreateTableBody, Grantee, Privilege, QualifiedName, RoleSpec, Stmt,
-+};
- 
- /// Prefix the PostgreSQL frontend puts before the `CREATE TABLE` text it
- /// stores in `sqlite_schema`.
-@@ -76,6 +78,20 @@ pub enum RelationChange {
-         name: String,
-         enabled: bool,
-     },
-+    /// `CREATE POLICY` on table `name`. Its expressions refer to the
-+    /// table's columns by their unqualified names.
-+    CreatePolicy {
-+        namespace: NamespaceId,
-+        name: String,
-+        policy: Box<ast::CreatePolicy>,
-+    },
-+    /// `DROP POLICY policy_name ON name`.
-+    DropPolicy {
-+        namespace: NamespaceId,
-+        name: String,
-+        policy_name: String,
-+        if_exists: bool,
-+    },
- }
- 
- /// Whom a relation belongs to after a [`RelationChange::ChangeOwner`].
-@@ -349,8 +365,9 @@ pub trait Dialect: Send + Sync + 'static {
-     /// comes with its automatic indexes in one call. Does nothing for a
-     /// dialect without schema state of its own, except that such a dialect
-     /// has no ownership, privileges or row-level security and refuses
--    /// `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`, `GRANT` and
--    /// `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`.
-+    /// `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`, `GRANT`,
-+    /// `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`, `CREATE POLICY` and
-+    /// `DROP POLICY`.
-     fn translate_relation_changes(
-         &self,
-         program: &mut ProgramBuilder,
-@@ -380,7 +397,9 @@ pub trait Dialect: Send + Sync + 'static {
-                 RelationChange::Grant { .. } => {
-                     return Err(LimboError::ParseError("GRANT is not supported".to_string()));
-                 }
--                RelationChange::SetRowSecurity { .. } => {
-+                RelationChange::SetRowSecurity { .. }
-+                | RelationChange::CreatePolicy { .. }
-+                | RelationChange::DropPolicy { .. } => {
-                     return Err(LimboError::ParseError(
-                         "row-level security is not supported".to_string(),
-                     ));
-@@ -448,6 +467,18 @@ pub trait Dialect: Send + Sync + 'static {
-         false
-     }
- 
-+    /// The policies of table `name` of `namespace`, for every role and
-+    /// command. A dialect without row-level security has none.
-+    fn row_security_policies<'a>(
-+        &self,
-+        schema: &'a Schema,
-+        namespace: NamespaceId,
-+        name: &str,
-+    ) -> &'a [RowPolicy] {
-+        let _ = (schema, namespace, name);
-+        &[]
-+    }
-+
-     /// Whether `PRAGMA capture_data_changes_conn` may create its change
-     /// tables in a database of this dialect.
-     ///
-```
-
-**File**: `core/incremental/vdbe_maintenance/binding.rs` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ pub(super) fn make_joined_table(
-         namespace: NamespaceRef::root_of(crate::MAIN_DB_ID),
-         indexed: None,
-         plan_estimate: None,
-+        row_filter: None,
-     }
- }
- 
-```
-
-**File**: `core/security/permission.rs` (modified, +18/-8)
-```diff
-@@ -32,27 +32,33 @@ impl PermissionDenied {
-         }
-     }
- 
--    /// The row-level security policy of `table` does not let the role write
--    /// a row to it.
--    pub fn policy(table: Object) -> Self {
-+    /// A row that the role writes to `table` fails a condition of the
-+    /// table's row-level security policies: of restrictive policy `policy`,
-+    /// or of the permissive policies together when it is None. The condition
-+    /// is a USING condition checked on the existing row when
-+    /// `using_condition` is set, and otherwise one checked on the new row.
-+    pub fn policy(table: Object, policy: Option<String>, using_condition: bool) -> Self {
-         Self {
-             action: Action::Write,
-             object: table,
--            reason: Reason::Policy,
-+            reason: Reason::Policy {
-+                policy,
-+                using_condition,
-+            },
-         }
-     }
- }
- 
- impl fmt::Display for PermissionDenied {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        match self.reason {
-+        match &self.reason {
-             Reason::Privilege => write!(f, "permission denied: {} on {}", self.action, self.object),
-             Reason::Owner => write!(
-                 f,
-                 "permission denied: {} on {} needs its owner",
-                 self.action, self.object
-             ),
--            Reason::Policy => write!(
-+            Reason::Policy { .. } => write!(
-                 f,
-                 "permission denied: {} on {} violates its row-level security policy",
-                 self.action, self.object
-@@ -61,11 +67,15 @@ impl fmt::Display for PermissionDenied {
-     }
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+#[derive(Debug, Clone, PartialEq, Eq)]
- pub enum Reason {
-     Privilege,
-     Owner,
--    Policy,
-+    /// See [`PermissionDenied::policy`].
-+    Policy {
-+        policy: Option<String>,
-+        using_condition: bool,
-+    },
- }
- 
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-```
-
-**File**: `core/security/policy.rs` (modified, +53/-11)
-```diff
-@@ -1,13 +1,18 @@
- //! Row-level security policies.
- //!
- //! A table with row-level security limits which of its rows a role may
--//! access. Which tables have it is part of the dialect's schema state, like
--//! the owner of a table, and [`crate::Dialect::table_rls_enabled`] says
--//! which tables have it.
-+//! access. Which tables have it and their policies are part of the dialect's
-+//! schema state, like the owner of a table.
-+//! [`crate::Dialect::table_rls_enabled`] says which tables have it, and
-+//! [`crate::Dialect::row_security_policies`] gives the policies.
- //!
--//! Policies cannot be created yet, so a table with row-level security hides
--//! every row from every role it applies to, as a PostgreSQL table with
--//! row-level security and no policies does.
-+//! A role reads the rows that pass at least one of the permissive policies
-+//! and every restrictive policy that apply to it, as in PostgreSQL. Without
-+//! a permissive policy no row passes.
-+
-+use turso_parser::ast;
-+
-+use crate::security::roles::RoleId;
- 
- /// What a statement does to the rows of a table.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -19,11 +24,48 @@ pub enum Command {
-     Truncate,
- }
- 
--/// Which rows of a table a role may access.
--#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+/// Whether row-level security limits which rows of a table a role may
-+/// access for a command.
-+#[derive(Debug, Clone, PartialEq, Eq)]
- pub enum Policy {
--    /// Every row.
-+    /// It does not: the role may access every row.
-     Allow,
--    /// No row.
--    Deny,
-+    /// These policies of the command, the ones that apply to the role,
-+    /// decide. Without a permissive one among them, no row passes.
-+    Apply(Vec<RowPolicy>),
-+}
-+
-+/// A policy of a table, as `CREATE POLICY` defines it.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct RowPolicy {
-+    pub name: String,
-+    /// Permissive policies combine with OR, restrictive ones with AND.
-+    pub permissive: bool,
-+    pub command: ast::PolicyCommand,
-+    /// The roles the policy applies to. [`RoleId::PUBLIC`] stands for every
-+    /// role.
-+    pub roles: Vec<RoleId>,
-+    /// Which existing rows the policy lets the roles access. It refers to the
-+    /// columns of the table by their unqualified names.
-+    pub using_expr: Option<ast::Expr>,
-+    /// Which new rows the policy lets the roles write.
-+    pub check_expr: Option<ast::Expr>,
-+}
-+
-+impl RowPolicy {
-+    /// Whether the policy decides which rows `role` may access for `command`.
-+    pub fn applies_to(&self, command: Command, role: RoleId) -> bool {
-+        let command_matches = match self.command {
-+            ast::PolicyCommand::All => true,
-+            ast::PolicyCommand::Select => command == Command::Select,
-+            ast::PolicyCommand::Insert => command == Command::Insert,
-+            ast::PolicyCommand::Update => command == Command::Update,
-+            ast::PolicyCommand::Delete => command == Command::Delete,
-+        };
-+        command_matches
-+            && self
-+                .roles
-+                .iter()
-+                .any(|policy_role| *policy_role == RoleId::PUBLIC || *policy_role == role)
-+    }
- }
-```
-
-**File**: `core/translate/alter.rs` (modified, +8/-0)
-```diff
-@@ -760,6 +760,7 @@ fn emit_column_constraints_validation(
-                 namespace,
-                 indexed: None,
-                 plan_estimate: None,
-+                row_filter: None,
-             }],
-             vec![],
-         );
-@@ -941,6 +942,12 @@ pub fn translate_alter_table(
-         }
-         ast::AlterTableBody::DropColumn(column_name) => {
-             let column_name = column_name.as_str();
-+            row_security::reject_change_of_policy_column(
-+                resolver,
-+                namespace,
-+                table_name,
-+                column_name,
-+            )?;
- 
-             // Tables always have at least one column.
-             turso_assert_ne!(btree.columns().len(), 0);
-@@ -1869,6 +1876,7 @@ pub fn translate_alter_table(
- 
-             let from = from.as_str();
-             let col_name = col_name.as_str();
-+            row_security::reject_change_of_policy_column(resolver, namespace, table_name, from)?;
- 
-             let Some((column_index, _)) = btree.get_column(from) else {
-                 return Err(LimboError::ParseError(format!(
-```
-
-**File**: `core/translate/collate.rs` (modified, +4/-0)
-```diff
-@@ -1614,6 +1614,7 @@ mod tests {
-             join_info: None,
-             table,
-             plan_estimate: None,
-+            row_filter: None,
-             indexed: None,
-         });
- 
-@@ -1650,6 +1651,7 @@ mod tests {
-             internal_id: TableInternalId::from(1),
-             join_info: None,
-             plan_estimate: None,
-+            row_filter: None,
-             table: Table::BTree(Arc::new(BTreeTable::new(
-                 0,
-                 "t1".to_string(),
-@@ -1688,6 +1690,7 @@ mod tests {
-             internal_id: TableInternalId::from(2),
-             join_info: None,
-             plan_estimate: None,
-+            row_filter: None,
-             table: Table::BTree(Arc::new(BTreeTable::new(
-                 0,
-                 "t2".to_string(),
-@@ -1736,6 +1739,7 @@ mod tests {
-             internal_id: TableInternalId::from(1),
-             join_info: None,
-             plan_estimate: None,
-+            row_filter: None,
-             indexed: None,
-             table: Table::BTree(Arc::new(BTreeTable::new(
-                 0,
-```
-
-**File**: `core/translate/delete.rs` (modified, +56/-23)
-```diff
-@@ -126,7 +126,6 @@ pub fn translate_delete(
-         returning,
-         indexed,
-         with,
--        command,
-         connection,
-         namespace,
-     )?;
-@@ -146,15 +145,30 @@ pub fn translate_delete(
-                 connection,
-             )?;
-         }
--        check_delete_privileges(delete_plan_inner, privilege, resolver, connection)?;
-+        let reads_target_columns = delete_reads_target_columns(delete_plan_inner)?;
-         let target = &delete_plan_inner.table_references.joined_tables()[0];
-+        roles::check_write_privileges(
-+            resolver,
-+            connection,
-+            target.namespace,
-+            target.table.get_name(),
-+            privilege,
-+            reads_target_columns,
-+        )?;
-         roles::hide_constraint_values_from_role_without_select(
-             program,
-             resolver,
-             connection,
-             target.namespace,
-             target.table.get_name(),
-         );
-+        filter_deleted_rows(
-+            delete_plan_inner,
-+            command,
-+            reads_target_columns,
-+            resolver,
-+            program,
-+        )?;
-     }
- 
-     optimize_plan(program, &mut delete_plan, resolver, connection)?;
-@@ -201,16 +215,11 @@ pub fn translate_delete(
-     Ok(())
- }
- 
--/// Checks the privileges on the target table: `privilege`, and SELECT too
--/// when WHERE or RETURNING reads the table's columns, as in PostgreSQL.
--/// Subqueries must be planned first, so that only a subquery that refers to
--/// the target table counts as reading it.
--fn check_delete_privileges(
--    plan: &DeletePlan,
--    privilege: ast::Privilege,
--    resolver: &Resolver,
--    connection: &Arc<crate::Connection>,
--) -> Result<()> {
-+/// Whether WHERE or RETURNING reads the columns of the target table, which
-+/// makes the DELETE need SELECT on it and its SELECT policies apply, as in
-+/// PostgreSQL. Subqueries must be planned first, so that only a subquery
-+/// that refers to the target table counts as reading it.
-+fn delete_reads_target_columns(plan: &DeletePlan) -> Result<bool> {
-     let target = &plan.table_references.joined_tables()[0];
-     let reads_in_where = match &plan.rowset_plan {
-         Some(rowset_plan) => roles::reads_columns_of(
-@@ -229,14 +238,40 @@ fn check_delete_privileges(
-         plan.result_columns.iter().map(|column| &column.expr),
-         &plan.non_from_clause_subqueries,
-     )?;
--    roles::check_write_privileges(
--        resolver,
--        connection,
--        target.namespace,
--        target.table.get_name(),
--        privilege,
--        reads_in_where || reads_in_returning,
--    )
-+    Ok(reads_in_where || reads_in_returning)
-+}
-+
-+/// Limits the rows that `command`, DELETE or TRUNCATE, removes to those
-+/// its row-level security policies allow, and to those the SELECT policies
-+/// allow too when `reads_target_columns`. The filter goes where the WHERE
-+/// clause is, in the plan that collects the rowids when there is one.
-+fn filter_deleted_rows(
-+    plan: &mut DeletePlan,
-+    command: Command,
-+    reads_target_columns: bool,
-+    resolver: &Resolver,
-+    program: &mut ProgramBuilder,
-+) -> Result<()> {
-+    let mut commands = vec![command];
-+    if reads_target_columns {
-+        commands.push(Command::Select);
-+    }
-+    match &mut plan.rowset_plan {
-+        Some(rowset_plan) => row_security::filter_rows(
-+            &commands,
-+            &mut rowset_plan.table_references,
-+            &mut rowset_plan.where_clause,
-+            resolver,
-+            program,
-+        ),
-+        None => row_security::filter_rows(
-+            &commands,
-+            &mut plan.table_references,
-+            &mut plan.where_clause,
-+            resolver,
-+            program,
-+        ),
-+    }
- }
- 
- #[allow(clippy::too_many_arguments)]
-@@ -250,7 +285,6 @@ pub fn prepare_delete_plan(
-     mut returning: Vec<ResultColumn>,
-     indexed: Option<turso_parser::ast::Indexed>,
-     with: Option<With>,
--    command: Command,
-     connection: &Arc<crate::Connection>,
-     namespace: NamespaceRef,
- ) -> Result<Plan> {
-@@ -283,6 +317,7 @@ pub fn prepare_delete_plan(
-         namespace,
-         indexed,
-         plan_estimate: None,
-+        row_filter: None,
-     }];
-     let mut table_references = TableReferences::new(joined_tables, vec![]);
- 
-@@ -315,8 +350,6 @@ pub fn prepare_delete_plan(
-         &mut where_predicates,
-         resolver,
-     )?;
--    row_security::filter_rows(command, &table_references, &mut where_predicates, resolver)?;
--
-     // Plan subqueries in RETURNING expressions before processing
-     // (so SubqueryResult nodes are cloned into result_columns)
-     let mut non_from_clause_subqueries = vec![];
-```
-
----
-
-### Incident Patch 2: `510b6fc6` (2026-11-11)
-**Commit Message**: core/translate: apply row-level security policies to writes
-
-Roles could write the tables they have privileges on, but a table with
-row-level security still refused every write by a role that does not own
-it, whatever its policies said, so the policies FOR INSERT, UPDATE and
-DELETE and the WITH CHECK conditions did nothing.
-
-Writes now follow PostgreSQL's rules. UPDATE and DELETE change only the
-rows that pass the USING conditions of the command's policies, and of the
-SELECT policies too when the statement reads the table's columns. A new
-row that INSERT or UPDATE writes must pass the WITH CHECK conditions of
-the command's policies, or their USING conditions where they have none,
-and the SELECT policies when the statement reads the table's columns, as
-RETURNING does. A row that fails is an error, 42501 "new row violates
-row-level security policy", naming the restrictive policy that failed; a
-condition that is NULL fails too.
-
-UPDATE and DELETE apply the policies where they check their privileges,
-after their subqueries are planned, so a subquery that does not read the
-table brings in no SELECT policies, as it needs no SELECT privilege. A
-DELETE that collects its rowids first, for t
-
-**File**: `core/translate/delete.rs` (modified, +55/-29)
-```diff
-@@ -126,7 +126,6 @@ pub fn translate_delete(
-         returning,
-         indexed,
-         with,
--        command,
-         connection,
-         namespace,
-     )?;
-@@ -146,15 +145,30 @@ pub fn translate_delete(
-                 connection,
-             )?;
-         }
--        check_delete_privileges(delete_plan_inner, privilege, resolver, connection)?;
-+        let reads_target_columns = delete_reads_target_columns(delete_plan_inner)?;
-         let target = &delete_plan_inner.table_references.joined_tables()[0];
-+        roles::check_write_privileges(
-+            resolver,
-+            connection,
-+            target.namespace,
-+            target.table.get_name(),
-+            privilege,
-+            reads_target_columns,
-+        )?;
-         roles::hide_constraint_values_from_role_without_select(
-             program,
-             resolver,
-             connection,
-             target.namespace,
-             target.table.get_name(),
-         );
-+        filter_deleted_rows(
-+            delete_plan_inner,
-+            command,
-+            reads_target_columns,
-+            resolver,
-+            program,
-+        )?;
-     }
- 
-     optimize_plan(program, &mut delete_plan, resolver, connection)?;
-@@ -201,16 +215,11 @@ pub fn translate_delete(
-     Ok(())
- }
- 
--/// Checks the privileges on the target table: `privilege`, and SELECT too
--/// when WHERE or RETURNING reads the table's columns, as in PostgreSQL.
--/// Subqueries must be planned first, so that only a subquery that refers to
--/// the target table counts as reading it.
--fn check_delete_privileges(
--    plan: &DeletePlan,
--    privilege: ast::Privilege,
--    resolver: &Resolver,
--    connection: &Arc<crate::Connection>,
--) -> Result<()> {
-+/// Whether WHERE or RETURNING reads the columns of the target table, which
-+/// makes the DELETE need SELECT on it and its SELECT policies apply, as in
-+/// PostgreSQL. Subqueries must be planned first, so that only a subquery
-+/// that refers to the target table counts as reading it.
-+fn delete_reads_target_columns(plan: &DeletePlan) -> Result<bool> {
-     let target = &plan.table_references.joined_tables()[0];
-     let reads_in_where = match &plan.rowset_plan {
-         Some(rowset_plan) => roles::reads_columns_of(
-@@ -229,14 +238,40 @@ fn check_delete_privileges(
-         plan.result_columns.iter().map(|column| &column.expr),
-         &plan.non_from_clause_subqueries,
-     )?;
--    roles::check_write_privileges(
--        resolver,
--        connection,
--        target.namespace,
--        target.table.get_name(),
--        privilege,
--        reads_in_where || reads_in_returning,
--    )
-+    Ok(reads_in_where || reads_in_returning)
-+}
-+
-+/// Limits the rows that `command`, DELETE or TRUNCATE, removes to those
-+/// its row-level security policies allow, and to those the SELECT policies
-+/// allow too when `reads_target_columns`. The filter goes where the WHERE
-+/// clause is, in the plan that collects the rowids when there is one.
-+fn filter_deleted_rows(
-+    plan: &mut DeletePlan,
-+    command: Command,
-+    reads_target_columns: bool,
-+    resolver: &Resolver,
-+    program: &mut ProgramBuilder,
-+) -> Result<()> {
-+    let mut commands = vec![command];
-+    if reads_target_columns {
-+        commands.push(Command::Select);
-+    }
-+    match &mut plan.rowset_plan {
-+        Some(rowset_plan) => row_security::filter_rows(
-+            &commands,
-+            &mut rowset_plan.table_references,
-+            &mut rowset_plan.where_clause,
-+            resolver,
-+            program,
-+        ),
-+        None => row_security::filter_rows(
-+            &commands,
-+            &mut plan.table_references,
-+            &mut plan.where_clause,
-+            resolver,
-+            program,
-+        ),
-+    }
- }
- 
- #[allow(clippy::too_many_arguments)]
-@@ -250,7 +285,6 @@ pub fn prepare_delete_plan(
-     mut returning: Vec<ResultColumn>,
-     indexed: Option<turso_parser::ast::Indexed>,
-     with: Option<With>,
--    command: Command,
-     connection: &Arc<crate::Connection>,
-     namespace: NamespaceRef,
- ) -> Result<Plan> {
-@@ -316,14 +350,6 @@ pub fn prepare_delete_plan(
-         &mut where_predicates,
-         resolver,
-     )?;
--    row_security::filter_rows(
--        &[command],
--        &mut table_references,
--        &mut where_predicates,
--        resolver,
--        program,
--    )?;
--
-     // Plan subqueries in RETURNING expressions before processing
-     // (so SubqueryResult nodes are cloned into result_columns)
-     let mut non_from_clause_subqueries = vec![];
-```
-
-**File**: `core/translate/emitter/update.rs` (modified, +19/-0)
-```diff
-@@ -466,6 +466,7 @@ pub fn emit_program_for_update(
-         target_table,
-         returning_buffer.as_ref(),
-         &mut update_subqueries,
-+        &plan.row_checks,
-     )?;
- 
-     // Close the main loop
-@@ -1100,6 +1101,7 @@ fn emit_update_insns<'a>(
-     target_table: Arc<JoinedTable>,
-     returning_buffer: Option<&ReturningBufferCtx>,
-     non_from_clause_subqueries: &mut [NonFromClauseSubquery],
-+    row_checks: &[crate::translate::row_security::RowCheck],
- ) -> crate::Result<()> {
-     let uses_write_set = temp_cursor_id.is_some();
-     let iteration_cursor_id = temp_cursor_id.unwrap_or(target_table_cursor_id);
-@@ -1835,6 +1837,23 @@ fn emit_update_insns<'a>(
-             });
-         }
- 
-+        // Rows that row-level security does not let the role write fail
-+        // before the CHECK constraints, as in PostgreSQL.
-+        crate::translate::row_security::emit_row_checks(
-+            program,
-+            &mut t_ctx.resolver,
-+            row_checks,
-+            &TableReferences::new(vec![target_table.as_ref().clone()], vec![]),
-+            effective_rowid_reg,
-+            btree_table.columns().iter().enumerate().map(|(idx, col)| {
-+                if col.is_rowid_alias() {
-+                    (col, effective_rowid_reg)
-+                } else {
-+                    (col, layout.to_register(start, idx))
-+                }
-+            }),
-+        )?;
-+
-         if !btree_table.check_constraints.is_empty() {
-             // SQLite only evaluates CHECK constraints that reference at least one
-             // column in the SET clause. Build a set of updated column names to filter.
-```
-
-**File**: `core/translate/insert.rs` (modified, +51/-20)
-```diff
-@@ -7,7 +7,6 @@ use crate::translate::emitter::RegisterColumn;
- use crate::translate::emitter::{
-     emit_index_column_value_old_image, emit_partial_index_where_old_image, gencol,
- };
--use crate::translate::plan::NonFromClauseSubquery;
- use crate::translate::{roles, row_security};
- use crate::turso_debug_assert;
- use crate::{
-@@ -344,7 +343,6 @@ pub fn translate_insert(
-             crate::util::table_name_for_error(&tbl_name)
-         );
-     };
--    row_security::check_insert(&btree_table, namespace, resolver)?;
- 
-     let BoundInsertResult {
-         mut values,
-@@ -427,14 +425,38 @@ pub fn translate_insert(
-     // Process RETURNING clause using shared module
-     let mut result_columns =
-         process_returning_clause(&mut returning, &mut table_references, resolver)?;
--    check_upsert_and_returning_privileges(
-+    let updates_on_conflict = upsert_actions
-+        .iter()
-+        .any(|(_, _, upsert)| matches!(upsert.do_clause, ast::UpsertDo::Set { .. }));
-+    let reads_columns = updates_on_conflict
-+        || upsert_actions
-+            .iter()
-+            .any(|(_, _, upsert)| upsert.index.is_some())
-+        || roles::reads_columns_of(
-+            table_references.joined_tables()[0].internal_id,
-+            result_columns.iter().map(|column| &column.expr),
-+            &returning_subqueries,
-+        )?;
-+    check_upsert_privileges(
-         &table_references,
--        &result_columns,
--        &returning_subqueries,
-         &upsert_actions,
-+        reads_columns,
-         resolver,
-         connection,
-     )?;
-+    let row_checks = row_security::new_row_checks(
-+        resolver,
-+        namespace,
-+        table_name.as_str(),
-+        crate::security::policy::Command::Insert,
-+        reads_columns,
-+    );
-+    if updates_on_conflict && !row_checks.is_empty() {
-+        return Err(crate::LimboError::ParseError(
-+            "ON CONFLICT DO UPDATE on a table whose row-level security limits the role is not supported yet"
-+                .to_string(),
-+        ));
-+    }
-     let has_fks = fk_enabled
-         && (resolver.with_schema(database_id, |s| {
-             s.has_child_fks(namespace.id, table_name.as_str())
-@@ -859,6 +881,25 @@ pub fn translate_insert(
-         )?;
-     }
- 
-+    // Rows that row-level security does not let the role write fail before
-+    // the CHECK constraints, as in PostgreSQL, and before ON CONFLICT looks
-+    // for a conflicting row, so that every row proposed is checked.
-+    crate::translate::row_security::emit_row_checks(
-+        program,
-+        resolver,
-+        &row_checks,
-+        &table_references,
-+        insertion.key_register(),
-+        insertion.col_mappings.iter().map(|m| {
-+            let reg = if m.column.is_rowid_alias() {
-+                insertion.key_register()
-+            } else {
-+                m.register
-+            };
-+            (m.column, reg)
-+        }),
-+    )?;
-+
-     // Evaluate CHECK constraints after NOT NULL default substitution and before index mutations.
-     let check_halt_on_error = program.constraint_halt_on_error(ctx.on_conflict);
-     emit_check_constraints(
-@@ -2048,14 +2089,13 @@ fn emit_notnulls(
- }
- 
- /// Checks the privileges an INSERT needs besides INSERT, as in PostgreSQL:
--/// UPDATE for ON CONFLICT DO UPDATE, and SELECT when RETURNING reads the
--/// table's columns or ON CONFLICT names the columns that conflict. DO UPDATE
--/// also needs SELECT, because its SET and WHERE read the row that conflicts.
--fn check_upsert_and_returning_privileges(
-+/// UPDATE for ON CONFLICT DO UPDATE, and SELECT when `reads_columns` says
-+/// that RETURNING reads the table's columns, ON CONFLICT names the columns
-+/// that conflict, or DO UPDATE reads the row that conflicts.
-+fn check_upsert_privileges(
-     table_references: &TableReferences,
--    result_columns: &[ResultSetColumn],
--    returning_subqueries: &[NonFromClauseSubquery],
-     upsert_actions: &[(ResolvedUpsertTarget, BranchOffset, Box<Upsert>)],
-+    reads_columns: bool,
-     resolver: &Resolver,
-     connection: &Arc<crate::Connection>,
- ) -> Result<()> {
-@@ -2075,15 +2115,6 @@ fn check_upsert_and_returning_privileges(
-             object(),
-         )?;
-     }
--    let reads_columns = updates
--        || upsert_actions
--            .iter()
--            .any(|(_, _, upsert)| upsert.index.is_some())
--        || roles::reads_columns_of(
--            target.internal_id,
--            result_columns.iter().map(|column| &column.expr),
--            returning_subqueries,
--        )?;
-     if reads_columns {
-         roles::check_privilege(
-             resolver,
-```
-
-**File**: `core/translate/plan.rs` (modified, +2/-0)
-```diff
-@@ -1079,6 +1079,8 @@ pub struct UpdatePlan {
-     pub non_from_clause_subqueries: Vec<NonFromClauseSubquery>,
-     /// Whether this UPDATE plan uses the safer pre-materialization path, and why.
-     pub safety: DmlSafety,
-+    /// The checks of row-level security that each new row must pass.
-+    pub(crate) row_checks: Vec<crate::translate::row_security::RowCheck>,
- }
- 
- impl UpdatePlan {
-```
-
-**File**: `core/translate/row_security.rs` (modified, +174/-61)
-```diff
-@@ -20,30 +20,32 @@ use crate::{
-     dialect::RelationChange,
-     function::Func,
-     namespace::{NamespaceId, NamespaceRef},
--    schema::{collect_column_dependencies_of_expr, BTreeTable, Schema, Table},
-+    schema::{collect_column_dependencies_of_expr, BTreeTable, Column, Schema, Table},
-     security::permission::{Action, Object, PermissionDenied},
-     security::policy::{Command, Policy, RowPolicy},
-     security::roles::{RoleCatalog, RoleId},
-     translate::{
--        emitter::Resolver,
-+        emitter::{with_columns_in_registers, Resolver},
-         expr::{
--            bind_and_rewrite_expr, translate_expr, walk_expr, walk_expr_mut, BindingBehavior,
--            WalkControl,
-+            bind_and_rewrite_expr, translate_expr, translate_expr_no_constant_opt, walk_expr,
-+            walk_expr_mut, BindingBehavior, NoConstantOptReason, WalkControl,
+@@ -10927,15 +10927,13 @@ mod tests {
          },
-         plan::{JoinInfo, JoinOrigin, JoinedTable, TableReferences, WhereTerm, WhereTermOrigin},
-         planner::break_predicate_at_and_boundaries,
-         roles,
-         schema::emit_schema_cookie,
-     },
-     util::normalize_ident,
--    vdbe::builder::ProgramBuilder,
-+    vdbe::{builder::ProgramBuilder, insn::Insn},
-     vtab::{VirtualTable, VirtualTableType},
--    Connection, Dialect, LimboError, Result, MAIN_DB_ID,
-+    Connection, Dialect, HashSet, LimboError, Result, MAIN_DB_ID,
- };
+     };
  
- /// Limits the rows of the tables in `table_references` that the statement
--/// reads, updates or deletes to the rows the role may access, which the
--/// policies of all of `commands` decide.
-+/// reads, updates or deletes to the rows the role may access. The policies of
-+/// `commands` decide: SELECT for a read, and UPDATE or DELETE for the table a
-+/// statement writes, with SELECT too when the statement reads the table's
-+/// columns, as in PostgreSQL.
- ///
- /// Each such table gets the condition its rows must pass as
- /// [`JoinedTable::row_filter`], which the loop over the table checks before
-@@ -81,6 +83,7 @@ pub(crate) fn filter_rows(
+-    use tempfile::TempDir;
+-
+     use crate::{
+         storage::{
+             btree::{compute_free_space, fill_cell_payload, payload_overflow_threshold_max},
+             sqlite3_ondisk::{BTreeCell, PageContent, PageType, TableLeafCell},
+         },
+         types::Value,
+-        Database, Page, Pager, PlatformIO,
++        Database, Page, Pager,
+     };
+ 
+     use super::{btree_init_page, defragment_page, drop_cell, insert_into_cell};
+@@ -11016,25 +11014,6 @@ mod tests {
+         page
+     }
+ 
+-    /// The returned `TempDir` deletes the database directory when it drops, so
+-    /// callers must hold it for as long as they use the database.
+-    #[allow(clippy::arc_with_non_send_sync)]
+-    fn get_database() -> (Arc<Database>, TempDir) {
+-        let temp_dir = TempDir::new().unwrap();
+-        let path = temp_dir.path().join("test.db");
+-        {
+-            let connection = rusqlite::Connection::open(&path).unwrap();
+-            connection
+-                .pragma_update(None, "journal_mode", "wal")
+-                .unwrap();
+-        }
+-        let io: Arc<dyn IO> = Arc::new(PlatformIO::new().unwrap());
+-        let db = Database::open_file(io.clone(), path.to_str().unwrap(), Arc::new(EngineDialect))
+-            .unwrap();
+-
+-        (db, temp_dir)
+-    }
+-
+     /// Deterministic coverage for the allocation-failure window created by routing
+     /// overflow-cell payloads through `TursoAllocator`: in
+     /// `OverwriteCellState::ClearOverflowPagesAndOverwrite`, `drop_cell` mutates the
+@@ -11453,7 +11432,7 @@ mod tests {
+         pos: usize,
+         page: PageRef,
+         record: ImmutableRecord,
+-        conn: &Arc<Connection>,
++        pager: &Arc<Pager>,
+     ) -> crate::alloc::Vec<u8> {
+         let mut payload: crate::alloc::Vec<u8> = crate::alloc::vec![];
+         let mut fill_cell_payload_state = FillCellPayloadState::Start;
+@@ -11466,11 +11445,11 @@ mod tests {
+                     pos,
+                     &record,
+                     4096,
+-                    &conn.pager.load(),
++                    pager,
+                     &mut fill_cell_payload_state,
+                 )
+             },
+-            &conn.pager.load().clone(),
++            pager,
+         )
+         .unwrap();
+         insert_into_cell(page.get_contents(), &payload, pos, 4096).unwrap();
+@@ -11510,16 +11489,13 @@ mod tests {
+ 
+     #[test]
+     fn test_insert_cell() {
+-        let (db, _temp_dir) = get_database();
+-        let conn = db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
++        let pager = pager_of_new_database();
+         let page = get_page(2);
+ 
+         let header_size = 8;
+         let regs = &[Register::Value(Value::from_i64(1))];
+         let record = ImmutableRecord::from_registers(regs, regs.len()).unwrap();
+-        let payload = add_record(1, 0, page.clone(), record, &conn);
++        let payload = add_record(1, 0, page.clone(), record, &pager);
+         let page_contents = page.get_contents();
+         assert_eq!(page_contents.cell_count(), 1);
+         let free = compute_free_space(page_contents, 4096).unwrap();
+@@ -11549,10 +11525,7 @@ mod tests {
+ 
+     #[test]
+     fn test_drop_1() {
+-        let (db, _temp_dir) = get_database();
+-        let conn = db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
++        let pager = pager_of_new_database();
+ 
+         let page = get_page(2);
+ 
+@@ -11565,7 +11538,7 @@ mod tests {
+         for i in 0..3 {
+             let regs = &[Register::Value(Value::from_i64(i as i64))];
+             let record = ImmutableRecord::from_registers(regs, regs.len()).unwrap();
+-            let payload = add_record(i, i, page.clone(), record, &conn);
++            let payload = add_record(i, i, page.clone(), record, &pager);
+             assert_eq!(page_contents.cell_count(), i + 1);
+             let free = compute_free_space(page_contents, usable_space).unwrap();
+             total_size += payload.len() + 2;
+@@ -11759,7 +11732,53 @@ mod tests {
          }
-         let Some(filter) = conditions
-             .into_iter()
-+            .map(|condition| condition.expr)
-             .reduce(|all, expr| combine(Some(all), ast::Operator::And, expr))
-         else {
-             continue;
-@@ -114,18 +117,115 @@ pub(crate) fn filter_rows(
-     Ok(())
- }
+     }
  
--/// Checks that the role may insert rows into `table`.
--pub(crate) fn check_insert(
--    table: &BTreeTable,
--    namespace: NamespaceRef,
-+/// A check that each row a statement writes must pass, or the statement
-+/// fails.
-+#[derive(Debug, Clone)]
-+pub(crate) struct RowCheck {
-+    condition: Condition,
-+    /// The condition is a USING condition checked on the existing row.
-+    using_condition: bool,
-+}
-+
-+/// The checks that the new rows `command` writes to `table_name` of
-+/// `namespace` must pass for the role, as in PostgreSQL: the WITH CHECK
-+/// conditions of the command's policies, or their USING conditions where
-+/// they have none, and the USING conditions of the SELECT policies when the
-+/// statement reads the table's columns, so that a role never writes a row it
-+/// could not read back that way.
-+pub(crate) fn new_row_checks(
-     resolver: &Resolver,
-+    namespace: NamespaceRef,
-+    table_name: &str,
-+    command: Command,
-+    reads_columns: bool,
-+) -> Vec<RowCheck> {
-+    let Policy::Apply(policies) = policy(resolver, namespace, table_name, command) else {
-+        return Vec::new();
-+    };
-+    let mut conditions = conditions_of(&policies, with_check_condition);
-+    if reads_columns {
-+        let Policy::Apply(select_policies) =
-+            policy(resolver, namespace, table_name, Command::Select)
-+        else {
-+            unreachable!("row-level security limits every command of a role or none");
-+        };
-+        conditions.extend(conditions_of(&select_policies, using_condition));
+-    fn empty_btree() -> (Arc<Pager>, i64, Arc<Database>, Arc<Connection>) {
++    fn empty_btree() -> (Arc<Pager>, i64) {
++        let pager = pager_of_new_database();
++        let page2 = run_until_done(|| pager.allocate_page(), &pager).unwrap();
++        btree_init_page(&page2, PageType::TableLeaf, 0, pager.usable_space());
++        (pager, page2.get().id() as i64)
 +    }
-+    conditions
-+        .into_iter()
-+        .map(|condition| RowCheck {
-+            condition,
-+            using_condition: false,
-+        })
-+        .collect()
-+}
 +
-+/// Emits `checks` on a row that the statement writes to the first table of
-+/// `table_references`, whose rowid is in `rowid_reg` and whose columns are in
-+/// the registers `columns` gives. The statement fails at the first check that
-+/// the row does not pass; a condition that is NULL fails too, as in
-+/// PostgreSQL.
-+pub(crate) fn emit_row_checks<'a>(
-+    program: &mut ProgramBuilder,
-+    resolver: &mut Resolver,
-+    checks: &[RowCheck],
-+    table_references: &TableReferences,
-+    rowid_reg: usize,
-+    columns: impl Iterator<Item = (&'a Column, usize)>,
- ) -> Result<()> {
--    match policy(resolver, namespace, &table.declared_name, Command::Insert) {
--        Policy::Allow => Ok(()),
--        Policy::Apply(_) => Err(LimboError::PermissionDenied(Box::new(
--            PermissionDenied::policy(Object::Table(table.declared_name.clone()), None, false),
--        ))),
-+    if checks.is_empty() {
-+        return Ok(())
-```
-
-**File**: `core/translate/update.rs` (modified, +65/-28)
-```diff
-@@ -197,9 +197,25 @@ fn prepare_and_optimize_update_plan(
-         connection,
-     )?;
-     // An ALTER that rewrites the schema table has had its own privileges
--    // checked already.
-+    // checked already, and no policy applies to it.
-     if !is_internal_schema_change {
--        check_update_privileges(&update_plan, resolver, connection)?;
-+        let reads_target_columns = update_reads_target_columns(&update_plan)?;
-+        let target = &update_plan.target_table;
-+        roles::check_write_privileges(
-+            resolver,
-+            connection,
-+            target.namespace,
-+            target.table.get_name(),
-+            ast::Privilege::Update,
-+            reads_target_columns,
-+        )?;
-+        apply_update_policies(
-+            &mut update_plan,
-+            &mut read_scope_tables,
-+            reads_target_columns,
-+            resolver,
-+            program,
-+        )?;
-         roles::hide_constraint_values_from_role_without_select(
-             program,
-             resolver,
-@@ -220,33 +236,60 @@ fn prepare_and_optimize_update_plan(
-     Ok(plan)
- }
- 
--/// Checks the privileges on the target table: UPDATE, and SELECT too when
--/// SET, WHERE or RETURNING reads the table's columns, as in PostgreSQL.
--/// Subqueries must be planned first, so that only a subquery that refers to
--/// the target table counts as reading it.
--fn check_update_privileges(
--    plan: &UpdatePlan,
--    resolver: &Resolver,
--    connection: &Arc<crate::Connection>,
--) -> crate::Result<()> {
--    let target = &plan.target_table;
--    let reads_target_columns = roles::reads_columns_of(
--        target.internal_id,
-+/// Whether SET, WHERE or RETURNING reads the columns of the target table,
-+/// which makes the UPDATE need SELECT on it and its SELECT policies apply,
-+/// as in PostgreSQL. Subqueries must be planned first, so that only a
-+/// subquery that refers to the target table counts as reading it.
-+fn update_reads_target_columns(plan: &UpdatePlan) -> crate::Result<bool> {
-+    roles::reads_columns_of(
-+        plan.target_table.internal_id,
-         plan.where_clause
-             .iter()
-             .map(|term| &term.expr)
-             .chain(plan.set_clauses.iter().map(|set| set.expr.as_ref()))
-             .chain(plan.returning.iter().flatten().map(|column| &column.expr)),
-         &plan.non_from_clause_subqueries,
--    )?;
--    roles::check_write_privileges(
-+    )
-+}
++    /// A pager whose database holds only page 1.
++    fn pager_of_new_database() -> Arc<Pager> {
++        let pager = empty_pager(4096, PageCache::default());
++        run_until_done(|| pager.allocate_page1(), &pager).unwrap();
++        pager
++    }
 +
-+/// Applies the target table's row-level security policies: the UPDATE
-+/// changes only the rows that the UPDATE policies allow, and the SELECT
-+/// policies too when `reads_target_columns`, and each new row must pass the
-+/// checks in `plan.row_checks`. The target table is the first of
-+/// `read_scope_tables`; the FROM tables have their SELECT policies already.
-+fn apply_update_policies(
-+    plan: &mut UpdatePlan,
-+    read_scope_tables: &mut TableReferences,
-+    reads_target_columns: bool,
-+    resolver: &Resolver,
-+    program: &mut ProgramBuilder,
-+) -> crate::Result<()> {
-+    let commands: &[Command] = if reads_target_columns {
-+        &[Command::Update, Command::Select]
-+    } else {
-+        &[Command::Update]
-+    };
-+    let target_table = read_scope_tables.joined_tables_mut().remove(0);
-+    plan.row_checks = row_security::new_row_checks(
-         resolver,
--        connection,
--        target.namespace,
--        target.table.get_name(),
--        ast::Privilege::Update,
-+        target_table.namespace,
-+        target_table.table.get_name(),
-+        Command::Update,
-         reads_target_columns,
--    )
-+    );
-+    let mut target_scope = TableReferences::new(vec![target_table], vec![]);
-+    row_security::filter_rows(
-+        commands,
-+        &mut target_scope,
-+        &mut plan.where_clause,
-+        resolver,
-+        program,
-+    )?;
-+    let target_table = target_scope.joined_tables_mut().remove(0);
-+    read_scope_tables
-+        .joined_tables_mut()
-+        .insert(0, target_table);
-+    Ok(())
- }
- 
- fn validate_update(
-@@ -426,13 +469,6 @@ fn prepare_update_plan(
-     )?;
- 
-     let mut read_scope_tables = TableReferences::new(vec![target_table], vec![]);
--    row_security::filter_rows(
--        &[Command::Update],
--        &mut read_scope_tables,
--        &mut where_clause,
--        resolver,
--        program,
--    )?;
-     read_scope_tables.extend(from_tables);
- 
-     for set in &mut body.sets {
-@@ -533,6 +569,7 @@ fn prepare_update_plan(
-         cdc_update_alter_statement: None,
-         non_from_clause_subqueries,
-         safety: DmlSafety::default(),
-+        row_checks: Vec::new(),
-     })
- }
- 
-```
-
-**File**: `postgres/COMPAT.md` (modified, +1/-1)
-```diff
-@@ -437,7 +437,7 @@ Upgrade is not supported.
- | Predefined roles | ❌ Not supported | |
- | Privileges for setting configuration parameters | ❌ Not supported | |
- | ROLES | 🟡 Partial | `CREATE ROLE name` (no options), `SET [LOCAL] ROLE`, `RESET ROLE`, `SHOW role`; roles that are not superusers may read and write the tables they own or were granted `SELECT`, `INSERT`, `UPDATE` and `DELETE` on, with SELECT also needed when a write reads the table's columns, and call `nextval` with `USAGE` or `UPDATE` and `setval` with `UPDATE` on the sequence, but not change the schema they do not own; `GRANT` of privileges on whole tables and sequences, `ALL` included, is stored in `pg_class.relacl`; `TRUNCATE` needs the `TRUNCATE` privilege, and the `REFERENCES`, `TRIGGER` and `MAINTAIN` privileges let a role do nothing yet; `pg_roles` lists the built-in `postgres` superuser, `pg_database_owner`, and created roles |
--| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; policies for writes and `WITH CHECK` are stored but have no effect yet, since a table with row-level security refuses writes by roles that do not own it; `pg_policy` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every row |
-+| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; a new row is checked after its `NOT NULL` constraints instead of before; `INSERT ... ON CONFLICT DO UPDATE` by a role the policies limit is not supported; `pg_policy` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every row |
- | SCRAM-SHA-256 authentication | ❌ Not supported | |
- | Search+bind mode operation for LDAP authentication | ❌ Not supported | |
- | security_barrier option on views | ❌ Not supported | |
-```
-
-**File**: `postgres/MANUAL.md` (modified, +33/-12)
-```diff
-@@ -23,7 +23,8 @@ the table's owner only the rows that the table's policies allow it, which
- PostgreSQL. The policies apply wherever the table appears in a query: in
- joins, subqueries, common table expressions, views and `COPY ... TO STDOUT`.
- In a `LEFT JOIN`, the columns of a row the role may not see read as NULL.
--Superusers and the table's owner see every row.
-+The policies also limit which rows the role may insert, update and delete.
-+Superusers and the table's owner see and write every row.
- 
- **Parameters:**
- 
-@@ -86,15 +87,31 @@ CREATE POLICY name ON table_name
- 
- **Description:**
- 
--`CREATE POLICY` defines which rows of a table the roles it names may read.
--It matters once `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` is on for the
--table.
-+`CREATE POLICY` defines which rows of a table the roles it names may read
-+and write. It matters once `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` is on
-+for the table.
- 
- A role reads the rows for which the `USING` expression of at least one
- permissive policy is true and the `USING` expressions of all restrictive
- policies are true, counting only the policies `FOR ALL` and `FOR SELECT` that
- name the role or `PUBLIC`. Without a permissive policy, it reads no rows.
- 
-+Writes work as in PostgreSQL, with the policies `FOR ALL` and for the
-+command:
-+
-+- `UPDATE` and `DELETE` change only the rows that pass the `USING`
-+  expressions of the `UPDATE` or `DELETE` policies, combined in the same
-+  way. When the statement reads the table's columns, in `WHERE`, in `SET`
-+  or in `RETURNING`, directly or in a subquery that refers to the table,
-+  the rows must also pass the `SELECT` policies.
-+- A new row that `INSERT` or `UPDATE` writes must pass the `WITH CHECK`
-+  expressions of the `INSERT` or `UPDATE` policies, or their `USING`
-+  expressions where they have none, and the `SELECT` policies when the
-+  statement has `RETURNING`. Otherwise the statement fails with
-+  `new row violates row-level security policy for table` (SQLSTATE 42501),
-+  naming the restrictive policy when one of those fails. A check that is
-+  NULL fails.
-+
- The policies are checked on each row before the other conditions of a query,
- so a condition of the query, or a function it calls, never sees a row the
- role may not read.
-@@ -114,16 +131,20 @@ role may not read.
-   columns of the table, written alone, with the table's name, or with the
-   schema and table names, and call scalar functions such as `current_user`.
-   It can also use a subquery without `FROM`, such as `(SELECT auth.uid())`.
--- `check_expression`: Which new rows the policy lets a role write. It is
--  stored but has no effect yet, because roles cannot write to tables.
-+- `check_expression`: Which new rows the policy lets a role write. It can use
-+  what `using_expression` can.
- 
- **Notes:**
- 
- Only the owner of the table or a superuser may create its policies.
- 
--Roles that are not superusers cannot write to tables yet, so the policies
--`FOR INSERT`, `FOR UPDATE` and `FOR DELETE` and the `WITH CHECK` expressions
--are stored but do not change what any role can do.
-+A new row is checked against the policies after its `NOT NULL` constraints,
-+not before as in PostgreSQL, so a row that breaks both reports the `NOT
-+NULL` constraint. `INSERT ... ON CONFLICT DO UPDATE` by a role that the
-+table's policies limit is not supported yet.
-+
-+`TRUNCATE` is not subject to the policies, as in PostgreSQL: a role with the
-+`TRUNCATE` privilege empties the whole table.
- 
- Policies cannot use subqueries with `FROM`, parameters, aggregate or window
- functions, or generated columns that are computed when they are read. A
-@@ -324,9 +345,9 @@ or `UPDATE`, `setval` needs `UPDATE`, and `currval` needs `SELECT` or
- PRIMARY KEY` column is the exception: its value comes from the row's rowid,
- not from the sequence, so the insert needs no privilege on the sequence.
- `pg_sequences.last_value` is null for a role with neither `SELECT` nor
--`USAGE` on the sequence. A table with row-level security still
--refuses writes by a role that does not own it: `INSERT` fails, and
--`UPDATE` and `DELETE` change no rows. As in PostgreSQL, row-level security
-+`USAGE` on the sequence. On a table with row-level security, the table's
-+policies also limit what a role that does not own it writes, as described
-+under `CREATE POLICY`. As in PostgreSQL, row-level security
- does not apply to `TRUNCATE`, which removes every row. A constraint error
- shows the values of the row or key (`Failing row contains ...`, `Key ...
- already exists`) only to a role with `SELECT` on the table; PostgreSQL also
++    /// A pager over an empty in-memory database file, opened without a `Database`.
++    #[allow(clippy::arc_with_non_send_sync)]
++    fn empty_pager(page_size: u32, page_cache: PageCache) -> Arc<Pager> {
++        let io: Arc<dyn IO> = Arc::new(Mem
 ```
 
 ---
 
-### Incident Patch 3: `b4f80666` (2026-11-11)
-**Commit Message**: core/vdbe: add an instruction that fails with a row-level security error
+### Incident Patch 2: `0e448cb3` (2026-11-15)
+**Commit Message**: Merge 'tests: move the schema, translation and security tests that need only the public API out of core' from Pekka Enberg
 
-Writes will check each new row against the conditions of the table's
-policies, and a row that fails one must fail the statement with
-PostgreSQL's error, which names the restrictive policy that failed, or
-says that a USING condition failed on the row that ON CONFLICT DO UPDATE
-would change: new row violates row-level security policy "p" (USING
-expression) for table "t".
+Core will stop parsing SQL by itself, so a test that passes SQL text to
+core cannot stay in core. This moves the 16 tests of schema loading,
+statement translation, roles and row-level security that compile against
+core as it is on main to `tests/integration/`, the same way #11822,
+#11823 and #11824 did for other tests.
 
-RowSecurityViolation fails the statement with the PermissionDenied it
-carries. Reason::Policy now records the policy and the kind of condition,
-and the PostgreSQL frontend puts them in the message. Nothing emits the
-instruction yet; the commits that apply policies to writes do and test
-it.
+Core itself does not change: no item becomes public, no `cfg` is
+widened. The core diff only deletes the moved tests and the helpers that
+only they used.
 
-**File**: `core/security/permission.rs` (modified, +18/-8)
+| From | To | Tests |
+|---|---|---|
+| `core/schema.rs` | `schema.rs` (new) | 8 |
+| `core/translate/mod.rs` | `query_processing/test_write_path.rs` (2),
+`query_processing/test_read_path.rs` (1), `trigger.rs` (1) | 4 |
+| `core/translate/row_security.rs` | `security.rs` (new) | 2 |
+| `core/translate/roles.rs` | `security.rs` (new) | 1 |
+| `core/dialect/mod.rs` | `connection.rs` | 1 |
+
+The tests keep their names and assertions; only paths change (`crate::`
+to `turso_core::`, `EngineDialect` to `SqliteDialect`). The set of test
+names under `core` and `tests/integration` is the same before and afte
+
+**File**: `core/dialect/mod.rs` (modified, +0/-12)
 ```diff
-@@ -32,27 +32,33 @@ impl PermissionDenied {
+@@ -897,18 +897,6 @@ mod tests {
+         conn.close().unwrap();
+     }
+ 
+-    #[test]
+-    fn consume_stmt_reports_parse_error() {
+-        let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
+-        let db = open_db(&io, "consume-stmt-parse-error.db", Arc::new(EngineDialect)).unwrap();
+-        let conn = db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-
+-        assert!(conn.consume_stmt("SELECT * FROM").is_err());
+-        conn.close().unwrap();
+-    }
+-
+     #[test]
+     fn dialect_catalog_available_on_every_schema_and_rebuild() {
+         let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
+```
+
+**File**: `core/schema.rs` (modified, +0/-261)
+```diff
+@@ -9156,16 +9156,6 @@ mod tests {
+         Arc::new(BTreeTable::from_sql(sql, root_page).unwrap())
+     }
+ 
+-    #[test]
+-    fn a_new_schema_has_only_the_root_namespace_with_the_schema_table() {
+-        let schema = Schema::new();
+-        let ids: std::vec::Vec<NamespaceId> = schema.namespace_ids().collect();
+-        assert_eq!(ids, vec![NamespaceId::ROOT]);
+-        assert!(schema
+-            .get_table(NamespaceId::ROOT, SCHEMA_TABLE_NAME)
+-            .is_some());
+-    }
+-
+     #[test]
+     fn builtin_types_read_as_the_kind_their_decode_gives() {
+         use crate::{
+@@ -9601,81 +9591,6 @@ mod tests {
          }
      }
  
--    /// The row-level security policy of `table` does not let the role write
--    /// a row to it.
--    pub fn policy(table: Object) -> Self {
-+    /// A row that the role writes to `table` fails a condition of the
-+    /// table's row-level security policies: of restrictive policy `policy`,
-+    /// or of the permissive policies together when it is None. The condition
-+    /// is a USING condition checked on the existing row when
-+    /// `using_condition` is set, and otherwise one checked on the new row.
-+    pub fn policy(table: Object, policy: Option<String>, using_condition: bool) -> Self {
-         Self {
-             action: Action::Write,
-             object: table,
--            reason: Reason::Policy,
-+            reason: Reason::Policy {
-+                policy,
-+                using_condition,
-+            },
-         }
+-    #[test]
+-    fn test_column_definition_matches_create_table() -> Result<()> {
+-        for sql in [
+-            "CREATE TABLE t(a)",
+-            "CREATE TABLE t(a INTEGER PRIMARY KEY)",
+-            "CREATE TABLE t(a INT PRIMARY KEY)",
+-            "CREATE TABLE t(a InTeGeR PRIMARY KEY ASC)",
+-            "CREATE TABLE t(a INTEGER PRIMARY KEY DESC)",
+-            "CREATE TABLE t(a BIGINT PRIMARY KEY)",
+-            "CREATE TABLE t(a TEXT PRIMARY KEY)",
+-            "CREATE TABLE t(a INTEGER PRIMARY KEY NOT NULL UNIQUE)",
+-            "CREATE TABLE t(a TEXT UNIQUE NOT NULL ON CONFLICT IGNORE DEFAULT hello COLLATE NOCASE)",
+-            "CREATE TABLE t(a TEXT NOT NULL NULL)",
+-            "CREATE TABLE t(a TEXT NULL NOT NULL ON CONFLICT REPLACE DEFAULT 'x')",
+-            "CREATE TABLE t(a NUMERIC(10, 2) DEFAULT (1 + 2))",
+-            "CREATE TABLE t(a VARCHAR(40) COLLATE RTRIM)",
+-            "CREATE TABLE t(a ANY)",
+-            "CREATE TABLE t(a aNy) STRICT",
+-            "CREATE TABLE t(a INTEGER[]) STRICT",
+-            "CREATE TABLE t(a INTEGER[][]) STRICT",
+-            "CREATE TABLE t(a TEXT, b ANY AS (a))",
+-            "CREATE TABLE t(a TEXT, b aNy AS (a)) STRICT",
+-        ] {
+-            let Some(Cmd::Stmt(Stmt::CreateTable { body, .. })) =
+-                crate::dialect::engine::parse_statement(sql)?
+-            else {
+-                panic!("expected CREATE TABLE: {sql}");
+-            };
+-            let table = create_table("t", &body, 0, false)?;
+-            let CreateTableBody::ColumnsAndConstraints { columns, .. } = body else {
+-                panic!("expected column definitions: {sql}");
+-            };
+-            let flags = FromDefinitionFlags::empty()
+-                .with(FromDefinitionFlags::InStrictTable, table.is_strict);
+-            assert_eq!(columns.len(), table.columns().len(), "{sql}");
+-            for (definition, expected) in columns.iter().zip(table.columns()) {
+-                let actual = Column::from_definition(definition, flags)?;
+-                assert_eq!(actual.name, expected.name, "{sql}");
+-                assert_eq!(actual.ty_str, expected.ty_str, "{sql}");
+-                assert_eq!(actual.ty_params, expected.ty_params, "{sql}");
+-                assert_eq!(actual.default, expected.default, "{sql}");
+-                assert_eq!(actual.ty(), expected.ty(), "{sql}");
+-                assert_eq!(actual.affinity(), expected.affinity(), "{sql}");
+-                assert_eq!(actual.text_collation(), expected.text_collation(), "{sql}");
+-                assert_eq!(actual.primary_key(), expected.primary_key(), "{sql}");
+-                assert_eq!(actual.is_rowid_alias(), expected.is_rowid_alias(), "{sql}");
+-                assert_eq!(actual.notnull(), expected.notnull(), "{sql}");
+-                assert_eq!(actual.explicit_notnull(), expected.explicit_notnull(), "{sql}");
+-                assert_eq!(actual.unique(), expected.unique(), "{sql}");
+-                assert_eq!(actual.hidden(), expected.hidden(), "{sql}");
+-                assert_eq!(
+-                    actual.notnull_conflict_clause,
+-                    expected.notnull_conflict_clause,
+-                    "{sql}"
+-                );
+-                assert_eq!(actual.array_dimensions(), expected.array_dimensions(), "{sql}");
+-                match (actual.generated_type(), expected.generated_type()) {
+-                    (
+-                        GeneratedType::Virtual {
+-                            original_sql: actual,
+-                            ..
+-                        },
+-                        GeneratedType::Virtual {
+-                            original_sql: expected,
+-                            ..
+-                        },
+-                    ) => assert_eq!(actual, expected, "{sql}"),
+-                    (GeneratedType::NotGenerated, GeneratedType::NotGenerated) => {}
+-                    _ => panic!("generated column types differ: {sql}"),
+-                }
+-            }
+-        }
+-        Ok(())
+-    }
+-
+     #[test]
+     pub fn test_has_rowid_true() -> Result<()> {
+         let sql = r#"CREATE TABLE t1 (a INTEGER PRIMARY KEY, b TEXT);"#;
+@@ -10511,133 +10426,6 @@ mod tests {
+         Ok(())
      }
- }
  
- impl fmt::Display for PermissionDenied {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        match self.reason {
-+        match &self.reason {
-             Reason::Privilege => write!(f, "permission denied: {} on {}", self.action, self.object),
-             Reason::Owner => write!(
-                 f,
-                 "permission denied: {} on {} needs its owner",
-                 self.action, self.object
-             ),
--            Reason::Policy => write!(
-+            Reason::Policy { .. } => write!(
-                 f,
-                 "permission denied: {} on {} violates its row-level security policy",
-                 self.action, self.object
-@@ -61,11 +67,15 @@ impl fmt::Display for PermissionDenied {
-     }
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+#[derive(Debug, Clone, PartialEq, Eq)]
- pub enum Reason {
-     Privilege,
-     Owner,
--    Policy,
-+    /// See [`PermissionDenied::policy`].
-+    Policy {
-+        policy: Option<String>,
-+        using_condition: bool,
-+    },
- }
- 
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+-    #[test]
+-    fn test_schema_loading_accepts_generated_columns() {
+-        let mut schema = Schema::new();
+-
+-        schema
 ```
 
-**File**: `core/translate/row_security.rs` (modified, +1/-1)
+**File**: `core/translate/mod.rs` (modified, +0/-210)
 ```diff
-@@ -111,7 +111,7 @@ pub(crate) fn check_insert(
-     match policy(resolver, namespace, &table.declared_name, Command::Insert) {
-         Policy::Allow => Ok(()),
-         Policy::Deny | Policy::Filter(_) => Err(LimboError::PermissionDenied(Box::new(
--            PermissionDenied::policy(Object::Table(table.declared_name.clone())),
-+            PermissionDenied::policy(Object::Table(table.declared_name.clone()), None, false),
-         ))),
+@@ -711,7 +711,6 @@ mod tests {
+     use crate::namespace::NamespaceId;
+     use crate::schema::{BTreeTable, Table, SQLITE_SEQUENCE_TABLE_NAME};
+     use crate::security::roles::SessionRole;
+-    use crate::vdbe::insn::{ClearBtreeCount, Insn};
+     use crate::ConnectOpts;
+     use crate::Database;
+     use crate::EngineDialect;
+@@ -797,184 +796,6 @@ mod tests {
+         );
      }
+ 
+-    #[test]
+-    fn nth_value_reads_from_saved_rows_without_an_accumulator() {
+-        let io = Arc::new(MemoryIO::new());
+-        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
+-        let conn = db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-        conn.execute("CREATE TABLE items(value)").unwrap();
+-
+-        let statement = conn
+-            .prepare("SELECT nth_value(value, 2) OVER (ORDER BY value) FROM items")
+-            .unwrap();
+-        let instructions = &statement.get_program().insns;
+-
+-        let missing_row_target = instructions
+-            .iter()
+-            .find_map(|(instruction, _)| match instruction {
+-                Insn::SeekRowid { target_pc, .. } => Some(target_pc.as_offset_int() as usize),
+-                _ => None,
+-            })
+-            .expect("nth_value must read its answer from the saved window rows");
+-        assert!(
+-            matches!(
+-                &instructions[missing_row_target].0,
+-                Insn::Halt { on_error: None, .. }
+-            ),
+-            "a missing saved row must stop execution instead of returning NULL"
+-        );
+-        assert!(
+-            instructions.iter().all(|(instruction, _)| !matches!(
+-                instruction,
+-                Insn::AggStep { .. } | Insn::AggValue { .. }
+-            )),
+-            "nth_value must not keep another copy of saved values in an accumulator"
+-        );
+-    }
+-
+-    #[test]
+-    fn delete_without_where_clears_table_and_index_btrees() {
+-        let io = Arc::new(MemoryIO::new());
+-        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
+-        let conn = db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-        conn.execute("CREATE TABLE items(id INTEGER PRIMARY KEY, name TEXT, score INTEGER)")
+-            .unwrap();
+-        conn.execute("CREATE UNIQUE INDEX items_name ON items(name)")
+-            .unwrap();
+-        conn.execute("CREATE INDEX items_score ON items(score) WHERE score > 0")
+-            .unwrap();
+-        conn.execute("INSERT INTO items VALUES(1, 'one', -1), (2, 'two', 0), (3, 'three', 1)")
+-            .unwrap();
+-
+-        let mut statement = conn.prepare("DELETE FROM items").unwrap();
+-        let instructions = &statement.get_program().insns;
+-        let clears = instructions
+-            .iter()
+-            .filter_map(|(instruction, _)| match instruction {
+-                Insn::ClearBtree { count, .. } => Some(*count),
+-                _ => None,
+-            })
+-            .collect::<Vec<_>>();
+-
+-        assert_eq!(
+-            clears,
+-            vec![
+-                ClearBtreeCount::RowsWritten,
+-                ClearBtreeCount::RowsWritten,
+-                ClearBtreeCount::ChangesAndRowsWritten,
+-            ],
+-            "both indexes and then the table must be cleared, and only the table counts changes"
+-        );
+-        assert!(
+-            instructions
+-                .iter()
+-                .all(|(instruction, _)| !matches!(instruction, Insn::Delete { .. })),
+-            "a whole-table delete must not emit the row-at-a-time Delete opcode"
+-        );
+-
+-        statement.run_ignore_rows().unwrap();
+-        assert_eq!(statement.n_change(), 3);
+-        assert_eq!(
+-            statement.metrics().rows_written,
+-            7,
+-            "metrics must count table, full-index, and partial-index entries"
+-        );
+-
+-        statement.reset().unwrap();
+-        statement.reset_metrics();
+-        statement.run_ignore_rows().unwrap();
+-        assert_eq!(statement.n_change(), 0);
+-        assert_eq!(statement.metrics().rows_written, 0);
+-
+-        statement.reset().unwrap();
+-        statement.reset_metrics();
+-        conn.execute("INSERT INTO items VALUES(4, 'four', -1), (5, 'five', 1)")
+-            .unwrap();
+-        statement.run_ignore_rows().unwrap();
+-        assert_eq!(statement.n_change(), 2);
+-        assert_eq!(
+-            statement.metrics().rows_written,
+-            5,
+-            "reused statements must recount table and index entries"
+-        );
+-
+-        statement.reset().unwrap();
+-        statement.reset_metrics();
+-        conn.execute(
+-            "WITH RECURSIVE c(x) AS (VALUES(1) UNION ALL SELECT x + 1 FROM c WHERE x < 3000) \
+-             INSERT INTO items SELECT x, printf('name-%0200d', x), x % 2 FROM c",
+-        )
+-        .unwrap();
+-        statement.run_ignore_rows().unwrap();
+-        assert_eq!(statement.n_change(), 3000);
+-        assert_eq!(
+-       
+```
+
+**File**: `core/translate/roles.rs` (modified, +0/-39)
+```diff
+@@ -599,42 +599,3 @@ pub fn translate_create_role(
+     };
+     translate_change(change, resolver, program, connection)
+ }
+-
+-#[cfg(test)]
+-mod tests {
+-    use crate::security::roles::SessionRole;
+-    use std::sync::Arc;
+-
+-    use turso_parser::ast;
+-
+-    use crate::{Connection, Database, EngineDialect, MemoryIO};
+-
+-    #[test]
+-    fn create_role_fails_under_a_dialect_without_roles() {
+-        let db = Database::open_file(
+-            Arc::new(MemoryIO::new()),
+-            ":memory:",
+-            Arc::new(EngineDialect),
+-        )
+-        .unwrap();
+-        let conn = db
+-            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-
+-        let error = create_role(&conn, "alice").unwrap_err();
+-
+-        assert!(
+-            error.to_string().contains("CREATE ROLE is not supported"),
+-            "{error}"
+-        );
+-    }
+-
+-    fn create_role(conn: &Arc<Connection>, name: &str) -> crate::Result<()> {
+-        let create_role = ast::Cmd::Stmt(ast::Stmt::CreateRole {
+-            role_name: name.to_string(),
+-            options: ast::RoleOptions::default(),
+-        });
+-        conn.prepare_translated_cmd(create_role, &format!("CREATE ROLE {name}"))?
+-            .run_ignore_rows()
+-    }
+-}
+```
+
+**File**: `core/translate/row_security.rs` (modified, +1/-80)
+```diff
+@@ -920,7 +920,6 @@ fn single_value_of_mut(select: &mut ast::Select) -> Option<&mut ast::Expr> {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use crate::security::roles::SessionRole;
+     use std::sync::Arc;
+ 
+     use rustc_hash::FxHashMap;
+@@ -936,7 +935,7 @@ mod tests {
+     use crate::security::policy::RowPolicy;
+     use crate::security::roles::RoleId;
+     use crate::translate::emitter::{DoubleQuotedDml, Resolver};
+-    use crate::{Database, DatabaseCatalog, MemoryIO, Qualifiers, RwLock, SymbolTable};
++    use crate::{DatabaseCatalog, Qualifiers, RwLock, SymbolTable};
+ 
+     /// The engine dialect, except that every table of a schema with dialect
+     /// schema state has row-level security, and table `documents` has a
+@@ -1177,82 +1176,4 @@ mod tests {
+         );
+         f(&mut resolver)
+     }
+-
+-    /// A materialized view stores the rows of its query when it is refreshed,
+-    /// so policies on it could not limit them.
+-    #[test]
+-    fn row_security_statements_reject_a_materialized_view() {
+-        let db = Database::open_file_with_flags(
+-            Arc::new(MemoryIO::new()),
+-            "row-security-materialized-view.db",
+-            crate::OpenFlags::default(),
+-            crate::DatabaseOpts::new().with_views(true),
+-            None,
+-            Arc::new(EngineDialect),
+-        )
+-        .unwrap();
+-        let conn = db
+-            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-        conn.execute("CREATE TABLE t (x)").unwrap();
+-        conn.execute("CREATE MATERIALIZED VIEW mv AS SELECT x FROM t")
+-            .unwrap();
+-        let mv = || ast::QualifiedName::single(ast::Name::exact("mv".to_string()));
+-        let statements = [
+-            ast::Stmt::AlterTable(ast::AlterTable {
+-                name: mv(),
+-                body: ast::AlterTableBody::EnableRowSecurity,
+-            }),
+-            ast::Stmt::CreatePolicy(Box::new(ast::CreatePolicy {
+-                policy_name: ast::Name::exact("p".to_string()),
+-                tbl_name: mv(),
+-                permissive: true,
+-                command: ast::PolicyCommand::All,
+-                roles: vec![ast::Grantee::Public],
+-                using_expr: None,
+-                check_expr: None,
+-            })),
+-        ];
+-
+-        for statement in statements {
+-            let sql = statement.to_string();
+-            let error = conn
+-                .prepare_translated_cmd(ast::Cmd::Stmt(statement), &sql)
+-                .unwrap_err();
+-
+-            assert!(
+-                error.to_string().contains("\"mv\" is not a table"),
+-                "{error}"
+-            );
+-        }
+-    }
+-
+-    #[test]
+-    fn enabling_row_security_fails_under_a_dialect_without_it() {
+-        let db = Database::open_file(
+-            Arc::new(MemoryIO::new()),
+-            ":memory:",
+-            Arc::new(EngineDialect),
+-        )
+-        .unwrap();
+-        let conn = db
+-            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-        conn.execute("CREATE TABLE t (x)").unwrap();
+-        let enable = ast::Cmd::Stmt(ast::Stmt::AlterTable(ast::AlterTable {
+-            name: ast::QualifiedName::single(ast::Name::exact("t".to_string())),
+-            body: ast::AlterTableBody::EnableRowSecurity,
+-        }));
+-
+-        let error = conn
+-            .prepare_translated_cmd(enable, "ALTER TABLE t ENABLE ROW LEVEL SECURITY")
+-            .unwrap_err();
+-
+-        assert!(
+-            error
+-                .to_string()
+-                .contains("row-level security is not supported"),
+-            "{error}"
+-        );
+-    }
  }
 ```
 
-**File**: `core/vdbe/execute.rs` (modified, +10/-0)
+**File**: `tests/integration/connection.rs` (modified, +21/-0)
 ```diff
-@@ -4228,6 +4228,16 @@ pub fn op_halt_if_null(
-     }
+@@ -1,14 +1,17 @@
+ use tempfile::TempDir;
+ use turso_core::connection::*;
++use turso_core::dialect::Dialect;
+ use turso_core::io::MemoryIO;
+ use turso_core::io::IO;
+ use turso_core::security::roles::SessionRole;
++use turso_core::storage::database::DatabaseFile;
+ use turso_core::sync::Arc;
+ use turso_core::ConnectOpts;
+ use turso_core::Database;
+ use turso_core::DatabaseOpts;
+ use turso_core::LimboError;
+ use turso_core::OpenFlags;
++use turso_core::OpenOptions;
+ use turso_core::Result;
+ use turso_core::Value;
+ use turso_core::MAIN_DB_ID;
+@@ -388,3 +391,21 @@ fn test_setval_uncalled_emits_stored_value_as_next() -> Result<()> {
+     );
+     Ok(())
  }
- 
-+pub fn op_row_security_violation(
-+    _program: &Program,
-+    _state: &mut ProgramState,
-+    insn: &Insn,
-+    _pager: &Arc<Pager>,
-+) -> InsnResult {
-+    load_insn!(RowSecurityViolation { denial }, insn);
-+    Err(LimboError::PermissionDenied(denial.clone()).into())
++
++#[test]
++fn consume_stmt_reports_parse_error() {
++    let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
++    let db = open_db(&io, "consume-stmt-parse-error.db", Arc::new(SqliteDialect)).unwrap();
++    let conn = db
++        .connect(ConnectOpts::new(SessionRole::Superuser))
++        .unwrap();
++
++    assert!(conn.consume_stmt("SELECT * FROM").is_err());
++    conn.close().unwrap();
 +}
 +
- #[derive(Debug, Clone, Copy)]
- pub enum OpTransactionState {
-     Start,
++fn open_db(io: &Arc<dyn IO>, path: &str, dialect: Arc<dyn Dialect>) -> Result<Arc<Database>> {
++    let file = io.open_file(path, OpenFlags::Create, true)?;
++    let db_file = Arc::new(DatabaseFile::new(file));
++    Database::open(io.clone(), path, OpenOptions::new(dialect).storage(db_file))
++}
 ```
 
-**File**: `core/vdbe/explain.rs` (modified, +9/-0)
+**File**: `tests/integration/mod.rs` (modified, +2/-0)
 ```diff
-@@ -1038,6 +1038,15 @@ pub fn insn_to_row(
-                 0,
-                 "".to_string(),
-             ),
-+            Insn::RowSecurityViolation { denial } => (
-+                "RowSecurityViolation",
-+                0,
-+                0,
-+                0,
-+                Value::build_text(denial.to_string()),
-+                0,
-+                "".to_string(),
-+            ),
-             Insn::Transaction { db, tx_mode, schema_cookie} => (
-                 "Transaction",
-                 *db as i64,
+@@ -39,6 +39,8 @@ mod query_processing;
+ mod query_timeout;
+ mod queued_io;
+ mod reindex;
++mod schema;
++mod security;
+ mod statement;
+ mod statement_lifecycle;
+ mod statement_metadata;
 ```
 
-**File**: `core/vdbe/insn.rs` (modified, +7/-0)
+**File**: `tests/integration/query_processing/test_read_path.rs` (modified, +38/-0)
 ```diff
-@@ -1184,6 +1184,12 @@ pub enum Insn {
-         on_error: Option<ResolveType>, // p2
-     },
- 
-+    /// Fail the statement because a row it writes fails a condition of a
-+    /// row-level security policy.
-+    RowSecurityViolation {
-+        denial: Box<crate::security::permission::PermissionDenied>,
-+    },
-+
-     /// Start a transaction.
-     Transaction {
-         db: usize,                // p1
-@@ -2517,6 +2523,7 @@ impl InsnVariants {
-             InsnVariants::Prev => execute::op_prev,
-             InsnVariants::Halt => execute::op_halt,
-             InsnVariants::HaltIfNull => execute::op_halt_if_null,
-+            InsnVariants::RowSecurityViolation => execute::op_row_security_violation,
-             InsnVariants::Transaction => execute::op_transaction,
-             InsnVariants::AutoCommit => execute::op_auto_commit,
-             InsnVariants::Savepoint => execute::op_savepoint,
-```
-
-**File**: `postgres/frontend/error.rs` (modified, +19/-3)
-```diff
-@@ -414,10 +414,26 @@ fn tx_error_sqlstate(msg: &str) -> &'static str {
+@@ -4,6 +4,7 @@ use asserting::prelude::*;
+ use rusqlite::Connection as SqliteConnection;
+ use std::sync::Arc;
+ use tempfile::TempDir;
++use turso_core::vdbe::insn::Insn;
+ use turso_core::{ConnectOpts, LimboError, SessionRole, StepResult, Value};
+ use turso_core::{Database, DatabaseOpts, MemoryIO, OpenFlags, IO};
+ use turso_sqlite::SqliteDialect;
+@@ -1556,3 +1557,40 @@ fn test_negate_blob_subscript_invalid_utf8_no_panic() {
+         "Negating a blob subscript with invalid UTF-8 text should not panic"
+     );
  }
- 
- fn permission_denied_message(denial: &PermissionDenied) -> String {
--    match (denial.reason, &denial.object) {
-+    match (&denial.reason, &denial.object) {
-         (Reason::Owner, object) => return format!("must be owner of {}", object_name(object)),
--        (Reason::Policy, Object::Table(name)) => {
--            return format!("new row violates row-level security policy for table \"{name}\"")
-+        (
-+            Reason::Policy {
-+                policy,
-+                using_condition,
-+            },
-+            Object::Table(name),
-+        ) => {
-+            let policy = policy
-+                .as_ref()
-+                .map_or(String::new(), |policy| format!(" \"{policy}\""));
-+            let condition = if *using_condition {
-+                " (USING expression)"
-+            } else {
-+                ""
-+            };
-+            return format!(
-+                "new row violates row-level security policy{policy}{condition} for table \"{name}\""
-+            );
-         }
-         _ => {}
++
++#[test]
++fn nth_value_reads_from_saved_rows_without_an_accumulator() {
++    let io = Arc::new(MemoryIO::new());
++    let db = Database::open_file(io, ":memory:", Arc::new(SqliteDialect)).unwrap();
++    let conn = db
++        .connect(ConnectOpts::new(SessionRole::Superuser))
++        .unwrap();
++    conn.execute("CREATE TABLE items(value)").unwrap();
++
++    let statement = conn
++        .prepare("SELECT nth_value(value, 2) OVER (ORDER BY value) FROM items")
++        .unwrap();
++    let instructions = &statement.get_program().insns;
++
++    let missing_row_target = instructions
++        .iter()
++        .find_map(|(instruction, _)| match instruction {
++            Insn::SeekRowid { target_pc, .. } => Some(target_pc.as_offset_int() as usize),
++            _ => None,
++        })
++        .expect("nth_value must read its answer from the saved window rows");
++    assert!(
++        matches!(
++            &instructions[missing_row_target].0,
++            Insn::Halt { on_error: None, .. }
++        ),
++        "a missing saved row must stop execution instead of returning NULL"
++    );
++    assert!(
++        instructions.iter().all(|(instruction, _)| !matches!(
++            instruction,
++            Insn::AggStep { .. } | Insn::AggValue { .. }
++        )),
++        "nth_value must not keep another copy of saved values in an accumulator"
++    );
++}
+```
+
+---
+
+### Incident Patch 3: `b0b56a5a` (2026-11-15)
+**Commit Message**: tests: move the schema, translation and security tests that need only the public API out of core
+
+Core will stop parsing SQL by itself, so a test that passes SQL text to
+core cannot stay in core. Move the 16 tests of schema loading, statement
+translation, roles and row-level security that compile against core as
+it is.
+
+Core itself does not change. No item becomes public and no cfg is
+widened. About 215 more tests in schema.rs, util.rs, dialect/mod.rs,
+translate/, stats.rs, pragma.rs, vtab.rs and incremental/cursor.rs
+parse SQL and also use private parts of core: the translate module, the
+optimizer types, Resolver, the table_from_sql test helper,
+MaterializedViewCursor and AnalyzeStats. They stay where they are for
+now.
+
+The tests go to the files for what they test: the schema tests to a new
+schema.rs, the role and row-level security tests to a new security.rs,
+and the rest to connection.rs, trigger.rs,
+query_processing/test_read_path.rs and
+query_processing/test_write_path.rs.
+
+The tests keep their names and assertions; only paths change. Helpers
+that only the moved tests used are deleted from core.
+
+Tests: cargo test -p turso_core --lib,
+cargo test -p core_tester --test integrati
+
+**File**: `core/dialect/mod.rs` (modified, +0/-12)
+```diff
+@@ -897,18 +897,6 @@ mod tests {
+         conn.close().unwrap();
      }
+ 
+-    #[test]
+-    fn consume_stmt_reports_parse_error() {
+-        let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
+-        let db = open_db(&io, "consume-stmt-parse-error.db", Arc::new(EngineDialect)).unwrap();
+-        let conn = db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-
+-        assert!(conn.consume_stmt("SELECT * FROM").is_err());
+-        conn.close().unwrap();
+-    }
+-
+     #[test]
+     fn dialect_catalog_available_on_every_schema_and_rebuild() {
+         let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
+```
+
+**File**: `core/schema.rs` (modified, +0/-261)
+```diff
+@@ -9156,16 +9156,6 @@ mod tests {
+         Arc::new(BTreeTable::from_sql(sql, root_page).unwrap())
+     }
+ 
+-    #[test]
+-    fn a_new_schema_has_only_the_root_namespace_with_the_schema_table() {
+-        let schema = Schema::new();
+-        let ids: std::vec::Vec<NamespaceId> = schema.namespace_ids().collect();
+-        assert_eq!(ids, vec![NamespaceId::ROOT]);
+-        assert!(schema
+-            .get_table(NamespaceId::ROOT, SCHEMA_TABLE_NAME)
+-            .is_some());
+-    }
+-
+     #[test]
+     fn builtin_types_read_as_the_kind_their_decode_gives() {
+         use crate::{
+@@ -9601,81 +9591,6 @@ mod tests {
+         }
+     }
+ 
+-    #[test]
+-    fn test_column_definition_matches_create_table() -> Result<()> {
+-        for sql in [
+-            "CREATE TABLE t(a)",
+-            "CREATE TABLE t(a INTEGER PRIMARY KEY)",
+-            "CREATE TABLE t(a INT PRIMARY KEY)",
+-            "CREATE TABLE t(a InTeGeR PRIMARY KEY ASC)",
+-            "CREATE TABLE t(a INTEGER PRIMARY KEY DESC)",
+-            "CREATE TABLE t(a BIGINT PRIMARY KEY)",
+-            "CREATE TABLE t(a TEXT PRIMARY KEY)",
+-            "CREATE TABLE t(a INTEGER PRIMARY KEY NOT NULL UNIQUE)",
+-            "CREATE TABLE t(a TEXT UNIQUE NOT NULL ON CONFLICT IGNORE DEFAULT hello COLLATE NOCASE)",
+-            "CREATE TABLE t(a TEXT NOT NULL NULL)",
+-            "CREATE TABLE t(a TEXT NULL NOT NULL ON CONFLICT REPLACE DEFAULT 'x')",
+-            "CREATE TABLE t(a NUMERIC(10, 2) DEFAULT (1 + 2))",
+-            "CREATE TABLE t(a VARCHAR(40) COLLATE RTRIM)",
+-            "CREATE TABLE t(a ANY)",
+-            "CREATE TABLE t(a aNy) STRICT",
+-            "CREATE TABLE t(a INTEGER[]) STRICT",
+-            "CREATE TABLE t(a INTEGER[][]) STRICT",
+-            "CREATE TABLE t(a TEXT, b ANY AS (a))",
+-            "CREATE TABLE t(a TEXT, b aNy AS (a)) STRICT",
+-        ] {
+-            let Some(Cmd::Stmt(Stmt::CreateTable { body, .. })) =
+-                crate::dialect::engine::parse_statement(sql)?
+-            else {
+-                panic!("expected CREATE TABLE: {sql}");
+-            };
+-            let table = create_table("t", &body, 0, false)?;
+-            let CreateTableBody::ColumnsAndConstraints { columns, .. } = body else {
+-                panic!("expected column definitions: {sql}");
+-            };
+-            let flags = FromDefinitionFlags::empty()
+-                .with(FromDefinitionFlags::InStrictTable, table.is_strict);
+-            assert_eq!(columns.len(), table.columns().len(), "{sql}");
+-            for (definition, expected) in columns.iter().zip(table.columns()) {
+-                let actual = Column::from_definition(definition, flags)?;
+-                assert_eq!(actual.name, expected.name, "{sql}");
+-                assert_eq!(actual.ty_str, expected.ty_str, "{sql}");
+-                assert_eq!(actual.ty_params, expected.ty_params, "{sql}");
+-                assert_eq!(actual.default, expected.default, "{sql}");
+-                assert_eq!(actual.ty(), expected.ty(), "{sql}");
+-                assert_eq!(actual.affinity(), expected.affinity(), "{sql}");
+-                assert_eq!(actual.text_collation(), expected.text_collation(), "{sql}");
+-                assert_eq!(actual.primary_key(), expected.primary_key(), "{sql}");
+-                assert_eq!(actual.is_rowid_alias(), expected.is_rowid_alias(), "{sql}");
+-                assert_eq!(actual.notnull(), expected.notnull(), "{sql}");
+-                assert_eq!(actual.explicit_notnull(), expected.explicit_notnull(), "{sql}");
+-                assert_eq!(actual.unique(), expected.unique(), "{sql}");
+-                assert_eq!(actual.hidden(), expected.hidden(), "{sql}");
+-                assert_eq!(
+-                    actual.notnull_conflict_clause,
+-                    expected.notnull_conflict_clause,
+-                    "{sql}"
+-                );
+-                assert_eq!(actual.array_dimensions(), expected.array_dimensions(), "{sql}");
+-                match (actual.generated_type(), expected.generated_type()) {
+-                    (
+-                        GeneratedType::Virtual {
+-                            original_sql: actual,
+-                            ..
+-                        },
+-                        GeneratedType::Virtual {
+-                            original_sql: expected,
+-                            ..
+-                        },
+-                    ) => assert_eq!(actual, expected, "{sql}"),
+-                    (GeneratedType::NotGenerated, GeneratedType::NotGenerated) => {}
+-                    _ => panic!("generated column types differ: {sql}"),
+-                }
+-            }
+-        }
+-        Ok(())
+-    }
+-
+     #[test]
+     pub fn test_has_rowid_true() -> Result<()> {
+         let sql = r#"CREATE TABLE t1 (a INTEGER PRIMARY KEY, b TEXT);"#;
+@@ -10511,133 +10426,6 @@ mod tests {
+         Ok(())
+     }
+ 
+-    #[test]
+-    fn test_schema_loading_accepts_generated_columns() {
+-        let mut schema = Schema::new();
+-
+-        schema
+```
+
+**File**: `core/translate/mod.rs` (modified, +0/-210)
+```diff
+@@ -711,7 +711,6 @@ mod tests {
+     use crate::namespace::NamespaceId;
+     use crate::schema::{BTreeTable, Table, SQLITE_SEQUENCE_TABLE_NAME};
+     use crate::security::roles::SessionRole;
+-    use crate::vdbe::insn::{ClearBtreeCount, Insn};
+     use crate::ConnectOpts;
+     use crate::Database;
+     use crate::EngineDialect;
+@@ -797,184 +796,6 @@ mod tests {
+         );
+     }
+ 
+-    #[test]
+-    fn nth_value_reads_from_saved_rows_without_an_accumulator() {
+-        let io = Arc::new(MemoryIO::new());
+-        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
+-        let conn = db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-        conn.execute("CREATE TABLE items(value)").unwrap();
+-
+-        let statement = conn
+-            .prepare("SELECT nth_value(value, 2) OVER (ORDER BY value) FROM items")
+-            .unwrap();
+-        let instructions = &statement.get_program().insns;
+-
+-        let missing_row_target = instructions
+-            .iter()
+-            .find_map(|(instruction, _)| match instruction {
+-                Insn::SeekRowid { target_pc, .. } => Some(target_pc.as_offset_int() as usize),
+-                _ => None,
+-            })
+-            .expect("nth_value must read its answer from the saved window rows");
+-        assert!(
+-            matches!(
+-                &instructions[missing_row_target].0,
+-                Insn::Halt { on_error: None, .. }
+-            ),
+-            "a missing saved row must stop execution instead of returning NULL"
+-        );
+-        assert!(
+-            instructions.iter().all(|(instruction, _)| !matches!(
+-                instruction,
+-                Insn::AggStep { .. } | Insn::AggValue { .. }
+-            )),
+-            "nth_value must not keep another copy of saved values in an accumulator"
+-        );
+-    }
+-
+-    #[test]
+-    fn delete_without_where_clears_table_and_index_btrees() {
+-        let io = Arc::new(MemoryIO::new());
+-        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
+-        let conn = db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-        conn.execute("CREATE TABLE items(id INTEGER PRIMARY KEY, name TEXT, score INTEGER)")
+-            .unwrap();
+-        conn.execute("CREATE UNIQUE INDEX items_name ON items(name)")
+-            .unwrap();
+-        conn.execute("CREATE INDEX items_score ON items(score) WHERE score > 0")
+-            .unwrap();
+-        conn.execute("INSERT INTO items VALUES(1, 'one', -1), (2, 'two', 0), (3, 'three', 1)")
+-            .unwrap();
+-
+-        let mut statement = conn.prepare("DELETE FROM items").unwrap();
+-        let instructions = &statement.get_program().insns;
+-        let clears = instructions
+-            .iter()
+-            .filter_map(|(instruction, _)| match instruction {
+-                Insn::ClearBtree { count, .. } => Some(*count),
+-                _ => None,
+-            })
+-            .collect::<Vec<_>>();
+-
+-        assert_eq!(
+-            clears,
+-            vec![
+-                ClearBtreeCount::RowsWritten,
+-                ClearBtreeCount::RowsWritten,
+-                ClearBtreeCount::ChangesAndRowsWritten,
+-            ],
+-            "both indexes and then the table must be cleared, and only the table counts changes"
+-        );
+-        assert!(
+-            instructions
+-                .iter()
+-                .all(|(instruction, _)| !matches!(instruction, Insn::Delete { .. })),
+-            "a whole-table delete must not emit the row-at-a-time Delete opcode"
+-        );
+-
+-        statement.run_ignore_rows().unwrap();
+-        assert_eq!(statement.n_change(), 3);
+-        assert_eq!(
+-            statement.metrics().rows_written,
+-            7,
+-            "metrics must count table, full-index, and partial-index entries"
+-        );
+-
+-        statement.reset().unwrap();
+-        statement.reset_metrics();
+-        statement.run_ignore_rows().unwrap();
+-        assert_eq!(statement.n_change(), 0);
+-        assert_eq!(statement.metrics().rows_written, 0);
+-
+-        statement.reset().unwrap();
+-        statement.reset_metrics();
+-        conn.execute("INSERT INTO items VALUES(4, 'four', -1), (5, 'five', 1)")
+-            .unwrap();
+-        statement.run_ignore_rows().unwrap();
+-        assert_eq!(statement.n_change(), 2);
+-        assert_eq!(
+-            statement.metrics().rows_written,
+-            5,
+-            "reused statements must recount table and index entries"
+-        );
+-
+-        statement.reset().unwrap();
+-        statement.reset_metrics();
+-        conn.execute(
+-            "WITH RECURSIVE c(x) AS (VALUES(1) UNION ALL SELECT x + 1 FROM c WHERE x < 3000) \
+-             INSERT INTO items SELECT x, printf('name-%0200d', x), x % 2 FROM c",
+-        )
+-        .unwrap();
+-        statement.run_ignore_rows().unwrap();
+-        assert_eq!(statement.n_change(), 3000);
+-        assert_eq!(
+-       
+```
+
+**File**: `core/translate/roles.rs` (modified, +0/-39)
+```diff
+@@ -599,42 +599,3 @@ pub fn translate_create_role(
+     };
+     translate_change(change, resolver, program, connection)
+ }
+-
+-#[cfg(test)]
+-mod tests {
+-    use crate::security::roles::SessionRole;
+-    use std::sync::Arc;
+-
+-    use turso_parser::ast;
+-
+-    use crate::{Connection, Database, EngineDialect, MemoryIO};
+-
+-    #[test]
+-    fn create_role_fails_under_a_dialect_without_roles() {
+-        let db = Database::open_file(
+-            Arc::new(MemoryIO::new()),
+-            ":memory:",
+-            Arc::new(EngineDialect),
+-        )
+-        .unwrap();
+-        let conn = db
+-            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-
+-        let error = create_role(&conn, "alice").unwrap_err();
+-
+-        assert!(
+-            error.to_string().contains("CREATE ROLE is not supported"),
+-            "{error}"
+-        );
+-    }
+-
+-    fn create_role(conn: &Arc<Connection>, name: &str) -> crate::Result<()> {
+-        let create_role = ast::Cmd::Stmt(ast::Stmt::CreateRole {
+-            role_name: name.to_string(),
+-            options: ast::RoleOptions::default(),
+-        });
+-        conn.prepare_translated_cmd(create_role, &format!("CREATE ROLE {name}"))?
+-            .run_ignore_rows()
+-    }
+-}
+```
+
+**File**: `core/translate/row_security.rs` (modified, +1/-80)
+```diff
+@@ -920,7 +920,6 @@ fn single_value_of_mut(select: &mut ast::Select) -> Option<&mut ast::Expr> {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use crate::security::roles::SessionRole;
+     use std::sync::Arc;
+ 
+     use rustc_hash::FxHashMap;
+@@ -936,7 +935,7 @@ mod tests {
+     use crate::security::policy::RowPolicy;
+     use crate::security::roles::RoleId;
+     use crate::translate::emitter::{DoubleQuotedDml, Resolver};
+-    use crate::{Database, DatabaseCatalog, MemoryIO, Qualifiers, RwLock, SymbolTable};
++    use crate::{DatabaseCatalog, Qualifiers, RwLock, SymbolTable};
+ 
+     /// The engine dialect, except that every table of a schema with dialect
+     /// schema state has row-level security, and table `documents` has a
+@@ -1177,82 +1176,4 @@ mod tests {
+         );
+         f(&mut resolver)
+     }
+-
+-    /// A materialized view stores the rows of its query when it is refreshed,
+-    /// so policies on it could not limit them.
+-    #[test]
+-    fn row_security_statements_reject_a_materialized_view() {
+-        let db = Database::open_file_with_flags(
+-            Arc::new(MemoryIO::new()),
+-            "row-security-materialized-view.db",
+-            crate::OpenFlags::default(),
+-            crate::DatabaseOpts::new().with_views(true),
+-            None,
+-            Arc::new(EngineDialect),
+-        )
+-        .unwrap();
+-        let conn = db
+-            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-        conn.execute("CREATE TABLE t (x)").unwrap();
+-        conn.execute("CREATE MATERIALIZED VIEW mv AS SELECT x FROM t")
+-            .unwrap();
+-        let mv = || ast::QualifiedName::single(ast::Name::exact("mv".to_string()));
+-        let statements = [
+-            ast::Stmt::AlterTable(ast::AlterTable {
+-                name: mv(),
+-                body: ast::AlterTableBody::EnableRowSecurity,
+-            }),
+-            ast::Stmt::CreatePolicy(Box::new(ast::CreatePolicy {
+-                policy_name: ast::Name::exact("p".to_string()),
+-                tbl_name: mv(),
+-                permissive: true,
+-                command: ast::PolicyCommand::All,
+-                roles: vec![ast::Grantee::Public],
+-                using_expr: None,
+-                check_expr: None,
+-            })),
+-        ];
+-
+-        for statement in statements {
+-            let sql = statement.to_string();
+-            let error = conn
+-                .prepare_translated_cmd(ast::Cmd::Stmt(statement), &sql)
+-                .unwrap_err();
+-
+-            assert!(
+-                error.to_string().contains("\"mv\" is not a table"),
+-                "{error}"
+-            );
+-        }
+-    }
+-
+-    #[test]
+-    fn enabling_row_security_fails_under_a_dialect_without_it() {
+-        let db = Database::open_file(
+-            Arc::new(MemoryIO::new()),
+-            ":memory:",
+-            Arc::new(EngineDialect),
+-        )
+-        .unwrap();
+-        let conn = db
+-            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
+-            .unwrap();
+-        conn.execute("CREATE TABLE t (x)").unwrap();
+-        let enable = ast::Cmd::Stmt(ast::Stmt::AlterTable(ast::AlterTable {
+-            name: ast::QualifiedName::single(ast::Name::exact("t".to_string())),
+-            body: ast::AlterTableBody::EnableRowSecurity,
+-        }));
+-
+-        let error = conn
+-            .prepare_translated_cmd(enable, "ALTER TABLE t ENABLE ROW LEVEL SECURITY")
+-            .unwrap_err();
+-
+-        assert!(
+-            error
+-                .to_string()
+-                .contains("row-level security is not supported"),
+-            "{error}"
+-        );
+-    }
+ }
+```
+
+**File**: `tests/integration/connection.rs` (modified, +21/-0)
+```diff
+@@ -1,14 +1,17 @@
+ use tempfile::TempDir;
+ use turso_core::connection::*;
++use turso_core::dialect::Dialect;
+ use turso_core::io::MemoryIO;
+ use turso_core::io::IO;
+ use turso_core::security::roles::SessionRole;
++use turso_core::storage::database::DatabaseFile;
+ use turso_core::sync::Arc;
+ use turso_core::ConnectOpts;
+ use turso_core::Database;
+ use turso_core::DatabaseOpts;
+ use turso_core::LimboError;
+ use turso_core::OpenFlags;
++use turso_core::OpenOptions;
+ use turso_core::Result;
+ use turso_core::Value;
+ use turso_core::MAIN_DB_ID;
+@@ -388,3 +391,21 @@ fn test_setval_uncalled_emits_stored_value_as_next() -> Result<()> {
+     );
+     Ok(())
+ }
++
++#[test]
++fn consume_stmt_reports_parse_error() {
++    let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
++    let db = open_db(&io, "consume-stmt-parse-error.db", Arc::new(SqliteDialect)).unwrap();
++    let conn = db
++        .connect(ConnectOpts::new(SessionRole::Superuser))
++        .unwrap();
++
++    assert!(conn.consume_stmt("SELECT * FROM").is_err());
++    conn.close().unwrap();
++}
++
++fn open_db(io: &Arc<dyn IO>, path: &str, dialect: Arc<dyn Dialect>) -> Result<Arc<Database>> {
++    let file = io.open_file(path, OpenFlags::Create, true)?;
++    let db_file = Arc::new(DatabaseFile::new(file));
++    Database::open(io.clone(), path, OpenOptions::new(dialect).storage(db_file))
++}
+```
+
+**File**: `tests/integration/mod.rs` (modified, +2/-0)
+```diff
+@@ -39,6 +39,8 @@ mod query_processing;
+ mod query_timeout;
+ mod queued_io;
+ mod reindex;
++mod schema;
++mod security;
+ mod statement;
+ mod statement_lifecycle;
+ mod statement_metadata;
+```
+
+**File**: `tests/integration/query_processing/test_read_path.rs` (modified, +38/-0)
+```diff
+@@ -4,6 +4,7 @@ use asserting::prelude::*;
+ use rusqlite::Connection as SqliteConnection;
+ use std::sync::Arc;
+ use tempfile::TempDir;
++use turso_core::vdbe::insn::Insn;
+ use turso_core::{ConnectOpts, LimboError, SessionRole, StepResult, Value};
+ use turso_core::{Database, DatabaseOpts, MemoryIO, OpenFlags, IO};
+ use turso_sqlite::SqliteDialect;
+@@ -1556,3 +1557,40 @@ fn test_negate_blob_subscript_invalid_utf8_no_panic() {
+         "Negating a blob subscript with invalid UTF-8 text should not panic"
+     );
+ }
++
++#[test]
++fn nth_value_reads_from_saved_rows_without_an_accumulator() {
++    let io = Arc::new(MemoryIO::new());
++    let db = Database::open_file(io, ":memory:", Arc::new(SqliteDialect)).unwrap();
++    let conn = db
++        .connect(ConnectOpts::new(SessionRole::Superuser))
++        .unwrap();
++    conn.execute("CREATE TABLE items(value)").unwrap();
++
++    let statement = conn
++        .prepare("SELECT nth_value(value, 2) OVER (ORDER BY value) FROM items")
++        .unwrap();
++    let instructions = &statement.get_program().insns;
++
++    let missing_row_target = instructions
++        .iter()
++        .find_map(|(instruction, _)| match instruction {
++            Insn::SeekRowid { target_pc, .. } => Some(target_pc.as_offset_int() as usize),
++            _ => None,
++        })
++        .expect("nth_value must read its answer from the saved window rows");
++    assert!(
++        matches!(
++            &instructions[missing_row_target].0,
++            Insn::Halt { on_error: None, .. }
++        ),
++        "a missing saved row must stop execution instead of returning NULL"
++    );
++    assert!(
++        instructions.iter().all(|(instruction, _)| !matches!(
++            instruction,
++            Insn::AggStep { .. } | Insn::AggValue { .. }
++        )),
++        "nth_value must not keep another copy of saved values in an accumulator"
++    );
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11737** (2026-11-12): postgres: drop SQL functions with DROP FUNCTION (@LeMikaelF)
-- **PR #11717** (2026-11-12): postgres: split statements with the parser (@LeMikaelF)
-- **PR #11703** (2026-11-11): postgres: Allow only superusers to access internal tables (@penberg)
-- **PR #11690** (closed): postgres: Pin Postgres version to 18 (@penberg)
-- **PR #11689** (2026-11-11): postgres: Pin Postgres version to 18 (@penberg)
-- **PR #11688** (2026-11-11): sqlite: Define supported version in `sqlite/version` (@penberg)
+- **PR #11866** (2026-11-16): tests: move the WAL tests that need only the pager's WAL out of core (@penberg)
+- **PR #11859** (closed): postgres: give an integer primary key its default and reject NULL, with a flag on the INSERT statement (@glommer)
+- **PR #11858** (2026-11-15): core/storage: build the pager directly in the b-tree unit tests (@penberg)
+- **PR #11857** (2026-11-15): tests: move the schema and dialect tests that need only the public API out of core (@penberg)
+- **PR #11854** (2026-11-15): core/vdbe: build opcode unit test programs without parsing SQL (@penberg)
+- **PR #11844** (2026-11-14): core/mvcc: read-only accessors for tests, and move the tests that only read store state (@penberg)
 
 ---
 
@@ -2890,32 +2782,86 @@ it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'postgres: Add row-level security policies' from Pekka Enberg
+## X. Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pek
 
 **RULE**:
-When implementing operations in `cli/mcp_server.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/storage/btree.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `719fcc41`: Merge 'postgres: Add row-level security policies' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f0bfbef`: Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/mcp_server.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/btree.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            | Stmt::CreatePolicy(_)
-            | Stmt::DropPolicy { .. }
+        Database, Page, Pager,
+        pager: &Arc<Pager>,
+                    pager,
+            pager,
+        let pager = pager_of_new_database();
+        let payload = add_record(1, 0, page.clone(), record, &pager);
+        let pager = pager_of_new_database();
+            let payload = add_record(i, i, page.clone(), record, &pager);
+    fn empty_btree() -> (Arc<Pager>, i64) {
+        let pager = pager_of_new_database();
+        let page2 = run_until_done(|| pager.allocate_page(), &pager).unwrap();
+        btree_init_page(&page2, PageType::TableLeaf, 0, pager.usable_space());
+        (pager, page2.get().id() as i64)
+    }
+
+    /// A pager whose database holds only page 1.
+    fn pager_of_new_database() -> Arc<Pager> {
+        let pager = empty_pager(4096, PageCache::default());
+        run_until_done(|| pager.allocate_page1(), &pager).unwrap();
+        pager
+    }
+
+    /// A pager over an empty in-memory database file, opened without a `Database`.
+    #[allow(clippy::arc_with_non_send_sync)]
+    fn empty_pager(page_size: u32, page_cache: PageCache) -> Arc<Pager> {
+        let io: Arc<dyn IO> = Arc::new(Mem
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    use tempfile::TempDir;
+
+        Database, Page, Pager, PlatformIO,
+    /// The returned `TempDir` deletes the database directory when it drops, so
+    /// callers must hold it for as long as they use the database.
+    #[allow(clippy::arc_with_non_send_sync)]
+    fn get_database() -> (Arc<Database>, TempDir) {
+        let temp_dir = TempDir::new().unwrap();
+        let path = temp_dir.path().join("test.db");
+        {
+            let connection = rusqlite::Connection::open(&path).unwrap();
+            connection
+                .pragma_update(None, "journal_mode", "wal")
+                .unwrap();
+        }
+        let io: Arc<dyn IO> = Arc::new(PlatformIO::new().unwrap());
+        let db = Database::open_file(io.clone(), path.to_str().unwrap(), Arc::new(EngineDialect))
+            .unwrap();
+
+        (db, temp_dir)
+    }
+
+        conn: &Arc<Connection>,
+                    &conn.pager.load(),
+            &conn.pager.load().clone(),
+        let (db, _temp_dir) = get_database();
+        let conn = db
+            .connect(ConnectOpts::new(SessionRole::Superuser))
+            .unwrap();
+        let payload = add_record(1, 0, page.clone(), record, &conn);
+        let (db, _temp_dir)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `719fcc41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f0bfbef` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

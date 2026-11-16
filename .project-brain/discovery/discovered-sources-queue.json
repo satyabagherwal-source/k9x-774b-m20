@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T05:42:06.429Z",
+  "updated_at": "2026-11-16T06:59:44.108Z",
   "stats": {
-    "total_discovered": 4162,
-    "approved_pending_harvest": 3911,
+    "total_discovered": 4164,
+    "approved_pending_harvest": 3913,
     "harvested_count": 0,
     "rejected_count": 251,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3910,
+      "COMMUNITY_AND_EXPERT": 3912,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -89828,6 +89828,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
         "fileName": "joreilly-confetti-learnings.md"
+      }
+    },
+    "SRC-F2ECE39B069C": {
+      "id": "SRC-F2ECE39B069C",
+      "url": "https://github.com/tursodatabase/limbo",
+      "title": "https://github.com/tursodatabase/limbo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T06:59:44.079Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-6B5690426C7E": {
+      "id": "SRC-6B5690426C7E",
+      "url": "https://sqlite.org/pragma.html",
+      "title": "https://sqlite.org/pragma.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T06:59:44.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
       }
     }
   }

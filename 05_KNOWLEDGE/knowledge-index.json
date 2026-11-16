@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T06:35:56.130Z",
+  "last_updated": "2026-11-16T06:59:45.807Z",
   "total_verified_learnings": 8769,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19004,
+  "total_items": 19008,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "13635c8eac6111d8d3f97471f435c4d13bedf75bb254af5b3e72c52ed3dc6543",
+      "content_hash": "b8a732a5248a3edeb2a0e60354125dc15d563be117ce8f8689d5cf945d1aea49",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T06:35:54.509Z"
+      "persisted_at": "2026-11-16T06:59:45.103Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d42c1c02076e75c785c7a8258f7c695acfae84f6cfb6df3a0b3dc56a3b9b19ae",
+      "content_hash": "c658f7199fcf831a57c7b5a1741996d196a9b0e408debc5bb847da9dc34c66c5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T06:35:54.640Z"
+      "persisted_at": "2026-11-16T06:59:45.215Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112990,25 +112990,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "c718b2ad",
-      "content_hash": "922e01ed542407758e6e33ebdaa7fcf86876d001149d642cd16bf41166e1062f",
+      "source_version": "323ddd36",
+      "content_hash": "92fe4b5524c4b547f637552769772eb23272c4ad47250aebed89648855238445",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T06:00:14.968Z"
+      "persisted_at": "2026-11-16T06:59:41.176Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "c718b2ad",
-      "content_hash": "c100998f387c4ff454d5bfe2fb236889ba3be895768e2021e84b1baf5b352be0",
+      "source_version": "323ddd36",
+      "content_hash": "469ffa4e46a69df94e5513232c3528b7768017ab0a110147f1e10223ed22f5cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:00:15.085Z"
+      "persisted_at": "2026-11-16T06:59:41.302Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213354,13 +213354,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "c718b2ad",
-      "content_hash": "ab35ea80df53299e2e920a020986fa065f47fba5a18230edccc546fb0f0cfd80",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "323ddd36",
+      "content_hash": "b770a9b8166830cf06931be3c0c448f76577fdc2e8e99f799ffe102420f983b4",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213371,6 +213371,11 @@
           "number": 8549,
           "title": "Merge 'tests: move the MVCC tests that need only the public API out of core' fro",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8723,
+          "title": "Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pek",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213378,7 +213383,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:00:14.480Z",
+      "verified_at": "2026-11-16T06:59:40.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234053,9 +234058,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a0df90ca9e56758116faf45ab737161c15a51f72775bc0ca0aef5f48107d479",
+      "content_hash": "b350fbb5562aaa40bfccd2167bd51786db3489a5bf8992ae95a8f6f3f9a62815",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T01:33:02.401Z"
+      "persisted_at": "2026-11-16T06:59:45.807Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -250450,13 +250455,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3NJN-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YBFI-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e6566d95f63b72b644179d1eb9f5b792bd7a86b9d2090068cfae4fb93df643f",
+      "content_hash": "a4cf00d4b2a277ca7da00d578761d0f791d957959f465c42ba03085fbb407056",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T06:35:54.228Z"
+      "persisted_at": "2026-11-16T06:59:44.863Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -250466,9 +250471,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "db3006b11fd70f996c305ae12c98dc25cc78a89fe81ba6f494be1cf180574c36",
+      "content_hash": "b0fb16d0bebfc0974f4b963ef1d6f8fa93d9dfec3db2e35e0c8d66cf3d6333ae",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T06:35:54.364Z"
+      "persisted_at": "2026-11-16T06:59:44.981Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -252542,6 +252547,56 @@
       "content_hash": "2ffaf168928dafaa874ddc02f4644d46c64fa7061ed87530767870d7f8ab85b7",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T06:17:48.276Z"
+    },
+    "rule-8723": {
+      "learning_id": "rule-8723",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8723,
+      "title": "Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pek",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "323ddd36",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T06:59:40.706Z"
+    },
+    "candidate_directive-merge-core-storage-build-the-pager-directly-in-the-b-tree-unit-tests-from-pek": {
+      "item_id": "candidate_directive-merge-core-storage-build-the-pager-directly-in-the-b-tree-unit-tests-from-pek",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YAZN-merge-core-storage-build-the-pager-directly-in-the-b-tree-unit-tests-from-pek.md",
+      "title": "Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pek",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a0055eb47333122a98933d57ae9c374773cd23174637f0488685b19428db1fe6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T06:59:44.295Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-learnings-technical-construction-intelligence-tursodatabase-.md",
+      "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9d3767dfe938bf2309408dd33ed640631d9766fba3de2432a448f4899b43cbba",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T06:59:44.415Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tursodatabase-limbo-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-limbo-learnings",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6db2a9e1af82fa42699e9a4ed0509980fea5b5485ba23fd89e7f87614119d1ee",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T06:59:44.538Z"
     }
   },
   "ai-builder-brain": {

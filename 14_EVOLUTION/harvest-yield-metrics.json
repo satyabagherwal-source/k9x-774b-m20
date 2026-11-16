@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T06:17:44.740Z",
-  "total_cycles_completed": 9846,
-  "total_learnings_persisted": 9846,
-  "total_rules_promoted": 9454,
+  "last_updated": "2026-11-16T06:59:40.883Z",
+  "total_cycles_completed": 9847,
+  "total_learnings_persisted": 9847,
+  "total_rules_promoted": 9455,
   "history": [
-    {
-      "timestamp": "2026-11-15T02:55:36.832Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T02:58:54.914Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T06:17:44.740Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T06:59:40.883Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

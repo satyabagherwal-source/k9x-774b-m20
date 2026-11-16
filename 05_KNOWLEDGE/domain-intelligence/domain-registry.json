@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T06:35:55.986Z",
-  "total_records": 1241,
+  "last_updated": "2026-11-16T06:59:45.807Z",
+  "total_records": 1242,
   "domains": {
     "A": {
       "total": 7,
@@ -887,7 +887,7 @@
       ]
     },
     "H": {
-      "total": 260,
+      "total": 261,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1148,7 +1148,8 @@
         "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
         "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant"
       ]
     },
     "I": {
@@ -7450,10 +7451,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "922e01ed542407758e6e33ebdaa7fcf86876d001149d642cd16bf41166e1062f",
-      "created_at": "2026-11-15T06:00:14.968Z"
+      "content_hash": "92fe4b5524c4b547f637552769772eb23272c4ad47250aebed89648855238445",
+      "created_at": "2026-11-16T06:59:41.176Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -16891,8 +16892,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "0a0df90ca9e56758116faf45ab737161c15a51f72775bc0ca0aef5f48107d479",
-      "created_at": "2026-11-16T01:33:02.401Z"
+      "content_hash": "b350fbb5562aaa40bfccd2167bd51786db3489a5bf8992ae95a8f6f3f9a62815",
+      "created_at": "2026-11-16T06:59:45.807Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -22412,8 +22413,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "db3006b11fd70f996c305ae12c98dc25cc78a89fe81ba6f494be1cf180574c36",
-      "created_at": "2026-11-16T06:35:54.364Z"
+      "content_hash": "b0fb16d0bebfc0974f4b963ef1d6f8fa93d9dfec3db2e35e0c8d66cf3d6333ae",
+      "created_at": "2026-11-16T06:59:44.981Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -22906,6 +22907,15 @@
       "repository": "yyjeqhc-webcodex-learnings",
       "content_hash": "8c11ec00f6a1496b96a087675ed164863176e98188af5e60fbebc68fba9adb18",
       "created_at": "2026-11-16T06:17:48.167Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-learnings-technical-construction-intelligence-tursodatabase-.md",
+      "repository": "tursodatabase-limbo-learnings",
+      "content_hash": "9d3767dfe938bf2309408dd33ed640631d9766fba3de2432a448f4899b43cbba",
+      "created_at": "2026-11-16T06:59:44.415Z"
     }
   }
 }

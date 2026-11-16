@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-SBZ8",
-    "timestamp": "2026-11-13T19:39:54.404Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "cfd88c0efc3d62cd133926f2feeea8ab865a51259d0d61ee1e9f3246523a4096",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-SEC8",
     "timestamp": "2026-11-13T19:39:57.464Z",
     "repository": "NervJS/taro",
@@ -7490,6 +7475,21 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-Y8CQ",
+    "timestamp": "2026-11-16T06:59:40.874Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "b770a9b8166830cf06931be3c0c448f76577fdc2e8e99f799ffe102420f983b4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

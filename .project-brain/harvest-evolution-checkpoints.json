@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T06:35:56.263Z",
+  "last_updated": "2026-11-16T06:59:45.927Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T05:59:03.881Z",
@@ -8,12 +8,12 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-16T06:35:53.957Z",
+      "processed_at": "2026-11-16T06:59:44.660Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-16T01:33:02.017Z",
+      "processed_at": "2026-11-16T06:59:45.335Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3156,9 +3156,14 @@
       "processed_at": "2026-11-16T04:30:31.327Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "tursodatabase-limbo-learnings.md": {
+      "processed_at": "2026-11-16T06:59:44.062Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1263,
+  "total_dossiers_evaluated": 1266,
   "total_canonical_promoted": 287,
-  "total_staged_for_review": 971
+  "total_staged_for_review": 974
 }
