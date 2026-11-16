@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T22:34:22.456Z",
+  "last_updated": "2026-11-16T22:47:42.618Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T22:34:20.943Z",
@@ -428,7 +428,7 @@
       "staged_for_review": 1
     },
     "metalbear-co-mirrord-learnings.md": {
-      "processed_at": "2026-11-15T02:16:14.597Z",
+      "processed_at": "2026-11-16T22:47:40.971Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -483,7 +483,7 @@
       "staged_for_review": 1
     },
     "siderolabs-talos-learnings.md": {
-      "processed_at": "2026-11-14T03:16:47.333Z",
+      "processed_at": "2026-11-16T22:47:42.156Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -833,7 +833,7 @@
       "staged_for_review": 0
     },
     "axios-axios-learnings.md": {
-      "processed_at": "2026-11-12T05:27:36.005Z",
+      "processed_at": "2026-11-16T22:47:41.501Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3218,7 +3218,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1377,
+  "total_dossiers_evaluated": 1380,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1075
+  "total_staged_for_review": 1078
 }

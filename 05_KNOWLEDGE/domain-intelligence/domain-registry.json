@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T22:34:22.028Z",
-  "total_records": 1343,
+  "last_updated": "2026-11-16T22:47:42.405Z",
+  "total_records": 1345,
   "domains": {
     "A": {
       "total": 9,
@@ -939,7 +939,7 @@
       ]
     },
     "H": {
-      "total": 296,
+      "total": 298,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1236,7 +1236,9 @@
         "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants",
         "domain_intelligence-technical-construction-intelligence-cachix-devenv-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants"
       ]
     },
     "I": {
@@ -12048,8 +12050,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "a2831cf692f072ef211e849918750ee8da0de1ba0e997296acb9ae492bac2770",
-      "created_at": "2026-11-14T03:10:34.470Z"
+      "content_hash": "53d66afbeec977542f6ea3d7591237a3d534ad158917fe2c281015f2cfff6c41",
+      "created_at": "2026-11-16T22:47:38.138Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -12170,8 +12172,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "b50b40fe3bb5ce1b418886d4873a5f19bab9eb169056ba5683ba8af836d555e5",
-      "created_at": "2026-11-14T03:16:47.744Z"
+      "content_hash": "57f1e4d0e258b1ebe349e3a17db129d9b0ffc51e800de7af8ba4cf70223e7e05",
+      "created_at": "2026-11-16T22:47:42.405Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -18332,8 +18334,8 @@
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "repository": "metalbear-co/mirrord",
-      "content_hash": "af07253ab92086fe7ef780f7ecd8f0751191c15143fd0c186a5460786f44a262",
-      "created_at": "2026-11-15T02:14:58.314Z"
+      "content_hash": "e117fb22d755912aa05349e0c6b938a51d0d9dd0aa0d934e0e82b5f818fe2b74",
+      "created_at": "2026-11-16T22:47:29.855Z"
     },
     "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
@@ -18359,8 +18361,8 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-learnings-technical-construction-intelligence-metalbear-co-.md",
       "repository": "metalbear-co-mirrord-learnings",
-      "content_hash": "2f0bdc829e3e4a3e2b03c14a961d434ac653ba4b1e42ab0608dbcae25f779067",
-      "created_at": "2026-11-15T02:16:15.065Z"
+      "content_hash": "82cedbb1576f1871f66e564c9076e58bf46d525e7ff14f0b7e05273b970f1367",
+      "created_at": "2026-11-16T22:47:41.303Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -24050,6 +24052,24 @@
       "repository": "nodejs-undici-learnings",
       "content_hash": "b93f7d152cba25850eb21aa0a3337217054dc54640906fd54afa004587237b65",
       "created_at": "2026-11-16T22:34:20.640Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: axios/axios Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-technical-construction-intelligence-axios-axios-core-invariants.md",
+      "repository": "axios/axios",
+      "content_hash": "a7fb05d69fdc657e1cf7d2d15f24b5afb0e265f6376387c2e9a8683b7c0cbc9f",
+      "created_at": "2026-11-16T22:47:32.352Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: axios-axios-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-learnings-technical-construction-intelligence-axios-axios-learnings-.md",
+      "repository": "axios-axios-learnings",
+      "content_hash": "154f11f83cf5c80d37d7d9d22f62516ddea7676dcef628dddbd0b015372a614e",
+      "created_at": "2026-11-16T22:47:41.958Z"
     }
   }
 }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T22:34:14.015Z",
-  "total_cycles_completed": 9943,
-  "total_learnings_persisted": 9943,
-  "total_rules_promoted": 9539,
+  "last_updated": "2026-11-16T22:47:37.890Z",
+  "total_cycles_completed": 9946,
+  "total_learnings_persisted": 9946,
+  "total_rules_promoted": 9542,
   "history": [
-    {
-      "timestamp": "2026-11-15T17:52:40.640Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T18:17:17.703Z",
-      "repository": "telemt/telemt",
-      "learningId": "learn-github-telemt-telemt",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T18:47:46.835Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T19:04:03.122Z",
       "repository": "Diffuspace/Clover-35B-A3B-Preview",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-16T22:34:14.015Z",
       "repository": "nodejs/undici",
       "learningId": "learn-github-nodejs-undici",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:47:29.620Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:47:32.090Z",
+      "repository": "axios/axios",
+      "learningId": "learn-github-axios-axios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T22:47:37.890Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

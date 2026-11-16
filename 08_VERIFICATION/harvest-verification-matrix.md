@@ -10356,3 +10356,6 @@
 | `CYCLE-20261116-T0MC` | `2026-11-16T22:19:24.900Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8800` | Yes (`805246a8...`) |
 | `CYCLE-20261116-T54Z` | `2026-11-16T22:19:30.755Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8801` | Yes (`a8f7fdff...`) |
 | `CYCLE-20261116-C2NO` | `2026-11-16T22:34:14.004Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8802` | Yes (`beca9c50...`) |
+| `CYCLE-20261116-T4JW` | `2026-11-16T22:47:29.612Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8803` | Yes (`26d0be52...`) |
+| `CYCLE-20261116-T6GJ` | `2026-11-16T22:47:32.083Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8804` | Yes (`2f15b73f...`) |
+| `CYCLE-20261116-TAXN` | `2026-11-16T22:47:37.883Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8805` | Yes (`37d077e4...`) |

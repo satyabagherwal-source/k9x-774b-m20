@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `77c2d33d`  
+> **Source Version**: `c5bdfc45`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T02:14:56.925Z  
+> **Timestamp**: 2026-11-16T22:47:28.889Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T02:14:56.754Z  
+> **Harvest Timestamp**: 2026-11-16T22:47:28.686Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5411 stars
+- **Stars / Engagement**: 5412 stars
 
 ---
 
@@ -1529,481 +1529,410 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77c2d33d` (2026-11-14)
-**Commit Message**: Remove GitHub PATs in CI (#5239)
+### Incident Patch 1: `ce8e8e23` (2026-11-16)
+**Commit Message**: Show MetalBear Cloud sessions in mirrord ui (#5242)
 
-* Publish the changelog to docs-changelog with a Cubby app token
+* Show MetalBear Cloud sessions in mirrord ui
 
-Replace CHANGELOG_PAT with a token minted from the Cubby app, scoped to
-metalbear-co/docs-changelog with contents: write. The reusable workflow
-now takes CUBBY_CLIENT_ID and CUBBY_PRIVATE_KEY instead of the PAT, and
-commits as cubby-mb[bot], the same as the operator, VS Code and IntelliJ
-changelogs.
-
-Part of COR-2178.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Push the Homebrew formula with a Cubby app token
-
-Replace BREW_GITHUB_PAT with a token minted from the Cubby app, scoped to
-metalbear-co/homebrew-mirrord with contents: write. Formula commits are
-now made as cubby-mb[bot] instead of a personal identity.
-
-Part of COR-2178.
+Serverless targets run without an operator, so mirrord ui had nothing to
+list for them and showed an operator or Kubernetes error instead. The
+sessions-manager now lists the live sessions of the organization the
+`mirrord login` token names (`GET /v1/sessions`, served by the operator
+repo), and mirrord ui shows them in a MetalBear Cloud section. While the
+user is logged in, a missing operator or kube context isn't an error.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* Pin return-dispatch and await-remote-run to commits in the operator E2E workflow
+* Address review of the Cloud sessions in mirrord ui
 
-Both actions were referenced by @main. They are about to receive a token
-minted from the Cubby app key, so pin them to their current main commits
-like the other actions in this repo.
-
-Part of COR-2178.
+- Decide that the developer uses Cloud from the login the backend read, not from any non-loggedOut status, so a failed check doesn't hide the operator and Kubernetes guidance.
+- Treat a login the sessions-manager refused as logged out.
+- Show a Cloud pane instead of the Kubernetes quick start for Cloud users.
+- Render Cloud rows as plain content, and show their replica.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* Dispatch the operator E2E run with Cubby app tokens
+* Fix review findings in the Cloud sessions of mirrord ui
 
-Repla
+- Show the Cloud overview only where the operator guidance would have been.
+- Don
 
-**File**: `.github/workflows/changelog-update.yaml` (modified, +15/-4)
-```diff
-@@ -16,7 +16,9 @@ on:
-         type: string
-         default: ''
-     secrets:
--      CHANGELOG_PAT:
-+      CUBBY_CLIENT_ID:
-+        required: true
-+      CUBBY_PRIVATE_KEY:
-         required: true
- 
- jobs:
-@@ -25,6 +27,15 @@ jobs:
-     permissions:
-       contents: read
-     steps:
-+      - name: Create GitHub App token (docs-changelog repo)
-+        id: app-token
-+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
-+        with:
-+          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
-+          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
-+          owner: metalbear-co
-+          repositories: docs-changelog
-+          permission-contents: write
-       - name: Prepare changelog to be published at /docs/changelog
-         uses: metalbear-co/release-changelog-docs@747e23c4fbb265ddd583a37e709549e1dbfc4e60
-         with:
-@@ -34,9 +45,9 @@ jobs:
-           public_source_url: https://github.com/metalbear-co/mirrord
-           destination_repo: metalbear-co/docs-changelog
-           destination_file_path: ./changelog/mirrord.md
--          git_user: Eyal Bukchin
--          git_email: eyal@metalbear.co
--          git_access_token: ${{ secrets.CHANGELOG_PAT }}
-+          git_user: cubby-mb[bot]
-+          git_email: 273354325+cubby-mb[bot]@users.noreply.github.com
-+          git_access_token: ${{ steps.app-token.outputs.token }}
-           title: mirrord Changelog
-           description: The release changelog for the mirrord CLI.
-           tags: oss,team,enterprise
-```
-
-**File**: `.github/workflows/operator-e2e.yaml` (modified, +31/-14)
-```diff
-@@ -10,10 +10,10 @@ name: Operator E2E Test
- # when commits are pushed to those branches in `metalbear-co/mirrord`, so fork
- # PRs do not trigger this workflow.
- #
--# `OPERATOR_E2E_PAT` requirements for the remote operator workflow:
--# - Classic PAT: `repo`
--# - Fine-grained PAT:
--#   - `metalbear-co/operator`: `Actions: read` and `Actions: write`
-+# The remote operator workflow is dispatched and polled with Cubby app tokens
-+# scoped to `metalbear-co/operator` (`Actions: write` to dispatch, `Actions:
-+# read` to poll). App tokens expire after one hour, so a fresh one is minted
-+# before waiting on the run, and both timeouts stay under an hour.
- #
- # Automatic runs only proceed when the pushed branch matches
- # `releases/<major>.<minor>.<patch>`.
-@@ -70,14 +70,22 @@ jobs:
-     runs-on: blacksmith-4vcpu-ubuntu-2404
-     continue-on-error: true
-     steps:
-+      - name: Create GitHub App token (operator repo, dispatch)
-+        id: dispatch-token
-+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
-+        with:
-+          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
-+          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
-+          owner: metalbear-co
-+          repositories: operator
-+          permission-actions: write
-+
-       - name: Trigger operator E2E workflow and wait for completion
-         id: trigger-e2e
--        uses: metalbear-co/return-dispatch@main
-+        uses: metalbear-co/return-dispatch@dac7338c24ea3a5c470ba13f9c3425537afa3439 # main
-         continue-on-error: true
-         with:
--          # This PAT is only used to dispatch the workflow in
--          # `metalbear-co/operator`.
--          token: ${{ secrets.OPERATOR_E2E_PAT }}
-+          token: ${{ steps.dispatch-token.outputs.token }}
-           ref: ${{ needs.resolve_trigger_context.outputs.operator_branch }}
-           repo: operator
-           owner: metalbear-co
-@@ -87,24 +95,33 @@ jobs:
-               "mirrord_commit": "${{ needs.resolve_trigger_context.outputs.mirrord_commit }}",
-               "mirrord_branch": "${{ needs.resolve_trigger_context.outputs.mirrord_branch }}"
-             }
--          workflow_timeout_seconds: 7200
-+          workflow_timeout_seconds: 3300
-           workflow_job_steps_retry_seconds: 30
- 
-       - name: Use the output run ID and URL
-         run: |
-           echo ${{steps.trigger-e2e.outputs.run_id}}
-           echo ${{steps.trigger-e2e.outputs.run_url}}
- 
-+      # Minted after the dispatch so the full hour is available while waiting.
-+      - name: Create GitHub App token (operator repo, await)
-+        id: await-token
-+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
-+        with:
-+          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
-+          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
-+          owner: metalbear-co
-+          repositories: operator
-+          permission-actions: read
-+
-       - name: Await Run ID ${{ steps.trigger-e2e.outputs.run_id }}
--        uses: metalbear-co/await-remote-run@main
-+        uses: metalbear-co/await-remote-run@1fef79c6a9f061b4acf1773834285709fa4a7d5f # main
-         with:
--          # This PAT is only used to read workflow runs in
--          # `metalbear-co/operator`.
--          token: ${{ secrets.OPERATOR_E2E_PAT }}
-+          token: ${{ steps.await-token.outputs.token }}
-           repo: operator
-           owner: metalbear-co
-           run_id: ${{ steps.trigger-e2e.outputs.run_id }}
--          run_timeout_seconds: 7200 # Optional
-+          run_timeout_seconds: 3300 # Optional
-           poll_interval_ms: 5000 # Optional
- 
-       - name: Show operator E2E results
-```
-
-**File**: `.github/workflows/release.yaml` (modified, +14/-4)
-```diff
-@@ -1131,7 +1131,8 @@ jobs:
-     with:
-       ref: ${{ needs.validate_release_request.outputs.sha }}
-     secrets:
--      CHANGELOG_PAT: ${{ secrets.CHANGELOG_PAT }}
-+      CUBBY_CLIENT_ID: ${{ secrets.CUBBY_CLIENT_ID }}
-+      CUBBY_PRIVATE_KEY: ${{ secrets.CUBBY_PRIVATE_KEY }}
- 
-   release_homebrew:
-     needs: [validate_release_request, release_gh]
-@@ -1152,12 +1153,21 @@ jobs:
-           echo "sha256_mac=$(cat /tmp/artifacts/universal-apple-darwin/mirrord_mac_universal.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
-           echo "sha256_linux_aarch64=$(cat /tmp/artifacts/aarch64-unknown-linux-gnu/mirrord_linux_aarch64.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
-           echo "sha256_linux_x86_64=$(cat /tmp/artifacts/x86_64-unknown-linux-gnu/mirrord_linux_x86_64.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
-+      - name: Create GitHub App token (homebrew-mirrord repo)
-+        id: app-token
-+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
-+        with:
-+          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
-+          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
-+          owner: metalbear-co
-+          repositories: homebrew-mirrord
-+          permission-contents: write
-       - name: Checkout into homebrew-mirrord
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-           repository: metalbear-co/homebrew-mirrord
-           path: ./
--          token: ${{ secrets.BREW_GITHUB_PAT }}
-+          token: ${{ steps.app-token.outputs.token }}
-       - name: Update hashes and urls
-         run: |
-           sed -i -e 's/\([0-9]\+\.[0-9]\+\.[0-9]\+\)/${{ env.version }}/g' mirrord.rb
-@@ -1168,8 +1178,8 @@ jobs:
-         run: cat mirrord.rb
-       - name: Commit to metalbear-co/homebrew-mirrord
-         run: |
--          git config --global user.email "eyal@metalbear.co"
--          git config --global user.name "Eyal Bukchin"
-+          git config --global user.email "273354325+cubby-mb[bot]@users.noreply.github.com"
-+          git config --global user.name "cubby-mb[bot]"
-           git add .
-           git commit -m "Update to ${{ env.version }}"
-           git push
-```
-
-**File**: `changelog.d/+ci-cubby-app-tokens.internal.md` (added, +1/-0)
+**File**: `changelog.d/+cloud-sessions-in-ui.added.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Replace personal access tokens in CI with Cubby app tokens.
++`mirrord ui` shows the sessions of your organization on MetalBear Cloud after `mirrord login`, and while you're logged in, no longer reports an error when the cluster has no mirrord operator or there is no Kubernetes context.
 ```
 
----
-
-### Incident Patch 2: `fe91e1c2` (2026-11-13)
-**Commit Message**: Revise wizard (#5236)
-
-* up: ask to customize traffic instead of configure it
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* up: say what the traffic question's default does
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ui: show the traffic default in the wizard's traffic step
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Typo
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/+up-wizard-traffic-default.changed.md` (added, +1/-0)
+**File**: `mirrord/cli/src/ui/server/v2.rs` (modified, +5/-0)
 ```diff
-@@ -0,0 +1 @@
-+`mirrord wizard` and `mirrord up init` now say what `mirrord up` does with traffic when you skip customizing the header filter and ports.
-```
-
-**File**: `mirrord/cli/src/error.rs` (modified, +1/-1)
-```diff
-@@ -823,7 +823,7 @@ pub(crate) enum CliError {
+@@ -17,6 +17,9 @@
+ //! - `operator/*` — cluster sessions from the operator. Fetched per-request for the selected
+ //!   context and filtered to the selected namespace; the upstream is itself a poll of the operator
+ //!   CRD, so a stateless per-context fetch is the natural fit.
++//! - `cloud/*`    — sessions of the developer's organization from the MetalBear Cloud
++//!   sessions-manager, for serverless targets that run without an operator. Authenticated with
++//!   the `mirrord login` token; see [`cloud`].
+ //! - `kube/*`     — kubeconfig/cluster metadata used to populate the context and namespace pickers.
  
-     #[error("Failed to setup mirrord startup retry config with `{0}`")]
-     #[diagnostic(help(
--        "This may happen when `startup_retry.min_ms > startup_retry.max_ms` or when `startup_retry.max_ms == 0`. If this is not teh case in your config, then this might be a bug!"
-+        "This may happen when `startup_retry.min_ms > startup_retry.max_ms` or when `startup_retry.max_ms == 0`. If this is not the case in your config, then this might be a bug!"
-     ))]
-     InvalidBackoff(String),
- 
-```
-
-**File**: `mirrord/cli/src/ui/wizard.rs` (modified, +2/-0)
-```diff
-@@ -73,6 +73,7 @@ struct ModeInfo {
-     targetless: bool,
-     http_filter: bool,
-     traffic_question: &'static str,
-+    traffic_default: &'static str,
- }
- 
- /// ### Response for `GET /api/v1/up/modes`
-@@ -95,6 +96,7 @@ async fn up_modes() -> Json<ModesResponse> {
-             targetless: mode.allows_targetless(),
-             http_filter: mode.uses_http_filter(),
-             traffic_question: mode.traffic_question(),
-+            traffic_default: mode.traffic_default(),
-         })
-         .collect();
-     Json(ModesResponse { modes })
-```
-
-**File**: `mirrord/up/src/init.rs` (modified, +10/-3)
-```diff
-@@ -28,6 +28,7 @@ use mirrord_kube::{
-     api::kubernetes::create_kube_config, error::KubeApiError,
-     resolved::ResolvedTarget as KubeResolvedTarget,
+ use std::{collections::BTreeMap, time::Duration};
+@@ -53,6 +56,7 @@ use super::{
  };
-+use modes::MODES_DOCS_URL;
- pub use skeleton::{
-     PickedService, PickedWorkload, SkeletonError, render_skeleton, service_name_for,
- };
-@@ -313,9 +314,15 @@ async fn prompt_traffic(
-     namespace: &str,
- ) -> Result<(Option<String>, BTreeSet<u16>), InitError> {
-     let message = mode.traffic_question();
--    if prompt(move || Confirm::new(message).with_default(false).prompt())
--        .await?
--        .not()
-+    let help = format!("{} See {MODES_DOCS_URL}", mode.traffic_default());
-+    if prompt(move || {
-+        Confirm::new(message)
-+            .with_default(false)
-+            .with_help_message(&help)
-+            .prompt()
-+    })
-+    .await?
-+    .not()
-     {
-         return Ok(Default::default());
-     }
+ use crate::{data::GlobalConfig, ui::error::ApiError};
+ 
++mod cloud;
+ mod events;
+ mod targets;
+ 
+@@ -72,6 +76,7 @@ pub(super) fn v2_router() -> Router<AppState> {
+         .route("/operator/events", get(events::operator_events_sse))
+         .route("/operator/previews/{id}", get(operator_preview_detail))
+         .route("/operator/license", get(operator_license))
++        .route("/cloud/sessions", get(cloud::cloud_sessions))
+         .route("/kube/contexts", get(kube_contexts))
+         .route("/kube/namespaces", get(kube_namespaces))
+         .route("/kube/user", get(kube_user))
 ```
 
-**File**: `mirrord/up/src/init/modes.rs` (modified, +17/-2)
+**File**: `mirrord/cli/src/ui/server/v2/cloud.rs` (added, +184/-0)
 ```diff
-@@ -7,6 +7,10 @@ use mirrord_config::target::TargetType;
- 
- use crate::{INFERRED_TARGET_TYPES, config::ServiceMode};
- 
-+/// The `mirrord up` docs on the modes, linked from the traffic question.
-+pub const MODES_DOCS_URL: &str =
-+    "https://metalbear.com/mirrord/docs/using-mirrord/multiple-concurrent-sessions/#service-modes";
+@@ -0,0 +1,184 @@
++//! `cloud/*`: sessions of the developer's organization, from the MetalBear Cloud sessions-manager.
++//!
++//! Serverless targets run without an operator, so there's no cluster resource that lists their
++//! sessions. Instead, the sessions-manager the developer is logged in to with `mirrord login`
++//! lists the live sessions of their organization. It's the same sessions-manager, and the same
++//! login, that `mirrord exec` connects a serverless target through.
++//!
++//! The frontend polls this next to `operator/sessions`. While a response carries the login's
++//! `email`, the developer uses MetalBear Cloud, and a missing operator or kube context is expected
++//! rather than an error. Only a response that read a usable login carries it, so a failure to tell
++//! never hides the operator and Kubernetes guidance.
 +
- impl ServiceMode {
-     /// The modes offered, in order. The first is preselected.
-     pub const OFFERED: [Self; 3] = [Self::Split, Self::Mirror, Self::Replace];
-@@ -70,9 +74,20 @@ impl ServiceMode {
-     /// The yes/no question before the traffic questions.
-     pub fn traffic_question(self) -> &'static str {
-         if self.uses_http_filter() {
--            "Configure traffic filtering and ports?"
-+            "Customize the header filter and ports?"
-+        } else {
-+            "Customize ports?"
++use std::sync::Arc;
++
++use chrono::{DateTime, Utc};
++use mirrord_sessions_manager_client::{
++    DirectTransport, SESSIONS_MANAGER_URL_ENV, SessionOwner, SessionSummary,
++    SessionsManagerClientError, SessionsManagerEndpoint,
++};
++use serde::Serialize;
++use tokio::sync::OnceCell;
++use tracing::warn;
++
++use crate::{
++    data::{AuthStore, StoredLogin},
++    login::issuer,
++};
++
++#[derive(Serialize)]
++#[serde(rename_all = "camelCase")]
++enum CloudStatus {
++    Available,
++    /// No usable `mirrord login` token, so the developer doesn't use MetalBear Cloud. Includes a
++    /// token the sessions-manager refused, such as a revoked one, with the refusal as `reason`.
++    LoggedOut,
++    /// Logged in, but the sessions couldn't be listed.
++    Unavailable,
++}
++
++#[derive(Serialize)]
++#[serde(rename_all = "camelCase")]
++pub(super) struct CloudSessionsResponse {
++    status: CloudStatus,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    reason: Option<String>,
++    /// The developer `mirrord login` signed in. Set only once a login was read and not refused,
++    /// which is how the frontend tells a Cloud user from a failure to check.
++    #[serde(skip_serializing_if = "Option::is_none")]
++    email: Option<String>,
++    sessions: Vec<CloudSession>,
++}
++
++#[derive(Serialize)]
++#[serde(rename_all = "camelCase")]
++struct CloudSession {
++    id: String,
++    environment: String,
++    service: String,
++    replica_id: String,
++    user_session_id: String,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    owner: Option<CloudSessionOwner>,
++    /// RFC 3339, like the operator sessions' `createdAt`.
++    created_at: String,
++    connected: bool,
++}
++
++#[derive(Serialize)]
++#[serde(rename_all = "camelCase")]
++struct CloudSessionOwner {
++    user_id: String,
++    email: String,
++}
++
++impl From<SessionOwner> for CloudSessionOwner {
++    fn from(owner: SessionOwner) -> Self {
++        Self {
++            user_id: owner.user_id,
++            email: owner.email,
 +        }
 +    }
++}
 +
-+    /// What `mirrord up` does when the [`Self::traffic_question`] is answered
-+    /// no. The fallback filter is built in `ServiceConfig::unpatched_config`,
-+    /// without `ports`, so it applies to every port not in `ignore_ports`.
-+    pub fn traffic_default(self) -> &'static str {
-+        if self.uses_http_filter() {
-+            "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on."
-         } else {
--            "Configure ports?"
-+            "Default: all traffic on every port your app listens on, unfiltered."
-         }
-     }
++impl From<SessionSummary> for CloudSession {
++    fn from(session: SessionSummary) -> Self {
++        // Out of range only for a malformed listing, which shouldn't take the handler down.
++        let created_at = i64::try_from(session.started_at)
++            .ok()
++            .and_then(|secs| DateTime::<Utc>::from_timestamp(secs, 0))
++            .unwrap_or_default();
++        Self {
++            id: session.id,
++            environment: session.scope.environment,
++            service: session.scope.service,
++            replica_id: session.agent_replica_id.to_string(),
++            user_session_id: session.user_session_id,
++            owner: session.owner.map(CloudSessionOwner::from),
++            created_at: created_at.to_rfc3339(),
++            connected: session.connected,
++        }
++    }
++}
++
++impl CloudSessionsResponse {
++    fn unavailable(email: Option<String>, reason: String) -> Self {
++        warn!("{reason}");
++        Self {
++            status: CloudStatus::Unavailable,
++            reason: Some(reason),
++            email,
++            sessions: Vec::new(),
++        }
++    }
++}
++
++pub(super) async fn cloud_sessions() -> axum::Json<CloudSessionsResponse> {
++    let cloud_url = match StoredLogin::cloud_url() {
++        Ok(url) => url,
++        Err(error) => {
++            return axum::Json(CloudSessionsResponse::unavailable(
++                None,
++                format!("MetalBear Cloud URL is invalid: {error}"),
++            ));
++        }
++    };
++
++    let login = match AuthStore::login_token(issuer(&cloud_url)).await {
++        Ok(Some(login)) => login,
++        Ok(None) => {
++            return axum::Json(CloudSessionsResponse {
++                status: CloudStatus::LoggedOut,
++                reason: None,
++                email: None,
++                sessions: Vec::new(),
++            });
++        }
++        Err(error) => {
++            return axum::Json(CloudSessionsResponse::unavailable(
++                None,
++                format!("Could not read your mirrord login: {error}"),
++            ));
++        }
++    };
++    let email = Some(login.email);
++
++    // Built 
+```
+
+**File**: `mirrord/sessions-manager/client/src/control_plane/api.rs` (modified, +8/-1)
+```diff
+@@ -27,7 +27,11 @@ pub(crate) struct ControlPlaneApi {
  }
+ 
+ pub(crate) enum ControlPlaneEndpoint<'a> {
+-    Assignments { scope: &'a ServiceScope },
++    Assignments {
++        scope: &'a ServiceScope,
++    },
++    /// The live sessions of the caller's organization.
++    Sessions,
+ }
+ 
+ impl ControlPlaneApi {
+@@ -60,6 +64,9 @@ impl ControlPlaneApi {
+                     let service = slug::slugify(&scope.service);
+                     segments.extend(["env", &environment, "service", &service, "assignments"]);
+                 }
++                ControlPlaneEndpoint::Sessions => {
++                    segments.push("sessions");
++                }
+             }
+         }
+         Ok(url)
 ```
 
-**File**: `packages/wizard/BUSINESS_LOGIC.md` (modified, +4/-3)
+**File**: `mirrord/sessions-manager/client/src/lib.rs` (modified, +3/-1)
 ```diff
-@@ -30,9 +30,10 @@ The steps follow `mirrord up init` (`mirrord/up/src/init.rs`):
-    named after the workload (`<workload>-2` and so on when the name is taken); a targetless
-    service is named by the user.
- 3. **Traffic** (`TrafficStep`), skipped for a targetless service: the mode's `traffic_question`,
--   off by default. When on: the HTTP header filter (not in Replace), the ports the target
--   declares (from `GET /api/v1/up/ports`) to intercept (all ticked; unticked ones are ignored),
--   and other ports to ignore.
-+   off by default. When off: the mode's `traffic_default`, what `mirrord up` does without
-+   customizing, linking to the service modes docs. When on: the HTTP header filter (not in
-+   Replace), the ports the target declares (from `GET /api/v1/up/ports`) to intercept (all
-+   ticked; unticked ones are ignored), and other ports to ignore.
- 4. **Run** (`RunStep`): the local command (required) and the working directory.
- 5. **Export** (`ExportStep`): the services so far, "Add another service" (back to Mode), the YAML
-    from `POST /api/v1/up/render`, copy and download as `mirrord-up.yaml`, and how to run it. It
+@@ -31,7 +31,9 @@ pub use credentials::{
+     SESSIONS_MANAGER_URL_DEFAULT, SharedSecretCredentials, cloud_url_from_env,
+ };
+ pub use error::{Result, SessionsManagerClientError};
+-pub use mirrord_sessions_manager_protocol::{IntproxyIdentity, ReplicaId, ServiceScope};
++pub use mirrord_sessions_manager_protocol::{
++    IntproxyIdentity, ReplicaId, ServiceScope, SessionList, SessionOwner, SessionSummary,
++};
+ pub use transport::{
+     DirectTransport, EndpointSource, OperatorTransport, SESSIONS_MANAGER_URL_ENV,
+     SessionsManagerEndpoint, SessionsManagerTransport,
 ```
 
-**File**: `packages/wizard/mock-server.js` (modified, +9/-3)
+**File**: `mirrord/sessions-manager/client/src/transport/direct.rs` (modified, +39/-10)
 ```diff
-@@ -13,7 +13,9 @@ const mockData = {
-       target_types: ["deployment", "statefulset", "rollout", "pod"],
-       targetless: true,
-       http_filter: true,
--      traffic_question: "Configure traffic filtering and ports?",
-+      traffic_question: "Customize the header filter and ports?",
-+      traffic_default:
-+        "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on.",
-     },
-     {
-       id: "mirror",
-@@ -24,7 +26,9 @@ const mockData = {
-       target_types: ["deployment", "statefulset", "rollout", "pod"],
-       targetless: false,
-       http_filter: true,
--      traffic_question: "Configure traffic filtering and ports?",
-+      traffic_question: "Customize the header filter and ports?",
-+      traffic_default:
-+        "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on.",
-     },
-     {
-       id: "replace",
-@@ -35,7 +39,9 @@ const mockData = {
-       target_types: ["deployment", "statefulset"],
-       targetless: false,
-       http_filter: false,
--      traffic_question: "Configure ports?",
-+      traffic_question: "Customize ports?",
-+      traffic_default:
-+        "Default: all traffic on every port your app listens on, unfiltered.",
-     },
-   ],
-   contexts: {
+@@ -20,7 +20,7 @@ use mirrord_operator_websocket::{
+ };
+ use mirrord_protocol_io::ProtocolEndpoint;
+ use mirrord_sessions_manager_protocol::{
+-    AssignmentSubscription, ConnectionAssignment, ServiceScope,
++    AssignmentSubscription, ConnectionAssignment, ServiceScope, SessionList,
+ };
+ use reqwest::StatusCode;
+ use tokio::time::Instant;
+@@ -158,6 +158,43 @@ impl DirectTransport {
+         self
+     }
+ 
++    /// The live sessions of the organization the credentials name, for showing them without an
++    /// operator (`mirrord ui`).
++    pub async fn list_sessions(&self) -> Result<SessionList, SessionsManagerClientError> {
++        let deadline = Instant::now() + RESPONSE_HEADER_TIMEOUT;
++        let endpoint = self.api.endpoint(ControlPlaneEndpoint::Sessions)?;
++        let credentials =
++            with_deadline(Some(deadline), self.credentials.control_plane_headers()).await??;
++        let sent_authorization = credentials.contains_key(AUTHORIZATION);
++        let request = self.http.get(endpoint).headers(credentials).send();
++        let response = with_deadline(Some(deadline), request).await??;
++        self.check_refused(response.status(), sent_authorization)?;
++        if !response.status().is_success() {
++            return Err(SessionsManagerClientError::HttpStatus(response.status()));
++        }
++        Ok(with_deadline(Some(deadline), response.json()).await??)
++    }
++
++    /// Explains a control-plane request the sessions-manager refused by who it refused, the
++    /// credentials (`401`) or the caller they name (`403`). `sent_authorization` is whether the
++    /// request carried an `Authorization` header, without which a `401` says nothing about them.
++    fn check_refused(
++        &self,
++        status: StatusCode,
++        sent_authorization: bool,
++    ) -> Result<(), SessionsManagerClientError> {
++        if status == StatusCode::UNAUTHORIZED
++            && sent_authorization
++            && let Some(error) = self.credentials.unauthorized_error()
++        {
++            return Err(error);
++        }
++        if status == StatusCode::FORBIDDEN {
++            return Err(SessionsManagerClientError::Forbidden);
++        }
++        Ok(())
++    }
++
+     /// Dials and authorizes the data-plane WebSocket described by a control-plane assignment.
+     ///
+     /// Assignment endpoints are relative to the configured base URL. The assignment
+@@ -254,15 +291,7 @@ impl SessionsManagerTransport for DirectTransport {
+             .header(ACCEPT, "text/event-stream")
+             .send();
+         let response = with_deadline(Some(deadline), request).await??;
+-        if response.status() == StatusCode::UNAUTHORIZED
+-            && sent_authorization
+-            && let Some(error) = self.credentials.unauthorized_error()
+-        {
+-            return Err(error);
+-        }
+-        if response.status() == StatusCode::FORBIDDEN {
+-            return Err(SessionsManagerClientError::Forbidden);
+-        }
++        self.check_refused(response.status(), sent_authorization)?;
+         verify_event_stream(response.status(), response.headers())?;
+ 
+         Ok(ControlPlaneEventStream::from_bytes(response.bytes_stream()))
 ```
 
-**File**: `packages/wizard/src/components/Wizard.test.tsx` (modified, +24/-3)
+**File**: `mirrord/sessions-manager/protocol/src/lib.rs` (modified, +2/-0)
 ```diff
-@@ -75,7 +75,7 @@ describe('Wizard', () => {
-     next()
+@@ -21,10 +21,12 @@ pub use data_plane::{
+ };
+ pub use error::SessionsManagerProtocolError;
+ use serde::{Deserialize, Serialize};
++pub use sessions::{SessionList, SessionOwner, SessionSummary};
  
-     fireEvent.click(
--      screen.getByLabelText('Configure traffic filtering and ports?'),
-+      screen.getByLabelText('Customize the header filter and ports?'),
-     )
-     typeInto(/HTTP header filter/, 'x-user: me')
-     fireEvent.click(await screen.findByLabelText('intercept port 9090'))
-@@ -135,6 +135,27 @@ describe('Wizard', () => {
-     ).toBeInTheDocument()
-   })
+ mod control_plane;
+ mod data_plane;
+ mod error;
++mod sessions;
  
-+  it('says what the traffic defaults are until the user customizes them', async () => {
-+    render(<Wizard open={true} onClose={onClose} />)
+ /// Information a control-plane subscription sends to one peer.
+ #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+```
+
+**File**: `mirrord/sessions-manager/protocol/src/sessions.rs` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++//! The listing of live sessions a standalone sessions-manager serves at `GET /v1/sessions`.
++//!
++//! Without an operator there is no cluster resource to read sessions from, so `mirrord ui` asks
++//! the sessions-manager the developer is logged in to, the same way it reads the operator's status
++//! when one is installed. The caller sees every session of the organization their `mirrord login`
++//! token names, which matches what the operator shows its users.
 +
-+    await pickMode('Split')
-+    await pickOption(/server-echo deployment/)
-+    next()
++use serde::{Deserialize, Serialize};
 +
-+    const toggle = screen.getByLabelText(
-+      'Customize the header filter and ports?',
-+    )
-+    expect(toggle).toHaveAccessibleDescription(/header filter on every port/)
-+    expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
-+      'href',
-+      'https://metalbear.com/mirrord/docs/using-mirrord/multiple-concurrent-sessions/#service-modes',
-+    )
-+    fireEvent.click(toggle)
-+    expect(
-+      screen.queryByText(/header filter on every port/),
-+    ).not.toBeInTheDocument()
-+  })
++use crate::{ReplicaId, ServiceScope};
 +
-   it('offers no targetless option and no header filter in replace mode', async () => {
-     render(<Wizard open={true} onClose={onClose} />)
- 
-@@ -145,7 +166,7 @@ describe('Wizard', () => {
-     ).not.toBeInTheDocument()
-     next()
- 
--    fireEvent.click(screen.getByLabelText('Configure ports?'))
-+    fireEvent.click(screen.getByLabelText('Customize ports?'))
-     expect(
-       screen.queryByLabelText(/HTTP header filter/),
-     ).not.toBeInTheDocument()
-@@ -158,7 +179,7 @@ describe('Wizard', () => {
-     await pickOption(/server-echo deployment/)
-     next()
-     fireEvent.click(
--      screen.getByLabelText('Configure traffic filtering and ports?'),
-+      screen.getByLabelText('Customize the header filter and ports?'),
-     )
-     await screen.findByLabelText('intercept port 80')
-     typeInto(/Other ports to ignore/, 'http')
++/// Every live session of the caller's organization.
++#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
++pub struct SessionList {
++    pub sessions: Vec<SessionSummary>,
++}
++
++/// One intproxy connection paired with an agent. A mirrord run that connects several times shows
++/// up once per connection, all sharing its `user_session_id`.
++#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
++pub struct SessionSummary {
++    /// Unique among the listed sessions, and stable for as long as the pairing lasts.
++    pub id: String,
++    pub scope: ServiceScope,
++    /// The replica whose agent serves the session.
++    pub agent_replica_id: ReplicaId,
++    /// The developer's mirrord run, shared by all of its connections.
++    pub user_session_id: String,
++    /// Absent when the sessions-manager does not authenticate developers.
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub owner: Option<SessionOwner>,
++    /// When the pairing was made, in seconds since the Unix epoch.
++    pub started_at: u64,
++    /// Whether both sides have attached to the data plane. A pairing whose sides never attach is
++    /// dropped after the sessions-manager's attach timeout.
++    pub connected: bool,
++}
++
++/// The developer who started a session, as their `mirrord login` token names them.
++#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
++pub struct SessionOwner {
++    pub user_id: String,
++    pub email: String,
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5246** (2026-11-16): intproxy: redact credential headers in the request log (@MintSoup)
+- **PR #5245** (2026-11-16): Report serverless connection failures with their own analytics error kinds (@hank-metalbear)
+- **PR #5244** (closed): mirrord ui: stop asking MetalBear Cloud users for an operator (@DmitryDodzin)
+- **PR #5243** (2026-11-15): Release 3.288.0 (@cubby-mb[bot])
+- **PR #5242** (2026-11-16): Show MetalBear Cloud sessions in mirrord ui (@DmitryDodzin)
 - **PR #5239** (2026-11-14): Remove GitHub PATs in CI (@0x00A5)
-- **PR #5236** (2026-11-13): Revise wizard (@0x00A5)
-- **PR #5235** (2026-11-13): Run serverless targets with mirrord up (@Razz4780)
-- **PR #5234** (2026-11-12): agent: add http_detect_inactive_ports config option (@0x00A5)
-- **PR #5231** (2026-11-12): MBE-2174: Clear zip, minimatch and x/crypto Dependabot alerts (@hank-metalbear)
-- **PR #5230** (2026-11-12): agent: warn when HTTP detection times out (@MintSoup)
 
 ---
 
@@ -2023,45 +1952,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove GitHub PATs in CI
+## X. Show MetalBear Cloud sessions in mirrord ui
 
 **RULE**:
-When implementing operations in `.github/workflows/changelog-update.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/+cloud-sessions-in-ui.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77c2d33d`: Remove GitHub PATs in CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce8e8e23`: Show MetalBear Cloud sessions in mirrord ui. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/changelog-update.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+cloud-sessions-in-ui.added.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      CUBBY_CLIENT_ID:
-        required: true
-      CUBBY_PRIVATE_KEY:
-      - name: Create GitHub App token (docs-changelog repo)
-        id: app-token
-        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
-        with:
-          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
-          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
-          owner: metalbear-co
-          repositories: docs-changelog
-          permission-contents: write
-          git_user: cubby-mb[bot]
-          git_email: 273354325+cubby-mb[bot]@users.noreply.github.com
-          git_access_token: ${{ steps.app-token.outputs.token }}
+`mirrord ui` shows the sessions of your organization on MetalBear Cloud after `mirrord login`, and while you're logged in, no longer reports an error when the cluster has no mirrord operator or there is no Kubernetes context.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      CHANGELOG_PAT:
-          git_user: Eyal Bukchin
-          git_email: eyal@metalbear.co
-          git_access_token: ${{ secrets.CHANGELOG_PAT }}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77c2d33d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce8e8e23` are properly handled with clean fallback behavior.

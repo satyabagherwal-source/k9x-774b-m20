@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "77c2d33d",
+    "sourceVersion": "c5bdfc45",
     "license": "MIT",
-    "contentHash": "82e18676215350b325b11e44611e458f7f02e786e4e30058c8db21a75884004e",
-    "lastHarvestedAt": "2026-11-15T02:14:57.978Z",
+    "contentHash": "26d0be52e8736ea8256f7f37d1d95bd270837cc38703df6b5fe5bd8d2e5ad330",
+    "lastHarvestedAt": "2026-11-16T22:47:29.615Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "ba4a88b6",
+    "sourceVersion": "a5b5d7de",
     "license": "MPL-2.0",
-    "contentHash": "e19f48d3f0f61193b5a257b90d914f0f39c05e41415e4aedde57468deaf56998",
-    "lastHarvestedAt": "2026-11-14T03:10:34.110Z",
+    "contentHash": "37d077e4275c0879f9e8da1deb597db64dd186e30ea168aca55b47cde2e2f64c",
+    "lastHarvestedAt": "2026-11-16T22:47:37.886Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -9593,10 +9593,10 @@
     "repository": "axios/axios",
     "platform": "github",
     "sourceUrl": "https://github.com/axios/axios",
-    "sourceVersion": "4ee8d46f",
+    "sourceVersion": "c0d4c900",
     "license": "MIT",
-    "contentHash": "0211fbae1cecfa5f63610e69e1a9ab1b4c5ccbdc039a4dad9862ca6b8b5e2333",
-    "lastHarvestedAt": "2026-11-12T05:27:07.800Z",
+    "contentHash": "2f15b73f95046e79725dfcd92c1dda0fd85a5840c15b530977946573044a57b3",
+    "lastHarvestedAt": "2026-11-16T22:47:32.086Z",
     "learningId": "learn-github-axios-axios"
   },
   "jasonjmcghee-rem": {

@@ -10389,3 +10389,6 @@ Every entry in this ledger must capture:
 | `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `985d63a1` | Multi-dimensional audit evidence | 2026-11-16T22:19:24.904Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `87e6cde2` | Multi-dimensional audit evidence | 2026-11-16T22:19:30.759Z |
 | `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `02c4f8c6` | Multi-dimensional audit evidence | 2026-11-16T22:34:14.008Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `c5bdfc45` | Multi-dimensional audit evidence | 2026-11-16T22:47:29.615Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `c0d4c900` | Multi-dimensional audit evidence | 2026-11-16T22:47:32.086Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `a5b5d7de` | Multi-dimensional audit evidence | 2026-11-16T22:47:37.886Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-W02U",
-    "timestamp": "2026-11-14T03:10:39.462Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "03d8f4b9cdf177778c15cc53c02f6fa86054241b36f1d0533dc207817e8c4842",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-21TA",
-    "timestamp": "2026-11-14T03:15:21.646Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "52ea2eb1583905ca240161dd3d4382dcfc64f89f98c5f2c2b110cc9507ebde58",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-NOOL",
-    "timestamp": "2026-11-14T03:32:11.061Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "104ff53eb19ec684da31512cfef702e8c094d0f5527cedf4eb1009567c6f08d2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-NXZ2",
     "timestamp": "2026-11-14T03:32:23.102Z",
     "repository": "moby/buildkit",
@@ -7490,6 +7445,51 @@
     "repository": "nodejs/undici",
     "learningId": "learn-github-nodejs-undici",
     "contentHash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-T4JW",
+    "timestamp": "2026-11-16T22:47:29.612Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "26d0be52e8736ea8256f7f37d1d95bd270837cc38703df6b5fe5bd8d2e5ad330",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-T6GJ",
+    "timestamp": "2026-11-16T22:47:32.083Z",
+    "repository": "axios/axios",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "2f15b73f95046e79725dfcd92c1dda0fd85a5840c15b530977946573044a57b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-TAXN",
+    "timestamp": "2026-11-16T22:47:37.883Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "37d077e4275c0879f9e8da1deb597db64dd186e30ea168aca55b47cde2e2f64c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

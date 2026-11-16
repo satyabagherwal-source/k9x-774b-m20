@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T22:34:14.020Z",
+  "last_updated": "2026-11-16T22:47:37.894Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "82e18676215350b325b11e44611e458f7f02e786e4e30058c8db21a75884004e",
-      "verified_at": "2026-11-15T02:14:57.993Z",
+      "content_hash": "26d0be52e8736ea8256f7f37d1d95bd270837cc38703df6b5fe5bd8d2e5ad330",
+      "verified_at": "2026-11-16T22:47:29.623Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T02:14:57.993Z"
+      "last_updated": "2026-11-16T22:47:29.623Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "e19f48d3f0f61193b5a257b90d914f0f39c05e41415e4aedde57468deaf56998",
-      "verified_at": "2026-11-14T03:10:34.122Z",
+      "content_hash": "37d077e4275c0879f9e8da1deb597db64dd186e30ea168aca55b47cde2e2f64c",
+      "verified_at": "2026-11-16T22:47:37.893Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:10:34.122Z"
+      "last_updated": "2026-11-16T22:47:37.893Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -14436,14 +14436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-axios-axios",
-      "content_hash": "0211fbae1cecfa5f63610e69e1a9ab1b4c5ccbdc039a4dad9862ca6b8b5e2333",
-      "verified_at": "2026-11-12T05:27:07.809Z",
+      "content_hash": "2f15b73f95046e79725dfcd92c1dda0fd85a5840c15b530977946573044a57b3",
+      "verified_at": "2026-11-16T22:47:32.093Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T05:27:07.809Z"
+      "last_updated": "2026-11-16T22:47:32.094Z"
     },
     "jasonjmcghee/rem": {
       "repository": "jasonjmcghee/rem",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T03:16:47.474Z",
+  "timestamp": "2026-11-16T22:47:42.234Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-siderolabs-talos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [siderolabs-talos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T03:16:47.474Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T22:47:42.234Z`  
 > **Learning ID**: `LEARN-EVO-siderolabs-talos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 70%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from siderolabs-talos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `ba4a88b6`  
+> **Source Version**: `a5b5d7de`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:10:33.012Z  
+> **Timestamp**: 2026-11-16T22:47:37.134Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:10:33.005Z  
+> **Harvest Timestamp**: 2026-11-16T22:47:37.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11521 stars
+- **Stars / Engagement**: 11538 stars
 
 ---
 
@@ -929,8 +929,8 @@ import (
 //
 // It legitimately may not exist: the startup task creates it, so a controller can run a pass before
 // it is there.
-func readContainerLifecycle(ctx context.Context, runtime controller.Runtime) (*containers.ContainerLifecycle, error) {
-	containerLifecycle, err := safe.ReaderGetByID[*containers.ContainerLifecycle](ctx, runtime, containers.ContainerLifecycleID)
+func readContainerLifecycle(ctx context.Context, reader controller.Reader) (*containers.ContainerLifecycle, error) {
+	containerLifecycle, err := safe.ReaderGetByID[*containers.ContainerLifecycle](ctx, reader, containers.ContainerLifecycleID)
 	if err != nil {
 		if state.IsNotFoundError(err) {
 			return nil, nil
@@ -2139,11 +2139,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14949** (2026-11-13): **fix: WorkloadPidsController ENOENT /system/extensions on boot**
-  *Symptoms*:  Resolves https://github.com/siderolabs/talos/issues/14948  `/system/extensions/pids.max` did not exist at boot, and the `WorkloadPidsController` failed with `ENOENT` until a later container start under `/system` enabled pids there.  We now create the extensions cgroup with pids enabled. Created with no limit, like for the other workload roots, and the pids max value is later reconciled by the controller. Adds coverage in the cgroup resources test.  ---  From a local dev cluster, build from this PR: ```sh _out/talosctl-linux-amd64 --nodes 172.20.0.5 logs controller-runtime | grep WorkloadPids 172.20.0.5: 2026-11-13T13:27:55.918Z DEBUG controller starting {"component": "controller-runtime", "controller": "runtime.WorkloadPidsController"} 172.20.0.5: 2026-11-13T13:27:55.918Z INFO pids limit updated {"component": "controller-runtime", "controller": "runtime.WorkloadPidsController", "cgroup": "taloscontainers", "previous": "max", "limit": "32668", "capacity": 32768} 172.20.0.5: 2026-11-13T13:27:55.919Z INFO pids limit updated {"component": "controller-runtime", "controller": "runtime.WorkloadPidsController", "cgroup": "virtualmachines.partition", "previous": "max", "limit": "32668", "capacity": 32768} 172.20.0.5: 2026-11-13T13:27:55.919Z INFO pids limit updated {"component": "controller-runtime", "controller": "runtime.WorkloadPidsController", "cgroup": "system/extensions", "previous": "max", "limit": "32668", "capacity": 32768} 172.20.0.5: 2026-11-13T13:27:55.951
+- **Issue #14988** (2026-11-16): **fix: ignore the default router in RAs on unnumbered BGP links**
+  *Symptoms*: Talos sets accept_ra=2 on unnumbered BGP links to learn the neighbor's link-local address, but left accept_ra_defrtr at 1. A neighbor sending RAs with a non-zero router lifetime (FRR does by default) made the kernel install a "proto ra" default route at metric 1024, and the kernel then refused the default route learned over BGP with "file exists".  Set accept_ra_defrtr=0 on those links, so the default route comes from BGP only.  Fixes: #14967
 
-- **Issue #14948** (2026-11-13): **WorkloadPidsController fails with ENOENT on /system/extensions at boot**
-  *Symptoms*: ## Bug Report  ### What happened? What did you expect?  On boot, `runtime.WorkloadPidsController` fails twice on `/system/extensions` with ENOENT before it applies the limit on its third run (2026-11-13 11:54 UTC, node 172.16.0.2):  ``` 11:54:16.039Z ERROR controller failed {"controller": "runtime.WorkloadPidsController", "error": "error enforcing pids limit on cgroup \"system/extensions\": error reading /sys/fs/cgroup/system/extensions/pids.max: open /sys/fs/cgroup/system/extensions/pids.max: no such file or directory"} 11:54:16.039Z DEBUG restarting controller in 400.640779ms 11:54:16.442Z ERROR controller failed {... same error ...} 11:54:16.442Z DEBUG restarting controller in 1.06641896s 11:54:17.510Z INFO pids limit updated {"cgroup": "system/extensions", "previous": "max", "limit": "61649", "capacity": 61749} ```  I expected the first reconcile to set `pids.max` on all three roots without an error. `/taloscontainers` and `/virtualmachines.partition` were set on the first run.  `/system/extensions` is created with CPU resources only, so creating it doesn't enable `pids` in `/system/cgroup.subtree_control`. The file appears once something else enables `pids` on `/system`; I suspect runc starting the first container under `/system`, but haven't confirmed it. The workload roots don't hit this because #14911 creates them with `Pids: &cgroup2.Pids{}`. Doing the same for `constants.CgroupExtensions` in `internal/pkg/cgroup/cgroup.go` should fix it.  ### Steps to reproduce  1. 
+- **Issue #14987** (2026-11-16): **fix: do not install BGP routes over connected prefixes**
+  *Symptoms*: Talos installs address prefix routes at metric 1024 and BGP routes at metric 0. When a peer advertised the node's own subnet, for example FRR with "redistribute connected", the BGP route for the same prefix won, and traffic to every host on the link went through the peer.  Skip learned routes whose prefix matches an address prefix in the instance's routing domain, the same way originated prefixes are already skipped.  Fixes: #14965
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2160,782 +2160,539 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `768ed463` (2026-11-13)
-**Commit Message**: fix: data race between test fixtures in tests
+### Incident Patch 1: `4f583972` (2026-11-16)
+**Commit Message**: fix: keep healthy BGP instances running when one fails
 
-We have observed data race in tests. Add locking to prevent it.
+BGPController returned the first error from any instance or peer.
+The deferred cleanup then stopped every GoBGP server, and the
+controller restarted with backoff, failing the same way each time.
+One neighbor that GoBGP rejected took down all sessions on the
+node, and peers after the failing one were never configured.
 
-Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
+Log failures per peer and per instance, keep reconciling the rest,
+and retry the failed ones from the controller loop with exponential
+backoff instead of restarting the controller. Transient failures,
+such as a busy listen port, now recover without an input change.
 
-**File**: `internal/app/machined/pkg/controllers/storage/md_array_reconcile_test.go` (modified, +134/-101)
+Fixes: #14962
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/network/bgp.go` (modified, +44/-9)
 ```diff
-@@ -214,6 +214,15 @@ func (f *fakeMDProvisioner) grown(device string) (int, bool) {
- 	return n, ok
- }
- 
-+// with runs fn under the fake's lock, for tests that seed or inspect fixture
-+// state while the controller runtime is running.
-+func (f *fakeMDProvisioner) with(fn func(f *fakeMDProvisioner)) {
-+	f.mu.Lock()
-+	defer f.mu.Unlock()
-+
-+	fn(f)
-+}
-+
- func (f *fakeMDProvisioner) reset() {
- 	f.mu.Lock()
- 	defer f.mu.Unlock()
-@@ -296,12 +305,14 @@ func (suite *MDArrayReconcileSuite) TestCreatesArrayFromScratch() {
- }
- 
- func (suite *MDArrayReconcileSuite) TestExtendsExistingArray() {
--	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
--	suite.md.details["/dev/md0"] = md.Detail{
--		Level:       "raid1",
--		RaidDevices: 2,
--		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
--	}
-+	suite.md.with(func(f *fakeMDProvisioner) {
-+		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
-+		f.details["/dev/md0"] = md.Detail{
-+			Level:       "raid1",
-+			RaidDevices: 2,
-+			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-+		}
-+	})
- 
- 	createDisk(&suite.DefaultSuite, "nvme0n1", "/dev/nvme0n1", "nvme")
- 	createDisk(&suite.DefaultSuite, "nvme1n1", "/dev/nvme1n1", "nvme")
-@@ -325,12 +336,14 @@ func (suite *MDArrayReconcileSuite) TestExtendsExistingArray() {
- }
- 
- func (suite *MDArrayReconcileSuite) TestNoOpWhenObservedMatchesDesired() {
--	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
--	suite.md.details["/dev/md0"] = md.Detail{
--		Level:       "raid1",
--		RaidDevices: 2,
--		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
--	}
-+	suite.md.with(func(f *fakeMDProvisioner) {
-+		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
-+		f.details["/dev/md0"] = md.Detail{
-+			Level:       "raid1",
-+			RaidDevices: 2,
-+			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-+		}
-+	})
- 
- 	createDisk(&suite.DefaultSuite, "nvme0n1", "/dev/nvme0n1", "nvme")
- 	createDisk(&suite.DefaultSuite, "nvme1n1", "/dev/nvme1n1", "nvme")
-@@ -349,13 +362,15 @@ func (suite *MDArrayReconcileSuite) TestNoOpWhenObservedMatchesDesired() {
- }
- 
- func (suite *MDArrayReconcileSuite) TestRebuildingWhileSyncing() {
--	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
--	suite.md.details["/dev/md0"] = md.Detail{
--		Level:       "raid1",
--		RaidDevices: 2,
--		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
--	}
--	suite.md.syncAction["/dev/md0"] = md.SyncActionResync
-+	suite.md.with(func(f *fakeMDProvisioner) {
-+		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
-+		f.details["/dev/md0"] = md.Detail{
-+			Level:       "raid1",
-+			RaidDevices: 2,
-+			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-+		}
-+		f.syncAction["/dev/md0"] = md.SyncActionResync
-+	})
- 
- 	createDisk(&suite.DefaultSuite, "nvme0n1", "/dev/nvme0n1", "nvme")
- 	createDisk(&suite.DefaultSuite, "nvme1n1", "/dev/nvme1n1", "nvme")
-@@ -371,13 +386,15 @@ func (suite *MDArrayReconcileSuite) TestRebuildingWhileSyncing() {
- }
- 
- func (suite *MDArrayReconcileSuite) TestReportsSyncActionAsRebuilding() {
--	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
--	suite.md.details["/dev/md0"] = md.Detail{
--		Level:       "raid1",
--		RaidDevices: 2,
--		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
--	}
--	suite.md.syncAction["/dev/md0"] = md.SyncActionRecover
-+	suite.md.with(func(f *fakeMDProvisioner) {
-+		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
-+		f.details["/dev/md0"] = md.Detail{
-+			Level:       "raid1",
-+			RaidDevices: 2,
-+			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-+		}
-+		f.syncAction["/dev/md0"] = md.SyncActionRecover
-+	})
- 
- 	createDisk(&suite.DefaultSuite, "nvme0n1", "/dev/nvme0n1", "nvme")
- 	createDisk(&suite.DefaultSuite, "nvme1n1", "/dev/nvme1n1", "nvme")
-@@ -470,33 +487,32 @@ func (suite *MDArrayReconcileSuite) createSerialMirrorSpecs() {
- // observeSerialMirror changes only the simulated mdadm/sysfs observation. The
- // production controller still decides whether to create, add, or grow an array.
- func (suite *MDArrayReconcileSuite) observeSerialMirror(name, device string, members []string, action md.SyncAction) {
--	suite.md.mu.Lock()
--	defer suite.md.mu.Unlock()
--
--	metadata := "1.0"
--	if name == "data" {
--		metadata = "1.2"
--	}
-+	suite.md.with(func(f *fakeMDProvisioner) {
-+		metadata := "1.0"
-+		if name == "data" {
-+			metadata = "1.2"
-+		}
- 
--	suite.md.details[device] = md.Detail{
--		Level:       "raid1",
--		RaidDevices: 2,
--		Members:     append([]string(nil), members...),
--		Name:        "talos:" + name,
--		UUID:        "test-" + name,
--		Metadata:    metadata,
--	}
--	suite.md.syncAction[device] = action
-+		f.details[device] = md.Detail{
-+			Level:       "raid1",
-+			RaidDevices: 2,
-+			Members:     append([]string(nil), members...),
-+			Name:        "talos:" + name,
-+			UUID:        "test-" + name,
-+			Metadata:    metadata,
-+		}
-+		f.syncAction[device] = action
- 
--	for member, arrayDevice := range suite.md.findByMember {
--		if arrayDevice == device {
--			delete(suite.md.findByMember, member)
-+		for member, arrayDevice := range f.findByMember {
-+			if arrayDevic
-```
-
----
-
-### Incident Patch 2: `0cd2d52f` (2026-11-12)
-**Commit Message**: fix: write extension service config files to a detached tmpfs
-
-The controller wrote extension service config files with plain os
-calls into /system/overlays/extensions, a directory that stays
-writable for anything that can reach /system. Mount a detached 1M
-tmpfs instead, write the files only through its xfs root and bind it
-read-only at the old path, so only the controller can change them.
-
-Store each file at its mount path under the service directory
-instead of flattening the path into one file name. Flattening made
-"/etc/a/b" and "/etc/a-b" the same file, so one silently replaced
-the other. Mount paths must now be absolute and clean, and must not
-repeat or sit under another mount path of the same service, so a
-path like "../tailscale/etc/auth" can't reach another service's
-directory. The controller also writes each service's files through
-a root opened beneath its directory, so a mount path that slipped
-past validation still can't resolve outside of it.
-
-Remove stale files before writing, so a path that turns from a file
-into a directory can be written, and write the config status last,
-so its version changes only once the directory matches the config.
-
-Signed-off-by: Noel Georg
-
-**File**: `hack/release.toml` (modified, +11/-0)
-```diff
-@@ -1089,6 +1089,17 @@ Every connection to the endpoints is authenticated with TLS, and unreachable end
- The `/virtualmachines.partition` cgroup has a `pids.max` limit, so virtual machines can't exhaust the host PID space.
- Talos calculates it the same way the kubelet calculates the `kubepods` limit: the smaller of `kernel.pid_max` and `kernel.threads-max`, minus 100 reserved PIDs.
- The limit follows changes to these sysctls without a reboot.
-+"""
-+
-+    [notes.extension_service_config_mount_paths]
-+        title = "Extension Service Config Mount Paths"
-+        description = """\
-+`ExtensionServiceConfig` mount paths must be absolute and clean (no `.`, `..`, repeated or trailing slashes),
-+must not repeat, and must not sit under another mount path of the same extension service.
-+Talos used to accept such paths, so fix them in the machine configuration before upgrading:
-+a node with an invalid mount path in its saved machine configuration fails to load the configuration on boot.
-+
-+Config files are now stored on a dedicated 1 MiB tmpfs, which limits the total size of all extension service config files.
- """
- 
- [make_deps]
-```
-
-**File**: `internal/app/machined/pkg/controllers/runtime/extension_service_config_files.go` (modified, +89/-27)
-```diff
-@@ -8,22 +8,23 @@ import (
- 	"context"
+@@ -9,7 +9,9 @@ import (
  	"fmt"
- 	"io/fs"
--	"os"
- 	"path/filepath"
--	"strings"
+ 	"net/netip"
+ 	"slices"
++	"time"
  
++	"github.com/cenkalti/backoff/v7"
  	"github.com/cosi-project/runtime/pkg/controller"
+ 	"github.com/cosi-project/runtime/pkg/resource"
  	"github.com/cosi-project/runtime/pkg/safe"
- 	"go.uber.org/zap"
+@@ -96,18 +98,33 @@ func (ctrl *BGPController) Run(ctx context.Context, r controller.Runtime, logger
  
- 	v1alpha1runtime "github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
-+	"github.com/siderolabs/talos/pkg/machinery/config/types/runtime/extensions"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
-+	"github.com/siderolabs/talos/pkg/xfs"
-+	"github.com/siderolabs/talos/pkg/xfs/opendir"
- )
+ 	defer neighWatcher.Done()
  
- // ExtensionServiceConfigFilesController writes down the config files for extension services.
- type ExtensionServiceConfigFilesController struct {
--	V1Alpha1Mode            v1alpha1runtime.Mode
--	ExtensionsConfigBaseDir string
-+	V1Alpha1Mode         v1alpha1runtime.Mode
-+	ExtensionsConfigRoot xfs.Root
- }
- 
- // Name implements controller.Controller interface.
-@@ -74,27 +75,40 @@ func (ctrl *ExtensionServiceConfigFilesController) Run(ctx context.Context, r co
- 
- 		r.StartTrackingOutputs()
- 
--		touchedFiles := map[string]struct{}{}
-+		// every path to keep in the root, and whether it is a directory
-+		wanted := map[string]bool{}
- 
- 		for res := range list.All() {
--			extensionConfigPath := filepath.Join(ctrl.ExtensionsConfigBaseDir, res.Metadata().ID())
--
--			if err = os.MkdirAll(extensionConfigPath, 0o755); err != nil {
--				return fmt.Errorf("error creating directory %q: %w", extensionConfigPath, err)
--			}
--
--			touchedFiles[extensionConfigPath] = struct{}{}
-+			wanted[res.Metadata().ID()] = true
- 
- 			for _, file := range res.TypedSpec().Files {
--				fileName := filepath.Join(extensionConfigPath, strings.ReplaceAll(strings.TrimPrefix(file.MountPath, "/"), "/", "-"))
-+				fileName, err := extensions.ConfigFileName(res.Metadata().ID(), file.MountPath)
-+				if err != nil {
-+					return err
-+				}
++	retryBackoff := backoff.NewExponentialBackOff()
 +
-+				fileName = filepath.Join(res.Metadata().ID(), fileName)
- 
--				if err = updateFile(fileName, []byte(file.Content), 0o644); err != nil {
--					return fmt.Errorf("error writing file %q: %w", fileName, err)
-+				for dir := filepath.Dir(fileName); dir != "."; dir = filepath.Dir(dir) {
-+					wanted[dir] = true
- 				}
- 
--				touchedFiles[fileName] = struct{}{}
-+				wanted[fileName] = false
- 			}
-+		}
- 
-+		// clean up first, so that a path which changed between a file and a directory can be written
-+		if err = cleanupExtensionServiceConfigFiles(ctrl.ExtensionsConfigRoot, wanted); err != nil {
-+			return err
-+		}
++	var retryCh <-chan time.Time
 +
-+		for res := range list.All() {
-+			if err = ctrl.writeConfigFiles(res); err != nil {
-+				return err
-+			}
-+		}
-+
-+		for res := range list.All() {
- 			if err = safe.WriterModify(ctx, r, runtime.NewExtensionServiceConfigStatusSpec(runtime.NamespaceName, res.Metadata().ID()), func(spec *runtime.ExtensionServiceConfigStatus) error {
- 				spec.TypedSpec().SpecVersion = res.Metadata().Version().String()
- 
-@@ -104,21 +118,69 @@ func (ctrl *ExtensionServiceConfigFilesController) Run(ctx context.Context, r co
- 			}
+ 	for {
+ 		select {
+ 		case <-ctx.Done():
+ 			return nil
+ 		case <-r.EventCh():
+ 		case <-ctrl.reconcileCh:
++		case <-retryCh:
  		}
  
--		// remove all files not managed by us
--		if err = filepath.WalkDir(ctrl.ExtensionsConfigBaseDir, func(path string, d fs.DirEntry, walkErr error) error {
--			if _, ok := touchedFiles[path]; path != ctrl.ExtensionsConfigBaseDir && !ok {
--				if err = os.RemoveAll(path); err != nil {
--					return err
--				}
--			}
--
--			return nil
--		}); err != nil {
-+		if err = safe.CleanupOutputs[*runtime.ExtensionServiceConfigStatus](ctx, r); err != nil {
- 			return err
- 		}
-+	}
-+}
- 
--		if err = safe.CleanupOutputs[*runtime.ExtensionServiceConfigStatus](ctx, r); err != nil {
-+// writeConfigFiles writes the config files of an extension service through a root opened beneath
-+// its directory, so no mount path can resolve into another service's directory.
-+func (ctrl *ExtensionServiceConfigFilesController) writeConfigFiles(res *runtime.ExtensionServiceConfig) error {
-+	id := res.Metadata().ID()
-+
-+	if err := xfs.MkdirAll(ctrl.ExtensionsConfigRoot, id, 0o755); err != nil {
-+		return fmt.Errorf("error creating directory %q: %w", id, err)
-+	}
-+
-+	rootFd, err := ctrl.ExtensionsConfigRoot.Fd()
-+	if err != nil {
-+		return err
-+	}
-+
-+	root := &xfs.UnixRoot{FS: opendir.NewBeneath(rootFd, id)}
-+	if err = root.OpenFS(); err != nil {
-+		return err
-+	}
-+
-+	defer root.Close() //nolint:errcheck
-+
-+	for _, file := range res.TypedSpec().Files {
-+		fileName, err := extensions.ConfigFileName(id, file.MountPath)
+-		if err := ctrl.reconcile(ctx, r, logger); err != nil {
++		failed, err := ctrl.reconcile(ctx, r, logger)
 +		if err != nil {
  			return err
  		}
+ 
++		// failed instances and peers are retried here: a controller restart would also stop the healthy ones
++		if failed {
++			retryCh = time.After(retryBackoff.NextBackOff())
++		} else {
++			retryBackoff.Reset()
 +
-+		if err = xfs.MkdirAll(root, filepath.Dir(fileName), 0o755); err != nil {
-+			return fmt.Errorf("error creating directory for %q of extension %q: %w", fileName, id, err)
++			retryCh = nil
 +		}
 +
-+		if err = updateFile(root, fileName, []byte(file.Content), 0o644); err != nil {
-+			return fmt.Errorf("error writing file %q of extension %q: %w", fileName, id, err)
-+		}
+ 		r.ResetRestartBackoff()
  	}
+ }
+@@ -153,28 +170,32 @@ func instanceOutputs(ctx context.Context, name resource.ID, instance *internalbg
+ 	}
+ }
+ 
++// reconcile reports whether an instance failed and needs a retry.
++//
+ //nolint:gocyclo,cyclop
+-func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
++func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) (bool, error) {
+ 	configs, err := safe.ReaderListAll[*network.BGPInstanceConfig](ctx, r)
+ 	if err != nil {
+-		return fmt.Errorf("error listing BGP instance configs: %w", err)
++		return false, fmt.Errorf("error listing BGP instance configs: %w", err)
+ 	}
+ 
+ 	linkStatuses, err := safe.ReaderListAll[*network.LinkStatus](ctx, r)
+ 	if err != nil {
+-		return fmt.Errorf("error listing link statuses: %w", err)
++		return false, fmt.Errorf("error listing link statuses: %w", err)
+ 	}
+ 
+ 	addressStatuses, err := safe.ReaderListAll[*network.AddressStatus](ctx, r)
+ 	if err != nil {
+-		return fmt.Errorf("error listing address statuses: %w", err)
++		return false, fmt.Errorf("error listing address statuses: %w", err)
+ 	}
+ 
+ 	runtimeState := internalbgp.NewRuntimeStateFromResources(linkStatuses.All(), addressStatuses.All())
+ 	neighborResolver := internalbgp.NewNeighborResolver()
+ 
+ 	desired := map[resource.ID]struct{}{}
+ 
++	var failed bool
 +
-+	return nil
-+}
+ 	for configResource := range configs.All() {
+ 		name := configResource.Metadata().ID()
+ 		desired[name] = struct{}{}
+@@ -214,11 +235,21 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
+ 			ctrl.effectiveListenPort(),
+ 			ctrl.signal,
+ 		); err != nil {
+-			return fmt.Errorf("error configuring BGP instance %q: %w", name, err)
++			instanceLogger.Error("error configuring BGP instance", zap.Error(err))
 +
-+func cleanupExtensionServiceConfigFiles(root xfs.Root, wanted map[string]bool) error {
-+	return fs.WalkDir(root, ".", func(path string, d fs.DirEntry, err error) error {
-+		if err != nil || p
++			failed = true
++
++			if !instance.Running() {
++				continue
++			}
+ 		}
+ 
+ 		if err = instance.ReconcileOriginated(resolved.AdvertisedPrefixes); err != nil {
+-			return fmt.Errorf("error originating routes for BGP instance %q: %w", name, err)
++			instanceLogger.Error("error originating BGP routes", zap.Error(err))
++
++			failed = true
++
++			continue
+ 		}
+ 
+ 		instance.SetOutputState(
+@@ -255,7 +286,11 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
+ 
+ 		desiredCount, ready, importErr := internalbgp.ReconcileImportedPaths(name, instance, ctrl.instances, desired)
+ 		if importErr != nil {
+-			return fmt.Errorf("error resolving route imports for BGP instance %q: %w", name, importErr)
++			logger.With(zap.String("instance", name)).Error("error resolving BGP route imports", zap.Error(importErr))
++
++			failed = true
++
++			continue
+ 		}
+ 
+ 		if !ready {
+@@ -293,7 +328,7 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
+ 		)
+ 	}
+ 
+-	return ctrl.writeOutputs(ctx, r, outputs)
++	return failed, ctrl.writeOutputs(ctx, r, outputs)
+ }
+ 
+ func (ctrl *BGPController) effectiveListenPort() int32 {
 ```
 
-**File**: `internal/app/machined/pkg/controllers/runtime/extension_service_config_files_test.go` (modified, +36/-7)
+**File**: `internal/app/machined/pkg/controllers/network/bgp_controller_test.go` (modified, +112/-0)
 ```diff
-@@ -6,16 +6,18 @@ package runtime_test
- import (
- 	"os"
- 	"path/filepath"
--	"strings"
- 	"testing"
+@@ -5,12 +5,14 @@
+ package network_test
  
-+	"github.com/cosi-project/runtime/pkg/safe"
- 	"github.com/siderolabs/gen/xslices"
+ import (
++	"net"
+ 	"net/netip"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/cosi-project/runtime/pkg/resource/rtestutils"
  	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
  	"github.com/stretchr/testify/suite"
  
  	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/ctest"
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/runtime"
- 	runtimeres "github.com/siderolabs/talos/pkg/machinery/resources/runtime"
-+	"github.com/siderolabs/talos/pkg/xfs"
-+	"github.com/siderolabs/talos/pkg/xfs/opendir"
- )
+@@ -181,6 +183,64 @@ func (suite *BGPControllerSuite) TestRuntimeStatusResolutionAndServerRestart() {
+ 	)
+ }
  
- type ExtensionServiceConfigFilesSuite struct {
-@@ -27,12 +29,18 @@ type ExtensionServiceConfigFilesSuite struct {
- func TestExtensionServiceConfigFilesSuite(t *testing.T) {
- 	extensionsConfigDir := t.TempDir()
- 
-+	root := &xfs.UnixRoot{FS: opendir.NewFromPath(extensionsConfigDir)}
-+
- 	suite.Run(t, &ExtensionServiceConfigFilesSuite{
- 		AfterSetup: func(suite *ctest.DefaultSuite) {
-+			suite.Require().NoError(root.OpenFS())
- 			suite.Require().NoError(suite.Runtime().RegisterController(&runtime.ExtensionServiceConfigFilesController{
--				ExtensionsConfigBaseDir: extensionsConfigDir,
-+				ExtensionsConfigRoot: root,
- 			}))
- 		},
-+		AfterTearDown: func(*ctest.DefaultSuite) {
-+			root.Close() //nolint:errcheck
++func (suite *BGPControllerSuite) TestRejectedPeerDoesNotStopOtherPeers() {
++	fabric := network.NewBGPInstanceConfig("fabric")
++	*fabric.TypedSpec() = network.BGPInstanceConfigSpec{
++		LocalASN:      65001,
++		RouterID:      netip.MustParseAddr("10.0.0.1"),
++		VRFTable:      nethelpers.TableMain,
++		InstallRoutes: true,
++		Neighbors: []network.BGPNeighborConfigSpec{
++			{
++				Address: netip.MustParseAddr("192.0.2.1"),
++				PeerASN: 65002,
++				Passive: true,
++			},
++			{
++				// GoBGP rejects it: the zone names a link which does not exist
++				Address: netip.MustParseAddr("fe80::1%bgpmissing0"),
++				PeerASN: 65002,
++				Passive: true,
++			},
 +		},
- 		extensionsConfigDir: extensionsConfigDir,
++	}
++
++	workload := network.NewBGPInstanceConfig("workload")
++	*workload.TypedSpec() = network.BGPInstanceConfigSpec{
++		LocalASN:      65003,
++		RouterID:      netip.MustParseAddr("10.0.0.2"),
++		VRFTable:      88,
++		InstallRoutes: true,
++		Neighbors: []network.BGPNeighborConfigSpec{
++			{
++				Address: netip.MustParseAddr("192.0.2.2"),
++				PeerASN: 65004,
++				Passive: true,
++			},
++		},
++	}
++
++	suite.Create(fabric)
++	suite.Create(workload)
++
++	var created time.Time
++
++	rtestutils.AssertResource(suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", func(res *network.BGPPeerStatus, _ *assert.Assertions) {
++		created = res.Metadata().Created()
++	}, rtestutils.WithNamespace(network.NamespaceName))
++
++	rtestutils.AssertResource(suite.Ctx(), suite.T(), suite.State(), "workload/192.0.2.2", func(*network.BGPPeerStatus, *assert.Assertions) {}, rtestutils.WithNamespace(network.NamespaceName))
++
++	rtestutils.AssertNoResource[*network.BGPPeerStatus](suite.Ctx(), suite.T(), suite.State(), "fabric/fe80::1%bgpmissing0", rtestutils.WithNamespace(network.NamespaceName))
++
++	// a restarted controller would stop every server and recreate the statuses
++	time.Sleep(time.Second)
++
++	rtestutils.AssertResource(suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", func(res *network.BGPPeerStatus, assertions *assert.Assertions) {
++		assertions.Equal(created, res.Metadata().Created())
++	}, rtestutils.WithNamespace(network.NamespaceName))
++}
++
+ func TestBGPControllerSuite(t *testing.T) {
+ 	t.Parallel()
+ 
+@@ -191,3 +251,55 @@ func TestBGPControllerSuite(t *testing.T) {
+ 		},
  	})
  }
-@@ -96,7 +104,7 @@ func (suite *ExtensionServiceConfigFilesSuite) TestReconcileExtensionServiceConf
- 		)
- 
- 		for _, file := range tt.configFiles {
--			content, err := os.ReadFile(filepath.Join(suite.extensionsConfigDir, tt.extensionName, strings.ReplaceAll(strings.TrimPrefix(file.mountPath, "/"), "/", "-")))
-+			content, err := os.ReadFile(filepath.Join(suite.extensionsConfigDir, tt.extensionName, file.mountPath))
- 			suite.Require().NoError(err)
- 
- 			suite.Assert().Equal(file.content, string(content))
-@@ -109,7 +117,7 @@ func (suite *ExtensionServiceConfigFilesSuite) TestReconcileExtensionServiceConf
- 	suite.Assert().NoError(os.Mkdir(filepath.Join(suite.extensionsConfigDir, "test"), 0o755))
- 	suite.Assert().NoError(os.WriteFile(filepath.Join(suite.extensionsConfigDir, "test", "testdata"), []byte("{}"), 0o644))
- 
--	extensionAConfigFileInfo, err := os.Stat(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc-test"))
-+	extensionAConfigFileInfo, err := os.Stat(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc", "test"))
- 	suite.Assert().NoError(err)
- 
- 	// delete test-extension-b resource
-@@ -118,12 +126,33 @@ func (suite *ExtensionServiceConfigFilesSuite) TestReconcileExtensionServiceConf
- 
- 	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test", "testdata"))
- 	suite.Assert().NoDirExists(filepath.Join(suite.extensionsConfigDir, "test"))
--	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b", "etc-bar"))
--	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b", "var-etc-foo"))
-+	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b", "etc", "bar"))
-+	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b", "var", "etc", "foo"))
- 	suite.Assert().NoDirExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b"))
- 
--	extensionAConfigFileInfoAfterUpdate, err := os.Stat(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc-test"))
-+	extensionAConfigFileInfoAfterUpdate, err := os.Stat(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc", "test"))
- 	suite.Require().NoError(err)
- 
- 	suite.Assert().Equal(extensionAConfigFileInfo.ModTime(), extensionAConfigFileInfoAfterUpdate.ModTime())
 +
-+	// a mount path which turns a config file into a directory replaces the file
-+	extensionA, err := safe.StateUpdateWithConflicts(suite.Ctx(), suite.State(), runtimeres.NewExtensionServiceConfigSpec(runtimeres.NamespaceName, "test-extension-a").Metadata(),
-+		func(res *runtimeres.ExtensionServiceConfig) error {
-+			res.TypedSpec().Files = []runtimeres.ExtensionServiceConfigFile{{Content: "test-content-d", MountPath: "/etc/test/inner"}}
++type BGPControllerRetrySuite struct {
++	ctest.DefaultSuite
 +
-+			return nil
++	listener net.Listener
++}
++
++func (suite *BGPControllerRetrySuite) TestFailedInstanceIsRetried() {
++	fabric := network.NewBGPInstanceConfig("fabric")
++	*fabric.TypedSpec() = network.BGPInstanceConfigSpec{
++		LocalASN:      65001,
++		RouterID:      netip.MustParseAddr("10.0.0.1"),
++		VRFTable:      nethelpers.TableMain,
++		InstallRoutes: true,
++		Neighbors: []network.BGPNeighborConfigSpec{
++			{
++				Address: netip.MustParseAddr("192.0.2.1"),
++				PeerASN: 65002,
++				Passive: true,
++			},
 +		},
-+	)
-+	suite.Require().NoError(err)
++	}
 +
-+	ctest.AssertResource(
-+		suite, "test-extension-a",
-+		func(status *runtimeres.ExtensionServiceConfigStatus, asrt *assert.Assertions) {
-+			asrt.Equal(extensionA.Metadata().Version().String(), status.TypedSpec().SpecVersion)
++	suite.Create(fabric)
++
++	// the server can not start while the listen port is taken
++	time.Sleep(time.Second)
++
++	rtestutils.AssertNoResource[*network.BGPPeerStatus](suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", rtestutils.WithNamespace(network.NamespaceName))
++
++	// freeing the port changes no controller input: only the retry starts the server
++	suite.Require().NoError(suite.listener.Close())
++
++	rtestutils.AssertResource(suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", func(*network.BGPPeerStatus, *assert.Assertions) {}, rtestutils.WithNamespace(network.NamespaceName))
++}
++
++func TestBGPControllerRetrySuite(t *testing.T) {
++	t.Parallel()
++
++	listener, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", ":0")
++	require.NoError(t, err)
++
++	port := int32(listener.Addr().(*net.TCPAddr).Port)
++
++	suite.Run(t, &BGPControllerRetrySuite{
++		listener: listener,
++		Timeout:  10 * time.Second,
++		AfterSetup: func(s *ctest.DefaultSuite) {
++			s.Require().NoError(s.Runtime().RegisterController(&netctrl.BGPController{ListenPort: port}))
 +		},
-+	)
-+
-+	content, err := os.ReadFile(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc", "test", "inner"))
-+	suite.Require().NoError(err)
-+	suite.Assert().Equal("test-content-d", string(content))
- }
-```
-
-**File**: `internal/app/machined/pkg/controllers/runtime/utils.go` (modified, +5/-4)
-```diff
-@@ -15,6 +15,7 @@ import (
- 	"github.com/siderolabs/gen/optional"
- 
- 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
-+	"github.com/siderolabs/talos/pkg/xfs"
- )
- 
- // WaitForDevicesReady waits for devices to be ready.
-@@ -66,13 +67,13 @@ func WaitForDevicesReady(ctx context.Context, r controller.Runtime, nextInputs [
- 	return nil
- }
- 
--// updateFile is like `os.WriteFile`, but it will only update the file if the
-+// updateFile is like `xfs.WriteFile`, but it will only update the file if the
- // contents have changed.
--func updateFile(filename string, contents []byte, mode os.FileMode) error {
--	oldContents, err := os.ReadFile(filename)
-+func updateFile(root xfs.Root, filename string, contents []byte, mode os.FileMode) error {
-+	oldContents, err := xfs.ReadFile(root, filename)
- 	if err == nil && bytes.Equal(oldContents, contents) {
- 		return nil
- 	}
- 
--	return os.WriteFile(filename, contents, mode)
-+	return xfs.WriteFile(root, filename, contents, mode)
- }
-```
-
-**File**: `internal/app/machined/pkg/runtime/v1alpha2/internal/extconfigroot/extconfigroot.go` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+// Package extconfigroot mounts the tmpfs which holds rendered extension service config files.
-+package extconfigroot
-+
-+import (
-+	"errors"
-+	"fmt"
-+	"os"
-+
-+	"go.uber.org/zap"
-+	"golang.org/x/sys/unix"
-+
-+	mountv3 "github.com/siderolabs/talos/internal/pkg/mount/v3"
-+	"github.com/siderolabs/talos/internal/pkg/selinux"
-+	"github.com/siderolabs/talos/pkg/machinery/constants"
-+	"github.com/siderolabs/talos/pkg/xfs"
-+	"github.com/siderolabs/talos/pkg/xfs/fsopen"
-+)
-+
-+// Setup mounts a detached tmpfs and binds it read-only at target.
-+//
-+// The returned root is the only writable view.
-+func Setup(target string, logger *zap.Logger) (xfs.Root, func() error, error) {
-+	fsOptions := []fsopen.Option{
-+		fsopen.WithStringParameter("mode", "0755"),
-+		fsopen.WithStringParameter("size", "1M"),
-+	}
-+
-+	if selinux.IsEnabled() {
-+		fsOptions = append(fsOptions, fsopen.WithStringParameter("context", constants.SystemSelinuxLabel))
-+	}
-+
-+	if err := os.MkdirAll(target, 0o755); err != nil {
-+		return nil, nil, fmt.Errorf("failed to create extension service config mount target %q: %w", target, err)
-+	}
-+
-+	mgr := mountv3.NewManager(
-+		mountv3.WithDetached(),
-+		mountv3.WithPrinter(logger.Sugar().Infof),
-+		mountv3.WithFsopen("tmpfs", fsOptions...),
-+	)
-+
-+	point, err := mgr.Mount()
-+	if err != nil {
-+		return nil, nil, fmt.Errorf("failed to mount anonymous tmpfs for extension service config: %w", err)
-+	}
-+
-+	cleanup := func() {
-+		mgr.Unmount() //nolint:errcheck
-+	}
-+
-+	root := point.Root()
-+
-+	rootFD, err := root.Fd()
-+	if err != nil {
-+		cleanup()
-+
-+		return nil, nil, fmt.Errorf("failed to get extension service config root fd: %w", err)
-+	}
-+
-+	if err = mountv3.BindReadonlyFd(rootFD, target); err != nil {
-+		cleanup()
-+
-+		return nil, nil, fmt.Errorf("failed to bind extension service config root at %q: %w", target, err)
-+	}
-+
-+	logger.Info("mounted extension service config tmpfs", zap.String("target", target))
-+
-+	unmount := func() error {
-+		return errors.Join(
-+			unix.Unmount(target, unix.MNT_DETACH),
-+			mgr.Unmount(),
-+		)
-+	}
-+
-+	return root, unmount, nil
++	})
 +}
 ```
 
-**File**: `internal/app/machined/pkg/runtime/v1alpha2/internal/extconfigroot/extconfigroot_test.go` (added, +73/-0)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance.go` (modified, +14/-4)
 ```diff
-@@ -0,0 +1,73 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+//go:build linux
-+
-+package extconfigroot_test
-+
-+import (
+@@ -6,6 +6,7 @@ package bgp
+ 
+ import (
+ 	"context"
 +	"errors"
-+	"os"
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap"
-+	"golang.org/x/sys/unix"
-+
-+	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/v1alpha2/internal/extconfigroot"
-+	mountv3 "github.com/siderolabs/talos/internal/pkg/mount/v3"
-+	"github.com/siderolabs/talos/pkg/xfs"
-+)
-+
-+func TestExtensionServiceConfigRoot(t *testing.T) {
-+	if os.Geteuid() != 0 {
-+		t.Skip("requires root for mount operations")
-+	}
-+
-+	target := filepath.Join(t.TempDir(), "extension-config")
-+
-+	root, unmount, err := extconfigroot.Setup(target, zap.NewNop())
-+	require.NoError(t, err)
-+
-+	unmounted := false
-+
-+	t.Cleanup(func() {
-+		if !unmounted {
-+			unmount() //nolint:errcheck
-+		}
-+	})
-+
-+	require.NoError(t, xfs.MkdirAll(root, "test-service", 0o755))
-+	require.NoError(t, xfs.WriteFile(root, "test-service/etc-test", []byte("secret"), 0o600))
-+
-+	stableSource := filepath.Join(target, "test-service/etc-test")
-+	contents, err := os.ReadFile(stableSource)
-+	require.NoError(t, err)
-+	assert.Equal(t, "secret", string(contents))
-+
-+	err = os.WriteFile(filepath.Join(target, "blocked"), []byte("blocked"), 0o600)
-+	assert.True(t, errors.Is(err, unix.EROFS), "stable view should be read-only: %v", err)
-+
-+	bindTarget := filepath.Join(t.TempDir(), "bound-config")
-+	require.NoError(t, os.WriteFile(bindTarget, nil, 0o600))
-+	require.NoError(t, mountv3.BindReadonly(stableSource, bindTarget))
-+
-+	t.Cleanup(func() {
-+		unix.Unmount(bindTarget, unix.MNT_DETACH) //nolint:errcheck
-+	})
-+
-+	boundContents, err := os.ReadFile(bindTarget)
-+	require.NoError(t, err)
-+	assert.Equal(t, "secret", string(boundContents))
-+
-+	require.NoError(t, unix.Unmount(bindTarget, unix.MNT_DETACH))
-+	require.NoError(t, unmount())
-+
-+	unmounted = true
-+
-+	_, err = os.Stat(stableSource)
-+	assert.True(t, os.IsNotExist(err))
-+}
-```
-
-**File**: `internal/app/machined/pkg/runtime/v1alpha2/v1alpha2_controller.go` (modified, +17/-2)
-```diff
-@@ -43,6 +43,7 @@ import (
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/v1alpha1"
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
- 	runtimelogging "github.com/siderolabs/talos/internal/app/machined/pkg/runtime/logging"
-+	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/v1alpha2/internal/extconfigroot"
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/system"
- 	"github.com/siderolabs/talos/internal/pkg/ctrltrace"
- 	"github.com/siderolabs/talos/internal/pkg/libvirt"
-@@ -54,6 +55,7 @@ import (
- 	talosconfig "github.com/siderolabs/talos/pkg/machinery/config/config"
- 	"github.com/siderolabs/talos/pkg/machinery/constants"
- 	configresource "github.com/siderolabs/talos/pkg/machinery/resources/config"
-+	"github.com/siderolabs/talos/pkg/xfs"
- 	"github.com/siderolabs/talos/pkg/xfs/fsopen"
- )
+ 	"fmt"
+ 	"log/slog" //nolint:loglinter // GoBGP's logger compatibility interface requires slog.
+ 	"net/netip"
+@@ -234,6 +235,7 @@ func (instance *Instance) SetOutputState(
+ }
  
-@@ -154,6 +156,19 @@ func (ctrl *Controller) Run(ctx context.Context, drainer *runtime.Drainer) error
- 		defer udevUnmount() //nolint:errcheck
+ // reconcilePeers adds, removes and updates peers to match the resolved set.
++// A peer GoBGP rejects is skipped and retried on the next reconcile; the other peers are still reconciled.
+ //
+ // Changed peers are updated in place: GoBGP applies BFD and timer changes to the live session, and resets it
+ // only for changes which need a new OPEN message (e.g. ASN or transport settings).
+@@ -242,6 +244,8 @@ func (instance *Instance) reconcilePeers(
+ 	config network.BGPInstanceConfigSpec,
+ 	resolved []Peer,
+ ) error {
++	var errs error
++
+ 	desired := make(map[string]string, len(resolved))
+ 
+ 	for _, peer := range resolved {
+@@ -254,7 +258,9 @@ func (instance *Instance) reconcilePeers(
+ 		}
+ 
+ 		if err := instance.server.DeletePeer(ctx, &gobgpapi.DeletePeerRequest{Address: address}); err != nil {
+-			return fmt.Errorf("error deleting BGP peer: %w", err)
++			errs = errors.Join(errs, fmt.Errorf("error deleting BGP peer %s: %w", address, err))
++
++			continue
+ 		}
+ 
+ 		delete(instance.peers, address)
+@@ -266,16 +272,20 @@ func (instance *Instance) reconcilePeers(
+ 		switch {
+ 		case !ok:
+ 			if err := instance.server.AddPeer(ctx, &gobgpapi.AddPeerRequest{Peer: BuildPeer(peer, config.Multipath)}); err != nil {
+-				return fmt.Errorf("error adding BGP peer: %w", err)
++				errs = errors.Join(errs, fmt.Errorf("error adding BGP peer %s: %w", peer.Address, err))
++
++				continue
+ 			}
+ 		case hash != desired[peer.Address]:
+ 			if _, err := instance.server.UpdatePeer(ctx, &gobgpapi.UpdatePeerRequest{Peer: BuildPeer(peer, config.Multipath)}); err != nil {
+-				return fmt.Errorf("error updating BGP peer: %w", err)
++				errs = errors.Join(errs, fmt.Errorf("error updating BGP peer %s: %w", peer.Address, err))
++
++				continue
+ 			}
+ 		}
+ 
+ 		instance.peers[peer.Address] = desired[peer.Address]
  	}
  
-+	var extensionServiceConfigRoot xfs.Root
-+
-+	if ctrl.v1alpha1Runtime.State().Platform().Mode() != runtime.ModeContainer {
-+		var extensionServiceConfigUnmount func() error
-+
-+		extensionServiceConfigRoot, extensionServiceConfigUnmount, err = extconfigroot.Setup(constants.ExtensionServiceUserConfigPath, ctrl.logger)
-+		if err != nil {
-+			return fmt.Errorf("failed to set up extension service config root: %w", err)
-+		}
-+
-+		defer extensionServiceConfigUnmount() //nolint:errcheck
-+	}
-+
- 	lvmProvisioner, err := lvm.New()
- 	if err != nil {
- 		return fmt.Errorf("failed to initialize LVM: %w", err)
-@@ -539,8 +554,8 @@ func (ctrl *Controller) Run(ctx context.Context, drainer *runtime.Drainer) error
- 		runtimecontrollers.NewRebootController(ctrl.v1alpha1Runtime, ctrl.reboot),
- 		&runtimecontrollers.ExtensionServiceConfigController{},
- 		&runtimecontrollers.ExtensionServiceConfigFilesController{
--			V1Alpha1Mode:            ctrl.v1alpha1Runtime.State().Platform().Mode(),
--			ExtensionsConfigBaseDir: constants.ExtensionServiceUserConfigPath,
-+			V1Alpha1Mode:         ctrl.v1alpha1Runtime.State().Platform().Mode(),
-+			ExtensionsConfigRoot: extensionServiceConfigRoot,
- 		},
- 		&runtimecontrollers.EventsSinkConfigController{
- 			Cmdline:      procfs.ProcCmdline(),
-```
-
-**File**: `internal/app/machined/pkg/system/services/extension.go` (modified, +7/-2)
-```diff
-@@ -11,7 +11,6 @@ import (
- 	"os"
- 	"path/filepath"
- 	"slices"
--	"strings"
- 
- 	"github.com/containerd/containerd/v2/core/containers"
- 	"github.com/containerd/containerd/v2/pkg/oci"
-@@ -31,6 +30,7 @@ import (
- 	"github.com/siderolabs/talos/internal/pkg/environment"
- 	"github.com/siderolabs/talos/internal/pkg/mount/v3"
- 	"github.com/siderolabs/talos/pkg/conditions"
-+	"github.com/siderolabs/talos/pkg/machinery/config/types/runtime/extensions"
- 	"github.com/siderolabs/talos/pkg/machinery/constants"
- 	extservices "github.com/siderolabs/talos/pkg/machinery/extensions/services"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/network"
-@@ -389,8 +389,13 @@ func (svc *Extension) applyExtensionServiceConfig(
- 	}
- 
- 	for _, ext := range spec.Files {
-+		fileName, err := extensions.ConfigFileName(svc.Spec.Name, ext.MountPath)
-+		if err != nil {
-+			return nil, nil, err
-+		}
-+
- 		mounts = append(mounts, specs.Mount{
--			Source:      filepath.Join(constants.ExtensionServiceUserConfigPath, svc.Spec.Name, strings.ReplaceAll(strings.TrimPrefix(ext.MountPath, "/"), "/", "-")),
-+			Source:      filepath.Join(constants.ExtensionServiceUserConfigPath, svc.Spec.Name, fileName),
- 			Destination: ext.MountPath,
- 			Type:        "bind",
- 			Options:     []string{"ro", "bind"},
+-	return nil
++	return errs
+ }
 ```
 
 ---
 
-### Incident Patch 3: `f0a81e1b` (2026-11-13)
-**Commit Message**: fix: pids ctrl enoent on extension pids at boot
+### Incident Patch 2: `a9a62344` (2026-11-16)
+**Commit Message**: fix: retry failed routes without restarting RouteSpecController
 
-/system/extensions/pids.max did not exist at boot, and the WorkloadPidsController failed with ENOENT until a later container start under /system enabled pids there.
+RouteSpecController returned when the kernel refused any route, so
+the controller restarted with backoff. While it waited, no other
+route change was applied. A BGP peer advertising a prefix that the
+kernel already routes (the node's pod CIDR, or a default route from
+a router advertisement) kept it failing, with the backoff reaching
+29 seconds for every route on the node.
 
-Create the extensions cgroup with pids enabled and no limit, like the other workload roots, and cover it in the resources test.
+Log the failed routes and retry them from the controller loop with
+exponential backoff, so that other route changes are still applied
+on the next event.
 
-Resolves https://github.com/siderolabs/talos/issues/14948
+Fixes: #14966
 
-Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
-**File**: `internal/pkg/cgroup/cgroup.go` (modified, +1/-0)
+**File**: `internal/app/machined/pkg/controllers/network/route_spec.go` (modified, +15/-1)
 ```diff
-@@ -121,6 +121,7 @@ func getCgroupV2Resources(name string) *cgroup2.Resources {
- 			CPU: &cgroup2.CPU{
- 				Weight: new(MillicoresToCPUWeight(MilliCores(constants.CgroupExtensionsMillicores))),
- 			},
-+			Pids: workloadRootPids(),
+@@ -9,7 +9,9 @@ import (
+ 	"fmt"
+ 	"net/netip"
+ 	"slices"
++	"time"
+ 
++	"github.com/cenkalti/backoff/v7"
+ 	"github.com/cosi-project/runtime/pkg/controller"
+ 	"github.com/cosi-project/runtime/pkg/resource"
+ 	"github.com/cosi-project/runtime/pkg/safe"
+@@ -80,11 +82,16 @@ func (ctrl *RouteSpecController) Run(ctx context.Context, r controller.Runtime,
+ 		ctrl.installedProtocols = map[resource.ID]nethelpers.RouteProtocol{}
+ 	}
+ 
++	retryBackoff := backoff.NewExponentialBackOff()
++
++	var retryCh <-chan time.Time
++
+ 	for {
+ 		select {
+ 		case <-ctx.Done():
+ 			return nil
+ 		case <-r.EventCh():
++		case <-retryCh:
  		}
- 	case constants.CgroupInstaller:
- 		return &cgroup2.Resources{
+ 
+ 		// list source network configuration resources
+@@ -125,8 +132,15 @@ func (ctrl *RouteSpecController) Run(ctx context.Context, r controller.Runtime,
+ 			}
+ 		}
+ 
++		// failed routes are retried here: a controller restart would also delay every other route change
+ 		if err = multiErr.ErrorOrNil(); err != nil {
+-			return err
++			logger.Error("error syncing routes", zap.Error(err))
++
++			retryCh = time.After(retryBackoff.NextBackOff())
++		} else {
++			retryBackoff.Reset()
++
++			retryCh = nil
+ 		}
+ 
+ 		r.ResetRestartBackoff()
 ```
 
-**File**: `internal/pkg/cgroup/resources_test.go` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/network/route_spec_test.go` (modified, +49/-0)
 ```diff
-@@ -20,7 +20,7 @@ import (
- func TestWorkloadRootsEnablePidsUnlimited(t *testing.T) {
+@@ -1354,6 +1354,55 @@ func TestRouteScopeMatches(t *testing.T) {
+ 	}
+ }
+ 
++func (suite *RouteSpecSuite) TestFailingRouteDoesNotDelayOtherRoutes() {
++	link := uniqueDummyInterface()
++
++	conn, err := rtnetlink.Dial(nil)
++	suite.Require().NoError(err)
++
++	defer conn.Close() //nolint:errcheck
++
++	index := suite.createDummyInterface(conn, link, netip.MustParsePrefix("10.77.0.2/31"))
++
++	defer conn.Link.Delete(index) //nolint:errcheck
++
++	gateway := netip.MustParseAddr("10.77.0.3")
++
++	newRoute := func(id string, destination netip.Prefix, priority uint32) *network.RouteSpec {
++		route := network.NewRouteSpec(network.NamespaceName, id)
++		*route.TypedSpec() = network.RouteSpecSpec{
++			Family:      nethelpers.FamilyInet4,
++			Destination: destination,
++			Gateway:     gateway,
++			Table:       nethelpers.TableMain,
++			Protocol:    nethelpers.ProtocolStatic,
++			Type:        nethelpers.TypeUnicast,
++			Scope:       nethelpers.ScopeGlobal,
++			ConfigLayer: network.ConfigOperator,
++			Priority:    priority,
++		}
++
++		return route
++	}
++
++	// the kernel refuses it: the connected route of the link has the same destination and metric
++	suite.Create(newRoute("failing", netip.MustParsePrefix("10.77.0.2/31"), 0))
++
++	// let failures pile up, as a restarted controller would back off longer with each of them
++	time.Sleep(10 * time.Second)
++
++	destination := netip.MustParsePrefix("10.79.0.0/24")
++	start := time.Now()
++
++	suite.Create(newRoute("unrelated", destination, 1024))
++
++	for suite.assertRoute(destination, gateway, func(rtnetlink.RouteMessage) error { return nil }) != nil {
++		time.Sleep(20 * time.Millisecond)
++	}
++
++	suite.Assert().Less(time.Since(start), time.Second, "a failing route must not delay the others")
++}
++
+ func TestRouteSpecSuite(t *testing.T) {
  	t.Parallel()
  
--	for _, name := range []string{constants.CgroupTalosContainersRoot, constants.CgroupVirtualMachines} {
-+	for _, name := range []string{constants.CgroupTalosContainersRoot, constants.CgroupVirtualMachines, constants.CgroupExtensions} {
- 		t.Run(name, func(t *testing.T) {
- 			t.Parallel()
+```
+
+---
+
+### Incident Patch 3: `b292f3d5` (2026-11-16)
+**Commit Message**: fix: keep the peer ASN in AS_PATH with a neighbor localASN
+
+A neighbor localASN set GoBGP's ReplacePeerAsn, which is
+as-override. GoBGP replaced the peer's own ASN in every AS_PATH
+sent to it, so the peer accepted routes that had already passed
+through its AS and its loop detection never fired. GoBGP also
+refuses as-override on iBGP sessions, so a localASN equal to the
+peerASN passed validation and failed when the peer was added.
+
+Set only the local ASN. GoBGP still uses it in OPEN and prepends
+it to AS_PATH, which is what the field is for.
+
+Fixes: #14963
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +0/-1)
+```diff
+@@ -50,7 +50,6 @@ func BuildPeer(peer Peer, multipath bool) *gobgpapi.Peer {
  
+ 	if peer.Config.LocalASN != 0 {
+ 		result.Conf.LocalAsn = peer.Config.LocalASN
+-		result.Conf.ReplacePeerAsn = true
+ 	}
+ 
+ 	if peer.Config.Passive || peer.BindInterface != "" {
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp_test.go` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@ func TestBuildPeer(t *testing.T) {
+ 	assert.Equal(t, "fe80::1%eth0", peer.GetConf().GetNeighborAddress())
+ 	assert.Equal(t, uint32(65002), peer.GetConf().GetPeerAsn())
+ 	assert.Equal(t, uint32(65003), peer.GetConf().GetLocalAsn())
+-	assert.True(t, peer.GetConf().GetReplacePeerAsn())
++	assert.False(t, peer.GetConf().GetReplacePeerAsn(), "localASN must not rewrite the peer ASN in AS_PATH")
+ 	assert.True(t, peer.EbgpMultihop.Enabled)
+ 	assert.Equal(t, uint32(2), peer.EbgpMultihop.MultihopTtl)
+ 	assert.True(t, peer.GetTransport().GetPassiveMode())
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14949** (2026-11-13): fix: WorkloadPidsController ENOENT /system/extensions on boot (@majabojarska)
-- **PR #14946** (2026-11-13): fix: data race between test fixtures in tests (@shanduur)
-- **PR #14942** (2026-11-13): fix: write extension service config files to a detached tmpfs (@frezbo)
-- **PR #14941** (2026-11-12): fix: extend host namespace PID resolving to Talos containers (@smira)
-- **PR #14940** (2026-11-12): feat: update runc 1.5.3, NVIDIA LTS and CNI plugins (@smira)
-- **PR #14939** (2026-11-12): fix(security): mount hardening (@frezbo)
+- **PR #14988** (2026-11-16): fix: ignore the default router in RAs on unnumbered BGP links (@frezbo)
+- **PR #14987** (2026-11-16): fix: do not install BGP routes over connected prefixes (@frezbo)
+- **PR #14984** (2026-11-16): fix: retry failed routes without restarting RouteSpecController (@frezbo)
+- **PR #14983** (2026-11-16): fix: install IPv6 routes from numbered peers via the global next-hop (@frezbo)
+- **PR #14979** (2026-11-16): fix: keep healthy BGP instances running when one fails (@frezbo)
+- **PR #14978** (2026-11-16): fix: keep the peer ASN in AS_PATH with a neighbor localASN (@frezbo)
 
 ---
 
@@ -2955,108 +2712,77 @@ Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. data race between test fixtures in tests
+## X. keep healthy BGP instances running when one fails
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/storage/md_array_reconcile_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/network/bgp.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `768ed463`: data race between test fixtures in tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4f583972`: keep healthy BGP instances running when one fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/storage/md_array_reconcile_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/network/bgp.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// with runs fn under the fake's lock, for tests that seed or inspect fixture
-// state while the controller runtime is running.
-func (f *fakeMDProvisioner) with(fn func(f *fakeMDProvisioner)) {
-	f.mu.Lock()
-	defer f.mu.Unlock()
+	"time"
+	"github.com/cenkalti/backoff/v7"
+	retryBackoff := backoff.NewExponentialBackOff()
 
-	fn(f)
-}
+	var retryCh <-chan time.Time
 
-	suite.md.with(func(f *fakeMDProvisioner) {
-		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
-		f.details["/dev/md0"] = md.Detail{
-			Level:       "raid1",
-			RaidDevices: 2,
-			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+		case <-retryCh:
+		failed, err := ctrl.reconcile(ctx, r, logger)
+		if err != nil {
+		// failed instances and peers are retried here: a controller restart would also stop the healthy ones
+		if failed {
+			retryCh = time.After(retryBackoff.NextBackOff())
+		} else {
+			retryBackoff.Reset()
+
+			retryCh = nil
 		}
-	})
-	suite.md.with(func(f *fakeMDProvisioner) {
-		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
-		f.details["/dev/md0"] = md.Detail{
-			Level:       "raid1",
-			RaidDevices: 2,
-			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-		}
-	})
-	suite.md.with(func(f *fakeMDProvisioner) {
-		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
-		f.details["/dev/md0"] = md.Detail{
-			Level:       "raid1",
-			RaidDevices: 2,
-			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-		}
-		f.syncAction["/dev/md0"] = md.SyncActionResync
-	})
-	suite.md.with(func(f *fakeMDProvisioner) {
-		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
-		f.details["/dev/md0"] = md.Detail{
-			Level:       "raid1",
-			RaidDevices: 2,
-			Members:     []string{"/dev
+
+// reconcile reports whether an instance failed and needs a retry.
+//
+func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) (bool, error) {
+		return false, fmt.Errorf("error listing BGP instance configs: %w", err)
+		return false, fmt.Errorf("error listing link statuses: %w", err)
+		return false, fmt.Errorf("error listing address statuses: %w", err)
+	var failed bool
+
+			instanceLogger.Error("error configuring BGP instance", zap.Error(err))
+
+			failed = true
+
+			if !instance.Running() {
+				continue
+			}
+			instanceLogger.Error("error originating BGP routes", zap.Error(err))
+
+			failed = true
+
+			continue
+			logger.With(zap.String("instance", name)).Error("error resolving BGP route imports", zap.Error(importErr)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
-	suite.md.details["/dev/md0"] = md.Detail{
-		Level:       "raid1",
-		RaidDevices: 2,
-		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-	}
-	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
-	suite.md.details["/dev/md0"] = md.Detail{
-		Level:       "raid1",
-		RaidDevices: 2,
-		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-	}
-	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
-	suite.md.details["/dev/md0"] = md.Detail{
-		Level:       "raid1",
-		RaidDevices: 2,
-		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-	}
-	suite.md.syncAction["/dev/md0"] = md.SyncActionResync
-	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
-	suite.md.details["/dev/md0"] = md.Detail{
-		Level:       "raid1",
-		RaidDevices: 2,
-		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
-	}
-	suite.md.syncAction["/dev/md0"] = md.SyncActionRecover
-	suite.md.mu.Lock()
-	defer suite.md.mu.Unlock()
-
-	metadata := "1.0"
-	if name == "data" {
-		metadata = "1.2"
-	}
-	suite.md.details[device] = md.Detail{
-		Level:       "raid1",
-		RaidDevices: 2,
-		Members:     append([]string(nil), members...),
-		Name:        "talos:" + name,
-		UUID:        "test-" + na
+		if err := ctrl.reconcile(ctx, r, logger); err != nil {
+func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
+		return fmt.Errorf("error listing BGP instance configs: %w", err)
+		return fmt.Errorf("error listing link statuses: %w", err)
+		return fmt.Errorf("error listing address statuses: %w", err)
+			return fmt.Errorf("error configuring BGP instance %q: %w", name, err)
+			return fmt.Errorf("error originating routes for BGP instance %q: %w", name, err)
+			return fmt.Errorf("error resolving route imports for BGP instance %q: %w", name, importErr)
+	return ctrl.writeOutputs(ctx, r, outputs)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `768ed463` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4f583972` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

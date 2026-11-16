@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T22:34:22.318Z",
-  "total_verified_learnings": 8807,
+  "last_updated": "2026-11-16T22:47:42.524Z",
+  "total_verified_learnings": 8808,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19402,
+  "total_items": 19414,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -221307,14 +221307,19 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "ba4a88b6",
-      "content_hash": "e19f48d3f0f61193b5a257b90d914f0f39c05e41415e4aedde57468deaf56998",
+      "source_version": "a5b5d7de",
+      "content_hash": "37d077e4275c0879f9e8da1deb597db64dd186e30ea168aca55b47cde2e2f64c",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
         {
           "number": 8425,
           "title": "data race between test fixtures in tests",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8805,
+          "title": "keep healthy BGP instances running when one fails",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -221323,7 +221328,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:10:33.907Z",
+      "verified_at": "2026-11-16T22:47:37.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221365,10 +221370,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "ba4a88b6",
-      "content_hash": "a2831cf692f072ef211e849918750ee8da0de1ba0e997296acb9ae492bac2770",
+      "source_version": "a5b5d7de",
+      "content_hash": "53d66afbeec977542f6ea3d7591237a3d534ad158917fe2c281015f2cfff6c41",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:10:34.470Z"
+      "persisted_at": "2026-11-16T22:47:38.138Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -221377,10 +221382,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "ba4a88b6",
-      "content_hash": "b6cc0d33e43562d3e955b119bf8c93787ae2c381be5b27562cdd1a3f47987cb5",
+      "source_version": "a5b5d7de",
+      "content_hash": "e194f1e94d51b9a8230265a7f4d4dcec6789fb588d0dd1c09fd61f6503893b0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:10:34.592Z"
+      "persisted_at": "2026-11-16T22:47:38.237Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -221783,9 +221788,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "b50b40fe3bb5ce1b418886d4873a5f19bab9eb169056ba5683ba8af836d555e5",
+      "content_hash": "57f1e4d0e258b1ebe349e3a17db129d9b0ffc51e800de7af8ba4cf70223e7e05",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:16:47.744Z"
+      "persisted_at": "2026-11-16T22:47:42.405Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -221795,9 +221800,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "36a70b844c1ced6c1ec2f83c651864f36055587501e2aa7408a2dcb8288ddd01",
+      "content_hash": "d82484d2aad9c4f43c53159ab53f9d8b465a89b3f88ed8a6f3c06721aa315e23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:16:47.888Z"
+      "persisted_at": "2026-11-16T22:47:42.524Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -238329,14 +238334,19 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "77c2d33d",
-      "content_hash": "82e18676215350b325b11e44611e458f7f02e786e4e30058c8db21a75884004e",
+      "source_version": "c5bdfc45",
+      "content_hash": "26d0be52e8736ea8256f7f37d1d95bd270837cc38703df6b5fe5bd8d2e5ad330",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
         {
           "number": 8561,
           "title": "Remove GitHub PATs in CI",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8803,
+          "title": "Show MetalBear Cloud sessions in mirrord ui",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -238345,7 +238355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T02:14:57.792Z",
+      "verified_at": "2026-11-16T22:47:29.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238387,10 +238397,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "repository": "metalbear-co/mirrord",
-      "source_version": "77c2d33d",
-      "content_hash": "af07253ab92086fe7ef780f7ecd8f0751191c15143fd0c186a5460786f44a262",
+      "source_version": "c5bdfc45",
+      "content_hash": "e117fb22d755912aa05349e0c6b938a51d0d9dd0aa0d934e0e82b5f818fe2b74",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T02:14:58.314Z"
+      "persisted_at": "2026-11-16T22:47:29.855Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord",
@@ -238399,10 +238409,10 @@
       "relative_path": "08_VERIFICATION/metalbear-co-mirrord-verification-protocol-empirical-defect-shield-for-metalbear.md",
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord",
       "repository": "metalbear-co/mirrord",
-      "source_version": "77c2d33d",
-      "content_hash": "959714ef0ef85b3d9d14b03b1ebec899a841c6518a755a301fc1446e27f4451a",
+      "source_version": "c5bdfc45",
+      "content_hash": "6d081f75b521eb313b5f44580791c93951cd3dbb028d137d572e6cac548ed113",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T02:14:58.442Z"
+      "persisted_at": "2026-11-16T22:47:29.955Z"
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -238558,9 +238568,9 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f0bdc829e3e4a3e2b03c14a961d434ac653ba4b1e42ab0608dbcae25f779067",
+      "content_hash": "82cedbb1576f1871f66e564c9076e58bf46d525e7ff14f0b7e05273b970f1367",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T02:16:15.065Z"
+      "persisted_at": "2026-11-16T22:47:41.303Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings",
@@ -238570,9 +238580,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co-mirrord-learnings",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "778a62d971086a45dc14f5d95695a607a6cba96961603ae1924bcd4f80429c30",
+      "content_hash": "e98513613f6349934c7621738eb8049ee566e3732fde785ae8fdc92808ad0893",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T02:16:15.192Z"
+      "persisted_at": "2026-11-16T22:47:41.404Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -258487,6 +258497,177 @@
       "content_hash": "a561118d2ad48f410d2fc0672285547927cd50172aa91a9a681658452297e583",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T22:34:20.793Z"
+    },
+    "rule-8803": {
+      "learning_id": "rule-8803",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8803,
+      "title": "Show MetalBear Cloud sessions in mirrord ui",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "c5bdfc45",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T22:47:29.480Z"
+    },
+    "candidate_directive-show-metalbear-cloud-sessions-in-mirrord-ui": {
+      "item_id": "candidate_directive-show-metalbear-cloud-sessions-in-mirrord-ui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TDHZ-show-metalbear-cloud-sessions-in-mirrord-ui.md",
+      "title": "Show MetalBear Cloud sessions in mirrord ui",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da30b8dfd12b5c4413b3a209160ef349d27cc07f475f365400d48c907ec8558e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:47:41.212Z"
+    },
+    "learn-github-axios-axios": {
+      "learning_id": "learn-github-axios-axios",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "axios/axios",
+      "repository": "axios/axios",
+      "slug": "axios-axios",
+      "platform": "github",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "c0d4c900",
+      "content_hash": "2f15b73f95046e79725dfcd92c1dda0fd85a5840c15b530977946573044a57b3",
+      "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8804,
+          "title": "reject negative timeouts instead of crashing the process",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T22:47:31.952Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8804": {
+      "learning_id": "rule-8804",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8804,
+      "title": "reject negative timeouts instead of crashing the process",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "c0d4c900",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T22:47:31.952Z"
+    },
+    "candidate_directive-reject-negative-timeouts-instead-of-crashing-the-process": {
+      "item_id": "candidate_directive-reject-negative-timeouts-instead-of-crashing-the-process",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T6KW-reject-negative-timeouts-instead-of-crashing-the-process.md",
+      "title": "reject negative timeouts instead of crashing the process",
+      "repository": "axios/axios",
+      "source_version": "c0d4c900",
+      "content_hash": "6bffb9782e36a25f6d9dc593450909f992d28004fe5dd1f608819641a50e345b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:47:32.246Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-technical-construction-intelligence-axios-axios-core-invariants.md",
+      "title": "Technical Construction Intelligence: axios/axios Core Invariants",
+      "repository": "axios/axios",
+      "source_version": "c0d4c900",
+      "content_hash": "a7fb05d69fdc657e1cf7d2d15f24b5afb0e265f6376387c2e9a8683b7c0cbc9f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:47:32.352Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-axios-axios": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-axios-axios",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/axios-axios-verification-protocol-empirical-defect-shield-for-axios-axios.md",
+      "title": "Verification Protocol: Empirical Defect Shield for axios/axios",
+      "repository": "axios/axios",
+      "source_version": "c0d4c900",
+      "content_hash": "c53308081c690b467427ddf5d59e73358788fc4d8883d9dbdd9b7db46f075b81",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:47:32.454Z"
+    },
+    "rule-8805": {
+      "learning_id": "rule-8805",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8805,
+      "title": "keep healthy BGP instances running when one fails",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "a5b5d7de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T22:47:37.751Z"
+    },
+    "candidate_directive-keep-healthy-bgp-instances-running-when-one-fails": {
+      "item_id": "candidate_directive-keep-healthy-bgp-instances-running-when-one-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TECK-keep-healthy-bgp-instances-running-when-one-fails.md",
+      "title": "keep healthy BGP instances running when one fails",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "593a75b761e420502b0e635892775e57f5d75e2e7f815b0654758b1b7e12c854",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:47:42.313Z"
+    },
+    "candidate_directive-http-reject-negative-timeouts-instead-of-crashing-the-process": {
+      "item_id": "candidate_directive-http-reject-negative-timeouts-instead-of-crashing-the-process",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TE05-http-reject-negative-timeouts-instead-of-crashing-the-process.md",
+      "title": "http): reject negative timeouts instead of crashing the process",
+      "repository": "axios-axios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b401fd1f6f5359ac01dab74d9c803a48dd1c6445e433165ce8997f12de2922de",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:47:41.866Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-learnings-technical-construction-intelligence-axios-axios-learnings-.md",
+      "title": "Technical Construction Intelligence: axios-axios-learnings Core Invariants",
+      "repository": "axios-axios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "154f11f83cf5c80d37d7d9d22f62516ddea7676dcef628dddbd0b015372a614e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T22:47:41.958Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-axios-axios-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-axios-axios-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/axios-axios-learnings-verification-protocol-empirical-defect-shield-for-axios-ax.md",
+      "title": "Verification Protocol: Empirical Defect Shield for axios-axios-learnings",
+      "repository": "axios-axios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e8d77fd5612cabd32c687e598c6d397fbd9210d3a4f9ff1850322717480cfa2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T22:47:42.058Z"
     }
   },
   "ai-builder-brain": {
