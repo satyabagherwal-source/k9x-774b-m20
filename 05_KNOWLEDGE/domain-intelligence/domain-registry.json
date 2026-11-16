@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T18:27:24.759Z",
-  "total_records": 1305,
+  "last_updated": "2026-11-16T18:38:40.916Z",
+  "total_records": 1307,
   "domains": {
     "A": {
       "total": 7,
@@ -40,7 +40,7 @@
       ]
     },
     "D": {
-      "total": 593,
+      "total": 595,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -634,7 +634,9 @@
         "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
         "DOM-D-BCDF73E3",
         "domain_intelligence-research-knowledge-intelligence-hf-n4ze3m-tiny-voca-learnings-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-divagr1925-qwen3-5-4b-qwenputer-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor"
       ]
     },
     "E": {
@@ -7795,8 +7797,8 @@
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "repository": "microsoft/agent-governance-toolkit",
-      "content_hash": "af22d16b12feeefeced6d52072d15b06fb0a3b8186515f899021f5b68e8cdd31",
-      "created_at": "2026-11-14T15:25:47.866Z"
+      "content_hash": "d6921948c46c0823f69dba681356ffb9081063ad35a82b07d728a946376e48c7",
+      "created_at": "2026-11-16T18:38:36.210Z"
     },
     "DOM-D-21095CB7": {
       "record_id": "DOM-D-21095CB7",
@@ -7855,8 +7857,8 @@
       "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-learnings-architecture-intelligence-microsoft.md",
       "repository": "microsoft-agent-governance-toolkit-learnings",
-      "content_hash": "7f2ea1c0f16f54086ef9fd9c79ef15e6545c7b90eee4fe3947df59c920853c39",
-      "created_at": "2026-11-14T15:26:23.607Z"
+      "content_hash": "da3c6dffb12a9064916bc093b2945066784328dba19238fb8fd3d254b881f30e",
+      "created_at": "2026-11-16T18:38:40.916Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
@@ -17079,8 +17081,8 @@
       "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
       "repository": "iii-hq/iii",
-      "content_hash": "a3f9a51ca2574317b9957faa5a35f52d0e173f8099db3d1f126999199808294e",
-      "created_at": "2026-11-14T20:52:03.556Z"
+      "content_hash": "99a5fc105dfca84ced740a8befeb938060e3eb081b9fef6346e16f57fafd7b11",
+      "created_at": "2026-11-16T18:38:25.551Z"
     },
     "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants",
@@ -17088,8 +17090,8 @@
       "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-learnings-architecture-intelligence-iii-hq-iii-learnings-core-invaria.md",
       "repository": "iii-hq-iii-learnings",
-      "content_hash": "c465af70194deeabb426acc787613ef69d5b128d3f3c25df2aa5942a75f8f902",
-      "created_at": "2026-11-14T20:52:14.524Z"
+      "content_hash": "5eaea9058d5889e6df434b80f1bf8000394bb61a8105e0c97a6addb0f9c8a8b7",
+      "created_at": "2026-11-16T18:38:39.724Z"
     },
     "DOM-D-73A9B4FE": {
       "record_id": "DOM-D-73A9B4FE",
@@ -23637,6 +23639,24 @@
       "repository": "seaql-sea-orm-learnings",
       "content_hash": "f0b04c6eeaaed2bcb9650a754997ca3b6faa6aaddab044591bbd22940deb0c9c",
       "created_at": "2026-11-16T18:27:24.124Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-divagr1925-qwen3-5-4b-qwenputer-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-divagr1925-qwen3-5-4b-qwenputer-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: divagr1925/Qwen3.5-4B-Qwenputer Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-divagr1925-qwen3-5-4b-qwenputer-research-knowledge-intelligence-divagr1925-qw.md",
+      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "content_hash": "814074c824a96eea85084f5313e9fe6d4a99af087cd8437f213955d4ad04a582",
+      "created_at": "2026-11-16T18:38:23.767Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-divagr1925-qwen3.5-4b-qwenputer-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-research-knowledge-intelligence-hf-.md",
+      "repository": "hf-divagr1925-qwen3.5-4b-qwenputer-learnings",
+      "content_hash": "0fcdc490269458d5c8599283a1eff521d1c98b3b46fd60be44b3a87a1404d31d",
+      "created_at": "2026-11-16T18:38:40.379Z"
     }
   }
 }

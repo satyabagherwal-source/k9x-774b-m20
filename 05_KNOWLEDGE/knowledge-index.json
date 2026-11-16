@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T18:27:24.877Z",
-  "total_verified_learnings": 8794,
+  "last_updated": "2026-11-16T18:38:41.153Z",
+  "total_verified_learnings": 8795,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19255,
+  "total_items": 19266,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113389,10 +113389,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "678070ab",
-      "content_hash": "af22d16b12feeefeced6d52072d15b06fb0a3b8186515f899021f5b68e8cdd31",
+      "source_version": "5bcf1daa",
+      "content_hash": "d6921948c46c0823f69dba681356ffb9081063ad35a82b07d728a946376e48c7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T15:25:47.866Z"
+      "persisted_at": "2026-11-16T18:38:36.210Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit",
@@ -113401,10 +113401,10 @@
       "relative_path": "12_DECISIONS/ADR-microsoft-agent-governance-toolkit-adr-subsystem-boundary-modular-decoupling-in-.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft/agent-governance-toolkit",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "678070ab",
-      "content_hash": "d0786b3caf8cca36db5528191ea62eb34139b70a3ce4c932fca85f989909cbd8",
+      "source_version": "5bcf1daa",
+      "content_hash": "4312cfc7464064301e549b4d96d2fc759402e83dfa81cfdddb27056abdfc3a2d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T15:25:47.966Z"
+      "persisted_at": "2026-11-16T18:38:36.330Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too",
@@ -113414,9 +113414,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for microsoft-agent-governance-toolkit-learnings",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d165865bc8a71ddfab3062583dedad79bb9058a9e3e18dff49b3a9699313535",
+      "content_hash": "5cd4eeff0ce23d4766231818ff9af06b71d75043467c1738082ec1b51dd940b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:26:23.845Z"
+      "persisted_at": "2026-11-16T18:38:41.153Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
@@ -113438,9 +113438,9 @@
       "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f2ea1c0f16f54086ef9fd9c79ef15e6545c7b90eee4fe3947df59c920853c39",
+      "content_hash": "da3c6dffb12a9064916bc093b2945066784328dba19238fb8fd3d254b881f30e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T15:26:23.607Z"
+      "persisted_at": "2026-11-16T18:38:40.916Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-",
@@ -113450,9 +113450,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft-agent-governance-toolkit-learnings",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "7bdfa6c6e0be798bdeced287d64aa15b086c36af50868b201dba405cd7ad0535",
+      "content_hash": "ac04acfff25783d8e1db501e56e4f2bd8fd580222f780d36b345df6be316c9c9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T15:26:23.724Z"
+      "persisted_at": "2026-11-16T18:38:41.040Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
@@ -216509,8 +216509,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "678070ab",
-      "content_hash": "469afe900402c0bae14be8431d34d4721d1ae30e942c9b349d590ccc32b3529e",
+      "source_version": "5bcf1daa",
+      "content_hash": "ce7994ccdb20e279edb574d37cf6d2f53c42a7e88da61501dab3e0249d8590a3",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -216523,6 +216523,11 @@
           "number": 8497,
           "title": "Bump aiohttp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8774,
+          "title": "Bump cedar-policy",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216530,7 +216535,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:25:47.435Z",
+      "verified_at": "2026-11-16T18:38:35.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234714,14 +234719,19 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "8279fa0d",
-      "content_hash": "e1212943d42cc89f797c14be000035c5cc4901972ef39015130eee2ac1f125d9",
+      "source_version": "756888ba",
+      "content_hash": "8125f69c7cb5b15a0072be8ab3a31c73c8014a2fa1efe862ec46a0547281bebe",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
         {
           "number": 8532,
           "title": "supervise VM workers from their log stream instead of polling worker::",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8773,
+          "title": "remove placeholder tutorials and pre-monorepo leftovers",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -234730,7 +234740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T20:52:03.002Z",
+      "verified_at": "2026-11-16T18:38:25.072Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234772,10 +234782,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
       "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
       "repository": "iii-hq/iii",
-      "source_version": "8279fa0d",
-      "content_hash": "a3f9a51ca2574317b9957faa5a35f52d0e173f8099db3d1f126999199808294e",
+      "source_version": "756888ba",
+      "content_hash": "99a5fc105dfca84ced740a8befeb938060e3eb081b9fef6346e16f57fafd7b11",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:52:03.556Z"
+      "persisted_at": "2026-11-16T18:38:25.551Z"
     },
     "agent_contract-agent-contract-iii-hq-iii-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-iii-hq-iii-autonomous-specialist-persona",
@@ -234784,10 +234794,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/iii-hq-iii-agent-contract-iii-hq-iii-autonomous-specialist-persona.md",
       "title": "Agent Contract: iii-hq/iii Autonomous Specialist Persona",
       "repository": "iii-hq/iii",
-      "source_version": "8279fa0d",
-      "content_hash": "0ff87ef22e5804c0a74a899e750e568371b1baed70a7dbe8f488111c6d23c7b5",
+      "source_version": "756888ba",
+      "content_hash": "f24c8f99cf15dd6e41ecedc936b2c5d73366c84403a77a2cefc9a6db8fe4ddb5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:52:03.683Z"
+      "persisted_at": "2026-11-16T18:38:25.784Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii",
@@ -234796,10 +234806,10 @@
       "relative_path": "08_VERIFICATION/iii-hq-iii-verification-protocol-empirical-defect-shield-for-iii-hq-iii.md",
       "title": "Verification Protocol: Empirical Defect Shield for iii-hq/iii",
       "repository": "iii-hq/iii",
-      "source_version": "8279fa0d",
-      "content_hash": "2ea17e55a26ae9f98adb3d8710e643be765678b2995ba6b5aa242db9fee20a0f",
+      "source_version": "756888ba",
+      "content_hash": "2778e0906dc89645678a3088818960193779dd9499d7eae06bea9c877ee66a72",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:52:03.802Z"
+      "persisted_at": "2026-11-16T18:38:25.894Z"
     },
     "learn-github-meshery-meshery": {
       "learning_id": "learn-github-meshery-meshery",
@@ -234909,9 +234919,9 @@
       "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "c465af70194deeabb426acc787613ef69d5b128d3f3c25df2aa5942a75f8f902",
+      "content_hash": "5eaea9058d5889e6df434b80f1bf8000394bb61a8105e0c97a6addb0f9c8a8b7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:52:14.524Z"
+      "persisted_at": "2026-11-16T18:38:39.724Z"
     },
     "agent_contract-agent-contract-iii-hq-iii-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-iii-hq-iii-learnings-autonomous-specialist-persona",
@@ -234921,9 +234931,9 @@
       "title": "Agent Contract: iii-hq-iii-learnings Autonomous Specialist Persona",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "735a3a224b9043e2f52b2aca73926c1a065610f1a995b26f30c2867ee43f60a7",
+      "content_hash": "acc5ce530a0807a33858407b760155506cb40d99c5a0778c46f137d83f14c21e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:52:14.652Z"
+      "persisted_at": "2026-11-16T18:38:39.965Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii-learnings",
@@ -234933,9 +234943,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for iii-hq-iii-learnings",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "b15a10c202d60d4cabd05e74377a55ae536e915222a04e95beb02158cf1141d2",
+      "content_hash": "1a79a1079617aade3e67c3ea1dafbb5ec7f0c6ee26067aec11bde06894931d70",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:52:14.770Z"
+      "persisted_at": "2026-11-16T18:38:40.080Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear",
@@ -256304,6 +256314,157 @@
       "content_hash": "3223b2f83bca12bd3456bec2e851dfa3fad9a724bf6754227ca767ddd5591e4b",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T18:27:24.237Z"
+    },
+    "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer": {
+      "learning_id": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "slug": "hf-divagr1925-qwen3.5-4b-qwenputer",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
+      "source_version": "hf-divagr1925-qwen3.5-4b-qwenputer",
+      "content_hash": "6c1685141cd6ea6898d4cf22562c9e9d996f7faad6d646c4a716db22f6a43daa",
+      "dossier_path": "07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T18:38:23.379Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-divagr1925-qwen3-5-4b-qwenputer-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-divagr1925-qwen3-5-4b-qwenputer-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-divagr1925-qwen3-5-4b-qwenputer-research-knowledge-intelligence-divagr1925-qw.md",
+      "title": "Research & Knowledge Intelligence: divagr1925/Qwen3.5-4B-Qwenputer Core Invariants",
+      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "source_version": "hf-divagr1925-qwen3.5-4b-qwenputer",
+      "content_hash": "814074c824a96eea85084f5313e9fe6d4a99af087cd8437f213955d4ad04a582",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T18:38:23.767Z"
+    },
+    "rule-8773": {
+      "learning_id": "rule-8773",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8773,
+      "title": "remove placeholder tutorials and pre-monorepo leftovers",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "756888ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:38:25.072Z"
+    },
+    "candidate_directive-remove-placeholder-tutorials-and-pre-monorepo-leftovers": {
+      "item_id": "candidate_directive-remove-placeholder-tutorials-and-pre-monorepo-leftovers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WTJO-remove-placeholder-tutorials-and-pre-monorepo-leftovers.md",
+      "title": "remove placeholder tutorials and pre-monorepo leftovers",
+      "repository": "iii-hq/iii",
+      "source_version": "756888ba",
+      "content_hash": "4b1dbe14d17178846937aa785bb997478b3a408b41d6083425a601016a72af03",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:38:25.434Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-iii-hq-iii": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-iii-hq-iii",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/iii-hq-iii-skill-operational-integration-playbook-for-iii-hq-iii.md",
+      "title": "Skill: Operational & Integration Playbook for iii-hq/iii",
+      "repository": "iii-hq/iii",
+      "source_version": "756888ba",
+      "content_hash": "0b0927b0d41dfcf0d35e3af8e1cebc98d90cee26fe396070015e7358834373db",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:38:25.672Z"
+    },
+    "rule-8774": {
+      "learning_id": "rule-8774",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8774,
+      "title": "Bump cedar-policy",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "5bcf1daa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T18:38:35.749Z"
+    },
+    "candidate_directive-bump-cedar-policy": {
+      "item_id": "candidate_directive-bump-cedar-policy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X1RT-bump-cedar-policy.md",
+      "title": "Bump cedar-policy",
+      "repository": "microsoft/agent-governance-toolkit",
+      "source_version": "5bcf1daa",
+      "content_hash": "f972c0324f9345f394fe8e91dbf24ae5bc4a1367bb5041c33e1d13434c0b23d0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:38:36.090Z"
+    },
+    "candidate_directive-docs-remove-placeholder-tutorials-and-pre-monorepo-leftovers": {
+      "item_id": "candidate_directive-docs-remove-placeholder-tutorials-and-pre-monorepo-leftovers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X4FC-docs-remove-placeholder-tutorials-and-pre-monorepo-leftovers.md",
+      "title": "docs: remove placeholder tutorials and pre-monorepo leftovers",
+      "repository": "iii-hq-iii-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a9ddd265b30a96e61407b5618088eb1bcd80a0fc4954eae48c660ce7acc4f5c9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:38:39.534Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-iii-hq-iii-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-iii-hq-iii-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/iii-hq-iii-learnings-skill-operational-integration-playbook-for-iii-hq-iii-learn.md",
+      "title": "Skill: Operational & Integration Playbook for iii-hq-iii-learnings",
+      "repository": "iii-hq-iii-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cc6ef10d654946e2a94764dce4d16e107eae25d59e5696c4eaf4609fb72810cf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:38:39.849Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-research-knowledge-intelligence-hf-.md",
+      "title": "Research & Knowledge Intelligence: hf-divagr1925-qwen3.5-4b-qwenputer-learnings Core Invariants",
+      "repository": "hf-divagr1925-qwen3.5-4b-qwenputer-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0fcdc490269458d5c8599283a1eff521d1c98b3b46fd60be44b3a87a1404d31d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T18:38:40.379Z"
+    },
+    "candidate_directive-deps-bump-cedar-policy": {
+      "item_id": "candidate_directive-deps-bump-cedar-policy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X5EH-deps-bump-cedar-policy.md",
+      "title": "deps): Bump cedar-policy",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ed4637f10d78d9323c21bd15dad50c7b0f7a15eca92dcc0e416465f4521ce49c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T18:38:40.794Z"
     }
   },
   "ai-builder-brain": {

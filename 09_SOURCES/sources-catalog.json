@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "678070ab",
+    "sourceVersion": "5bcf1daa",
     "license": "MIT",
-    "contentHash": "469afe900402c0bae14be8431d34d4721d1ae30e942c9b349d590ccc32b3529e",
-    "lastHarvestedAt": "2026-11-14T15:25:47.579Z",
+    "contentHash": "ce7994ccdb20e279edb574d37cf6d2f53c42a7e88da61501dab3e0249d8590a3",
+    "lastHarvestedAt": "2026-11-16T18:38:35.911Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "8279fa0d",
+    "sourceVersion": "756888ba",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "e1212943d42cc89f797c14be000035c5cc4901972ef39015130eee2ac1f125d9",
-    "lastHarvestedAt": "2026-11-14T20:52:03.196Z",
+    "contentHash": "8125f69c7cb5b15a0072be8ab3a31c73c8014a2fa1efe862ec46a0547281bebe",
+    "lastHarvestedAt": "2026-11-16T18:38:25.236Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -11825,8 +11825,8 @@
     "sourceUrl": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
     "sourceVersion": "hf-divagr1925-qwen3.5-4b-qwenputer",
     "license": "Open-Source",
-    "contentHash": "89b57261595c7d6146405a8dfdd07f3cbab61b4ccc5062f6800d73020316399b",
-    "lastHarvestedAt": "2026-11-12T02:16:30.398Z",
+    "contentHash": "6c1685141cd6ea6898d4cf22562c9e9d996f7faad6d646c4a716db22f6a43daa",
+    "lastHarvestedAt": "2026-11-16T18:38:23.584Z",
     "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer"
   },
   "hf-abenzerps-qwen-image-2.1-turbo-quantized": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T18:27:23.852Z",
+  "updated_at": "2026-11-16T18:38:40.617Z",
   "stats": {
-    "total_discovered": 4357,
-    "approved_pending_harvest": 4093,
+    "total_discovered": 4362,
+    "approved_pending_harvest": 4098,
     "harvested_count": 0,
     "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4098,
+      "COMMUNITY_AND_EXPERT": 4103,
       "OFFICIAL_DOCUMENTATION": 138,
       "STANDARDS_AND_SPECIFICATIONS": 95,
       "ENGINEERING_BLOGS": 3,
@@ -94027,6 +94027,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
         "fileName": "seaql-sea-orm-learnings.md"
+      }
+    },
+    "SRC-75F00DCC3D06": {
+      "id": "SRC-75F00DCC3D06",
+      "url": "https://workers.iii.dev/",
+      "title": "https://workers.iii.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:38:39.294Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-C65FB51DB15A": {
+      "id": "SRC-C65FB51DB15A",
+      "url": "https://cdn.workers.iii.dev/my-worker/1.2.0/bundle.tar.gz",
+      "title": "https://cdn.workers.iii.dev/my-worker/1.2.0/bundle.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:38:39.333Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-6ECEFE96F510": {
+      "id": "SRC-6ECEFE96F510",
+      "url": "https://github.com/cedar-policy/cedar",
+      "title": "https://github.com/cedar-policy/cedar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:38:40.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-5987714E97B7": {
+      "id": "SRC-5987714E97B7",
+      "url": "https://github.com/cedar-policy/cedar/releases",
+      "title": "https://github.com/cedar-policy/cedar/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:38:40.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-B18756C7F162": {
+      "id": "SRC-B18756C7F162",
+      "url": "https://github.com/cedar-policy/cedar/compare/cedar-policy-cli-v4.11.0...cedar-policy-cli-v4.11.2",
+      "title": "https://github.com/cedar-policy/cedar/compare/cedar-policy-cli-v4.11.0...cedar-policy-cli-v4.11.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T18:38:40.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
       }
     }
   }

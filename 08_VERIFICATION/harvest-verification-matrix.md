@@ -10319,3 +10319,6 @@
 | `CYCLE-20261116-IEFV` | `2026-11-16T18:27:12.667Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8770` | Yes (`faed9a52...`) |
 | `CYCLE-20261116-II8H` | `2026-11-16T18:27:17.585Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8771` | Yes (`c8f11499...`) |
 | `CYCLE-20261116-IK5V` | `2026-11-16T18:27:20.083Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8772` | Yes (`68f58263...`) |
+| `CYCLE-20261116-WS4C` | `2026-11-16T18:38:23.580Z` | `divagr1925/Qwen3.5-4B-Qwenputer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md` | Yes (`6c168514...`) |
+| `CYCLE-20261116-WTE8` | `2026-11-16T18:38:25.232Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8773` | Yes (`8125f69c...`) |
+| `CYCLE-20261116-X1MR` | `2026-11-16T18:38:35.907Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8774` | Yes (`ce7994cc...`) |

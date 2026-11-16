@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-YS2P",
-    "timestamp": "2026-11-13T23:28:52.129Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "fcb34bc0efbd06692340ffc7bdb8532882805213e01a8822f817364d03898b41",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-FOG4",
-    "timestamp": "2026-11-13T23:42:00.580Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "2eb75347f7602cfdc1211830314db921707241cef1f6a83ed4b53fa9ad747c63",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-FTLH",
-    "timestamp": "2026-11-13T23:42:07.253Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "0d6be646b5200a8c2914ef778d48da51880c4b6f8f6d5ce15b80cfdbe7151ad6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-IL9N",
     "timestamp": "2026-11-13T23:44:16.427Z",
     "repository": "openai/whisper-large-v3",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "68f5826399a02beb3c3040f1d1548d1774e3a9e044c4852964c1723b69b7f18e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-WS4C",
+    "timestamp": "2026-11-16T18:38:23.580Z",
+    "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+    "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
+    "contentHash": "6c1685141cd6ea6898d4cf22562c9e9d996f7faad6d646c4a716db22f6a43daa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-WTE8",
+    "timestamp": "2026-11-16T18:38:25.232Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "8125f69c7cb5b15a0072be8ab3a31c73c8014a2fa1efe862ec46a0547281bebe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-X1MR",
+    "timestamp": "2026-11-16T18:38:35.907Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "ce7994ccdb20e279edb574d37cf6d2f53c42a7e88da61501dab3e0249d8590a3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

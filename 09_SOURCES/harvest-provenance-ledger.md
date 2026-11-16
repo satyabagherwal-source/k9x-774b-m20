@@ -10352,3 +10352,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `874cc793` | Multi-dimensional audit evidence | 2026-11-16T18:27:12.671Z |
 | `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `18cbaa3d` | Multi-dimensional audit evidence | 2026-11-16T18:27:17.589Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8ee7817e` | Multi-dimensional audit evidence | 2026-11-16T18:27:20.087Z |
+| `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-16T18:38:23.584Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `756888ba` | Multi-dimensional audit evidence | 2026-11-16T18:38:25.236Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `5bcf1daa` | Multi-dimensional audit evidence | 2026-11-16T18:38:35.911Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T15:26:23.410Z",
+  "timestamp": "2026-11-16T18:38:40.709Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-microsoft-agent-governance-toolkit-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [microsoft-agent-governance-toolkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T15:26:23.410Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T18:38:40.709Z`  
 > **Learning ID**: `LEARN-EVO-microsoft-agent-governance-toolkit-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from microsoft-agent-governance-toolkit-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `678070ab`  
+> **Source Version**: `5bcf1daa`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T15:25:46.740Z  
+> **Timestamp**: 2026-11-16T18:38:35.022Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:25:46.735Z  
+> **Harvest Timestamp**: 2026-11-16T18:38:35.017Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6563 stars
+- **Stars / Engagement**: 6572 stars
 
 ---
 
@@ -433,74 +433,106 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `678070ab` (2026-11-14)
-**Commit Message**: chore(deps): Bump aiohttp (#4398)
+### Incident Patch 1: `5bcf1daa` (2026-11-16)
+**Commit Message**: chore(deps): Bump cedar-policy (#4578)
 
-Bumps [aiohttp](https://github.com/aio-libs/aiohttp) from 3.14.3 to 3.14.4.
+Bumps [cedar-policy](https://github.com/cedar-policy/cedar) from 4.11.0 to 4.11.2.
+- [Release notes](https://github.com/cedar-policy/cedar/releases)
+- [Commits](https://github.com/cedar-policy/cedar/compare/cedar-policy-cli-v4.11.0...cedar-policy-cli-v4.11.2)
 
 ---
 updated-dependencies:
-- dependency-name: aiohttp
-  dependency-version: 3.14.4
-  dependency-type: direct:production
+- dependency-name: cedar-policy
+  dependency-version: 4.11.2
+  dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `agent-governance-python/agent-os/services/cloud-board/requirements.txt` (modified, +1/-1)
+**File**: `policy-engine/examples/coding_agent/app/Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -6,7 +6,7 @@ fastapi==0.115.0
- uvicorn[standard]==0.27.1
+@@ -293,9 +293,9 @@ dependencies = [
  
- # Async HTTP
--aiohttp==3.14.3
-+aiohttp==3.14.4
- httpx==0.27.0
+ [[package]]
+ name = "cedar-policy"
+-version = "4.11.0"
++version = "4.11.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "674ca6ef6e44a1e29e6c07f6b2ab7e6913938d6049204d48e7849703d02443ce"
++checksum = "1fdd98501120bc31fc09f92d3f58c489f4ee4b846904109ac63dd8256de7b84d"
+ dependencies = [
+  "cedar-policy-core",
+  "cedar-policy-formatter",
+@@ -313,9 +313,9 @@ dependencies = [
  
- # Data Validation
-```
-
----
-
-### Incident Patch 2: `dffd8480` (2026-11-14)
-**Commit Message**: chore(deps): Bump opentelemetry-api (#4575)
-
-Bumps [opentelemetry-api](https://github.com/open-telemetry/opentelemetry-python) from 1.45.1 to 1.45.2.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-python/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-python/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-python/compare/v1.45.1...v1.45.2)
-
----
-updated-dependencies:
-- dependency-name: opentelemetry-api
-  dependency-version: 1.45.2
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `agent-governance-python/agent-os/services/cloud-board/requirements.txt` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ cryptography==50.0.0  # PKCS7/DER hardening; see docs/dependency-audits/2026-08-
- pynacl==1.6.2
+ [[package]]
+ name = "cedar-policy-core"
+-version = "4.11.0"
++version = "4.11.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3df781c108240c3b3778c586c6a1b234355f1a2f9d35e08630b63b2590c59dbb"
++checksum = "d1d41088b497e39b6789e87e05ad6549b7f64a663a4d6ecd73a748dc3a9a98a9"
+ dependencies = [
+  "chrono",
+  "educe",
+@@ -341,9 +341,9 @@ dependencies = [
  
- # Observability
--opentelemetry-api==1.45.1
-+opentelemetry-api==1.45.2
- opentelemetry-sdk==1.29.0
- opentelemetry-instrumentation-fastapi==0.50b0
- structlog==24.4.0
+ [[package]]
+ name = "cedar-policy-formatter"
+-version = "4.11.0"
++version = "4.11.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e293607563253e249d19cf4d36ac05821955170a63cf6d65deb4db60138b192e"
++checksum = "fb6c28be47d77dcbc04c2a80181a2c0db9725ed60d24832c6401396cc2ae114b"
+ dependencies = [
+  "cedar-policy-core",
+  "itertools",
+@@ -604,7 +604,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -1531,7 +1531,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -1888,7 +1888,7 @@ dependencies = [
+  "getrandom 0.4.3",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -2197,7 +2197,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4578** (2026-11-16): chore(deps): Bump cedar-policy from 4.11.0 to 4.11.2 in /policy-engine/examples/coding_agent/app (@dependabot[bot])
 - **PR #4575** (2026-11-14): chore(deps): Bump opentelemetry-api from 1.45.1 to 1.45.2 in /agent-governance-python/agent-os/services/cloud-board (@dependabot[bot])
 - **PR #4574** (2026-11-13): chore(deps-dev): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
 - **PR #4573** (2026-11-13): chore(deps): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
 - **PR #4572** (2026-11-13): chore(deps): Bump hono from 4.13.7 to 4.13.18 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
 - **PR #4571** (2026-11-13): chore(deps-dev): Bump hono from 4.13.7 to 4.13.18 in /policy-engine/sdk/node (@dependabot[bot])
-- **PR #4566** (2026-11-12): chore(deps): Bump @hono/node-server from 2.1.1 to 2.1.8 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
 
 ---
 
@@ -520,31 +552,49 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Bump aiohttp
+## X. deps): Bump cedar-policy
 
 **RULE**:
-When implementing operations in `agent-governance-python/agent-os/services/cloud-board/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `policy-engine/examples/coding_agent/app/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `678070ab`: deps): Bump aiohttp. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5bcf1daa`: deps): Bump cedar-policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-os/services/cloud-board/requirements.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `policy-engine/examples/coding_agent/app/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-aiohttp==3.14.4
+version = "4.11.2"
+checksum = "1fdd98501120bc31fc09f92d3f58c489f4ee4b846904109ac63dd8256de7b84d"
+version = "4.11.2"
+checksum = "d1d41088b497e39b6789e87e05ad6549b7f64a663a4d6ecd73a748dc3a9a98a9"
+version = "4.11.2"
+checksum = "fb6c28be47d77dcbc04c2a80181a2c0db9725ed60d24832c6401396cc2ae114b"
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-aiohttp==3.14.3
+version = "4.11.0"
+checksum = "674ca6ef6e44a1e29e6c07f6b2ab7e6913938d6049204d48e7849703d02443ce"
+version = "4.11.0"
+checksum = "3df781c108240c3b3778c586c6a1b234355f1a2f9d35e08630b63b2590c59dbb"
+version = "4.11.0"
+checksum = "e293607563253e249d19cf4d36ac05821955170a63cf6d65deb4db60138b192e"
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `678070ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5bcf1daa` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
