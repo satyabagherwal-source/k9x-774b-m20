@@ -10216,3 +10216,8 @@ Every entry in this ledger must capture:
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `ac243a1b` | Multi-dimensional audit evidence | 2026-11-15T23:39:58.580Z |
 | `learn-dom-d-9a5a6c46` | `project://sfu-db-connector-x` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | 2026-11-15T23:40:36.463Z |
 | `learn-dom-h-503996f3` | `project://sfu-db-connector-x` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | 2026-11-15T23:41:17.020Z |
+| `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-15T23:59:43.887Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `1952010a` | Multi-dimensional audit evidence | 2026-11-15T23:59:53.271Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f577f0d8` | Multi-dimensional audit evidence | 2026-11-15T23:59:58.531Z |
+| `learn-dom-d-cb5f7dee` | `project://hf-webai-official-twil-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md` | 2026-11-16T00:00:27.372Z |
+| `learn-dom-h-20a56733` | `project://agent-field-agentfield` | `1952010a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md` | 2026-11-16T00:01:01.447Z |

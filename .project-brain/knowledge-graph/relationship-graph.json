@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T23:41:17.018Z",
+  "updated_at": "2026-11-16T00:01:01.445Z",
   "statistics": {
-    "total_nodes": 274,
-    "total_edges": 144,
+    "total_nodes": 276,
+    "total_edges": 145,
     "domain_distribution": {
-      "D": 214,
+      "D": 215,
       "M": 1,
-      "H": 25,
+      "H": 26,
       "J": 10,
       "K": 12,
       "L": 3,
@@ -19,7 +19,7 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 143,
+      "CONSTRAINED_BY_ARCHITECTURE": 144,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -6150,6 +6150,51 @@
       ],
       "created_at": "2026-11-15T23:41:17.017Z",
       "updated_at": "2026-11-15T23:41:17.017Z"
+    },
+    "DOM-D-CB5F7DEE": {
+      "id": "DOM-D-CB5F7DEE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): webAI-Official/TwIL-8B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-webai-official-twil-8b/hf-webai-official-twil-8b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T00:00:01.628Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-webai-official-twil-8b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-16T00:00:27.370Z",
+      "updated_at": "2026-11-16T00:00:27.370Z"
+    },
+    "DOM-H-20A56733": {
+      "id": "DOM-H-20A56733",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "python): preserve stored memory JSON value types",
+      "summary": "Prevents defects observed in production commit `95c109dc`: python): preserve stored memory JSON value types. Unvalidated execution paths cau -> When implementing operations in `sdk/python/agentfield/memory.py`, engineers MUST enforce rigorous boundary validation, safe state transitio",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://agent-field-agentfield/agent-field-agentfield-learnings.md",
+        "source_version": "1952010a",
+        "observed_at": "2026-11-15T23:59:52.418Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (agent-field-agentfield)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-16T00:01:01.445Z",
+      "updated_at": "2026-11-16T00:01:01.445Z"
     }
   },
   "edges": [
@@ -7592,6 +7637,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-0A98A103 [H] with Domain K",
       "created_at": "2026-11-15T21:44:45.305Z"
+    },
+    {
+      "id": "EDGE-6F6CAEDA9E9D",
+      "sourceId": "DOM-D-CB5F7DEE",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-CB5F7DEE [D] with Domain M",
+      "created_at": "2026-11-16T00:00:27.370Z"
     }
   ]
 }

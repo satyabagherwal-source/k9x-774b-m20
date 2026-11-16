@@ -10183,3 +10183,8 @@
 | `CYCLE-20261115-8RN3` | `2026-11-15T23:39:58.575Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8667, Rule 8668` | Yes (`d20ece58...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T23:40:36.463Z` | `sfu-db-connector-x` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9A5A6C46` [Domain D] | Yes (`74935131...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T23:41:17.020Z` | `sfu-db-connector-x` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-503996F3` [Domain H] | Yes (`74789975...`) |
+| `CYCLE-20261115-Y68C` | `2026-11-15T23:59:43.884Z` | `webAI-Official/TwIL-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md` | Yes (`2d8600d2...`) |
+| `CYCLE-20261115-YDGZ` | `2026-11-15T23:59:53.267Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8669` | Yes (`26b3d23c...`) |
+| `CYCLE-20261115-YHJ4` | `2026-11-15T23:59:58.528Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md` | Yes (`98c6c67b...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T00:00:27.372Z` | `hf-webai-official-twil-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CB5F7DEE` [Domain D] | Yes (`76ff1707...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T00:01:01.447Z` | `agent-field-agentfield` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-20A56733` [Domain H] | Yes (`8206b042...`) |

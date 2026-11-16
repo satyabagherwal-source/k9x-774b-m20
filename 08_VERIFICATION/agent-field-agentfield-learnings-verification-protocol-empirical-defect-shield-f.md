@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T15:50:17.821Z",
+  "timestamp": "2026-11-16T00:01:01.635Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-agent-field-agentfield-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [agent-field-agentfield-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T15:50:17.821Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T00:01:01.635Z`  
 > **Learning ID**: `LEARN-EVO-agent-field-agentfield-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `7205812b`  
+> **Source Version**: `1952010a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T15:49:36.838Z  
+> **Timestamp**: 2026-11-15T23:59:52.418Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:49:36.833Z  
+> **Harvest Timestamp**: 2026-11-15T23:59:52.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1443,679 +1443,363 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0145089a` (2026-11-13)
-**Commit Message**: fix(python): finish harness cleanup before propagating cancellation (#1180)
+### Incident Patch 1: `95c109dc` (2026-11-15)
+**Commit Message**: fix(python): preserve stored memory JSON value types (#1199)
 
-* fix(python): finish harness cleanup before propagating cancellation
+Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
 
-* fix(python): retain harness cleanup during loop shutdown
-
-* test(python): respect cancellation message version contract
-
-**File**: `sdk/python/agentfield/harness/_cli.py` (modified, +38/-14)
+**File**: `sdk/python/agentfield/memory.py` (modified, +2/-8)
 ```diff
-@@ -250,7 +250,9 @@ async def _wait_process_exit(
-     """
-     try:
-         return await asyncio.wait_for(proc.wait(), timeout=_PROC_EXIT_GRACE_SECONDS)
--    except (asyncio.TimeoutError, TimeoutError):
-+    except (asyncio.TimeoutError, TimeoutError, asyncio.CancelledError):
-+        # Loop shutdown cancels the cleanup task too. Finish the same bounded
-+        # kill/poll fallback; run_cli still propagates the caller's cancellation.
-         pass
-     # The notification may have landed while we grace-waited (in which case
-     # the transport finalizer may already have dropped its Popen reference —
-@@ -267,7 +269,11 @@ async def _wait_process_exit(
-         returncode = popen.poll()
-         if returncode is not None:
-             return returncode
--        await asyncio.sleep(0.1)
-+        try:
-+            await asyncio.sleep(0.1)
-+        except asyncio.CancelledError:
-+            # Do not restart the polling budget when shutdown cancels again.
-+            pass
-     return proc.returncode
+@@ -364,14 +364,8 @@ async def get(
  
+             # Extract the actual data from the memory response
+             if isinstance(result, dict) and "data" in result:
+-                # The server returns JSON-encoded data, so we need to decode it
+-                data = result["data"]
+-                if isinstance(data, str):
+-                    try:
+-                        return json.loads(data)
+-                    except json.JSONDecodeError:
+-                        return data
+-                return data
++                # response.json() already decoded the value, including strings.
++                return result["data"]
  
-@@ -402,18 +408,36 @@ def _kill_group() -> None:
-                     break
-                 # Spurious wakeup (progress reset the idle window): loop again.
-     finally:
--        if not completed:
--            # Timeout, cancellation, or an internal error: stop the child so
--            # nothing keeps running and the exit wait below can conclude.
--            # (Previously only the timeout paths killed; a cancelled run_cli
--            # left the child running and awaited its natural exit.)
--            _kill_group()
--        drain.cancel()
--        try:
--            await drain
--        except BaseException:
--            pass
--        fallback_returncode = await _wait_process_exit(proc, _kill_group)
-+
-+        async def cleanup() -> Optional[int]:
-+            if not completed:
-+                _kill_group()
-+            drain.cancel()
-+            try:
-+                await drain
-+            except BaseException:
-+                pass
-+            return await _wait_process_exit(proc, _kill_group)
-+
-+        # Pipe EOF does not mean the child has exited. Keep ownership until
-+        # the bounded exit wait finishes, even if cancellation arrives here
-+        # or is repeated while cleanup is already running.
-+        cleanup_task = asyncio.create_task(cleanup())
-+        cleanup_cancelled: Optional[asyncio.CancelledError] = None
-+        while True:
-+            try:
-+                fallback_returncode = await asyncio.shield(cleanup_task)
-+                break
-+            except asyncio.CancelledError as exc:
-+                if cleanup_cancelled is None:
-+                    cleanup_cancelled = exc
-+                    _kill_group()
-+                if cleanup_task.cancelled():
-+                    # Shutdown can cancel a task before its coroutine starts.
-+                    fallback_returncode = await _wait_process_exit(proc, _kill_group)
-+                    break
-+        if cleanup_cancelled is not None:
-+            raise cleanup_cancelled
- 
-     if idle_timed_out:
-         raise TimeoutError(
+             return result
+         except MemoryAccessError:
 ```
 
-**File**: `sdk/python/tests/test_harness_cli.py` (modified, +146/-0)
+**File**: `sdk/python/tests/test_memory_client_core.py` (modified, +3/-5)
 ```diff
-@@ -218,6 +218,152 @@ async def never_ready(_n):
-     process.kill.assert_called()
+@@ -1,6 +1,5 @@
+ from __future__ import annotations
  
+-import json
+ from types import SimpleNamespace
+ from typing import Any
+ from unittest.mock import AsyncMock
+@@ -66,7 +65,7 @@ def fake_post(url, json=None, headers=None, timeout=None):  # type: ignore[overr
  
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("repeat_cancel", [False, True])
-+async def test_run_cli_cancellation_after_pipe_eof_reaps_child(
-+    monkeypatch, repeat_cancel
-+):
-+    """Cancellation must still own the child after its output pipes close."""
-+    create_process = asyncio.create_subprocess_exec
-+    waiting_for_exit = asyncio.Event()
-+    reaped = asyncio.Event()
-+    release_wait = asyncio.Event()
-+    process = None
-+
-+    async def spawn(*args, **kwargs):
-+        nonlocal process
-+        process = await create_process(*args, **kwargs)
-+        wait = process.wait
-+
-+        async def observed_wait():
-+            waiting_for_exit.set()
-+            result = await wait()
-+            reaped.set()
-+            if repeat_cancel:
-+                await release_wait.wait()
-+            return result
-+
-+        process.wait = observed_wait
-+        return process
-+
-+    monkeypatch.setattr(asyncio, "create_subprocess_exec", spawn)
-+    task = asyncio.create_task(
-+        run_cli(
-+            [
-+                sys.executable,
-+                "-c",
-+                "import os, time; os.close(1); os.close(2); time.sleep(60)",
-+            ],
-+            timeout=30,
-+            idle_seconds=0,
-+        )
-+    )
-+    try:
-+        await asyncio.wait_for(waiting_for_exit.wait(), timeout=5)
-+        task.cancel("stop after EOF")
-+        if repeat_cancel:
-+            await asyncio.wait_for(reaped.wait(), timeout=2)
-+            task.cancel("stop again")
-+            await asyncio.sleep(0)
-+            assert not task.done()
-+            release_wait.set()
-+        with pytest.raises(asyncio.CancelledError) as cancelled:
-+            await asyncio.wait_for(task, timeout=2)
-+        # Task cancellation messages reach awaiters starting with Python 3.11.
-+        if sys.version_info >= (3, 11):
-+            assert str(cancelled.value) == "stop after EOF"
-+        assert process is not None
-+        assert process.returncode is not None
-+    finally:
-+        release_wait.set()
-+        if not task.done():
-+            task.cancel()
-+            await asyncio.gather(task, return_exceptions=True)
-+        if process is not None and process.returncode is None:
-+            process.kill()
-+            await process.wait()
-+
-+
-+@pytest.mark.asyncio
-+async def test_run_cli_returns_exit_status_after_pipe_eof():
-+    stdout, stderr, returncode = await run_cli(
-+        [
-+            sys.executable,
-+            "-c",
-+            "import os, sys, time; print('done', flush=True); "
-+            "os.close(1); os.close(2); time.sleep(0.05); sys.exit(7)",
-+        ],
-+        timeout=2,
-+        idle_seconds=0,
-+    )
-+    assert (stdout, stderr, returncode) == ("done\n", "", 7)
-+
-+
-+def test_run_cli_reaps_child_during_event_loop_shutdown(monkeypatch):
-+    """asyncio.run cancels the runner and any cleanup tasks together."""
-+    create_process = asyncio.create_subprocess_exec
-+    process = None
-+    runner = None
-+    observed = {}
-+
-+    class ObservedPolicy(asyncio.DefaultEventLoopPolicy):
-+        def new_event_loop(self):
-+            loop = super().new_event_loop()
-+            close = loop.close
-+
-+            def observed_close():
-+                try:
-+                    if process is not None:
-+                        observed["child_alive"] = process.returncode is None
-+                        observed["runner_cancelled"] = runner.cancelled()
-+                        if process.returncode is None:
-+                            process.kill()
-+                            loop.run_until_complete(process.wait())
-+                finally:
-+                    close()
-+
-+            loop.close = observed_close
-+            return loop
-+
-+    async def main():
-+        nonlocal runner
-+        waiting_for_exit = asyncio.Event()
-+
-+        async def spawn(*args, **kwargs):
-+            nonlocal process
-+            process = await create_process(*args, **kwargs)
-+            wait = process.wait
-+
-+            async def observed_wait():
-+                waiting_for_exit.set()
-+                return await wait()
-+
-+            process.wait = observed_wait
-+            return process
-+
-+        monkeypatch.setattr(asyncio, "create_subprocess_exec", spawn)
-+        runner = asyncio.create_task(
-+            run_cli(
-+                [
-+                    sys.executable,
-+                    "-c",
-+                    "import os, time; os.close(1); os.close(2); time.sleep(60)",
-+                ],
-+                timeout=30,
-+                idle_seconds=0,
-+            )
-+        )
-+        await asyncio.wait_for(waiting_for_exit.wait(), timeout=5)
-+
-+    policy = asyncio.get_event_loop_policy()
-+    asyncio.set_event_loop_policy(ObservedPolicy())
-+    try:
-+        asyncio.run(main())
-+    finally:
-+        asyncio.set_event_loop_policy(policy)
-+    assert observed == {"child_alive": False, "runner_cancelled": True}
-```
-
----
-
-### Incident Patch 2: `c148bb54` (2026-11-14)
-**Commit Message**: fix(python): enforce total timeout while awaiting approval (#1198)
-
-* fix(python): enforce total timeout while awaiting approval
-
-Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
-
-* fix(python): preserve approval wait cancellation on supported runtimes
-
-Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
-
-* style(python): format approval polling additions
-
-Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
-
-**File**: `sdk/python/agentfield/client.py` (modified, +37/-18)
-```diff
-@@ -2167,7 +2167,8 @@ async def wait_for_approval(
-             execution_id: Execution ID to wait for.
-             poll_interval: Initial polling interval in seconds.
-             max_interval: Maximum polling interval in seconds.
--            timeout: Total timeout in seconds (None = wait indefinitely).
-+            timeout: Total timeout including polling delays and requests, in seconds
-+                (None = wait indefinitely).
- 
-         Returns:
-             ApprovalStatusResponse with the final approval status (approved/rejected/expired).
-@@ -2176,29 +2177,47 @@ async def wait_for_approval(
-             AgentFieldClientError: If polling encounters a non-retryable error.
-             ExecutionTimeoutError: If timeout is reached.
-         """
--        start_time = time.time()
--        interval = poll_interval
--        backoff_factor = 2.0
- 
--        while True:
--            if timeout is not None and (time.time() - start_time) >= timeout:
--                raise ExecutionTimeoutError(
--                    f"Approval for execution {execution_id} timed out after {timeout}s"
--                )
-+        async def poll() -> ApprovalStatusResponse:
-+            interval = poll_interval
-+            backoff_factor = 2.0
- 
--            await asyncio.sleep(interval)
-+            while True:
-+                await asyncio.sleep(interval)
-+
-+                try:
-+                    result = await self.get_approval_status(execution_id)
-+                except AgentFieldClientError:
-+                    # Transient failure — back off and retry
-+                    interval = min(interval * backoff_factor, max_interval)
-+                    continue
-+
-+                if result.status != "pending":
-+                    return result
- 
--            try:
--                result = await self.get_approval_status(execution_id)
--            except AgentFieldClientError:
--                # Transient failure — back off and retry
-                 interval = min(interval * backoff_factor, max_interval)
--                continue
- 
--            if result.status != "pending":
--                return result
-+        if timeout is None:
-+            return await poll()
-+
-+        timeout_message = (
-+            f"Approval for execution {execution_id} timed out after {timeout}s"
-+        )
-+        if timeout <= 0:
-+            raise ExecutionTimeoutError(timeout_message)
- 
--            interval = min(interval * backoff_factor, max_interval)
-+        loop = asyncio.get_running_loop()
-+        deadline = loop.time() + timeout
-+        polling = asyncio.create_task(poll())
-+        try:
-+            done, _ = await asyncio.wait({polling}, timeout=timeout)
-+            if not done or loop.time() >= deadline:
-+                raise ExecutionTimeoutError(timeout_message)
-+            return polling.result()
-+        finally:
-+            if not polling.done():
-+                polling.cancel()
-+            await asyncio.gather(polling, return_exceptions=True)
- 
-     async def post_execution_logs(
-         self,
-```
-
-**File**: `sdk/python/tests/test_approval.py` (modified, +1/-12)
-```diff
-@@ -188,20 +188,9 @@ async def no_sleep(_: float) -> None:
- 
- 
+ @pytest.mark.unit
  @pytest.mark.asyncio
--async def test_wait_for_approval_times_out(
--    client: AgentFieldClient, monkeypatch: pytest.MonkeyPatch
--):
--    import agentfield.client as client_module
--
-+async def test_wait_for_approval_times_out(client: AgentFieldClient):
-     client.get_approval_status = AsyncMock(return_value=ApprovalStatusResponse(status="pending"))
+-async def test_get_decodes_json_payload(memory_client, monkeypatch):
++async def test_get_extracts_json_value(memory_client, monkeypatch):
+     record = {}
  
--    async def no_sleep(_: float) -> None:
--        return None
--
--    times = iter([0.0, 0.02, 0.06])
--    monkeypatch.setattr("agentfield.client.asyncio.sleep", no_sleep)
--    monkeypatch.setattr(client_module.time, "time", lambda: next(times))
--
-     with pytest.raises(ExecutionTimeoutError, match="timed out"):
-         await client.wait_for_approval(
-             EXECUTION_ID,
+     class DummyAsyncClient:
+@@ -80,9 +79,8 @@ async def request(self, method, url, json=None, headers=None, timeout=None):  #
+             record["url"] = url
+             record["json"] = json
+             record["headers"] = headers
+-            return DummyResponse(200, {"data": json_module.dumps({"count": 1})})
++            return DummyResponse(200, {"data": {"count": 1}})
+ 
+-    json_module = json
+     monkeypatch.setattr(
+         httpx, "AsyncClient", lambda *args, **kwargs: DummyAsyncClient()
+     )
+@@ -277,7 +275,7 @@ def raise_for_status(self):
+             return None
+ 
+         def json(self):
+-            return {"data": "null"}
++            return {"data": None}
+ 
+     async def fake_request(method, url, json=None, headers=None, timeout=None):  # type: ignore[override]
+         return StoredNullResponse()
 ```
 
-**File**: `sdk/python/tests/test_approval_timeout.py` (added, +215/-0)
+**File**: `sdk/python/tests/test_memory_flow_core.py` (modified, +2/-9)
 ```diff
-@@ -0,0 +1,215 @@
-+"""Approval polling deadlines through the public client API."""
+@@ -1,4 +1,3 @@
+-import json
+ from types import SimpleNamespace
+ 
+ import httpx
+@@ -57,11 +56,7 @@ async def post(self, url, json=None, headers=None, timeout=None):  # type: ignor
+             data = store.get(scope, {}).get(json["key"])
+             if data is None:
+                 return DummyAsyncResponse(404, {})
+-            payload = {
+-                "data": json_module.dumps(data)
+-                if not isinstance(data, (dict, list))
+-                else data
+-            }
++            payload = {"data": data}
+             return DummyAsyncResponse(200, payload)
+ 
+         async def request(
+@@ -88,8 +83,6 @@ async def get(self, url, params=None, headers=None, timeout=None):  # type: igno
+             keys = [{"key": key} for key in sorted(store.get(scope, {}))]
+             return DummyAsyncResponse(200, keys)
+ 
+-    json_module = json
+-
+     monkeypatch.setattr(requests, "post", fake_post)
+     monkeypatch.setattr(httpx, "AsyncClient", lambda *args, **kwargs: AsyncClientStub())
+     monkeypatch.setattr("agentfield.logger.log_debug", lambda *args, **kwargs: None)
+@@ -129,7 +122,7 @@ class DummyAgentFieldClient:
+         async def _async_request(self, method, url, **kwargs):
+             calls.append((method, url, kwargs))
+             if url.endswith("/memory/get"):
+-                return DummyAsyncResponse(200, {"data": json.dumps({"value": 42})})
++                return DummyAsyncResponse(200, {"data": {"value": 42}})
+             return DummyAsyncResponse(200, {"ok": True})
+ 
+     context = SimpleNamespace(to_headers=lambda: dict(dummy_headers))
+```
+
+**File**: `sdk/python/tests/test_memory_value_roundtrip.py` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++"""Memory values retain their JSON type across the HTTP boundary."""
 +
-+import asyncio
-+from unittest.mock import AsyncMock
++import json
++from types import SimpleNamespace
 +
 +import httpx
 +import pytest
-+import respx
 +
-+from agentfield.client import AgentFieldClient
-+from agentfield.exceptions import ExecutionTimeoutError
-+
-+
-+@pytest.fixture
-+def router():
-+    return respx.MockRouter(assert_all_mocked=True)
-+
-+
-+@pytest.fixture
-+async def client(router, monkeypatch):
-+    client = AgentFieldClient(base_url="https://control-plane.test")
-+    client.caller_agent_id = "test-node"
-+    async with httpx.AsyncClient(
-+        transport=httpx.MockTransport(router.async_handler)
-+    ) as http_client:
-+        monkeypatch.setattr(
-+            client, "get_async_http_client", AsyncMock(return_value=http_client)
-+        )
-+        yield client
-+    await client.aclose()
++from agentfield.memory import MemoryClient, MemoryInterface
 +
 +
 +@pytest.mark.asyncio
-+async def test_timeout_interrupts_initial_poll_delay(client, router):
-+    route = router.get(
-+        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
-+    ).respond(200, json={"status": "approved"})
-+
-+    with pytest.raises(ExecutionTimeoutError, match="exec-1 timed out after 0.01s"):
-+        await asyncio.wait_for(
-+            client.wait_for_approval("exec-1", poll_interval=1, timeout=0.01),
-+            timeout=0.5,
-+        )
-+
-+    assert not route.called
-+
-+
-+@pytest.mark.asyncio
-+async def test_timeout_cancels_in_flight_status_request(client, router):
-+    started = asyncio.Event()
-+    cancelled = asyncio.Event()
-+
-+    async def slow_response(request):
-+        started.set()
-+        try:
-+            await asyncio.Event().wait()
-+        finally:
-+            await asyncio.sleep(0)
-+            cancelled.set()
-+
-+    router.get(
-+        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
-+    ).mock(side_effect=slow_response)
-+
-+    with pytest.raises(ExecutionTimeoutError, match="timed out"):
-+        await asyncio.wait_for(
-+            client.wait_for_approval("exec-1", poll_interval=0, timeout=0.05),
-+            timeout=0.5,
-+        )
-+
-+    assert started.is_set()
-+    assert cancelled.is_set()
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("first_status", [200, 503])
-+async def test_timeout_interrupts_pending_or_error_backoff(
-+    client, router, first_status
-+):
-+    route = router.get(
-+        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
-+    ).mock(
-+        side_effect=[
-+            httpx.Response(first_status, json={"status": "pending"}),
-+            httpx.Response(200, json={"status": "approved"}),
-+        ]
-+    )
-+
-+    with pytest.raises(ExecutionTimeoutError, match="timed out"):
-+        await asyncio.wait_for(
-+            client.wait_for_approval("exec-1", poll_interval=0.05, timeout=0.08),
-+            timeout=0.5,
-+        )
-+
-+    assert route.call_count <= 1
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("timeout", [0, -1])
-+async def test_elapsed_deadline_does_not_poll(client, router, timeout):
-+    route = router.get(
-+        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
-+    ).respond(200, json={"status": "approved"})
-+
-+    with pytest.raises(ExecutionTimeoutError, match="timed out"):
-+        await client.wait_for_approval("exec-1", poll_interval=0, timeout=timeout)
-+
-+    assert not route.called
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("timeout", [None, 1])
 +@pytest.mark.parametrize(
-+    "status", ["approved", "rejected", "expired", "request_changes"]
++    "entrypoint", ["client", "interface", "global", "session", "actor", "workflow"]
 +)
-+async def test_resolved_status_before_deadline_is_unchanged(
-+    client, router, timeout, status
-+):
-+    route = router.get(
-+        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
-+    ).respond(200, json={"status": status, "feedback": "human response"})
++@pytest.mark.parametrize(
++    "value",
++    [
++        "123",
++        "-1",
++        "1.5",
++        "true",
++        "false",
++        "null",
++        "[1, 2]",
++        '{"count": 1}',
++        '"quoted"',
++        "plain-text",
++        "",
++        "你好",
++        123,
++        1.5,
++        True,
++        False,
++        None,
++        [1, "null"],
++        {"count": 1, "text": "true"},
++    ],
++)
++async def test_memory_roundtrip_preserves_json_values(entrypoint, value):
++    stored = {}
 +
-+    result = await asyncio.wait_for(
-+        client.wait_for_approval("exec-1", poll_interval=0, timeout=timeout),
-+        timeout=0.5,
-+    )
++    def handle(request):
++        payload = json.loads(request.content)
++        if request.url.path.endswith("/set"):
++            stored[payload["key"]] = payload["data"]
++        # The control plane returns Memory.Data (json.RawMessage) as a JSON
++        # value, not a second JSON document encoded inside a string.
++        return httpx.Response(200, json={"data": stored[payload["key"]]})
 +
-+    assert result.status == status
-+    assert result.feedback == "human response"
-+    assert route.call_count == 1
++    async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as http:
++        client = MemoryClient(
++            SimpleNamespace(
++                api_base="http://agentfield.test/api/v1", _async_request=http.request
++            ),
++            SimpleNamespace(to_headers=lambda: {}),
++        )
++        interface = MemoryInterface(client, event_client=None)
++        target = {
++            "client": client,
++            "interface": interface,
++            "global": interface.global_scope,
++            "session": interface.session("session-1"),
++            "actor": interface.actor("actor-1"),
++            "workflow": interface.workflow("workflow-1"),
++        }[entrypoint]
++        await target.set("value", value)
++        result = await target.get("value")
 +
-+
-+@pytest.mark.asyncio
-+async def test_caller_cancellation_cleans_up_status_request(client, router):
-+    started = asyncio.Event()
-+    cancelled = asyncio.Event()
-+
-+    async def slow_response(request):
-+        started.set()
-+        try:
-+            await asyncio.Event().wait()
-+        finally:
-+            cancelled.set()
-+
-+    router.get(
-+        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
-+    ).mock(side_effect=slow_response)
-+    task = asyncio.create_task(
-+        client.wait_for_approval("exec-1", poll_interval=0, timeout=10)
-+    )
-+    try:
-+        await asyncio.wait_for(started.wait(), timeout=0.5)
-+        task.cancel()
-+        with pytest.raises(asyncio.CancelledError):
-+            await task
-+        assert cancelled.is_set()
-+    finally:
-+        ta
-```
-
-**File**: `sdk/python/tests/test_client_laser_push.py` (modified, +1/-6)
-```diff
-@@ -765,7 +765,6 @@ async def test_approval_helpers_and_wait_for_approval(client, monkeypatch):
-     async def fake_sleep(_):
-         return None
- 
--    times = iter([0.0, 0.0, 1.0, 2.0, 3.0])
-     responses = [
-         AgentFieldClientError("transient"),
-         SimpleNamespace(status="pending"),
-@@ -779,17 +778,13 @@ async def fake_get_status(execution_id):
-         return result
- 
-     monkeypatch.setattr(client_mod.asyncio, "sleep", fake_sleep)
--    monkeypatch.setattr(client_mod.time, "time", lambda: next(times))
-     monkeypatch.setattr(client, "get_approval_status", fake_get_status)
- 
-     waited = await client.wait_for_approval("exec-2", poll_interval=0.1, max_interval=0.2, timeout=5.0)
-     assert waited.status == "approved"
- 
--    times_timeout = iter([0.0, 10.0])
--    monkeypatch.setattr(client_mod.time, "time", lambda: next(times_timeout))
--
-     with pytest.raises(ExecutionTimeoutError, match="timed out"):
--        await client.wait_for_approval("exec-3", poll_interval=0.1, timeout=1.0)
-+        await client.wait_for_approval("exec-3", poll_interval=0.1, timeout=0)
- 
- 
- @pytest.mark.asyncio
++    assert result == value
++    assert type(result) is type(value)
 ```
 
 ---
 
-### Incident Patch 3: `fef65a5c` (2026-11-14)
-**Commit Message**: fix(sdk/go): surface in-stream error events from StreamComplete (#1194)
+### Incident Patch 2: `e497b755` (2026-11-15)
+**Commit Message**: fix(python): decode URL escapes in inline base64 media (#1200)
 
-An SSE data event of the form {"error":{...}} was unmarshalled into an
-empty StreamChunk and yielded as a normal chunk, so the caller never saw
-the provider failure. Return it as an error so it reaches errCh.
+Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `sdk/go/ai/client.go` (modified, +30/-0)
+**File**: `sdk/python/agentfield/data_url.py` (modified, +8/-6)
 ```diff
-@@ -404,6 +404,12 @@ func (d *SSEDecoder) Decode() (StreamChunk, error) {
- 				if err := json.Unmarshal([]byte(jsonData), &chunk); err != nil {
- 					continue // Skip malformed chunks
- 				}
-+				// Providers (e.g. OpenRouter) report mid-stream failures as a
-+				// {"error":{...}} data event on an HTTP 200 stream. Surface it
-+				// instead of yielding an empty chunk.
-+				if streamErr := parseStreamError([]byte(jsonData)); streamErr != nil {
-+					return StreamChunk{}, streamErr
-+				}
- 				chunk.normalizeNativeCost()
+@@ -22,6 +22,7 @@
  
- 				return chunk, nil
-@@ -427,6 +433,30 @@ func (d *SSEDecoder) Decode() (StreamChunk, error) {
- 	}
- }
+ import base64
+ from typing import Any
++from urllib.parse import unquote_to_bytes
  
-+// parseStreamError returns an error when an SSE data payload is an in-stream
-+// {"error":{...}} event, or nil for ordinary chunks.
-+func parseStreamError(data []byte) error {
-+	var probe struct {
-+		Error *struct {
-+			Message string          `json:"message"`
-+			Type    string          `json:"type"`
-+			Code    json.RawMessage `json:"code"`
-+		} `json:"error"`
-+	}
-+	if err := json.Unmarshal(data, &probe); err != nil || probe.Error == nil {
-+		return nil
-+	}
-+	msg := probe.Error.Message
-+	if msg == "" {
-+		msg = "unknown error"
-+	}
-+	code := strings.Trim(string(probe.Error.Code), `"`)
-+	if code != "" && code != "null" {
-+		return fmt.Errorf("stream error (code %s): %s", code, msg)
-+	}
-+	return fmt.Errorf("stream error: %s", msg)
-+}
-+
- // Convenience functions for common patterns
+ # Cap on how much of a rejected URL is echoed back in the error. Only the
+ # metadata head (everything before the first comma) is ever reported, so a
+@@ -32,7 +33,7 @@
+ # rejects it — but RFC 2045 encoders wrap payloads at 76 columns and some
+ # producers pad the comma with a space. Deleting it keeps those decodable
+ # while a genuinely corrupt payload still raises.
+-_ASCII_WHITESPACE = {ord(c): None for c in " \t\n\r\v\f"}
++_ASCII_WHITESPACE = b" \t\n\r\v\f"
  
- // SimpleAI makes a simple AI call with just a prompt.
+ 
+ def is_data_url(url: Any) -> bool:
+@@ -60,8 +61,9 @@ def data_url_mime_type(url: str) -> str:
+ def decode_data_url(url: str) -> bytes:
+     """Return the decoded bytes carried inline by a base64 ``data:`` URL.
+ 
+-    ASCII whitespace in the payload (line wrapping, a trailing newline, a space
+-    after the comma) is ignored.
++    URL escapes in the payload are decoded before base64 validation. ASCII
++    whitespace (line wrapping, a trailing newline, a space after the comma)
++    is ignored.
+ 
+     Raises:
+         ValueError: if *url* has no ``,`` separator, its metadata head does not
+@@ -78,7 +80,7 @@ def decode_data_url(url: str) -> bytes:
+         raise ValueError(
+             f"Unsupported data: URL (expected base64 payload): {reported!r}"
+         )
+-    payload = payload.translate(_ASCII_WHITESPACE)
+-    if not payload:
++    decoded_payload = unquote_to_bytes(payload).translate(None, _ASCII_WHITESPACE)
++    if not decoded_payload:
+         raise ValueError(f"Empty data: URL payload: {reported!r}")
+-    return base64.b64decode(payload, validate=True)
++    return base64.b64decode(decoded_payload, validate=True)
 ```
 
-**File**: `sdk/go/ai/client_test.go` (modified, +41/-0)
+**File**: `sdk/python/tests/test_data_url_media_outputs.py` (modified, +35/-0)
 ```diff
-@@ -799,3 +799,44 @@ func TestSSEDecoder_CRLFAndNoSpaceDataField(t *testing.T) {
- 		})
+@@ -57,6 +57,8 @@
+     EMPTY_PAYLOAD_DATA_URL,
+     NOT_BASE64_DATA_URL,
+     CORRUPT_DATA_URL,
++    "data:image/png;base64,Zm9v%21",
++    "data:image/png;base64,%20%0A",
+ ]
+ 
+ # Whitespace inside a payload is layout, not corruption: RFC 2045 encoders wrap
+@@ -264,6 +266,39 @@ def test_rejection_message_never_echoes_the_payload(self):
+         assert "sup3r-s3cret" not in str(excinfo.value)
+ 
+ 
++@pytest.mark.parametrize("payload", ["%2B%2F8%3D", "+%2f8=", "%2b/8%3d", "+/8="])
++def test_image_decodes_percent_encoded_base64(payload, no_network):
++    assert (
++        ImageOutput(url=f"data:image/png;base64,{payload}").get_bytes() == b"\xfb\xff"
++    )
++
++
++@pytest.mark.parametrize("make", [cls for _, cls in URL_OUTPUTS])
++def test_percent_encoded_media_reads_and_saves_locally(make, tmp_path, no_network):
++    output = make(url="data:application/octet-stream;base64,%2B%2F8%3D")
++    assert output.get_bytes() == b"\xfb\xff"
++    path = tmp_path / "media.bin"
++    output.save(path)
++    assert path.read_bytes() == b"\xfb\xff"
++
++
++def test_audio_accepts_percent_encoded_base64(no_network):
++    audio = audio_from_url("data:audio/mpeg;base64,+%2F8%3D")
++    assert base64.b64decode(audio.input_audio["data"]) == b"\xfb\xff"
++    assert audio.input_audio["format"] == "mp3"
++
++
++def test_percent_encoded_whitespace_is_layout(no_network):
++    url = "data:image/png;base64,%20%2B%0D%0A%2F8%3D%09"
++    assert ImageOutput(url=url).get_bytes() == b"\xfb\xff"
++
++
++@pytest.mark.parametrize("payload", ["%252B%2F8%3D", "Zm9v%21", "Zm9v%FF", "Zm9v%ZZ"])
++def test_percent_decoding_keeps_base64_validation_strict(payload, no_network):
++    with pytest.raises(binascii.Error):
++        ImageOutput(url=f"data:image/png;base64,{payload}").get_bytes()
++
++
+ @pytest.mark.parametrize(
+     "make", [cls for _, cls in URL_OUTPUTS], ids=[label for label, _ in URL_OUTPUTS]
+ )
+```
+
+---
+
+### Incident Patch 3: `bd7a3c38` (2026-11-15)
+**Commit Message**: fix(config): honor AGENTFIELD_AUTHORIZATION_TAG_APPROVAL_MODE (#1201)
+
+docs/ENVIRONMENT_VARIABLES.md documents the variable, but ApplyEnvOverrides
+never read it, so setting it left tag_approval_rules.default_mode untouched
+and tags stayed auto-approved. Read it into
+features.did.authorization.tag_approval_rules.default_mode and document the
+modes the tag approval service implements (auto, manual, forbidden).
+
+Also drop AGENTFIELD_AUTHORIZATION_MASTER_SEED from the docs: nothing reads
+it, the master seed is generated and stored in the DID registry.
+
+**File**: `control-plane/internal/config/config.go` (modified, +3/-0)
+```diff
+@@ -1009,6 +1009,9 @@ func ApplyEnvOverrides(cfg *Config) {
+ 	if val := os.Getenv("AGENTFIELD_AUTHORIZATION_DEFAULT_DENY"); val != "" {
+ 		cfg.Features.DID.Authorization.DefaultDeny = val == "true" || val == "1"
  	}
- }
-+
-+func TestSSEDecoder_InStreamError(t *testing.T) {
-+	input := "data: {\"id\":\"a\"}\n\n" +
-+		"data: {\"error\":{\"message\":\"upstream overloaded\",\"code\":429}}\n\n" +
-+		"data: [DONE]\n\n"
-+	decoder := NewSSEDecoder(strings.NewReader(input))
-+
-+	if chunk, err := decoder.Decode(); err != nil || chunk.ID != "a" {
-+		t.Fatalf("expected first chunk a, got %+v err=%v", chunk, err)
++	if val := strings.TrimSpace(os.Getenv("AGENTFIELD_AUTHORIZATION_TAG_APPROVAL_MODE")); val != "" {
++		cfg.Features.DID.Authorization.TagApprovalRules.DefaultMode = strings.ToLower(val)
 +	}
-+	_, err := decoder.Decode()
-+	if err == nil || err == io.EOF {
-+		t.Fatalf("expected in-stream error, got %v", err)
-+	}
-+	if !strings.Contains(err.Error(), "upstream overloaded") {
-+		t.Fatalf("error should carry provider message, got %q", err.Error())
-+	}
-+}
-+
-+func TestStreamComplete_InStreamErrorReachesErrCh(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "text/event-stream")
-+		fmt.Fprint(w, "data: {\"error\":{\"message\":\"boom\",\"type\":\"server_error\"}}\n\n")
-+	}))
-+	defer server.Close()
-+
-+	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m"})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	chunks, errs := client.StreamComplete(context.Background(), "hi")
-+	for range chunks {
-+	}
-+	var got error
-+	for e := range errs {
-+		got = e
-+	}
-+	if got == nil || !strings.Contains(got.Error(), "boom") {
-+		t.Fatalf("expected stream error containing boom, got %v", got)
-+	}
-+}
+ 
+ 	// Node log proxy (UI → agent NDJSON)
+ 	if val := os.Getenv("AGENTFIELD_NODE_LOG_PROXY_CONNECT_TIMEOUT"); val != "" {
+```
+
+**File**: `control-plane/internal/config/config_additional_test.go` (modified, +3/-1)
+```diff
+@@ -301,6 +301,7 @@ func TestApplyEnvOverrides(t *testing.T) {
+ 		"AGENTFIELD_AUTHORIZATION_ADMIN_TOKEN":                       "admin-token",
+ 		"AGENTFIELD_AUTHORIZATION_INTERNAL_TOKEN":                    "internal-token",
+ 		"AGENTFIELD_AUTHORIZATION_DEFAULT_DENY":                      "true",
++		"AGENTFIELD_AUTHORIZATION_TAG_APPROVAL_MODE":                 " Manual ",
+ 		"AGENTFIELD_NODE_LOG_PROXY_CONNECT_TIMEOUT":                  "21s",
+ 		"AGENTFIELD_NODE_LOG_PROXY_STREAM_IDLE_TIMEOUT":              "22s",
+ 		"AGENTFIELD_NODE_LOG_PROXY_MAX_DURATION":                     "23s",
+@@ -386,7 +387,8 @@ func TestApplyEnvOverrides(t *testing.T) {
+ 		cfg.Features.DID.Authorization.Domain != "auth.local" ||
+ 		cfg.Features.DID.Authorization.AdminToken != "admin-token" ||
+ 		cfg.Features.DID.Authorization.InternalToken != "internal-token" ||
+-		!cfg.Features.DID.Authorization.DefaultDeny {
++		!cfg.Features.DID.Authorization.DefaultDeny ||
++		cfg.Features.DID.Authorization.TagApprovalRules.DefaultMode != "manual" {
+ 		t.Fatalf("unexpected authorization overrides: %+v", cfg.Features.DID.Authorization)
+ 	}
+ 	if cfg.AgentField.NodeLogProxy.ConnectTimeout != 21*time.Second ||
+```
+
+**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +1/-2)
+```diff
+@@ -267,8 +267,7 @@ When enabled, the control plane issues DID identities to agents and enforces tag
+ 
+ - `AGENTFIELD_AUTHORIZATION_ENABLED` (default: `false`): Enable VC-based authorization.
+ - `AGENTFIELD_AUTHORIZATION_ADMIN_TOKEN` (recommended): Separate token for admin operations and `/debug/pprof/*`; clients send it in `X-Admin-Token`. Without it, those endpoints rely on the global API key, so do not expose pprof outside trusted networks unless authentication is configured.
+-- `AGENTFIELD_AUTHORIZATION_MASTER_SEED` (required when enabled): Master seed for deriving Ed25519 keypairs for agent DIDs. Keep this secret and consistent across restarts — changing it invalidates all existing DID signatures.
+-- `AGENTFIELD_AUTHORIZATION_TAG_APPROVAL_MODE` (default: `auto`): `auto` (tags approved immediately) or `admin` (tags require admin approval before the agent becomes ready).
++- `AGENTFIELD_AUTHORIZATION_TAG_APPROVAL_MODE` (default: `auto`): Approval mode for proposed tags that match no rule in `tag_approval_rules.rules`: `auto` (approved immediately), `manual` (an admin must approve them before the agent becomes ready), or `forbidden` (registration with those tags is rejected). Equivalent YAML: `features.did.authorization.tag_approval_rules.default_mode`.
+ - `AGENTFIELD_AUTHORIZATION_DEFAULT_DENY` (default: `false`): When `true`, the tag policy middleware returns HTTP 403 for any request where no access policy matches the `(caller_tags, target_tags, function)` tuple. Default is `false`, preserving the existing behavior of allowing unmatched requests. The unmatched tuple is logged at `DEBUG` in both modes for diagnosis. Equivalent YAML: `features.did.authorization.default_deny`.
+ 
+ ### Connector (External Management API)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1198** (2026-11-14): fix(python): enforce total timeout while awaiting approval (@remote-controlled-man)
-- **PR #1197** (2026-11-14): fix(go-sdk): parse data fields in SSE events (@remote-controlled-man)
-- **PR #1194** (2026-11-14): fix(sdk/go): surface in-stream error events from StreamComplete (@pcbeingused333)
-- **PR #1193** (2026-11-13): fix(sdk-typescript): omit temperature for models that reject it (@pcbeingused333)
-- **PR #1192** (2026-11-13): fix(memory): honor legacy vector delete body scope (@remote-controlled-man)
-- **PR #1189** (2026-11-13): fix(sdk-ts): keep memory scope ids with their own scope (@remote-controlled-man)
+- **PR #1206** (2026-11-15): fix(sdk-ts): apply rate-limit retry and circuit breaker to AIClient.stream (@pcbeingused333)
+- **PR #1203** (2026-11-15): fix(go-sdk): preserve streaming read errors after buffered data (@remote-controlled-man)
+- **PR #1202** (2026-11-15): fix(control-plane): read AGENTFIELD_API_CORS_* without a config file (@pcbeingused333)
+- **PR #1201** (2026-11-15): fix(config): honor AGENTFIELD_AUTHORIZATION_TAG_APPROVAL_MODE (@pcbeingused333)
+- **PR #1200** (2026-11-15): fix(python): decode URL escapes in inline base64 media (@remote-controlled-man)
+- **PR #1199** (2026-11-15): fix(python): preserve stored memory JSON value types (@remote-controlled-man)
 
 ---
 
@@ -2135,72 +1819,39 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): finish harness cleanup before propagating cancellation
+## X. python): preserve stored memory JSON value types
 
 **RULE**:
-When implementing operations in `sdk/python/agentfield/harness/_cli.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/python/agentfield/memory.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0145089a`: python): finish harness cleanup before propagating cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95c109dc`: python): preserve stored memory JSON value types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/harness/_cli.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/memory.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    except (asyncio.TimeoutError, TimeoutError, asyncio.CancelledError):
-        # Loop shutdown cancels the cleanup task too. Finish the same bounded
-        # kill/poll fallback; run_cli still propagates the caller's cancellation.
-        try:
-            await asyncio.sleep(0.1)
-        except asyncio.CancelledError:
-            # Do not restart the polling budget when shutdown cancels again.
-            pass
-
-        async def cleanup() -> Optional[int]:
-            if not completed:
-                _kill_group()
-            drain.cancel()
-            try:
-                await drain
-            except BaseException:
-                pass
-            return await _wait_process_exit(proc, _kill_group)
-
-        # Pipe EOF does not mean the child has exited. Keep ownership until
-        # the bounded exit wait finishes, even if cancellation arrives here
-        # or is repeated while cleanup is already running.
-        cleanup_task = asyncio.create_task(cleanup())
-        cleanup_cancelled: Optional[asyncio.CancelledError] = None
-        while True:
-            try:
-                fallback_returncode = await asyncio.shield(cleanup_task)
-                break
-            except asy
+                # response.json() already decoded the value, including strings.
+                return result["data"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    except (asyncio.TimeoutError, TimeoutError):
-        await asyncio.sleep(0.1)
-        if not completed:
-            # Timeout, cancellation, or an internal error: stop the child so
-            # nothing keeps running and the exit wait below can conclude.
-            # (Previously only the timeout paths killed; a cancelled run_cli
-            # left the child running and awaited its natural exit.)
-            _kill_group()
-        drain.cancel()
-        try:
-            await drain
-        except BaseException:
-            pass
-        fallback_returncode = await _wait_process_exit(proc, _kill_group)
+                # The server returns JSON-encoded data, so we need to decode it
+                data = result["data"]
+                if isinstance(data, str):
+                    try:
+                        return json.loads(data)
+                    except json.JSONDecodeError:
+                        return data
+                return data
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0145089a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95c109dc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T23:50:00.708Z",
-  "total_verified_learnings": 8736,
+  "last_updated": "2026-11-16T00:01:04.437Z",
+  "total_verified_learnings": 8738,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18710,
+  "total_items": 18722,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230248,14 +230248,19 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "7205812b",
-      "content_hash": "f758f7d23bad84fefedf03f14baea7b5ce5db0bdfe9f5d022da3391366465acc",
+      "source_version": "1952010a",
+      "content_hash": "26b3d23c27b32b9a84dad04b7cec039af2d74d2667424f9879f1f9ec2205a8f2",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
         {
           "number": 8502,
           "title": "finish harness cleanup before propagating cancellation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8669,
+          "title": "preserve stored memory JSON value types",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -230264,7 +230269,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:49:37.593Z",
+      "verified_at": "2026-11-15T23:59:53.107Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230306,10 +230311,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "repository": "Agent-Field/agentfield",
-      "source_version": "7205812b",
-      "content_hash": "8b542b4cd914721d39e134c8a774ec6149196794df48a48b8027effcb455edcb",
+      "source_version": "1952010a",
+      "content_hash": "1bfc9d5d98660f9d83bd07ff1c108eb763206a4bf74aa1f3482eedb62381789a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T15:49:38.035Z"
+      "persisted_at": "2026-11-15T23:59:53.547Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield",
@@ -230318,10 +230323,10 @@
       "relative_path": "08_VERIFICATION/agent-field-agentfield-verification-protocol-empirical-defect-shield-for-agent-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for Agent-Field/agentfield",
       "repository": "Agent-Field/agentfield",
-      "source_version": "7205812b",
-      "content_hash": "3d795d4316f69a6ded944fa2a7f6ceb68998eb74732fa34f173721d7ddedaac4",
+      "source_version": "1952010a",
+      "content_hash": "07e3933cfc5050623ef863922e407b26200ad6c01fde18b824d84c4e50dee3e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:49:38.139Z"
+      "persisted_at": "2026-11-15T23:59:53.661Z"
     },
     "learn-github-trinodb-trino": {
       "learning_id": "learn-github-trinodb-trino",
@@ -230474,9 +230479,9 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f4066a13d72d21d522a2f2fdb02d293a0921dc9dbbfbc2182a798a8ccc87eea",
+      "content_hash": "02ec7ea34092abda52e3866a04425ff185b0682e47f558d7e399797ee1f47da2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T15:50:18.041Z"
+      "persisted_at": "2026-11-16T00:01:01.877Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield-learnin",
@@ -230486,9 +230491,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-field-agentfield-learnings",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "e84d5b05e9e9c10a5fd5df7803470cf4aa61091579e330abb2e7ad56909288ef",
+      "content_hash": "3099ef39d3f5add68e5ba0b49229b71a5936393c9c90b71d41e7b03194cbcab5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:50:18.160Z"
+      "persisted_at": "2026-11-16T00:01:02.011Z"
     },
     "learn-huggingface-mudler-locate-anything-cpp-gguf": {
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
@@ -248106,6 +248111,182 @@
       "content_hash": "f5b96f7a633e92c6bab644b40637f9817dca995dbc0c5c217c605e8d9dc6f9bf",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T23:41:18.092Z"
+    },
+    "learn-huggingface-webai-official-twil-8b": {
+      "learning_id": "learn-huggingface-webai-official-twil-8b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "webAI-Official/TwIL-8B",
+      "repository": "webAI-Official/TwIL-8B",
+      "slug": "hf-webai-official-twil-8b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/webAI-Official/TwIL-8B",
+      "source_version": "hf-webai-official-twil-8b",
+      "content_hash": "2d8600d24a68ab9f5e73738015d2a6d224b1bd13178d7f0ae8ca329d0c53d445",
+      "dossier_path": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T23:59:43.734Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-webai-official-twil-8b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-webai-official-twil-8b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-webai-official-twil-8b-research-knowledge-intelligence-webai-official-twil-8b.md",
+      "title": "Research & Knowledge Intelligence: webAI-Official/TwIL-8B Core Invariants",
+      "repository": "webAI-Official/TwIL-8B",
+      "source_version": "hf-webai-official-twil-8b",
+      "content_hash": "160e7d9d02883b2287d252252f8bc5b8825657f2064783273eac29f677eb742d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T23:59:44.049Z"
+    },
+    "rule-8669": {
+      "learning_id": "rule-8669",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8669,
+      "title": "preserve stored memory JSON value types",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "1952010a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T23:59:53.107Z"
+    },
+    "candidate_directive-preserve-stored-memory-json-value-types": {
+      "item_id": "candidate_directive-preserve-stored-memory-json-value-types",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YDLO-preserve-stored-memory-json-value-types.md",
+      "title": "preserve stored memory JSON value types",
+      "repository": "Agent-Field/agentfield",
+      "source_version": "1952010a",
+      "content_hash": "6bdbc10521a881701362a7f89c0c1167ec552afc103cd3d77dcc50bcaefcdc3f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T23:59:53.439Z"
+    },
+    "learn-github-etcd-io-etcd": {
+      "learning_id": "learn-github-etcd-io-etcd",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "etcd-io/etcd",
+      "repository": "etcd-io/etcd",
+      "slug": "etcd-io-etcd",
+      "platform": "github",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "f577f0d8",
+      "content_hash": "98c6c67b5fb2a8dba84fb602bee594bde65827a9ba8b9d8d56a742e5eabcda04",
+      "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T23:59:58.399Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-update-changelog-to-cover-go-version-and-cve-fix": {
+      "item_id": "candidate_directive-update-changelog-to-cover-go-version-and-cve-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZW6N-update-changelog-to-cover-go-version-and-cve-fix.md",
+      "title": "Update changelog to cover go version and CVE fix",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e29c61b6673e8525780342b722cc6ce7f6801ff4f44af8ad560068b40fc365c1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T00:01:04.175Z"
+    },
+    "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
+      "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
+      "repository": "etcd-io/etcd",
+      "source_version": "f577f0d8",
+      "content_hash": "4b8d84d1ea06ad4c210166af797722ef4cd2080010f6cce71aa3ea97760668db",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T23:59:58.816Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/etcd-io-etcd-verification-protocol-empirical-defect-shield-for-etcd-io-etcd.md",
+      "title": "Verification Protocol: Empirical Defect Shield for etcd-io/etcd",
+      "repository": "etcd-io/etcd",
+      "source_version": "f577f0d8",
+      "content_hash": "386f5762f71f1de5b089193344333e2b8b8cd6d48af63d244344dba04388f48f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T23:59:58.917Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-webai-official-twil-8b-learnings-research-knowledge-intelligence-hf-webai-off.md",
+      "title": "Research & Knowledge Intelligence: hf-webai-official-twil-8b-learnings Core Invariants",
+      "repository": "hf-webai-official-twil-8b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "afb4706f3de46ff497648d48f9cc1418dbacd7fb51e20e69ec95bb33484f9985",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T00:00:27.574Z"
+    },
+    "candidate_directive-python-preserve-stored-memory-json-value-types": {
+      "item_id": "candidate_directive-python-preserve-stored-memory-json-value-types",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZUB7-python-preserve-stored-memory-json-value-types.md",
+      "title": "python): preserve stored memory JSON value types",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "13078399809f3457c9219c94b3898d573138a85973c0f872f116abb0d720ac92",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T00:01:01.763Z"
+    },
+    "domain_intelligence-content-information-intelligence-etcd-io-etcd-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-etcd-io-etcd-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-learnings-content-information-intelligence-etcd-io-etcd-learnings-c.md",
+      "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f318034b16f45216bfd3a2ddb97d53e2f48076a8350e8f1022f5d4b3ce93e160",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T00:01:04.305Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/etcd-io-etcd-learnings-verification-protocol-empirical-defect-shield-for-etcd-io.md",
+      "title": "Verification Protocol: Empirical Defect Shield for etcd-io-etcd-learnings",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eb84e0dffa8725c860043a6fa609bc5c7f41e51c4c689e6129e34dd94c8c5242",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T00:01:04.437Z"
     }
   },
   "ai-builder-brain": {

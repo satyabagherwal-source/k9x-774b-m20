@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "7205812b",
+    "sourceVersion": "1952010a",
     "license": "Apache-2.0",
-    "contentHash": "f758f7d23bad84fefedf03f14baea7b5ce5db0bdfe9f5d022da3391366465acc",
-    "lastHarvestedAt": "2026-11-14T15:49:37.751Z",
+    "contentHash": "26b3d23c27b32b9a84dad04b7cec039af2d74d2667424f9879f1f9ec2205a8f2",
+    "lastHarvestedAt": "2026-11-15T23:59:53.271Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "1b969e26",
+    "sourceVersion": "f577f0d8",
     "license": "Apache-2.0",
-    "contentHash": "70db2db93254a3f49818303d49bc0eb90195c31d4a450526794960c50f1a086d",
-    "lastHarvestedAt": "2026-11-13T08:22:10.073Z",
+    "contentHash": "98c6c67b5fb2a8dba84fb602bee594bde65827a9ba8b9d8d56a742e5eabcda04",
+    "lastHarvestedAt": "2026-11-15T23:59:58.531Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -12065,8 +12065,8 @@
     "sourceUrl": "https://huggingface.co/webAI-Official/TwIL-8B",
     "sourceVersion": "hf-webai-official-twil-8b",
     "license": "Open-Source",
-    "contentHash": "bd624a4f33850d0ea73b52034983a5fc2a7302265ed192f132386e53b3aafb1a",
-    "lastHarvestedAt": "2026-11-11T09:40:54.378Z",
+    "contentHash": "2d8600d24a68ab9f5e73738015d2a6d224b1bd13178d7f0ae8ca329d0c53d445",
+    "lastHarvestedAt": "2026-11-15T23:59:43.887Z",
     "learningId": "learn-huggingface-webai-official-twil-8b"
   },
   "hf-unsloth-qwen3.8-flash-next-gguf": {

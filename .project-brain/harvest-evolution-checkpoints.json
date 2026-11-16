@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T23:50:00.837Z",
+  "last_updated": "2026-11-16T00:01:04.556Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T23:49:59.409Z",
@@ -83,9 +83,9 @@
       "staged_for_review": 0
     },
     "hf-webai-official-twil-8b-learnings.md": {
-      "processed_at": "2026-11-11T09:41:14.925Z",
+      "processed_at": "2026-11-16T00:00:27.372Z",
       "promoted_canonical": 1,
-      "staged_for_review": 1
+      "staged_for_review": 0
     },
     "projectdiscovery-nuclei-learnings.md": {
       "processed_at": "2026-11-15T06:00:50.251Z",
@@ -683,7 +683,7 @@
       "staged_for_review": 1
     },
     "etcd-io-etcd-learnings.md": {
-      "processed_at": "2026-11-12T02:17:25.266Z",
+      "processed_at": "2026-11-16T00:01:02.141Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -878,9 +878,9 @@
       "staged_for_review": 1
     },
     "agent-field-agentfield-learnings.md": {
-      "processed_at": "2026-11-14T15:50:17.630Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-16T00:01:01.447Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "mohamedrejeb-calf-learnings.md": {
       "processed_at": "2026-11-12T06:41:50.159Z",
@@ -3093,7 +3093,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1170,
-  "total_canonical_promoted": 278,
-  "total_staged_for_review": 891
+  "total_dossiers_evaluated": 1173,
+  "total_canonical_promoted": 280,
+  "total_staged_for_review": 892
 }

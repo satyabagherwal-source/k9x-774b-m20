@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T23:50:00.436Z",
-  "total_records": 1155,
+  "last_updated": "2026-11-16T00:01:04.305Z",
+  "total_records": 1161,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 558,
+      "total": 561,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -596,7 +596,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-learnings-core-invariants",
-        "DOM-D-9A5A6C46"
+        "DOM-D-9A5A6C46",
+        "domain_intelligence-research-knowledge-intelligence-webai-official-twil-8b-core-invariants",
+        "DOM-D-CB5F7DEE",
+        "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria"
       ]
     },
     "E": {
@@ -839,7 +842,7 @@
       ]
     },
     "H": {
-      "total": 239,
+      "total": 240,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1079,11 +1082,12 @@
         "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-core-invariants",
         "DOM-H-503996F3",
-        "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants",
+        "DOM-H-20A56733"
       ]
     },
     "I": {
-      "total": 45,
+      "total": 47,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1129,7 +1133,9 @@
         "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-core-invariants",
         "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-core-inva",
-        "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings"
+        "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings",
+        "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants",
+        "domain_intelligence-content-information-intelligence-etcd-io-etcd-learnings-core-invariants"
       ]
     },
     "J": {
@@ -15404,8 +15410,8 @@
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "repository": "Agent-Field/agentfield",
-      "content_hash": "8b542b4cd914721d39e134c8a774ec6149196794df48a48b8027effcb455edcb",
-      "created_at": "2026-11-14T15:49:38.035Z"
+      "content_hash": "1bfc9d5d98660f9d83bd07ff1c108eb763206a4bf74aa1f3482eedb62381789a",
+      "created_at": "2026-11-15T23:59:53.547Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
@@ -15482,8 +15488,8 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-learnings-technical-construction-intelligence-agent-field.md",
       "repository": "agent-field-agentfield-learnings",
-      "content_hash": "1f4066a13d72d21d522a2f2fdb02d293a0921dc9dbbfbc2182a798a8ccc87eea",
-      "created_at": "2026-11-14T15:50:18.041Z"
+      "content_hash": "02ec7ea34092abda52e3866a04425ff185b0682e47f558d7e399797ee1f47da2",
+      "created_at": "2026-11-16T00:01:01.877Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants",
@@ -21773,6 +21779,126 @@
       "repository": "sfu-db-connector-x-learnings",
       "content_hash": "3f1d6a92a8a30818b58b917e2e1e3ca27834fe6b1beab09811123772a3dccd2e",
       "created_at": "2026-11-15T23:41:17.626Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-webai-official-twil-8b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-webai-official-twil-8b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: webAI-Official/TwIL-8B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-webai-official-twil-8b-research-knowledge-intelligence-webai-official-twil-8b.md",
+      "repository": "webAI-Official/TwIL-8B",
+      "content_hash": "160e7d9d02883b2287d252252f8bc5b8825657f2064783273eac29f677eb742d",
+      "created_at": "2026-11-15T23:59:44.049Z"
+    },
+    "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
+      "repository": "etcd-io/etcd",
+      "content_hash": "4b8d84d1ea06ad4c210166af797722ef4cd2080010f6cce71aa3ea97760668db",
+      "created_at": "2026-11-15T23:59:58.816Z"
+    },
+    "DOM-D-CB5F7DEE": {
+      "record_id": "DOM-D-CB5F7DEE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): webAI-Official/TwIL-8B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/webAI-Official/TwIL-8B](https://huggingface.co/webAI-Official/TwIL-8B))  \n> **Source Version**: `hf-webai-off`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "76ff1707585744ef7b688debd0684ccdac7f1022639f908e0e54a7c2075f03f3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-webai-official-twil-8b/hf-webai-official-twil-8b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-16T00:00:01.628Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-webai-official-twil-8b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-webai-official-twil-8b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T00:00:27.357Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-webai-official-twil-8b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-webai-official-twil-8b-learnings-research-knowledge-intelligence-hf-webai-off.md",
+      "repository": "hf-webai-official-twil-8b-learnings",
+      "content_hash": "afb4706f3de46ff497648d48f9cc1418dbacd7fb51e20e69ec95bb33484f9985",
+      "created_at": "2026-11-16T00:00:27.574Z"
+    },
+    "DOM-H-20A56733": {
+      "record_id": "DOM-H-20A56733",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "python): preserve stored memory JSON value types",
+      "content": "When implementing operations in `sdk/python/agentfield/memory.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "8206b042db5815a1eb12375527d9d98ff5891057bcffc69d506d1d10b6a107a4",
+      "summary": "Prevents defects observed in production commit `95c109dc`: python): preserve stored memory JSON value types. Unvalidated execution paths cau -> When implementing operations in `sdk/python/agentfield/memory.py`, engineers MUST enforce rigorous boundary validation, safe state transitio",
+      "provenance": {
+        "source_uri": "project://agent-field-agentfield/agent-field-agentfield-learnings.md",
+        "source_version": "1952010a",
+        "observed_at": "2026-11-15T23:59:52.418Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (agent-field-agentfield)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of agent-field-agentfield"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T00:01:01.433Z"
+    },
+    "domain_intelligence-content-information-intelligence-etcd-io-etcd-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-etcd-io-etcd-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-learnings-content-information-intelligence-etcd-io-etcd-learnings-c.md",
+      "repository": "etcd-io-etcd-learnings",
+      "content_hash": "f318034b16f45216bfd3a2ddb97d53e2f48076a8350e8f1022f5d4b3ce93e160",
+      "created_at": "2026-11-16T00:01:04.305Z"
     }
   }
 }

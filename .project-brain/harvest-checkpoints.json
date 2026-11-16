@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T23:39:58.592Z",
+  "last_updated": "2026-11-15T23:59:58.551Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "f758f7d23bad84fefedf03f14baea7b5ce5db0bdfe9f5d022da3391366465acc",
-      "verified_at": "2026-11-14T15:49:37.761Z",
+      "content_hash": "26b3d23c27b32b9a84dad04b7cec039af2d74d2667424f9879f1f9ec2205a8f2",
+      "verified_at": "2026-11-15T23:59:53.279Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:49:37.761Z"
+      "last_updated": "2026-11-15T23:59:53.279Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "70db2db93254a3f49818303d49bc0eb90195c31d4a450526794960c50f1a086d",
-      "verified_at": "2026-11-13T08:22:10.311Z",
+      "content_hash": "98c6c67b5fb2a8dba84fb602bee594bde65827a9ba8b9d8d56a742e5eabcda04",
+      "verified_at": "2026-11-15T23:59:58.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:22:10.311Z"
+      "last_updated": "2026-11-15T23:59:58.550Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -18156,14 +18156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-webai-official-twil-8b",
-      "content_hash": "bd624a4f33850d0ea73b52034983a5fc2a7302265ed192f132386e53b3aafb1a",
-      "verified_at": "2026-11-11T09:40:54.399Z",
+      "content_hash": "2d8600d24a68ab9f5e73738015d2a6d224b1bd13178d7f0ae8ca329d0c53d445",
+      "verified_at": "2026-11-15T23:59:43.895Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:40:54.399Z"
+      "last_updated": "2026-11-15T23:59:43.895Z"
     },
     "unsloth/Qwen3.8-Flash-Next-GGUF": {
       "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
