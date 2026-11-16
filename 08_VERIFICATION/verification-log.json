@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-1ASR",
-    "timestamp": "2026-11-13T16:58:55.083Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-GO6Z",
-    "timestamp": "2026-11-13T17:10:52.283Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "20ebe3d5f43459d3c157beb0502661f3dad8d421eb3c58dc429c9b4893aa8c4a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-GXRO",
     "timestamp": "2026-11-13T17:11:04.692Z",
     "repository": "nolabs-ai/nono",
@@ -7490,6 +7460,36 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "123f1b4873a59e75bc18a7657b3cc8ecd560698e26b58e6b185d1c04e9f83b62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-ZEXI",
+    "timestamp": "2026-11-16T01:52:40.278Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "e9c4f18bd4402c94a12274402c926965ae603b8905ced4211a72442d396c2f70",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-ZM5H",
+    "timestamp": "2026-11-16T01:52:49.637Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "4d0a93b31a41f9e3c284230bd52f542506f684a20de864af74911cffb9c7c33f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

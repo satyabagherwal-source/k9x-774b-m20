@@ -10208,3 +10208,5 @@
 | `CYCLE-20261116-PT0Z` | `2026-11-16T01:45:11.987Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8683` | Yes (`8b29a3da...`) |
 | `CYCLE-20261116-PWON` | `2026-11-16T01:45:16.727Z` | `rickclephas/KMP-NativeCoroutines` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8684` | Yes (`d3f37df4...`) |
 | `CYCLE-20261116-Q0W2` | `2026-11-16T01:45:22.178Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8685` | Yes (`123f1b48...`) |
+| `CYCLE-20261116-ZEXI` | `2026-11-16T01:52:40.278Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8686` | Yes (`e9c4f18b...`) |
+| `CYCLE-20261116-ZM5H` | `2026-11-16T01:52:49.637Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8687` | Yes (`4d0a93b3...`) |

@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "fdc05210",
+    "sourceVersion": "effd674b",
     "license": "NOASSERTION",
-    "contentHash": "0c602308aab2127e5b305d077cebcaa7b40ad69f7a266235fa60d3531a61b2d4",
-    "lastHarvestedAt": "2026-11-15T20:51:01.789Z",
+    "contentHash": "4d0a93b31a41f9e3c284230bd52f542506f684a20de864af74911cffb9c7c33f",
+    "lastHarvestedAt": "2026-11-16T01:52:49.640Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "7dd495f7",
+    "sourceVersion": "12adfb14",
     "license": "NOASSERTION",
-    "contentHash": "10c1c542c53b889824cf179d681f0a498b71488fa3f78f6d3b651a2683e8b533",
-    "lastHarvestedAt": "2026-11-14T05:07:04.581Z",
+    "contentHash": "e9c4f18bd4402c94a12274402c926965ae603b8905ced4211a72442d396c2f70",
+    "lastHarvestedAt": "2026-11-16T01:52:40.282Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

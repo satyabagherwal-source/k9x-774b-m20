@@ -10241,3 +10241,5 @@ Every entry in this ledger must capture:
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `738ba7af` | Multi-dimensional audit evidence | 2026-11-16T01:45:11.990Z |
 | `learn-github-rickclephas-kmp-nativecoroutines` | `https://github.com/rickclephas/KMP-NativeCoroutines` | `5fdeeff5` | Multi-dimensional audit evidence | 2026-11-16T01:45:16.730Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `2299a19b` | Multi-dimensional audit evidence | 2026-11-16T01:45:22.181Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `12adfb14` | Multi-dimensional audit evidence | 2026-11-16T01:52:40.282Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `effd674b` | Multi-dimensional audit evidence | 2026-11-16T01:52:49.640Z |

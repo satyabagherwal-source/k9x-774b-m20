@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T01:45:26.514Z",
+  "last_updated": "2026-11-16T01:52:54.213Z",
   "total_verified_learnings": 8751,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18819,
+  "total_items": 18824,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa0fd22b54e877cb66a86993b8eb80083918ce0298bc87cbade96f21d24679ba",
+      "content_hash": "023994a6b2ed32560c0d148d6586c74da2b87a06743d0bd640a5c086ee6606d3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T01:21:26.296Z"
+      "persisted_at": "2026-11-16T01:52:54.098Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b77d5bcb3341a7615b55cb2dcbe069262e60e91b94afa0b9697868e08a437109",
+      "content_hash": "ae3ba0aeed2ff77516012659f9bd3e8732c7d5f028a1a6c62ef5e21de0ccaba2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:21:26.417Z"
+      "persisted_at": "2026-11-16T01:52:54.213Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -114637,10 +114637,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "fdc05210",
-      "content_hash": "2db185371796568c9099f147506c4982495a68ae981396644b74e228451c1d4e",
+      "source_version": "effd674b",
+      "content_hash": "c49b7f88e1c70a3aaa31a251ac51e5f2afc1d97041addda26dd5b432f1cfa886",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T20:51:02.083Z"
+      "persisted_at": "2026-11-16T01:52:49.922Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114649,10 +114649,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "fdc05210",
-      "content_hash": "fc227bfd23880add5a0a3f11fef756af6860a22ca9e04e133b439849b22d50d6",
+      "source_version": "effd674b",
+      "content_hash": "22804088afcc632ca68e3a4dc4c4be835026bf8ef81b07e465bbcd50cb4c52be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T20:51:02.199Z"
+      "persisted_at": "2026-11-16T01:52:50.034Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114734,9 +114734,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "00c974315a6cd75ce1fa5afdd1c2e9b05aed0425c33ef2ac4549255bcc8f62fa",
+      "content_hash": "bd2a8245cd5399f0164d36e13b354e641223eb0311587281c94659e559319986",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T20:51:39.711Z"
+      "persisted_at": "2026-11-16T01:52:53.596Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114746,9 +114746,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "71b216e3825454c6c3f171326af68dba3f0be0a71b898a3e1a5352d0805626a7",
+      "content_hash": "5b7d3d4f5d681e3b3c95ad83d5e4064ea17a90d543f3cdd0623937f65d635535",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T20:51:39.842Z"
+      "persisted_at": "2026-11-16T01:52:53.706Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -214825,13 +214825,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-V8V8-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZPIB-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1293f58e90b6870cee43b88dc05fc45db7325b4485ad2a1eb80843b857481692",
+      "content_hash": "85569b8eceb558078586681878bae092faf5c3ce7975b3d9282afb6da55223a4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T01:21:26.181Z"
+      "persisted_at": "2026-11-16T01:52:53.989Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -219201,8 +219201,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "fdc05210",
-      "content_hash": "0c602308aab2127e5b305d077cebcaa7b40ad69f7a266235fa60d3531a61b2d4",
+      "source_version": "effd674b",
+      "content_hash": "4d0a93b31a41f9e3c284230bd52f542506f684a20de864af74911cffb9c7c33f",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -219220,6 +219220,11 @@
           "number": 8649,
           "title": "fix macOS Service Unit timeouts (reuse e2e build, warm cache)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8687,
+          "title": "start the QUIC data ramp in 0.2.158",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219227,7 +219232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T20:51:01.629Z",
+      "verified_at": "2026-11-16T01:52:49.486Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223485,8 +223490,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "7dd495f7",
-      "content_hash": "10c1c542c53b889824cf179d681f0a498b71488fa3f78f6d3b651a2683e8b533",
+      "source_version": "12adfb14",
+      "content_hash": "e9c4f18bd4402c94a12274402c926965ae603b8905ced4211a72442d396c2f70",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -223504,6 +223509,11 @@
           "number": 8452,
           "title": "Non-Zero Identity Types for Domain Key Primitives",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8686,
+          "title": "[DataFusion] Report remote scan failures as external errors, not DataFusion bugs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223511,7 +223521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T05:07:04.440Z",
+      "verified_at": "2026-11-16T01:52:40.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223605,10 +223615,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "repository": "restatedev/restate",
-      "source_version": "7dd495f7",
-      "content_hash": "bf06ab22f63d99e1486e3e29e6865bd8cce7753088da68770f73d79efa5fe6b8",
+      "source_version": "12adfb14",
+      "content_hash": "0337700791c3cc40a48281cd89c29c346a38bd93973abc712da38743b33e569c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T05:07:05.026Z"
+      "persisted_at": "2026-11-16T01:52:40.570Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate",
@@ -223629,10 +223639,10 @@
       "relative_path": "08_VERIFICATION/restatedev-restate-verification-protocol-empirical-defect-shield-for-restatedev-.md",
       "title": "Verification Protocol: Empirical Defect Shield for restatedev/restate",
       "repository": "restatedev/restate",
-      "source_version": "7dd495f7",
-      "content_hash": "e2376b3d63cd52f8ca906f75f9a0755820cb9dbafad381ab5b0828925ca11cc8",
+      "source_version": "12adfb14",
+      "content_hash": "01b9e9606c4e62109c73da386163b8e943a7062ab2717a7ff0696f8cd78a9ab1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T05:07:05.215Z"
+      "persisted_at": "2026-11-16T01:52:40.685Z"
     },
     "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
@@ -223642,9 +223652,9 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "095c6a738d55ad0c8394523ff7e05e0948707df12d5523d8f9bfb0d7a8ffd67a",
+      "content_hash": "996a21e734932454dbd8ae522510ec89364a0bad214a3b1fa96123803ac79ec0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T05:08:14.257Z"
+      "persisted_at": "2026-11-16T01:52:53.108Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings",
@@ -223666,9 +223676,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for restatedev-restate-learnings",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "cfc869bca86de55c89b80dac1dd87c549f7c035e7f7704b62c602e888ddfa539",
+      "content_hash": "8097ccc2422e91378127210312fa4ce68a49bb61e60d7668f16963c6617e452c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T05:08:14.489Z"
+      "persisted_at": "2026-11-16T01:52:53.221Z"
     },
     "candidate_directive-dual-ar-state-decoupling-invariant": {
       "item_id": "candidate_directive-dual-ar-state-decoupling-invariant",
@@ -249768,6 +249778,70 @@
       "content_hash": "4893ea1757182d1ff27503466f7a76e0465a2258af8d644b7a6864980e79491a",
       "domain_letter": "G",
       "persisted_at": "2026-11-16T01:45:26.411Z"
+    },
+    "rule-8686": {
+      "learning_id": "rule-8686",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8686,
+      "title": "[DataFusion] Report remote scan failures as external errors, not DataFusion bugs",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "12adfb14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T01:52:40.122Z"
+    },
+    "candidate_directive-datafusion-report-remote-scan-failures-as-external-errors-not-datafusion-bugs": {
+      "item_id": "candidate_directive-datafusion-report-remote-scan-failures-as-external-errors-not-datafusion-bugs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZOQR-datafusion-report-remote-scan-failures-as-external-errors-not-datafusion-bugs.md",
+      "title": "[DataFusion] Report remote scan failures as external errors, not DataFusion bugs",
+      "repository": "restatedev-restate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c61c89d974092df9559dc97663a0ead710b94fb42e620851aa9e044868478d5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-16T01:52:52.999Z"
+    },
+    "rule-8687": {
+      "learning_id": "rule-8687",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8687,
+      "title": "start the QUIC data ramp in 0.2.158",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "effd674b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T01:52:49.486Z"
+    },
+    "candidate_directive-start-the-quic-data-ramp-in-0-2-158": {
+      "item_id": "candidate_directive-start-the-quic-data-ramp-in-0-2-158",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZMAC-start-the-quic-data-ramp-in-0-2-158.md",
+      "title": "start the QUIC data ramp in 0.2.158",
+      "repository": "freenet/freenet-core",
+      "source_version": "effd674b",
+      "content_hash": "6c8da1f97688d47ddedd5fd6001c8eae981cc8ee0082526d93059e25516c64b4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T01:52:49.815Z"
+    },
+    "candidate_directive-transport-start-the-quic-data-ramp-in-0-2-158": {
+      "item_id": "candidate_directive-transport-start-the-quic-data-ramp-in-0-2-158",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZP4C-transport-start-the-quic-data-ramp-in-0-2-158.md",
+      "title": "transport): start the QUIC data ramp in 0.2.158",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6b6b8ef70c2b771660306691ea527db49de6744fa134ae91bf50a66d9007a191",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T01:52:53.487Z"
     }
   },
   "ai-builder-brain": {

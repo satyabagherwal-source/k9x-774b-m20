@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T01:45:26.411Z",
+  "last_updated": "2026-11-16T01:52:54.098Z",
   "total_records": 1190,
   "domains": {
     "A": {
@@ -7005,8 +7005,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "fa0fd22b54e877cb66a86993b8eb80083918ce0298bc87cbade96f21d24679ba",
-      "created_at": "2026-11-16T01:21:26.296Z"
+      "content_hash": "023994a6b2ed32560c0d148d6586c74da2b87a06743d0bd640a5c086ee6606d3",
+      "created_at": "2026-11-16T01:52:54.098Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8556,8 +8556,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "2db185371796568c9099f147506c4982495a68ae981396644b74e228451c1d4e",
-      "created_at": "2026-11-15T20:51:02.083Z"
+      "content_hash": "c49b7f88e1c70a3aaa31a251ac51e5f2afc1d97041addda26dd5b432f1cfa886",
+      "created_at": "2026-11-16T01:52:49.922Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -8634,8 +8634,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "00c974315a6cd75ce1fa5afdd1c2e9b05aed0425c33ef2ac4549255bcc8f62fa",
-      "created_at": "2026-11-15T20:51:39.711Z"
+      "content_hash": "bd2a8245cd5399f0164d36e13b354e641223eb0311587281c94659e559319986",
+      "created_at": "2026-11-16T01:52:53.596Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -12648,8 +12648,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "bf06ab22f63d99e1486e3e29e6865bd8cce7753088da68770f73d79efa5fe6b8",
-      "created_at": "2026-11-14T05:07:05.026Z"
+      "content_hash": "0337700791c3cc40a48281cd89c29c346a38bd93973abc712da38743b33e569c",
+      "created_at": "2026-11-16T01:52:40.570Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -12725,8 +12725,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "095c6a738d55ad0c8394523ff7e05e0948707df12d5523d8f9bfb0d7a8ffd67a",
-      "created_at": "2026-11-14T05:08:14.257Z"
+      "content_hash": "996a21e734932454dbd8ae522510ec89364a0bad214a3b1fa96123803ac79ec0",
+      "created_at": "2026-11-16T01:52:53.108Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",

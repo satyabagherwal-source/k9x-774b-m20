@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T20:51:39.464Z",
+  "timestamp": "2026-11-16T01:52:53.388Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T20:51:39.464Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T01:52:53.388Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet-freenet-core-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `fdc05210`  
+> **Source Version**: `effd674b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T20:51:00.903Z  
+> **Timestamp**: 2026-11-16T01:52:48.777Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:51:00.897Z  
+> **Harvest Timestamp**: 2026-11-16T01:52:48.771Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3123 stars
+- **Stars / Engagement**: 3125 stars
 
 ---
 
@@ -1787,1187 +1787,342 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66b4a932` (2026-11-15)
-**Commit Message**: ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache) (#6235)
+### Incident Patch 1: `effd674b` (2026-11-15)
+**Commit Message**: feat(transport): start the QUIC data ramp in 0.2.158 (#6224)
 
-**File**: `.github/scripts/check_cache_warm_parity.py` (modified, +42/-16)
+**File**: `.claude/rules/transport.md` (modified, +27/-17)
 ```diff
-@@ -34,12 +34,14 @@
-    filters, ``-j`` and nextest's test ``--profile`` are ignored, so a warm job
-    that compiles without running matches a CI job that compiles and runs;
- 5. ``apt-get install`` package sets are identical;
--6. the warm job runs on a Ubicloud runner with the same label suffix
--   (architecture, OS variant), and its display name starts with
-+6. the warm job runs on the same kind of runner as its twin: a Ubicloud
-+   runner with the same label suffix (architecture, OS variant), or, for a
-+   GitHub-hosted twin (macOS), the identical label, since GitHub's cache
-+   backend is only written by GitHub-hosted runners; its display name starts with
-    ``Warm cache:`` -- scripts/release.sh excludes check runs by that prefix,
-    and a name that matched a required context would impersonate it.
- 
--It also DISCOVERS which ci.yml jobs need a twin: a Ubicloud job whose
-+It also DISCOVERS which ci.yml jobs need a twin: a job (Ubicloud or macOS) whose
- rust-cache has a conditional ``save-if`` and whose ``if:`` gates on
- ``github.event_name`` without ever admitting ``== 'push'``. It fails if such a
- job has no twin, or if a warm job's twin no longer needs one.
-@@ -277,15 +279,19 @@ def _restore_only_on_prs(job: list[str]) -> bool:
- 
- 
- def needs_warm_twin(job: list[str]) -> bool:
--    """A Ubicloud job that restores a cache it can never write itself.
-+    """A job that restores a cache it can never write itself.
- 
-     Its rust-cache saves conditionally, and its ``if:`` gates on the event
-     without admitting a push, so it never runs where it could save a
-     main-scoped entry. Clippy (no ``if:``) runs on main pushes and saves its
--    own; a GitHub-hosted job uses a different cache backend, which a Ubicloud
--    warm job could not fill.
-+    own. The runner may be Ubicloud or GitHub-hosted (macOS): each has its own
-+    cache backend, so the warm job must run on the same kind of runner (see the
-+    runner check in ``check``).
-     """
--    if "ubicloud" not in _runs_on(job):
-+    # windows_unit has the same shape (#6236) and no warm twin yet; widen this
-+    # to GitHub-hosted runners generally when one is added.
-+    ro = _runs_on(job)
-+    if "ubicloud" not in ro and not ro.startswith("macos-"):
-         return False
-     steps = _cache_steps(job)
-     if not steps or not any(w.get("save-if", "").strip() not in ("", "true")
-@@ -456,7 +462,7 @@ def differ(what: str, job: str, ci_val, warm_val, why: str):
-               if needs_warm_twin(extract_job(ci_text, j) or [])]
-     if not needed:
-         errors.append(
--            f"{ci_name}: no job looks like it needs a warm twin (Ubicloud, "
-+            f"{ci_name}: no job looks like it needs a warm twin (Ubicloud or macOS runner, "
-             f"conditional rust-cache save-if, `if:` on event_name without "
-             f"'push'). Either the discovery rule no longer matches {ci_name}, "
-             f"or {warm_name} is dead weight; find out which before silencing this."
-@@ -486,7 +492,7 @@ def differ(what: str, job: str, ci_val, warm_val, why: str):
-                 f"{warm_name}: job `{job_id}` warms a cache its {ci_name} twin "
-                 f"does not need from it: the twin runs on pushes to main (so it "
-                 f"saves its own entry), saves unconditionally, or is not on "
--                f"Ubicloud. Delete the warm job, or restore the twin's shape."
-+                f"a Ubicloud or macOS runner. Delete the warm job, or restore the twin's shape."
-             )
- 
-         ci_env, warm_env = _job_env(ci_job), _job_env(warm_job)
-@@ -545,12 +551,18 @@ def cache_inputs(job):
-                 )
- 
-         warm_ro = _runs_on(warm_job)
--        if "ubicloud" not in warm_ro:
-+        if "ubicloud" not in _runs_on(ci_job):
-+            # GitHub-hosted twin: its cache lives in GitHub's backend, which
-+            # only a GitHub-hosted runner can write, and the runner label
-+            # decides OS and arch (so the key).
-+            if _norm(_runs_on(ci_job)) != _norm(warm_ro):
-+                differ("runner label", job_id, _runs_on(ci_job), warm_ro, key_why)
-+        elif "ubicloud" not in warm_ro:
-             errors.append(
--                f"{warm_name}: job `{job_id}` runs on `{warm_ro}`. Ubicloud "
--                f"serves its own cache backend, so an entry saved from any other "
--                f"runner is invisible to the Ubicloud PR job. Use a "
--                f"`ubicloud-standard-*` label."
-+                f"{warm_name}: job `{job_id}` runs on `{warm_ro}`. Its "
-+                f"`ci.yml` twin is on Ubicloud, which serves its own cache "
-+                f"backend, so an entry saved from any other runner is invisible "
-+                f"to that PR job. Use a `ubicloud-standard-*` label."
-             )
-         else:
-             ci_sfx, warm_sfx = _label_suffixes(_runs_on(ci_job)), _label_suffixes(warm_ro)
-@@ -817,7 +829,7 @@ def _cases() -> list[tuple[str, str, str, str | None]]:
-      "apt-get install packages"),
-     (
+@@ -1173,17 +1173,22 @@ elsewhere, since the breaker cannot trip without a boot identity) decides whethe
+ `prefer` negotiates data with the share of pairs the ramp gives at the time ("Data
+ slice" below; `upgrade::policy::log_startup` reports the share at INFO once per
+ node, and each band the ramp enters is logged at INFO), and a pair with both bits
+-sends its data on the path ("QUIC send route" below). With no ramp start and no
++sends its data on the path ("QUIC send route" below). The tree sets the ramp
++start for 0.2.158 (#6224), so `prefer` nodes, every Linux, macOS and Windows node
++that did not set the key, carry data with the ramp's share, and 0.2.158's release
++notes say so. With no ramp start (the emergency-stop build) and no
+ `quic-data-percent` the share is 0, and `prefer` differs from `shadow` only by the
+-bit, which stays 0. The release that sets the ramp start must say in its notes that
+-`prefer` nodes, every Linux, macOS and Windows node that did not set the key, start
+-carrying data. Off: no endpoint, no QUIC ingress, nothing
++bit, which stays 0. Off: no endpoint, no QUIC ingress, nothing
+ changes, except that `off` set in the config is deprecated and logs a WARN at
+ startup (`upgrade::policy::log_startup`); the endpoint state telemetry reports it
+ as `off_config`. Windows has the same default since its crash-loop breaker was
+ confirmed on a real Windows machine (#6031). The default is
+ read, never written to config.toml: a node that did not set the key follows the
+-release it runs, so a default-off release is the kill switch. It does not reach
++release it runs, so a default-off release is the kill switch for QUIC as a
++whole. Stopping only the data ramp is smaller: `QUIC_DATA_RAMP_START = None`
++with the defaults back to 0.2.156's, shadow on Linux and macOS and off on
++Windows (RELEASING.md, "Emergency stop"), which keeps Linux and macOS
++endpoints and shadow paths up. Neither reaches
+ a node that ever ran with `--transport-quic` or `FREENET_TRANSPORT_QUIC`: those
+ are saved to config.toml like any setting (the Step 1 gateways are such nodes). Shadow or prefer: the endpoint is built
+ with the node's QUIC identity (below) and an EMPTY allow-set, so nothing
+@@ -1300,9 +1305,9 @@ pair is in the slice when its bucket is below the percentage, so 0 holds none,
+   The percentage: a ramp over one release (`slice::ramp_percent`): 5% for the
+   first 6 h, then linear 5 to 25% to 12 h and 25 to 100% to 24 h, 100% after,
+   from `QUIC_DATA_RAMP_START` in `upgrade/policy.rs` (Unix seconds, or `None`:
+-  no ramp, share 0). The start is `None` in tree and set in its own reviewed PR to
+-  the planned publish time, just before the release's soak, and left set: past 24 h
+-  it reads 100%, the steady state. A node whose clock reads before the start gets
++  no ramp, share 0). The start is set for 0.2.158 (#6224, 2026-11-16 02:30 UTC),
++  in its own reviewed PR at the planned publish time, and left set: past 24 h it
++  reads 100%, the steady state. Only an emergency stop sets it back to `None`. A node whose clock reads before the start gets
+   5%. Slices nest, so a pair in the slice stays in as the share grows. The config
+   key `quic-data-percent` (lenient text like `quic-max-paths`; anything but a whole
+   number from 0 to 100 reads as unset, with a WARN when QUIC is on) replaces the
+@@ -1543,15 +1548,17 @@ a test passes its own; tests read their own, never the global).
+   `cap_held` is an episode ended by the egress cap holding this side's sends
+   (the watch cannot tell then whether the peer is dark). The
+   dark-path rule closes only a path that carries data (QuicPath::enable_data);
+-  on every other path (all of them while QUIC_DATA_PERCENT is 0) it only
+-  counts, so the field shows how long real dark spells last. A spell is read
++  on every other path (shadow paths, and pairs outside the ramp's share) it
++  only counts, so the field shows how long real dark spells last. A spell is read
+   up to when the peer is next heard from, which waits for quinn's backed-off
+   probes after the outage ends, so it reads longer than the outage (in
+   a_path_without_data_is_not_closed_by_a_dark_spell a 30 s outage read about
+   45 s and a 100 s one about 200 s), and an outage whose backoff runs past
+   quinn's 120 s idle timeout ends the path and counts `unrecovered`. The dark
+-  threshold (the 10 s window) is to be revisited from these numbers before the
+-  data ramp passes 5%.
++  threshold (the 10 s window) was not revisited before 0.2.158: the ramp passes
++  5% at T0 + 6 h with it as is. The release watch reads carried against shadow
++  dark episodes (rule 14) through the 5% plateau, and the window is to be
++  revisited from those numbers.
+   quic_gate_loss_<queue|share|persistent|ecn|no_sample|ignored> (congestion
+   events by the loss gate's verdict, recycle::loss_gate, reported by the path's
+   report at each tick; over a path's life they sum to its quic_congestion_events,
+@@ -1990,8 +1997,9 @@ release goes out.
 ```
 
-**File**: `.github/workflows/ci-cache-warm.yml` (modified, +56/-6)
+**File**: `crates/core/src/config.rs` (modified, +8/-2)
 ```diff
-@@ -21,18 +21,20 @@ name: CI Cache Warm
- # the PR jobs compile (which must be mirrored here) has to yield a new key for
- # this workflow to fill. So each job below MUST keep:
- #   - the SAME job id as its ci.yml counterpart (test_unit, test_simulation,
--#     nat_validation) -- the display `name:` is deliberately different, so
-+#     nat_validation, macos_unit) -- the display `name:` is deliberately different, so
- #     these never masquerade as the required status contexts;
- #   - the SAME job-level `env:`, toolchain and toolchain targets;
- #   - the SAME linker env on its compile steps, and the same cargo features,
- #     or cargo's fingerprints differ and the restored deps are rebuilt anyway.
- # .github/scripts/check_cache_warm_parity.py enforces this from Rule Lint.
- # When you change one of those jobs in ci.yml, change its twin here.
- #
--# It must run on a Ubicloud runner: Ubicloud serves its own cache backend, so
--# an entry saved from a GitHub-hosted runner is invisible to Ubicloud jobs.
--# Runner size does not enter the key (only OS and arch do), so the cheaper
--# standard-8 is used throughout.
-+# The Linux jobs must run on a Ubicloud runner: Ubicloud serves its own cache
-+# backend, so an entry saved from a GitHub-hosted runner is invisible to
-+# Ubicloud jobs. Runner size does not enter the key (only OS and arch do), so
-+# the cheaper standard-8 is used throughout. The reverse holds for macos_unit,
-+# which ci.yml runs on GitHub-hosted `macos-latest`: only a GitHub-hosted runner
-+# can write the entry it restores.
+@@ -10189,7 +10189,9 @@ shutdown-drain-secs = 42
  
- on:
-   # Daily backstop, for what no path filter sees: eviction (Ubicloud's policy
-@@ -234,13 +236,61 @@ jobs:
-           cargo nextest run -p freenet-ping-app --features testing \
-             --profile ci --no-run
+     /// The node's limit follows its data share: `prefer` with a share above 0
+     /// lowers it on a 1 GiB host; a share of 0, `shadow`, or an off endpoint
+-    /// keeps 200. `quic-max-paths` follows the limit.
++    /// keeps 200. `prefer` with no `quic-data-percent` takes the release's
++    /// share: lowered once the release sets a ramp start. `quic-max-paths`
++    /// follows the limit.
+     #[tokio::test]
+     async fn the_node_lowers_its_connection_limit_only_when_it_may_carry_quic_data() {
+         const GIB: usize = 1024 * 1024 * 1024;
+@@ -10200,7 +10202,11 @@ shutdown-drain-secs = 42
+             ("prefer", Some("5"), true),
+             ("prefer", Some("100"), true),
+             ("prefer", Some("0"), false),
+-            ("prefer", None, false),
++            (
++                "prefer",
++                None,
++                crate::transport::quic::upgrade::policy::RAMP_START_IS_SET,
++            ),
+             ("shadow", Some("5"), false),
+             ("off", Some("5"), false),
+         ] {
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +4/-1)
+```diff
+@@ -1171,7 +1171,10 @@ use crate::operations::connect::native::NativeWire;
+ /// `docs/RELEASING.md`, this is the release that first ships the decoder, then
+ /// frozen. Bias HIGH: too low closes connections to the release below it, too
+ /// high only delays the offer.
+-pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 158);
++/// Raised from 0.2.158 to 0.2.159 by the QUIC data ramp PR (#6224): 0.2.158
++/// starts the data ramp, and turning on the native connect offer in the same
++/// release would change two things at once.
++pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 159);
  
-+  # Same job id as ci.yml's `macos_unit`, which runs on a GitHub-hosted macOS
-+  # runner and so uses GitHub's own cache backend, not Ubicloud's: this job
-+  # must run on the identical `macos-latest` label. It shares the repo's 10 GB
-+  # GitHub cache pool with the release-build and benchmark entries, so a new
-+  # macOS entry can evict older ones there; the Ubicloud entries above are in a
-+  # different backend and are not affected.
-+  macos_unit:
-+    name: "Warm cache: macOS Service Unit"
-+    runs-on: macos-latest
-+    timeout-minutes: 60
-+
-+    # Must match ci.yml macos_unit's job-level env exactly (cache key input).
-+    env:
-+      RUST_LOG: error
-+      CARGO_TARGET_DIR: ${{ github.workspace }}/target
-+      RUST_MIN_STACK: 268435456
-+      FREENET_GIT_IS_DIRTY: "1"
-+
-+    steps:
-+      - uses: actions/checkout@v7
-+
-+      - uses: dtolnay/rust-toolchain@stable
-+        with:
-+          toolchain: 1.93.0
-+          targets: wasm32-unknown-unknown
-+
-+      - uses: Swatinem/rust-cache@v2
-+        with:
-+          save-if: ${{ github.ref == 'refs/heads/main' }}
-+          key: ci-${{ hashFiles('.github/workflows/ci-cache-warm.yml') }}
-+
-+      - name: Install nextest
-+        uses: taiki-e/install-action@v2
-+        timeout-minutes: 5
-+        with:
-+          tool: cargo-nextest
-+          fallback: none
-+
-+      - name: Build freenet bin
-+        run: cargo build --locked -p freenet --bin freenet
-+
-+      # The three test invocations of ci.yml macos_unit, compiled but not run.
-+      - name: Compile tests
-+        run: |
-+          cargo nextest run -p freenet --bin freenet --profile ci --no-run
-+          cargo nextest run -p freenet --profile ci --test graceful_shutdown_exit_code --no-run
-+          cargo nextest run -p freenet --profile ci --test url_scheme_handler --no-run
-+
-   # A failed warm leaves PRs building cold with every check green, so say so.
-   # Named "Warm cache: ..." like the jobs above: scripts/release.sh ignores
-   # main-branch check runs by that prefix, including this one while queued.
-   notify_failure:
-     name: "Warm cache: notify on failure"
-     runs-on: ubuntu-latest
--    needs: [test_unit, test_simulation, nat_validation]
-+    needs: [test_unit, test_simulation, nat_validation, macos_unit]
-     if: failure() && github.ref == 'refs/heads/main'
-     # Best-effort, like ci.yml's notify_dev_room_main_failure.
-     continue-on-error: true
+ /// Has the decoder for the QUIC-native `ConnectMsg` variants shipped, and in
+ /// which release?
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +23/-9)
+**File**: `crates/core/src/transport/quic/upgrade/driver.rs` (modified, +10/-1)
 ```diff
-@@ -1129,8 +1129,15 @@ jobs:
-   macos_unit:
-     name: macOS Service Unit
-     runs-on: macos-latest
--    # 45, not 30: the freenet:// LaunchServices e2e rebuilds the freenet crate
--    # (auto-update off) and waits for the app to launch and handle links.
-+    # 45, not 30: the freenet:// LaunchServices e2e waits for the app to launch
-+    # and handle links, and a cold build of this job takes ~35 min. Normally it
-+    # is not cold: this job never runs on main, so ci-cache-warm.yml's
-+    # `macos_unit` job writes the cache entry it restores (the key below is that
-+    # file's hash; check_cache_warm_parity.py keeps the two in step). After a
-+    # lockfile change on main, or if the warm entry was evicted, a PR run is
-+    # cold again and the headroom is what keeps it from failing by cancellation.
-+    # The warm entry covers dependencies only: rust-cache cleans workspace-member
-+    # artifacts before saving, so `freenet` itself still compiles on every run.
-     timeout-minutes: 45
-     # Same skip conditions as test_unit (see test_unit comment for details).
-     if: |
-@@ -1144,6 +1151,16 @@ jobs:
-       # Increase rustc stack size to prevent SIGSEGV during compilation
-       # 256MB required for LLVM optimization passes on large workspaces (rustc suggests this value)
-       RUST_MIN_STACK: 268435456
-+      # Auto-update off for EVERY build in this job, not just the e2e step. The
-+      # freenet:// LaunchServices e2e starts a real node from the built binary,
-+      # and a newer release must not make it exit 42 and swap the test bundle.
-+      # `build.rs` declares `rerun-if-env-changed=FREENET_GIT_IS_DIRTY`, so
-+      # setting this only on the e2e step changed the build script's input and
-+      # recompiled the whole freenet crate there (2m42s on a fast runner; it ran
-+      # the job into its timeout on a slow one, #6214). Set once here, the e2e
-+      # build is a no-op. The other steps are unaffected: the node tests already
-+      # pass --disable-auto-update.
-+      FREENET_GIT_IS_DIRTY: "1"
- 
-     steps:
-       - uses: actions/checkout@v7
-@@ -1168,6 +1185,7 @@ jobs:
-         # `if:` here, and NOT a separate step.
-         with:
-           save-if: ${{ github.ref == 'refs/heads/main' }}
-+          key: ci-${{ hashFiles('.github/workflows/ci-cache-warm.yml') }}
- 
-       # nextest via the maintained action, not a hand-rolled download.
-       # Rationale at the first of these in ci.yml (test_unit job); see #5296.
-@@ -1203,14 +1221,10 @@ jobs:
-       # login. It also checks that the menu bar icon is really on screen, which
-       # needs macOS 26 or later to mean anything (#6093), and that Launch at
-       # Login registers and repairs old agents. The app starts a real node, so
--      # this rebuilds the binary with
--      # FREENET_GIT_IS_DIRTY=1 (auto-update off; only the freenet crate
--      # recompiles): otherwise a release newer than this branch would make
--      # the node exit 42 and the DMG-swap updater replace the test bundle
--      # mid-run. Last step on purpose, since it changes target/debug/freenet.
-+      # the binary must be built with FREENET_GIT_IS_DIRTY=1 (auto-update off;
-+      # set job-wide above, so this `cargo build` is a no-op).
-+      # Last step on purpose, since it changes target/debug/freenet.
-       - name: freenet:// end to end through LaunchServices
--        env:
--          FREENET_GIT_IS_DIRTY: "1"
-         run: |
-           cargo build --locked -p freenet --bin freenet
-           scripts/macos-url-scheme-e2e.sh target/debug/freenet
-```
-
-**File**: `scripts/macos-url-scheme-e2e.sh` (modified, +1/-1)
-```diff
-@@ -124,7 +124,7 @@ echo "ok - LaunchServices resolves freenet:// to the bundle"
- # build uses the platform directories); explicit directories sidestep that.
- # FREENET_TELEMETRY_ENABLED: the app starts a real node; keep it out of the
- # production telemetry. (Its auto-update is off because CI builds this binary
--# with FREENET_GIT_IS_DIRTY=1, so a newer release cannot swap the bundle out
-+# with FREENET_GIT_IS_DIRTY=1 (set job-wide), so a newer release cannot swap the bundle out
- # mid-test.)
- mkdir -p "$OUT/data" "$OUT/config"
- launchctl setenv FREENET_OPEN_DRY_RUN 1
-```
-
----
-
-### Incident Patch 2: `fdc05210` (2026-11-15)
-**Commit Message**: fix: replace the broken-invariant contract freeze with a per-contract merge budget (#6237)
-
-**File**: `.claude/rules/contracts.md` (modified, +12/-8)
-```diff
-@@ -317,12 +317,16 @@ State merging rules:
-     bytes, as the verifier does, so a contract whose encoding depends on
-     argument order and that also fails strict associativity can be flagged
-     for byte order alone. Violators get flagged in
--    `Ring::broken_invariants`; while flagged, this node suppresses commit,
--    outbound `BroadcastStateChange` (including the retry/stash/flush
--    re-emissions through `handle_broadcast_state_change`), AND full-state
--    egress (`ResyncResponse`, `SyncStateToPeer` heal). The flag is
--    TTL-bounded (`BROKEN_INVARIANT_TTL`, swept by the Ring reaper) so a
--    false positive self-heals instead of bricking the contract forever; a
-+    `Ring::broken_invariants`. Since #6190 the flag is DIAGNOSTIC ONLY (INFO
-+    log, `freenet.contract.broken_invariant.detections` counter,
-+    `broken_invariant_flagged` telemetry event): it must not gate a commit,
-+    a broadcast or an egress path, and a source pin
-+    (`broken_flag_gates_no_commit_broadcast_or_egress`) fails if one comes
-+    back. The load a non-settling merge causes is bounded instead, for every
-+    contract alike, by the per-contract merge budget on the broadcast receive
-+    path (`ring::contract_merge_budget`). The flag is TTL-bounded
-+    (`BROKEN_INVARIANT_TTL`, swept by the Ring reaper), which now bounds how
-+    often a contract is re-probed and re-reported; a
-     genuine violation is re-detected after expiry (deterministically by the
-     identical-input probe when the echo re-pushes a payload this node has not
-     already recorded as merged). A re-push of a payload the node already
-@@ -336,8 +340,8 @@ State merging rules:
-     by a different payload with the same bytes; otherwise, for 15 minutes the
-     skip replaces it. When the record's precondition holds and when it does
-     not is in that module's "Precondition" section. For a
--    contract that replays a fixed set of payloads, that skip is now the
--    defence, not the flag: such contracts are flagged less often, and a lower
-+    contract that replays a fixed set of payloads, that skip is a defence
-+    alongside the merge budget: such contracts are flagged less often, and a lower
-     broken-flag count does NOT mean fewer broken contracts. There is deliberately NO
-     automatic escalation to the contract ban list: a durable ban needs an
-     aging/recovery story first (see PR #4902 review). Residual
-```
-
-**File**: `crates/core/src/contract.rs` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ pub(crate) mod delegate_capabilities;
- mod delegate_lane;
- mod delegate_park;
- mod delegate_restore;
--mod executor;
-+pub(crate) mod executor;
- mod fair_queue;
- #[cfg(all(test, feature = "wasmtime-backend", feature = "redb"))]
- mod wakeup_wasm_tests;
-```
-
-**File**: `crates/core/src/contract/executor.rs` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ use crate::{
- 
- pub(super) mod init_tracker;
- pub(super) mod mock_runtime;
--pub(super) mod mock_wasm_runtime;
-+pub(crate) mod mock_wasm_runtime;
- #[cfg(test)]
- mod pool_tests;
- pub(super) mod runtime;
-```
-
-**File**: `crates/core/src/contract/executor/mock_wasm_runtime.rs` (modified, +49/-1)
-```diff
-@@ -157,6 +157,44 @@ pub(crate) enum UpdateOverride {
- /// merge), `MockWasmRuntime` delegates to the same `bridged_*` methods that
- /// `Executor<Runtime>` uses, exercising init_tracker, validation, subscriber
- /// notification pipeline, corrupted state recovery, and contract key indexing.
-+/// Simulation hooks (#6190, `dev_tool::sim_merge_budget`). Process-global
-+/// because simulation contract ids are random; a test that arms them must run
-+/// in its own process (it does: `run_alone_in_child_process`).
-+#[cfg(any(test, feature = "testing"))]
-+pub(crate) mod sim_hooks {
-+    use super::*;
-+    use std::sync::atomic::{AtomicU8, AtomicU64, Ordering};
-+
-+    /// Contracts whose first id byte is a multiple of this merge
-+    /// non-idempotently (fresh bytes on every apply). 0 disables the hook and
-+    /// the merge counter.
-+    pub(crate) static BAD_CONTRACT_MODULUS: AtomicU8 = AtomicU8::new(0);
-+    /// `update_state` calls per contract id while armed.
-+    pub(crate) static MERGE_COUNTS: std::sync::Mutex<Option<HashMap<ContractInstanceId, u64>>> =
-+        std::sync::Mutex::new(None);
-+    static NONCE: AtomicU64 = AtomicU64::new(1);
-+
-+    /// Count the call and return the non-settling override for `key` if the
-+    /// hook selects it. A no-op (one atomic load) while disarmed.
-+    pub(crate) fn on_update_state(key: &ContractInstanceId) -> Option<UpdateOverride> {
-+        let modulus = BAD_CONTRACT_MODULUS.load(Ordering::Relaxed);
-+        if modulus == 0 {
-+            return None;
+@@ -674,7 +674,16 @@ impl QuicUpgrades {
+         if self.policy.percent_set() {
+             return None;
+         }
+-        let start = self.trace.as_ref()?.data_ramp_start()?;
++        let trace = self.trace.as_ref()?;
++        // The emergency-stop release has no ramp, whatever this build's
++        // `QUIC_DATA_RAMP_START` is, so the node reads the fixed share.
++        if trace.runs_without_ramp() {
++            return Some((
++                super::policy::DataShare::Fixed(super::policy::QUIC_DATA_PERCENT),
++                self.path_clock.wall_now(),
++            ));
 +        }
-+        *MERGE_COUNTS
-+            .lock()
-+            .unwrap()
-+            .get_or_insert_with(HashMap::new)
-+            .entry(*key)
-+            .or_insert(0) += 1;
-+        (key.as_bytes()[0] % modulus == 0).then(|| {
-+            UpdateOverride::NonIdempotent(std::sync::Arc::new(AtomicU64::new(
-+                NONCE.fetch_add(1 << 20, Ordering::Relaxed),
-+            )))
-+        })
-+    }
-+}
-+
- pub(crate) struct MockWasmRuntime {
-     pub(crate) contract_store: InMemoryContractStore,
-     /// Per-contract validation overrides for testing related contract flows.
-@@ -494,7 +532,17 @@ impl ContractRuntimeInterface for MockWasmRuntime {
-         // update_data slice) returns `requires`; once the bridged path
-         // re-attempts with `RelatedState` entries appended, fall through
-         // to the default merge.
--        if let Some(override_) = self.update_overrides.get(_key.id()).cloned() {
-+        #[cfg(any(test, feature = "testing"))]
-+        let sim_override = sim_hooks::on_update_state(_key.id())
-+            .filter(|_| !self.update_overrides.contains_key(_key.id()));
-+        #[cfg(not(any(test, feature = "testing")))]
-+        let sim_override: Option<UpdateOverride> = None;
-+        if let Some(override_) = self
-+            .update_overrides
-+            .get(_key.id())
-+            .cloned()
-+            .or(sim_override)
-+        {
-             match override_ {
-                 UpdateOverride::RequiresRelated(ids) => {
-                     let has_related = update_data
++        let start = trace.data_ramp_start()?;
+         let shift = Duration::from_secs(start.min(0).unsigned_abs());
+         let share = super::policy::DataShare::Ramp {
+             start_unix_secs: start.max(0).unsigned_abs(),
 ```
 
-**File**: `crates/core/src/contract/executor/pool_tests/applied_payloads_tests.rs` (modified, +13/-6)
+**File**: `crates/core/src/transport/quic/upgrade/driver/tests.rs` (modified, +38/-9)
 ```diff
-@@ -319,8 +319,11 @@ async fn a_refused_merge_is_not_recorded() {
-     );
- }
- 
-+/// Since #6190 a flagged contract's merge is committed like any other, so its
-+/// payload is absorbed and recorded (the flag used to suppress the commit, and
-+/// this test used to assert the payload was NOT recorded).
- #[tokio::test(flavor = "current_thread")]
--async fn a_merge_suppressed_for_a_broken_contract_is_not_recorded() {
-+async fn a_merge_on_a_flagged_contract_is_recorded() {
-     let (op_manager, _guards) = build_op_manager("applied-broken").await;
-     let (mut executor, key) = installed(&op_manager, b"applied_broken", b"s0").await;
-     op_manager.ring.record_broken_invariant(
-@@ -329,6 +332,7 @@ async fn a_merge_suppressed_for_a_broken_contract_is_not_recorded() {
-         crate::ring::BrokenInvariantDetector::IdenticalInput,
-         "test",
-     );
-+    assert!(op_manager.ring.is_contract_broken(&key), "premise: flagged");
-     let result = executor
-         .upsert_contract_state(
-             key,
-@@ -337,14 +341,17 @@ async fn a_merge_suppressed_for_a_broken_contract_is_not_recorded() {
-             None,
-         )
-         .await
--        .expect("suppressed merge returns Ok");
--    assert!(matches!(result, crate::contract::UpsertResult::NoChange));
-+        .expect("merge on a flagged contract");
-     assert!(
--        !op_manager
-+        matches!(result, crate::contract::UpsertResult::Updated(_)),
-+        "a flagged contract's merge must commit, got {result:?}"
-+    );
-+    assert!(
-+        op_manager
-             .ring
-             .applied_payloads
-             .contains(&key, state_hash(&op_manager, b"s1")),
--        "nothing was stored, so the payload was not absorbed"
-+        "the committed payload was absorbed, so it is recorded"
-     );
- }
- 
-@@ -408,7 +415,7 @@ fn the_install_reset_precedes_the_store() {
- fn the_recovery_reset_precedes_the_commit() {
-     let src = include_str!("../runtime/executor_impl.rs");
-     let commit_at = src
--        .find("let commit_outcome = self")
-+        .find("self.commit_state_update(&key, &params, &updated_state)")
-         .expect("final commit of the merge path");
-     let before = &src[..commit_at];
-     let gate = before
-```
-
-**File**: `crates/core/src/contract/executor/pool_tests/delegate_notification_tests.rs` (modified, +0/-68)
-```diff
-@@ -508,41 +508,6 @@ fn finalize_state_commit_is_the_only_post_store_fan_out_site() {
-         );
-     }
- 
--    // The queued-operation replay loop inside the install branch must consume
--    // `commit_state_update`'s OUTCOME, not a bare `Ok`.
--    //
--    // `commit_state_update` returns `Ok(SuppressedBrokenContract)` — storing
--    // nothing and fanning out nothing — for a contract flagged in
--    // `ring::broken_invariants`. When it returned `Result<(), _>` the replay
--    // loop read that as "this replay committed", advanced `installed_state`,
--    // and skipped the branch's own trailing fan-out, so the state the branch
--    // HAD stored reached no delegate, no WebSocket client and no peer. #5481
--    // again, at the install-plus-flagged-contract corner, introduced by the fix
--    // for #5481 and caught by the repo's rule review.
--    //
--    // The enum makes the conflation uncompilable — there is no `Ok(())` left to
--    // misread — so what is worth pinning is that the loop still matches on the
--    // variant rather than being rewritten to discard it with `let _ =` or
--    // `.is_ok()`, which would restore the same bug through a different door.
--    // Scoped to `bridged_upsert_contract_state_inner`, NOT the whole file:
--    // `commit_state_update`'s own return sites mention both variants, so a
--    // file-wide check is satisfied by the enum's definition site and would
--    // stay green through the very rewrite it is meant to catch.
--    let replay_scope = upsert_inner_body(production);
--    assert!(
--        code_contains(replay_scope, "StateCommitOutcome::Committed"),
--        "the queued-operation replay loop must branch on \
--         `StateCommitOutcome::Committed`. Treating any `Ok` as a commit makes \
--         a broken-contract suppression look like a successful one, and the \
--         install branch then skips a fan-out it still owes."
--    );
--    assert!(
--        code_contains(replay_scope, "StateCommitOutcome::SuppressedBrokenContract"),
--        "the replay loop must handle the suppression case explicitly, so the \
--         install branch's own fan-out is still performed when a replay stored \
--         nothing."
--    );
--
-     // And every storing path delegates to it.
-     let calls = count_call_sites(production, ".finalize_state_commit(");
-     assert_eq!(
-@@ -652,39 +617,6 @@ fn brace_delimited_body(src: &str, start: usize) -> &str {
-     panic!("unbalanced braces while scraping the item body starting at {start}");
- }
- 
--/// The brace-delimited body of `bridged_upsert_contract_state_inner`, which is
--/// where the queued-operation replay loop lives.
--///
--/// Scoping matters here rather than being tidiness. `StateCommitOutcome::`
--/// appears FOUR times in `executor_impl.rs`: twice in the replay match, and
--/// twice in `commit_state_update`'s own `return` sites. An unscoped "does this
--/// token appear" check is therefore satisfied by the enum's DEFINITION SITE, so
--/// deleting the replay match entirely and writing `if ....await.is_ok()` would
--/// leave it green — restoring the exact bug the enum was introduced to close.
--/// Two reviewers found that independently on #5484.
--///
--/// The function body is the right scope rather than the loop itself: it
--/// excludes both `commit_state_update` sites, and it does not depend on the
--/// loop keeping any particular shape.
--fn upsert_inner_body(src: &str) -> &str {
--    const SIG: &str = "async fn bridged_upsert_contract_state_inner(";
--    let start = src
--        .find(SIG)
--        .expect("bridged_upsert_contract_state_inner must exist");
--    brace_delimited_body(src, start)
--}
--
--/// Whether `needle` appears in `src` as CODE — not in a comment, not inside a
--/// string literal.
--///
--/// Deliberately says nothing about scope: pass the region you mean. The
--/// previous name (`helper_free_production_contains`) promised a region
--/// excluding the fan-out helper and delivered a whole-file search, which is how
--/// the unscoped `StateCommitOutcome` assertions above came to pin nothing.
--fn code_contains(src: &str, needle: &str) -> bool {
--    count_call_sites(src, needle) > 0
--}
--
- /// Count `needle` occurrences, one per matching LINE (two calls on one line
- /// count once — rustfmt does not produce that shape here, and the assertions
- /// below would fail loud rather than pass if it ever did).
-```
-
-**File**: `crates/core/src/contract/executor/pool_tests/identical_input_probe_tests.rs` (modified, +31/-22)
-```diff
-@@ -21,12 +21,13 @@
- //! `bridged_upsert_contract_state` path via `Executor<MockWasmRuntime>`
- //! wired to a real `OpManager`/`Ring` (harness mirrors
- //! `disk_budget_gate_tests.rs`), so the `is_contract_broken` flag the
--//! probes set — and the commit suppression it gates — are the real ones.
-+//! probes set is the real one. Since #6190 the flag gates nothing:
-+//! `flagged_contract_subsequent_apply_is_committed` pins that a flagged
-+//! contract still commits, and `non_idempotent_detector_tests.rs` pins that
-+//! no commit/broadcast/egress path reads the flag.
- //!
- //! The probe cooldown is unit-tested with a mock clock in
--//! `ring::broken_invariants::tests`; the egress gates (ResyncResponse /
--//! SyncStateToPeer / handle_broadcast_state_change) are pinned in
--//! `non_idempotent_detector_tests.rs`.
-+//! `ring::broken_invariants::tests`.
- 
- use either::Either;
- use freenet_stdlib::prelude::*;
-@@ -296,15 +297,18 @@ async fn identical_input_canonicalize_once_is_not_flagged() {
-     );
- }
- 
--/// While flagged, a subsequent NON-identical apply is fully suppressed:
--/// the merge result is neither committed nor observable — the stored
--/// state stays put and the caller sees `NoChange`. (This is the existing
--/// #4279 commit gate; asserting it here proves the flag set by the NEW
--/// identity probe engages it end-to-end.)
-+/// Regression for #6190: a flagged contract still takes updates.
-+///
-+/// While flagged, a non-identical apply used to be suppressed: nothing was
-+/// stored and the caller got `NoChange`. That caller includes this node's own
-+/// client, whose UPDATE was then answered `state_changed: false` and silently
-+/// discarded (`contract.rs::update_response_from_result` maps `NoChange` to
-+/// exactly that). The flag is diagnostic only now, so the apply must commit
-+/// and report `Updated`, and the stored state must be the merge result.
- #[tokio::test(flavor = "current_thread")]
--async fn flagged_contract_subsequent_apply_is_suppressed() {
--    let (op_manager, _guards) = build_op_manager("nonidem-identity-suppress").await;
--    let contract = test_contract(b"suppressed_identity_contract");
-+async fn flagged_contract_subsequent_apply_is_committed() {
-+    let (op_manager, _guards) = build_op_manager("nonidem-identity-commit").await;
-+    let contract = test_contract(b"flagged_commit_contract");
-     let key = contract.key();
-     let state = distinct_bytes_state();
- 
-@@ -335,10 +339,11 @@ async fn flagged_contract_subsequent_apply_is_suppressed() {
-         )
-         .await
-         .expect("identical re-apply");
--    assert!(op_manager.ring.is_contract_broken(&key));
-+    assert!(
-+        op_manager.ring.is_contract_broken(&key),
-+        "premise: the contract is flagged before the update under test"
-+    );
- 
--    // A different incoming state now runs the merge, but the flagged-
--    // contract gate suppresses the commit: NoChange, stored state intact.
-     let different = WrappedState::new((101u8..=132).collect::<Vec<u8>>());
-     let result = executor
-         .upsert_contract_state(
-@@ -349,18 +354,22 @@ async fn flagged_contract_subsequent_apply_is_suppressed() {
-         )
-         .await
-         .expect("non-identical apply while flagged");
--    assert!(
--        matches!(result, UpsertResult::NoChange),
--        "apply while flagged must be suppressed to NoChange, got {result:?}"
--    );
-+    let UpsertResult::Updated(merged) = result else {
-+        panic!("an apply on a flagged contract must commit and report Updated, got {result:?}");
-+    };
- 
-     let (stored, _) = executor
-         .fetch_contract(key, false)
-         .await
--        .expect("fetch after suppressed apply");
-+        .expect("fetch after apply");
-     assert_eq!(
-         stored.map(|s| s.as_ref().to_vec()),
--        Some(state.as_ref().to_vec()),
--        "suppressed apply must not have touched the stored state"
-+        Some(merged.as_ref().to_vec()),
-+        "the stored state must be the committed merge result"
-+    );
-+    assert_ne!(
-+        merged.as_ref(),
-+        state.as_ref(),
-+        "the merge must have changed the state"
-     );
- }
-```
-
-**File**: `crates/core/src/contract/executor/pool_tests/non_idempotent_detector_tests.rs` (modified, +89/-129)
-```diff
-@@ -1,7 +1,7 @@
- //! Tests for the per-contract non-idempotency *fixture*. See
- //! `crate::ring::broken_invariants` (tracker-level unit tests) and
- //! `Executor::maybe_probe_idempotency` in `contract/executor/runtime.rs`
--//! for the detector + gate code itself.
-+//! for the detector itself.
- //!
- //! ## What these tests cover
- //!
-@@ -15,18 +15,8 @@
- //!    so the property the probe checks doesn't false-positive on
- //!    well-behaved contracts.
- //!
--//! ## What these tests do NOT cover (deferred)
--//!
--//! End-to-end "probe fires inside the executor, sets the flag via
--//! `Ring::record_broken_invariant`, and the next merge / broadcast is
--//! suppressed by the `is_contract_broken` gate in `commit_state_update`
--//! and `broadcast_state_change`" is **NOT** exercised here — the mock
--//! executor path (`Executor::new_mock_wasm`) doesn't wire a real
--//! `OpManager`, so `op_manager.ring.is_contract_broken(...)` from inside
--//! the executor is a no-op against an absent ring. The tracker layer
--//! (record → is_broken) is covered in `ring::broken_invariants::tests`.
--//! Full integration coverage requires a `SimNetwork`-shaped harness and
--//! is filed as a follow-up to #4279.
-+//! 3. **No gate on the flag** — `broken_flag_gates_no_commit_broadcast_or_egress`
-+//!    pins that the flag stays diagnostic (#6190).
- 
- use freenet_stdlib::prelude::*;
- 
-@@ -111,130 +101,100 @@ fn fixture_non_idempotent_override_produces_distinct_states() {
-     );
- }
- 
--/// Source-grep pin: the three production gate sites in `runtime.rs`
--/// (`commit_state_update` top-gate, `broadcast_state_change` gate, and
--/// `bridged_upsert_contract_state` merge-suppression after probe) all
--/// MUST consult `op_manager.ring.is_contract_broken(...)`. A regression
--/// that removes or inverts any of these checks silently re-enables the
--/// broadcast storm — this test would fail compile-time-style on string
--/// match in CI before the gap reaches production.
--#[test]
--fn production_gate_sites_consult_is_contract_broken() {
--    // Read the full source files at compile time. `include_str!` is
--    // resolved relative to the file containing this macro — these tests
--    // live at `crates/core/src/contract/executor/pool_tests/` so we
--    // climb one level to reach the production files.
--    // `is_contract_broken` call sites live in runtime/executor_impl.rs after
--    // the split; both files are searched independently (not concatenated) so
--    // that `#[cfg(test)]` markers in runtime.rs don't accidentally truncate
--    // the executor_impl.rs search window.
--    const RUNTIME_RS: &str = include_str!("../runtime.rs");
--    const EXECUTOR_IMPL_RS: &str = include_str!("../runtime/executor_impl.rs");
--
--    // Strip test modules from each file independently, then concatenate the
--    // production-only slices. executor_impl.rs has no #[cfg(test)] today so
--    // its split_once is a no-op, but future-proofs against one being added.
--    let runtime_prod = RUNTIME_RS
--        .split_once("#[cfg(test)]")
--        .map(|(prod, _)| prod)
--        .unwrap_or(RUNTIME_RS);
--    let executor_impl_prod = EXECUTOR_IMPL_RS
--        .split_once("#[cfg(test)]")
--        .map(|(prod, _)| prod)
--        .unwrap_or(EXECUTOR_IMPL_RS);
--
--    let occurrences = runtime_prod.matches("is_contract_broken").count()
--        + executor_impl_prod.matches("is_contract_broken").count();
--    assert!(
--        occurrences >= 3,
--        "expected at least 3 `is_contract_broken` checks in production \
--         runtime.rs (commit_state_update top-gate, broadcast_state_change \
--         gate, and bridged_upsert_contract_state post-probe merge \
--         suppression); found {occurrences}. A regression that removed or \
--         inverted any of these silently re-enables the storm we're \
--         defending against — see PR #4279."
--    );
--}
--
--/// Source-grep pin for the full-state EGRESS gates: while a contract is
--/// flagged, the executor's own commit/broadcast suppression is not enough
--/// — three paths still pushed state off the node and kept the broadcast
--/// echo alive network-wide:
-+/// Source pin (#6190): the broken-invariant flag is DIAGNOSTIC ONLY.
- ///
--/// 1. `InterestMessage::ResyncRequest` handling in node.rs served a full
--///    `ResyncResponse`.
--/// 2. The Summaries-mismatch heal (`handle_sync_state_to_peer` in
--///    p2p_protoc/broadcast.rs) pushed full state to a "stale" peer.
--/// 3. `handle_broadcast_state_change` (same file) — the highest-
--///    amplification fan-out sink — is re-entered by re-emission paths
--///    that bypass the executor's emission gate (its own no-target retry
--///    re-emissions, the #4359 stashed-broadcast flush, pending flushes),
--///    re-seeding the echo after a flag lands.
-+/// It used to gate the commit, the broadcast and three egress paths, so a
-+/// flagged contract stopped advancing on this node, including the node's own
-+/// client UPDATEs, which were answered `state_changed: false` and silently
-+/// di
-```
-
----
-
-### Incident Patch 3: `76c85b09` (2026-11-15)
-**Commit Message**: feat(transport): close a QUIC path whose peer lets three ack waits expire in 30 min (#6208)
-
-**File**: `.claude/rules/transport.md` (modified, +114/-28)
-```diff
-@@ -1529,6 +1529,13 @@ a test passes its own; tests read their own, never the global).
-   level in the period, and the highest count a reset in the period took a path
-   to). They are for the fixed charge, which takes quinn's stopped map at
-   SEND_ABORT_LIMIT x QUIC_STOPPED_ENTRY_BYTES until field data justifies less.
-+  quic_ack_wait_expired_<stream|short|control>: ack-wait expiries that
-+  counted as strikes (path::StrikeCheck), by kind; expected 0 on honest
-+  paths. quic_stall_close_<not_acknowledging|dark|credit_starved|
-+  stream_credit_withheld|ack_waits_expired>: paths the acknowledgement
-+  watch closed, by why (recycle::Stall). quic_stall_would_close_<same
-+  labels>: times a rule that only observes would have closed a path; only
-+  ack_waits_expired observes today (recycle::ACK_WAITS_EXPIRED_CLOSES).
-   quic_dark_episode_<recovered_lt_5s|lt_10s|lt_30s|lt_120s|recovered_ge_120s|
-   unrecovered|cap_held|closed_at_window>: dark episodes (recycle::AckWatch:
-   packets outstanding, nothing acknowledged, nothing heard) by how they ended;
-@@ -2210,7 +2217,10 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-   also past a deadline that reported MaybeDelivered: Outgoing's drop hands
-   the wait to a small task (at most 48 per path, each ending with the
-   connection). A one-packet Short holds no permit but its send epoch, and
--  waits the same way, at most ACK_WAITS_WITHOUT_PERMIT (64) per path; past
-+  waits the same way, at most ACK_WAITS_WITHOUT_PERMIT (64) per path, each
-+  for at most SHORT_ACK_WAIT (120 s), after which its stream is reset,
-+  freeing the epoch, and may count as a strike (liveness rules, below); a
-+  control frame's wait is bounded the same way; past
-   that its epoch is released at once and counted
-   (quic_data_event_ack_wait_released) and its stream is reset, so quinn
-   discards the unacknowledged packet with the epoch (the reset counts toward
-@@ -2399,7 +2409,10 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-   Dropping a send future resets its stream (Drop on Outgoing; quinn's own
-   drop would FINISH it, which the receiver reads as a stream that ended
-   early). A send dropped while waiting for acks after finish is not reset
--  and may still be delivered.
-+  and may still be delivered, except when its own deadline ended the wait
-+  (a stream's ack wait or total, SendDeadlines::ack_wait), and a one-packet
-+  Short or control frame whose background wait reaches SHORT_ACK_WAIT:
-+  those are reset (liveness rules, below).
-   Each locally reset stream leaves one Arc<Notify> in quinn's per-
-   connection `stopped` map until the connection closes (quinn 0.11.12:
-   stopped() registers it, and a local reset produces neither the Finished
-@@ -2742,31 +2755,102 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
-   → Ack wait (SendDeadlines::ack_wait): once a stream's end is sent, its
-     acknowledgement is awaited for at most its first age
-     (inbound_stream_age_limit(len): its length at 32 KiB/s, at least
--    5 min), or, on a node's sends (QuicPath::stream_deadlines), its length
--    at the credit floor at the path's round trip (credit_floor_rate, at
--    least 16 KiB/s) if that is longer, and at most the 2 h total. When a
--    stream send's deadline runs out after its end was sent (the ack wait,
-+    5 min), or, on a node's sends (QuicPath::stream_deadlines), the longer
-+    of that, the stream's length at the credit floor at the path's round
-+    trip (credit_floor_rate, at least 16 KiB/s), and the time the rest of
-+    the stream may take, read when the end is sent: at most its length
-+    (and MAX_WINDOW_BYTES) is left, going round-robin at a share of one in
-+    the streamed sends in flight, so the sends in flight (their permits)
-+    times that, at the floor (QuicPath::backlog_wait); and at most the 2 h
-+    total. Multi-packet Shorts (SendDeadlines::short) hold a permit and
-+    take the same backlog term. With many large sends in flight a wait
-+    can run to the 2 h total, so the expiry rule below can take up to
-+    that long to fire there. When
-+    a stream send's deadline runs out after its end was sent (the ack wait,
-     or the total), the send ends MaybeDelivered(TimedOut) and the stream is
-     reset, counted as an abort toward SEND_ABORT_LIMIT, freeing its permit
--    and send epoch. Residual, open (#6205, a gate before UDP removal): no
--    rule recycles a peer that acknowledges other traffic but not Stream
--    ends; only SEND_ABORT_LIMIT (4096 resets) does, as before this rule, so
--    such a peer can keep a path degraded for hours, its streamed sends
--    holding permits and epochs (up to all 48) for their ack waits. A rule
--    counting expiries in a row was removed: an acknowledged multi-packet
--    Short (which has an ack wait) reset it, and acknowledging one Stream
--    end in three defeated it. With UDP present the harm is performance on
--    that path. A Short or a send without an ack wait that ti
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +3/-0)
-```diff
-@@ -7927,6 +7927,9 @@ mod tests {
-         data.dark_episodes = (1078..1086).collect();
-         data.carried_dark_episodes = (1087..1095).collect();
-         data.ramp_share_pct = 1086;
-+        data.ack_wait_expired = (1095..1098).collect();
-+        data.stall_closes = (1098..1103).collect();
-+        data.stall_would_close = (1103..1108).collect();
-         let want: std::collections::BTreeMap<String, u64> =
-             snapshot.quic_data.keys().into_iter().collect();
-         assert!(want.values().all(|value| *value != 0));
-```
-
-**File**: `crates/core/src/transport/egress_cap.rs` (modified, +5/-0)
-```diff
-@@ -1080,6 +1080,11 @@ impl EgressCap {
-         Some(Self::new(total_bytes_per_sec as u64, time_source))
-     }
- 
-+    /// The cap's clock, in nanoseconds.
-+    pub(crate) fn now_nanos(&self) -> u64 {
-+        (self.clock)()
-+    }
-+
-     /// The cap's rate, in bytes per second.
-     pub(crate) fn rate_bytes_per_sec(&self) -> u64 {
-         self.rate_bytes_per_sec
-```
-
-**File**: `crates/core/src/transport/metrics.rs` (modified, +4/-1)
-```diff
-@@ -32,8 +32,11 @@ use crate::tracing::{TransferDirection, TransferEvent};
- 
- mod quic_data;
- pub use quic_data::QuicDataSnapshot;
-+#[cfg(test)]
-+pub(crate) use quic_data::STALL_CLOSE_LABELS;
- pub(crate) use quic_data::{
--    DarkEnd, PathGateWindow, PathLossWindow, QuicDataCounters, ShareSource, StreamsOpenPeak,
-+    AckWaitKind, DarkEnd, PathGateWindow, PathLossWindow, QuicDataCounters, ShareSource,
-+    StreamsOpenPeak,
- };
- 
- /// Global transport metrics instance.
-```
-
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +100/-0)
-```diff
-@@ -31,6 +31,9 @@
- //! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
- //! | `quic_carried_dark_episode_<label>` | the same, for the episodes of paths that carried data when the episode ended: a subset of `quic_dark_episode_<label>`, counted by the same decision |
- //! | `quic_dark_episode_<label>` | dark episodes on QUIC paths (`recycle::AckWatch`: packets outstanding, nothing acknowledged and nothing heard) by how they ended: `recovered_lt_5s`, `lt_10s`, `lt_30s`, `lt_120s`, `recovered_ge_120s`, `unrecovered` (the path closed, or nothing was outstanding any more), `cap_held` (the egress cap held this side's sends, so darkness could no longer be told), `closed_at_window` (the dark-path rule closed a path that carries data). A path that carries no data is never closed by that rule, so its episodes run to their end; read at the watch's 2 s ticks |
-+//! | `quic_ack_wait_expired_<label>` | sends whose wait for the acknowledgement of their end ran out and whose stream was reset, by kind: `stream` (a send with an ack wait: a Stream, or a Short past one packet), `short` (a one-packet Short, past its 120 s bound) or `control` (a control frame, bounded as a one-packet Short); only those that count as strikes (`path::StrikeCheck`: evidence the end went out and the peer is alive). An honest peer acknowledges an end within a few round trips, so this should be 0 on every honest path (`recycle::ACK_WAIT_EXPIRY_LIMIT` in `ACK_WAIT_EXPIRY_WINDOW` counts a would-close; the rule does not close a path yet) |
-+//! | `quic_stall_close_<label>` | paths the acknowledgement watch closed, by why: `not_acknowledging`, `dark`, `credit_starved`, `stream_credit_withheld`, `ack_waits_expired` (`recycle::Stall`) |
-+//! | `quic_stall_would_close_<label>` | times a rule that only observes would have closed a path, by the same labels; each count starts the rule's window afresh. Only `ack_waits_expired` observes today (`recycle::ACK_WAITS_EXPIRED_CLOSES` is false): it counts each time `ACK_WAIT_EXPIRY_LIMIT` strikes came within `ACK_WAIT_EXPIRY_WINDOW`, for calibrating the close from the field (#6205) |
- //! | `quic_send_resets`, `quic_path_ms` | sends a path reset on this side, and the time QUIC paths were up, shadow paths included, up to each path's last tick: resets per connection-hour is their ratio |
- //! | `quic_budget_bytes`, `quic_budget_charged_bytes`, `quic_budget_charged_peak_bytes` | the node's QUIC buffer budget, what its data paths' windows have grown above their floor grants now (the floor grants are each path's fixed charge, not the budget's, so a node with every path at the floor reports 0 and uploads nothing; gauges, not reset, uploaded when not 0), and the most charged at once in the period (`quic::budget`) |
- //! | `quic_staged_peak_pct` | the most any connection staged in the period (bytes read for streams whose header its reader had not taken yet) as a percentage of its staging cap (`quic::path::inbound::ConnStaging`); streams stopped at the cap are `quic_inbound_evicted_staged` |
-@@ -167,6 +170,35 @@ pub(crate) const GATE_MIN_VERDICTS: u64 = 20;
- /// queue: under 10%, under 50%, 50% or more.
- pub(crate) const GATE_QUEUE_LABELS: [&str; 3] = ["lt_10pct", "lt_50pct", "ge_50pct"];
- 
-+/// The labels of `quic_ack_wait_expired_<label>`: sends whose wait for the
-+/// acknowledgement of their end ran out (`recycle::AckWatch`'s expiry rule),
-+/// by kind: a send with an ack wait (a Stream, or a Short past one packet),
-+/// a one-packet Short, or a control frame (whose background wait is bounded
-+/// as a one-packet Short's).
-+pub(crate) const ACK_WAIT_EXPIRED_LABELS: [&str; 3] = ["stream", "short", "control"];
-+
-+/// What kind of send's ack wait ran out, for `quic_ack_wait_expired_<label>`.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) enum AckWaitKind {
-+    /// A send with an ack wait (`bounded::SendDeadlines::ack_wait`).
-+    Stream = 0,
-+    /// A one-packet Short, whose acknowledgement is waited for in the
-+    /// background up to its bound.
-+    Short = 1,
-+    /// A control frame, waited for as a one-packet Short.
-+    Control = 2,
-+}
-+
-+/// The labels of `quic_stall_close_<label>`: paths the acknowledgement watch
-+/// closed, by why (`recycle::Stall::label`, in its order).
-+pub(crate) const STALL_CLOSE_LABELS: [&str; 5] = [
-+    "not_acknowledging",
-+    "dark",
-+    "credit_starved",
-+    "stream_credit_withheld",
-+    "ack_waits_expired",
-+];
-+
- /// The labels of `quic_dark_episode_<label>`: dark episodes on QUIC paths
- /// (`recycle::AckWatch`: this side's packets outstanding, nothing
- /// acknowledged and nothing heard), by how they ended: the peer was heard
-@@ -457,6 +489,9 @@ pub(crate) struct QuicDataCounters {
-     /// Where this node's data share is read from, set when i
-```
-
-**File**: `crates/core/src/transport/quic/path.rs` (modified, +308/-16)
-```diff
-@@ -332,6 +332,10 @@ pub(crate) struct QuicPathLimits {
-     /// ([`staging_cap_without_meter`]). A metered path's follows its credit.
-     #[cfg(test)]
-     pub(crate) staging_cap: Option<usize>,
-+    /// The bound on a one-packet Short's background ack wait, in place of
-+    /// [`SHORT_ACK_WAIT`], for a test that cannot wait two minutes.
-+    #[cfg(test)]
-+    pub(crate) short_ack_wait: Option<Duration>,
-     /// While the flag is set, the receive side cancels the handle of the
-     /// next Stream it admits, before its announce, and clears the flag: a
-     /// test of how a stream cancelled that early ends.
-@@ -389,6 +393,8 @@ impl QuicPathLimits {
-         staging_cap: None,
-         #[cfg(test)]
-         cancel_next_admitted: None,
-+        #[cfg(test)]
-+        short_ack_wait: None,
-     };
- 
-     /// [`Self::DEFAULT`] for a path in shadow mode: control frames only.
-@@ -789,6 +795,13 @@ pub(crate) struct QuicPath {
-     /// Sends with data still to write, for the credit rule
-     /// (`recycle::CreditWatch`).
-     writers: Arc<recycle::Writers>,
-+    /// A sleep on the path's clock, for a stream's bounded background wait
-+    /// (`SHORT_ACK_WAIT`).
-+    sleeper: Sleeper,
-+    /// [`SHORT_ACK_WAIT`], or a test's.
-+    short_ack_wait: Duration,
-+    /// The path's clock, for judging expired ack waits ([`StrikeCheck`]).
-+    clock: Arc<dyn Fn() -> u64 + Send + Sync>,
-     /// Set once the path may send data: only then does the acknowledgement
-     /// watch's dark-path rule close it (`recycle::AckWatch::observing`).
-     carries_data: Arc<std::sync::atomic::AtomicBool>,
-@@ -972,6 +985,14 @@ impl QuicPath {
-         data: QuicDataSenders,
-         windows: Option<&Arc<super::budget::QuicBudget>>,
-     ) -> (Self, mpsc::Receiver<Bytes>) {
-+        let sleeper: Sleeper = {
-+            let time = time.clone();
-+            Arc::new(move |duration| time.sleep_cancelable(duration))
-+        };
-+        let clock: Arc<dyn Fn() -> u64 + Send + Sync> = {
-+            let time = time.clone();
-+            Arc::new(move || time.now_nanos())
-+        };
-         let stats = Arc::new(QuicPathStats::new(
-             limits
-                 .counters
-@@ -1105,6 +1126,12 @@ impl QuicPath {
-                 meter,
-                 stream_slots: Arc::new(tokio::sync::Semaphore::new(STREAMED_SEND_LIMIT as usize)),
-                 writers,
-+                sleeper,
-+                #[cfg(test)]
-+                short_ack_wait: limits.short_ack_wait.unwrap_or(SHORT_ACK_WAIT),
-+                #[cfg(not(test))]
-+                short_ack_wait: SHORT_ACK_WAIT,
-+                clock,
-                 carries_data,
-                 controls_opening: Arc::default(),
-                 send_data: AtomicU8::new(SEND_DATA_NEVER),
-@@ -1342,6 +1369,11 @@ impl QuicPath {
-     /// the credit rule's floor (`recycle::credit_floor_rate`, at least
-     /// 16 KiB/s), when that is longer than its first age, so an honest slow
-     /// path's stream is not reset while its acknowledgement is on the way.
-+    ///
-+    /// The time the rest of the stream may take is added when the end is
-+    /// sent ([`Outgoing::finish`], [`Self::backlog_wait`]): the streams in
-+    /// flight then, times the rest of this one (at most `len`), at the
-+    /// floor.
-     pub(crate) fn stream_deadlines(&self, len: u64) -> SendDeadlines {
-         let deadlines = SendDeadlines::stream(len).with_gap(self.receiver_gap());
-         let floor = recycle::credit_floor_rate(self.connection.inner().stats().path.rtt).max(1);
-@@ -1350,10 +1382,33 @@ impl QuicPath {
-             ack_wait: deadlines
-                 .ack_wait
-                 .map(|wait| wait.max(at_floor).min(deadlines.total)),
-+            ack_wait_covers_backlog: true,
-             ..deadlines
-         }
-     }
- 
-+    /// How long the rest of a stream of `len` bytes may take to go out, read
-+    /// when its end is sent: at most `len` (and at most the send window,
-+    /// `budget::MAX_WINDOW_BYTES` at its largest) is left of it, and quinn
-+    /// shares the link round-robin among the streams with data, so it goes
-+    /// at a share of one in the streamed sends in flight (their permits).
-+    /// That is the sends in flight times the rest, at the credit floor at
-+    /// the path's round trip.
-+    fn backlog_wait(&self, len: u64) -> Arc<dyn Fn() -> Duration + Send + Sync> {
-+        let (slots, connection) = (self.stream_slots.clone(), self.connection.inner().clone());
-+        Arc::new(move || {
-+            let in_flight = (STREAMED_SEND_LIMIT as u64)
-+                .saturating_sub(slots.available_permits() as u64)
-+                .max(1);
-+            let floor = recycle::credit_floor_rate(connection.stats().path.rtt).max(1);
-+            Duration::from_secs(
-+                in_flight
-+                    .saturating_mul(len.min(super::budget::MAX_WINDOW_BYTES))
-+                    .div_ceil(floor),
-+            )
-+        })
-+    }
-+
-     /// The connection, for tests that write raw streams
-```
-
-**File**: `crates/core/src/transport/quic/path/bounded.rs` (modified, +65/-2)
-```diff
-@@ -79,6 +79,10 @@ pub(crate) struct SendDeadlines {
-     /// abort (`Outgoing`'s drop), so a peer that never acknowledges a
-     /// stream's last packet cannot hold its permit and send epoch for long.
-     pub(crate) ack_wait: Option<Duration>,
-+    /// The ack wait also covers the backlog ahead of the stream's end, read
-+    /// when the end is sent ([`SendProgress::mark_finished_behind`]): a
-+    /// node's sends (`QuicPath::stream_deadlines`).
-+    pub(crate) ack_wait_covers_backlog: bool,
- }
- 
- impl SendDeadlines {
-@@ -90,6 +94,7 @@ impl SendDeadlines {
-             source_gap: None,
-             total: timeout,
-             ack_wait: None,
-+            ack_wait_covers_backlog: false,
-         }
-     }
- 
-@@ -104,9 +109,15 @@ impl SendDeadlines {
-                 source_gap: None,
-                 total: SHORT_TOTAL_TIMEOUT,
-                 ack_wait: None,
-+                ack_wait_covers_backlog: false,
-             }
-         } else {
--            Self::stream(len)
-+            // It holds a permit and shares the link as a stream does, so its
-+            // ack wait covers the backlog ahead of its end too.
-+            Self {
-+                ack_wait_covers_backlog: true,
-+                ..Self::stream(len)
+@@ -746,22 +746,51 @@ fn ready_ack(session: &Session, attempt: u32, caps: u32) {
+ /// The driver acts on every (own bit, peer bit): what the path accepts follows
+ /// this node's bit from the moment the path exists, its `Ready` says so, and it
+ /// may send only once the peer's frame has the bit too. Mode `shadow` sets no bit
+-/// at any percentage, and neither does `prefer` at this release's share.
++/// at any percentage. With no `quic-data-percent`, `prefer` takes the release's
++/// share: 0 with no ramp start (the emergency-stop build), and with one set the
++/// ramp's 5% before T0, so the bit then depends on the pair's bucket.
+ #[test]
+ fn a_path_follows_the_data_bits() {
+     use crate::transport::quic::control::{QuicControl, caps};
+     use crate::transport::quic::path::QuicInboundOutcome;
++    use crate::transport::quic::upgrade::policy::RAMP_START_IS_SET;
++    use crate::transport::quic::upgrade::slice::bucket;
+     bounded(|| async move {
+-        let _seed = GlobalRng::seed_guard(SEED);
+-        for (mode, percent, peer_caps, accepts, sends) in [
+-            ("prefer", Some("100"), caps::DATA, true, true),
+-            ("prefer", Some("100"), 0, true, false),
+-            ("prefer", Some("0"), caps::DATA, false, false),
+-            ("shadow", Some("100"), caps::DATA, false, false),
+-            ("prefer", None, caps::DATA, false, false),
++        // (seed, the pair's bucket under it when the row depends on it, mode,
++        // quic-data-percent, peer caps, accepts, sends). Each row seeds its own
++        // keys, so its bucket does not depend on the rows before it.
++        for (seed, want_bucket, mode, percent, peer_caps, accepts, sends) in [
++            (SEED, None, "prefer", Some("100"), caps::DATA, true, true),
++            (SEED, None, "prefer", Some("100"), 0, true, false),
++            (SEED, None, "prefer", Some("0"), caps::DATA, false, false),
++            (SEED, None, "shadow", Some("100"), caps::DATA, false, false),
++            // No quic-data-percent: the release's share. This harness's virtual
++            // clock reads 1970, before any T0, and a time before T0 reads as
++            // T0, so with a ramp start the share is 5%. A pair with bucket 51
++            // is outside it, and one with bucket 2 is inside it. With no ramp
++            // start the share is 0 and neither gets the bit.
++            (SEED, Some(51), "prefer", None, caps::DATA, false, false),
++            (
++                4,
++                Some(2),
++                "prefer",
++                None,
++                caps::DATA,
++                RAMP_START_IS_SET,
++                RAMP_START_IS_SET,
++            ),
+         ] {
+-            let case = format!("{mode} {percent:?}, peer {peer_caps}");
++            let _seed = GlobalRng::seed_guard(seed);
++            let case = format!("seed {seed:#x}, {mode} {percent:?}, peer {peer_caps}");
+             let h = Harness::server_with("quic-driver-bits", mode, percent).await;
++            if let Some(want) = want_bucket {
++                assert_eq!(
++                    bucket(h.pair.a_keys.public(), h.pair.b_keys.public()),
++                    want,
++                    "{case}: the seeded pair's bucket changed; pick a seed whose \
++                     bucket is on the same side of 5%"
++                );
 +            }
-         }
-     }
- 
-@@ -129,6 +140,7 @@ impl SendDeadlines {
-             source_gap: None,
-             total,
-             ack_wait: Some(inbound_stream_age_limit(len).min(total)),
-+            ack_wait_covers_backlog: false,
-         }
-     }
- 
-@@ -266,6 +278,14 @@ struct ProgressState {
-     finished_at: AtomicU64,
-     /// [`SendProgress::ack_wait_ended`].
-     ack_wait_ended: AtomicBool,
-+    /// [`SendProgress::ack_wait_due`].
-+    ack_wait_due: AtomicU64,
-+    /// The ack wait's deadline once the end is sent, recorded each time the
-+    /// loop arms; zero before ([`SendProgress::ack_wait_left`]).
-+    ack_wait_deadline: AtomicU64,
-+    /// The backlog ahead of the end when it was sent, in nanoseconds
-+    /// ([`SendProgress::mark_finished_behind`]).
-+    backlog_wait: AtomicU64,
- }
- 
- impl SendProgress {
-@@ -286,6 +306,9 @@ impl SendProgress {
-             refused: AtomicBool::new(false),
-             finished_at: AtomicU64::new(0),
-             ack_wait_ended: AtomicBool::new(false),
-+            ack_wait_due: AtomicU64::new(0),
-+            ack_wait_deadline: AtomicU64::new(0),
-+            backlog_wait: AtomicU64::new(0),
-         }))
-     }
- 
-@@ -305,6 +328,9 @@ impl SendProgress {
-             refused: AtomicBool::new(false),
-             finished_at: AtomicU64::new(0),
-             ack_wait_ended: AtomicBool::new(false),
-+            ack_wait_due: AtomicU64::new(0),
-+            ack_wait_deadline: AtomicU64::new(0),
-+            backlog_wait: AtomicU64::new(0),
-         }))
-     }
- 
-@@ -403,7 +429,16 @@ impl SendProgress {
-     }
- 
-     /// Every byte was written and the end of the stream queued.
-+    #[cfg(test)]
-     pub(super) fn mark_finished(&self) {
-+        self.mark_finished_behind(Duration::ZERO);
-+    }
-+
-+    /// [`Self::mark_finished`], with `backlog`: how long the bytes still
-+    /// ahead of the stream's end may take to go out, which extends its ack
-+    /// wait ([`SendDeadlines::ack_wait`]) to at least that, within its total.
-+    pub(super) fn mark_finished_behind(&self, backlog: Duration) {
-+        self.0.backlog_wait.store(nanos(backlog), Ordering::Release);
-         self.0.finished_at.store((self.0.now)(), Ordering::Release);
-         self.0.stage.store(STAGE_FINISHED, Ordering::Release);
-         // The loop re-arms at the ack wait's end, which may come before the
-@@ -419,6 +454,20 @@ impl SendProgress {
-         self.0.ack_wait_ended.load(Ordering::Acquire)
-     }
- 
-+    /// When the ack wait that ended was due, in nanoseconds on the send's
-+    /// clock ([`Self::ack_wait_ended`]).
-+    pub(super) fn ack_wait_due(&self) -> u64 {
-+        self.0.ack_wait_due.load(Ordering::Acquire)
-+    }
-+
-+    /// What is left of the ack wait of a send whose end was sent, if it has
-+    /// one: from now to its deadline, at most `deadlines.total` from the
-+    /// start (recorded by [`bounded_send`]).
-+    pub(super) fn ack_wait_left(&self) -> Option<Duration> {
-+        let deadline = self.0.ack_wait_deadline.load(Ordering::Acquire);
-+        (deadline != 0).then(|| Duration::from_nanos(deadline.saturating_sub((self.0.now)())))
-+    }
-+
-     fn stage(&self) -> u8 {
-         self.0.stage.load(Ordering::Acquire)
-     }
-@@ -461,10 +510,15 @@ impl SendProgress {
-             }
-             _ => (
-                 deadlines.ack_wait.map_or(total, |wait| {
-+                    let backlog = if deadlines.ack_wait_covers_backlog {
-+                        self.0.backlog_wait.load(Ordering::Acquire)
-+                    } else {
-+                        0
-+                    };
-                     self.0
-                         .finished_at
-                         .load(Ordering::Acquire)
--                        .saturating_add(nanos(wait))
-+               
+             let (session, inbox) = h.session();
+             let attempt = offered(&h, &session);
+             let up = path_up(&h, &session, inbox);
 ```
 
-**File**: `crates/core/src/transport/quic/path/route.rs` (modified, +6/-4)
+**File**: `crates/core/src/transport/quic/upgrade/policy.rs` (modified, +19/-8)
 ```diff
-@@ -182,10 +182,12 @@ pub(crate) fn next_step(kind: SendKind, outcome: &BoundedSend) -> (NextStep, Qui
- /// count: a path whose sends nothing acknowledges is closed by its
- /// acknowledgement watch's dark-path rule (`recycle::AckWatch`); a peer that
- /// acknowledges other traffic but never a stream's end has the stream reset
--/// at its ack wait (`bounded::SendDeadlines::ack_wait`), counted as an abort
--/// toward `recycle::SEND_ABORT_LIMIT`; and a peer that withholds its
--/// stream limit is closed by the stream-credit rule
--/// (`recycle::StreamCreditWatch`).
-+/// at its ack wait (`bounded::SendDeadlines::ack_wait`), and three strikes
-+/// within 30 min are counted as a would-close
-+/// (`recycle::ACK_WAIT_EXPIRY_LIMIT`); that rule only observes for now
-+/// (`recycle::ACK_WAITS_EXPIRED_CLOSES`), so such a peer is bounded by
-+/// `recycle::SEND_ABORT_LIMIT`; and a peer that withholds its stream limit is
-+/// closed by the stream-credit rule (`recycle::StreamCreditWatch`).
- fn timed_out(outcome: &BoundedSend) -> bool {
-     match outcome {
-         BoundedSend::MaybeDelivered(MaybeDelivered::TimedOut)
+@@ -35,11 +35,12 @@ use crate::transport::quic::breaker::{BreakerOutcome, Verdict};
+ use crate::transport::quic::control::caps;
+ use crate::transport::quic::liveness::{QuicAvailability, QuicAvailabilityWatch};
+ 
+-/// The share of pairs, in percent, that carry data on QUIC in this release
+-/// when it sets no ramp ([`QUIC_DATA_RAMP_START`]), for a node in `prefer`
+-/// mode: a fixed step (0, then 5 for the first data release). Both sides must
+-/// set their bit, so a pair moves only once both run a release that puts it in
+-/// the slice. `quic-data-percent` replaces it on one node.
++/// The share of pairs, in percent, that carry data on QUIC for a node in
++/// `prefer` mode. It applies only to a build with no ramp start
++/// ([`QUIC_DATA_RAMP_START`] = `None`), which is the emergency-stop build; while
++/// the ramp start is set, the ramp's share applies and this is not read. Both
++/// sides must set their bit, so a pair moves only once both run a release that
++/// puts it in the slice. `quic-data-percent` replaces it on one node.
+ pub(in crate::transport) const QUIC_DATA_PERCENT: u8 = 0;
+ 
+ /// Whether this node, as configured, may carry data on QUIC: `transport-quic`
+@@ -74,7 +75,13 @@ fn may_carry_data_with(config: &NetworkApiConfig, ramp_start: Option<u64>) -> bo
+ /// starts later. `quic-data-percent` replaces the ramp on one node.
+ /// `scripts/check_quic_data_ramp_t0.sh` reads this line, so keep it on one line
+ /// in this form.
+-pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = None;
++// 2026-11-16 02:30:00 UTC: the ramp start of the 0.2.158 release (#6224).
++pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = Some(1_794_796_200);
++
++/// Whether this build sets a ramp start: for tests outside the transport
++/// module whose expectations change once [`QUIC_DATA_RAMP_START`] is set.
++#[cfg(test)]
++pub(crate) const RAMP_START_IS_SET: bool = QUIC_DATA_RAMP_START.is_some();
+ 
+ /// The release whose cut must come within 3 h of [`QUIC_DATA_RAMP_START`], as
+ /// `"X.Y.Z"`, or `None`. Set together with the ramp start, in the same reviewed
+@@ -86,7 +93,7 @@ pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = None;
+ /// ship the ramp unchecked (before this release, or skipping it) is refused. An
+ /// emergency stop that sets the start back to `None` leaves this as it is.
+ #[cfg_attr(not(test), allow(dead_code))]
+-pub(in crate::transport) const QUIC_DATA_RAMP_RELEASE: Option<&str> = None;
++pub(in crate::transport) const QUIC_DATA_RAMP_RELEASE: Option<&str> = Some("0.2.158");
+ 
+ /// Whether this build reads data from a QUIC path. It does: `PeerConnection::recv`
+ /// drains the session's data channels, so a node that says it accepts data delivers
+@@ -949,7 +956,11 @@ mod tests {
+                 policy.own_caps_with(policy.share(), &local, &peer, now)
+             );
+         }
+-        assert_eq!(caps_with("prefer", Some("lots".to_string())), 0);
++        // An unreadable quic-data-percent reads as unset: the release's share.
++        assert_eq!(
++            caps_with("prefer", Some("lots".to_string())),
++            caps_with("prefer", None)
++        );
+         assert_eq!(
+             caps_with("prefer", Some("100".to_string())),
+             caps::DATA | caps::RECYCLES
+```
+
+**File**: `crates/core/src/transport/quic/upgrade/sim_trace.rs` (modified, +7/-1)
+```diff
+@@ -243,12 +243,18 @@ impl NodeTrace {
+     }
+ 
+     pub(crate) fn data_ramp_start(&self) -> Option<i64> {
+-        if self.trace.data.no_ramp.lock().contains(&self.addr) {
++        if self.runs_without_ramp() {
+             return None;
+         }
+         *self.trace.data.ramp_start.lock()
+     }
+ 
++    /// Whether this node runs as the emergency-stop release
++    /// ([`QuicUpgradeTrace::run_without_ramp`]).
++    pub(crate) fn runs_without_ramp(&self) -> bool {
++        self.trace.data.no_ramp.lock().contains(&self.addr)
++    }
++
+     pub(crate) fn refuses_data_while_advertising(&self) -> bool {
+         self.trace.data.refuse_data.lock().contains(&self.addr)
+     }
+```
+
+**File**: `docs/RELEASING.md` (modified, +21/-12)
+```diff
+@@ -491,13 +491,16 @@ Current wire-gated floors:
+   and `ResponseNative` at indices 5 and 6 of
+   `operations/connect/wire.rs::ConnectMsgWire`, #5940).
+ 
+-  Set to **`(0, 2, 158)`**, the release intended to first ship the decoder,
++  Set to **`(0, 2, 159)`**, the release intended to first ship the decoder,
+   and guarded by `QUIC_NATIVE_SHIPPED_IN`, currently `None`, checked by
+   `p2p_protoc::quic_native_floor_tests::quic_native_floor_tracks_the_shipping_release`.
+-  0.2.157 carries the decoder but was cut with the floor raised past it, so
+-  it never emits the native variants. When the 0.2.158 bump fails that test,
+-  set the marker to the literal `Some((0, 2, 158))` if the release carries
+-  the decoder, otherwise raise the floor. Same failure mode as the
++  0.2.157 and 0.2.158 carry the decoder but were cut with the floor raised
++  past them, so they never emit the native variants. 0.2.158 is the QUIC data
++  ramp release (#6224), which raised the floor so that the native offer does
++  not start in the same release as the data ramp. When the 0.2.159 bump fails
++  that test, set the marker to the literal `Some((0, 2, 159))` if the release
++  carries the decoder and should start the native offer, otherwise raise the
++  floor. Same failure mode as the
+   application-message floors above: a peer at
+   or above the floor without the decoder closes the connection on the variant,
+   so bias high. Only `connect::wire::encode_for_peer`, at the one peer-bound
+@@ -615,13 +618,19 @@ Current wire-gated floors:
+   can turn a pair's bit on a second time and recycle it again.
+ 
+   Emergency stop: a parked release, built and soaked before the ramp release is
+-  cut, is published through the normal auto-update stagger (0 to 4 h). It makes
+-  two changes, and needs both. It sets the default mode to off, which turns QUIC
+-  off on every node that did not set `transport-quic` itself (the default is
+-  read, never written to `config.toml`). It also sets `QUIC_DATA_RAMP_START`
+-  back to `None`, which gives every node that set `transport-quic = "prefer"`
+-  itself (testers, possibly our own gateways) a share of 0, so none of its pairs
+-  carries data; only a node that also set `quic-data-percent` keeps a share.
++  cut, is published through the normal auto-update stagger (0 to 4 h). It
++  restores the pre-ramp state with two changes, and needs both. It sets
++  `QUIC_DATA_RAMP_START` back to `None`, which gives every `prefer` node a
++  share of 0, so none of its pairs carries data; only a node that set
++  `quic-data-percent` keeps a share. It also sets the default mode back to
++  0.2.156's: shadow on Linux and macOS, off on Windows. An emergency release
++  should only go back to states the field has run, and Windows with QUIC off
++  is what every release through 0.2.156 ran. So a Linux or macOS node that did not set
++  `transport-quic` keeps its endpoint with shadow paths (off would tear down
++  every endpoint mid-incident), and a Windows node turns QUIC off (the default
++  is read, never written to `config.toml`). A node that set
++  `transport-quic = "prefer"` itself stays in prefer at a share of 0, which
++  acts as shadow on the wire.
+   A node takes either change only when it restarts into the release (an
+   auto-update restarts it, 0 to 4 h after publish). Until then its paths with
+   data keep carrying data: a path with data is never rechecked.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2976,7 +2131,7 @@ Observed empirical fixes and code patches:
 - **PR #6230** (2026-11-14): build: release 0.2.157 (@sanity)
 - **PR #6228** (2026-11-13): chore(release): raise the QUIC-native wire floor to 0.2.158 (@sanity)
 - **PR #6225** (2026-11-13): docs(config): --transport-quic help says prefer is the default (@sanity)
-- **PR #6223** (2026-11-13): fix(test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers (@sanity)
+- **PR #6224** (2026-11-15): feat(transport): start the QUIC data ramp in 0.2.158 (@sanity)
 
 ---
 
@@ -2996,61 +2151,57 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache)
+## X. transport): start the QUIC data ramp in 0.2.158
 
 **RULE**:
-When implementing operations in `.github/scripts/check_cache_warm_parity.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66b4a932`: ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `effd674b`: transport): start the QUIC data ramp in 0.2.158. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/check_cache_warm_parity.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-6. the warm job runs on the same kind of runner as its twin: a Ubicloud
-   runner with the same label suffix (architecture, OS variant), or, for a
-   GitHub-hosted twin (macOS), the identical label, since GitHub's cache
-   backend is only written by GitHub-hosted runners; its display name starts with
-It also DISCOVERS which ci.yml jobs need a twin: a job (Ubicloud or macOS) whose
-    """A job that restores a cache it can never write itself.
-    own. The runner may be Ubicloud or GitHub-hosted (macOS): each has its own
-    cache backend, so the warm job must run on the same kind of runner (see the
-    runner check in ``check``).
-    # windows_unit has the same shape (#6236) and no warm twin yet; widen this
-    # to GitHub-hosted runners generally when one is added.
-    ro = _runs_on(job)
-    if "ubicloud" not in ro and not ro.startswith("macos-"):
-            f"{ci_name}: no job looks like it needs a warm twin (Ubicloud or macOS runner, "
-                f"a Ubicloud or macOS runner. Delete the warm job, or restore the twin's shape."
-        if "ubicloud" not in _runs_on(ci_job):
-            # GitHub-hosted twin: its cache lives in GitHub's backend, which
-            # only a GitHub
+sends its data on the path ("QUIC send route" below). The tree sets the ramp
+start for 0.2.158 (#6224), so `prefer` nodes, every Linux, macOS and Windows node
+that did not set the key, carry data with the ramp's share, and 0.2.158's release
+notes say so. With no ramp start (the emergency-stop build) and no
+bit, which stays 0. Off: no endpoint, no QUIC ingress, nothing
+release it runs, so a default-off release is the kill switch for QUIC as a
+whole. Stopping only the data ramp is smaller: `QUIC_DATA_RAMP_START = None`
+with the defaults back to 0.2.156's, shadow on Linux and macOS and off on
+Windows (RELEASING.md, "Emergency stop"), which keeps Linux and macOS
+endpoints and shadow paths up. Neither reaches
+  no ramp, share 0). The start is set for 0.2.158 (#6224, 2026-11-16 02:30 UTC),
+  in its own reviewed PR at the planned publish time, and left set: past 24 h it
+  reads 100%, the steady state. Only an emergency stop sets it back to `None`. A node whose clock reads before the start gets
+  on every other path (shadow paths, and pairs outside the ramp's share) it
+  only counts, so the field shows how long real dark spells last. A spell is read
+  threshold (the 10 s window) was not re
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-6. the warm job runs on a Ubicloud runner with the same label suffix
-   (architecture, OS variant), and its display name starts with
-It also DISCOVERS which ci.yml jobs need a twin: a Ubicloud job whose
-    """A Ubicloud job that restores a cache it can never write itself.
-    own; a GitHub-hosted job uses a different cache backend, which a Ubicloud
-    warm job could not fill.
-    if "ubicloud" not in _runs_on(job):
-            f"{ci_name}: no job looks like it needs a warm twin (Ubicloud, "
-                f"Ubicloud. Delete the warm job, or restore the twin's shape."
-        if "ubicloud" not in warm_ro:
-                f"{warm_name}: job `{job_id}` runs on `{warm_ro}`. Ubicloud "
-                f"serves its own cache backend, so an entry saved from any other "
-                f"runner is invisible to the Ubicloud PR job. Use a "
-                f"`ubicloud-standard-*` label."
+sends its data on the path ("QUIC send route" below). With no ramp start and no
+bit, which stays 0. The release that sets the ramp start must say in its notes that
+`prefer` nodes, every Linux, macOS and Windows node that did not set the key, start
+carrying data. Off: no endpoint, no QUIC ingress, nothing
+release it runs, so a default-off release is the kill switch. It does not reach
+  no ramp, share 0). The start is `None` in tree and set in its own reviewed PR to
+  the planned publish time, just before the release's soak, and left set: past 24 h
+  it reads 100%, the steady state. A node whose clock reads before the start gets
+  on every other path (all of them while QUIC_DATA_PERCENT is 0) it only
+  counts, so the field shows how long real dark spells last. A spell is read
+  threshold (the 10 s window) is to be revisited from these numbers before the
+  data ramp passes 5%.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66b4a932` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `effd674b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
