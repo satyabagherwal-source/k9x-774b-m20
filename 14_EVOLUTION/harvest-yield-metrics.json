@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T22:55:47.222Z",
-  "total_cycles_completed": 9947,
-  "total_learnings_persisted": 9947,
-  "total_rules_promoted": 9543,
+  "last_updated": "2026-11-16T23:03:47.279Z",
+  "total_cycles_completed": 9951,
+  "total_learnings_persisted": 9951,
+  "total_rules_promoted": 9545,
   "history": [
-    {
-      "timestamp": "2026-11-15T19:12:00.650Z",
-      "repository": "pyannote/speaker-diarization-3.1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T19:32:03.477Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T19:32:16.466Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T19:45:25.222Z",
-      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T19:45:45.260Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-16T22:55:47.222Z",
       "repository": "moby/buildkit",
       "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:03:35.920Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:03:38.624Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:03:44.035Z",
+      "repository": "sozercan/kaset",
+      "learningId": "learn-github-sozercan-kaset",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T23:03:47.279Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

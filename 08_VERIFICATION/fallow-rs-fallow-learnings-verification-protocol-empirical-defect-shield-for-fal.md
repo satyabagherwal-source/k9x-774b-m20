@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T02:58:58.409Z",
+  "timestamp": "2026-11-16T23:03:50.884Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-fallow-rs-fallow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fallow-rs-fallow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T02:58:58.409Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-16T23:03:50.884Z`  
 > **Learning ID**: `LEARN-EVO-fallow-rs-fallow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `b5123420`  
+> **Source Version**: `22c832f6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T02:55:36.454Z  
+> **Timestamp**: 2026-11-16T23:03:38.077Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T02:55:36.335Z  
+> **Harvest Timestamp**: 2026-11-16T23:03:38.070Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5366 stars
+- **Stars / Engagement**: 5374 stars
 
 ---
 
@@ -1475,11 +1475,11 @@ fn format_finding(finding: &Finding<'_>) -> String {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4605** (2026-11-15): **ci: CodSpeed fast simulation builds stop with exit code 143**
-  *Symptoms*: ## Problem  Since 2026-11-14, many "CodSpeed fast simulation" jobs in the Benchmarks workflow fail on pull requests and on `main`, before any benchmark runs.  - The step "Build benchmark shard" (`cargo codspeed build`) stops with `Process completed with exit code 143`, after 5 to 8 minutes. The job timeout is 30 minutes, and the step has no timeout of its own. - Other jobs of the same matrix stay queued or running until the 30-minute job timeout cancels them. - A rerun of a failed job often fails again in the same way.  Examples:  - `main` push runs on 2026-11-14: one run with 1 failure and 4 cancelled jobs of 12, one run with 7 of 7 cancelled, one run with 2 failures and 4 cancelled jobs of 6. - Pull request runs: https://github.com/fallow-rs/fallow/actions/runs/43601936478 (exit code 143 again on a rerun of "LSP save-to-publish"), https://github.com/fallow-rs/fallow/actions/runs/43604188088.  These jobs are not required checks, but they keep each pull request in the `UNSTABLE` state, and a `ci:perf` pull request gets no benchmark result.  ## Proposal  - Find what sends SIGTERM to the build step. Possible causes: memory pressure on the `ubuntu-24.04` runner during the `cargo codspeed build`, or runner shutdown. - If memory is the cause, limit `CARGO_BUILD_JOBS` for the build step, or build with fewer codegen units. - Count a job that hits the timeout before its build starts separately from a benchmark failure.  ## Acceptance  - Over one day of pull request and `main` runs, t
+- **Issue #4613** (2026-11-16): **mutation: inherited VITEST_MAX_WORKERS overrides the Vitest companion's maxWorkers: 1**
+  *Symptoms*: ## Summary  The Vitest companion that `fallow mutation` spawns calls `createVitest` with `fileParallelism: false` and `maxWorkers: 1`. Vitest, however, applies `process.env.VITEST_MAX_WORKERS` after the resolved config options (`resolveConfig` in `vitest/dist/chunks/index.*.js`):  ```js if (process.env.VITEST_MAX_WORKERS) {   resolved.maxWorkers = Number.parseInt(process.env.VITEST_MAX_WORKERS);   resolved.providedOptions.maxWorkers = true; } ```  So when `VITEST_MAX_WORKERS` is set in the shell that runs fallow, every companion inherits it and starts that many Vitest workers instead of one. With the default `--concurrency` (half the logical cores) this multiplies: on a 32-thread machine with `VITEST_MAX_WORKERS=4` that is 16 companions x 4 workers = 64 Vitest workers, and on a real project memory use climbs to tens of GB.  ## Versions  - fallow 3.41.0 - vitest 5.0.5 - Node v24.22.2 - Linux x64  ## Reproduction  ```sh mkdir /tmp/repro && cd /tmp/repro npm init -y npm i -D vitest@5.0.5 fallow@3.41.0 ```  `package.json`: add `"type": "module"` and `"scripts": { "test": "vitest run" }`.  `.fallowrc.json`:  ```json {} ```  Six modules `src/m1.js` .. `src/m6.js` (`N` = 1..6):  ```js export function fN(a, b) {   if (a > b) return a - b + N;   return a + b * N; } ```  Six tests `test/m1.test.js` .. `test/m6.test.js`, each logging the Vitest pool id it runs in:  ```js import { appendFileSync } from "node:fs"; import { expect, test } from "vitest"; import { fN } from "../src/mN.js";  
 
-- **Issue #4585** (2026-11-14): **migrate from knip: production markers on ignoreDependencies and project, and named plugin configs, are lost**
-  *Symptoms*: ### What happened?  `fallow migrate` from a knip config loses three settings. Two of them only get a generic warning, and one gets a warning that gives the wrong advice:  1. **The production marker on `ignoreDependencies` is copied literally.** knip's `"left-pad!"` becomes `"left-pad!"` in Fallow. Fallow reads it as a package name, so the entry never matches. On a real repository, the migrated config then printed "ignoreDependencies entry 'ai!' hid no dependency finding in this run, so it has no effect" for each such entry. 2. **Production exclusions in `project` are dropped.** knip's `"!scripts/**!"` (exclude from production mode) only gets "[knip] `project`: Fallow auto-discovers project files". On a real repository with `!.agents/**!`, `!other/**!`, `!tests/**!` and similar exclusions, `fallow dead-code --production` with the migrated config reported 99 unused files and 56 unused exports, nearly all inside those excluded trees. knip's production run on the same tree reported none. 3. **A plugin section that names non-default config files is called redundant.** knip's `"playwright": { "config": ["playwright.e2e.config.ts"] }` gets "plugin config `playwright` is auto-detected by fallow's built-in plugins (suggestion: remove this section; fallow detects framework config automatically)". But the Playwright plugin reads only `playwright.config.{ts,js}` (`CONFIG_PATTERNS` in `crates/core/src/plugins/playwright.rs`), so a project with named configs loses them. Fallow also has no 
+- **Issue #4611** (2026-11-16): **security: resolved local request() and controller.merge() misclassified as SSRF/prototype-pollution sinks**
+  *Symptoms*: Reproduced with npm `fallow@3.43.0` on Linux x64 / Node 26.13.0. The samples below are parsed only, never executed.  Create a private module package with `index.ts` and:  ```json {"entry":["index.ts"],"security":{"categories":{"include":["ssrf","prototype-pollution"]}}} ```  ```ts function request(lines: number): number { return lines + 1; } const lines = Number("20"); const controller = {   merge(action: string, branch: { name: string }): string {     return `${action} ${branch.name}`;   } }; const branch = { name: "feature" }; console.log(request(lines), controller.merge("merge", branch)); ```  Run `fallow security --format json`.  Actual: - `request(lines)`: `ssrf`, CWE-918, “Non-literal URL passed to request()”; URL shape is `dynamic-origin`. - `controller.merge("merge", branch)`: `prototype-pollution`, CWE-1321, described as “a recursive merge”.  Expected: neither candidate. Both callees are declared locally and have trivial inspectable bodies: numeric addition and string interpolation. There is no network operation, URL, object write, or recursive merge.  The name-only fallback is useful for unresolved external callees, but should not override a resolved, unrelated local binding. In a desktop application this also flags Git branch operations named `merge` and local request callbacks. This differs from #1137: these are not URL sinks at all. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1496,984 +1496,1309 @@ fn format_finding(finding: &Finding<'_>) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a3fbe65` (2026-11-14)
-**Commit Message**: fix(audit): keep a clone inherited when lines above one copy are rewritten (#4593)
+### Incident Patch 1: `22c832f6` (2026-11-16)
+**Commit Message**: fix(security): skip calls of inert local functions as name-only sinks (#4641)
 
-The new-only duplication check maps each head copy of a clone group back
-to its base lines and keeps the group inherited when the copies lie
-inside one base clone group. When the first or last line of a copy was a
-rewritten line that replaced several base lines, the mapped range grew to
-the far end of the replaced lines. The range then fell outside the base
-copy, and the group was reported as introduced.
+* fix(security): skip calls of inert local functions as name-only sinks
 
-This happened for example when a change renamed one copy and removed an
-import line above the other copy. The clone in that copy then started on
-the rewritten line, and `--gate new-only` failed on duplication that the
-change did not write.
+Some catalogue rows match a callee by name only, for example `request`
+for `ssrf` and `*.merge` for `prototype-pollution`. A call of a function
+that the module declares itself matched these rows, also when the body
+cannot reach any library.
 
-An added line at the start of a range now maps to the last base line of
-its block, and an added line at the end maps to the first one. These are
-the replaced lines next to the unchanged lines of the copy. A range that
-starts and ends in one block still maps to every removed line.
+The extractor now records a local function as inert when its body and
+its parameter defaults run no call, no `new`, no tagged template, no
+`import()` and no `delete`, and write no member. This covers function
+declarations, `const` bindings of function and arrow expressions, and
+the inline methods of an object literal. A call of an inert local
+function or method is not captured as a sink. A local function that runs
+a call keeps the name match, because it can forward its argument to the
+library.
 
-The drift harness seed of the failing case is in the regression file, so
-each harness run replays it.
+Two fixtures used empty local stubs for a logger and for
+`Handlebars.SafeString`. The stubs now run a call, so they keep modelling
+a library.
 
-Closes #4580
+The cached sink sites change, so `CACHE_VERSION` goes to 445.
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/fix-audit-clone-attribution-on-rename.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+### Fixed
-+
-+- **`fallow audit` no longer reports an old clone group as introduced when the change rewrites the lines above one copy.**
-+  The audit maps each head copy of a clone back to its base lines. When the
-+  first or last line of a copy was a rewritten line that replaced several base
-+  lines, the mapped range grew to the far end of the replaced lines and fell
-+  outside the base clone. A rename of the other copy, together with fewer
-+  import lines above this copy, could then fail `--gate new-only` on
-+  duplication that the change did not write. The rewritten edge line now maps
-+  to the replaced base line next to the unchanged lines of the copy.
-+  (Closes [#4580](https://github.com/fallow-rs/fallow/issues/4580))
-```
-
-**File**: `crates/api/src/audit_run/clone_containment.rs` (modified, +24/-0)
-```diff
-@@ -212,6 +212,30 @@ mod tests {
-         assert!(keys.is_empty());
-     }
- 
-+    /// The change renames one copy and replaces the three lines above the
-+    /// other copy with two. The second copy moves up one line, and its clone
-+    /// starts on a replaced line, which holds only the clone's first token
-+    /// (issue #4580).
-+    #[test]
-+    fn renamed_copy_with_a_rewritten_first_line_in_the_other_copy_is_contained() {
-+        let diff = DiffIndex::from_unified_diff(
-+            "diff --git a/src/a.js b/src/r.js\nsimilarity index 100%\nrename from src/a.js\nrename to src/r.js\ndiff --git a/src/b.js b/src/b.js\n--- a/src/b.js\n+++ b/src/b.js\n@@ -1,3 +1,2 @@\n-import { a0 } from './a.js';\n-import { c0 } from './c.js';\n-export const b0 = a0 + c0;\n+import { a0 } from './r.js';\n+export const b0 = a0;\n",
-+        );
-+        let renames = [RenamedFile {
-+            from: root().join("src/a.js"),
-+            to: root().join("src/r.js"),
-+        }];
-+        let base = vec![BaseCloneGroup {
-+            instances: vec![span("src/a.js", 1, 14), span("src/b.js", 3, 16)],
-+        }];
-+        let moved = group(vec![
-+            instance("src/b.js", 2, 15),
-+            instance("src/r.js", 1, 14),
-+        ]);
-+        let keys = base_contained_dupe_group_keys([&moved], &root(), &diff, &base, &renames);
-+        assert_eq!(keys.len(), 1);
-+    }
-+
-     #[test]
-     fn renamed_copy_maps_to_its_base_path() {
-         let diff = DiffIndex::from_unified_diff(
-```
-
-**File**: `crates/cli/tests/drift/drift.proptest-regressions` (modified, +1/-0)
-```diff
-@@ -8,3 +8,4 @@ cc 5df4327fe0503553bb8a508d63db3bfb12a49da74905f7aae5d279d3adcd67b5 # shrinks to
- cc 24c6d75d5610b0ac612b8bba185e77e21e14627731d3964cde850561e78db8d6 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(2, 0)] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(0, 0), (3, 0)] }], deps: [], duplicate: Some((4, 1, false)), complex: None, changes: [Delete(0)], baseline_mask: [false, false, false, false, false, false] }
- cc f02fec81f4b22e082a5bfa73f22e9d5890acbd86079e7e4373d98c84bf3f9322 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: true }, ExportSpec { is_type: false, suppressed: true }], imports: [(1, 0)] }, FileSpec { second_package: false, entry_imported: true, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [(3, 0)] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }], deps: [], duplicate: None, complex: None, changes: [Delete(4)], baseline_mask: [false, false, false, false, false, false] }
- cc fa822e78e71d56589ad0d90be43c58c85e4bcbf6143abcb088ba0dcd0ecc763b # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }], deps: [], duplicate: None, complex: None, changes: [], baseline_mask: [false, false, false, false, false, false] }
-+cc 3e4c880932c0f81cd6f1340de91eb5a3f537153039fde33194ed05c1719f8063 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(1, 0), (4, 0)] }], deps: [], duplicate: Some((3, 4, false)), complex: None, changes: [Rename(0), Delete(1)], baseline_mask: [false, false, false, false, false, false] }
-```
-
-**File**: `crates/cli/tests/integration/audit_clone_containment_tests.rs` (modified, +66/-0)
-```diff
-@@ -175,6 +175,72 @@ fn audit_renamed_and_edited_copy_inside_base_clone_is_inherited() {
-     assert_all_clone_groups_inherited(&json);
- }
- 
-+/// The change renames one copy and rewrites the lines above the other copy.
-+/// Two import lines become one, so that copy moves up by one line, and its
-+/// clone starts on a rewritten line. The rewritten line replaces several base
-+/// lines, and the clone text on it matches only the last of them. The head
-+/// group thus lies inside the base group (issue #4580).
-+#[test]
-+fn audit_renamed_copy_and_rewritten_lines_above_other_copy_is_inherited() {
-+    let tmp = TempDir::new().expect("failed to create temp dir");
-+    let repo = tmp.path();
-+    fs::create_dir_all(repo.join("src")).unwrap();
-+    fs::write(
-+        repo.join("package.json"),
-+        r#"{"name":"audit-clone-rename-shift","type":"module","main":"src/index.js"}"#,
-+    )
-+    .unwrap();
-+    let clone = SUBSPAN_CLONE.replace("NAME", "compute");
-+    fs::write(
-+        repo.join("src/a.js"),
-+        format!("export const a0 = 1;\n{clone}"),
-+    )
-+    .unwrap();
-+    fs::write(repo.join("src/c.js"), "export const c0 = 2;\n").unwrap();
-+    fs::write(
-+        repo.join("src/b.js"),
-+        format!(
-+            "import {{ a0 }} from './a.js';\nimport {{ c0 }} from './c.js';\nexport const b0 = a0 + c0;\n{clone}"
-+        ),
-+    )
-+    .unwrap();
-+    fs::write(
-+        repo.join("src/index.js"),
-+        "import { b0 } from './b.js';\nimport { compute } from './a.js';\nconsole.log(b0, compute);\n",
-+    )
-+    .unwrap();
-+    git(repo, &["init", "-b", "main"]);
-+    git(repo, &["config", "core.autocrlf", "false"]);
-+    commit_all(repo, "initial");
-+
-+    git(repo, &["mv", "src/a.js", "src/r.js"]);
-+    git(repo, &["rm", "-q", "src/c.js"]);
-+    fs::write(
-+        repo.join("src/b.js"),
-+        format!("import {{ a0 }} from './r.js';\nexport const b0 = a0;\n{clone}"),
-+    )
-+    .unwrap();
-+    edit_file(repo, "src/index.js", "'./a.js'", "'./r.js'");
-+    commit_all(repo, "rename and rewrite");
-+
-+    let output = run_fallow_raw(&[
-+        "audit",
-+        "--root",
-+        repo.to_str().unwrap(),
-+        "--base",
-+        "HEAD~1",
-+        "--gate",
-+        "new-only",
-+        "--no-cache",
-+        "--format",
-+        "json",
-+        "--quiet",
-+    ]);
-+    let json = parse_json(&output);
-+    assert_all_clone_groups_inherited(&json);
-+    assert_eq!(json["attribution"]["duplication_inherited"], 1);
-+}
-+
- /// A project in a subdirectory of the repo gets the same result. The added
- /// lines move the head clone below the end of its base instance. The head
- /// span maps back inside the base instance only when the diff paths are
-```
-
-**File**: `crates/output/src/diff.rs` (modified, +62/-13)
-```diff
-@@ -56,6 +56,15 @@ struct ChangeBlock {
-     old_len: u64,
- }
- 
-+impl ChangeBlock {
-+    /// Last base line that the run removed. `None` when it removed no line.
-+    fn last_removed_line(self) -> Option<u64> {
-+        (self.old_start + self.old_len)
-+            .checked_sub(1)
-+            .filter(|_| self.old_len > 0)
-+    }
-+}
-+
- /// Where one head line sits relative to the change blocks of its file.
- enum HeadLinePlace {
-     /// An unchanged line, at this base line.
-@@ -216,26 +225,44 @@ impl DiffIndex {
-     /// is a key of this diff.
-     ///
-     /// Unchanged lines map exactly. An added line at the start of the range
--    /// maps to the first base line that its block removed. An added line at
--    /// the end maps to the last one. A file that the diff does not name maps
--    /// unchanged. `None` when the range holds no base line, when the diff
--    /// adds `path` as a new file, or when the index stopped at
--    /// [`MAX_ADDED_LINES`].
-+    /// maps to the last base line that its block removed, which is the
-+    /// removed line next to the unchanged lines inside the range. An added
-+    /// line at the end maps to the first removed line, for the same reason.
-+    /// A block that replaces several lines thus does not widen the range to
-+    /// base lines that the range does not reach. A range that starts and
-+    /// ends in one block maps to every line that the block removed. A file
-+    /// that the diff does not name maps unchanged. `None` when the range
-+    /// holds no base line, when the diff adds `path` as a new file, or when
-+    /// the index stopped at [`MAX_ADDED_LINES`].
-     #[must_use]
-     pub fn base_line_range(&self, path: &str, start: u64, end: u64) -> Option<(u64, u64)> {
-         let map = &self.base_lines;
-         if map.lines_capped || start > end || map.new_files.contains(path) {
-             return None;
-         }
-         let blocks = map.change_blocks.get(path).map_or(&[][..], Vec::as_slice);
--        let base_start = match head_line_place(blocks, start) {
--            HeadLinePlace::Unchanged(line) => line,
--            HeadLinePlace::Added(block) => block.old_start,
--        };
--        let base_end = match head_line_place(blocks, end) {
--            HeadLinePlace::Unchanged(line) => line,
--            HeadLinePlace::Added(block) => (block.old_start + block.old_len).checked_sub(1)?,
--        };
-+        let (base_start, base_end) =
-+            match (head_line_place(blocks, start), head_line_place(blocks, end)) {
-+                (HeadLinePlace::Added(first), HeadLinePlace::Added(last))
-+                    if first.new_start == last.new_start =>
-+                {
-+                    (first.old_start, first.last_removed_line()?)
-+                }
-+                (start_place, end_place) => {
-+                    let base_start = match start_place {
-+                        HeadLinePlace::Unchanged(line) => line,
-+                        HeadLinePlace::Added(block) => {
-+                            block.last_removed_line().unwrap_or(block.old_start)
-+                        }
-+                    };
-+                    let base_end = match end_place {
-+                        HeadLinePlace::Unchanged(line) => line,
-+                        HeadLinePlace::Added(block) if block.old_len > 0 => block.old_start,
-+                        HeadLinePlace::Added(block) => block.old_start.checked_sub(1)?,
-+                    };
-+                    (base_start, base_end)
-+                }
-+            };
-         (base_start <= base_end).then_some((base_start, base_end))
-     }
- 
-@@ -496,6 +523,28 @@ mod tests {
-         assert_eq!(index.base_line_range("a.js", 1, 12), Some((1, 10)));
-     }
- 
-+    /// Three base lines become two head lines. A range that starts on the
-+    /// second head line reaches only the last replaced base line, so it maps
-+    /// to that line and not to the first one (issue #4580).
-+    #[test]
-+    fn base_line_range_maps_a_start_in_a_multi_line_replacement_to_its_last_removed_line() {
-+        let index = DiffIndex::from_unified_diff(
-+            "diff --git a/b.ts b/b.ts\n--- a/b.ts\n+++ b/b.ts\n@@ -1,3 +1,2 @@\n-one\n-two\n-three\n+ONE\n+TWO\n",
-+        );
-+        assert_eq!(index.base_line_range("b.ts", 2, 15), Some((3, 16)));
-+        assert_eq!(index.base_line_range("b.ts", 1, 2), Some((1, 3)));
-+    }
-+
-+    #[test]
-+    fn base_line_range_maps_an_end_in_a_multi_line_replacement_to_its_first_removed_line() {
-+        let index = DiffIndex::from_unified_diff(
-+            "diff --git a/b.ts b/b.ts\n--- a/b.ts\n+++ b/b.ts\n@@ -10,3 +10,2 @@\n-ten\n-eleven\n-twelve\n+TEN\n+ELEVEN\n",
-+        );
-+        assert_eq!(index.base_line_range("b.ts", 1, 10), Some((1, 10)));
-+        assert_eq!(index.base_line_range("b.ts", 1, 11), Some((1, 10)));
-+        assert_eq!(index.base_line_range("b.ts", 12, 20), Some((13, 21)));
-+    }
-+
-     #[test]
-     fn base_line_range_has_no_base_line_for_pure_additions() {
-         let index = DiffIndex::f
-```
-
-**File**: `docs/reference/cli-internals.md` (modified, +4/-1)
-```diff
-@@ -538,7 +538,10 @@ line states exit code 0.
-   (`crates/api/src/audit_run/clone_containment.rs`). The check maps each head
-   instance to its base path through the rename list and the diff renames,
-   and to its base lines through the line changes of the diff
--  (`DiffIndex::base_line_range`). An edit inside one copy of a base clone
-+  (`DiffIndex::base_line_range`). A rewritten line at the start or end of an
-+  instance maps to the replaced base line next to the unchanged lines of the
-+  instance, so a block that turns several lines into fewer does not move the
-+  span outside its base instance. An edit inside one copy of a base clone
-   splits the base group into smaller groups with new keys, and this rule
-   keeps them inherited. The rule records no demotion, because the group
-   matches a base group. A file that the diff adds has no base lines, so a
-```
-
----
-
-### Incident Patch 2: `b5123420` (2026-11-15)
-**Commit Message**: ci(bench): build CodSpeed shards with two compile jobs, swap and a resource log (#4616)
-
-* ci(bench): add swap and a resource log to the CodSpeed builds
-
-CodSpeed jobs stop in "Build benchmark shard" with exit code 143 and
-"The runner has received a shutdown signal", with no compiler error.
-The runner stops while a cold build compiles several large crates at
-once with full debug info.
-
-Each CodSpeed job now adds 8 GiB of swap on the temporary disk before
-the build. When the disk has too little free space or swapon fails,
-the step prints a warning and the job continues. The build runs
-through a wrapper that prints the available memory, the used swap,
-the load average and the available disk every 30 seconds, so the last
-lines of a log show which resource ran out.
-
-The cargo command and its flags do not change, so the instruction
-counts of the benchmarks do not change.
-
-Closes #4605
+Closes #4611
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* ci(bench): build the CodSpeed shards with two compile jobs
+* fix(security): keep inert local 
 
-The resource log of the first run showed the memory peak. While the
-large fallow crates compile in parallel, the available memory fell to
-about 1 GB, and six shards used up to 2.5 GB of swap. 
-
-**File**: `.github/workflows/bench.yml` (modified, +28/-3)
-```diff
-@@ -141,7 +141,8 @@ jobs:
-     permissions:
-       contents: read
-       id-token: write
--    timeout-minutes: 30
-+    # A cold build with two compile jobs takes longer than one with four.
-+    timeout-minutes: 45
-     env:
-       # One rayon thread keeps simulated instruction counts stable: adaptive
-       # work splitting on steals changes them between runs of the same code.
-@@ -164,9 +165,21 @@ jobs:
-         with:
-           tool: cargo-codspeed@4.7.0
- 
-+      - name: Add swap for the build
-+        # A cold build compiles several large crates at once with full debug
-+        # info. Without extra swap, a memory peak can stop the hosted runner
-+        # with exit code 143 and no compiler error (#4605). The temporary
-+        # disk at /mnt has the free space.
-+        run: bash scripts/ci-add-swap.sh /mnt/bench.swap 8
-+
-       - name: Build benchmark shard
-         # Keep PR feedback focused on deterministic API/session/cache paths.
--        run: cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
-+        # The resource log shows the cause when the runner stops mid-build.
-+        env:
-+          # Four parallel compiles of the large fallow crates, with full debug
-+          # info, use more than the 16 GB of the runner (#4605).
-+          CARGO_BUILD_JOBS: "2"
-+        run: bash scripts/ci-with-resource-log.sh cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
- 
-       - name: Run benchmark shard
-         uses: CodSpeedHQ/action@af75f77f17a054769abefaa42fe8dc2975469b5f # v5.6.3
-@@ -214,9 +227,21 @@ jobs:
-         with:
-           tool: cargo-codspeed@4.7.0
- 
-+      - name: Add swap for the build
-+        # A cold build compiles several large crates at once with full debug
-+        # info. Without extra swap, a memory peak can stop the hosted runner
-+        # with exit code 143 and no compiler error (#4605). The temporary
-+        # disk at /mnt has the free space.
-+        run: bash scripts/ci-add-swap.sh /mnt/bench.swap 8
-+
-       - name: Build full benchmark shard
-         # Full suites include audit/git-heavy and scaling paths that are useful but noisier.
--        run: cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
-+        # The resource log shows the cause when the runner stops mid-build.
-+        env:
-+          # Four parallel compiles of the large fallow crates, with full debug
-+          # info, use more than the 16 GB of the runner (#4605).
-+          CARGO_BUILD_JOBS: "2"
-+        run: bash scripts/ci-with-resource-log.sh cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
- 
-       - name: Run full benchmark shard
-         uses: CodSpeedHQ/action@af75f77f17a054769abefaa42fe8dc2975469b5f # v5.6.3
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
-```diff
-@@ -984,6 +984,10 @@ jobs:
-         run: sh scripts/check-conflict-markers.sh
-       - name: Merge-conflict marker check self-test
-         run: bash scripts/test-check-conflict-markers.sh
-+      - name: CI runner script self-tests
-+        run: |
-+          bash scripts/test-ci-add-swap.sh
-+          bash scripts/test-ci-with-resource-log.sh
- 
-   js-lint:
-     name: JS Lint and Format
-```
-
-**File**: `docs/benchmarking.md` (modified, +13/-0)
-```diff
-@@ -27,6 +27,19 @@ to judge an I/O change.
- compare instruction counts across a change to this profile: the codegen
- changes, so CodSpeed records a one-time baseline shift.
- 
-+A cold build of a shard compiles several large crates at once, and
-+cargo-codspeed always adds full debug info (`-Cdebuginfo=2`). With four
-+parallel compile jobs, the large fallow crates (core, engine, cli, lsp) used
-+more than the 16 GB of the runner. Each CodSpeed job in
-+`.github/workflows/bench.yml` therefore builds with `CARGO_BUILD_JOBS=2` and adds
-+8 GiB of swap on the temporary disk (`scripts/ci-add-swap.sh`) before the
-+build. The job count does not change the instruction counts, because each
-+crate compiles to the same code. The build runs through
-+`scripts/ci-with-resource-log.sh`, which prints the available memory, the used
-+swap and the available disk every 30 seconds. When a runner stops in "Build
-+benchmark shard" with exit code 143 and no compiler error, read the last
-+`resources:` lines of the job log to find the resource that ran out.
-+
- The optional TypeScript semantic companion is measured separately with
- CodSpeed walltime. Simulation cannot measure the interpreted Node.js process or
- its child process, so `tools/type-aware-sidecar/bench/session.mjs` uses the
-```
-
-**File**: `scripts/ci-add-swap.sh` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+#!/usr/bin/env bash
-+# Adds a swap file on a Linux CI runner and prints the memory and swap after.
-+# When the directory of the file does not exist, or its file system has less
-+# free space than the swap size plus a reserve, the script prints a warning and
-+# adds no swap: a missing swap file must not fail the job.
-+#
-+# Usage: bash scripts/ci-add-swap.sh <swap file> <size in GiB>
-+set -u
-+
-+RESERVE_GIB=4
-+
-+if [ "$#" -ne 2 ] || ! [[ "$2" =~ ^[1-9][0-9]*$ ]]; then
-+  echo "usage: bash scripts/ci-add-swap.sh <swap file> <size in GiB>" >&2
-+  exit 2
-+fi
-+
-+file="$1"
-+size_gib="$2"
-+dir="$(dirname "$file")"
-+
-+warn() {
-+  echo "::warning::No extra swap: $1"
-+  exit 0
-+}
-+
-+[ -d "$dir" ] || warn "$dir does not exist"
-+free_gib="$(df -Pk "$dir" | awk 'NR == 2 { print int($4 / 1024 / 1024) }')"
-+[ "$free_gib" -ge $((size_gib + RESERVE_GIB)) ] ||
-+  warn "$dir has ${free_gib} GiB free, the swap file needs $((size_gib + RESERVE_GIB)) GiB"
-+
-+sudo_cmd=""
-+[ "$(id -u)" -eq 0 ] || sudo_cmd="sudo -n"
-+
-+drop() {
-+  $sudo_cmd rm -f "$file"
-+  warn "$1"
-+}
-+
-+$sudo_cmd fallocate -l "${size_gib}G" "$file" || drop "fallocate failed for $file"
-+$sudo_cmd chmod 600 "$file"
-+$sudo_cmd mkswap "$file" >/dev/null || drop "mkswap failed for $file"
-+$sudo_cmd swapon "$file" || drop "swapon failed for $file"
-+free -m
-```
-
-**File**: `scripts/ci-with-resource-log.sh` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+#!/usr/bin/env bash
-+# Runs a command and prints the available memory, the used swap, the load
-+# average and the available disk of the runner at an interval while the command
-+# runs, and once at the end. A hosted runner that runs out of memory or disk, or
-+# is too busy to answer, stops without an error from the command, so the last
-+# lines of the log show the cause.
-+#
-+# Usage: bash scripts/ci-with-resource-log.sh <command> [args...]
-+# RESOURCE_LOG_INTERVAL sets the interval in seconds (default 30). A value that
-+# is not a positive whole number uses the default.
-+# The exit code is the exit code of the command.
-+set -u
-+
-+if [ "$#" -eq 0 ]; then
-+  echo "usage: bash scripts/ci-with-resource-log.sh <command> [args...]" >&2
-+  exit 2
-+fi
-+
-+interval="${RESOURCE_LOG_INTERVAL:-30}"
-+[[ "$interval" =~ ^[1-9][0-9]*$ ]] || interval=30
-+
-+sample() {
-+  local line="resources:"
-+  if [ -r /proc/meminfo ]; then
-+    line="$line $(awk '
-+      /^MemAvailable:/ { available = $2 }
-+      /^SwapTotal:/ { swap_total = $2 }
-+      /^SwapFree:/ { swap_free = $2 }
-+      END { printf "mem_available_mb=%d swap_used_mb=%d", available / 1024, (swap_total - swap_free) / 1024 }
-+    ' /proc/meminfo)"
-+  fi
-+  if [ -r /proc/loadavg ]; then
-+    line="$line load_1m=$(cut -d ' ' -f 1 /proc/loadavg)"
-+  fi
-+  line="$line $(df -Pk . | awk 'NR == 2 { printf "disk_available_mb=%d", $4 / 1024 }')"
-+  echo "$line"
-+}
-+
-+# The sampler also stops its sleep, so no process keeps the output open after
-+# the command ends.
-+(
-+  sleeper=""
-+  trap '[ -n "$sleeper" ] && kill "$sleeper" 2>/dev/null; exit 0' TERM
-+  while :; do
-+    sample
-+    sleep "$interval" &
-+    sleeper=$!
-+    wait "$sleeper"
-+  done
-+) &
-+sampler=$!
-+trap 'kill "$sampler" 2>/dev/null' EXIT
-+
-+"$@"
-+status=$?
-+kill "$sampler" 2>/dev/null
-+sample
-+exit "$status"
-```
-
-**File**: `scripts/test-ci-add-swap.sh` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+#!/usr/bin/env bash
-+# Self-test for scripts/ci-add-swap.sh. Covers the paths that add no swap, so
-+# it runs without root: invalid arguments, a missing directory and too little
-+# free space. The CodSpeed jobs in bench.yml run the path that adds swap.
-+# Run: bash scripts/test-ci-add-swap.sh
-+set -u
-+
-+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+SWAP="$SCRIPT_DIR/ci-add-swap.sh"
-+
-+pass=0
-+fail=0
-+check() { # description, expected, actual
-+  if [ "$2" = "$3" ]; then pass=$((pass + 1)); else fail=$((fail + 1)); echo "FAIL: $1 (expected $2, got $3)"; fi
-+}
-+
-+# 1. Invalid arguments: usage error.
-+bash "$SWAP" >/dev/null 2>&1
-+check "no arguments" 2 $?
-+bash "$SWAP" /tmp/x.swap 0 >/dev/null 2>&1
-+check "zero size" 2 $?
-+bash "$SWAP" /tmp/x.swap 8G >/dev/null 2>&1
-+check "size with unit" 2 $?
-+
-+# 2. A missing directory: warning, exit code 0, no file.
-+out="$(bash "$SWAP" /nonexistent-dir-for-swap-test/x.swap 1 2>&1)"
-+check "missing directory exit code" 0 $?
-+check "missing directory warning" 1 "$(printf '%s\n' "$out" | grep -c '^::warning::No extra swap: .* does not exist$')"
-+# The warning ends the script, so no other command prints anything.
-+check "missing directory stops at the warning" 1 "$(printf '%s\n' "$out" | wc -l | tr -d ' ')"
-+
-+# 3. Too little free space: warning, exit code 0, no file.
-+dir="$(mktemp -d)"
-+trap 'rm -rf "$dir"' EXIT
-+out="$(bash "$SWAP" "$dir/x.swap" 999999 2>&1)"
-+check "low space exit code" 0 $?
-+check "low space warning" 1 "$(printf '%s\n' "$out" | grep -c '^::warning::No extra swap: .* GiB free, the swap file needs 1000003 GiB$')"
-+check "low space stops at the warning" 1 "$(printf '%s\n' "$out" | wc -l | tr -d ' ')"
-+check "low space creates no file" 0 "$([ -e "$dir/x.swap" ] && echo 1 || echo 0)"
-+
-+echo "ci-add-swap: $pass passed, $fail failed"
-+[ "$fail" -eq 0 ]
-```
-
-**File**: `scripts/test-ci-with-resource-log.sh` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+#!/usr/bin/env bash
-+# Self-test for scripts/ci-with-resource-log.sh. Asserts that the wrapper keeps
-+# the exit code and the output of the command, prints resource lines, and stops
-+# its sampler with the command.
-+# Run: bash scripts/test-ci-with-resource-log.sh
-+set -u
-+
-+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+WRAP="$SCRIPT_DIR/ci-with-resource-log.sh"
-+TMP="$(mktemp -d)"
-+trap 'rm -rf "$TMP"' EXIT
-+# A wrapper run that takes longer than this has a sampler that did not stop.
-+LIMIT_SECONDS=15
-+
-+pass=0
-+fail=0
-+check() { # description, expected, actual
-+  if [ "$2" = "$3" ]; then pass=$((pass + 1)); else fail=$((fail + 1)); echo "FAIL: $1 (expected $2, got $3)"; fi
-+}
-+
-+# Runs the wrapper with an interval and a command. A reader in the background
-+# copies the output through a pipe, like a CI step does. Sets `out` to the
-+# output and `status` to the exit code, or to "hung" when the output stays open
-+# past the limit (a sampler that keeps running holds the pipe open).
-+run_wrapped() { # interval, command...
-+  local interval="$1"
-+  shift
-+  rm -f "$TMP/out" "$TMP/status"
-+  ( (RESOURCE_LOG_INTERVAL="$interval" bash "$WRAP" "$@"; echo $? >"$TMP/status") | cat >"$TMP/out" ) &
-+  local reader=$!
-+  local waited=0
-+  while kill -0 "$reader" 2>/dev/null && [ "$waited" -lt "$LIMIT_SECONDS" ]; do
-+    sleep 1
-+    waited=$((waited + 1))
-+  done
-+  if kill -0 "$reader" 2>/dev/null; then
-+    kill "$reader" 2>/dev/null
-+    status=hung
-+  else
-+    status="$(cat "$TMP/status" 2>/dev/null || echo missing)"
-+  fi
-+  out="$(cat "$TMP/out" 2>/dev/null)"
-+}
-+
-+resource_lines() { printf '%s\n' "$out" | grep -c '^resources:.*disk_available_mb=[0-9]'; }
-+
-+# 1. A passing command: exit code 0, its output stays, resource lines appear.
-+run_wrapped 1 sh -c 'echo built; sleep 2'
-+check "pass exit code" 0 "$status"
-+check "command output kept" 1 "$(printf '%s\n' "$out" | grep -c '^built$')"
-+check "interval and final resource lines" 1 "$([ "$(resource_lines)" -ge 2 ] && echo 1 || echo 0)"
-+if [ -r /proc/meminfo ]; then
-+  check "memory and swap on Linux" 1 "$(printf '%s\n' "$out" | grep -c -m1 'mem_available_mb=[0-9]* swap_used_mb=[0-9]*')"
-+  check "load average on Linux" 1 "$(printf '%s\n' "$out" | grep -c -m1 'load_1m=[0-9.]* disk_available_mb=')"
-+fi
-+
-+# 2. A failing command: the wrapper returns its exit code.
-+run_wrapped 1 sh -c 'exit 7'
-+check "failure exit code" 7 "$status"
-+
-+# 3. The sampler stops with the command and keeps no pipe open. With a 30 s
-+# interval, the output has the first line and the final line.
-+run_wrapped 30 sleep 2
-+check "sampler stops with the command" 0 "$status"
-+check "first and final resource lines" 2 "$(resource_lines)"
-+
-+# 4. An invalid interval uses the default, so the sampler does not loop fast.
-+run_wrapped abc sleep 2
-+check "invalid interval uses the default" 2 "$(resource_lines)"
-+run_wrapped 0 sleep 2
-+check "zero interval uses the default" 2 "$(resource_lines)"
-+
-+# 5. No command: usage error.
-+bash "$WRAP" >/dev/null 2>&1
-+check "usage error" 2 $?
-+
-+echo "ci-with-resource-log: $pass passed, $fail failed"
-+[ "$fail" -eq 0 ]
-```
-
----
-
-### Incident Patch 3: `0776b47e` (2026-11-14)
-**Commit Message**: fix(vscode): enable links set the setting without the Settings editor (#4597)
-
-In Cursor, `workbench.action.openSettings` with a query can freeze the
-Settings editor. The command returns the Settings editor pane, and the
-Cursor RPC layer serializes that object graph. The "enable" links in the
-Security Candidates and Health views used this command through
-`fallow.openSettings`.
-
-The links now run `fallow.enableSecurity` and `fallow.enableHealth`.
-These commands set the toggle to true in workspace settings, or in user
-settings when no folder is open. They show the result, or an error
-message that names the setting to change by hand.
-
-Closes #4553
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/fix-vscode-open-settings-cursor.md` (added, +3/-0)
+**File**: `changelog.d/fix-security-resolved-local-callees.md` (added, +3/-0)
 ```diff
 @@ -0,0 +1,3 @@
 +### Fixed
 +
-+- **VS Code: the "enable" links in the Security Candidates and Health views no longer freeze Settings in Cursor.** The links opened the Settings editor with the `fallow` search query. In Cursor, that call can make the Settings editor stop responding. The links now run the new `Fallow: Enable Security Candidates` and `Fallow: Enable Health View` commands. These commands set `fallow.security.enabled` or `fallow.health.enabled` to `true` in workspace settings, or in user settings when no folder is open, and show a message. The Settings editor does not open. (Closes [#4553](https://github.com/fallow-rs/fallow/issues/4553))
++- **`fallow security` no longer reports a call of an inert local function as a library sink.** Some rows match a callee by name only, for example `request(url)` for `ssrf` and `x.merge(a, b)` for `prototype-pollution`. When the module declares that function, or an object literal with that inline method, and its body runs no call and writes no member, the call cannot reach the library. The call is then not a candidate. A local function that runs a call still matches by name, because it can forward its argument to the library. When the module reassigns the function anywhere (`request = got`), writes a member of the object (`utils.merge = _.merge`), or passes the object to a call (`Object.assign(utils, ...)`), the call also stays a candidate. (Part of [#4611](https://github.com/fallow-rs/fallow/issues/4611))
 ```
 
-**File**: `editors/vscode/README.md` (modified, +2/-0)
+**File**: `crates/extract/src/cache/types.rs` (modified, +1/-1)
 ```diff
-@@ -45,6 +45,8 @@ code --install-extension fallow-rs.fallow-vscode
- | `Fallow: Audit Changed Files` | Audit the current change set for a pass/warn/fail verdict, shown in the audit verdict status-bar item (or an information message when that item is disabled). Findings are static candidates to verify. |
- | `Fallow: Reload Health` | Re-run the Health view analysis (score, complexity, hotspot and refactoring candidates) |
- | `Fallow: Scan for Security Candidates` | Scan for local security candidates (`client-server-leak`, tainted-sink CWE findings) and populate the Security Candidates view. Requires `fallow.security.enabled`. Results are UNVERIFIED candidates to verify, never confirmed vulnerabilities. |
-+| `Fallow: Enable Security Candidates` | Set `fallow.security.enabled` to `true` in workspace settings (user settings when no folder is open). The Security Candidates welcome link runs this command. |
-+| `Fallow: Enable Health View` | Set `fallow.health.enabled` to `true` in workspace settings (user settings when no folder is open). The Health welcome link runs this command. |
- | `Fallow: Load Runtime Coverage` | Analyze a local runtime-coverage capture and populate the Runtime Coverage view with hot paths and cleanup candidates. Prompts for a capture when `fallow.coverage.capturePath` is empty. Requires the fallow-cov sidecar (`fallow coverage setup`). |
- | `Fallow: Reload Runtime Coverage` | Re-run the runtime-coverage analysis against the current capture |
- | `Fallow: Clear Runtime Coverage` | Clear the Runtime Coverage view back to its empty state |
+@@ -10,7 +10,7 @@ use crate::MemberKind;
+ /// extraction semantics change, and give the reason in the commit message and
+ /// the CHANGELOG. A stale version serves old extraction results from a warm
+ /// cache. The `assert_cached_type_size!` guards below catch shape changes.
+-pub(super) const CACHE_VERSION: u32 = 446;
++pub(super) const CACHE_VERSION: u32 = 447;
+ 
+ /// Duplication token cache version. Bump it when duplicate tokenization,
+ /// normalization, or the on-disk token cache schema changes, and give the
 ```
 
-**File**: `editors/vscode/package.json` (modified, +18/-2)
+**File**: `crates/extract/src/tests/js_ts/mod.rs` (modified, +1/-0)
 ```diff
-@@ -170,6 +170,14 @@
-         "command": "fallow.openSettings",
-         "title": "Fallow: Open Settings"
-       },
-+      {
-+        "command": "fallow.enableSecurity",
-+        "title": "Fallow: Enable Security Candidates"
-+      },
-+      {
-+        "command": "fallow.enableHealth",
-+        "title": "Fallow: Enable Health View"
-+      },
-       {
-         "command": "fallow.noop",
-         "title": "Fallow: No-op (internal)"
-@@ -870,6 +878,14 @@
-           "command": "fallow.reloadAnalysis",
-           "when": "false"
-         },
-+        {
-+          "command": "fallow.enableSecurity",
-+          "when": "!fallow.security.enabled"
+@@ -21,6 +21,7 @@ mod new_url_node_modules;
+ mod react_structural;
+ mod reflective_object_uses;
+ mod require_resolve;
++mod security_local_callees;
+ mod security_node_bindings;
+ mod security_set_attribute;
+ mod security_sources;
+```
+
+**File**: `crates/extract/src/tests/js_ts/security_local_callees.rs` (added, +156/-0)
+```diff
+@@ -0,0 +1,156 @@
++use crate::tests::parse_ts as parse_source;
++
++fn sink_paths(source: &str) -> Vec<String> {
++    parse_source(source)
++        .security_sinks
++        .iter()
++        .map(|sink| sink.callee_path.clone())
++        .collect()
++}
++
++fn assert_no_sink(source: &str, path: &str) {
++    let paths = sink_paths(source);
++    assert!(
++        !paths.iter().any(|observed| observed == path),
++        "unexpected {path}, observed {paths:?}"
++    );
++}
++
++fn assert_call_argument_sink(source: &str, path: &str, arg_index: u32) {
++    let sinks = parse_source(source).security_sinks;
++    assert!(
++        sinks
++            .iter()
++            .any(|sink| sink.callee_path == path && sink.arg_index == arg_index),
++        "expected {path} argument {arg_index}"
++    );
++}
++
++fn assert_sink(source: &str, path: &str) {
++    let paths = sink_paths(source);
++    assert!(
++        paths.iter().any(|observed| observed == path),
++        "expected {path}, observed {paths:?}"
++    );
++}
++
++#[test]
++fn a_call_of_a_local_function_declaration_is_not_a_sink() {
++    assert_no_sink(
++        "function request(lines: number): number { return lines + 1; }\nconst lines = Number('20');\nconsole.log(request(lines));\n",
++        "request",
++    );
++}
++
++#[test]
++fn a_call_before_a_hoisted_local_function_is_not_a_sink() {
++    assert_no_sink(
++        "export const run = (n: number) => request(n);\nfunction request(n: number) { return n; }\n",
++        "request",
++    );
++}
++
++#[test]
++fn a_call_of_a_local_arrow_function_is_not_a_sink() {
++    assert_no_sink(
++        "const request = (n: number) => n + 1;\nexport const run = (n: number) => request(n);\n",
++        "request",
++    );
++}
++
++#[test]
++fn an_inline_method_of_a_local_object_is_not_a_sink() {
++    assert_no_sink(
++        "const controller = { merge(action: string, branch: { name: string }) { return `${action} ${branch.name}`; } };\nconst branch = { name: 'feature' };\nconsole.log(controller.merge('merge', branch));\n",
++        "controller.merge",
++    );
++}
++
++#[test]
++fn a_local_function_that_runs_a_call_stays_a_sink() {
++    let source = "function request(url: string) { return fetch(url); }\nexport const run = (url: string) => request(url);\n";
++    assert_sink(source, "request");
++    assert_sink(source, "fetch");
++}
++
++#[test]
++fn a_local_method_that_writes_a_member_stays_a_sink() {
++    assert_sink(
++        "const utils = { merge(target: any, source: any) { target.value = source; return target; } };\nexport const run = (a: object, b: object) => utils.merge(a, b);\n",
++        "utils.merge",
++    );
++}
++
++#[test]
++fn a_function_overload_without_a_body_is_not_inert() {
++    assert_sink(
++        "declare function request(url: string): void;\nexport const run = (url: string) => request(url);\n",
++        "request",
++    );
++}
++
++#[test]
++fn a_parameter_hides_a_local_function() {
++    assert_sink(
++        "function request(n: number) { return n; }\nexport const run = (request: (u: string) => void, url: string) => request(url);\n",
++        "request",
++    );
++}
++
++#[test]
++fn a_method_that_is_not_inline_stays_a_sink() {
++    assert_sink(
++        "import _ from 'lodash';\nconst utils = { merge: _.merge };\nexport const run = (a: object, b: object) => utils.merge(a, b);\n",
++        "utils.merge",
++    );
++}
++
++#[test]
++fn a_spread_after_a_method_keeps_the_sink() {
++    assert_sink(
++        "import _ from 'lodash';\nconst utils = { merge() { return 1; }, ..._ };\nexport const run = (a: object, b: object) => utils.merge(a, b);\n",
++        "utils.merge",
++    );
++}
++
++#[test]
++fn a_reassigned_local_function_stays_a_sink() {
++    assert_sink(
++        "import got from 'got';\nlet request = (n: string) => n;\nrequest = got;\nexport const run = (url: string) => request(url);\n",
++        "request",
++    );
++}
++
++#[test]
++fn an_unresolved_request_stays_a_sink() {
++    assert_sink(
++        "import request from 'request';\nexport const run = (url: string) => request(url);\n",
++        "request",
++    );
++}
++
++#[test]
++fn a_local_function_reassigned_later_stays_a_sink() {
++    assert_sink(
++        "import got from 'got';\nlet request = (u: string) => u;\nexport const run = (u: string) => request(u);\nexport function configure() { request = got; }\n",
++        "request",
++    );
++}
++
++#[test]
++fn a_method_replaced_by_a_member_write_stays_a_sink() {
++    assert_call_argument_sink(
++        "import _ from 'lodash';\nconst utils = { merge(a: object, b: object): object { return a; } };\nutils.merge = _.merge;\napp.post('/b', (req, res) => { utils.merge({}, req.body); });\n",
++        "utils.merge",
++        1,
++    );
++}
++
++#[test]
++fn a_method_of_an_object_passed_to_a_call_stays_a_sink() {
++    assert_call_argument_sink(
++        "import _ from 'lodash';\nconst utils = { merge(a: object, b: object) { return a; } };\nObject.assign(utils, { merge: _.merge });\nexport const run = (body: object) => utils.merge({}, body);\n",
++        "utils.merge",
++        1,
++    );
+
+```
+
+**File**: `crates/extract/src/visitor/visit_impl.rs` (modified, +4/-4)
+```diff
+@@ -2297,7 +2297,7 @@ impl<'a> ModuleInfoExtractor {
+         if self.namespace_depth == 0 {
+             self.scoped_array_binding_element_types
+                 .push(FxHashMap::default());
+-            self.preseed_nested_declarations(statements);
++            self.preseed_scope_declarations(statements);
+         }
+         self.preseed_direct_object_binding_targets(statements);
+         match body {
+@@ -3462,13 +3462,13 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
+         self.record_program_spy_api_locals(program);
+         self.record_program_type_aliases(program);
+         self.record_program_prologue(program);
+-        self.record_program_sanitizer_functions(program);
++        self.record_program_function_facts(program);
+         self.record_local_function_return_types(program);
+         self.preseed_direct_object_binding_targets(&program.body);
+         self.record_module_vars(&program.body);
+         self.record_program_local_import_loaders(program);
+         self.record_program_component_loader_imports(program);
+-        walk::walk_program(self, program);
++        self.walk_program_and_drop_inert_callee_sinks(program);
+         self.finish_local_import_loaders();
+         self.finish_promise_import_bindings();
+         self.finish_register_loader_new_urls();
+@@ -3615,7 +3615,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
+         self.preseed_direct_object_binding_scope_roots(&stmt.body);
+         if self.namespace_depth == 0 {
+             self.push_nested_scope_frames();
+-            self.preseed_nested_declarations(&stmt.body);
++            self.preseed_scope_declarations(&stmt.body);
+         }
+         self.preseed_direct_object_binding_targets(&stmt.body);
+         for statement in &stmt.body {
+```
+
+**File**: `crates/extract/src/visitor/visit_impl_security_local_callees.rs` (added, +312/-0)
+```diff
+@@ -0,0 +1,312 @@
++//! Local callees that cannot reach a library sink.
++//!
++//! Some catalogue rows match a callee by name only (`request(url)`,
++//! `x.merge(a, b)`). A module can declare its own function of that name. When
++//! the body of that function runs no call and writes no member, the call of it
++//! cannot send a request or merge objects, so it is not a sink. A local
++//! function that runs a call keeps the name match: its body can forward the
++//! argument to the real library, and the taint of the argument is visible
++//! only at the outer call.
++//!
++//! A write can replace the local function at run time: a reassignment
++//! (`request = got`), a member write (`utils.merge = _.merge`), or a call that
++//! takes the object (`Object.assign(utils, ...)`). The order of the source
++//! does not show when such a write runs. The visitor therefore keeps the sink
++//! sites of each inert callee until the walk ends, and drops them only when
++//! the module never writes the callee root.
++
++use oxc_ast::ast::*;
++use oxc_ast_visit::{Visit, walk};
++use oxc_semantic::ScopeFlags;
++use rustc_hash::FxHashSet;
++
++use super::super::super::ModuleInfoExtractor;
++use super::{SinkBinding, unwrap_static_expr};
++use crate::js_text::JsText;
++
++/// Finds an expression that can have an effect outside the function: a call,
++/// a `new`, a tagged template, a dynamic import, a `delete`, or a write to a
++/// member.
++#[derive(Default)]
++struct EffectFinder {
++    found: bool,
++}
++
++impl<'a> Visit<'a> for EffectFinder {
++    fn visit_expression(&mut self, expr: &Expression<'a>) {
++        if !self.found {
++            walk::walk_expression(self, expr);
++        }
++    }
++
++    fn visit_statement(&mut self, stmt: &Statement<'a>) {
++        if !self.found {
++            walk::walk_statement(self, stmt);
++        }
++    }
++
++    fn visit_call_expression(&mut self, _expr: &CallExpression<'a>) {
++        self.found = true;
++    }
++
++    fn visit_new_expression(&mut self, _expr: &NewExpression<'a>) {
++        self.found = true;
++    }
++
++    fn visit_tagged_template_expression(&mut self, _expr: &TaggedTemplateExpression<'a>) {
++        self.found = true;
++    }
++
++    fn visit_import_expression(&mut self, _expr: &ImportExpression<'a>) {
++        self.found = true;
++    }
++
++    fn visit_unary_expression(&mut self, expr: &UnaryExpression<'a>) {
++        if expr.operator == UnaryOperator::Delete {
++            self.found = true;
++            return;
++        }
++        walk::walk_unary_expression(self, expr);
++    }
++
++    fn visit_assignment_expression(&mut self, expr: &AssignmentExpression<'a>) {
++        if !matches!(expr.left, AssignmentTarget::AssignmentTargetIdentifier(_)) {
++            self.found = true;
++            return;
++        }
++        walk::walk_assignment_expression(self, expr);
++    }
++
++    fn visit_update_expression(&mut self, expr: &UpdateExpression<'a>) {
++        if !matches!(
++            expr.argument,
++            SimpleAssignmentTarget::AssignmentTargetIdentifier(_)
++        ) {
++            self.found = true;
++        }
++    }
++}
++
++/// The names that the module writes or hands to a call: an assignment or
++/// update target, the root of a written member, and a call or `new`
++/// argument. The walk does not track scopes, so a write of a shadowing local
++/// also counts, which keeps more sink sites.
++#[derive(Default)]
++struct WrittenRoots {
++    names: FxHashSet<String>,
++    in_target: bool,
++}
++
++impl WrittenRoots {
++    fn record_argument(&mut self, argument: &Argument<'_>) {
++        let expr = match argument {
++            Argument::SpreadElement(spread) => &spread.argument,
++            _ => match argument.as_expression() {
++                Some(expr) => expr,
++                None => return,
++            },
++        };
++        if let Expression::Identifier(id) = unwrap_static_expr(expr) {
++            self.names.insert(id.name.to_string());
++        }
++    }
++}
++
++impl<'a> Visit<'a> for WrittenRoots {
++    fn visit_identifier_reference(&mut self, id: &IdentifierReference<'a>) {
++        if self.in_target {
++            self.names.insert(id.name.to_string());
++        }
++    }
++
++    fn visit_assignment_expression(&mut self, expr: &AssignmentExpression<'a>) {
++        let outer = std::mem::replace(&mut self.in_target, true);
++        self.visit_assignment_target(&expr.left);
++        self.in_target = outer;
++        self.visit_expression(&expr.right);
++    }
++
++    fn visit_update_expression(&mut self, expr: &UpdateExpression<'a>) {
++        let outer = std::mem::replace(&mut self.in_target, true);
++        self.visit_simple_assignment_target(&expr.argument);
++        self.in_target = outer;
++    }
++
++    fn visit_call_expression(&mut self, expr: &CallExpression<'a>) {
++        for argument in &expr.arguments {
++            self.record_argument(argument);
++        }
++        walk::walk_call_expression(self, expr);
++    }
++
++    fn visit_new_expression(&mut self, expr: &NewExpression<'a>) {
++        fo
+```
+
+**File**: `crates/extract/src/visitor/visit_impl_security_sinks.rs` (modified, +21/-1)
+```diff
+@@ -20,6 +20,9 @@ use super::{
+ };
+ use crate::js_text::JsText;
+ 
++#[path = "visit_impl_security_local_callees.rs"]
++mod local_callees;
++
+ struct ArgSinkSiteInput<'site, 'ast> {
+     callee_path: &'site str,
+     sink_shape: SinkShape,
+@@ -60,6 +63,11 @@ enum SinkBinding {
+     NodeModuleMember(String),
+     /// A `<script>` element (`document.createElement("script")`).
+     ScriptElement,
++    /// A local function whose body runs no call and writes no member. A call
++    /// of it cannot reach a library sink of the same name.
++    InertFunction,
++    /// An object literal, valued by the names of its inert inline methods.
++    InertMethods(Vec<String>),
+ }
+ 
+ /// Properties of a `<script>` element whose value the browser loads or runs
+@@ -106,6 +114,9 @@ pub(in crate::visitor) struct SinkAliasState {
+     /// JSX sink props of locals bound to an object literal, keyed by the local
+     /// name. A JSX spread of the local (`<div {...props} />`) emits them.
+     jsx_spread_object_sinks: FxHashMap<String, Vec<SinkSite>>,
++    /// Sink sites of calls of inert local callees, dropped after the walk
++    /// when the module never writes the callee root.
++    inert_callee_sinks: Vec<local_callees::InertCalleeSinks>,
+ }
+ 
+ /// Flatten an `Identifier` or `StaticMemberExpression` callee to a dotted path.
+@@ -961,6 +972,8 @@ impl ModuleInfoExtractor {
+             return;
+         };
+         self.capture_security_control_call(&callee_path, expr.span);
++        let inert_root = self.inert_local_callee_root(&expr.callee);
++        let sinks_before = self.security_sinks.len();
+         let sink_shape = if callee_path.contains('.') {
+             SinkShape::MemberCall
+         } else {
+@@ -996,6 +1009,9 @@ impl ModuleInfoExtractor {
+                 call_options: None,
+             });
+         }
++        if let Some(root) = inert_root {
++            self.defer_inert_callee_sinks(root, sinks_before);
++        }
+     }
+ 
+     fn record_unresolved_call_sink(&mut self, expr: &CallExpression<'_>) {
+@@ -1651,11 +1667,15 @@ impl ModuleInfoExtractor {
+ 
+     /// The sink binding that a value gives to `name`: an alias of a
+     /// code-executing global or of a Node.js module binding, a `require()` of
+-    /// a module in [`NODE_BINDING_MODULES`](fallow_types::security_sinks::NODE_BINDING_MODULES), or a new `<script>` element.
++    /// a module in [`NODE_BINDING_MODULES`](fallow_types::security_sinks::NODE_BINDING_MODULES), a new `<script>` element, or an
++    /// inert local function or object.
+     fn sink_binding_of_value(&self, name: &str, value: &Expression<'_>) -> Option<SinkBinding> {
+         if is_create_script_element_call(value) {
+             return Some(SinkBinding::ScriptElement);
+         }
++        if let Some(binding) = local_callees::inert_value_binding(value) {
++            return Some(binding);
++        }
+         if let Some(module) = self.node_binding_module_of_require(value) {
+             return Some(SinkBinding::NodeModule(module));
+         }
+```
+
+**File**: `tests/fixtures/security-catalogue-sinks-897/src/template-escape.ts` (modified, +3/-1)
+```diff
+@@ -1,7 +1,9 @@
+ // Positive: wrapping a non-literal value in a template engine SafeString marker
+ // emits it without HTML escaping, a template-escape-bypass candidate (CWE-79).
++// The stub runs a call, so the name match applies. A local method that runs
++// no call cannot reach the library, so it is not a sink.
+ const Handlebars = {
+-  SafeString: (value: string): string => value,
++  SafeString: (value: string): string => String(value),
+ };
+ 
+ export function unsafeMarkup(userInput: string): string {
+```
+
+---
+
+### Incident Patch 2: `379d1fc2` (2026-11-16)
+**Commit Message**: fix(coverage): find the fallow-cov sidecar in fixed install locations only (#4625)
+
+* fix(coverage): find the fallow-cov sidecar in fixed install locations only
+
+Sidecar discovery ran the project's package manager (`yarn bin`,
+`pnpm bin`, `bun pm bin`, `npm root`) with the analyzed root as its
+working directory. A package manager reads config from that root, for
+example `.yarnrc` `yarn-path`, `.yarnrc.yml` `yarnPath` and plugins, or
+`.pnpmfile.cjs`. So a repository could run its own code on every
+`--runtime-coverage` run, before the sidecar signature check.
+
+Discovery now reads the file system only. It also finds the signed binary
+in `.yarn/unplugged` for Yarn Plug'n'Play. An unsigned
+`node_modules/.bin/fallow-cov` wrapper is the last resort, so it no longer
+hides a sidecar in `~/.fallow/bin` or on `PATH`.
+
+An integration test puts fake package managers first on `PATH` and checks
+that `health`, `audit` and `security --runtime-coverage` and
+`coverage setup --json` start none of them. A unit test checks that the
+verified sidecar is the only program that the module starts. The source
+scans of the module now cut at the test module, not at the first
+`#[cfg(test)]` item.
+
+Signed-off-by: 
+
+**File**: `SECURITY.md` (modified, +2/-0)
+```diff
+@@ -39,6 +39,8 @@ The analysis crates (`fallow-core`, `fallow-extract`, `fallow-graph`) use `#![cf
+ 
+ A `package.json` lifecycle script is read as data and never run. The regression test `safe_analysis` asserts that a `postinstall` sentinel never fires during analysis.
+ 
++With `--runtime-coverage`, fallow finds the `fallow-cov` sidecar in fixed install locations only, and it starts no package manager or other program for this lookup. A package manager reads config from the analyzed root (for example `.yarnrc` `yarn-path` or `.pnpmfile.cjs`), so starting one would run project code. Fallow verifies the Ed25519 signature of the sidecar before it starts it. The integration test `sidecar_discovery_spawn_tests` puts fake package managers first on `PATH` and asserts that none of them starts. The unit test `runtime_coverage_module_spawns_only_the_verified_sidecar` asserts that the sidecar is the only program that `crates/cli/src/health/coverage.rs` starts. `fallow coverage setup` runs the project's package manager only to install the sidecar, after the user accepts the prompt or passes `--yes`. That install runs in the project and can run its config and install scripts, as the same command typed by hand does.
++
+ ## Threat model
+ 
+ The primary security boundary is the project root passed via `--root` (or the discovered config's directory). fallow walks files under that root and reads `package.json`, source files, lockfiles, and CI configs found within it.
+```
+
+**File**: `changelog.d/fix-sidecar-fixed-path-discovery.md` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++### Fixed
++
++- **Runtime coverage finds the sidecar in a Yarn Plug'n'Play project.** Fallow now reads the signed binary from `.yarn/unplugged`. Before, discovery stopped at the unsigned wrapper, and the run failed with a signature error.
++
++- **An unsigned `node_modules/.bin/fallow-cov` wrapper no longer hides a working sidecar.** Discovery now continues to `~/.fallow/bin` and `PATH`. It uses the wrapper only when no other location has a sidecar, so the signature error names the file that exists. Before, a pnpm project with a custom `virtualStoreDir` failed with a signature error even when `~/.fallow/bin/fallow-cov` was installed.
++
++### Security
++
++- **Runtime coverage finds the `fallow-cov` sidecar in fixed install locations only.** Fallow looks in the `@fallow-cli/fallow-cov-<platform>` package in `node_modules`, the pnpm and Bun stores, the Yarn `unplugged` folder, `node_modules/.bin`, `~/.fallow/bin` and `PATH`. This applies to `health`, `audit` and `security` with `--runtime-coverage`, to the MCP runtime-coverage tools, and to the sidecar check of `fallow coverage setup`.
+```
+
+**File**: `crates/cli/src/coverage/mod.rs` (modified, +8/-5)
+```diff
+@@ -1313,6 +1313,12 @@ fn handle_sidecar_step(
+             } else {
+                 "  -> Install @fallow-cli/fallow-cov globally via npm? [Y/n] ".to_owned()
+             };
++            if package_manager.is_some() {
++                println!(
++                    "  -> This runs `{install_command}` in {}. The package manager reads the project's config and can run its install scripts.",
++                    root.display()
++                );
++            }
+             let accepted = match confirm(prompt, args) {
+                 Ok(accepted) => accepted,
+                 Err(message) => {
+@@ -1498,11 +1504,8 @@ fn install_sidecar(
+         ));
+     }
+ 
+-    runtime_coverage::discover_sidecar(Some(root)).map_err(|_| {
+-        format!(
+-            "sidecar install finished but fallow still could not find fallow-cov. Checked project-local node_modules/.bin, {}, and PATH",
+-            runtime_coverage::canonical_sidecar_path().display()
+-        )
++    runtime_coverage::discover_sidecar(Some(root)).map_err(|message| {
++        format!("sidecar install finished but fallow still could not find fallow-cov. {message}")
+     })
+ }
+ 
+```
+
+**File**: `crates/cli/src/health/coverage.rs` (modified, +211/-426)
+```diff
+@@ -177,21 +177,6 @@ struct RemappedFnKey {
+     loc_end: (u32, u32),
+ }
+ 
+-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+-enum LocalPackageManager {
+-    Npm,
+-    Pnpm,
+-    Yarn,
+-    Bun,
+-}
+-
+-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+-enum PackageManagerOutput {
+-    BinaryPath,
+-    BinDir,
+-    NodeModulesDir,
+-}
+-
+ impl RemappedFunction {
+     fn key(&self) -> RemappedFnKey {
+         RemappedFnKey {
+@@ -389,32 +374,50 @@ pub fn discover_sidecar(root: Option<&Path>) -> Result<PathBuf, String> {
+         ));
+     }
+ 
+-    if let Some(root) = root
+-        && let Some(path) = find_platform_package_sidecar(root)
+-    {
+-        return Ok(path);
+-    }
+-    if let Some(root) = root
+-        && let Some(path) = find_project_local_sidecar(root)
+-    {
+-        return Ok(path);
+-    }
+-    if let Some(root) = root
+-        && let Some(path) = find_package_manager_sidecar(root)
+-    {
+-        return Ok(path);
+-    }
++    discover_sidecar_in(root, &canonical_sidecar_path(), || {
++        find_on_path("fallow-cov")
++    })
++    .ok_or_else(|| sidecar_missing_message(root))
++}
+ 
+-    let canonical = canonical_sidecar_path();
+-    if canonical.is_file() {
+-        return Ok(canonical);
++/// Resolve the sidecar from fixed install locations only.
++///
++/// Discovery reads the file system and never starts a program. A package
++/// manager reads config from the analyzed root (`.yarnrc` `yarn-path`,
++/// `.yarnrc.yml` `yarnPath` and plugins, `.pnpmfile.cjs`), so starting one
++/// here would run code from that repository before the signature check.
++///
++/// A `node_modules/.bin/fallow-cov` entry is a package-manager wrapper with
++/// no `.sig` file, and the signature check refuses it. Discovery takes it
++/// only when no other location has a sidecar, so that the user sees the
++/// signature error for the file that exists.
++fn discover_sidecar_in(
++    root: Option<&Path>,
++    canonical: &Path,
++    find_on_path: impl FnOnce() -> Option<PathBuf>,
++) -> Option<PathBuf> {
++    let mut unsigned_wrapper = None;
++    if let Some(root) = root {
++        if let Some(path) = find_platform_package_sidecar(root) {
++            return Some(path);
++        }
++        if let Some(path) = find_project_local_sidecar(root) {
++            if signature_path(&path).is_file() {
++                return Some(path);
++            }
++            unsigned_wrapper = Some(path);
++        }
+     }
+-
+-    if let Some(path) = find_on_path("fallow-cov") {
+-        return Ok(path);
++    if canonical.is_file() {
++        return Some(canonical.to_path_buf());
+     }
++    find_on_path().or(unsigned_wrapper)
++}
+ 
+-    Err(sidecar_missing_message(root))
++fn signature_path(binary: &Path) -> PathBuf {
++    let mut path = binary.as_os_str().to_os_string();
++    path.push(".sig");
++    PathBuf::from(path)
+ }
+ 
+ fn env_non_empty(key: &str) -> Option<String> {
+@@ -491,10 +494,22 @@ fn find_platform_package_sidecar(root: &Path) -> Option<PathBuf> {
+ 
+         let node_modules = ancestor.join("node_modules");
+         for store_dir in [".bun", ".pnpm"] {
+-            if let Some(path) = find_package_store_platform_sidecar(&node_modules, store_dir) {
++            if let Some(path) = find_package_store_platform_sidecar(
++                &node_modules.join(store_dir),
++                "@fallow-cli+fallow-cov-",
++            ) {
+                 return Some(path);
+             }
+         }
++
++        // Yarn Plug'n'Play has no `node_modules`. It unpacks a package with a
++        // native binary under `.yarn/unplugged/<scope>-<name>-npm-<version>-<hash>/`.
++        if let Some(path) = find_package_store_platform_sidecar(
++            &ancestor.join(".yarn").join("unplugged"),
++            "@fallow-cli-fallow-cov-",
++        ) {
++            return Some(path);
++        }
+     }
+     None
+ }
+@@ -517,17 +532,19 @@ fn find_scoped_platform_sidecar(fallow_cli_dir: &Path, binary_name: &str) -> Opt
+     None
+ }
+ 
+-fn find_package_store_platform_sidecar(node_modules: &Path, store_dir: &str) -> Option<PathBuf> {
++/// Find the newest platform sidecar in a package store whose entries hold
++/// `node_modules/@fallow-cli/fallow-cov-<platform>/` (the pnpm and Bun stores,
++/// and the Yarn `unplugged` folder).
++fn find_package_store_platform_sidecar(store: &Path, entry_prefix: &str) -> Option<PathBuf> {
+     let binary_name = sidecar_binary_name();
+-    let store = node_modules.join(store_dir);
+-    let entries = fs::read_dir(&store).ok()?;
++    let entries = fs::read_dir(store).ok()?;
+     let mut candidates = Vec::new();
+     for entry in entries.flatten() {
+         let name = entry.file_name();
+         let Some(name_str) = name.to_str() else {
+             continue;
+         };
+-        if !name_str.starts_with("@fallow-cli+fallow-cov-") {
++        if !name_str.starts_with(entry_prefix) {
+             continue;
+         }
+ 
+@@ -577,116 +594,6 @@ const fn sidecar_binary_name() -> &'static str {
+     }
+ }
+ 
+-fn find_package_manager_sidecar(root: &Path) -> Option<PathBuf> {
+
+```
+
+**File**: `crates/cli/tests/integration/main.rs` (modified, +1/-0)
+```diff
+@@ -151,6 +151,7 @@ mod security_override_tests;
+ mod security_stable_id_tests;
+ mod security_workflow_tests;
+ mod sfc_callee_line_tests;
++mod sidecar_discovery_spawn_tests;
+ mod signal_tests;
+ mod snapshot_tests;
+ mod stable_ci_fingerprint_tests;
+```
+
+**File**: `crates/cli/tests/integration/sidecar_discovery_spawn_tests.rs` (added, +235/-0)
+```diff
+@@ -0,0 +1,235 @@
++//! Runtime-coverage sidecar discovery must not start a package manager.
++//!
++//! A package manager reads config from the analyzed root (`.yarnrc`
++//! `yarn-path`, `.yarnrc.yml` `yarnPath` and plugins, `.pnpmfile.cjs`) and
++//! can run a script that the repository ships. Sidecar discovery runs before
++//! the sidecar signature check, so a spawn there runs project code on every
++//! `--runtime-coverage` run. These tests put fake `npm`, `pnpm`, `yarn`,
++//! `bun` and `corepack` executables first on `PATH`. Each fake writes a
++//! marker file when something starts it.
++
++#![cfg(unix)]
++
++use std::fs;
++use std::os::unix::fs::PermissionsExt;
++use std::path::{Path, PathBuf};
++use std::process::Command;
++
++use super::common::{commit_all, fallow_bin, git, scrub_analysis_env};
++
++const FAKE_TOOLS: &[&str] = &["npm", "pnpm", "yarn", "bun", "corepack"];
++
++struct Sandbox {
++    _tmp: tempfile::TempDir,
++    home: PathBuf,
++    fake_bin: PathBuf,
++    marker: PathBuf,
++    coverage: PathBuf,
++    projects: Vec<PathBuf>,
++}
++
++impl Sandbox {
++    fn new() -> Self {
++        let tmp = tempfile::tempdir().expect("create temp dir");
++        let base = tmp.path().canonicalize().expect("canonical temp dir");
++
++        let home = base.join("home");
++        fs::create_dir_all(&home).expect("create home");
++
++        let marker = base.join("spawned.log");
++        let fake_bin = base.join("fake-bin");
++        fs::create_dir_all(&fake_bin).expect("create fake bin");
++        for tool in FAKE_TOOLS {
++            let script = fake_bin.join(tool);
++            fs::write(
++                &script,
++                format!(
++                    "#!/bin/sh\nprintf '%s %s\\n' '{tool}' \"$*\" >> '{}'\nexit 1\n",
++                    marker.display()
++                ),
++            )
++            .expect("write fake tool");
++            fs::set_permissions(&script, fs::Permissions::from_mode(0o755))
++                .expect("chmod fake tool");
++        }
++
++        let coverage = base.join("coverage-final.json");
++        fs::write(&coverage, b"{}").expect("write coverage input");
++
++        let projects = [
++            ("npm", "npm@10.9.0", "package-lock.json"),
++            ("pnpm", "pnpm@9.15.0", "pnpm-lock.yaml"),
++            ("yarn", "yarn@1.22.22", "yarn.lock"),
++            ("bun", "bun@1.2.0", "bun.lock"),
++        ]
++        .iter()
++        .map(|(name, package_manager, lockfile)| {
++            let root = base.join(format!("project-{name}"));
++            write_project(&root, Some(package_manager), lockfile);
++            root
++        })
++        .chain(std::iter::once({
++            // Lockfile only: detection falls back to `yarn.lock`.
++            let root = base.join("project-lockfile-only");
++            write_project(&root, None, "yarn.lock");
++            root
++        }))
++        .collect();
++
++        Self {
++            _tmp: tmp,
++            home,
++            fake_bin,
++            marker,
++            coverage,
++            projects,
++        }
++    }
++
++    fn command(&self, args: &[&str]) -> Command {
++        let mut cmd = Command::new(fallow_bin());
++        cmd.env("RUST_LOG", "").env("NO_COLOR", "1");
++        scrub_analysis_env(&mut cmd);
++        for key in [
++            "FALLOW_COV_BIN",
++            "FALLOW_COV_BINARY_PATH",
++            "FALLOW_LICENSE",
++            "FALLOW_LICENSE_PATH",
++            "FALLOW_BIN",
++            "FALLOW_FORMAT",
++            "FALLOW_QUIET",
++        ] {
++            cmd.env_remove(key);
++        }
++        cmd.env("HOME", &self.home)
++            .env("USERPROFILE", &self.home)
++            .env("PATH", format!("{}:/usr/bin:/bin", self.fake_bin.display()))
++            .args(args);
++        cmd
++    }
++
++    fn spawned(&self) -> String {
++        fs::read_to_string(&self.marker).unwrap_or_default()
++    }
++}
++
++fn write_project(root: &Path, package_manager: Option<&str>, lockfile: &str) {
++    fs::create_dir_all(root.join("src")).expect("create project");
++    let package_json = package_manager.map_or_else(
++        || r#"{"name":"victim","version":"1.0.0","main":"src/index.js"}"#.to_owned(),
++        |pm| {
++            format!(
++                r#"{{"name":"victim","version":"1.0.0","main":"src/index.js","packageManager":"{pm}"}}"#
++            )
 +        },
-+        {
-+          "command": "fallow.enableHealth",
-+          "when": "!fallow.health.enabled"
-+        },
++    );
++    fs::write(root.join("package.json"), package_json).expect("write package.json");
++    fs::write(root.join("src/index.js"), "export const value = 1;\n").expect("write source");
++    fs::write(root.join(lockfile), "").expect("write lockfile");
++    fs::write(root.join(".yarnrc"), "yarn-path \"./tools/yarn.js\"\n").expect("write .yarnrc");
++    // `audit` needs a repository with a base branch before it reaches
++    // sidecar discovery.
++    git(root, &["init", "-q", "-b", "main"]);
++    commit_all(root, "initial");
++    // `audit` also needs a changed file against that base.
++    fs::write(root.join("src/index.js"), "export const value = 2;\n").expect("change source");
++
+```
+
+---
+
+### Incident Patch 3: `77c747d1` (2026-11-16)
+**Commit Message**: fix(extract): resolve a module-scope read through the module-scope binding (#4646)
+
+* fix(extract): resolve a module-scope read through the module-scope binding
+
+A member read at module scope no longer credits a class binding that only
+a function body declares. In `function setup() { const Alias = new Foo(); }`
+with a module-scope `const Alias = E; Alias.One`, the read `Alias.One` also
+credited `Foo.One`, so `unused-class-members` did not report it.
+
+The visitor now records the class bindings that only a nested scope
+declares. A read at module scope does not resolve through such a binding,
+at walk time or in the finalize pass. A module-scope value alias with the
+same name takes the module-scope reads. The order of the read and the
+function does not change the result.
+
+The extraction cache version goes to 445, because the cached member
+accesses change.
+
+Closes #4603
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(extract): keep the module-scope credit of a hoisted block var
+
+A `var` in an `if`, `try` or plain block of module scope hoists to
+module scope. The scope tracking marked such a class binding as nested
+only, so a module-scope read such as `svc.run()` lost its cred
+
+**File**: `changelog.d/fix-class-member-scope-shadow.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Fixed
++
++- **A module-scope member read no longer credits a class binding of a function body.** In `function setup() { const Alias = new Foo(); }` with a module-scope `const Alias = E; Alias.One`, the read `Alias.One` also credited `Foo.One`. The read now resolves only through the module-scope binding, so `unused-class-members` reports `Foo.One` and `E.One` stays credited. The order of the read and the function does not change the result. (Closes [#4603](https://github.com/fallow-rs/fallow/issues/4603))
+```
+
+**File**: `crates/core/tests/integration_test.rs` (modified, +2/-0)
+```diff
+@@ -762,6 +762,8 @@ mod issue_4498_production_excluded_import;
+ mod issue_4552_method_call_result_local;
+ #[path = "integration_test/issue_4578_enum_member_alias.rs"]
+ mod issue_4578_enum_member_alias;
++#[path = "integration_test/issue_4603_nested_class_binding_shadow.rs"]
++mod issue_4603_nested_class_binding_shadow;
+ #[path = "integration_test/issue_609_velite.rs"]
+ mod issue_609_velite;
+ #[path = "integration_test/issue_704_auto_import_components.rs"]
+```
+
+**File**: `crates/core/tests/integration_test/issue_4603_nested_class_binding_shadow.rs` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++use crate::common::{create_config, fixture_path};
++
++/// Issue #4603: a member read at module scope resolves through the binding of
++/// module scope. A class binding with the same name in a function body does
++/// not take the read.
++///
++/// Each file has a module-scope `const Alias = <enum>` with the read
++/// `Alias.One`, and a function body with `const Alias = new <Class>()`. In
++/// `read-after.ts` the read follows the function, in `read-before.ts` it comes
++/// first. No code reads the `One` field of a class, so both are unused, and
++/// the enum member `One` is used.
++#[test]
++fn module_scope_read_does_not_credit_nested_class_binding() {
++    let root = fixture_path("issue-4603-nested-class-binding-shadow");
++    let config = create_config(root);
++    let results = fallow_core::analyze(&config).expect("analysis should succeed");
++
++    let mut unused_class: Vec<String> = results
++        .unused_class_members
++        .iter()
++        .map(|m| format!("{}.{}", m.member.parent_name, m.member.member_name))
++        .collect();
++    unused_class.sort_unstable();
++    assert_eq!(unused_class, ["Early.One", "Late.One"]);
++
++    let mut unused_enum: Vec<String> = results
++        .unused_enum_members
++        .iter()
++        .map(|m| format!("{}.{}", m.member.parent_name, m.member.member_name))
++        .collect();
++    unused_enum.sort_unstable();
++    assert_eq!(unused_enum, ["After.Two", "Before.Two"]);
++}
+```
+
+**File**: `crates/extract/src/visitor/mod.rs` (modified, +1/-1)
+```diff
+@@ -1816,7 +1816,7 @@ impl ModuleInfoExtractor {
+             prefix = parent;
+         }
+         if let Some(class) = self.walk_order_class_bindings.get(object)
+-            && !self.class_binding_root_is_shadowed(object)
++            && !self.walk_read_is_shadowed(object)
          {
-           "command": "fallow.reloadCoverage",
-           "when": "fallow.hasCoverage"
-@@ -915,7 +931,7 @@
-       },
-       {
-         "view": "fallow.health",
--        "contents": "The Health view is turned off.\nEnable [fallow.health.enabled](command:fallow.openSettings) to see the project health score, complexity findings, hotspot candidates, and refactoring candidates.",
-+        "contents": "The Health view is turned off.\nEnable [fallow.health.enabled](command:fallow.enableHealth) to see the project health score, complexity findings, hotspot candidates, and refactoring candidates.",
-         "when": "!fallow.health.enabled"
-       },
-       {
-@@ -925,7 +941,7 @@
-       },
-       {
-         "view": "fallow.security",
--        "contents": "Security candidate scanning is off by default.\nEnable [fallow.security.enabled](command:fallow.openSettings) to scan for security candidates.\nResults are UNVERIFIED candidates to verify, never confirmed vulnerabilities.",
-+        "contents": "Security candidate scanning is off by default.\nEnable [fallow.security.enabled](command:fallow.enableSecurity) to scan for security candidates.\nResults are UNVERIFIED candidates to verify, never confirmed vulnerabilities.",
-         "when": "!fallow.security.enabled"
-       },
-       {
+             self.walk_order_member_accesses.push((
+                 Some(object.to_string()),
 ```
 
-**File**: `editors/vscode/src/enableFeature.ts` (added, +42/-0)
+**File**: `crates/extract/src/visitor/tests.rs` (modified, +85/-0)
 ```diff
-@@ -0,0 +1,42 @@
-+import * as vscode from "vscode";
+@@ -18789,3 +18789,88 @@ fn object_literal_getter_this_is_not_the_class_instance() {
+         info.member_accesses
+     );
+ }
 +
-+/** Fallow settings that a sidebar welcome link can turn on. */
-+export type FeatureToggleKey = "security.enabled" | "health.enabled";
-+
-+const FEATURE_LABELS: Readonly<Record<FeatureToggleKey, string>> = {
-+  "security.enabled": "security candidate scanning",
-+  "health.enabled": "the Health view",
-+};
-+
-+/**
-+ * Sets a Fallow feature toggle to `true` without the Settings editor.
-+ *
-+ * The sidebar welcome links use this command instead of
-+ * `workbench.action.openSettings` with a query. In Cursor, that command call
-+ * with a query can freeze the Settings editor: the reply to the extension host
-+ * is the Settings editor pane, and Cursor serializes that object graph (#4553).
-+ *
-+ * The value goes to workspace settings when a workspace is open, because a
-+ * workspace value overrides a user value. Without a workspace, it goes to
-+ * user settings. When the write fails (for example, a settings file with
-+ * invalid JSON), an error message names the setting to change by hand.
-+ */
-+export const enableFeature = async (key: FeatureToggleKey): Promise<void> => {
-+  const hasWorkspace = (vscode.workspace.workspaceFolders?.length ?? 0) > 0;
-+  const target = hasWorkspace
-+    ? vscode.ConfigurationTarget.Workspace
-+    : vscode.ConfigurationTarget.Global;
-+  const where = hasWorkspace ? "workspace" : "user";
-+  try {
-+    await vscode.workspace.getConfiguration("fallow").update(key, true, target);
-+  } catch (error) {
-+    const reason = error instanceof Error ? error.message : String(error);
-+    void vscode.window.showErrorMessage(
-+      `Fallow: could not turn on ${FEATURE_LABELS[key]}. Set "fallow.${key}": true in your ${where} settings.json. ${reason}`,
++/// Issue #4603: a member read at module scope resolves through the binding of
++/// module scope, not through a class binding of the same name that only a
++/// function body declares. Both orders of the read and the function hold.
++#[test]
++fn module_scope_read_skips_nested_class_binding_of_same_name() {
++    let accesses = |source: &str| {
++        parse(source)
++            .member_accesses
++            .iter()
++            .map(|access| format!("{}.{}", access.object, access.member))
++            .collect::<Vec<_>>()
++    };
++    let after = accesses(
++        "import { E } from './e';\nimport { Foo } from './f';\nexport function setup(): void { const Alias = new Foo(); void Alias; }\nconst Alias = E;\nconsole.log(Alias.One);",
 +    );
-+    return;
-+  }
-+  void vscode.window.showInformationMessage(
-+    `Fallow: turned on ${FEATURE_LABELS[key]} (fallow.${key} in ${where} settings).`,
-+  );
-+};
++    assert!(after.iter().any(|a| a == "E.One"), "{after:?}");
++    assert!(!after.iter().any(|a| a == "Foo.One"), "{after:?}");
++    let before = accesses(
++        "import { E } from './e';\nimport { Foo } from './f';\nconst Alias = E;\nconsole.log(Alias.One);\nexport function setup(): void { const Alias = new Foo(); void Alias; }",
++    );
++    assert!(before.iter().any(|a| a == "E.One"), "{before:?}");
++    assert!(!before.iter().any(|a| a == "Foo.One"), "{before:?}");
++    let global = accesses(
++        "import { Foo } from './f';\nexport function setup(): void { const Alias = new Foo(); void Alias; }\nconsole.log(Alias.One);",
++    );
++    assert!(!global.iter().any(|a| a == "Foo.One"), "{global:?}");
++    let assigned = accesses(
++        "import { Foo } from './f';\nlet svc: Foo | undefined;\nexport function init(): void { svc = new Foo(); }\nsvc?.run();",
++    );
++    assert!(
++        assigned.iter().any(|a| a == "Foo.run"),
++        "an assignment in a function to a module binding keeps its credit: {assigned:?}"
++    );
++    let nested = accesses(
++        "import { H } from './h';\ndescribe('x', () => {\n  test('a', async ({ page }) => {\n    const d = new H(page);\n    await d.m();\n  });\n});",
++    );
++    assert!(
++        nested.iter().any(|a| a == "H.m"),
++        "a read in the scope of the nested binding keeps its credit: {nested:?}"
++    );
++}
++
++/// Issue #4603: a `var` in a block of module scope hoists to module scope, so
++/// a module-scope read of it keeps the credit of its class binding. A
++/// module-scope binding of another kind with the name of a nested class
++/// binding also keeps its credit.
++#[test]
++fn module_scope_read_keeps_class_binding_of_hoisted_block_var() {
++    let accesses = |source: &str| {
++        parse(source)
++            .member_accesses
++            .iter()
++            .map(|access| format!("{}.{}", access.object, access.member))
++            .collect::<Vec<_>>()
++    };
++    for source in [
++        "import { Foo } from './f';\nif (globalThis.x) { var svc = new Foo(); }\nsvc.run();",
++        "import { Foo } from './f';\ntry { var svc = new Foo(); } catch {}\nsvc.run();",
++        "import { Foo } from './f';\ndeclare function make(): Foo;\n{ var svc: Foo = make(); }\nsvc.run();",
++        "import { Foo } from './f';\nsvc.run();\nif (globalThis.x) { var svc = new Foo(); }",
++    ] {
++        let found = accesses(source);
++        assert!(found.iter().any(|a| a == "Foo.run"), "{source}: {found:?}");
++    }
++    let lexical = accesses(
++        "import { Foo } from './f';\nif (globalThis.x) { const svc = new Foo(); void svc; }\nsvc.run();",
++    );
++    assert!(
++        !lexical.iter().any(|a| a == "Foo.run"),
++        "a lexical binding of a block stays nested: {lexical:?}"
++    );
++    let typed = accesses(
++        "import { Foo } from './f';\nimport { Bar } from './b';\nexport function setup(): void { const svc = new Foo(); void svc; }\nlet svc: Bar;\nsvc.run();",
++    );
++    assert!(typed.iter().any(|a| a == "Bar.run"), "{typed:?}");
++    assert!(!typed.iter().any(|a| a == "Foo.run"), "{typed:?}");
++    let destructured = accesses(
++        "import { Foo } from './f';\nimport { Bar } from './b';\nexport function setup(): void { const svc = new Foo(); void svc; }\nconst { svc }: { svc: Bar } = load();\nsvc.run();",
++    );
++    assert!(
++        !destructured.iter().any(|a| a == "Foo.run"),
++        "{destructured:?}"
++    );
++}
 ```
 
-**File**: `editors/vscode/src/extension.ts` (modified, +9/-0)
+**File**: `crates/extract/src/visitor/visit_impl.rs` (modified, +1/-8)
 ```diff
-@@ -10,6 +10,7 @@ import { runBaselineCommand } from "./baselineCommand.js";
- import { shouldAcceptLspAnalysisComplete } from "./analysisNotification.js";
- import { startClient, stopClient, restartClient } from "./client.js";
- import { cancelReleaseRetry } from "./download.js";
-+import { enableFeature } from "./enableFeature.js";
- import { createSingleFlight } from "./analysis-single-flight.js";
- import {
-   getHealthEnabled,
-@@ -1027,6 +1028,14 @@ export const activate = async (context: vscode.ExtensionContext): Promise<Extens
-     }),
-   );
+@@ -1634,14 +1634,6 @@ impl ModuleInfoExtractor {
+         }
+     }
  
-+  // Turn on an opt-in view from its sidebar welcome link (#4553).
-+  context.subscriptions.push(
-+    vscode.commands.registerCommand("fallow.enableSecurity", () =>
-+      enableFeature("security.enabled"),
-+    ),
-+    vscode.commands.registerCommand("fallow.enableHealth", () => enableFeature("health.enabled")),
-+  );
-+
-   // License management commands (activate / status / refresh / deactivate).
-   // All are one-shot CLI invocations; none touch the analysis path.
-   context.subscriptions.push(
+-    fn preseed_nested_declarations(&mut self, statements: &[Statement<'_>]) {
+-        for statement in statements {
+-            if let Some(declaration) = statement.as_declaration() {
+-                self.record_nested_declaration(declaration);
+-            }
+-        }
+-    }
+-
+     fn preseed_direct_object_binding_scope_roots(&mut self, statements: &[Statement<'_>]) {
+         for statement in statements {
+             let declaration = match statement {
+@@ -3473,6 +3465,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
+         self.record_program_sanitizer_functions(program);
+         self.record_local_function_return_types(program);
+         self.preseed_direct_object_binding_targets(&program.body);
++        self.record_module_vars(&program.body);
+         self.record_program_local_import_loaders(program);
+         self.record_program_component_loader_imports(program);
+         walk::walk_program(self, program);
 ```
 
-**File**: `editors/vscode/test/enableFeature.test.ts` (added, +78/-0)
+**File**: `crates/extract/src/visitor/visit_impl_scope_bindings.rs` (modified, +67/-0)
 ```diff
-@@ -0,0 +1,78 @@
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+import { enableFeature } from "../src/enableFeature.js";
-+
-+const mocks = vi.hoisted(() => ({
-+  update: vi.fn<(key: string, value: unknown, target: number) => Promise<void>>(),
-+  executeCommand: vi.fn<(command: string, ...args: unknown[]) => Promise<unknown>>(),
-+  showInformationMessage: vi.fn<(message: string) => Promise<undefined>>(),
-+  showErrorMessage: vi.fn<(message: string) => Promise<undefined>>(),
-+  workspaceFolders: undefined as readonly object[] | undefined,
-+}));
-+
-+vi.mock("vscode", () => ({
-+  ConfigurationTarget: { Global: 1, Workspace: 2, WorkspaceFolder: 3 },
-+  workspace: {
-+    get workspaceFolders() {
-+      return mocks.workspaceFolders;
-+    },
-+    getConfiguration: (section: string) => {
-+      expect(section).toBe("fallow");
-+      return { update: mocks.update };
-+    },
-+  },
-+  commands: { executeCommand: mocks.executeCommand },
-+  window: {
-+    showInformationMessage: mocks.showInformationMessage,
-+    showErrorMessage: mocks.showErrorMessage,
-+  },
-+}));
-+
-+beforeEach(() => {
-+  mocks.update.mockReset().mockResolvedValue(undefined);
-+  mocks.executeCommand.mockReset();
-+  mocks.showInformationMessage.mockReset().mockResolvedValue(undefined);
-+  mocks.showErrorMessage.mockReset().mockResolvedValue(undefined);
-+  mocks.workspaceFolders = [{}];
-+});
-+
-+describe("enableFeature", () => {
-+  it("writes the toggle to workspace settings when a workspace is open", async () => {
-+    await enableFeature("security.enabled");
-+
-+    expect(mocks.update).toHaveBeenCalledWith("security.enabled", true, 2);
-+    expect(mocks.showInformationMessage).toHaveBeenCalledWith(
-+      expect.stringContaining("fallow.security.enabled in workspace settings"),
-+    );
-+  });
-+
-+  it("writes the toggle to user settings when no workspace is open", async () => {
-+    mocks.workspaceFolders = undefined;
-+
-+    await enableFeature("health.enabled");
-+
-+    expect(mocks.update).toHaveBeenCalledWith("health.enabled", true, 1);
-+    expect(mocks.showInformationMessage).toHaveBeenCalledWith(
-+      expect.stringContaining("fallow.health.enabled in user settings"),
-+    );
-+  });
-+
-+  it("never opens the Settings editor", async () => {
-+    await enableFeature("security.enabled");
-+
-+    expect(mocks.executeCommand).not.toHaveBeenCalled();
-+  });
-+
-+  it("names the manual setting when the settings write fails", async () => {
-+    mocks.update.mockRejectedValue(new Error("Unable to write into workspace settings."));
-+
-+    await expect(enableFeature("security.enabled")).resolves.toBeUndefined();
-+
-+    expect(mocks.showInformationMessage).not.toHaveBeenCalled();
-+    expect(mocks.showErrorMessage).toHaveBeenCalledWith(
-+      expect.stringContaining('Set "fallow.security.enabled": true in your workspace settings.json'),
-+    );
-+    expect(mocks.showErrorMessage).toHaveBeenCalledWith(
-+      expect.stringContaining("Unable to write into workspace settings."),
-+    );
-+  });
-+});
-```
-
-**File**: `editors/vscode/test/integration/suite/extension.test.ts` (modified, +20/-0)
-```diff
-@@ -205,6 +205,26 @@ describe("Fallow VS Code extension", () => {
-     assert.equal(editor?.selection.active.line, 1);
-   });
+@@ -172,6 +172,17 @@ impl ModuleInfoExtractor {
+             .is_some_and(|scope| scope.contains(root))
+     }
  
-+  for (const { command, key } of [
-+    { command: "fallow.enableSecurity", key: "security.enabled" },
-+    { command: "fallow.enableHealth", key: "health.enabled" },
-+  ]) {
-+    it(`sets ${key} in workspace settings from ${command}`, async () => {
-+      const workspaceValue = (): boolean | undefined =>
-+        vscode.workspace.getConfiguration("fallow").inspect<boolean>(key)?.workspaceValue;
-+      assert.equal(workspaceValue(), undefined);
++    /// Whether a read of `object` at this point of the walk must not resolve
++    /// through a class binding: its root is a nested shadow, or the read is
++    /// at module scope and only a nested scope declares the class binding of
++    /// its root (issue #4603). Call it only during the walk: the finalize
++    /// pass runs at depth zero.
++    pub(in crate::visitor) fn walk_read_is_shadowed(&self, object: &str) -> bool {
++        let root = object.split_once('.').map_or(object, |(root, _)| root);
++        self.class_binding_root_is_shadowed(object)
++            || (self.is_module_scope() && self.shadowed_reads.is_nested_only(root))
++    }
 +
-+      try {
-+        await vscode.commands.executeCommand(command);
-+        assert.equal(workspaceValue(), true);
-+      } finally {
-+        await vscode.workspace
-+          .getConfiguration("fallow")
-+          .update(key, undefined, vscode.ConfigurationTarget.Workspace);
-+      }
-+    });
-+  }
+     /// Record the nested declarators of `var` that provably hold no class
+     /// instance. Call it together with `record_nested_declaration_names`.
+     pub(super) fn record_non_instance_declarators(&mut self, var: &VariableDeclaration<'_>) {
+@@ -229,6 +240,13 @@ impl ModuleInfoExtractor {
+                 .nested_roots
+                 .insert(self.member_accesses.len());
+         }
++        // A nested class binding can follow the read in the walk, so the
++        // finalize pass decides once it knows every nested binding.
++        if self.is_module_scope() {
++            self.shadowed_reads
++                .module_scope
++                .insert(self.member_accesses.len());
++        }
+         self.member_accesses
+             .push(crate::MemberAccess { object, member });
+     }
+@@ -239,6 +257,7 @@ impl ModuleInfoExtractor {
+         target: String,
+     ) {
+         self.clear_non_instance_binding(&binding);
++        self.track_binding_scope(&binding);
+         self.walk_order_class_bindings
+             .insert(binding.clone(), target.clone());
+         let target = super::super::BindingTarget::Class(target);
+@@ -258,6 +277,7 @@ impl ModuleInfoExtractor {
+         target: String,
+     ) {
+         self.clear_non_instance_binding(&binding);
++        self.track_binding_scope(&binding);
+         if !self.binding_target_names.contains_key(&binding) {
+             self.walk_order_class_bindings
+                 .insert(binding.clone(), target.clone());
+@@ -267,6 +287,33 @@ impl ModuleInfoExtractor {
+             .or_insert(super::super::BindingTarget::Class(target));
+     }
+ 
++    /// Track whether only a nested scope declares the class binding
++    /// `binding`. Call it before the binding map takes `binding`. An
++    /// assignment in a nested scope to an outer name does not declare it. A
++    /// `var` in a block of module scope hoists to module scope.
++    ///
++    /// A module-scope binding with the name of a nested-only binding is
++    /// another binding, so it replaces the nested class binding. Otherwise
++    /// the module-scope reads resolve through the nested class.
++    fn track_binding_scope(&mut self, binding: &str) {
++        let hoisted_var = self.function_depth == 0
++            && self.namespace_depth == 0
++            && self.shadowed_reads.module_vars.contains(binding);
++        if self.is_module_scope() || hoisted_var {
++            if self.shadowed_reads.nested_only_bindings.remove(binding) {
++                self.binding_target_names.remove(binding);
++                self.walk_order_class_bindings.remove(binding);
++            }
++        } else if !binding.contains('.')
++            && self.nested_scope_shadows(binding)
++            && !self.binding_target_names.contains_key(binding)
++        {
++            self.shadowed_reads
++                .nested_only_bindings
++                .insert(binding.to_string());
++        }
++    }
 +
-   it("frames completed security scans as unverified candidates in the actual toast", async () => {
-     const messages: string[] = [];
-     windowApi.showInformationMessage = async (message: string) => {
+     pub(super) fn nested_scope_shadows(&self, name: &str) -> bool {
+         self.nested_declaration_stack
+             .iter()
+@@ -626,6 +673,26 @@ impl ModuleInfoExtractor {
+         scope.extend(declarations.into_iter().map(|id| id.name.to_string()));
+     }
+ 
++    pub(super) fn preseed_nested_declarations(&mut self, statements: &[Statement<'_>]) {
++        for statement in statements {
++            if let Some(declaration) = statement.as_declaration() {
++                self.record_nested_declaration(declaration);
++            }
++        }
++    }
++
++    /// Record the `var` names that hoist to module scope, also from a block.
++    /// An SFC or Astro file visits each script with one extractor, so the
++    /// names of every script add up.
++    pub(super) fn record_module_vars<'a>(
++        &mut self,
++        statements: &oxc_allocator::Vec<'a, Statement<'a>>,
++    ) {
++        self.shadowed_reads
++            .module_vars
++            .extend(Self::var_binding_roots(statements));
++    }
++
+     pub(super) fn var_binding_roots<'a>(
+         statements: &oxc_allocator::Vec<'a, Statement<'a>>,
+     ) -> FxHashSet<String> {
 ```
 
-**File**: `editors/vscode/test/package-manifest.test.ts` (modified, +23/-0)
+**File**: `crates/extract/src/visitor/visit_impl_value_alias.rs` (modified, +29/-3)
 ```diff
-@@ -492,3 +492,26 @@ describe("package.json license commands", () => {
-     expect(properties["fallow.license.showStatusBar"]?.default).toBe(true);
-   });
- });
+@@ -46,7 +46,12 @@ impl ModuleInfoExtractor {
+         binding: String,
+         value: &Expression<'_>,
+     ) -> bool {
+-        if self.binding_target_names.contains_key(&binding) {
++        // A module-scope alias with the name of a class binding that only a
++        // nested scope declares is another binding. It takes the module-scope
++        // reads (issue #4603).
++        let replaces_nested =
++            self.is_module_scope() && self.shadowed_reads.is_nested_only(&binding);
++        if self.binding_target_names.contains_key(&binding) && !replaces_nested {
+             return false;
+         }
+         let Some(source) = value_alias_source(value) else {
+@@ -60,7 +65,11 @@ impl ModuleInfoExtractor {
+             Some(BindingTarget::FactoryCall { .. } | BindingTarget::Ambiguous) => return false,
+             None => source.to_string(),
+         };
+-        self.insert_class_binding_target_if_absent(binding, target);
++        if replaces_nested {
++            self.insert_class_binding_target(binding, target);
++        } else {
++            self.insert_class_binding_target_if_absent(binding, target);
++        }
+         true
+     }
+ }
+@@ -77,6 +86,15 @@ pub(in crate::visitor) struct ShadowedReads {
+     pub(in crate::visitor) nested_roots: FxHashSet<usize>,
+     /// Module-scope `const` aliases of a binding (`const Alias = Color`).
+     pub(in crate::visitor) module_aliases: FxHashSet<String>,
++    /// Reads written at module scope.
++    pub(in crate::visitor) module_scope: FxHashSet<usize>,
++    /// Class binding names that only a nested scope declares, such as
++    /// `const Alias = new Foo()` in a function body. A read at module scope
++    /// never sees such a binding (issue #4603).
++    pub(in crate::visitor) nested_only_bindings: FxHashSet<String>,
++    /// `var` names that hoist to module scope, such as a `var` in an `if`
++    /// block of module scope. Such a binding is never nested only.
++    pub(in crate::visitor) module_vars: FxHashSet<String>,
+ }
+ 
+ impl ShadowedReads {
+@@ -85,13 +103,21 @@ impl ShadowedReads {
+         self.module_aliases.contains(root)
+     }
+ 
++    /// Whether a read of `root` at module scope must not resolve through the
++    /// class binding of `root`, because only a nested scope declares it.
++    pub(in crate::visitor) fn is_nested_only(&self, root: &str) -> bool {
++        self.nested_only_bindings.contains(root)
++    }
 +
-+describe("package.json feature enable links", () => {
-+  const cases = [
-+    { view: "fallow.security", when: "!fallow.security.enabled", command: "fallow.enableSecurity" },
-+    { view: "fallow.health", when: "!fallow.health.enabled", command: "fallow.enableHealth" },
-+  ] as const;
-+
-+  // `workbench.action.openSettings` with a query can freeze the Settings
-+  // editor in Cursor (#4553). The disabled-state links turn the setting on
-+  // directly, so they never open the Settings editor.
-+  it.each(cases)("links the disabled $view welcome to $command", (entry) => {
-+    const welcome = pkg.contributes.viewsWelcome.find(
-+      (item) => item.view === entry.view && item.when === entry.when,
-+    );
-+    expect(welcome?.contents).toContain(`(command:${entry.command})`);
-+    expect(welcome?.contents).not.toContain("command:fallow.openSettings");
-+  });
-+
-+  it.each(cases)("contributes $command and hides it from the palette once on", (entry) => {
-+    expect(command(entry.command)?.title).toMatch(/^Fallow: /);
-+    expect(commandPaletteEntry(entry.command)?.when).toBe(entry.when);
-+  });
-+});
+     /// Whether the read at `index` of `object` skips the class bindings. A
+     /// nested declaration with the name of a module alias holds another
+-    /// value, so its reads do not resolve through the alias.
++    /// value, so its reads do not resolve through the alias. A read at module
++    /// scope does not resolve through a class binding of a nested scope.
+     pub(in crate::visitor) fn skips(&self, index: usize, object: &str) -> bool {
+         let root = object.split_once('.').map_or(object, |(root, _)| root);
+         self.class_roots.contains(&index)
+             || (self.nested_roots.contains(&index) && self.is_module_alias(root))
++            || (self.module_scope.contains(&index) && self.is_nested_only(root))
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4616** (2026-11-15): ci(bench): build CodSpeed shards with two compile jobs, swap and a resource log (@BartWaardenburg)
-- **PR #4615** (2026-11-14): ci(release): run the published Action on Linux after each publication (@BartWaardenburg)
-- **PR #4614** (2026-11-14): chore: sync napi, Docker pins and RELEASED_TAG to v3.43.1 (@BartWaardenburg)
-- **PR #4607** (2026-11-14): chore: release v3.43.1 (@BartWaardenburg)
-- **PR #4604** (2026-11-14): fix(angular): credit more template reads and inherited inputs and outputs (@BartWaardenburg)
-- **PR #4602** (2026-11-14): fix(extract): credit enum members read through an alias or passed on whole (@BartWaardenburg)
+- **PR #4648** (2026-11-16): chore: sync napi, Docker pins and RELEASED_TAG to v3.43.2 (@BartWaardenburg)
+- **PR #4647** (2026-11-16): feat(vscode): show one compact Fallow status bar item (@BartWaardenburg)
+- **PR #4646** (2026-11-16): fix(extract): resolve a module-scope read through the module-scope binding (@BartWaardenburg)
+- **PR #4645** (2026-11-16): fix(playwright): read conditional reporter and global setup values (@BartWaardenburg)
+- **PR #4644** (2026-11-16): feat(dupes): add consistentIdentifiers and compare template literal text (@BartWaardenburg)
+- **PR #4642** (2026-11-16): feat(config): add production.ignore for production-only exclusions (@BartWaardenburg)
 
 ---
 
@@ -2493,31 +2818,23 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. audit): keep a clone inherited when lines above one copy are rewritten
+## X. security): skip calls of inert local functions as name-only sinks
 
 **RULE**:
-When implementing operations in `changelog.d/fix-audit-clone-attribution-on-rename.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-security-resolved-local-callees.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a3fbe65`: audit): keep a clone inherited when lines above one copy are rewritten. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22c832f6`: security): skip calls of inert local functions as name-only sinks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-audit-clone-attribution-on-rename.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-security-resolved-local-callees.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ### Fixed
 
-- **`fallow audit` no longer reports an old clone group as introduced when the change rewrites the lines above one copy.**
-  The audit maps each head copy of a clone back to its base lines. When the
-  first or last line of a copy was a rewritten line that replaced several base
-  lines, the mapped range grew to the far end of the replaced lines and fell
-  outside the base clone. A rename of the other copy, together with fewer
-  import lines above this copy, could then fail `--gate new-only` on
-  duplication that the change did not write. The rewritten edge line now maps
-  to the replaced base line next to the unchanged lines of the copy.
-  (Closes [#4580](https://github.com/fallow-rs/fallow/issues/4580))
+- **`fallow security` no longer reports a call of an inert local function as a library sink.** Some rows match a callee by name only, for example `request(url)` for `ssrf` and `x.merge(a, b)` for `prototype-pollution`. When the module declares that function, or an object literal with that inline method, and its body runs no call and writes no member, the call cannot reach the library. The call is then not a candidate. A local function that runs a call still matches by name, because it can forward its argument to the library. When the module reassigns the function anywhere (`request = got`), writes a member of the object (`utils.merge = _.merge`), or passes the object to a call (`Object.assign(utils, ...)`), the call also stays a candidate. (Part of [#4611](https://github.com/fallow-rs/fallow/issues/4611))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2527,7 +2844,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a3fbe65` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22c832f6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

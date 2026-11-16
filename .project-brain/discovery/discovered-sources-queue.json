@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T22:55:50.519Z",
+  "updated_at": "2026-11-16T23:03:51.933Z",
   "stats": {
-    "total_discovered": 4478,
-    "approved_pending_harvest": 4213,
+    "total_discovered": 4482,
+    "approved_pending_harvest": 4217,
     "harvested_count": 0,
     "rejected_count": 265,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4215,
+      "COMMUNITY_AND_EXPERT": 4219,
       "OFFICIAL_DOCUMENTATION": 140,
       "STANDARDS_AND_SPECIFICATIONS": 96,
       "ENGINEERING_BLOGS": 3,
@@ -96682,6 +96682,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
         "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-462DC6C8284C": {
+      "id": "SRC-462DC6C8284C",
+      "url": "https://github.com/fallow-rs/fallow/issues/4611",
+      "title": "https://github.com/fallow-rs/fallow/issues/4611",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:03:50.726Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-CF5E95A90851": {
+      "id": "SRC-CF5E95A90851",
+      "url": "https://github.com/fallow-rs/fallow/issues/4603",
+      "title": "https://github.com/fallow-rs/fallow/issues/4603",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:03:50.764Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-05CD22B3282E": {
+      "id": "SRC-05CD22B3282E",
+      "url": "https://github.com/sozercan/kaset",
+      "title": "https://github.com/sozercan/kaset",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:03:51.895Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
+        "fileName": "sozercan-kaset-learnings.md"
+      }
+    },
+    "SRC-E1FB16BD231E": {
+      "id": "SRC-E1FB16BD231E",
+      "url": "https://github.com/user-attachments/assets/0d24bb67-21b2-4af8-a865-a558b7f54db6",
+      "title": "https://github.com/user-attachments/assets/0d24bb67-21b2-4af8-a865-a558b7f54db6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T23:03:51.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
+        "fileName": "sozercan-kaset-learnings.md"
       }
     }
   }

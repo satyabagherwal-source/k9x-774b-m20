@@ -639640,3 +639640,173 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5f79fbc6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8807. make native Up Next injection work in localized UIs and with stale queue (Harvested from sozercan/kaset)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "make native Up Next injection work in localized UIs and with stale queue",
+  "source": "sozercan/kaset",
+  "source_url": "https://github.com/sozercan/kaset",
+  "source_version": "ebaa1858",
+  "license": "MIT",
+  "extracted_at": "2026-11-16T23:03:43.491Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sozercan-kaset",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sozercan/kaset](https://github.com/sozercan/kaset) (Revision: `ebaa1858`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/Kaset/Services/Player/PlayerService+WebQueueSync.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `441d5a77`: queue): make native Up Next injection work in localized UIs and with stale queue rows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Kaset/Services/Player/PlayerService+WebQueueSync.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    private func scheduleWebQueueInjectionRetry(videoId: String) {
+        let sourceVideoId = self.expectedPlaybackVideoId
+        let remaining = self.webQueueInjectionRetries.flatMap {
+            $0.pair == (videoId, sourceVideoId) ? $0.remaining : nil
+        } ?? 5
+        guard remaining > 0 else { return }
+        self.webQueueInjectionRetries = ((videoId, sourceVideoId), remaining - 1)
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard self.injectedWebQueueVideoId == nil,
+                  self.pendingWebQueueInjectionVideoId == nil,
+                  let nextIndex = self.expectedQueueIndexAfterCurrentTrack(),
+                  self.queue[safe: nextIndex]?.videoId == videoId
+            else { return }
+            self.syncWebQueue()
+        }
+    }
+
+            // Right after a track change YouTube Music's queue may not list the new source yet.
+            // Without a retry the target stays unprepared and Next falls back to a fresh load.
+            if reason == "queue-source-not-ready" {
+                self.scheduleWebQueueInjectionRetry(videoId: videoId)
+            }
+        self.webQueueInjectionRetries = nil
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `441d5a77` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8808. provide upload completion callbacks (Harvested from higress-group/higress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "provide upload completion callbacks",
+  "source": "higress-group/higress",
+  "source_url": "https://github.com/higress-group/higress",
+  "source_version": "7059b8d2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-16T23:03:46.723Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-higress-group-higress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `7059b8d2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `plugins/wasm-go/extensions/ai-cache/core.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7059b8d2`: ai-cache): provide upload completion callbacks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/ai-cache/core.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	onUploadComplete := func(_ wrapper.HttpContext, log logs.Log, err error) {
+		if err != nil {
+			log.Warnf("[%s] [uploadEmbeddingAndAnswer] asynchronous embedding upload failed: %v", PLUGIN_NAME, err)
+		}
+	}
+		err := ansEmbUploader.UploadAnswerAndEmbedding(key, emb, value, ctx, log, onUploadComplete)
+		err := embUploader.UploadEmbedding(key, emb, ctx, log, onUploadComplete)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+		err := ansEmbUploader.UploadAnswerAndEmbedding(key, emb, value, ctx, log, nil)
+		err := embUploader.UploadEmbedding(key, emb, ctx, log, nil)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7059b8d2` are properly handled with clean fallback behavior.

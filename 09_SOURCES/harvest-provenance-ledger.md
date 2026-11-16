@@ -10393,3 +10393,7 @@ Every entry in this ledger must capture:
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `c0d4c900` | Multi-dimensional audit evidence | 2026-11-16T22:47:32.086Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `a5b5d7de` | Multi-dimensional audit evidence | 2026-11-16T22:47:37.886Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `5f79fbc6` | Multi-dimensional audit evidence | 2026-11-16T22:55:47.216Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-16T23:03:35.911Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `22c832f6` | Multi-dimensional audit evidence | 2026-11-16T23:03:38.602Z |
+| `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `ebaa1858` | Multi-dimensional audit evidence | 2026-11-16T23:03:44.029Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `7059b8d2` | Multi-dimensional audit evidence | 2026-11-16T23:03:47.272Z |

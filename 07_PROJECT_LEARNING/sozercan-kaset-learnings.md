@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source**: github ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
-> **Source Version**: `6a20e60c`  
+> **Source Version**: `ebaa1858`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:30:12.089Z  
+> **Timestamp**: 2026-11-16T23:03:42.871Z  
 > **Learning ID**: `learn-github-sozercan-kaset`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:30:11.276Z  
+> **Harvest Timestamp**: 2026-11-16T23:03:42.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📼 The missing YouTube and YouTube Music macOS app
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2498 stars
+- **Stars / Engagement**: 2613 stars
 
 ---
 
@@ -1338,11 +1338,11 @@ extension PlayerService {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #544** (2026-10-12): **[Bug]: Sidebar opens automatically when window regains focus**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  When the sidebar is collapsed, switching focus away from the application (or switching via Mission Control) and returning to the Kaset window causes the sidebar to expand and open automatically, ignoring its collapsed state.  **Actual Behavior** The sidebar automatically re-opens/expands upon focusing the window, requiring the user to manually close it again every time.     **Environment** Application: Kaset (sozercan/kaset)    OS: macOS     ### Expected Behavior  The sidebar should remain collapsed until the user explicitly clicks the toggle button or uses a shortcut to expand it.   ### Steps to Reproduce  1. Open a video in Kaset. 2. Click the sidebar toggle button in the top-left toolbar to collapse/hide the sidebar.    3. Switch focus to another application or window (e.g., via Mission Control or by clicking another app).    4. Click back into the Kaset window to refocus it.     ### macOS Version  macOS 26 (Tahoe)  ### Kaset Version  Version 0.14.2 (27)  ### Affected Area  UI / Visual  ### Screenshots or Logs  _No response_  ### Additional Context  <!-- Failed to upload "screen-recording.mov" -->
+- **Issue #579** (2026-11-11): **[Wrong repo] please ignore**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  Every track fails with "Time out, check internet connection (ERROR_UNKNOWN)". It is not a timeout: all three extractor tiers are rejected by YouTube's bot check.  My IP (a VPN exit) is challenged for anonymous requests. Official clients and other clients that send the login cookie play fine on it. SimpMusic is signed in, but per mitmproxy analysis, the stream request does not  ### Expected Behavior  When signed in, the stream request carries the login cookie.  ### Steps to Reproduce  1. Use an IP where YouTube challenges anonymous playback (e.g. a VPN exit). 2. Sign in on SimpMusic Desktop 2.5.0 (use official extension, paste cookies) and play any song.   ### macOS Version  Other  ### Kaset Version  2.5.0  ### Affected Area  Playback / Audio  ### Screenshots or Logs  _No response_  ### Additional Context  I have premium membership
 
-- **Issue #525** (2026-10-11): **[Bug]: Pause/Play Button Glitching**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  Pause/Play button doesn't move and time bar doesn't move at all. Audio also restarts mid-play and shuffles to a song that isn't included in the playlist.  ### Expected Behavior  Pause/Play button reacts as it should, time bar moves and audio doesn't restat mid-play.  ### Steps to Reproduce  Play any music.  ### macOS Version  Other  ### Kaset Version  0.14.1  ### Affected Area  Playback / Audio  ### Screenshots or Logs  <img width="979" height="43" alt="Image" src="https://github.com/user-attachments/assets/ccabc7ec-738a-4cea-9109-6994ca3168c4" />  ### Additional Context  _No response_
+- **Issue #574** (2026-11-09): **[Bug]: Google is blocking the sign in function**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  So it happens that Google is now blocking the in-app login window...  <img width="1181" height="943" alt="Image" src="https://github.com/user-attachments/assets/0d24bb67-21b2-4af8-a865-a558b7f54db6" />  Not sure that the recommended flow is now.  ### Expected Behavior  Google login is fixed (in a Google recommended way?)  ### Steps to Reproduce  1. Login  ### macOS Version  macOS 26 (Tahoe)  ### Kaset Version  0.14.2  ### Affected Area  Authentication / Login  ### Screenshots or Logs  _No response_  ### Additional Context  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1359,462 +1359,1109 @@ extension PlayerService {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2258e5cd` (2026-10-31)
-**Commit Message**: docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#567)
+### Incident Patch 1: `441d5a77` (2026-11-14)
+**Commit Message**: fix(queue): make native Up Next injection work in localized UIs and with stale queue rows (#564)
+
+**File**: `Sources/Kaset/Services/Player/PlayerService+WebQueueSync.swift` (modified, +24/-0)
+```diff
+@@ -194,6 +194,24 @@ extension PlayerService {
+         }
+     }
+ 
++    private func scheduleWebQueueInjectionRetry(videoId: String) {
++        let sourceVideoId = self.expectedPlaybackVideoId
++        let remaining = self.webQueueInjectionRetries.flatMap {
++            $0.pair == (videoId, sourceVideoId) ? $0.remaining : nil
++        } ?? 5
++        guard remaining > 0 else { return }
++        self.webQueueInjectionRetries = ((videoId, sourceVideoId), remaining - 1)
++        Task {
++            try? await Task.sleep(for: .seconds(2))
++            guard self.injectedWebQueueVideoId == nil,
++                  self.pendingWebQueueInjectionVideoId == nil,
++                  let nextIndex = self.expectedQueueIndexAfterCurrentTrack(),
++                  self.queue[safe: nextIndex]?.videoId == videoId
++            else { return }
++            self.syncWebQueue()
++        }
++    }
++
+     private func scheduleWebQueueInjectionTimeout(videoId: String, generation: Int) {
+         Task {
+             try? await Task.sleep(for: Self.webQueueInjectionTimeout)
+@@ -231,6 +249,11 @@ extension PlayerService {
+                 self.injectedWebQueueVideoId = nil
+             }
+             self.logger.warning("Web queue injection failed for \(videoId): \(reason ?? "unknown")")
++            // Right after a track change YouTube Music's queue may not list the new source yet.
++            // Without a retry the target stays unprepared and Next falls back to a fresh load.
++            if reason == "queue-source-not-ready" {
++                self.scheduleWebQueueInjectionRetry(videoId: videoId)
++            }
+             return
+         }
+ 
+@@ -245,6 +268,7 @@ extension PlayerService {
+         }
+ 
+         self.injectedWebQueueVideoId = videoId
++        self.webQueueInjectionRetries = nil
+         self.logger.info("Synced web queue: confirmed \(videoId) to play next natively")
+     }
+ 
+```
+
+**File**: `Sources/Kaset/Services/Player/PlayerService.swift` (modified, +4/-0)
+```diff
+@@ -803,6 +803,7 @@ final class PlayerService: NSObject, PlayerServiceProtocol {
+         SingletonPlayerWebView.shared.cancelQueueInjection()
+         self.injectedWebQueueVideoId = nil
+         self.pendingWebQueueInjectionVideoId = nil
++        self.webQueueInjectionRetries = nil
+     }
+ 
+     /// Records the current index before `next()` moves to `newIndex` (no-op if unchanged).
+@@ -920,6 +921,9 @@ final class PlayerService: NSObject, PlayerServiceProtocol {
+     /// or a new playback context supersedes it.
+     var webQueueInjectionGeneration: Int = 0
+ 
++    /// Retries left for injecting a target after a source that was not yet in YouTube Music's queue.
++    @ObservationIgnored var webQueueInjectionRetries: (pair: (videoId: String, sourceVideoId: String?), remaining: Int)?
++
+     /// Video ID that Kaset just selected through deterministic queue navigation.
+     /// WebView metadata can arrive out of order around manual/media-key skips; keep
+     /// this target protected briefly so stale in-queue rows cannot realign `currentIndex` backward.
+```
+
+**File**: `Sources/Kaset/Views/SingletonPlayerWebView+QueueInjection.swift` (modified, +34/-4)
+```diff
+@@ -193,6 +193,12 @@ extension SingletonPlayerWebView {
+                     && item.classList.contains('selected'));
+             }
+ 
++            function queueItemShowsPlayback(item) {
++                if (typeof item.getAttribute !== 'function') return false;
++                const state = item.getAttribute('play-button-state');
++                return state === 'playing' || state === 'paused' || state === 'loading';
++            }
++
+             function currentQueueItems() {
+                 const queueItems = Array.from(document.querySelectorAll(
+                     'ytmusic-player-queue-item, ytmusic-player-queue-item-renderer, '
+@@ -203,7 +209,11 @@ extension SingletonPlayerWebView {
+                     const ids = collectVideoIds(item.data || item.__data || null);
+                     const isCurrent = queueItemIsCurrent(item);
+                     if (ids.length > 0 || isCurrent) {
+-                        items.push({ videoId: ids[0] || '', isCurrent: isCurrent });
++                        items.push({
++                            videoId: ids[0] || '',
++                            isCurrent: isCurrent,
++                            isPlaying: isCurrent && queueItemShowsPlayback(item)
++                        });
+                     }
+                 }
+                 return items;
+@@ -220,12 +230,22 @@ extension SingletonPlayerWebView {
+ 
+             function uniqueCurrentQueueIndex(items) {
+                 let currentIndex = -1;
++                let isAmbiguous = false;
+                 for (let index = 0; index < items.length; index += 1) {
+                     if (!items[index].isCurrent) continue;
+-                    if (currentIndex >= 0) return -1;
++                    if (currentIndex >= 0) isAmbiguous = true;
+                     currentIndex = index;
+                 }
+-                return currentIndex;
++                if (!isAmbiguous) return currentIndex;
++                // YouTube Music can leave a stale `selected` attribute on another row. The row
++                // whose play button shows playback is the real current one, when exactly one does.
++                let playingIndex = -1;
++                for (let index = 0; index < items.length; index += 1) {
++                    if (!items[index].isPlaying) continue;
++                    if (playingIndex >= 0) return -1;
++                    playingIndex = index;
++                }
++                return playingIndex;
+             }
+ 
+             function hasExpectedNextOccurrence(items) {
+@@ -254,6 +274,15 @@ extension SingletonPlayerWebView {
+             }
+ 
+             function findPlayNextItem(menuItems) {
++                // Language- and icon-independent: "Play next" is the menu item whose queue
++                // endpoint inserts right after the current video ("Add to queue" appends).
++                const endpointItem = Array.from(menuItems).find(item => {
++                    const data = item.data || item.__data || null;
++                    const endpoint = data && (data.serviceEndpoint || data.navigationEndpoint || data.endpoint);
++                    const queueAdd = endpoint && endpoint.queueAddEndpoint;
++                    return !!queueAdd && queueAdd.queueInsertPosition === 'INSERT_AFTER_CURRENT_VIDEO';
++                });
++                if (endpointItem) return endpointItem;
+                 const playNextPathData = "M6 2.86V5H3a1 1 0 00-1 1v12a1 1 0 102 0V7h2v2.137a.5.5 0 00.748.434L13 5.998 6.748 2.426A.5.5 0 006 2.86ZM21 5h-5a1 1 0 100 2h5a1 1 0 100-2Zm0 6H9a1 1 0 000 2h12a1 1 0 000-2Zm0 6H9a1 1 0 000 2h12a1 1 0 000-2Z";
+                 const iconItem = Array.from(menuItems).find(item =>
+                     typeof item.querySelector === 'function'
+@@ -263,7 +292,8 @@ extension SingletonPlayerWebView {
+                 return Array.from(menuItems).find(item => {
+                     const text = (item.textContent || '').toLowerCase();
+                     const ariaLabel = (item.getAttribute('aria-label') || '').toLowerCase();
+-                    return text.includes('next') || ariaLabel.includes('next');
++                    return text.includes('next') || ariaLabel.includes('next')
++                        || text.includes('riproduci dopo') || ariaLabel.includes('riproduci dopo');
+                 }) || null;
+             }
+ 
+```
+
+**File**: `Tests/KasetTests/PlayerServiceWebQueueSyncFollowUpTests.swift` (modified, +32/-0)
+```diff
+@@ -180,6 +180,38 @@ extension PlayerServiceWebQueueSyncTests {
+         #expect(self.playerService.pendingWebQueueInjectionVideoId == nil)
+     }
+ 
++    @Test("A new playback occurrence gets a fresh injection retry budget for the same pair")
++    func newOccurrenceResetsInjectionRetryBudget() async {
++        let songs = [
++            Song(id: "a", title: "A", artists: [], duration: 180, videoId: "va"),
++            Song(id: "b", title: "B", artists: [], duration: 180, videoId: "vb"),
++        ]
++        await self.playerService.playQueue(songs, startingAt: 0)
++
++        func failWithSourceNotReady() {
++            let generation = self.playerService.webQueueInjectionGeneration
++            self.playerService.pendingWebQueueInjectionVideoId = "vb"
++            self.playerService.handleWebQueueInjectionResult(
++                videoId: "vb",
++                attemptGeneration: generation,
++                success: false,
++                reason: "queue-source-not-ready"
++            )
++        }
++
++        for _ in 0 ..< 6 {
++            failWithSourceNotReady()
++        }
++        #expect(self.playerService.webQueueInjectionRetries?.remaining == 0)
++
++        await self.playerService.playQueue(songs, startingAt: 0)
++        #expect(self.playerService.webQueueInjectionRetries == nil)
++
++        failWithSourceNotReady()
++        #expect(self.playerService.webQueueInjectionRetries?.pair.videoId == "vb")
++        #expect(self.playerService.webQueueInjectionRetries?.remaining == 4)
++    }
++
+     @Test("Changing the expected next target invalidates stale confirmed and pending injections")
+     func changedNextTargetInvalidatesStaleInjectionState() async {
+         let songs = [
+```
+
+**File**: `Tests/KasetTests/QueueInjectionScriptTests.swift` (modified, +47/-2)
+```diff
+@@ -130,6 +130,31 @@ struct QueueInjectionScriptTests {
+         #expect(context.evaluateScript("clickedVideoId === null")?.toBool() == true)
+     }
+ 
++    @Test("A stale selected row is disambiguated by the playing row")
++    func staleSelectedRowResolvedByPlayingRow() throws {
++        let context = try #require(self.makeContext(
++            menuAvailableAfterLookup: 1,
++            initialQueueVideoIds: ["source-video", "stale-selected", "target-video"],
++            queueCurrentIndex: 0,
++            additionalQueueCurrentIndices: [1],
++            playingQueueIndex: 0
++        ))
++
++        self.evaluate(
++            SingletonPlayerWebView.queueInjectionScript(
++                videoId: "target-video",
++                afterVideoId: "source-video"
++            ),
++            in: context
++        )
++        self.runTimersUntilMessage(in: context, limit: 200)
++
++        #expect(context.evaluateScript("clickedVideoId")?.toString() == "target-video")
++        #expect(context.evaluateScript("queueVideoIds[1]")?.toString() == "target-video")
++        #expect(context.evaluateScript("lastMessage.success")?.toBool() == true)
++        #expect(context.evaluateScript("lastMessage.reason")?.toString() == "queue-readback-confirmed")
++    }
++
+     @Test("An unhydrated selected row keeps queue readback ambiguous")
+     func unhydratedSelectedRowDoesNotConfirm() throws {
+         let context = try #require(self.makeContext(
+@@ -404,6 +429,17 @@ struct QueueInjectionScriptTests {
+         #expect(context.evaluateScript("bodyClickCount")?.toInt32() == 1)
+     }
+ 
++    @Test("Play Next is identified by its endpoint when neither label nor icon matches", arguments: [
++        ("INSERT_AFTER_CURRENT_VIDEO", "queue-readback-confirmed"),
++        ("INSERT_AT_END", "play-next-item-not-found"),
++    ])
++    func identifiesPlayNextByEndpoint(insertPosition: String, expectedReason: String) throws {
++        let context = try #require(self.makeContext(menuAvailableAfterLookup: 1, itemLabel: "Riproduci a seguire", insertPosition: insertPosition))
++        self.evaluate(SingletonPlayerWebView.queueInjectionScript(videoId: "target-video", afterVideoId: "source-video"), in: context)
++        self.runTimersUntilMessage(in: context)
++        #expect(context.evaluateScript("lastMessage.reason")?.toString() == expectedReason)
++    }
++
+     @Test("Delayed queue injection does not click after the source video changes")
+     func rejectsChangedSourceVideo() throws {
+         let context = try #require(self.makeContext(
+@@ -494,25 +530,30 @@ struct QueueInjectionScriptTests {
+         menuSelector: String = ".middle-controls-buttons.ytmusic-player-bar",
+         clickMode: String = "insertTarget",
+         itemLabel: String = "Play next",
++        insertPosition: String? = nil,
+         originalVideoId: String = "source-video",
+         currentVideoId: String? = nil,
+         refreshMenuSourceOnTimer: Bool = false,
+         initialQueueVideoIds: [String]? = nil,
+         queueCurrentIndex: Int? = 0,
+         additionalQueueCurrentIndices: [Int] = [],
+-        unhydratedQueueIndices: [Int] = []
++        unhydratedQueueIndices: [Int] = [],
++        playingQueueIndex: Int? = nil
+     ) -> JSContext? {
+         guard let context = JSContext() else { return nil }
+         let clickModeLiteral = SingletonPlayerWebView.javaScriptStringLiteral(clickMode)
+         let menuSelectorLiteral = SingletonPlayerWebView.javaScriptStringLiteral(menuSelector)
+         let itemLabelLiteral = SingletonPlayerWebView.javaScriptStringLiteral(itemLabel)
++        let insertPositionLiteral = insertPosition.map(SingletonPlayerWebView.javaScriptStringLiteral)
++            ?? "(\(itemLabelLiteral).toLowerCase().includes('next') ? 'INSERT_AFTER_CURRENT_VIDEO' : 'INSERT_AT_END')"
+         let originalVideoIdLiteral = SingletonPlayerWebView.javaScriptStringLiteral(originalVideoId)
+         let currentVideoIdLiteral = SingletonPlayerWebView.javaScriptStringLiteral(currentVideoId ?? originalVideoId)
+         let initialQueueVideoIds = initialQueueVideoIds ?? [originalVideoId, "autoplay-video"]
+         let initialQueueLiteral = "[" + initialQueueVideoIds
+             .map(SingletonPlayerWebView.javaScriptStringLiteral)
+             .joined(separator: ",") + "]"
+         let queueCurrentIndexLiteral = queueCurrentIndex.map(String.init) ?? "null"
++        let playingQueueIndexLiteral = playingQueueIndex.map(String.init) ?? "null"
+         let additionalQueueCurrentIndicesLiteral = "[" + additionalQueueCurrentIndices
+             .map(String.init)
+             .joined(separator: ",") + "]"
+@@ -540,6 +581,7 @@ struct QueueInjectionScriptTests {
+             var queueCurrentIndexValue = \(queueCurrentIndexLiteral);
+             var additionalQueueCurrentIndices = \(additionalQueueCurrentIndicesLiteral);
+             var unhydratedQueueIndices = \(unhydratedQueueIndicesLiteral);
++            var playingQueueIndex = \(playingQueueIndexLiteral);
+             Date.now = function() { 
+```
+
+---
+
+### Incident Patch 2: `ebaa1858` (2026-11-15)
+**Commit Message**: fix(extensions): require permission consent (#589)
+
+Extensions now stay off until the user approves a review of the access they
+request. The review explains that access in plain language and lists the exact
+permissions and website patterns under Technical details. Approvals are stored
+and checked again before loading, a change to required access needs another
+review, and optional runtime permission requests are denied.
+
+Originally #569.
+
+* fix(extensions): require permission consent
+* style(extensions): refine permission review UI
+* feat(extensions): explain requested access in plain language
+* fix(extensions): fit short reviews without scrolling
+* fix(extensions): translate the permission review into every locale
+* fix(extensions): report an extension approval that fails to save
+* fix(extensions): show one row for all unrecognized permissions
+
+Co-authored-by: Junaid Anjum <[REDACTED_EMAIL]>
+
+**File**: `Sources/Kaset/Models/ExtensionPermissions.swift` (added, +130/-0)
+```diff
+@@ -0,0 +1,130 @@
++import Foundation
++import WebKit
++
++// MARK: - ExtensionPermissions
++
++/// The access Kaset grants when loading an extension. Optional permissions are excluded.
++struct ExtensionPermissions: Codable, Equatable {
++    let permissions: [String]
++    let websitePatterns: [String]
++
++    @MainActor
++    init(webExtension: WKWebExtension) {
++        self.permissions = webExtension.requestedPermissions.map(\.rawValue).sorted()
++        let contentMatches = WebKitManager.contentScriptMatchPatterns(from: webExtension.manifest)
++        self.websitePatterns = Set(
++            webExtension.requestedPermissionMatchPatterns.map(\.string) + contentMatches.map(\.string)
++        ).sorted()
++    }
++
++    var requestsPageAccess: Bool {
++        !self.websitePatterns.isEmpty || self.permissions.contains("activeTab") || self.permissions.contains("scripting")
++    }
++
++    @MainActor
++    static func websiteName(for pattern: String) -> String {
++        guard let match = try? WKWebExtension.MatchPattern(string: pattern) else { return pattern }
++        if match.scheme == "file" {
++            return String(localized: "Webpages opened from files")
++        }
++        if match.matchesAllURLs || match.host == "*" {
++            return String(localized: "All websites")
++        }
++        guard let host = match.host else { return pattern }
++        switch host {
++        case "music.youtube.com":
++            return String(localized: "YouTube Music")
++        case "youtube.com", "www.youtube.com":
++            return String(localized: "YouTube")
++        case "*.youtube.com":
++            return String(localized: "All YouTube websites")
++        case "accounts.google.com":
++            return String(localized: "Google sign-in")
++        default:
++            if host.hasPrefix("*.") {
++                let domain = String(host.dropFirst(2))
++                return String(localized: "All \(domain) websites")
++            }
++            return host
++        }
++    }
++
++    /// Permissions that get their own row in the review, in order. `cookies` is excluded
++    /// because the review always lists it first.
++    static func describedPermissions(in permissions: [String]) -> [String] {
++        permissions.filter { $0 != "cookies" && self.accessDescription(for: $0) != nil }
++    }
++
++    /// Whether any permission lacks a plain-language description. All such permissions
++    /// share one "Other access requested" row that points to Technical details.
++    static func containsUndescribedPermission(_ permissions: [String]) -> Bool {
++        permissions.contains { self.accessDescription(for: $0) == nil }
++    }
++
++    static func accessDescription(for permission: String) -> ExtensionAccessDescription? {
++        switch permission {
++        case "cookies":
++            ExtensionAccessDescription(symbol: "person.crop.circle.badge.exclamationmark", title: String(localized: "Access your sign-in data"), detail: String(localized: "This could let it act as you on websites where you’re signed in."))
++        case "storage":
++            ExtensionAccessDescription(symbol: "archivebox", title: String(localized: "Save information"), detail: String(localized: "Remember its settings and other data."))
++        case "unlimitedStorage":
++            ExtensionAccessDescription(symbol: "externaldrive", title: String(localized: "Use more storage"), detail: String(localized: "Save data without the usual storage limit."))
++        case "activeTab":
++            ExtensionAccessDescription(symbol: "doc.text", title: String(localized: "Access the page you’re using"), detail: String(localized: "Access a page after you interact with the extension."))
++        case "alarms":
++            ExtensionAccessDescription(symbol: "clock", title: String(localized: "Run tasks later"), detail: String(localized: "Schedule its own background tasks."))
++        case "clipboardWrite":
++            ExtensionAccessDescription(symbol: "doc.on.clipboard", title: String(localized: "Copy information"), detail: String(localized: "Replace what you last copied."))
++        case "contextMenus", "menus":
++            ExtensionAccessDescription(symbol: "cursorarrow.click", title: String(localized: "Add menu options"), detail: String(localized: "Add its own actions to right-click menus."))
++        case "tabs":
++            ExtensionAccessDescription(symbol: "rectangle.on.rectangle", title: String(localized: "See what’s open in Kaset"), detail: String(localized: "Read the names and addresses of its webpages."))
++        case "webNavigation":
++            ExtensionAccessDescription(symbol: "arrow.triangle.branch", title: String(localized: "Follow page changes"), detail: String(localized: "See when pages open or change in Kaset."))
++        case "webRequest":
++            ExtensionAccessDescription(symbol: "network", title: String(localized: "See website connections"), detail: String(localized: "See how pages connect to websites it can access."))
++        case "declarativ
+```
+
+**File**: `Sources/Kaset/Resources/ar.lproj/Localizable.strings` (modified, +57/-0)
+```diff
+@@ -632,3 +632,60 @@
+ "No songs found for “%@”." = "لم يتم العثور على أغانٍ لـ “%@”.";
+ "Couldn't play “%@”." = "تعذّر تشغيل “%@”.";
+ "Couldn't rate “%@”." = "تعذّر تقييم “%@”.";
++
++// Extension permission review
++"The extension could not be read. Remove it and add it again." = "تعذّرت قراءة الإضافة. أزلها ثم أضفها مرة أخرى.";
++"The extension's access changed. Review it again before enabling it." = "تغيّر وصول الإضافة. راجعها مرة أخرى قبل تفعيلها.";
++"Extension Error" = "خطأ في الإضافة";
++"Review Required" = "المراجعة مطلوبة";
++"Read and change pages on these websites:" = "قراءة الصفحات وتغييرها على مواقع الويب هذه:";
++"Required API permissions:" = "أذونات API المطلوبة:";
++"Optional permissions are not granted. Changes to required access need another review." = "لا يتم منح الأذونات الاختيارية. تتطلب التغييرات على الوصول المطلوب مراجعة أخرى.";
++"When turned on, it can:" = "عند تفعيلها، يمكنها:";
++"An extension can share the information it can access. Only turn it on if you trust it." = "يمكن للإضافة مشاركة المعلومات التي يمكنها الوصول إليها. لا تفعّلها إلا إذا كنت تثق بها.";
++"Turn on this extension?" = "هل تريد تفعيل هذه الإضافة؟";
++"Read and change pages" = "قراءة الصفحات وتغييرها";
++"Other access requested" = "طلب وصول آخر";
++"Kaset can’t explain this request. Check Technical details before turning it on." = "لا يستطيع Kaset توضيح هذا الطلب. راجع «التفاصيل الفنية» قبل تفعيلها.";
++"No extra access requested" = "لم يُطلب أي وصول إضافي";
++"No webpage or sign-in access has been requested." = "لم يُطلب أي وصول إلى صفحات الويب أو بيانات تسجيل الدخول.";
++"Technical details" = "التفاصيل الفنية";
++"Takes effect after restarting Kaset." = "يسري التغيير بعد إعادة تشغيل Kaset.";
++"Not Now" = "ليس الآن";
++"Turning On…" = "جارٍ التفعيل…";
++"Turn On" = "تفعيل";
++"All websites" = "جميع مواقع الويب";
++"Webpages opened from files" = "صفحات الويب المفتوحة من الملفات";
++"YouTube Music" = "YouTube Music";
++"All YouTube websites" = "جميع مواقع YouTube";
++"Google sign-in" = "تسجيل الدخول إلى Google";
++"All %@ websites" = "جميع مواقع %@";
++"Access your sign-in data" = "الوصول إلى بيانات تسجيل الدخول الخاصة بك";
++"This could let it act as you on websites where you’re signed in." = "قد يتيح لها ذلك التصرف باسمك على مواقع الويب التي سجّلت الدخول إليها.";
++"Save information" = "حفظ المعلومات";
++"Remember its settings and other data." = "تذكّر إعداداتها وبيانات أخرى.";
++"Use more storage" = "استخدام مساحة تخزين أكبر";
++"Save data without the usual storage limit." = "حفظ البيانات دون حد التخزين المعتاد.";
++"Access the page you’re using" = "الوصول إلى الصفحة التي تستخدمها";
++"Access a page after you interact with the extension." = "الوصول إلى صفحة بعد تفاعلك مع الإضافة.";
++"Run tasks later" = "تشغيل المهام لاحقًا";
++"Schedule its own background tasks." = "جدولة مهامها الخاصة في الخلفية.";
++"Copy information" = "نسخ المعلومات";
++"Replace what you last copied." = "استبدال آخر ما نسخته.";
++"Add menu options" = "إضافة خيارات إلى القوائم";
++"Add its own actions to right-click menus." = "إضافة إجراءاتها الخاصة إلى قوائم النقر بزر الماوس الأيمن.";
++"See what’s open in Kaset" = "رؤية ما هو مفتوح في Kaset";
++"Read the names and addresses of its webpages." = "قراءة أسماء صفحات الويب في Kaset وعناوينها.";
++"Follow page changes" = "متابعة تغييرات الصفحات";
++"See when pages open or change in Kaset." = "معرفة متى تُفتح الصفحات أو تتغير في Kaset.";
++"See website connections" = "رؤية الاتصالات بمواقع الويب";
++"See how pages connect to websites it can access." = "معرفة كيفية اتصال الصفحات بمواقع الويب التي يمكنها الوصول إليها.";
++"Change website connections" = "تغيير الاتصالات بمواقع الويب";
++"Block connections or send them to another website." = "حظر الاتصالات أو توجيهها إلى موقع ويب آخر.";
++"See details of website connections" = "رؤية تفاصيل الاتصالات بمواقع الويب";
++"Check which connections matched its rules." = "التحقق من الاتصالات التي طابقت قواعدها.";
++"Change webpages" = "تغيير صفحات الويب";
++"Run its own code on websites it can access." = "تشغيل التعليمات البرمجية الخاصة بها على مواقع الويب التي يمكنها الوصول إليها.";
++"Talk to a companion app" = "التواصل مع تطبيق مرافق";
++"Request a connection to its companion app." = "طلب الاتصال بالتطبيق المرافق لها.";
++"It could read and share information shown while you’re signed in. Only turn it on if you trust it." = "قد تتمكن من قراءة المعلومات المعروضة أثناء تسجيل دخولك ومشاركتها. لا تفعّلها إلا إذا كنت تثق بها.";
+```
+
+**File**: `Sources/Kaset/Resources/de.lproj/Localizable.strings` (modified, +57/-0)
+```diff
+@@ -632,3 +632,60 @@
+ "No songs found for “%@”." = "Keine Titel für „%@“ gefunden.";
+ "Couldn't play “%@”." = "„%@“ konnte nicht wiedergegeben werden.";
+ "Couldn't rate “%@”." = "„%@“ konnte nicht bewertet werden.";
++
++// Extension permission review
++"The extension could not be read. Remove it and add it again." = "Die Erweiterung konnte nicht gelesen werden. Entferne sie und füge sie erneut hinzu.";
++"The extension's access changed. Review it again before enabling it." = "Der Zugriff der Erweiterung hat sich geändert. Prüfe sie erneut, bevor du sie aktivierst.";
++"Extension Error" = "Erweiterungsfehler";
++"Review Required" = "Prüfung erforderlich";
++"Read and change pages on these websites:" = "Seiten auf diesen Websites lesen und ändern:";
++"Required API permissions:" = "Erforderliche API-Berechtigungen:";
++"Optional permissions are not granted. Changes to required access need another review." = "Optionale Berechtigungen werden nicht erteilt. Änderungen am erforderlichen Zugriff müssen erneut geprüft werden.";
++"When turned on, it can:" = "Wenn sie aktiviert ist, kann sie:";
++"An extension can share the information it can access. Only turn it on if you trust it." = "Eine Erweiterung kann die Informationen weitergeben, auf die sie zugreifen kann. Aktiviere sie nur, wenn du ihr vertraust.";
++"Turn on this extension?" = "Diese Erweiterung aktivieren?";
++"Read and change pages" = "Seiten lesen und ändern";
++"Other access requested" = "Weiterer Zugriff angefordert";
++"Kaset can’t explain this request. Check Technical details before turning it on." = "Kaset kann diese Anfrage nicht erklären. Prüfe „Technische Details“, bevor du sie aktivierst.";
++"No extra access requested" = "Kein zusätzlicher Zugriff angefordert";
++"No webpage or sign-in access has been requested." = "Es wurde kein Zugriff auf Webseiten oder Anmeldedaten angefordert.";
++"Technical details" = "Technische Details";
++"Takes effect after restarting Kaset." = "Wird nach einem Neustart von Kaset wirksam.";
++"Not Now" = "Nicht jetzt";
++"Turning On…" = "Wird aktiviert…";
++"Turn On" = "Aktivieren";
++"All websites" = "Alle Websites";
++"Webpages opened from files" = "Aus Dateien geöffnete Webseiten";
++"YouTube Music" = "YouTube Music";
++"All YouTube websites" = "Alle YouTube-Websites";
++"Google sign-in" = "Google-Anmeldung";
++"All %@ websites" = "Alle %@-Websites";
++"Access your sign-in data" = "Auf deine Anmeldedaten zugreifen";
++"This could let it act as you on websites where you’re signed in." = "Dadurch könnte sie auf Websites, bei denen du angemeldet bist, in deinem Namen handeln.";
++"Save information" = "Informationen speichern";
++"Remember its settings and other data." = "Eigene Einstellungen und andere Daten speichern.";
++"Use more storage" = "Mehr Speicher nutzen";
++"Save data without the usual storage limit." = "Daten ohne die übliche Speicherbegrenzung speichern.";
++"Access the page you’re using" = "Auf die Seite zugreifen, die du gerade verwendest";
++"Access a page after you interact with the extension." = "Auf eine Seite zugreifen, nachdem du mit der Erweiterung interagiert hast.";
++"Run tasks later" = "Aufgaben später ausführen";
++"Schedule its own background tasks." = "Eigene Hintergrundaufgaben planen.";
++"Copy information" = "Informationen kopieren";
++"Replace what you last copied." = "Ersetzen, was du zuletzt kopiert hast.";
++"Add menu options" = "Menüoptionen hinzufügen";
++"Add its own actions to right-click menus." = "Eigene Aktionen zu Rechtsklick-Menüs hinzufügen.";
++"See what’s open in Kaset" = "Sehen, was in Kaset geöffnet ist";
++"Read the names and addresses of its webpages." = "Namen und Adressen seiner Webseiten lesen.";
++"Follow page changes" = "Seitenänderungen verfolgen";
++"See when pages open or change in Kaset." = "Sehen, wann Seiten in Kaset geöffnet oder geändert werden.";
++"See website connections" = "Website-Verbindungen sehen";
++"See how pages connect to websites it can access." = "Sehen, wie Seiten sich mit Websites verbinden, auf die sie zugreifen kann.";
++"Change website connections" = "Website-Verbindungen ändern";
++"Block connections or send them to another website." = "Verbindungen blockieren oder an eine andere Website umleiten.";
++"See details of website connections" = "Details zu Website-Verbindungen sehen";
++"Check which connections matched its rules." = "Prüfen, welche Verbindungen ihren Regeln entsprochen haben.";
++"Change webpages" = "Webseiten ändern";
++"Run its own code on websites it can access." = "Eigenen Code auf Websites ausführen, auf die sie zugreifen kann.";
++"Talk to a companion app" = "Mit einer Begleit-App kommunizieren";
++"Request a connection to its companion app." = "Eine Verbindung zu ihrer Begleit-App anfordern.";
++"It could read and share information shown while you’re signed in. Only turn it on if you trust it." = "Sie könnte Informationen lesen und weitergeben, die angezeigt werden, während du angemeldet bist. Aktiviere sie nur, wenn du ihr vertraust.";
+```
+
+**File**: `Sources/Kaset/Resources/en.lproj/Localizable.strings` (modified, +56/-0)
+```diff
+@@ -52,3 +52,59 @@
+ // App Intents (Shortcuts, Siri, Spotlight)
+ "Playing %@ by %@." = "Playing %1$@ by %2$@.";
+ "Now playing %@ by %@." = "Now playing %1$@ by %2$@.";
++
++"The extension could not be read. Remove it and add it again." = "The extension could not be read. Remove it and add it again.";
++"The extension's access changed. Review it again before enabling it." = "The extension's access changed. Review it again before enabling it.";
++"Extension Error" = "Extension Error";
++"Review Required" = "Review Required";
++"Read and change pages on these websites:" = "Read and change pages on these websites:";
++"Required API permissions:" = "Required API permissions:";
++"Optional permissions are not granted. Changes to required access need another review." = "Optional permissions are not granted. Changes to required access need another review.";
++"When turned on, it can:" = "When turned on, it can:";
++"An extension can share the information it can access. Only turn it on if you trust it." = "An extension can share the information it can access. Only turn it on if you trust it.";
++"Turn on this extension?" = "Turn on this extension?";
++"Read and change pages" = "Read and change pages";
++"Other access requested" = "Other access requested";
++"Kaset can’t explain this request. Check Technical details before turning it on." = "Kaset can’t explain this request. Check Technical details before turning it on.";
++"No extra access requested" = "No extra access requested";
++"No webpage or sign-in access has been requested." = "No webpage or sign-in access has been requested.";
++"Technical details" = "Technical details";
++"Takes effect after restarting Kaset." = "Takes effect after restarting Kaset.";
++"Not Now" = "Not Now";
++"Turning On…" = "Turning On…";
++"Turn On" = "Turn On";
++"All websites" = "All websites";
++"Webpages opened from files" = "Webpages opened from files";
++"YouTube Music" = "YouTube Music";
++"All YouTube websites" = "All YouTube websites";
++"Google sign-in" = "Google sign-in";
++"All %@ websites" = "All %@ websites";
++"Access your sign-in data" = "Access your sign-in data";
++"This could let it act as you on websites where you’re signed in." = "This could let it act as you on websites where you’re signed in.";
++"Save information" = "Save information";
++"Remember its settings and other data." = "Remember its settings and other data.";
++"Use more storage" = "Use more storage";
++"Save data without the usual storage limit." = "Save data without the usual storage limit.";
++"Access the page you’re using" = "Access the page you’re using";
++"Access a page after you interact with the extension." = "Access a page after you interact with the extension.";
++"Run tasks later" = "Run tasks later";
++"Schedule its own background tasks." = "Schedule its own background tasks.";
++"Copy information" = "Copy information";
++"Replace what you last copied." = "Replace what you last copied.";
++"Add menu options" = "Add menu options";
++"Add its own actions to right-click menus." = "Add its own actions to right-click menus.";
++"See what’s open in Kaset" = "See what’s open in Kaset";
++"Read the names and addresses of its webpages." = "Read the names and addresses of its webpages.";
++"Follow page changes" = "Follow page changes";
++"See when pages open or change in Kaset." = "See when pages open or change in Kaset.";
++"See website connections" = "See website connections";
++"See how pages connect to websites it can access." = "See how pages connect to websites it can access.";
++"Change website connections" = "Change website connections";
++"Block connections or send them to another website." = "Block connections or send them to another website.";
++"See details of website connections" = "See details of website connections";
++"Check which connections matched its rules." = "Check which connections matched its rules.";
++"Change webpages" = "Change webpages";
++"Run its own code on websites it can access." = "Run its own code on websites it can access.";
++"Talk to a companion app" = "Talk to a companion app";
++"Request a connection to its companion app." = "Request a connection to its companion app.";
++"It could read and share information shown while you’re signed in. Only turn it on if you trust it." = "It could read and share information shown while you’re signed in. Only turn it on if you trust it.";
+```
+
+**File**: `Sources/Kaset/Resources/es.lproj/Localizable.strings` (modified, +57/-0)
+```diff
+@@ -632,3 +632,60 @@
+ "No songs found for “%@”." = "No se encontraron canciones para “%@”.";
+ "Couldn't play “%@”." = "No se pudo reproducir “%@”.";
+ "Couldn't rate “%@”." = "No se pudo valorar “%@”.";
++
++// Extension permission review
++"The extension could not be read. Remove it and add it again." = "No se pudo leer la extensión. Elimínala y vuelve a agregarla.";
++"The extension's access changed. Review it again before enabling it." = "El acceso de la extensión cambió. Revísala de nuevo antes de activarla.";
++"Extension Error" = "Error de la extensión";
++"Review Required" = "Revisión necesaria";
++"Read and change pages on these websites:" = "Leer y cambiar páginas en estos sitios web:";
++"Required API permissions:" = "Permisos de API necesarios:";
++"Optional permissions are not granted. Changes to required access need another review." = "Los permisos opcionales no se conceden. Los cambios en el acceso necesario requieren otra revisión.";
++"When turned on, it can:" = "Cuando está activada, puede:";
++"An extension can share the information it can access. Only turn it on if you trust it." = "Una extensión puede compartir la información a la que puede acceder. Actívala solo si confías en ella.";
++"Turn on this extension?" = "¿Activar esta extensión?";
++"Read and change pages" = "Leer y cambiar páginas";
++"Other access requested" = "Otro acceso solicitado";
++"Kaset can’t explain this request. Check Technical details before turning it on." = "Kaset no puede explicar esta solicitud. Revisa “Detalles técnicos” antes de activarla.";
++"No extra access requested" = "No se solicitó acceso adicional";
++"No webpage or sign-in access has been requested." = "No se ha solicitado acceso a páginas web ni al inicio de sesión.";
++"Technical details" = "Detalles técnicos";
++"Takes effect after restarting Kaset." = "Se aplica después de reiniciar Kaset.";
++"Not Now" = "Ahora no";
++"Turning On…" = "Activando…";
++"Turn On" = "Activar";
++"All websites" = "Todos los sitios web";
++"Webpages opened from files" = "Páginas web abiertas desde archivos";
++"YouTube Music" = "YouTube Music";
++"All YouTube websites" = "Todos los sitios web de YouTube";
++"Google sign-in" = "Inicio de sesión de Google";
++"All %@ websites" = "Todos los sitios web de %@";
++"Access your sign-in data" = "Acceder a tus datos de inicio de sesión";
++"This could let it act as you on websites where you’re signed in." = "Esto podría permitirle actuar como tú en los sitios web en los que hayas iniciado sesión.";
++"Save information" = "Guardar información";
++"Remember its settings and other data." = "Recordar su configuración y otros datos.";
++"Use more storage" = "Usar más almacenamiento";
++"Save data without the usual storage limit." = "Guardar datos sin el límite de almacenamiento habitual.";
++"Access the page you’re using" = "Acceder a la página que estás usando";
++"Access a page after you interact with the extension." = "Acceder a una página después de que interactúes con la extensión.";
++"Run tasks later" = "Ejecutar tareas más tarde";
++"Schedule its own background tasks." = "Programar sus propias tareas en segundo plano.";
++"Copy information" = "Copiar información";
++"Replace what you last copied." = "Reemplazar lo último que copiaste.";
++"Add menu options" = "Agregar opciones de menú";
++"Add its own actions to right-click menus." = "Agregar sus propias acciones a los menús del clic derecho.";
++"See what’s open in Kaset" = "Ver lo que está abierto en Kaset";
++"Read the names and addresses of its webpages." = "Leer los nombres y las direcciones de sus páginas web.";
++"Follow page changes" = "Seguir los cambios de las páginas";
++"See when pages open or change in Kaset." = "Ver cuándo se abren o cambian páginas en Kaset.";
++"See website connections" = "Ver conexiones a sitios web";
++"See how pages connect to websites it can access." = "Ver cómo se conectan las páginas a los sitios web a los que puede acceder.";
++"Change website connections" = "Cambiar conexiones a sitios web";
++"Block connections or send them to another website." = "Bloquear conexiones o enviarlas a otro sitio web.";
++"See details of website connections" = "Ver detalles de las conexiones a sitios web";
++"Check which connections matched its rules." = "Comprobar qué conexiones coincidieron con sus reglas.";
++"Change webpages" = "Cambiar páginas web";
++"Run its own code on websites it can access." = "Ejecutar su propio código en los sitios web a los que puede acceder.";
++"Talk to a companion app" = "Comunicarse con una app complementaria";
++"Request a connection to its companion app." = "Solicitar una conexión con su app complementaria.";
++"It could read and share information shown while you’re signed in. Only turn it on if you trust it." = "Podría leer y compartir la información que se muestra mientras tienes la sesión iniciada. Actívala solo si confías en ella.";
+```
+
+**File**: `Sources/Kaset/Resources/fr.lproj/Localizable.strings` (modified, +57/-0)
+```diff
+@@ -632,3 +632,60 @@
+ "No songs found for “%@”." = "Aucun morceau trouvé pour « %@ ».";
+ "Couldn't play “%@”." = "Impossible de lire « %@ ».";
+ "Couldn't rate “%@”." = "Impossible d'évaluer « %@ ».";
++
++// Extension permission review
++"The extension could not be read. Remove it and add it again." = "Impossible de lire l’extension. Supprimez-la, puis ajoutez-la à nouveau.";
++"The extension's access changed. Review it again before enabling it." = "Les accès de l’extension ont changé. Vérifiez-la à nouveau avant de l’activer.";
++"Extension Error" = "Erreur de l’extension";
++"Review Required" = "Vérification requise";
++"Read and change pages on these websites:" = "Lire et modifier les pages de ces sites web :";
++"Required API permissions:" = "Autorisations d’API requises :";
++"Optional permissions are not granted. Changes to required access need another review." = "Les autorisations facultatives ne sont pas accordées. Toute modification des accès requis nécessite une nouvelle vérification.";
++"When turned on, it can:" = "Une fois activée, elle peut :";
++"An extension can share the information it can access. Only turn it on if you trust it." = "Une extension peut partager les informations auxquelles elle a accès. Ne l’activez que si vous lui faites confiance.";
++"Turn on this extension?" = "Activer cette extension ?";
++"Read and change pages" = "Lire et modifier des pages";
++"Other access requested" = "Autres accès demandés";
++"Kaset can’t explain this request. Check Technical details before turning it on." = "Kaset ne peut pas expliquer cette demande. Consultez « Détails techniques » avant de l’activer.";
++"No extra access requested" = "Aucun accès supplémentaire demandé";
++"No webpage or sign-in access has been requested." = "Aucun accès aux pages web ni aux données de connexion n’a été demandé.";
++"Technical details" = "Détails techniques";
++"Takes effect after restarting Kaset." = "Prend effet après le redémarrage de Kaset.";
++"Not Now" = "Pas maintenant";
++"Turning On…" = "Activation…";
++"Turn On" = "Activer";
++"All websites" = "Tous les sites web";
++"Webpages opened from files" = "Pages web ouvertes à partir de fichiers";
++"YouTube Music" = "YouTube Music";
++"All YouTube websites" = "Tous les sites web YouTube";
++"Google sign-in" = "Connexion Google";
++"All %@ websites" = "Tous les sites web %@";
++"Access your sign-in data" = "Accéder à vos données de connexion";
++"This could let it act as you on websites where you’re signed in." = "Elle pourrait ainsi agir en votre nom sur les sites web où vous êtes connecté.";
++"Save information" = "Enregistrer des informations";
++"Remember its settings and other data." = "Mémoriser ses réglages et d’autres données.";
++"Use more storage" = "Utiliser plus de stockage";
++"Save data without the usual storage limit." = "Enregistrer des données sans la limite de stockage habituelle.";
++"Access the page you’re using" = "Accéder à la page que vous utilisez";
++"Access a page after you interact with the extension." = "Accéder à une page après que vous avez interagi avec l’extension.";
++"Run tasks later" = "Exécuter des tâches plus tard";
++"Schedule its own background tasks." = "Planifier ses propres tâches en arrière-plan.";
++"Copy information" = "Copier des informations";
++"Replace what you last copied." = "Remplacer ce que vous avez copié en dernier.";
++"Add menu options" = "Ajouter des options de menu";
++"Add its own actions to right-click menus." = "Ajouter ses propres actions aux menus du clic droit.";
++"See what’s open in Kaset" = "Voir ce qui est ouvert dans Kaset";
++"Read the names and addresses of its webpages." = "Lire les noms et adresses de ses pages web.";
++"Follow page changes" = "Suivre les modifications des pages";
++"See when pages open or change in Kaset." = "Voir quand des pages s’ouvrent ou changent dans Kaset.";
++"See website connections" = "Voir les connexions aux sites web";
++"See how pages connect to websites it can access." = "Voir comment les pages se connectent aux sites web auxquels elle a accès.";
++"Change website connections" = "Modifier les connexions aux sites web";
++"Block connections or send them to another website." = "Bloquer des connexions ou les envoyer vers un autre site web.";
++"See details of website connections" = "Voir les détails des connexions aux sites web";
++"Check which connections matched its rules." = "Vérifier quelles connexions correspondaient à ses règles.";
++"Change webpages" = "Modifier des pages web";
++"Run its own code on websites it can access." = "Exécuter son propre code sur les sites web auxquels elle a accès.";
++"Talk to a companion app" = "Communiquer avec une app associée";
++"Request a connection to its companion app." = "Demander une connexion à son app associée.";
++"It could read and share information shown while you’re signed in. Only turn it on if you trust it." = "Elle pourrait lire et partager les informations affichées lorsque vous êtes connecté. Ne l’activez que si vous lui faites confiance.";
+```
+
+**File**: `Sources/Kaset/Resources/id.lproj/Localizable.strings` (modified, +57/-0)
+```diff
+@@ -632,3 +632,60 @@
+ "No songs found for “%@”." = "Tidak ada lagu yang ditemukan untuk “%@”.";
+ "Couldn't play “%@”." = "Tidak dapat memutar “%@”.";
+ "Couldn't rate “%@”." = "Tidak dapat memberi rating “%@”.";
++
++// Extension permission review
++"The extension could not be read. Remove it and add it again." = "Ekstensi tidak dapat dibaca. Hapus lalu tambahkan lagi.";
++"The extension's access changed. Review it again before enabling it." = "Akses ekstensi telah berubah. Tinjau lagi sebelum mengaktifkannya.";
++"Extension Error" = "Kesalahan Ekstensi";
++"Review Required" = "Perlu Ditinjau";
++"Read and change pages on these websites:" = "Membaca dan mengubah halaman di situs web berikut:";
++"Required API permissions:" = "Izin API yang diperlukan:";
++"Optional permissions are not granted. Changes to required access need another review." = "Izin opsional tidak diberikan. Perubahan pada akses yang diperlukan harus ditinjau lagi.";
++"When turned on, it can:" = "Saat diaktifkan, ekstensi ini dapat:";
++"An extension can share the information it can access. Only turn it on if you trust it." = "Ekstensi dapat membagikan informasi yang dapat diaksesnya. Aktifkan hanya jika Anda memercayainya.";
++"Turn on this extension?" = "Aktifkan ekstensi ini?";
++"Read and change pages" = "Membaca dan mengubah halaman";
++"Other access requested" = "Akses lain yang diminta";
++"Kaset can’t explain this request. Check Technical details before turning it on." = "Kaset tidak dapat menjelaskan permintaan ini. Periksa “Detail teknis” sebelum mengaktifkannya.";
++"No extra access requested" = "Tidak ada akses tambahan yang diminta";
++"No webpage or sign-in access has been requested." = "Tidak ada akses ke halaman web atau data masuk yang diminta.";
++"Technical details" = "Detail teknis";
++"Takes effect after restarting Kaset." = "Berlaku setelah Kaset dimulai ulang.";
++"Not Now" = "Jangan Sekarang";
++"Turning On…" = "Mengaktifkan…";
++"Turn On" = "Aktifkan";
++"All websites" = "Semua situs web";
++"Webpages opened from files" = "Halaman web yang dibuka dari file";
++"YouTube Music" = "YouTube Music";
++"All YouTube websites" = "Semua situs web YouTube";
++"Google sign-in" = "Proses masuk Google";
++"All %@ websites" = "Semua situs web %@";
++"Access your sign-in data" = "Mengakses data masuk Anda";
++"This could let it act as you on websites where you’re signed in." = "Ini dapat memungkinkannya bertindak sebagai Anda di situs web tempat Anda masuk.";
++"Save information" = "Menyimpan informasi";
++"Remember its settings and other data." = "Mengingat pengaturan dan data lainnya.";
++"Use more storage" = "Menggunakan lebih banyak penyimpanan";
++"Save data without the usual storage limit." = "Menyimpan data tanpa batas penyimpanan biasa.";
++"Access the page you’re using" = "Mengakses halaman yang sedang Anda gunakan";
++"Access a page after you interact with the extension." = "Mengakses halaman setelah Anda berinteraksi dengan ekstensi.";
++"Run tasks later" = "Menjalankan tugas nanti";
++"Schedule its own background tasks." = "Menjadwalkan tugas latar belakangnya sendiri.";
++"Copy information" = "Menyalin informasi";
++"Replace what you last copied." = "Mengganti apa yang terakhir Anda salin.";
++"Add menu options" = "Menambahkan opsi menu";
++"Add its own actions to right-click menus." = "Menambahkan tindakannya sendiri ke menu klik kanan.";
++"See what’s open in Kaset" = "Melihat apa yang terbuka di Kaset";
++"Read the names and addresses of its webpages." = "Membaca nama dan alamat halaman webnya.";
++"Follow page changes" = "Mengikuti perubahan halaman";
++"See when pages open or change in Kaset." = "Melihat kapan halaman dibuka atau berubah di Kaset.";
++"See website connections" = "Melihat koneksi situs web";
++"See how pages connect to websites it can access." = "Melihat bagaimana halaman terhubung ke situs web yang dapat diaksesnya.";
++"Change website connections" = "Mengubah koneksi situs web";
++"Block connections or send them to another website." = "Memblokir koneksi atau mengirimkannya ke situs web lain.";
++"See details of website connections" = "Melihat detail koneksi situs web";
++"Check which connections matched its rules." = "Memeriksa koneksi mana yang cocok dengan aturannya.";
++"Change webpages" = "Mengubah halaman web";
++"Run its own code on websites it can access." = "Menjalankan kodenya sendiri di situs web yang dapat diaksesnya.";
++"Talk to a companion app" = "Berkomunikasi dengan aplikasi pendamping";
++"Request a connection to its companion app." = "Meminta koneksi ke aplikasi pendampingnya.";
++"It could read and share information shown while you’re signed in. Only turn it on if you trust it." = "Ekstensi ini dapat membaca dan membagikan informasi yang ditampilkan saat Anda masuk. Aktifkan hanya jika Anda memercayainya.";
+```
+
+**File**: `Sources/Kaset/Resources/it.lproj/Localizable.strings` (modified, +57/-0)
+```diff
+@@ -632,3 +632,60 @@
+ "No songs found for “%@”." = "Nessun brano trovato per “%@”.";
+ "Couldn't play “%@”." = "Impossibile riprodurre “%@”.";
+ "Couldn't rate “%@”." = "Impossibile valutare “%@”.";
++
++// Extension permission review
++"The extension could not be read. Remove it and add it again." = "Impossibile leggere l’estensione. Rimuovila e aggiungila di nuovo.";
++"The extension's access changed. Review it again before enabling it." = "L’accesso dell’estensione è cambiato. Verificala di nuovo prima di attivarla.";
++"Extension Error" = "Errore dell’estensione";
++"Review Required" = "Verifica necessaria";
++"Read and change pages on these websites:" = "Leggere e modificare le pagine su questi siti web:";
++"Required API permissions:" = "Autorizzazioni API necessarie:";
++"Optional permissions are not granted. Changes to required access need another review." = "Le autorizzazioni facoltative non vengono concesse. Le modifiche all’accesso necessario richiedono una nuova verifica.";
++"When turned on, it can:" = "Quando è attiva, può:";
++"An extension can share the information it can access. Only turn it on if you trust it." = "Un’estensione può condividere le informazioni a cui può accedere. Attivala solo se ti fidi.";
++"Turn on this extension?" = "Attivare questa estensione?";
++"Read and change pages" = "Leggere e modificare le pagine";
++"Other access requested" = "Altro accesso richiesto";
++"Kaset can’t explain this request. Check Technical details before turning it on." = "Kaset non può spiegare questa richiesta. Controlla “Dettagli tecnici” prima di attivarla.";
++"No extra access requested" = "Nessun accesso aggiuntivo richiesto";
++"No webpage or sign-in access has been requested." = "Non è stato richiesto alcun accesso alle pagine web o ai dati di accesso.";
++"Technical details" = "Dettagli tecnici";
++"Takes effect after restarting Kaset." = "Ha effetto dopo il riavvio di Kaset.";
++"Not Now" = "Non ora";
++"Turning On…" = "Attivazione…";
++"Turn On" = "Attiva";
++"All websites" = "Tutti i siti web";
++"Webpages opened from files" = "Pagine web aperte da file";
++"YouTube Music" = "YouTube Music";
++"All YouTube websites" = "Tutti i siti web di YouTube";
++"Google sign-in" = "Accesso a Google";
++"All %@ websites" = "Tutti i siti web di %@";
++"Access your sign-in data" = "Accedere ai tuoi dati di accesso";
++"This could let it act as you on websites where you’re signed in." = "Potrebbe così agire come se fossi tu sui siti web in cui hai eseguito l’accesso.";
++"Save information" = "Salvare informazioni";
++"Remember its settings and other data." = "Ricordare le proprie impostazioni e altri dati.";
++"Use more storage" = "Usare più spazio di archiviazione";
++"Save data without the usual storage limit." = "Salvare dati senza il consueto limite di archiviazione.";
++"Access the page you’re using" = "Accedere alla pagina che stai usando";
++"Access a page after you interact with the extension." = "Accedere a una pagina dopo che hai interagito con l’estensione.";
++"Run tasks later" = "Eseguire attività in seguito";
++"Schedule its own background tasks." = "Pianificare le proprie attività in background.";
++"Copy information" = "Copiare informazioni";
++"Replace what you last copied." = "Sostituire l’ultimo elemento che hai copiato.";
++"Add menu options" = "Aggiungere opzioni di menu";
++"Add its own actions to right-click menus." = "Aggiungere le proprie azioni ai menu del clic destro.";
++"See what’s open in Kaset" = "Vedere cosa è aperto in Kaset";
++"Read the names and addresses of its webpages." = "Leggere i nomi e gli indirizzi delle sue pagine web.";
++"Follow page changes" = "Seguire le modifiche alle pagine";
++"See when pages open or change in Kaset." = "Vedere quando le pagine si aprono o cambiano in Kaset.";
++"See website connections" = "Vedere le connessioni ai siti web";
++"See how pages connect to websites it can access." = "Vedere come le pagine si collegano ai siti web a cui può accedere.";
++"Change website connections" = "Modificare le connessioni ai siti web";
++"Block connections or send them to another website." = "Bloccare connessioni o inviarle a un altro sito web.";
++"See details of website connections" = "Vedere i dettagli delle connessioni ai siti web";
++"Check which connections matched its rules." = "Verificare quali connessioni corrispondevano alle sue regole.";
++"Change webpages" = "Modificare pagine web";
++"Run its own code on websites it can access." = "Eseguire il proprio codice sui siti web a cui può accedere.";
++"Talk to a companion app" = "Comunicare con un’app complementare";
++"Request a connection to its companion app." = "Richiedere una connessione alla propria app complementare.";
++"It could read and share information shown while you’re signed in. Only turn it on if you trust it." = "Potrebbe leggere e condividere le informazioni mostrate mentre hai eseguito l’accesso. Attivala solo se ti fidi.";
+```
+
+---
+
+### Incident Patch 3: `86704cad` (2026-11-14)
+**Commit Message**: fix(youtube): size the YouTube watch chapters shelf to its cards (#587)
 
 Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
+Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
+Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
-**File**: `.agents/skills/api-exploration/SKILL.md` (modified, +6/-12)
+**File**: `Sources/Kaset/Views/YouTube/YouTubeWatchView.swift` (modified, +89/-30)
 ```diff
-@@ -7,21 +7,15 @@ metadata:
+@@ -1,3 +1,5 @@
++// swiftlint:disable file_length
++
+ import SwiftUI
  
- # API Exploration
+ // MARK: - YouTubeWatchView
+@@ -363,35 +365,12 @@ struct YouTubeWatchView: View {
+     // MARK: - Chapters
  
--Use this skill when a task needs a new or modified YouTube Music API call, response parser validation, authenticated endpoint investigation, or fixture capture.
+     private var chaptersSection: some View {
+-        VStack(alignment: .leading, spacing: 10) {
+-            Text("Chapters", comment: "Video chapters section header")
+-                .font(.title3.bold())
 -
--## Guardrails
--
--- Always enhance `Sources/APIExplorer/main.swift`; do not write one-off scripts for endpoint exploration.
--- Never commit real cookies, SAPISID values, tokens, or account identifiers. Redact anything sensitive in notes, fixtures, and examples.
--- Prefer API endpoints over WebView whenever the functionality already exists in `YTMusicClient`.
--
- ## Workflow
+-            CarouselShelf(
+-                accessibilityLabel: String(localized: "Video chapters"),
+-                pageFraction: 0.82,
+-                showsControls: true,
+-                controlVerticalAlignment: .center,
+-                contentInset: 0
+-            ) {
+-                LazyHStack(alignment: .top, spacing: 10) {
+-                    ForEach(self.viewModel.data.chapters) { chapter in
+-                        Button {
+-                            self.seekToChapter(chapter)
+-                        } label: {
+-                            ChapterCard(chapter: chapter, isActive: self.isActiveChapter(chapter))
+-                        }
+-                        .buttonStyle(.interactiveRow)
+-                        .accessibilityLabel(
+-                            String(localized: "Jump to chapter: \(chapter.title)")
+-                        )
+-                        .disabled(!self.canSeekToChapter(chapter))
+-                    }
+-                }
+-                .padding(.vertical, 2)
+-            }
+-        }
+-        .accessibilityIdentifier(AccessibilityID.YouTubeContent.chaptersSection)
++        YouTubeChaptersSection(
++            chapters: self.viewModel.data.chapters,
++            isActiveChapter: self.isActiveChapter,
++            canSeekToChapter: self.canSeekToChapter,
++            seekToChapter: self.seekToChapter
++        )
+     }
  
--1. Start with `swift run api-explorer auth` if the task touches sign-in-backed endpoints.
-+1. Run `swift run api-explorer auth` if the task touches sign-in-backed endpoints.
- 2. Check what already exists with `swift run api-explorer list`.
--3. Probe the endpoint with `browse`, `action`, or `continuation` before touching production code.
--4. Save representative payloads with `-o` when parser work or regression tests need fixtures.
--5. Update `docs/api-discovery.md` if you confirm a new endpoint, parameter, or auth constraint.
-+3. Probe the endpoint with `browse`, `action`, or `continuation` before touching production code. If the explorer can't express the request you need, add that capability to `Sources/APIExplorer/main.swift`.
-+4. Save representative payloads with `-o` when parser work or regression tests need fixtures. `-o` and `-v` emit the raw response, which can include account names, emails, and channel IDs: write captures outside the repo, and redact them before they go into `Tests/KasetTests/Fixtures/` or get quoted in your output.
-+5. Update `docs/api-discovery.md` when you confirm a new endpoint, parameter, or auth constraint.
-+
-+`action` sends a real request as the signed-in user. Read-only actions such as `search` are fine; for anything that changes account data (likes, playlist edits, subscriptions), prefer a captured, sanitized response or a disposable resource, and get explicit approval from the human before sending it live.
+     private func seekToChapter(_ chapter: YouTubeChapter) {
+@@ -775,6 +754,86 @@ private struct CommentRow: View {
+     }
+ }
  
- ## Common Commands
- 
-```
-
-**File**: `.agents/skills/autoreview/README.md` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+# Autoreview
++// MARK: - YouTubeChaptersSection
 +
-+This directory tracks the OpenClaw `autoreview` runtime with three narrow downstream behavior overrides.
++/// Watch-page chapters. The carousel hugs the cards, and the header collapses it.
++struct YouTubeChaptersSection: View {
++    let chapters: [YouTubeChapter]
++    let isActiveChapter: (YouTubeChapter) -> Bool
++    let canSeekToChapter: (YouTubeChapter) -> Bool
++    let seekToChapter: (YouTubeChapter) -> Void
 +
-+## Upstream
++    @State private var isExpanded: Bool
 +
-+- Repository: [`openclaw/agent-skills`](https://github.com/openclaw/agent-skills)
-+- Source snapshot: [`skills/autoreview` at commit `bae9b204f937991b45c3fd68d5c9dcafb23b9159`](https://github.com/openclaw/agent-skills/tree/bae9b204f937991b45c3fd68d5c9dcafb23b9159/skills/autoreview)
-+- Commit: [`bae9b204f937991b45c3fd68d5c9dcafb23b9159`](https://github.com/openclaw/agent-skills/commit/bae9b204f937991b45c3fd68d5c9dcafb23b9159)
-+
-+The vendored runtime starts from that snapshot and carries only the behavior overrides below.
-+`AGENTS.md` records the downstream sync policy.
-+
-+## Local differences
-+
-+- Codex defaults to `gpt-6.1-sol` with `xhigh` reasoning instead of upstream's `high` reasoning.
-+- Claude defaults to `claude-opus-5-5` with `xhigh` reasoning instead of upstream's `claude-fable-5` default.
-+- Codex preserves `openai_base_url` from an external `CODEX_HOME/config.toml`, passes it through an internal OpenAI-compatible provider because isolated runs use `--ignore-user-config`, and disables WebSocket transport for that provider.
-+- `references/repository-entrypoint.md` is omitted; it is a template for repositories that consume the shared install, and this directory vendors the runtime.
-+
-+No other runtime behavior is intentionally changed.
-+
-+## Packaging
-+
-+The upstream test suites, fixtures, and optional `scripts/test-review-harness*` live-provider smoke wrappers are omitted. `scripts/autoreview` does not depend on them. A small downstream test covers only the three local behavior overrides.
-+
-+## Upstream license
-+
-+OpenClaw's work is used under the MIT License:
-+
-+```text
-+MIT License
-+
-+Copyright (c) 2026 openclaw
-+
-+Permission is hereby granted, free of charge, to any person obtaining a copy
-+of this software and associated documentation files (the "Software"), to deal
-+in the Software without restriction, including without limitation the rights
-+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-+copies of the Software, and to permit persons to whom the Software is
-+furnished to do so, subject to the following conditions:
-+
-+The above copyright notice and this permission notice shall be included in all
-+copies or substantial portions of the Software.
-+
-+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-+SOFTWARE.
-+```
-```
-
-**File**: `.agents/skills/autoreview/SKILL.md` (modified, +315/-169)
-```diff
-@@ -1,210 +1,356 @@
- ---
- name: autoreview
--description: "Run a structured code review (Codex default, Claude optional) as a closeout check on a local or PR branch before commit or ship."
-+description: "Structured code review when explicitly requested, preferring OpenAI/Codex before Claude."
- ---
- 
- # Auto Review
- 
--Run the bundled structured review helper as a closeout check. This is code review, not Guardian `auto_review` approval routing.
--
--Codex review is the default when no engine is set. It usually delivers the best review results and should remain the normal final closeout engine.
--
--Use when:
--
--- user asks for Codex review / Claude review / autoreview / second-model review
--- after non-trivial code edits, before final/commit/ship
--- reviewing a local branch or PR branch after fixes
--
--## Contract
--
--- Treat review output as advisory. Never blindly apply it.
--- Verify every finding by reading the real code path and adjacent files.
--- Read dependency docs/source/types when the finding depends on external behavior.
--- Reject unrealistic edge cases, speculative risks, broad rewrites, and fixes that over-complicate the codebase.
--- Prefer small fixes at the right ownership boundary; no refactor unless it clearly improves the bug class.
--- When an accepted finding shows a bug class or repeated pattern, inspect the current PR scope for sibling instances before fixing.
--- Fix the scoped bug class at once when practical; stop at touched surfaces, owner boundaries, and clear follow-up territory.
--- Keep going until structured review returns no accepted/actionable findings.
--- If a review-triggered fix changes code, rerun focused tests and rerun the structured review helper.
--- For security-audit suppression changes, verify accepted findings remain auditable: suppressed findings stay in structured output, active output keeps an unsuppressible suppression notice, and aggregate findings cannot hide unrelated active risk.
--- Never switch or override the requested review engine/model. If the review hits model capacity, retry the same command a few times with the same engine/model.
--- Be patient with large bundles. Structured review can take up to 30 minutes while the model call is active, especially with Codex tools or web search.
--- Treat heartbeat lines like `review still running: ... elapsed=... pid=...` as healthy progress, not a hang. Let the helper continue while heartbeats are advancing. Pass `--stream-engine-output` when live engine text is useful; Codex and Claude filter tool/file chatter, other engines pass raw output through.
--- Do not kill a review just because it has been quiet for 2-5 minutes, or because it is still running under the 30-minute window. Inspect the process only after missing multiple expected heartbeats, after 30 minutes, or after an obviously failed subprocess; prefer letting the same helper command finish.
--- Tools are useful in review mode. The helper allows read-only inspection tools and web search by default so reviewers can check dependency contracts, upstream docs, and current behavior from a sanitized review workspace, not the real checkout.
--- Security perspective is always included, but it should not cripple legitimate functionality. Report security findings only when the change creates a concrete, actionable risk or removes an important safety check.
--- For regression provenance, keep roles separate: blamed code author, blamed PR author, PR merger/committer, current PR author, and PR/date. If no blamed PR is traceable, use the blamed commit as the provenance: commit SHA, date, and author username. Do not guess a merger or frame missing PR metadata as a separate finding.
--- If the blamed PR was merged by `clawsweeper[bot]` or another automation, identify the human trigger when practical. Check timeline/comments first; if rate-limited, use gitcrawl/cache or public PR HTML. Look for maintainer commands such as `@clawsweeper automerge`, `/landpr`, or labels/status comments that armed automerge. Report `automerge triggered by @login`; if not found, say trigger unknown.
--- Do not invoke built-in `codex review`, nested reviewers, or reviewer panels from inside the review. The helper builds one bundle, calls one selected engine, validates one structured result, and stops.
--- Stop as soon as the helper exits 0 with no accepted/actionable findings. Do not run an extra review just to get a nicer "clean" line, a second opinion, or clearer closeout wording.
--- Treat the helper's successful exit plus absence of actionable findings as the clean review result, even if the underlying Codex CLI output is terse.
--- Multi-reviewer panels are opt-in only. Use them when explicitly requested or when risk justifies the extra spend; the main agent still verifies every accepted finding before fixing.
--- If rejecting a finding as intentional/not worth fixing, add a brief inline code comment only when it explains a real invariant or ownership decision that future reviewers should know.
--- If `gh`/Git
-```
-
-**File**: `.agents/skills/autoreview/references/diagnostics-and-results.md` (added, +128/-0)
-```diff
-@@ -0,0 +1,128 @@
-+# Diagnostic and result guidance
-+
-+## Local stage diagnostic
-+
-+Use `--engine-stage-dir /outside/repo/fresh-private-directory` with
-+`--stream-engine-output` to observe the first streamed Codex process. The caller
-+must create and exclusively hold a fresh directory with mode `0700` on responsive
-+local POSIX storage. The helper never creates the directory or overwrites an
-+existing `engine-stage.json`. The option has no environment-variable activation
-+and produces no observation for other engines, buffered output or dry runs.
-+
-+The separate sidecar contains only closed booleans and enums, at most 4096 bytes.
-+It reports local launch, read, parser and display observations plus that first
-+process's terminal state. Later retries and passes do not update it. Its terminal
-+can differ from the overall review outcome. `spoofable` is always true;
-+`provider_receipt` and `acceptance` are always false. Missing or false observations
-+mean unknown. They never prove provider activity, native initialization or review
-+acceptance. The normal redaction wrapper conservatively leaves flushed-display
-+observations unknown, even when visible output succeeds.
-+
-+Ordinary observation and persistence failures preserve the primary result.
-+Persistence rejects repository paths, symlinks, unsafe ownership and permissions,
-+and publishes without overwriting existing names. Failed name cleanup can leave
-+a private `.engine-stage.partial`; failed descriptor closure can remain unresolved.
-+Ambiguous closes are not retried. Cancellation still propagates, and a new cleanup
-+cancellation can replace a pending exception after remaining cleanup attempts.
-+The contract assumes ordinary descriptor acquisition and assignment, trusted
-+caller custody and responsive local storage. It does not cover hostile same-user
-+interference, concurrent descriptor reuse, arbitrary instruction interruption,
-+stalled or network filesystems, or crash durability. Keep custody when clearing a
-+failed partial file. This diagnostic does not change reports, usage, deadlines,
-+exit codes or reviewer isolation.
-+
-+## Results
-+
-+`--output`, `--json-output`, and `--status-output` paths must be outside the
-+reviewed repository, both for the final directory entry after resolving parent
-+symlinks and for the resolved referent. Without `--status-output`, `--output` and
-+`--json-output` must name different final directory entries after resolving parent
-+symlinks. Distinct final symlinks or hardlinks may share an existing referent because
-+publication replaces their separate entries. With `--status-output`, all output
-+paths must have distinct resolved referents; hardlink aliases are refused too.
-+Case-only and Unicode normalization aliases at the applicable boundary are
-+conservatively refused on every platform, even when the filesystem would permit
-+distinct files.
-+Tilde and relative destinations are expanded once before validation and remain
-+anchored to the invocation directory. Atomic report writes replace a final
-+symlink instead of modifying its target.
-+
-+For event-stream results, the last terminal event is authoritative. An invalid
-+final result fails the review, even if an earlier event or review pass contained
-+a valid report; earlier reports are never published as a partial clean result.
-+A non-null `structured_output` must contain the report object; only an absent
-+or null field permits using the event's `result` instead.
-+
-+| Exit | Meaning                                                                            |
-+| ---- | ---------------------------------------------------------------------------------- |
-+| `0`  | `scoped-clean`, or a correct verdict with only filtered lower-priority findings    |
-+| `1`  | Accepted findings, an incorrect provider verdict, or a failed review attempt       |
-+| `2`  | Unfinished assessment, incomplete scope/attribution, or a missing required finding |
-+
-+Treat `scoped-clean` as clean only for the selected target and requested priority.
-+`filtered` is not clean; resolve `incomplete` before claiming completion.
-+Verify findings against the actual code and task before changing anything.
-+No extra review rounds for a nicer verdict; follow the owning workflow after fixes.
-+
-+Use `--status-output /outside/repo/status.json` for a separate, versioned
-+machine-readable outcome. It preserves the existing exit codes and
-+`--json-output` validated-report format. Completed reviews report `scoped-clean`,
-+`findings`, `filtered`, `incorrect`, or `incomplete`; a launched reviewer that
-+fails or returns an invalid report reports `reviewer_unavailable` with exit 1.
-+A failed later pass never publishes a partial review report.
-+
-+Codex runs collect usage with live display on or off. The final report, status
-+sidecar, and terminal summary include `usage`: process attempts, reported,
-+unknown and partial attempt counts, `complete`, and observed token totals.
-+Each fresh attempt contributes its last valid cumulative snapsh
-```
-
-**File**: `.agents/skills/autoreview/scripts/autoreview.ps1` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+$ErrorActionPreference = 'Stop'
-+
-+$Helper = Join-Path $PSScriptRoot 'autoreview'
-+$ForwardedArgs = $args
-+$Candidates = @(
-+    @{ Name = 'py'; Arguments = @('-3') },
-+    @{ Name = 'python3'; Arguments = @() },
-+    @{ Name = 'python'; Arguments = @() }
-+)
-+
-+foreach ($Candidate in $Candidates) {
-+    $Command = Get-Command $Candidate.Name -CommandType Application -ErrorAction SilentlyContinue |
-+        Select-Object -First 1
-+    if ($null -eq $Command) {
-+        continue
++    init(
++        chapters: [YouTubeChapter],
++        isActiveChapter: @escaping (YouTubeChapter) -> Bool,
++        canSeekToChapter: @escaping (YouTubeChapter) -> Bool,
++        seekToChapter: @escaping (YouTubeChapter) -> Void,
++        initiallyExpanded: Bool = true
++    ) {
++        self.chapters = chapters
++        self.isActiveChapter = isActiveChapter
++        self.canSeekToChapter = canSeekToChapter
++        self.seekToChapter = seekToChapter
++        self._isExpanded = State(initialValue: initiallyExpanded)
 +    }
 +
-+    $LauncherArgs = $Candidate.Arguments
-+    try {
-+        & $Command.Source @LauncherArgs -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' *> $null
-+    }
-+    catch {
-+        continue
-+    }
-+    if ($LASTEXITCODE -ne 0) {
-+        continue
++    var body: some View {
++        VStack(alignment: .leading, spacing: 10) {
++            Button {
++                self.isExpanded.toggle()
++            } label: {
++                HStack(spacing: 6) {
++                    Text("Chapters", comment: "Video chapters section header")
++                        .font(.title3.bold())
++
++                    Image(systemName: self.isExpanded ? "chevron.down" : "chevron.right")
++                        .font(.system(size: 13, weight: .semibold))
++                        .foregroundStyle(.secondary)
++                        .accessibilityHidden(true)
++                }
++            }
++            .buttonStyle(.plain)
++            .accessibilityValue(
++                self.isExpanded ? String(localized: "Showing") : String(localized: "Hidden")
++            )
++
++            if self.isExpanded {
++                CarouselShelf(
++                    accessibilityLabel: String(localized: "Video chapters"),
++                    pageFraction: 0.82,
++                    showsControls: true,
++                    controlVerticalAlignment: .center,
++                    contentInset: 0
++                ) {
++                    // Lazy so long chapter lists don't load every thumbnail up
++                    // front. A lazy stack sizes its height from the cards it has
++                    // built, so `ChapterCard` reserves both title lines to keep
++                    // every card, and the hugged row, the same height.
++                    LazyHStack(alignment: .top, spacing: 10) {
++                        ForEach(self.chapters) { chapter in
++                            Button {
++                                self.seekToChapter(chapter)
++                            } label: {
++                                ChapterCard(chapter: chapter, isActive: self.isActiveChapter(chapter))
++                            }
++                            .buttonStyle(.interactiveRow)
++                            .accessibilityLabel(
++                                String(localized: "Jump to chapter: \(chapter.title)")
++                            )
++                            .disabled(!self.canSeekToChapte
+```
+
+**File**: `Tests/KasetTests/YouTubeChaptersSectionLayoutTests.swift` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++import SwiftUI
++import Testing
++@testable import Kaset
++
++@Suite("YouTube chapters section layout", .serialized)
++@MainActor
++struct YouTubeChaptersSectionLayoutTests {
++    private static let longTitle = "A longer chapter title that wraps onto a second line"
++
++    @Test("Expanded shelf hugs the cards and the header collapses it")
++    func shelfHugsCardsAndHeaderCollapses() throws {
++        let chapters = [
++            Self.chapter(index: 0, title: "Intro"),
++            Self.chapter(index: 1, title: Self.longTitle),
++        ]
++        let expanded = try Self.renderedHeight(chapters: chapters, initiallyExpanded: true)
++        #expect(expanded > 140)
++        #expect(expanded < 320)
++
++        let collapsed = try Self.renderedHeight(chapters: chapters, initiallyExpanded: false)
++        #expect(collapsed < 96)
++        #expect(expanded - collapsed >= 80)
 +    }
 +
-+    & $Command.Source @LauncherArgs $Helper @ForwardedArgs
-+    exit $LASTEXITCODE
++    /// The row is lazy and can size from its first card, so every card must
++    /// reserve the same height. Otherwise a wrapping title after the first card,
++    /// visible or still offscreen, is clipped.
++    @Test("Shelf leaves room for a wrapping title on any card")
++    func shelfHeightIsStableAcrossTitleLengths() throws {
++        let wrappingFirst = try Self.renderedHeight(
++            chapters: [Self.chapter(index: 0, title: Self.longTitle)],
++            initiallyExpanded: true
++        )
++        let shortTitles = (0 ..< 12).map { Self.chapter(index: $0, title: "Part \($0)") }
++        var wrappingVisible = shortTitles
++        wrappingVisible[1] = Self.chapter(index: 1, title: Self.longTitle)
++        var wrappingOffscreen = shortTitles
++        wrappingOffscreen[11] = Self.chapter(index: 11, title: Self.longTitle)
++
++        #expect(try Self.renderedHeight(chapters: wrappingVisible, initiallyExpanded: true) == wrappingFirst)
++        #expect(try Self.renderedHeight(chapters: wrappingOffscreen, initiallyExpanded: true) == wrappingFirst)
++        #expect(try Self.renderedHeight(chapters: shortTitles, initiallyExpanded: true) == wrappingFirst)
++    }
++
++    private static func chapter(index: Int, title: String) -> YouTubeChapter {
++        YouTubeChapter(
++            videoId: "watch-video",
++            title: title,
++            startTime: TimeInterval(index * 75),
++            endTime: nil,
++            timeText: nil,
++            thumbnailURL: nil
++        )
++    }
++
++    private static func renderedHeight(
++        chapters: [YouTubeChapter],
++        initiallyExpanded: Bool
++    ) throws -> CGFloat {
++        let renderer = ImageRenderer(content: YouTubeChaptersSection(
++            chapters: chapters,
++            isActiveChapter: { _ in false },
++            canSeekToChapter: { _ in false },
++            seekToChapter: { _ in },
++            initiallyExpanded: initiallyExpanded
++        ))
++        renderer.scale = 1
++        renderer.proposedSize = ProposedViewSize(width: 720, height: 980)
++
++        let image = try #require(renderer.nsImage)
++        return image.size.height
++    }
 +}
-+
-+[Console]::Error.WriteLine('Python 3.10 or newer is required to run autoreview.')
-+exit 127
 ```
 
-**File**: `.agents/skills/autoreview/scripts/autoreview.test.py` (removed, +0/-337)
+**File**: `docs/youtube.md` (modified, +5/-3)
 ```diff
-@@ -1,337 +0,0 @@
--#!/usr/bin/env python3
--from __future__ import annotations
--
--import subprocess
--import tempfile
--import unittest
--from importlib.machinery import SourceFileLoader
--from importlib.util import module_from_spec, spec_from_loader
--from pathlib import Path
--
--
--SCRIPT = Path(__file__).with_name("autoreview")
--LOADER = SourceFileLoader("autoreview_helper", str(SCRIPT))
--SPEC = spec_from_loader(LOADER.name, LOADER)
--assert SPEC is not None
--autoreview = module_from_spec(SPEC)
--LOADER.exec_module(autoreview)
--
--
--def run(args: list[str], cwd: Path) -> str:
--    result = subprocess.run(args, cwd=cwd, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
--    return result.stdout
--
--
--class AutoReviewHelperTests(unittest.TestCase):
--    def test_redacts_quoted_secret_values_with_spaces(self) -> None:
--        output = autoreview.redact_review_text('PASSWORD="mock secret phrase value"')
--
--        self.assertIn("[REDACTED_ENV_SECRET]", output)
--        self.assertNotIn("mock secret phrase value", output)
--        self.assertNotIn("phrase value", output)
--
--    def test_keeps_call_expression_secret_assignments(self) -> None:
--        output = autoreview.redact_review_text("let password = getPassword()")
--        multiline_assignment = "let pass" "word = getPassword()\nnext line"
--        multiline_output = autoreview.redact_review_text(multiline_assignment)
--
--        self.assertEqual("let password = getPassword()", output)
--        self.assertIn("next line", multiline_output)
--
--    def test_rejects_call_expression_secret_literal_arguments(self) -> None:
--        assignment = "let pass" 'word = getPassword("actual-secret-123")'
--        fallback_assignment = "let pass" 'word = getPassword() || "actual-secret-123"'
--        template_assignment = "let pass" "word = getPassword(`actual-secret-123`)"
--        bare_argument_assignment = "let pass" "word = getPassword(actual-secret-123)"
--        secret_identifier_call = "let to" "ken = actualSecret123()"
--        prefixed_secret_identifier_call = "let to" "ken = getActualSecret123()"
--        with self.assertRaises(SystemExit):
--            autoreview.redact_review_text(assignment)
--        with self.assertRaises(SystemExit):
--            autoreview.redact_review_text(fallback_assignment)
--        with self.assertRaises(SystemExit):
--            autoreview.redact_review_text(template_assignment)
--        with self.assertRaises(SystemExit):
--            autoreview.redact_review_text(bare_argument_assignment)
--        with self.assertRaises(SystemExit):
--            autoreview.redact_review_text(secret_identifier_call)
--        with self.assertRaises(SystemExit):
--            autoreview.redact_review_text(prefixed_secret_identifier_call)
--
--    def test_redacts_colon_style_quoted_secret_values_with_spaces(self) -> None:
--        output = autoreview.redact_review_text('password: "mock secret phrase value"\n{"api_key": "mock api key value"}')
--
--        self.assertIn("[REDACTED_FIELD_SECRET]", output)
--        self.assertNotIn("mock secret phrase value", output)
--        self.assertNotIn("mock api key value", output)
--        self.assertNotIn("phrase value", output)
--
--    def test_redacts_short_unquoted_secret_fields(self) -> None:
--        output = autoreview.redact_review_text('password: abc123\n{"api_key": x9}')
--
--        self.assertEqual("[REDACTED_FIELD_SECRET]\n{[REDACTED_FIELD_SECRET]}", output)
--        self.assertNotIn("abc123", output)
--        self.assertNotIn("x9", output)
--
--    def test_keeps_common_short_secret_field_literals(self) -> None:
--        text = "password: false\ntoken: null\napiKey: test\nsecret: 2"
--
--        output = autoreview.redact_review_text(text)
--
--        self.assertEqual(text, output)
--
--    def test_keeps_code_references_with_secret_like_property_names(self) -> None:
--        output = autoreview.redact_review_text("return { password: user.passwordHash, apiKey: config.apiKey };")
--
--        self.assertEqual("return { password: user.passwordHash, apiKey: config.apiKey };", output)
--
--    def test_redacts_credential_urls_with_email_style_usernames(self) -> None:
--        output = autoreview.redact_review_text(
--            "DATABASE_URL=postgres://user@example.com:mock-password@db.example.test/app"
--        )
--
--        self.assertIn("[REDACTED_CREDENTIAL_URL]", output)
--        self.assertNotIn("mock-password", output)
--        self.assertNotIn("db.example.test", output)
--
--    def test_redacts_oauth_fragment_urls(self) -> None:
--        output = autoreview.redact_review_text("https://accounts.example.test/callback#code=mock-code-123456")
--
--        self.assertEqual("[REDACTED_AUTH_URL]", output)
--
--    def test_redacts_generic_session_cookies(self) -> None:
--        output = autoreview.redact_review_text("SESSIONID=abcdef1234567890")
--
--        self.assertEqual("[REDACTED_COOKIE]", output)
--
--    def test_redacts_quoted_cookie_assignments(self) -> None:
--        output = autoreview.redact_review_text(
-```
-
-**File**: `.agents/skills/autoreview/scripts/test-review-harness` (removed, +0/-16)
-```diff
-@@ -1,16 +0,0 @@
--#!/usr/bin/env bash
--set -euo pipefail
--
--script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
--harness="$script_dir/test-review-harness.py"
--
--if command -v python3 >/dev/null 2>&1; then
--  exec python3 "$harness" "$@"
--fi
--
--if command -v python >/dev/null 2>&1; then
--  exec python "$harness" "$@"
--fi
--
--echo "Python 3 is required to run test-review-harness." >&2
--exit 127
-```
-
-**File**: `.agents/skills/autoreview/scripts/test-review-harness.ps1` (removed, +0/-45)
-```diff
-@@ -1,45 +0,0 @@
--[CmdletBinding()]
--param(
--    [ValidateSet('malicious', 'benign')]
--    [string] $Fixture,
--
--    [ValidateSet('codex', 'claude', 'droid', 'copilot')]
--    [string[]] $Engine,
--
--    [Alias('h')]
--    [switch] $Help
--)
--
--$ErrorActionPreference = 'Stop'
--
--$Harness = Join-Path $PSScriptRoot 'test-review-harness.py'
--$ForwardedArgs = @()
--
--if ($Help) {
--    $ForwardedArgs += '--help'
--}
--
--if ($PSBoundParameters.ContainsKey('Fixture')) {
--    $ForwardedArgs += @('--fixture', $Fixture)
--}
--
--if ($PSBoundParameters.ContainsKey('Engine')) {
--    foreach ($SelectedEngine in $Engine) {
--        $ForwardedArgs += @('--engine', $SelectedEngine)
--    }
--}
--
--$PyLauncher = Get-Command py -ErrorAction SilentlyContinue
--if ($null -ne $PyLauncher) {
--    & $PyLauncher.Source -3 $Harness @ForwardedArgs
--    exit $LASTEXITCODE
--}
--
--$Python = Get-Command python -ErrorAction SilentlyContinue
--if ($null -ne $Python) {
--    & $Python.Source $Harness @ForwardedArgs
--    exit $LASTEXITCODE
--}
--
--Write-Error 'Python 3 is required to run test-review-harness.'
--exit 127
+@@ -156,7 +156,8 @@ The bottom Liquid Glass bar adapts to the active source. In YouTube mode
+   in the player metadata title area, and release-near-chapter scrubs snap to
+   that chapter.
+ - No shuffle/repeat/lyrics/queue — those are music concepts. Chapters use a
+-  horizontal scroller with chevron paging controls on the watch page.
++  horizontal scroller with chevron paging controls on the watch page; the shelf
++  hugs the cards, and the Chapters header collapses it.
+ 
+ Every navigable YouTube view carries its own bar inset (pushed views
+ don't inherit `safeAreaInset` — same rule as the music side). The watch
+@@ -292,8 +293,9 @@ from the regular grids, and routed to this surface.
+ Below the video, the layout is two-column: title/metadata/channel and
+ chapters/comments down the left, the related rail down the right.
+ Chapters come from the watch page's `next` response (see Endpoints above), show
+-as a horizontal scroller with chevron paging controls, and seek the active video
+-natively. Comments come from the watch page's `comment-item-section` continuation
++as a horizontal scroller with chevron paging controls that hugs the cards, and
++seek the active video natively. The Chapters header collapses the shelf.
++Comments come from the watch page's `comment-item-section` continuation
+ (entity-payload mutations joined to comment view models, with a legacy
+ `commentRenderer` fallback): paged reading, posting via
+ `comment/create_comment`, like/dislike toggles via
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #567** (2026-10-31): docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (@sozercan)
-- **PR #565** (2026-10-31): feat(player): add a full screen Now Playing view (@GeneralKoski)
-- **PR #551** (2026-10-22): feat: add App Intents for Shortcuts, Siri, and Spotlight (@sozercan)
-- **PR #550** (2026-10-19): perf(player): keep progress ticks out of PlayerBar and MiniPlayerWindow bodies (@friedtori)
-- **PR #545** (2026-10-12): fix(ui): keep collapsed sidebar collapsed when window regains focus (@sozercan)
-- **PR #543** (2026-10-12): chore(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 in the github-actions group (@dependabot[bot])
+- **PR #589** (2026-11-15): fix(extensions): require permission consent (@sozercan)
+- **PR #588** (2026-11-14): chore: add t3.json with project scripts (@sozercan)
+- **PR #587** (2026-11-14): fix(youtube): size the YouTube watch chapters shelf to its cards (@mvanhorn)
+- **PR #583** (2026-11-14): test: keep queue persistence and App Intents tests off shared singletons (@czubaker)
+- **PR #582** (2026-11-14): fix(player-bar): make the captions and quality menus clickable across the button (@czubaker)
+- **PR #575** (2026-11-14): fix(build): record the real SDK version in packaged apps (@bbredewold)
 
 ---
 
@@ -1834,44 +2481,51 @@ Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#
+## X. queue): make native Up Next injection work in localized UIs and with stale queue
 
 **RULE**:
-When implementing operations in `.agents/skills/api-exploration/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/Kaset/Services/Player/PlayerService+WebQueueSync.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2258e5cd`: docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#567). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `441d5a77`: queue): make native Up Next injection work in localized UIs and with stale queue rows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/api-exploration/SKILL.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Kaset/Services/Player/PlayerService+WebQueueSync.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-1. Run `swift run api-explorer auth` if the task touches sign-in-backed endpoints.
-3. Probe the endpoint with `browse`, `action`, or `continuation` before touching production code. If the explorer can't express the request you need, add that capability to `Sources/APIExplorer/main.swift`.
-4. Save representative payloads with `-o` when parser work or regression tests need fixtures. `-o` and `-v` emit the raw response, which can include account names, emails, and channel IDs: write captures outside the repo, and redact them before they go into `Tests/KasetTests/Fixtures/` or get quoted in your output.
-5. Update `docs/api-discovery.md` when you confirm a new endpoint, parameter, or auth constraint.
+    private func scheduleWebQueueInjectionRetry(videoId: String) {
+        let sourceVideoId = self.expectedPlaybackVideoId
+        let remaining = self.webQueueInjectionRetries.flatMap {
+            $0.pair == (videoId, sourceVideoId) ? $0.remaining : nil
+        } ?? 5
+        guard remaining > 0 else { return }
+        self.webQueueInjectionRetries = ((videoId, sourceVideoId), remaining - 1)
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard self.injectedWebQueueVideoId == nil,
+                  self.pendingWebQueueInjectionVideoId == nil,
+                  let nextIndex = self.expectedQueueIndexAfterCurrentTrack(),
+                  self.queue[safe: nextIndex]?.videoId == videoId
+            else { return }
+            self.syncWebQueue()
+        }
+    }
 
-`action` sends a real request as the signed-in user. Read-only actions such as `search` are fine; for anything that changes account data (likes, playlist edits, subscriptions), prefer a captured, sanitized response or a disposable resource, and get explicit approval from the human before sending it live.
+            // Right after a track change YouTube Music's queue may not list the new source yet.
+            // Without a retry the target stays unprepared and Next falls back to a fresh load.
+            if reason == "queue-source-not-ready" {
+                self.scheduleWebQueueInjectionRetry(videoId: videoId)
+            }
+        self.webQueueInjectionRetries = nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-Use this skill when a task needs a new or modified YouTube Music API call, response parser validation, authenticated endpoint investigation, or fixture capture.
-
-## Guardrails
-
-- Always enhance `Sources/APIExplorer/main.swift`; do not write one-off scripts for endpoint exploration.
-- Never commit real cookies, SAPISID values, tokens, or account identifiers. Redact anything sensitive in notes, fixtures, and examples.
-- Prefer API endpoints over WebView whenever the functionality already exists in `YTMusicClient`.
-
-1. Start with `swift run api-explorer auth` if the task touches sign-in-backed endpoints.
-3. Probe the endpoint with `browse`, `action`, or `continuation` before touching production code.
-4. Save representative payloads with `-o` when parser work or regression tests need fixtures.
-5. Update `docs/api-discovery.md` if you confirm a new endpoint, parameter, or auth constraint.
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2258e5cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `441d5a77` are properly handled with clean fallback behavior.

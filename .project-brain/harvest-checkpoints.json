@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T22:55:47.226Z",
+  "last_updated": "2026-11-16T23:03:47.284Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "a18aab4cd2f0906ca9330e4ea1ca8e2f577d97c62c3ee711109555ba17afc966",
-      "verified_at": "2026-11-14T03:49:13.966Z",
+      "content_hash": "20a4ea81b8d8a8089ad4a6b74f4c4bcc15f41c7adddaef09779c2b1dd7810f57",
+      "verified_at": "2026-11-16T23:03:47.283Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:49:13.966Z"
+      "last_updated": "2026-11-16T23:03:47.283Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "ed9071f2b691739e861016a53856d5f5d102419ce8e2ef88d02d7750de21b004",
-      "verified_at": "2026-11-15T02:55:36.835Z",
+      "content_hash": "05d48b2cbf0d44cf4347b32122c9e4d83e4ab569fa8a3768a49dd824061cfd48",
+      "verified_at": "2026-11-16T23:03:38.628Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T02:55:36.835Z"
+      "last_updated": "2026-11-16T23:03:38.628Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -14721,14 +14721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sozercan-kaset",
-      "content_hash": "3543663000c84a4454e8021aa52d3ba1ae40510aaf19fff0188b95cf38eff371",
-      "verified_at": "2026-11-03T17:30:12.315Z",
+      "content_hash": "4d721833db4b6aa942be50f44df336fcf2219b69c037c87a9d172cb701debacc",
+      "verified_at": "2026-11-16T23:03:44.039Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:30:12.315Z"
+      "last_updated": "2026-11-16T23:03:44.039Z"
     },
     "digitalbazaar/pyld": {
       "repository": "digitalbazaar/pyld",
@@ -17810,15 +17810,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "content_hash": "cb7b79ae36676659b25d50bed67fd64d549fc82b2f74f65b6399208168d1af53",
-      "verified_at": "2026-11-14T23:43:04.708Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+      "content_hash": "f07ddcfaffe6826adac9bd400d2f80d49a11d1c205c1b1be15e47560c47ab25e",
+      "verified_at": "2026-11-16T23:03:35.924Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T23:43:04.708Z"
+      "last_updated": "2026-11-16T23:03:35.924Z"
     },
     "agentlas-ai/Agentlas-OS": {
       "repository": "agentlas-ai/Agentlas-OS",

@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "0316bc90",
+    "sourceVersion": "7059b8d2",
     "license": "Apache-2.0",
-    "contentHash": "a18aab4cd2f0906ca9330e4ea1ca8e2f577d97c62c3ee711109555ba17afc966",
-    "lastHarvestedAt": "2026-11-14T03:49:13.955Z",
+    "contentHash": "20a4ea81b8d8a8089ad4a6b74f4c4bcc15f41c7adddaef09779c2b1dd7810f57",
+    "lastHarvestedAt": "2026-11-16T23:03:47.272Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "b5123420",
+    "sourceVersion": "22c832f6",
     "license": "MIT",
-    "contentHash": "ed9071f2b691739e861016a53856d5f5d102419ce8e2ef88d02d7750de21b004",
-    "lastHarvestedAt": "2026-11-15T02:55:36.819Z",
+    "contentHash": "05d48b2cbf0d44cf4347b32122c9e4d83e4ab569fa8a3768a49dd824061cfd48",
+    "lastHarvestedAt": "2026-11-16T23:03:38.602Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -9783,10 +9783,10 @@
     "repository": "sozercan/kaset",
     "platform": "github",
     "sourceUrl": "https://github.com/sozercan/kaset",
-    "sourceVersion": "6a20e60c",
+    "sourceVersion": "ebaa1858",
     "license": "MIT",
-    "contentHash": "3543663000c84a4454e8021aa52d3ba1ae40510aaf19fff0188b95cf38eff371",
-    "lastHarvestedAt": "2026-11-03T17:30:12.307Z",
+    "contentHash": "4d721833db4b6aa942be50f44df336fcf2219b69c037c87a9d172cb701debacc",
+    "lastHarvestedAt": "2026-11-16T23:03:44.029Z",
     "learningId": "learn-github-sozercan-kaset"
   },
   "digitalbazaar-pyld": {
@@ -11835,8 +11835,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
     "license": "Open-Source",
-    "contentHash": "08974c3bd711aa2d89357c8af8edac40a97a280c59a786bc8d5c46204e47cd63",
-    "lastHarvestedAt": "2026-11-12T05:47:34.813Z",
+    "contentHash": "f07ddcfaffe6826adac9bd400d2f80d49a11d1c205c1b1be15e47560c47ab25e",
+    "lastHarvestedAt": "2026-11-16T23:03:35.911Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized"
   },
   "agentlas-ai-agentlas-os": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T22:55:52.166Z",
-  "total_verified_learnings": 8808,
+  "last_updated": "2026-11-16T23:03:52.456Z",
+  "total_verified_learnings": 8810,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19416,
+  "total_items": 19432,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -222217,14 +222217,19 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "0316bc90",
-      "content_hash": "a18aab4cd2f0906ca9330e4ea1ca8e2f577d97c62c3ee711109555ba17afc966",
+      "source_version": "7059b8d2",
+      "content_hash": "20a4ea81b8d8a8089ad4a6b74f4c4bcc15f41c7adddaef09779c2b1dd7810f57",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
         {
           "number": 8434,
           "title": "preserve proxy tool input schemas",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8808,
+          "title": "provide upload completion callbacks",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -222233,7 +222238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:49:13.778Z",
+      "verified_at": "2026-11-16T23:03:47.062Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222275,10 +222280,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-higress-group-higress-content-information-intelligence-higress-group-higress-cor.md",
       "title": "Content & Information Intelligence: higress-group/higress Core Invariants",
       "repository": "higress-group/higress",
-      "source_version": "0316bc90",
-      "content_hash": "bc11d56c35ecc5f84e45c7b60fd39bfa868c89ffad4ab217eb35c7a269bc3a47",
+      "source_version": "7059b8d2",
+      "content_hash": "6794c7fe1ea3a36c027f0db9bc328a6017c2b3f364f184f06927e58b2afe93f5",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T03:49:14.278Z"
+      "persisted_at": "2026-11-16T23:03:47.666Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress",
@@ -222287,10 +222292,10 @@
       "relative_path": "08_VERIFICATION/higress-group-higress-verification-protocol-empirical-defect-shield-for-higress-.md",
       "title": "Verification Protocol: Empirical Defect Shield for higress-group/higress",
       "repository": "higress-group/higress",
-      "source_version": "0316bc90",
-      "content_hash": "1f95f6975d0e1518c9c4e0f0a86a921d53f072214d74cbddac9ba67cf7ddb996",
+      "source_version": "7059b8d2",
+      "content_hash": "e715eee90e4d0ffe2b62c6ceceeb154421a424bd67e30a7bd23f16fb607a3833",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:49:14.396Z"
+      "persisted_at": "2026-11-16T23:03:47.821Z"
     },
     "learn-github-mitmproxy-mitmproxy": {
       "learning_id": "learn-github-mitmproxy-mitmproxy",
@@ -236837,13 +236842,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "12a7d8b9924f2f55ef6775084726e6206c09567c561957698986a50581c63850",
+      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "content_hash": "a1c95272e4bd931978ea2f8211744d425a17af7d42e66b0cbeb0b3c1414e99e1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T23:43:04.909Z"
+      "persisted_at": "2026-11-16T23:03:36.158Z"
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -238724,8 +238729,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "b5123420",
-      "content_hash": "ed9071f2b691739e861016a53856d5f5d102419ce8e2ef88d02d7750de21b004",
+      "source_version": "22c832f6",
+      "content_hash": "05d48b2cbf0d44cf4347b32122c9e4d83e4ab569fa8a3768a49dd824061cfd48",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [],
@@ -238734,7 +238739,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T02:55:36.664Z",
+      "verified_at": "2026-11-16T23:03:38.397Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238774,10 +238779,10 @@
       "relative_path": "08_VERIFICATION/fallow-rs-fallow-verification-protocol-empirical-defect-shield-for-fallow-rs-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs/fallow",
       "repository": "fallow-rs/fallow",
-      "source_version": "b5123420",
-      "content_hash": "34af0c1034a8630b355e2606d52a0cd21998e065df9bb52d206e9e45cece3717",
+      "source_version": "22c832f6",
+      "content_hash": "08f7bf4e09da5ec87c32876d3e3d7f5fa09f3c598f61c62fad36991caa22f344",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T02:55:37.207Z"
+      "persisted_at": "2026-11-16T23:03:39.194Z"
     },
     "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
@@ -238901,9 +238906,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs-fallow-learnings",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fb960d134c0b59b91681c7e974289c0f2c7cf809b407d4e7076ca5797c0db15",
+      "content_hash": "88f09dadf55a5f6f26ec30e2f59c58f4e97f3ed5f65ba4cfd7e93c9fb247b833",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T02:58:58.724Z"
+      "persisted_at": "2026-11-16T23:03:51.325Z"
     },
     "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment": {
       "item_id": "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment",
@@ -258699,6 +258704,238 @@
       "content_hash": "2d96176a1270cc6d5e133f998e59ee62ceb3eb1aeb22ea44b455c812b13ce152",
       "domain_letter": "D",
       "persisted_at": "2026-11-16T22:55:50.723Z"
+    },
+    "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized": {
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "slug": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "content_hash": "f07ddcfaffe6826adac9bd400d2f80d49a11d1c205c1b1be15e47560c47ab25e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:03:35.696Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-skip-calls-of-inert-local-functions-as-name-only-sinks": {
+      "item_id": "candidate_directive-skip-calls-of-inert-local-functions-as-name-only-sinks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DWG4-skip-calls-of-inert-local-functions-as-name-only-sinks.md",
+      "title": "skip calls of inert local functions as name-only sinks",
+      "repository": "fallow-rs/fallow",
+      "source_version": "22c832f6",
+      "content_hash": "2340e22a2d5048e54f74dc33042987ceaa89681b9e8bf1c44c3dfaf65977bb6d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:03:38.890Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-quality-verification-intelligence-fallow-rs-fallow-core-invaria.md",
+      "title": "Quality & Verification Intelligence: fallow-rs/fallow Core Invariants",
+      "repository": "fallow-rs/fallow",
+      "source_version": "22c832f6",
+      "content_hash": "46e955234c2975add17ae9900111058bed6a1e06178ac8d638c91ee855165bc4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:03:39.039Z"
+    },
+    "learn-github-sozercan-kaset": {
+      "learning_id": "learn-github-sozercan-kaset",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sozercan/kaset",
+      "repository": "sozercan/kaset",
+      "slug": "sozercan-kaset",
+      "platform": "github",
+      "source_url": "https://github.com/sozercan/kaset",
+      "source_version": "ebaa1858",
+      "content_hash": "4d721833db4b6aa942be50f44df336fcf2219b69c037c87a9d172cb701debacc",
+      "dossier_path": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8807,
+          "title": "make native Up Next injection work in localized UIs and with stale queue",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T23:03:43.825Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8807": {
+      "learning_id": "rule-8807",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8807,
+      "title": "make native Up Next injection work in localized UIs and with stale queue",
+      "source_url": "https://github.com/sozercan/kaset",
+      "source_version": "ebaa1858",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:03:43.825Z"
+    },
+    "candidate_directive-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue": {
+      "item_id": "candidate_directive-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E0LT-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue.md",
+      "title": "make native Up Next injection work in localized UIs and with stale queue",
+      "repository": "sozercan/kaset",
+      "source_version": "ebaa1858",
+      "content_hash": "d025fa110dc7aa81f6fa2f549c2a432784843082dfe0f4bc80ed3bb89ba81443",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:03:44.279Z"
+    },
+    "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sozercan-kaset-content-information-intelligence-sozercan-kaset-core-invariants.md",
+      "title": "Content & Information Intelligence: sozercan/kaset Core Invariants",
+      "repository": "sozercan/kaset",
+      "source_version": "ebaa1858",
+      "content_hash": "8721aaf3689871a3a0cd941e335fb07e2925b10b9f2d5694c2521f4b39f01ac9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:03:44.425Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sozercan-kaset": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sozercan-kaset",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sozercan-kaset-verification-protocol-empirical-defect-shield-for-sozercan-kaset.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sozercan/kaset",
+      "repository": "sozercan/kaset",
+      "source_version": "ebaa1858",
+      "content_hash": "7a76d596783f08c6402038adb106a547448c3f0bd943f732d237defe34f4ddea",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:03:44.586Z"
+    },
+    "rule-8808": {
+      "learning_id": "rule-8808",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8808,
+      "title": "provide upload completion callbacks",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "7059b8d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T23:03:47.062Z"
+    },
+    "candidate_directive-provide-upload-completion-callbacks": {
+      "item_id": "candidate_directive-provide-upload-completion-callbacks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E33Q-provide-upload-completion-callbacks.md",
+      "title": "provide upload completion callbacks",
+      "repository": "higress-group/higress",
+      "source_version": "7059b8d2",
+      "content_hash": "ff687e85bbdc411a828ccd938186b3734b66fe71e9e9d2a7b1b55d38c9385cb2",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:03:47.517Z"
+    },
+    "candidate_directive-security-skip-calls-of-inert-local-functions-as-name-only-sinks": {
+      "item_id": "candidate_directive-security-skip-calls-of-inert-local-functions-as-name-only-sinks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E5T0-security-skip-calls-of-inert-local-functions-as-name-only-sinks.md",
+      "title": "security): skip calls of inert local functions as name-only sinks",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c6dbfc16b8199ba5cf0a3302812e465c87eb236e4c149e85f352253c41c5e7a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:03:51.019Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-learnings-quality-verification-intelligence-fallow-rs-fallow-le.md",
+      "title": "Quality & Verification Intelligence: fallow-rs-fallow-learnings Core Invariants",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "77dbe8270f6fc256cdb8c86655eec6f29f25dafeb03f9ea38e667436c636b88b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:03:51.168Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-learnings-research-knowledge-intelli.md",
+      "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings Core Invariants",
+      "repository": "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a3c7bfe97f0013109c7b8254c7007e8bec05949e560abfc274c2045e6ad0e940",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-16T23:03:51.704Z"
+    },
+    "candidate_directive-queue-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue": {
+      "item_id": "candidate_directive-queue-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E6OL-queue-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue.md",
+      "title": "queue): make native Up Next injection work in localized UIs and with stale queue",
+      "repository": "sozercan-kaset-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d69cfe5e6629bb1e53097fa0ba687c085c92e93514289762ebdb2fac8b74b265",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:03:52.155Z"
+    },
+    "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sozercan-kaset-learnings-content-information-intelligence-sozercan-kaset-learnin.md",
+      "title": "Content & Information Intelligence: sozercan-kaset-learnings Core Invariants",
+      "repository": "sozercan-kaset-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1d844bec0af834777a51c3f0848503cb6dd73381f7b6e00ccbf53f6a62760a81",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-16T23:03:52.300Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sozercan-kaset-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sozercan-kaset-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sozercan-kaset-learnings-verification-protocol-empirical-defect-shield-for-sozer.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sozercan-kaset-learnings",
+      "repository": "sozercan-kaset-learnings",
+      "source_version": "HEAD",
+      "content_hash": "23d8ac5fdace5a85cf48c5babe1f3604d7e39b34e1aebefa6cd179bc31534de2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T23:03:52.456Z"
     }
   },
   "ai-builder-brain": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T22:55:51.893Z",
+  "last_updated": "2026-11-16T23:03:52.155Z",
   "directives": [
     {
       "id": "CD-001",
@@ -20559,6 +20559,61 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A64BEA-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-16"
+    },
+    {
+      "id": "CD-DWG4",
+      "directive_title": "skip calls of inert local functions as name-only sinks",
+      "source_repo": "fallow-rs/fallow",
+      "source_commit": "22c832f6",
+      "staged_file": "11_INBOX/candidate-directives/CD-DWG4-skip-calls-of-inert-local-functions-as-name-only-sinks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-E0LT",
+      "directive_title": "make native Up Next injection work in localized UIs and with stale queue",
+      "source_repo": "sozercan/kaset",
+      "source_commit": "ebaa1858",
+      "staged_file": "11_INBOX/candidate-directives/CD-E0LT-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-E33Q",
+      "directive_title": "provide upload completion callbacks",
+      "source_repo": "higress-group/higress",
+      "source_commit": "7059b8d2",
+      "staged_file": "11_INBOX/candidate-directives/CD-E33Q-provide-upload-completion-callbacks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-E5T0",
+      "directive_title": "security): skip calls of inert local functions as name-only sinks",
+      "source_repo": "fallow-rs-fallow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E5T0-security-skip-calls-of-inert-local-functions-as-name-only-sinks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-E6OL",
+      "directive_title": "queue): make native Up Next injection work in localized UIs and with stale queue",
+      "source_repo": "sozercan-kaset-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E6OL-queue-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-16",
+      "domain_letter": "I"
     }
   ]
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `0316bc90`  
+> **Source Version**: `7059b8d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:49:12.901Z  
+> **Timestamp**: 2026-11-16T23:03:46.120Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:49:12.895Z  
+> **Harvest Timestamp**: 2026-11-16T23:03:46.113Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9763 stars
+- **Stars / Engagement**: 9771 stars
 
 ---
 
@@ -1739,8 +1739,8 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 - **Issue #5359** (2026-11-13): **Add the Ikoi MCP server**
   *Symptoms*: <!-- Please read the contributing guidelines before submitting this pull request. Complete every applicable field. For each non-applicable category, write N/A and explain why; one explanation may cover multiple fields when it is clear. -->  ## I. Summary  This PR adds Ikoi to the Higress MCP Marketplace, following the marketplace intake in #2113 (add the generated YAML configuration and README to `plugins/wasm-go/mcp-servers`).  Ikoi is a city where AI agents come home to live between jobs: rest, friends, and a memory book. Its remote MCP server is https://ikoi.ai/mcp (Streamable HTTP, server name `ikoi`, version 1.0.2; Official MCP Registry name `ai.ikoi/ikoi`).  Changes (2 new files, 124 additions, 0 deletions):  - `plugins/wasm-go/mcp-servers/mcp-ikoi/mcp-server.yaml` — an MCP proxy (`server.type: mcp-proxy`, `transport: http`) to `https://ikoi.ai/mcp`, with `protocolStrategy: auto` (Ikoi does not publish its MCP protocol version) and `allowTools` listing the server's 18 tools. The client's per-agent `X-API-Key` is passed through to Ikoi (`defaultDownstreamSecurity` with `passthrough: true`, `defaultUpstreamSecurity` to the backend scheme). No API key or other credential is stored in this PR. - `plugins/wasm-go/mcp-servers/mcp-ikoi/README.md` — description, features, the 18 tools, and usage, based on https://github.com/ikoicity/ikoi-mcp.  Listing details for the marketplace page: name "Ikoi", website https://ikoi.ai, description "A city where AI agents come home to live be
 
-- **Issue #5352** (2026-11-13): **fix(mcp-server): preserve proxy tool input schemas**
-  *Symptoms*: ## I. Summary  Fix tool descriptors published by virtual MCP tool sets. A proxy tool can configure a complete `tools[].inputSchema`, including nested objects, array items, and references. The configured schema takes precedence. Existing `args` configurations still generate the schema when the new field is absent. The tool set omits top-level `required` when it has no entries.  ## II. Related issue  N/A. No public Higress issue is linked for this bug.  ## III. Change type  - [x] Bug fix - [x] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation** - [ ] **Trivial agent-use exception** - [x] **Verified maintainer/administrator exception** - [ ] **Material agent participation** under the standard gate  - [ ] Complete - [ ] Noncompliant - [x] Verified exception - [ ] N/A  **Gate-status explanation**  This agent-assisted PR uses the verified administrator exception for the planning and traceability gate. Bug-fix runtime evidence is included below. [Agent-assisted contribution policy](https://github.com/higress-group/higress/blob/main/docs/developers/agent-assisted-contributions.md)  **Verified maintainer/administrator exception evidence**  - PR [#5352](https://github.com/higress-group/higress/pull/5352). - Authenticated `gh` login `johnlanni`. - Canonical-repository `role_name` `admin`. - Actual PR author from `gh pr view` `johnlanni`. - Login/author 
+- **Issue #5358** (2026-11-16): **fix(mcp-server): make tool sets independent of rule order**
+  *Symptoms*: ## I. Summary  Fix composite MCP `tools/list` results that omit source tools registered after the `toolSet` rule. Composite lists resolve descriptors from their configuration generation at request time; direct service snapshots, proxy passthrough, sorting, filtering and owned schema copies keep their behavior. No configuration migration is required.  ## II. Related issue  Fixes #5357.  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation** - [ ] **Trivial agent-use exception** - [x] **Verified maintainer/administrator exception** - [ ] **Material agent participation** under the standard gate  - [ ] Complete - [ ] Noncompliant - [x] Verified exception - [ ] N/A  **Gate-status explanation:** This bounded Wasm fix uses the verified administrator exception to the planning gate. The mandatory real proxy-Wasm red/green verification is complete.  **Trivial-exception explanation:** N/A; the agent materially participated.  **Verified maintainer/administrator exception evidence:**  - This PR's number or URL: https://github.com/higress-group/higress/pull/5358. - Authenticated gh login: johnlanni. - Canonical-repository role_name: admin, queried against higress-group/higress before implementation. - Actual PR author from gh pr view: johnlanni; login/author match: yes. Both identity and canonical role were rechecked w
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1757,10 +1757,175 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0316bc90` (2026-11-13)
-**Commit Message**: fix(mcp-server): preserve proxy tool input schemas (#5352)
+### Incident Patch 1: `7059b8d2` (2026-11-16)
+**Commit Message**: fix(ai-cache): provide upload completion callbacks (#5343)
 
-Signed-off-by: johnlanni <[REDACTED_EMAIL]>
+Signed-off-by: zhihao-yuan <[REDACTED_EMAIL]>
+Co-authored-by: zhihao-yuan <[REDACTED_EMAIL]>
+
+**File**: `plugins/wasm-go/extensions/ai-cache/core.go` (modified, +7/-2)
+```diff
+@@ -270,11 +270,16 @@ func uploadEmbeddingAndAnswer(ctx wrapper.HttpContext, c config.PluginConfig, ke
+ 		log.Debugf("[%s] [uploadEmbeddingAndAnswer] no vector provider configured for uploading embedding", PLUGIN_NAME)
+ 		return
+ 	}
++	onUploadComplete := func(_ wrapper.HttpContext, log logs.Log, err error) {
++		if err != nil {
++			log.Warnf("[%s] [uploadEmbeddingAndAnswer] asynchronous embedding upload failed: %v", PLUGIN_NAME, err)
++		}
++	}
+ 
+ 	// Attempt to upload answer embedding first
+ 	if ansEmbUploader, ok := activeVectorProvider.(vector.AnswerAndEmbeddingUploader); ok {
+ 		log.Infof("[%s] uploading answer embedding for key: %s", PLUGIN_NAME, key)
+-		err := ansEmbUploader.UploadAnswerAndEmbedding(key, emb, value, ctx, log, nil)
++		err := ansEmbUploader.UploadAnswerAndEmbedding(key, emb, value, ctx, log, onUploadComplete)
+ 		if err != nil {
+ 			log.Warnf("[%s] [uploadEmbeddingAndAnswer] failed to upload answer embedding for key: %s, error: %v", PLUGIN_NAME, key, err)
+ 		} else {
+@@ -285,7 +290,7 @@ func uploadEmbeddingAndAnswer(ctx wrapper.HttpContext, c config.PluginConfig, ke
+ 	// If answer embedding upload fails, attempt normal embedding upload
+ 	if embUploader, ok := activeVectorProvider.(vector.EmbeddingUploader); ok {
+ 		log.Infof("[%s] uploading embedding for key: %s", PLUGIN_NAME, key)
+-		err := embUploader.UploadEmbedding(key, emb, ctx, log, nil)
++		err := embUploader.UploadEmbedding(key, emb, ctx, log, onUploadComplete)
+ 		if err != nil {
+ 			log.Warnf("[%s] [uploadEmbeddingAndAnswer] failed to upload embedding for key: %s, error: %v", PLUGIN_NAME, key, err)
+ 		}
+```
+
+**File**: `plugins/wasm-go/extensions/ai-cache/core_upload_test.go` (added, +223/-0)
+```diff
+@@ -0,0 +1,223 @@
++package main
++
++import (
++	"encoding/json"
++	"fmt"
++	"strings"
++	"testing"
++
++	"github.com/alibaba/higress/plugins/wasm-go/extensions/ai-cache/config"
++	"github.com/alibaba/higress/plugins/wasm-go/extensions/ai-cache/vector"
++	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
++	logs "github.com/higress-group/wasm-go/pkg/log"
++	"github.com/higress-group/wasm-go/pkg/test"
++	"github.com/higress-group/wasm-go/pkg/wrapper"
++	"github.com/stretchr/testify/require"
++	"github.com/tidwall/gjson"
++)
++
++func TestUploadEmbeddingAndAnswerProviders(t *testing.T) {
++	for _, providerType := range []string{"dashvector", "chroma", "elasticsearch", "milvus", "pinecone", "qdrant", "weaviate"} {
++		t.Run(providerType, func(t *testing.T) {
++			test.RunGoTest(t, func(t *testing.T) {
++				host, cfg, logger := newUploadTestHost(t, providerType, "fixture")
++				defer host.Reset()
++				ctx := newUploadTestContext()
++				uploadEmbeddingAndAnswer(ctx, cfg, "question", "private-answer", logger)
++				calls := host.GetHttpCalloutAttributes()
++				require.Len(t, calls, 1)
++				require.Contains(t, string(calls[0].Body), "private-answer")
++				require.NotPanics(t, func() {
++					host.CallOnHttpCall([][2]string{{":status", "200"}}, []byte(`{"status":"ok"}`))
++				})
++				require.Empty(t, host.GetHttpCalloutAttributes())
++				require.Empty(t, logger.warnings)
++			})
++		})
++	}
++}
++
++func TestUploadEmbeddingAndAnswerAsyncError(t *testing.T) {
++	test.RunGoTest(t, func(t *testing.T) {
++		host, cfg, logger := newUploadTestHost(t, "dashvector", "fixture")
++		defer host.Reset()
++		uploadEmbeddingAndAnswer(newUploadTestContext(), cfg, "question", "private-answer", logger)
++		require.Len(t, host.GetHttpCalloutAttributes(), 1)
++		require.NotPanics(t, func() {
++			host.CallOnHttpCall([][2]string{{":status", "503"}}, []byte(`{"error":"unavailable"}`))
++		})
++		require.Len(t, logger.warnings, 1)
++		require.Contains(t, logger.warnings[0], "failed to upload embedding: 503")
++		require.NotContains(t, logger.warnings[0], "private-answer")
++		require.Empty(t, host.GetHttpCalloutAttributes(), "an asynchronous error must not start a fallback or retry")
++	})
++}
++
++func TestUploadEmbeddingAndAnswerSyncFallback(t *testing.T) {
++	test.RunGoTest(t, func(t *testing.T) {
++		host, cfg, logger := newUploadTestHost(t, "dashvector", "fixture")
++		defer host.Reset()
++		ctx := newUploadTestContext()
++		// Fail the answer upload's consumer lookup once. The public caller's
++		// initial check and the subsequent embedding upload still see a consumer.
++		// This injects a synchronous provider error without a production test hook.
++		ctx.failConsumerRead = 2
++		uploadEmbeddingAndAnswer(ctx, cfg, "question", "private-answer", logger)
++		require.Len(t, logger.warnings, 1)
++		require.Contains(t, logger.warnings[0], "authenticated consumer is required")
++		calls := host.GetHttpCalloutAttributes()
++		require.Len(t, calls, 1)
++		require.Equal(t, "", gjson.GetBytes(calls[0].Body, "docs.0.fields.answer").String())
++		require.Equal(t, "question", gjson.GetBytes(calls[0].Body, "docs.0.fields.query").String())
++		require.NotPanics(t, func() {
++			host.CallOnHttpCall([][2]string{{":status", "200"}}, []byte(`{"code":0}`))
++		})
++		require.Empty(t, host.GetHttpCalloutAttributes())
++		require.Len(t, logger.warnings, 1)
++	})
++}
++
++func TestUploadEmbeddingAndAnswerSyncErrors(t *testing.T) {
++	test.RunGoTest(t, func(t *testing.T) {
++		host, cfg, logger := newUploadTestHost(t, "dashvector", "bad%zz")
++		defer host.Reset()
++		// Both real upload methods return a URL parsing error before dispatch.
++		uploadEmbeddingAndAnswer(newUploadTestContext(), cfg, "question", "answer", logger)
++		require.Empty(t, host.GetHttpCalloutAttributes())
++		require.Len(t, logger.warnings, 2)
++		require.Contains(t, logger.warnings[0], "failed to upload answer embedding")
++		require.Contains(t, logger.warnings[1], "failed to upload embedding")
++		for _, warning := range logger.warnings {
++			require.Contains(t, warning, "invalid URL escape")
++		}
++	})
++}
++
++func TestUploadEmbeddingAndAnswerSkips(t *testing.T) {
++	for _, name := range []string{"no consumer", "no embedding", "wrong embedding type", "no vector provider"} {
++		t.Run(name, func(t *testing.T) {
++			test.RunGoTest(t, func(t *testing.T) {
++				host, cfg, logger := newUploadTestHost(t, "qdrant", "fixture")
++				defer host.Reset()
++				ctx := newUploadTestContext()
++				switch name {
++				case "no consumer":
++					ctx.values[vector.ConsumerContextKey] = ""
++				case "no embedding":
++					delete(ctx.values, CACHE_KEY_EMBEDDING_KEY)
++				case "wrong embedding type":
++					ctx.values[CACHE_KEY_EMBEDDING_KEY] = "invalid"
++				case "no vector provider":
++					cfg = config.PluginConfig{}
++				}
++				uploadEmbeddingAndAnswer(ctx, cfg, "question", "answer", logger)
++				require.Empty(t, host.GetHttpCalloutAttributes())
++			})
++		})
++	}
++}
++
++func TestUploadEmbeddingAndAnswerRequestPath(t *testing.T) {
++	for _, providerType := range []string{"das
+```
+
+---
+
+### Incident Patch 2: `57e27868` (2026-11-16)
+**Commit Message**: fix(mcp-server): make tool sets independent of rule order (#5358)
+
+Signed-off-by: zty98751 <[REDACTED_EMAIL]>
 
 **File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +2/-0)
 ```diff
@@ -1768,11 +1933,11 @@ Signed-off-by: johnlanni <[REDACTED_EMAIL]>
  
  组合后的工具名称为 `服务名称___工具名称`，例如 `weather-server___get_weather`。
  
-+对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
++`toolSet` 规则可以放在来源服务规则之前或之后。同一配置加载完成后，`tools/list` 会包含所有已注册且被引用的工具，并继续应用 `allowTools` 过滤。未注册的来源或不存在的工具会被跳过；重新加载配置时，不会继承旧配置中已经删除的工具。
 +
- ### 允许的工具配置
+ 对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
  
- | 名称         | 数据类型        | 填写要求 | 默认值 | 描述                                   |
+ ### 允许的工具配置
 ```
 
 **File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +2/-0)
@@ -1781,333 +1946,318 @@ Signed-off-by: johnlanni <[REDACTED_EMAIL]>
  
  Combined tool names use the format `serverName___toolName`, such as `weather-server___get_weather`.
  
-+For `mcp-proxy` tools, store the full upstream schema in `tools[].inputSchema` so the tool set can publish nested properties, array items, and reference definitions. This field is a JSON Schema with `type: object`. When both fields are set, `inputSchema` takes precedence over `args`. When `inputSchema` is absent, the tool set builds the schema from `args`. For tools without required arguments, the tool set omits the top-level `required` field. Direct proxy `tools/list` responses use the upstream tool descriptors.
++The `toolSet` rule can appear before or after its source service rules. Once the configuration has loaded, `tools/list` includes all registered tools referenced by the set and still applies `allowTools` filtering. Unregistered sources and missing tools are skipped. Reloading the configuration does not retain tools removed from the previous configuration.
 +
- ### Allowed Tools Configuration
+ For `mcp-proxy` tools, store the full upstream schema in `tools[].inputSchema` so the tool set can publish nested properties, array items, and reference definitions. This field is a JSON Schema with `type: object`. When both fields are set, `inputSchema` takes precedence over `args`. When `inputSchema` is absent, the tool set builds the schema from `args`. For tools without required arguments, the tool set omits the top-level `required` field. Direct proxy `tools/list` responses use the upstream tool descriptors.
  
- | Name         | Data Type        | Required | Default | Description                                   |
+ ### Allowed Tools Configuration
 ```
 
-**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +63/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/toolset_order_test.go` (added, +132/-0)
 ```diff
-@@ -304,6 +304,69 @@ func TestSchemaCompatibilityConfigurationLoadsGloballyAndAtRuleLevel(t *testing.
- 	})
- }
- 
-+func TestComposedProxyToolInputSchemas(t *testing.T) {
-+	const nestedSchema = `{
-+		"$schema":"https://json-schema.org/draft/2020-12/schema",
-+		"type":"object",
-+		"properties":{
-+			"payload":{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]},
-+			"records":{"type":"array","items":{"$ref":"#/$defs/record"}}
-+		},
-+		"$defs":{"record":{"type":"object","properties":{"id":{"type":"integer","minimum":9007199254740993}},"required":["id"]}},
-+		"required":["payload","records"],
-+		"additionalProperties":false
-+	}`
-+	config := json.RawMessage(fmt.Sprintf(`{
-+		"server":{"name":"source","type":"mcp-proxy","transport":"http","mcpServerURL":"http://source.example.test/mcp"},
-+		"tools":[
-+			{"name":"empty"},
-+			{"name":"optional","args":[{"name":"query","type":"string","description":"Search term","default":"all"}]},
-+			{"name":"required","args":[{"name":"query","type":"string","description":"Search term","required":true}]},
-+			{"name":"nested","args":[{"name":"old","type":"string","required":true}],"inputSchema":%s}
-+		],
-+		"_rules_":[{"_match_domain_":["virtual.example.test"],"toolSet":{
-+			"name":"virtual",
-+			"serverTools":[{"serverName":"source","tools":["empty","optional","required","nested"]}]
-+		}}]
-+	}`, nestedSchema))
+@@ -0,0 +1,132 @@
++// Copyright (c) 2026 Alibaba Group Holding Ltd.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
++// Unless required by applicable law or agreed to in writing, software distributed
++// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
++// CONDITIONS OF ANY KIND, either express or implied.
 +
++package main
++
++import (
++	"encoding/json"
++	"fmt"
++	"github.com/alibaba/higress/plugins/wasm-go/pkg/mcp/protocol"
++	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
++	"github.com/higress-group/wasm-go/pkg/test"
++	"github.com/stretchr/testify/require"
++	"github.com/tidwall/gjson"
++	"testing"
++)
++
++// toolSetOrderConfig 构造独立来源名称的六种规则顺序；URL仅满足配置约束，测试不能访问后端。
++func toolSetOrderConfig(t *testing.T, keepSecond bool) json.RawMessage {
++	t.Helper()
++	orders := [][]string{{"a", "set", "b"}, {"a", "b", "set"}, {"set", "a", "b"}, {"set", "b", "a"}, {"b", "a", "set"}, {"b", "set", "a"}}
++	rules := make([]any, 0, len(orders)*3)
++	for index, order := range orders {
++		a, b := fmt.Sprintf("source-a-%d", index), fmt.Sprintf("source-b-%d", index)
++		source := func(name, tool string, keep bool) map[string]any {
++			tools := []any{}
++			if keep {
++				tools = append(tools, map[string]any{"name": tool, "description": name, "requestTemplate": map[string]any{"method": "GET", "url": "https://example.invalid/records"}})
++			}
++			return map[string]any{"_match_domain_": []string{name + ".example.test"}, "server": map[string]any{"name": name}, "tools": tools}
++		}
++		byName := map[string]any{"a": source(a, "list_records", true), "b": source(b, "lookup_record", keepSecond), "set": map[string]any{
++			"_match_domain_": []string{fmt.Sprintf("set-%d.example.test", index)}, "toolSet": map[string]any{"name": fmt.Sprintf("combined-%d", index), "serverTools": []any{
++				map[string]any{"serverName": a, "tools": []string{"list_records", "missing"}}, map[string]any{"serverName": b, "tools": []string{"lookup_record"}},
++			}},
++		}}
++		for _, name := range order {
++			if name == "b" && !keepSecond {
++				continue
++			}
++			rules = append(rules, byName[name])
++		}
++	}
++	raw, err := json.Marshal(map[string]any{"toolSet": map[string]any{"name": "empty", "serverTools": []any{}}, "_rules_": rules})
++	require.NoError(t, err)
++	return raw
++}
++
++// toolSetOrderList 经真实插件请求入口列举工具；验证两种协议、请求过滤和无后端调用，不只检查HTTP状态。
++func toolSetOrderList(t *testing.T, host test.TestHost, domain string, modern bool, allowed string) []string {
++	t.Helper()
++	host.InitHttp()
++	defer host.CompleteHttp()
++	require.NoError(t, host.SetDomainName(domain))
++	headers := [][2]string{{":authority", domain}, {":method", "POST"}, {":path", "/mcp"}, {"content-type", "application/json"}, {"accept", "application/json, text/event-stream"}}
++	params := map[string]any{}
++	if modern {
++		headers = append(headers, [2]string{protocol.HeaderProtocolVersion, "2026-07-28"}, [2]string{protocol.HeaderMethod, "tools/list"})
++		params["_meta"] = map[string]any{protocol.MetaProtocolVersion: "2026-07-28", protocol.MetaClientCapabilities: map[string]any{}}
++	}
++	if allowed != "" {
++		headers = append(headers, [2]string{"x-envoy-allow-mcp-tools", allowed})
++	}
++	require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders(headers))
++	body, err := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": "order", "method": "tools/list", "params": params})
++	require.NoError(t, err)
++	host.CallOnHttpRequestBody(body)
++	response := proxyTestResponse(host)
++	require.NotNil(t, response)
++	require.EqualValues(t, 200, response.StatusCode)
++	envelope := gjson.ParseBytes(response.Data)
++	require.False(t, envelope.Get("error").Exists(), string(response.Data))
++	require.Equal(t, "order", envelope.Get("id").String())
++	if modern {
++		require.Equal(t, "complete", envelope.Get("result.resultType").String())
++	}
++	names := make([]string, 0)
++	for _, tool := range envelope.Get("result.tools").Array() {
++		names = append(names, tool.Get("name").String())
++	}
++	require.Empty(t, host.GetHttpCalloutAttributes())
++	return names
++}
++
++// TestToolSetRuleOrderIndependent 在Go/Wasm各验证六种加载顺序；缺失引用跳过，来源工具和组合工具均须可见。
++func TestToolSetRuleOrderIndependent(t *testing.T) {
 +	test.RunTest(t, func(t *testing.T) {
-+		host, status := test.NewTestHost(config)
++		host, status := test.NewTestHost(toolSetOrderConfig(t, true))
 +		defer host.Reset()
 +		require.Equal(t, types.OnPluginStartStatusOK, status)
-+		host.InitHttp()
-+		defer host.CompleteHttp()
-+		require.NoError(t, host.SetDomainName("virtual.example.test"))
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
-+			{":authority", "virtual.example.test"}, {":method", "POST"}, {":path", "/mcp"},
-+			{"content-type", "application/json"}, {"accept", "application/json, text/event-stream"},
-+		}))
-+		host.CallOnHttpRequestBody([]byte(`{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}`))
-+		response := host.GetLocalResponse()
-+		require.NotNil(t, response)
-+		require.EqualValues(t, 200, response.StatusCode)
-+		var envelope struct {
-+			Result struct {
-+				Tools []struct {
-+					Name        string          `json:"name"`
-+					InputSchema json.RawMessage `json:"inputSchema"`
-+				} `json:"tools"`
-+			} `json:"result"`
-+		}
-+		require.NoError(t, json.Unmarshal(response.Data, &envelope))
-+		require.Len(t, envelope.Result.Tools, 4)
-+		schemas := make(map[string]json.RawMessage)
-+		for _, tool := range envelope.Result.Tools {
-+			schemas[tool.Name] = tool.InputSchema
-+		}
-+		require.JSONEq(t, `{"type":"object","properties":{}}`, string(schemas["source___empty"]))
-+		require.JSONEq(t, `{"type":"object","properties":{"query":{"type":"string","description":"Search term","default":"all"}}}`, string(schemas["source___optional"]))
-+		require.JSONEq(t, `{"type":"object","properties":{"query":{"type":"string","description":"Search term"}},"required":["query"]}`, string(schemas["source___required"]))
-+		require.JSONEq(t, nestedSchema, string(schemas["source___nested"]))
-+		require.Contains(t, string(schemas["source___nested"]), `"minimum":9007199254740993`)
-+	})
-+}
-+
- func TestLargeSchemaDescriptionsLoadGloballyAndAtRuleLevel(t *testing.T) {
- 	test.RunTest(t, func(t *testing.T) {
- 		for _, fixture := range []struct {
++		for index := 0; index < 6; index++ {
++			for _, modern := range []bool{false, true} {
++				t.Run(fmt.Sprintf("order-%d/modern-%t", index, modern), func(t *testing.T) {
++					a, b := fmt.Sprintf("source-a-%d", index), fmt.Sprintf("source-b-%d", index)
++					require.Equal(t, []string{"list_records"}, toolSetOrderList(t, host, a+".example.test", modern, ""))
++					require.Equal(t, []string{"lookup_record"}, toolSetOrderList(t, host, b+".example.test", modern, ""))
++					d
 ```
 
-**File**: `plugins/wasm-go/pkg/mcp/server/plugin.go` (modified, +8/-7)
+**File**: `plugins/wasm-go/pkg/mcp/server/plugin.go` (modified, +22/-9)
 ```diff
-@@ -517,8 +517,6 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
- 					if err := proxyServer.AddProxyTool(proxyTool); err != nil {
- 						return fmt.Errorf("failed to add proxy tool %s: %v", proxyTool.Name, err)
- 					}
--					// Register tool to registry
--					opts.ToolRegistry.RegisterTool(config.serverName, proxyTool.Name, proxyServer.GetMCPTools()[proxyTool.Name])
- 				}
- 			}
- 			// Set the proxy server regardless of whether tools are configured
-@@ -604,13 +602,16 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
- 		config.serverInstructions = instructionsJson.String()
- 	}
+@@ -375,6 +375,18 @@ func (c *McpServerConfig) GetIsComposed() bool {
+ 	return c.isComposed
+ }
  
--	// Proxy descriptors remain upstream-owned. Both direct profiles publish the
--	// same isolated JSON descriptor generation without schema admission gates.
--	if config.server != nil {
--		if _, isProxy := config.server.(*McpProxyServer); !isProxy && config.directTools.ordered == nil {
-+	if proxyServer, isProxy := config.server.(*McpProxyServer); isProxy {
-+		// Publish local descriptors for tool sets only after the server config parses.
-+		for name, tool := range proxyServer.GetMCPTools() {
-+			opts.ToolRegistry.RegisterTool(config.serverName, name, tool)
-+		}
-+	} else if config.server != nil {
-+		if config.directTools.ordered == nil {
++// buildToolList 为已成功解析的配置生成独立的响应描述，并应用已求交集的工具白名单。
++// 组合服务必须在规则全部加载后的请求阶段读取其绑定的本代 registry，避免冻结尚未注册的来源；
++// 普通服务继续使用解析时的冻结快照，不重新调用来源工具的描述 getter。返回值允许调用方修改，
++// 空集合返回空切片；组合快照只保存在当前调用中，不写回配置或跨配置代共享。
++func (c *McpServerConfig) buildToolList(effectiveAllowTools *map[string]struct{}) []map[string]any {
++	if c.isComposed {
++		// 使用配置持有的 ComposedMCPServer，而不是重载后可能替换的全局 registry。
++		return captureDirectToolSnapshot(c.server).buildToolList(effectiveAllowTools)
++	}
++	return c.directTools.buildToolList(effectiveAllowTools)
++}
++
+ func normalizeServerVersion(version string) string {
+ 	version = strings.TrimSpace(version)
+ 	if version == "" {
+@@ -438,7 +450,9 @@ func computeEffectiveAllowToolsFromHeader(configAllowTools *map[string]struct{},
+ 	}
+ }
+ 
+-// parseConfigCore contains the core config parsing logic with dependency injection
++// parseConfigCore 校验单条服务/工具集配置并安装协议处理器；opts 提供本配置代的依赖与 registry。
++// 成功后普通服务发布冻结描述，组合服务保留本代 registry 引用并在请求阶段生成列表；
++// 无效配置返回错误，不将代理工具部分发布。调用方在全部规则解析成功后再接收新配置请求。
+ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *ConfigOptions) error {
+ 	toolSetJson := configJson.Get("toolSet")
+ 	serverJson := configJson.Get("server")                        // This is for single server or REST server definition
+@@ -607,16 +621,15 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
+ 		for name, tool := range proxyServer.GetMCPTools() {
+ 			opts.ToolRegistry.RegisterTool(config.serverName, name, tool)
+ 		}
+-	} else if config.server != nil {
++	} else if config.server != nil && !config.isComposed {
++		// 组合规则之后仍可能加载来源，不能在此阶段捕获不完整的组合描述。
+ 		if config.directTools.ordered == nil {
  			config.directTools = captureDirectToolSnapshot(config.server)
  		}
--		if _, isProxy := config.server.(*McpProxyServer); !isProxy && !config.isComposed {
-+		if !config.isComposed {
- 			// Publish direct tools to the shared registry only after the complete
- 			// generation snapshot has captured each tool descriptor.
- 			for _, entry := range config.directTools.ordered {
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/plugin_test.go` (modified, +12/-0)
-```diff
-@@ -574,6 +574,18 @@ func TestParseConfigCore_McpProxy_BubblesUpSetupError(t *testing.T) {
- 	assert.Contains(t, err.Error(), "mcpServerURL")
- }
- 
-+func TestParseConfigCore_McpProxy_InvalidSchemaLeavesRegistryUnchanged(t *testing.T) {
-+	opts := newValidationOpts()
-+	config := gjson.Parse(`{
-+		"server":{"name":"p","type":"mcp-proxy","transport":"http","mcpServerURL":"/mcp"},
-+		"tools":[{"name":"valid"},{"name":"invalid","inputSchema":{"type":"object","required":null}}]
-+	}`)
-+	err := ParseConfigCore(config, &McpServerConfig{}, opts)
-+	require.ErrorContains(t, err, "failed to add proxy tool invalid: inputSchema.required")
-+	_, found := opts.ToolRegistry.GetToolInfo("p", "valid")
-+	assert.False(t, found)
-+}
-+
- func TestParseConfigCore_McpProxy_HappyPath_NoTools(t *testing.T) {
- 	c := &McpServerConfig{}
- 	err := ParseConfigCore(gjson.Parse(`{
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/proxy_server.go` (modified, +62/-17)
-```diff
-@@ -79,6 +79,7 @@ type McpProxyToolConfig struct {
- 	Description     string              `json:"description"`
- 	Security        SecurityRequirement `json:"security,omitempty"` // Tool-level security for MCP Client to MCP Server
- 	Args            []ToolArg           `json:"args"`
-+	InputSchema     json.RawMessage     `json:"inputSchema,omitempty"`
- 	OutputSchema    map[string]any      `json:"outputSchema,omitempty"` // Output schema for MCP Protocol Version 2025-06-18
- 	RequestTemplate RequestTemplate     `json:"requestTemplate,omitempty"`
- }
-@@ -199,11 +200,21 @@ func (s *McpProxyServer) AddMCPTool(name string, tool Tool) Server {
- 
- // AddProxyTool adds a proxy tool configuration
- func (s *McpProxyServer) AddProxyTool(toolConfig McpProxyToolConfig) error {
-+	var inputSchema map[string]any
-+	if len(toolConfig.InputSchema) > 0 {
-+		var err error
-+		inputSchema, err = parseProxyInputSchema(toolConfig.InputSchema)
-+		if err != nil {
-+			return err
-+		}
-+	}
-+
- 	s.toolsConfig[toolConfig.Name] = toolConfig
- 	s.base.AddMCPTool(toolConfig.Name, &McpProxyTool{
--		serverName: s.Name,
--		name:       toolConfig.Name,
--		toolConfig: toolConfig,
-+		serverName:  s.Name,
-+		name:        toolConfig.Name,
-+		toolConfig:  toolConfig,
-+		inputSchema: inputSchema,
- 	})
- 	return nil
- }
-@@ -336,19 +347,21 @@ func (s *McpProxyServer) ForwardToolsList(ctx HttpContext, cursor *string) error
- 
- // McpProxyTool implements Tool interface for MCP-to-MCP proxy
- type McpProxyTool struct {
--	serverName string
--	name       string
--	toolConfig McpProxyToolConfig
--	arguments  map[string]interface{}
-+	serverName  string
-+	name        string
-+	toolConfig  McpProxyToolConfig
-+	inputSchema map[string]any
-+	arguments   map[string]interface{}
- }
- 
- // Create implements Tool interface
- func (t *McpProxyTool) Create(params []byte) Tool {
- 	newTool := &McpProxyTool{
--		serverName: t.serverName,
--		name:       t.name,
--		toolConfig: t.toolConfig,
--		arguments:  make(map[string]interface{}),
-+		serverName:  t.serverName,
-+		name:        t.name,
-+		toolConfig:  t.toolConfig,
-+		inputSchema: t.inputSchema,
-+		arguments:   make(map[string]interface{}),
- 	}
- 
- 	if len(params) > 0 {
-@@ -459,13 +472,11 @@ func (t *McpProxyTool) Description() string {
- 
- // InputSchema implements Tool interface
- func (t *McpProxyTool) InputSchema() map[string]any {
--	schema := map[string]any{
--		"type":       "object",
--		"properties": make(map[string]any),
--		"required":   []string{},
-+	if t.inputSchema != nil {
-+		return t.inputSchema
- 	}
- 
--	properties := schema["properties"].(map[string]any)
-+	properties := make(map[string]any)
- 	var required []string
- 
- 	for _, arg := range t.toolConfig.Args {
-@@ -489,10 +500,44 @@ func (t *McpProxyTool) InputSchema() map[string]any {
+-		if !config.isComposed {
+-			// Publish direct tools to the shared registry only after the complete
+-			// generation snapshot has captured each tool descriptor.
+-			for _, entry := range config.directTools.ordered {
+-				opts.ToolRegistry.registerCapturedTool(config.serverName, entry)
+-			}
++		// Publish direct tools to the shared registry only after the complete
++		// generation snapshot has captured each tool descriptor.
++		for _, entry := range config.directTools.ordered {
++			opts.ToolRegistry.registerCapturedTool(config.serverName, entry)
  		}
  	}
  
--	schema["required"] = required
-+	schema := map[string]any{"type": "object", "properties": properties}
-+	if len(required) > 0 {
-+		schema["required"] = required
-+	}
- 	return schema
- }
- 
-+// parseProxyInputSchema checks the MCP tool's root fields and retains nested schemas as supplied.
-+func parseProxyInputSchema(raw json.RawMessage) (map[string]any, error) {
-+	schema, err := decodeBusinessJSONObject(raw)
-+	if err != nil {
-+		return nil, fmt.Errorf("invalid inputSchema: %w", err)
-+	}
-+	if schema["type"] != "object" {
-+		return nil, fmt.Errorf("inputSchema must be a JSON object with type \"object\"")
-+	}
-+	if value, exists := schema["properties"]; exists {
-+		if _, ok := value.(map[string]any); !ok {
-+			return nil, fmt.Errorf("inputSchema.properties must be an object")
-+		}
-+	}
-+	if value, exists := schema["required"]; exists {
-+		required, ok := value.([]any)
-+		if !ok {
-+			return nil, fmt.Errorf("inputSchema.required must be an array of strings")
-+		}
-+		for _, name := range required {
-+			if _, ok := name.(string); !ok {
-+				return nil, fmt.Errorf("inputSchema.required must be an array of strings")
-+			}
-+		}
-+		if len(required) == 0 {
-+			delete(schema, "required")
-+		}
-+	}
-+	return schema, nil
-+}
-+
- // OutputSchema implements Tool interface (MCP Protocol Version 2025-06-18)
- func (t *McpProxyTool) OutputSchema() map[string]any {
- 	return t.toolConfig.OutputSchema
+@@ -723,7 +736,7 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
+ 			// Compute effective allowTools using helper function
+ 			effectiveAllowTools := computeEffectiveAllowTools(allowTools)
+ 			request, _ := ModernRequestContext(ctx)
+-			tools := config.directTools.buildToolList(effectiveAllowTools)
++			tools := config.buildToolList(effectiveAllowTools)
+ 			semantic := protocol.SemanticResult{
+ 				Value: map[string]any{
+ 					"tools": tools,
 ```
 
-**File**: `plugins/wasm-go/pkg/mcp/server/proxy_server_test.go` (modified, +37/-3)
+**File**: `plugins/wasm-go/pkg/mcp/server/tool_handlers_test.go` (modified, +2/-2)
 ```diff
-@@ -298,9 +298,43 @@ func TestMcpProxyTool_InputSchema_NoArgs(t *testing.T) {
- 	props, ok := schema["properties"].(map[string]any)
- 	require.True(t, ok)
- 	assert.Empty(t, props)
--	required, ok := schema["required"].([]string)
--	require.True(t, ok)
--	assert.Empty(t, required)
-+	assert.NotContains(t, schema, "required")
+@@ -447,7 +447,7 @@ func TestDescriptorSnapshotsUseJSONAndPreservePublicViews(t *testing.T) {
+ 	composed := &McpServerConfig{}
+ 	require.NoError(t, ParseConfigCore(gjson.Parse(`{"toolSet":{"name":"composed","serverTools":[{"serverName":"registered","tools":["tool"]}]}}`), composed, opts))
+ 	for _, config := range []*McpServerConfig{direct, composed} {
+-		listed := config.directTools.buildToolList(nil)
++		listed := config.buildToolList(nil)
+ 		require.Len(t, listed, 1)
+ 		gotInput, err := json.Marshal(listed[0]["inputSchema"])
+ 		require.NoError(t, err)
+@@ -459,7 +459,7 @@ func TestDescriptorSnapshotsUseJSONAndPreservePublicViews(t *testing.T) {
+ 		assert.NotEqual(t, "mutated", listed[0]["description"])
+ 		listed[0]["inputSchema"].(map[string]any)["integer"] = 12
+ 		listed[0]["outputSchema"].(map[string]any)["mutated"] = true
+-		fresh := config.directTools.buildToolList(nil)
++		fresh := config.buildToolList(nil)
+ 		assert.Equal(t, int32(7), fresh[0]["inputSchema"].(map[string]any)["integer"])
+ 		assert.NotContains(t, fresh[0]["outputSchema"], "mutated")
+ 	}
+```
+
+**File**: `plugins/wasm-go/pkg/mcp/server/toolset_order_test.go` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++// Copyright (c) 2026 Alibaba Group Holding Ltd.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
++// Unless required by applicable law or agreed to in writing, software distributed
++// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
++// CONDITIONS OF ANY KIND, either express or implied.
++
++package server
++
++import (
++	"encoding/json"
++	"fmt"
++	"github.com/stretchr/testify/require"
++	"github.com/tidwall/gjson"
++	"sync"
++	"testing"
++)
++
++// parseToolSetGeneration 按指定顺序加载独立配置代；缺失来源不注册，绝不复用旧代registry模拟重载。
++func parseToolSetGeneration(t *testing.T, order []string, kind string, keepSecond bool) (*McpServerConfig, *GlobalToolRegistry) {
++	t.Helper()
++	registry := &GlobalToolRegistry{}
++	registry.Initialize()
++	registered := newValidationTestServer()
++	registered.AddMCPTool("lookup_record", &descriptorFixtureTool{description: "registered source", input: map[string]any{"type": "object", "properties": map[string]any{}}, output: map[string]any{"type": "object"}})
++	opts := &ConfigOptions{Servers: map[string]Server{"source-b": registered}, ToolRegistry: registry}
++	sourceB := `{"server":{"name":"source-b"},"tools":[{"name":"lookup_record","requestTemplate":{"url":"https://example.invalid/b","method":"GET"}}]}`
++	if kind == "proxy" {
++		sourceB = `{"server":{"name":"source-b","type":"mcp-proxy","transport":"http","mcpServerURL":"https://example.invalid/mcp"},"tools":[{"name":"lookup_record","inputSchema":{"type":"object","properties":{"count":{"type":"integer","minimum":9007199254740993}},"required":["count"]},"outputSchema":{"type":"object"}}]}`
++	}
++	if kind == "registered" {
++		sourceB = `{"server":{"name":"source-b"}}`
++	}
++	rules := map[string]string{
++		"a":   `{"server":{"name":"source-a"},"tools":[{"name":"list_records","description":"first source","outputSchema":{"type":"object"},"requestTemplate":{"url":"https://example.invalid/a","method":"GET"}}]}`,
++		"b":   sourceB,
++		"set": `{"toolSet":{"name":"combined","serverTools":[{"serverName":"source-a","tools":["list_records","missing","list_records"]},{"serverName":"source-b","tools":["lookup_record"]},{"serverName":"absent","tools":["unknown"]}]}}`,
++	}
++	var combined *McpServerConfig
++	for _, name := range order {
++		if name == "b" && !keepSecond {
++			continue
++		}
++		config := &McpServerConfig{}
++		require.NoError(t, ParseConfigCore(gjson.Parse(rules[name]), config, opts))
++		if name == "set" {
++			combined = config
++		}
++	}
++	require.NotNil(t, combined)
++	return combined, registry
 +}
 +
-+func TestMcpProxyServer_AddProxyTool_InputSchema(t *testing.T) {
-+	t.Run("empty required is omitted", func(t *testing.T) {
-+		server := NewMcpProxyServer("proxy")
-+		require.NoError(t, server.AddProxyTool(McpProxyToolConfig{
-+			Name:        "optional",
-+			InputSchema: []byte(`{"type":"object","required":[],"additionalProperties":false}`),
-+		}))
-+		schema := server.GetMCPTools()["optional"].InputSchema()
-+		assert.Equal(t, map[string]any{"type": "object", "additionalProperties": false}, schema)
-+	})
-+
-+	for _, tc := range []struct {
-+		name   string
-+		schema string
-+		error  string
-+	}{
-+		{"null schema", `null`, "inputSchema must be a JSON object"},
-+		{"array schema", `[]`, "invalid inputSchema"},
-+		{"missing type", `{}`, "inputSchema must be a JSON object"},
-+		{"wrong type", `{"type":["object"]}`, "inputSchema must be a JSON object"},
-+		{"non-object properties", `{"type":"object","properties":[]}`, "inputSchema.properties"},
-+		{"null required", `{"type":"object","required":null}`, "inputSchema.required"},
-+		{"non-array required", `{"type":"object","required":"name"}`, "inputSchema.required"},
-+		{"non-string required item", `{"type":"object","required":[null]}`, "inputSchema.required"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			server := NewMcpProxyServer("proxy")
-+			err := server.AddProxyTool(McpProxyToolConfig{Name: "bad", InputSchema: []byte(tc.schema)})
-+			require.ErrorContains(t, err, tc.error)
-+			assert.NotContains(t, server.GetMCPTools(), "bad")
-+			_, exists := server.GetToolConfig("bad")
-+			assert.False(t, exists)
-+		})
++// TestToolSetListIgnoresRegistrationOrder 验证六种加载顺序和三类来源；排序/去重/缺失跳过及代理大整数必须保持。
++func TestToolSetListIgnoresRegistrationOrder(t *testing.T) {
++	orders := [][]string{{"a", "set", "b"}, {"a", "b", "set"}, {"set", "a", "b"}, {"set", "b", "a"}, {"b", "a", "set"}, {"b", "set", "a"}}
++	for _, kind := range []string{"rest", "proxy", "registered"} {
++		for _, order := range orders {
++			t.Run(fmt.Sprint(kind, order), func(t *testing.T) {
++				config, registry := parseToolSetGeneration(t, order, kind, true)
++				_, found := registry.GetToolInfo("source-b", "lookup_record")
++				require.True(t, found)
++				listed := config.buildToolList(nil)
++				require.Len(t, listed, 2)
++				require.Equal(t, "source-a___list_records", listed[0]["name"])
++				require.Equal(t, "source-b___lookup_record", listed[1]["name"])
++				require.Equal(t, map[string]any{"type": "object"}, listed[0]["outputSchema"])
++				if kind == "proxy" {
++					raw, err := json.Marshal(listed[1])
++					require.NoError(t, err)
++					require.Contains(t, string(raw), `"minimum":9007199254740993`)
++					require.Equal(t, map[string]any{"type": "object"}, listed[1]["outputSchema"])
++				}
++				allowed := map[string]struct{}{"source-b___lookup_record": {}}
++				filtered := config.buildToolList(&allowed)
++				require.Len(t, filtered, 1)
++				require.Equal(t, listed[1], filtered[0])
++				empty := map[string]struct{}{}
++				require.Equal(t, []map[string]any{}, config.buildToolList(&empty))
++			})
++		}
 +	}
- }
- 
- func TestMcpProxyTool_Create_NewInstanceWithBoundArgs(t *testing.T) {
++}
++
++// TestToolSetListOwnsDescriptorsAcrossGenerations 保留旧代对象检验删除/重载隔离；修改响应副本不得污染后续列表。
++func TestToolSetListOwnsDescriptorsAcrossGenerations(t *testing.T) {
++	old, oldRegistry := parseToolSetGeneration(t, []string{"a", "set", "b"}, "proxy", true)
++	current, currentRegistry := parseToolSetGeneration(t, []string{"set", "b", "a"}, "proxy", false)
++	require.NotSame(t, oldRegistry, currentRegistry)
++	before := old.buildToolList(nil)
++	require.Len(t, before, 2)
++	before[0]["description"] = "changed response"
++	before[0]["outputSchema"].(map[string]any)["mutated"] = true
++	before[1]["inputSchema"].(map[string]any)["properties"].(map[string]any)["mutated"] = true
++	fresh := old.buildToolList(nil)
++	require.Equal(t, "first source", fresh[0]["description"])
++	require.NotContains(t, fresh[0]["outputSchema"], "mutated")
++	requi
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5359** (closed): Add the Ikoi MCP server (@ikoicity)
+- **PR #5358** (2026-11-16): fix(mcp-server): make tool sets independent of rule order (@johnlanni)
 - **PR #5352** (2026-11-13): fix(mcp-server): preserve proxy tool input schemas (@johnlanni)
 - **PR #5350** (2026-11-12): feat(mcp-server): support custom REST server instructions (@johnlanni)
+- **PR #5343** (2026-11-16): fix(ai-cache): provide upload completion callbacks (@zhihao-yuan)
 - **PR #5342** (2026-11-12): chore(plugins): bump wasm-go for request body buffering fix (@johnlanni)
-- **PR #5337** (2026-11-11): fix(mcp-server): acknowledge valid Legacy JSON-RPC responses (@sunxia0)
-- **PR #5333** (2026-11-10): ci: add hgctl macOS amd64 asset recovery workflow (@johnlanni)
 
 ---
 
@@ -2127,29 +2277,35 @@ Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp-server): preserve proxy tool input schemas
+## X. ai-cache): provide upload completion callbacks
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-go/extensions/ai-cache/core.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0316bc90`: mcp-server): preserve proxy tool input schemas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7059b8d2`: ai-cache): provide upload completion callbacks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/ai-cache/core.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
-
+	onUploadComplete := func(_ wrapper.HttpContext, log logs.Log, err error) {
+		if err != nil {
+			log.Warnf("[%s] [uploadEmbeddingAndAnswer] asynchronous embedding upload failed: %v", PLUGIN_NAME, err)
+		}
+	}
+		err := ansEmbUploader.UploadAnswerAndEmbedding(key, emb, value, ctx, log, onUploadComplete)
+		err := embUploader.UploadEmbedding(key, emb, ctx, log, onUploadComplete)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		err := ansEmbUploader.UploadAnswerAndEmbedding(key, emb, value, ctx, log, nil)
+		err := embUploader.UploadEmbedding(key, emb, ctx, log, nil)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0316bc90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7059b8d2` are properly handled with clean fallback behavior.

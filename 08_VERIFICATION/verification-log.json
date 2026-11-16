@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-NZVT",
-    "timestamp": "2026-11-14T03:32:25.577Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "f5163ec5c888c88508c879ce7a8c9fa63a0490a7de09ad09381888cd5397f12f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-9EWG",
-    "timestamp": "2026-11-14T03:49:04.816Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "0209ed0502b8de79f952cf6389e730548b381e71af57e209810a466d61a58d3d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-9KJI",
-    "timestamp": "2026-11-14T03:49:12.126Z",
-    "repository": "sceneview/sceneview",
-    "learningId": "learn-github-sceneview-sceneview",
-    "contentHash": "426658dc88674ca07192c6eb1c60a46de46aff7c0ebdd7e74914dbd877158ba1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-9LY6",
-    "timestamp": "2026-11-14T03:49:13.950Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "a18aab4cd2f0906ca9330e4ea1ca8e2f577d97c62c3ee711109555ba17afc966",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-9O3A",
     "timestamp": "2026-11-14T03:49:16.726Z",
     "repository": "mitmproxy/mitmproxy",
@@ -7490,6 +7430,66 @@
     "repository": "moby/buildkit",
     "learningId": "learn-github-moby-buildkit",
     "contentHash": "58ed5bccba2e7419f390c49b217bb14adc3d6d7281f1f78aab27ec54f1cf63ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-DU5F",
+    "timestamp": "2026-11-16T23:03:35.907Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+    "contentHash": "f07ddcfaffe6826adac9bd400d2f80d49a11d1c205c1b1be15e47560c47ab25e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-DW86",
+    "timestamp": "2026-11-16T23:03:38.598Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "05d48b2cbf0d44cf4347b32122c9e4d83e4ab569fa8a3768a49dd824061cfd48",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-E0EW",
+    "timestamp": "2026-11-16T23:03:44.024Z",
+    "repository": "sozercan/kaset",
+    "learningId": "learn-github-sozercan-kaset",
+    "contentHash": "4d721833db4b6aa942be50f44df336fcf2219b69c037c87a9d172cb701debacc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-E2WZ",
+    "timestamp": "2026-11-16T23:03:47.267Z",
+    "repository": "higress-group/higress",
+    "learningId": "learn-github-higress-group-higress",
+    "contentHash": "20a4ea81b8d8a8089ad4a6b74f4c4bcc15f41c7adddaef09779c2b1dd7810f57",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

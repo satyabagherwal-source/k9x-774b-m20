@@ -10360,3 +10360,7 @@
 | `CYCLE-20261116-T6GJ` | `2026-11-16T22:47:32.083Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8804` | Yes (`2f15b73f...`) |
 | `CYCLE-20261116-TAXN` | `2026-11-16T22:47:37.883Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8805` | Yes (`37d077e4...`) |
 | `CYCLE-20261116-3SI5` | `2026-11-16T22:55:47.213Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8806` | Yes (`58ed5bcc...`) |
+| `CYCLE-20261116-DU5F` | `2026-11-16T23:03:35.907Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | Yes (`f07ddcfa...`) |
+| `CYCLE-20261116-DW86` | `2026-11-16T23:03:38.598Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`05d48b2c...`) |
+| `CYCLE-20261116-E0EW` | `2026-11-16T23:03:44.024Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8807` | Yes (`4d721833...`) |
+| `CYCLE-20261116-E2WZ` | `2026-11-16T23:03:47.267Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8808` | Yes (`20a4ea81...`) |

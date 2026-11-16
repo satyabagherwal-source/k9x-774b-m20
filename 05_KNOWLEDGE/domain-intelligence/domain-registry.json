@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T22:55:52.013Z",
-  "total_records": 1345,
+  "last_updated": "2026-11-16T23:03:52.300Z",
+  "total_records": 1350,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 597,
+      "total": 598,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -640,7 +640,8 @@
         "domain_intelligence-research-knowledge-intelligence-divagr1925-qwen3-5-4b-qwenputer-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor",
         "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in",
-        "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear"
+        "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear",
+        "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear"
       ]
     },
     "E": {
@@ -1242,7 +1243,7 @@
       ]
     },
     "I": {
-      "total": 60,
+      "total": 62,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1303,7 +1304,9 @@
         "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-meta-folly-core-invariants",
         "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants",
-        "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants",
+        "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants"
       ]
     },
     "J": {
@@ -1333,7 +1336,7 @@
       ]
     },
     "K": {
-      "total": 53,
+      "total": 55,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1387,7 +1390,9 @@
         "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants",
         "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-core-invariants",
         "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants"
       ]
     },
     "L": {
@@ -12286,8 +12291,8 @@
       "title": "Content & Information Intelligence: higress-group/higress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-higress-group-higress-content-information-intelligence-higress-group-higress-cor.md",
       "repository": "higress-group/higress",
-      "content_hash": "bc11d56c35ecc5f84e45c7b60fd39bfa868c89ffad4ab217eb35c7a269bc3a47",
-      "created_at": "2026-11-14T03:49:14.278Z"
+      "content_hash": "6794c7fe1ea3a36c027f0db9bc328a6017c2b3f364f184f06927e58b2afe93f5",
+      "created_at": "2026-11-16T23:03:47.666Z"
     },
     "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants",
@@ -17744,10 +17749,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "12a7d8b9924f2f55ef6775084726e6206c09567c561957698986a50581c63850",
-      "created_at": "2026-11-14T23:43:04.909Z"
+      "content_hash": "a1c95272e4bd931978ea2f8211744d425a17af7d42e66b0cbeb0b3c1414e99e1",
+      "created_at": "2026-11-16T23:03:36.158Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -24070,6 +24075,51 @@
       "repository": "axios-axios-learnings",
       "content_hash": "154f11f83cf5c80d37d7d9d22f62516ddea7676dcef628dddbd0b015372a614e",
       "created_at": "2026-11-16T22:47:41.958Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: fallow-rs/fallow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-quality-verification-intelligence-fallow-rs-fallow-core-invaria.md",
+      "repository": "fallow-rs/fallow",
+      "content_hash": "46e955234c2975add17ae9900111058bed6a1e06178ac8d638c91ee855165bc4",
+      "created_at": "2026-11-16T23:03:39.039Z"
+    },
+    "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: sozercan/kaset Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sozercan-kaset-content-information-intelligence-sozercan-kaset-core-invariants.md",
+      "repository": "sozercan/kaset",
+      "content_hash": "8721aaf3689871a3a0cd941e335fb07e2925b10b9f2d5694c2521f4b39f01ac9",
+      "created_at": "2026-11-16T23:03:44.425Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: fallow-rs-fallow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-learnings-quality-verification-intelligence-fallow-rs-fallow-le.md",
+      "repository": "fallow-rs-fallow-learnings",
+      "content_hash": "77dbe8270f6fc256cdb8c86655eec6f29f25dafeb03f9ea38e667436c636b88b",
+      "created_at": "2026-11-16T23:03:51.168Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-learnings-research-knowledge-intelli.md",
+      "repository": "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings",
+      "content_hash": "a3c7bfe97f0013109c7b8254c7007e8bec05949e560abfc274c2045e6ad0e940",
+      "created_at": "2026-11-16T23:03:51.704Z"
+    },
+    "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: sozercan-kaset-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sozercan-kaset-learnings-content-information-intelligence-sozercan-kaset-learnin.md",
+      "repository": "sozercan-kaset-learnings",
+      "content_hash": "1d844bec0af834777a51c3f0848503cb6dd73381f7b6e00ccbf53f6a62760a81",
+      "created_at": "2026-11-16T23:03:52.300Z"
     }
   }
 }
