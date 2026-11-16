@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-F4CV",
-    "timestamp": "2026-11-13T17:37:39.535Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-1C7N",
     "timestamp": "2026-11-13T17:54:56.147Z",
     "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
@@ -7492,6 +7477,21 @@
     "contentHash": "cb807d47505ea6f6012ef44c56a41da56362ec8bd90211388d0ad16074b22cce",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-6A0N",
+    "timestamp": "2026-11-16T02:26:00.119Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "fa8d87e060b4c8dd7c4dc9c84338cf8963abd19a75fe269cd6a5ae57cfbce1b2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

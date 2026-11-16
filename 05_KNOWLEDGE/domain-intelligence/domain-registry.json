@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T02:18:03.418Z",
-  "total_records": 1199,
+  "last_updated": "2026-11-16T02:26:04.488Z",
+  "total_records": 1200,
   "domains": {
     "A": {
       "total": 7,
@@ -870,7 +870,7 @@
       ]
     },
     "H": {
-      "total": 246,
+      "total": 247,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1117,7 +1117,8 @@
         "domain_intelligence-technical-construction-intelligence-medialab-xan-core-invariants",
         "domain_intelligence-technical-construction-intelligence-medialab-xan-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-crawlcove-hreflang-checker-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin"
+        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-hreflang-checker-learnin",
+        "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6969,8 +6970,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "3b0d41b8f1ec3feecf5f3de5099c73c5d2a6edd9197c2fdfb47912adb8056079",
-      "created_at": "2026-11-16T01:04:49.795Z"
+      "content_hash": "04210feb7577c650d08e26924f38ac5830a9be43068258e1c675b08322346224",
+      "created_at": "2026-11-16T02:26:04.488Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -7014,8 +7015,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "023994a6b2ed32560c0d148d6586c74da2b87a06743d0bd640a5c086ee6606d3",
-      "created_at": "2026-11-16T01:52:54.098Z"
+      "content_hash": "a94106be6c3665e4d5b3a616b9e236c9dbf2e1331f82c763de081f5244b41a5d",
+      "created_at": "2026-11-16T02:26:04.019Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -16291,8 +16292,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "7294f2c0ee70ddfbc8d12cf98b6206de6cf2a80b433424960b1e2b14653dac15",
-      "created_at": "2026-11-14T18:14:51.881Z"
+      "content_hash": "4bf8066473f70a49cd8ea516f7a56e34b6a9d02b498aa1f1e308f7c9fdd51966",
+      "created_at": "2026-11-16T02:26:00.401Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -22345,6 +22346,15 @@
       "repository": "saltstack-salt-learnings",
       "content_hash": "3e125bc2c6e9ceea5175d77fb6fef67518999e81b5cb14ee05e608dc225acb03",
       "created_at": "2026-11-16T02:18:03.418Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-learnings-technical-construction-intelligence-ydb-platform-ydb-.md",
+      "repository": "ydb-platform-ydb-learnings",
+      "content_hash": "aac87f43d963fe9fb72e781f0a69c0433eaf03d994536c40550198dc60ab8cec",
+      "created_at": "2026-11-16T02:26:03.558Z"
     }
   }
 }

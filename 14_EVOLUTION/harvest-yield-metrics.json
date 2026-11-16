@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T02:17:33.186Z",
-  "total_cycles_completed": 9814,
-  "total_learnings_persisted": 9814,
+  "last_updated": "2026-11-16T02:26:00.137Z",
+  "total_cycles_completed": 9815,
+  "total_learnings_persisted": 9815,
   "total_rules_promoted": 9422,
   "history": [
-    {
-      "timestamp": "2026-11-14T22:39:34.183Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T22:57:32.230Z",
       "repository": "speridlabs/iris-3b",
@@ -1403,6 +1396,13 @@
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T02:26:00.137Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

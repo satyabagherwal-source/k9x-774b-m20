@@ -4,22 +4,22 @@
 {
   "source_repository": "ydb-platform/ydb",
   "source_url": "https://github.com/ydb-platform/ydb",
-  "source_version": "7d522757",
+  "source_version": "a22ac8d6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T18:14:51.777Z",
+  "timestamp": "2026-11-16T02:26:00.299Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ydb-platform-ydb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `7d522757`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T18:14:51.777Z`  
+> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `a22ac8d6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T02:26:00.299Z`  
 > **Learning ID**: `learn-github-ydb-platform-ydb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ydb-platform/ydb` (Commit: `7d522757`)
+- **Target Repository**: `ydb-platform/ydb` (Commit: `a22ac8d6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T18:14:50.751Z  
+> **Harvest Timestamp**: 2026-11-16T02:25:59.445Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2076,435 +2076,154 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `659fc244` (2026-11-13)
-**Commit Message**: schemeshard: fix drop-replication + describe race crash (#59293)
+### Incident Patch 1: `398c10ff` (2026-11-14)
+**Commit Message**: Document extended dates and Decimal precision for Hibernate and Liquibase (#58245)
 
-**File**: `ydb/core/tx/schemeshard/schemeshard_path_describer.cpp` (modified, +4/-5)
+Co-authored-by: sisyphus-dev-ai <[REDACTED_EMAIL]>
+
+**File**: `ydb/docs/ru/core/integrations/migration/liquibase.md` (modified, +59/-6)
 ```diff
-@@ -1800,11 +1800,10 @@ void TSchemeShard::DescribeReplication(const TPathId& pathId, const TString& nam
-     desc.SetVersion(info->AlterVersion);
+@@ -22,7 +22,7 @@ Changeset `createTable` отвечает за создание таблицы. 
  
-     if (const auto& shardIdx = info->ControllerShardIdx; shardIdx != InvalidShardIdx) {
--        Y_ABORT_UNLESS(ShardInfos.contains(shardIdx));
--        const auto& shardInfo = ShardInfos.at(shardIdx);
--
--        if (shardInfo.TabletID != InvalidTabletId) {
--            desc.SetControllerId(ui64(shardInfo.TabletID));
-+        // The controller shard may already be deleted if the replication is being dropped
-+        const auto it = ShardInfos.find(shardIdx);
-+        if (it != ShardInfos.end() && it->second.TabletID != InvalidTabletId) {
-+            desc.SetControllerId(ui64(it->second.TabletID));
-         }
-     }
- }
+ {% endnote %}
+ 
+-Таблица сравнения описаний типов Liquibase с [типами {{ ydb-short-name }}](../../yql/reference/types/primitive.md):
++Таблица сопоставлений типов Liquibase по умолчанию с [типами {{ ydb-short-name }}](../../yql/reference/types/primitive.md):
+ 
+ | Liquibase типы                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | {{ ydb-short-name }} тип   |
+ |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+@@ -50,6 +50,59 @@ Changeset `createTable` отвечает за создание таблицы. 
+ 
+ `dropTable` - удаление таблицы. Пример: `<dropTable tableName="episodes"/>`
+ 
++### Расширенные типы дат и интервалов {#extended-datetime}
++
++Чтобы создать столбцы с расширенным диапазоном дат или интервалов, укажите нативные имена типов `Date32`, `Datetime64`, `Timestamp64` и `Interval64` в атрибуте `type`. Стандартные имена `date`, `datetime` и `timestamp` по-прежнему создают `Date`, `Datetime` и `Timestamp`; расширенные типы не выбираются автоматически.
++
++Например, добавьте следующий changeset в журнал миграций:
++
++```xml
++<changeSet id="extended-datetime" author="example">
++    <createTable tableName="events">
++        <column name="id" type="Int64">
++            <constraints primaryKey="true" nullable="false"/>
++        </column>
++        <column name="event_date" type="Date32"/>
++        <column name="event_datetime" type="Datetime64"/>
++        <column name="event_timestamp" type="Timestamp64"/>
++        <column name="event_interval" type="Interval64"/>
++    </createTable>
++</changeSet>
++```
++
++Те же имена типов можно использовать в `addColumn`, а также в журналах миграций в форматах YAML и JSON. Диапазоны значений и точность описаны в разделе [Дата и время](../../yql/reference/types/primitive.md#datetime).
++
++Используйте [JDBC-драйвер](../../reference/languages-and-apis/jdbc-driver/maven.md) версии 2.3.11 или новее: в этой версии добавлена поддержка расширенных типов. Указание типа столбца не добавляет автоматического преобразования строковых значений для `insert`, `loadData` и `loadUpdateData`. Для загрузки расширенных дат и интервалов используйте SQL-миграции с явно типизированными значениями.
++
++### Decimal с заданной точностью и масштабом {#decimal}
++
++В {{ ydb-short-name }} тип `Decimal(precision, scale)` позволяет задать общее число десятичных разрядов и число разрядов после запятой. Допустимы значения `1 ≤ precision ≤ 35` и `0 ≤ scale ≤ precision`; подробнее см. [Примитивные типы данных](../../yql/reference/types/primitive.md#numeric).
++
++{% note info %}
++
++Следующие примеры требуют `liquibase-ydb-dialect` версии [1.1.3](https://github.com/ydb-platform/ydb-java-dialects/blob/main/liquibase-dialect/CHANGELOG.md) или новее. В более ранних выпусках обработчик `decimal` использует фиксированный тип `Decimal(22,9)`, в том числе при явном указании других параметров.
++
++{% endnote %}
++
++Чтобы создать столбец с нужной точностью и масштабом, укажите оба параметра в атрибуте `type`:
++
++```xml
++<changeSet id="parameterized-decimal" author="example">
++    <createTable tableName="decimal_values">
++        <column name="id" type="Int64">
++            <constraints primaryKey="true" nullable="false"/>
++        </column>
++        <column name="amount" type="Decimal(35,10)"/>
++    </createTable>
++</changeSet>
++```
++
++Диалект сохраняет точность и масштаб в `createTable`, `addColumn`, при записи через `insert`, `loadData` и `loadUpdateData`, а также при генерации журнала миграций из существующей схемы. Для произвольного `Decimal(precision, scale)` SQL changeset не требуется. Те же параметры поддерживаются в журналах миграций YAML и JSON и для имён `java.sql.Types.DECIMAL` и `java.math.BigDecimal`.
++
++Если параметры не указаны, например `type="decimal"`, используется `Decimal(22,9)`. Один параметр задаёт точность с нулевым масштабом: `type="decimal(10)"` создаёт `Decimal(10,0)`. Более двух параметров, нецелочисленные значения или значения за пределами допустимого диапазона приводят к ошибке проверки типа.
++
++При совместном использовании с Hibernate укажите ту же точность и
 ```
 
-**File**: `ydb/core/tx/schemeshard/ut_replication/ut_replication.cpp` (modified, +52/-0)
+**File**: `ydb/docs/ru/core/integrations/orm/hibernate.md` (modified, +87/-2)
 ```diff
-@@ -1,6 +1,8 @@
- #include <ydb/core/protos/replication.pb.h>
-+#include <ydb/core/testlib/actors/block_events.h>
- #include <ydb/core/tx/replication/controller/public_events.h>
- #include <ydb/core/tx/schemeshard/ut_helpers/helpers.h>
-+#include <ydb/core/tx/tx_proxy/proxy.h>
- #include <ydb/core/ydb_convert/replication_description.h>
- #include <ydb/public/api/protos/draft/ydb_replication.pb.h>
- #include <ydb/public/lib/ydb_cli/dump/util/replication_utils.h>
-@@ -1009,4 +1011,54 @@ Y_UNIT_TEST_SUITE(TReplicationTests) {
-         TestDescribeResult(DescribePath(runtime, "/MyRoot/Replication"), {NLs::PathNotExist});
-     }
+@@ -93,7 +93,8 @@ Hibernate - это фреймворк объектно-реляционного
+ | `bool`, `Boolean`                                                           | `Bool`                      |
+ | `String`, enum с аннотацией `@Enumerated(EnumType.STRING)`                  | `Text` (синоним `Utf8`)     |
+ | `java.time.LocalDate`                                                       | `Date`                      |
+-| `java.math.BigDecimal`, `java.math.BigInteger`                              | `Decimal(22,9)`             |
++| `java.math.BigDecimal`                                                       | `Decimal(22,9)`             |
++| `java.math.BigInteger`                                                       | `Decimal(22,0)` (Hibernate 6 и 7), `Decimal(22,9)` (Hibernate 5) |
+ | `double`, `Double`                                                          | `Double`                    |
+ | `float`, `Float`                                                            | `Float`                     |
+ | `int`, `java.lang.Integer`                                                  | `Int32`                     |
+@@ -251,7 +252,91 @@ Hibernate не предназначен для управления схемам
  
-+    Y_UNIT_TEST(DescribeDuringDropAfterControllerShardDeletion) {
-+        TTestBasicRuntime runtime;
-+        TTestEnv env(runtime, TTestEnvOptions().InitYdbDriver(true));
-+        ui64 txId = 100;
-+
-+        SetupLogging(runtime);
-+
-+        TestCreateReplication(runtime, ++txId, "/MyRoot", DefaultScheme("Replication"));
-+        env.TestWaitNotification(runtime, txId);
-+        TestDescribeResult(DescribePath(runtime, "/MyRoot/Replication"), {
-+            NLs::PathExist,
-+            NLs::ReplicationState(NKikimrReplication::TReplicationState::kStandBy),
-+        });
-+        // The controller shard is the only shard in the domain: the root
-+        // schemeshard is fresh in this test and assigns local shard ids
-+        // from 1, so the controller shard has local id 1. (In a tenant
-+        // schemeshard this would never hold.)
-+        TestDescribeResult(DescribePath(runtime, "/MyRoot"), {NLs::ShardsInsideDomain(1)});
-+
-+        // Hold the drop's proposal to the coordinator so the drop cannot
-+        // commit. The controller tablet is deleted before the commit: the
-+        // drop queues the Hive deletion fire-and-forget, and schemeshard
-+        // erases the controller shard from ShardInfos upon processing
-+        // Hive's confirmation while the replication is still describable.
-+        // This is the race the original crash happened on.
-+        TBlockEvents<TEvTxProxy::TEvProposeTransaction> dropPropose(runtime);
-+
-+        const auto dropTxId = ++txId;
-+        TestDropReplication(runtime, dropTxId, "/MyRoot", "Replication");
-+        runtime.WaitFor("drop propose", [&] { return !dropPropose.empty(); });
-+
-+        // TEvNotifyShardDeleted is sent by the transaction that erases the
-+        // shard from ShardInfos.
-+        env.TestWaitShardDeletion(runtime, {1});
-+
-+        // The drop's proposal is withheld, so the drop is not committed
-+        // yet: this describe crashed the whole schemeshard before the
-+        // tolerant ShardInfos lookup was introduced.
-+        const auto described = DescribePath(runtime, "/MyRoot/Replication");
-+        TestDescribeResult(described, {
-+            NLs::PathExist,
-+            NLs::CheckPathState(NKikimrSchemeOp::EPathStateDrop),
-+        });
-+        UNIT_ASSERT(!described.GetPathDescription().GetReplicationDescription().HasControllerId());
-+
-+        dropPropose.Stop().Unblock();
-+        env.TestWaitNotification(runtime, dropTxId);
-+        TestDescribeResult(DescribePath(runtime, "/MyRoot/Replication"), {NLs::PathNotExist});
-+    }
-+
- } // TReplicationTests
-```
-
----
-
-### Incident Patch 2: `7d522757` (2026-11-14)
-**Commit Message**: Fix SelfHeal stuck after group deletion (#59372)
-
-**File**: `ydb/core/mind/bscontroller/self_heal.cpp` (modified, +5/-3)
-```diff
-@@ -462,6 +462,7 @@ namespace NKikimr::NBsController {
-                         Y_DEBUG_ABORT_UNLESS(ActiveReassignerActorId);
-                         if (ActiveReassignerActorId) {
-                             Send(*ActiveReassignerActorId, new TEvents::TEvPoison);
-+                            ActiveReassignerActorId.reset();
-                         }
-                     }
+ {% endlist %}
  
-@@ -685,9 +686,10 @@ namespace NKikimr::NBsController {
-         }
- 
-         void Handle(TEvReassignerDone::TPtr& ev) {
--            Y_ABORT_UNLESS(ActiveReassignerActorId);
--            TActorId reassigner = *std::exchange(ActiveReassignerActorId, std::nullopt);
--            Y_ABORT_UNLESS(reassigner == ev->Sender);
-+            if (!ActiveReassignerActorId || *ActiveReassignerActorId != ev->Sender) {
-+                return;
-+            }
-+            ActiveReassignerActorId.reset();
- 
-             if (const auto it = Groups.find(ev->Get()->GroupId); it != Groups.end()) {
-                 auto& group = it->second;
-```
-
-**File**: `ydb/core/mind/bscontroller/ut_selfheal/self_heal_actor_ut.cpp` (modified, +90/-2)
-```diff
-@@ -85,9 +85,12 @@ TEvControllerUpdateSelfHealInfo::TGroupContent Convert(const TIntrusivePtr<TBlob
-     return res;
- }
- 
--void ValidateCmd(const TActorId& parentId, TTestActorSystem& runtime, ui32 groupId, ui32 groupGeneration,
-+TActorId ValidateCmd(const TActorId& parentId, TTestActorSystem& runtime, ui32 groupId, ui32 groupGeneration,
-         ui32 failRealmIdx, ui32 failDomainIdx, ui32 vdiskIdx, bool isSelfHealReasonDecommit = false) {
--    auto res = runtime.WaitForEdgeActorEvent({parentId});
-+    const TActorId timeoutId = runtime.AllocateEdgeActor(1);
-+    runtime.Schedule(TDuration::Minutes(1), new IEventHandle(timeoutId, {}, new TEvents::TEvWakeup), nullptr, 1);
-+    auto res = runtime.WaitForEdgeActorEvent({parentId, timeoutId});
-+    runtime.DestroyActor(timeoutId);
-     UNIT_ASSERT_EQUAL(res->GetTypeRewrite(), TEvBlobStorage::TEvControllerConfigRequest::EventType);
-     auto *m = res->Get<TEvBlobStorage::TEvControllerConfigRequest>();
-     UNIT_ASSERT(m->SelfHeal);
-@@ -103,6 +106,7 @@ void ValidateCmd(const TActorId& parentId, TTestActorSystem& runtime, ui32 group
-     UNIT_ASSERT_VALUES_EQUAL(reassign.GetFailRealmIdx(), failRealmIdx);
-     UNIT_ASSERT_VALUES_EQUAL(reassign.GetFailDomainIdx(), failDomainIdx);
-     UNIT_ASSERT_VALUES_EQUAL(reassign.GetVDiskIdx(), vdiskIdx);
-+    return res->Sender;
- }
- 
- void ValidateNoCmd(const TActorId& parentId, TTestActorSystem& runtime) {
-@@ -112,8 +116,92 @@ void ValidateNoCmd(const TActorId& parentId, TTestActorSystem& runtime) {
-     UNIT_ASSERT_EQUAL(res->GetTypeRewrite(), TEvents::TSystem::Wakeup);
- }
- 
-+void TestGroupDeletion(bool queueNextGroup, bool completionInFlight) {
-+    RunTestCase([&](const TActorId& selfHealId, const TActorId& parentId, TTestActorSystem& runtime) {
-+        const auto first = CreateGroup();
-+        const auto second = CreateGroup(TBlobStorageGroupType::Erasure4Plus2Block, TGroupId::FromValue(0x82000001));
-+        const auto third = CreateGroup(TBlobStorageGroupType::Erasure4Plus2Block, TGroupId::FromValue(0x82000002));
-+        RegisterDiskResponders(runtime, first);
+-### Пример с Spring Data JPA {#integration-with-spring-data-jpa-example}
++## Нативные типы {{ ydb-short-name }} {#native-types}
 +
-+        auto updateGroup = [&](const TIntrusivePtr<TBlobStorageGroupInfo>& info, bool faulty) {
-+            auto ev = std::make_unique<TEvControllerUpdateSelfHealInfo>();
-+            ev->GroupsToUpdate[info->GroupID] = Convert(info, faulty ? std::set<ui32>{0} : std::set<ui32>{}, {});
-+            runtime.Send(new IEventHandle(selfHealId, parentId, ev.release()), 1);
-+        };
++Таблица выше описывает сопоставления по умолчанию. Для явного выбора нативных типов дат и интервалов используйте аннотацию `@JdbcTypeCode` из `org.hibernate.annotations` и константы `YdbJdbcCode` из `tech.ydb.hibernate.dialect.code`. Точность и масштаб Decimal задаются отдельно с помощью `@Column`.
 +
-+        updateGroup(first, true);
-+        const TActorId firstReassigner = ValidateCmd(parentId, runtime, 0x82000000, 1, 0, 0, 0);
++Следующие примеры предназначены для Hibernate 6 и 7. Расширенные даты и интервалы поддерживаются в `hibernate-ydb-dialect` начиная с версии 1.5.1 для Hibernate 6 и 1.7.0 для Hibernate 7; необходим [JDBC-драйвер](../../reference/languages-and-apis/jdbc-driver/maven.md) версии 2.3.11 или новее. Произвольный Decimal поддерживается начиная с версии 1.8.0, см. [ниже](#decimal). В отдельном диалекте для Hibernate 5 эти коды не зарегистрированы, а аннотация `@JdbcTypeCode` отсутствует в API Hibernate 5.
 +
-+        std::unique_ptr<IEventHandle> heldCompletion;
-+        if (completionInFlight) {
-+            runtime.FilterFunction = [&](ui32, std::unique_ptr<IEventHandle>& ev) {
-+                if (ev->Sender == firstReassigner && ev->Recipient == selfHealId) {
-+                    heldCompletion = std::move(ev);
-+                    return false;
-+                }
-+                return true;
-+            };
-+            runtime.Send(new IEventHandle(firstReassigner, parentId, new TEvBlobStorage::TEvControllerConfigResponse), 1);
-+            const TInstant deadline = runtime.GetClock() + TDuration::Minutes(1);
-+            runtime.Sim([&] { return !heldCompletion && runtime.GetClock() < deadline; });
-+            UNIT_ASSERT(heldCompletion);
-+            runtime.FilterFunction = {};
-+        }
++### Расширенные типы дат и интервалов {#extended-datetime}
 +
-+        if (queueNextGroup) {
-+            updateGroup(second, true);
-+            ValidateNoCmd(parentId, runtime);
-+        }
++Чтобы хранить даты вне диапазона обычных `Date`, `Datetime` и `Timestamp` или расширенные интервалы, выберите соответствующий JDBC-код:
 +
-+        auto deletion = std::make_unique<TEvControllerUpdateSelfHealInfo>();
-+        deletion->GroupsToUpdate[first->GroupID] = std::nullopt;
-+        runtime.Send(new IEventHandle(selfHealId, parentId, deletion.release()), 1);
++| Java-тип | Аннотация | Тип {{ ydb-short-name }} |
++|---|---|---|
++| `java.time.LocalDate` | `@JdbcTypeCode(YdbJdbcCode.DATE_32)` | `Date32` |
++| `java.time.LocalDateTime` | `@JdbcTypeCode(YdbJdbcCode.DATETIME_64)` | `Datetime64` |
++| `java.time.Instant` | `@JdbcTypeCode(YdbJdbcCode.TIMESTAMP_64)` | `Timestamp64` |
++| `java.time.Duration` | `@JdbcTypeCode(YdbJdbcCode.INTERVAL_64)` | `Interval64` |
 +
-+        if (!queueNextGroup) {
-+            if (heldCompletion) {
-+                runtime.Send(std::move(heldCompletion), 1);
-+            }
-+            ValidateNoCmd(parentId, runtime);
-+            updateGroup(second, true);
-+        }
++Например, добавьте следующие поля в класс сущности:
 +
-+        const TActorId secondReassigner = ValidateCmd(parentId, runtime, 0x82000001, 1, 0, 0, 0);
-+        UNIT_ASSERT_UNEQUAL(firstReassigner, secondReassigner);
-+        updateGroup(third, true);
-+        if (heldCompletion) {
-+            runtime.Send(std::move(heldCompletion), 1);
-+        }
-+        ValidateNoCmd(parentId, runtime);
++```java
++@JdbcTypeCode(YdbJdbcCode.DATE_32)
++private LocalDate eventDate;
 +
-+        updateGroup(second, false);
-+        auto response = std::make_unique<TEvBlobStorage::TEvControllerConfigResponse>();
-+        auto *result = response->Record.MutableResponse();
-+        result->SetSuccess(true);
-+        result->SetConfigTxSeqNo(1);
-+        result->AddStatus();
-+        runtime.Send(new IEventHandle(secondReassigner, parentId, response.release()), 1);
-+        ValidateCmd(parentId, runtime, 0x82000002, 1, 0, 0, 0);
-+    });
-+}
++@JdbcTypeCode(YdbJdbcCode.DATETIME_64)
++private LocalDateTime eventDatetime;
 +
- Y_UNIT_TEST_SUITE(SelfHealActorTest) {
- 
-+    Y_UNIT_TEST(GroupDeletionStartsQueuedReassign) {
-+        TestGroupDeletion(true, false);
-+    }
++@JdbcTypeCode(YdbJdbcCode.TIMESTAMP_64)
++private Instant eventTimestamp;
 +
-+    Y_UNIT_TEST(GroupDel
-```
-
----
-
-### Incident Patch 3: `c4527eca` (2026-11-14)
-**Commit Message**: Fix bridge history being deleted without recovery possibility (#59400)
-
-**File**: `ydb/core/blobstorage/nodewarden/distconf_bridge.cpp` (modified, +6/-5)
-```diff
-@@ -315,24 +315,25 @@ namespace NKikimr::NStorage {
- 
-             Y_DEBUG_ABORT_UNLESS(config->HasClusterState());
-             const auto& clusterState = config->GetClusterState();
-+            const auto& prevClusterState = config->GetPrevConfig().GetClusterState();
- 
--            // filter out unsynced piles from config (they become synced when they are the part of the quorum)
-             int maxFullySyncedIndex = -1;
-             for (int i = 0; i < history->size(); ++i) {
-                 auto *unsyncedPiles = history->Mutable(i)->MutableUnsyncedPiles();
-                 for (int j = 0; j < unsyncedPiles->size(); ++j) {
-                     const auto unsyncedBridgePileId = TBridgePileId::FromProto(unsyncedPiles,
-                         &std::decay_t<decltype(*unsyncedPiles)>::at, j);
-                     const auto state = NBridge::GetPileState(clusterState, unsyncedBridgePileId);
-+                    const auto prevState = NBridge::GetPileState(prevClusterState, unsyncedBridgePileId);
-                     if (state == NKikimrBridge::TClusterState::INACTIVE ||
--                            NBridge::PileStateTraits(state).RequiresConfigQuorum) {
--                        // this pile is a part of quorum we expect to obtain, so it will be config-synced, or it is not
--                        // a part of the cluster anymore and it won't ever need this history
-+                            (NBridge::PileStateTraits(state).RequiresConfigQuorum &&
-+                                NBridge::PileStateTraits(prevState).RequiresConfigQuorum)) {
-                         unsyncedPiles->SwapElements(j--, unsyncedPiles->size() - 1);
-                         unsyncedPiles->RemoveLast();
-                     }
-                 }
--                if (unsyncedPiles->empty()) {
-+                if (unsyncedPiles->empty() && history->Get(i).GetClusterState().GetGeneration()
-+                        <= prevClusterState.GetGeneration()) {
-                     maxFullySyncedIndex = i;
-                 }
-             }
-```
-
-**File**: `ydb/core/blobstorage/ut_blobstorage/bridge_cluster_state.cpp` (modified, +47/-0)
-```diff
-@@ -2,10 +2,57 @@
- 
- #include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
- #include <ydb/core/blobstorage/nodewarden/distconf.h>
-+#include <ydb/library/testlib/helpers.h>
++@JdbcTypeCode(YdbJdbcCode.INTERVAL_64)
++private Duration eventInterval;
++```
 +
-+#include <algorithm>
- 
- using NBridgeTest::GetBridgedLocation;
- 
- Y_UNIT_TEST_SUITE(BridgeClusterState) {
-+    Y_UNIT_TEST_TWIN(HistorySurvivesUncommittedState, rejoining) {
-+        using TState = NKikimrBridge::TClusterState;
-+        NKikimrBlobStorage::TStorageConfig config;
-+        config.SetGeneration(1);
-+        config.MutableClusterState()->CopyFrom(NBridge::MakeInitialClusterState(2));
-+        auto update = [&] {
-+            if (const auto error = NStorage::TDistributedConfigKeeper::UpdateClusterStateGeneration(&config)) {
-+                UNIT_FAIL(*error);
-+            }
-+            if (const auto error = NStorage::TDistributedConfigKeeper::TrimHistoryEntries(&config)) {
-+                UNIT_FAIL(*error);
-+            }
-+        };
-+        update();
-+        auto advance = [&](TState::EPileState state) {
-+            auto prev = config;
-+            prev.ClearPrevConfig();
-+            config.MutablePrevConfig()->CopyFrom(prev);
-+            config.SetGeneration(prev.GetGeneration() + 1);
-+            config.MutableClusterState()->SetPerPileState(1, state);
-+            update();
-+        };
++Аннотация задаёт тип как при генерации схемы, так и при передаче значений через JDBC. Например, поле `eventDate` сможет хранить `LocalDate.of(1960, 1, 1)`, которое не входит в диапазон `Date`.
 +
-+        advance(TState::DISCONNECTED);
-+        advance(TState::NOT_SYNCHRONIZED_1);
-+        if constexpr (!rejoining) {
-+            advance(TState::NOT_SYNCHRONIZED_2);
-+            advance(TState::NOT_SYNCHRONIZED_2);
-+        }
-+        const auto lastCommittedState = config.GetClusterState();
-+        advance(rejoining ? TState::NOT_SYNCHRONIZED_2 : TState::SYNCHRONIZED);
++Одна аннотация `@Column(columnDefinition = "Date32")` меняет определение столбца при генерации схемы, но не выбирает нужный способ передачи значений. Используйте `@JdbcTypeCode` и для существующих таблиц, созданных с помощью Liquibase или Flyway; при этом тип поля должен совпадать с типом столбца.
 +
-+        const auto& history = config.GetClusterStateDetails().GetUnsyncedHistory();
-+        UNIT_ASSERT_C(std::ranges::any_of(history, [&](const auto& entry) {
-+            return NBridge::IsSameClusterState(entry.GetClusterState(), lastCommittedState);
-+        }), "previous committed state was trimmed before its successor was committed on the pile");
++Расширенный диапазон не увеличивает точность: `Datetime64` хранит секунды, а `Timestamp64` и `Interval64` — микросекунды. Значения `LocalDateTime` интерпретируются в UTC. Диапазоны значений описаны в разделе [Дата и время](../../yql/reference/types/primitive.md#datetime).
 +
-+        const auto currentState = config.GetClusterState();
-+        advance(currentState.GetPerPileState(1));
-+        const auto& trimmed = config.GetClusterStateDetails().GetUnsyncedHistory();
-+        UNIT_ASSERT_VALUES_EQUAL(trimmed.size(), 1);
-+        UNIT_ASSERT(NBridge::IsSameClusterState(trimmed.Get(0).GetClusterState(), currentState));
-+    }
++#### Расширенные типы по умолчанию в JDBC-драйвере {#force-signed-datetimes}
 +
-     Y_UNIT_TEST(RecoveredStateRejectsInvalidPileRolesAndStates) {
-         using namespace NBridgeTest;
-         TEnvironmentSetup env{{
-```
-
-**File**: `ydb/core/blobstorage/ut_blobstorage/bridge_rejoin.cpp` (modified, +107/-0)
-```diff
-@@ -3,6 +3,7 @@
- 
- #include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
- #include <ydb/core/blobstorage/nodewarden/distconf.h>
-+#include <ydb/core/blobstorage/nodewarden/node_warden.h>
- #include <ydb/core/blobstorage/nodewarden/node_warden_events.h>
- #include <ydb/core/protos/bridge_storage.pb.h>
- #include <ydb/core/sys_view/common/events.h>
-@@ -26,6 +27,112 @@ TAutoPtr<TEventHandle<TEvent>> WaitReply(TEnvironmentSetup& env, const TActorId&
- }
- 
- Y_UNIT_TEST_SUITE(BridgeRejoin) {
-+    Y_UNIT_TEST(PileRestartsBeforeStage2CommitIsStored) {
-+        using namespace NBridgeTest;
-+        using TState = NKikimrBridge::TClusterState;
-+        TEnvironmentSetup env{{
-+            .NodeCount = 16,
-+            .Erasure = TBlobStorageGroupType::Erasure4Plus2Block,
-+            .LocationGenerator = GetBridgedLocation,
-+            .SelfManagementConfig = true,
-+            .NumPiles = 2,
-+            .AutomaticBootstrap = true,
-+        }};
-+        const ui32 groupId = CreatePoolAndGetGroup(env);
-+        TDataChecker checker(env);
-+        checker.Write(groupId);
-+        SwitchPileState(env, 1, TState::DISCONNECTED);
-+        checker.Write(groupId);
++{% note tip %}
 +
-+        bool holdCommit = true;
-+        bool restarted = false;
-+        std::set<ui32> blockedNodes;
-+        std::set<ui32> recoveredProposals;
-+        std::optional<NKikimrBlobStorage::TStorageConfig> lastCommittedConfig;
-+        env.Runtime->FilterFunction = [&](ui32 nodeId, std::unique_ptr<IEventHandle>& ev) {
-+            if (nodeId < 9 || nodeId > 16) {
-+                return true;
-+            }
-+            if (holdCommit && ev->GetTypeRewrite() == NStorage::TEvNodeWardenWriteMetadata::EventType) {
-+                const auto& record = ev->Get<NStorage::TEvNodeWardenWriteMetadata>()->Record;
-+                if (record.HasCommittedStorageConfig() && record.HasProposedStorageConfig()
-+                        && record.GetCommittedStorageConfig().GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_1
-+                        && record.GetProposedStorageConfig().GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_2) {
-+                    lastCommittedConfig = record.GetCommittedStorageConfig();
-+                }
-+                if (record.HasCommittedStorageConfig() && record.GetCommittedStorageConfig()
-+                        .GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_2) {
-+                    blockedNodes.insert(nodeId);
-+                    return false;
-+                }
-+            }
-+            if (restarted && ev->GetTypeRewrite() == NStorage::TEvNodeWardenReadMetadataResult::EventType) {
-+                const auto& record = ev->Get<NStorage::TEvNodeWardenReadMetadataResult>()->Record;
-+                if (record.HasCommittedStorageConfig() && record.HasProposedStorageConfig()
-+                        && record.GetCommittedStorageConfig().GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_1
-+                        && record.GetProposedStorageConfig().GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_2) {
-+                    recoveredProposals.insert(nodeId);
-+                }
-+            }
-+            return true;
-+        };
-+        SwitchPileState(env, 1, TState::NOT_SYNCHRONIZED_1);
-+        const auto deadline = env.Runtime->GetClock() + TDuration::Seconds(30);
-+        while (blockedNodes.size() != 8 && env.Runtime->GetClock() < deadline) {
-+            env.Sim(TDuration::MilliSeconds(1));
-+        }
-+        UNIT_ASSERT_VALUES_EQUAL_C(blockedNodes.size(), 8, "not all nodes reached the stage-2 commit write");
-+        for (ui32 nodeId = 9; nodeId <= 16; ++nodeId) {
-+            env.StopNode(nodeId);
-+        }
++Если в проекте не нужно смешивать обычные и расширенные типы дат, можно не аннотировать каждое поле, а включить свойство `forceSignedDatetimes=true` в [JDBC-драйвере](https://github.com/ydb-platform/ydb-jdbc-driver) версии 2.3.11 или новее, например в [JDBC URL](../../reference/languages-and-apis/jdbc-driver/properties.md#jdbc-url): `jdbc:ydb:grpc://localhost:2136/local?forceSignedDatetimes=true`. По умолчанию свойство выключено. С ним драйвер передаёт параметры стандартных JDBC-типов `DATE` и `TIMESTAMP`, а также значения `java.time.LocalDate`, `java.time.LocalDateTime`, `java.time.Instant`, `java.time.Duration`, `java.sql.Date` и `java.sql.Timestamp` как `Date32`, `Datetime64`, `Timestamp64` и `Interval64`.
 +
-+        UNIT_ASSERT(lastCommittedConfig);
-+        const TActorId connectionChecker = env.Runtime->Register(CreateDistconfBridgeConnectionCheckerActor(
-+            TBridgePileId::FromPileIndex(0), "pile_1"), 1);
-+        const TActorId edge = env.Runtime->AllocateEdgeActor(1, __FILE__, __LINE__);
-+        auto checkConnection = [&](const NKikimrBlobStorage::TStorageConfig& peerConfig) {
-+            NKikimrBlobStorage::TConnectivityPayload payload;
-+            TBridgePileId::FromPileIndex(1).CopyToProto(&payload,
-+                &NKikimrBlobStorage::TConnectivityPayload::SetBridgePileId);
-+            payload.SetBridgePileName("pile_2");
-+            payload.SetPileListChangeCapable(true);
-+            payload.SetBridgeFeatureLevel(NStorage::BridgeFeatureLevel);
-+            payload.MutableStorageConfig()->CopyFrom(peerConfig);
-+            THashMap<TString, TString> params;
-+            UNIT_ASSERT(payload.SerializeToString(&params["distconf"]));
-+            env.Runtime->Send(new IEventHandle(connectionChecker, edge,
-+                new TEvInterconnect::TEvCheckIncomingConnection(9, std::move(params))), 1);
-+            return WaitReply<TEvInterconnect::TEvCheckIncomingConnectionResult>(env, edge, "bridge handshake after a pile crash");
++Свойство действует только на передачу значений через JDBC, поэтому в Hibernate учитывайте следующее:
++
++* Генерация схемы не меняется: без `@JdbcTypeCode` диалект по-прежнему создаёт столбцы `Date`, `Datetime`, `Timestamp` и `Interval`. Создавайте таблицы с расширенными типами заранее, например чере
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59407** (2026-11-14): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #59400** (2026-11-14): Fix bridge history being deleted without recovery possibility (@mregrock)
-- **PR #59398** (2026-11-14): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #59397** (2026-11-14): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #59396** (2026-11-14): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #59395** (2026-11-14): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #59461** (2026-11-16): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #59460** (2026-11-16): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #59459** (2026-11-16): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #59458** (2026-11-16): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #59457** (2026-11-16): Sync branches 261115-2307: stable-26-3-1 to stable-26-3-1-ent (@ydbot)
+- **PR #59452** (closed): docs: update roadmap drafts (@fomichev3000)
 
 ---
 
@@ -2524,38 +2243,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. schemeshard: fix drop-replication + describe race crash
+## X. Document extended dates and Decimal precision for Hibernate and Liquibase
 
 **RULE**:
-When implementing operations in `ydb/core/tx/schemeshard/schemeshard_path_describer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/docs/ru/core/integrations/migration/liquibase.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `659fc244`: schemeshard: fix drop-replication + describe race crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `398c10ff`: Document extended dates and Decimal precision for Hibernate and Liquibase. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/schemeshard/schemeshard_path_describer.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/docs/ru/core/integrations/migration/liquibase.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        // The controller shard may already be deleted if the replication is being dropped
-        const auto it = ShardInfos.find(shardIdx);
-        if (it != ShardInfos.end() && it->second.TabletID != InvalidTabletId) {
-            desc.SetControllerId(ui64(it->second.TabletID));
+Таблица сопоставлений типов Liquibase по умолчанию с [типами {{ ydb-short-name }}](../../yql/reference/types/primitive.md):
+### Расширенные типы дат и интервалов {#extended-datetime}
+
+Чтобы создать столбцы с расширенным диапазоном дат или интервалов, укажите нативные имена типов `Date32`, `Datetime64`, `Timestamp64` и `Interval64` в атрибуте `type`. Стандартные имена `date`, `datetime` и `timestamp` по-прежнему создают `Date`, `Datetime` и `Timestamp`; расширенные типы не выбираются автоматически.
+
+Например, добавьте следующий changeset в журнал миграций:
+
+```xml
+<changeSet id="extended-datetime" author="example">
+    <createTable tableName="events">
+        <column name="id" type="Int64">
+            <constraints primaryKey="true" nullable="false"/>
+        </column>
+        <column name="event_date" type="Date32"/>
+        <column name="event_datetime" type="Datetime64"/>
+        <column name="event_timestamp" type="Timestamp64"/>
+        <column name="event_interval" type="Interval64"/>
+    </createTable>
+</changeSet>
+```
+
+Те же имена типов можно использовать в `addColumn`, а также в журналах миграций в форматах YAML и JSON. Диапазоны значений и точность описаны в разделе [Дата 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        Y_ABORT_UNLESS(ShardInfos.contains(shardIdx));
-        const auto& shardInfo = ShardInfos.at(shardIdx);
-
-        if (shardInfo.TabletID != InvalidTabletId) {
-            desc.SetControllerId(ui64(shardInfo.TabletID));
+Таблица сравнения описаний типов Liquibase с [типами {{ ydb-short-name }}](../../yql/reference/types/primitive.md):
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `659fc244` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `398c10ff` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

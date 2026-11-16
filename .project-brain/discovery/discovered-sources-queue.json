@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T02:18:03.236Z",
+  "updated_at": "2026-11-16T02:26:03.291Z",
   "stats": {
-    "total_discovered": 4063,
-    "approved_pending_harvest": 3817,
+    "total_discovered": 4065,
+    "approved_pending_harvest": 3819,
     "harvested_count": 0,
     "rejected_count": 246,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3814,
+      "COMMUNITY_AND_EXPERT": 3816,
       "OFFICIAL_DOCUMENTATION": 134,
       "STANDARDS_AND_SPECIFICATIONS": 93,
       "ENGINEERING_BLOGS": 2,
@@ -87685,6 +87685,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
         "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-C1EC1409909F": {
+      "id": "SRC-C1EC1409909F",
+      "url": "https://github.com/ydb-platform/ydb-java-dialects/blob/main/liquibase-dialect/CHANGELOG.md",
+      "title": "https://github.com/ydb-platform/ydb-java-dialects/blob/main/liquibase-dialect/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:26:03.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-8F85BB36BBE0": {
+      "id": "SRC-8F85BB36BBE0",
+      "url": "https://github.com/ydb-platform/ydb-jdbc-driver",
+      "title": "https://github.com/ydb-platform/ydb-jdbc-driver",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T02:26:03.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
       }
     }
   }

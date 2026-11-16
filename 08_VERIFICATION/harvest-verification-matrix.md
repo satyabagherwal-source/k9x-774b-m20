@@ -10218,3 +10218,4 @@
 | `CYCLE-20261116-VAQ5` | `2026-11-16T02:17:27.821Z` | `saltstack/salt` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/saltstack-salt-learnings.md` | Yes (`8e96f560...`) |
 | `CYCLE-20261116-VEUY` | `2026-11-16T02:17:33.178Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8693` | Yes (`cb807d47...`) |
 | `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T02:18:03.141Z` | `saltstack-salt` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E52861DE` [Domain D] | Yes (`81b25cc8...`) |
+| `CYCLE-20261116-6A0N` | `2026-11-16T02:26:00.119Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md` | Yes (`fa8d87e0...`) |
