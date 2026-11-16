@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T03:57:22.206Z",
-  "total_cycles_completed": 9828,
-  "total_learnings_persisted": 9828,
-  "total_rules_promoted": 9440,
+  "last_updated": "2026-11-16T04:17:56.957Z",
+  "total_cycles_completed": 9829,
+  "total_learnings_persisted": 9829,
+  "total_rules_promoted": 9441,
   "history": [
-    {
-      "timestamp": "2026-11-15T00:50:36.515Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T00:50:40.827Z",
       "repository": "necolas/react-native-web",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-16T03:57:22.206Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-16T04:17:56.957Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

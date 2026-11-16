@@ -10269,3 +10269,4 @@ Every entry in this ledger must capture:
 | `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `2a4ea295` | Multi-dimensional audit evidence | 2026-11-16T03:57:17.338Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b9c39f1f` | Multi-dimensional audit evidence | 2026-11-16T03:57:22.202Z |
 | `learn-dom-f-4f38fea1` | `project://ganymedenil-document.ai` | `4e2940ff` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ganymedenil-document.ai-learnings.md` | 2026-11-16T03:57:49.588Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `afcac4f0` | Multi-dimensional audit evidence | 2026-11-16T04:17:56.951Z |

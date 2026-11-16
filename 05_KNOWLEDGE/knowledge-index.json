@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T03:57:51.192Z",
+  "last_updated": "2026-11-16T04:18:02.591Z",
   "total_verified_learnings": 8761,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18930,
+  "total_items": 18932,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113269,10 +113269,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "00d5739f",
-      "content_hash": "e26de00debc107d8a6b346f14ccf87981ab4c1b83c7501ac55ea07287bbc8e3b",
+      "source_version": "afcac4f0",
+      "content_hash": "9a2baf99021934416110cbbd3454fff732ebe720df7e8f438f3e89f1ae9d6456",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T21:38:26.033Z"
+      "persisted_at": "2026-11-16T04:17:57.311Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113281,10 +113281,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "00d5739f",
-      "content_hash": "ed2d444e49166908d729b4720845a6f8781b846703cb6ede0ce932e99f0ae86e",
+      "source_version": "afcac4f0",
+      "content_hash": "18ca36060c5734b47a61999deb72a5ac2d9a8c0c6c3d7332563705c6f3e82d76",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:38:26.137Z"
+      "persisted_at": "2026-11-16T04:17:57.455Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113342,9 +113342,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "de5781211a98f64cc98775c209d2164502f550fcc95f8048a6751878b017b87a",
+      "content_hash": "79761d1e124b3c3904999d717ab071c4067161e22b96f6b41f60f132931c2c6f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T21:39:05.396Z"
+      "persisted_at": "2026-11-16T04:18:00.973Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113354,9 +113354,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "07051242ae905a5b0716db19f6372476bf3a3a14e49678336c747b8983d315bb",
+      "content_hash": "a309d014329330074767b7c9d5c8ab599c88d47925e6aaf96332c3e8f52a6ab2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:39:05.513Z"
+      "persisted_at": "2026-11-16T04:18:01.118Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-V8F8-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6CW2-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb5245f5a727a2a41ebd334d1400822b7dfbbd485812d5996cddcce128fed2a8",
+      "content_hash": "21703eb5b44641e5694a47734ba61c2573340579cae6d15392ee5a4215309db2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T01:21:25.608Z"
+      "persisted_at": "2026-11-16T04:18:02.311Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "94a276dcd630f229b58a3cb7d7738ca7e4fd32184235052d3f1483348cdcb3da",
+      "content_hash": "dda3b5d81507e654317259f78fac1be0476789739f8be7d42f5b941d0b60b2ba",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T01:21:25.724Z"
+      "persisted_at": "2026-11-16T04:18:02.448Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4769bda7a1d6faacb1f50f2a864eddf075b8bc3a48bb74f84c9e1f6a4cd51b6b",
+      "content_hash": "18b7403140e35caff86e16235dfd6267bedbf98065f03fa838119eb57e653bb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:21:25.867Z"
+      "persisted_at": "2026-11-16T04:18:02.591Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -217957,13 +217957,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U904-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6C9J-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "50031f214c7fc3c41fd9d5a0a968aa2535bfcd6c00c257d04b53eb0555a7d121",
+      "content_hash": "d47911d7d33c269db5e00363f8e6f6b521bc8bdb8c4566c2454c5c531c87c3b2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T02:44:38.548Z"
+      "persisted_at": "2026-11-16T04:18:01.495Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -217973,9 +217973,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c3487d601099bf8746967f8ffd0edfcb0b44b2091f8abdeec62b70b2a7f14e3",
+      "content_hash": "9a96585ba209f0384773e9f7098087d8f7e307b7e6f877a0049fe53b50fdc67b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T02:44:38.702Z"
+      "persisted_at": "2026-11-16T04:18:01.631Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -217985,9 +217985,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f60e99cbd4c22b1c97b9c5c31e666108be28c852f6a93fec10f5738e535b6f6b",
+      "content_hash": "988d2461af088f8e58ca51186689c9fe694f21740373e46ed8637eb2694a376a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:44:38.851Z"
+      "persisted_at": "2026-11-16T04:18:01.778Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -235402,14 +235402,19 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "00d5739f",
-      "content_hash": "d9cc59f05eafed22ea2fd4e78993cf3f2470337b96f4b8037378578600435484",
+      "source_version": "afcac4f0",
+      "content_hash": "27900d23b861f41d6cc25b4255d03d4b11829af10332d5389f6932bae3b09dc0",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
         {
           "number": 8539,
           "title": "build(deps): bump gradle-wrapper",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8710,
+          "title": "build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -235418,7 +235423,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:38:25.636Z",
+      "verified_at": "2026-11-16T04:17:56.762Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251436,6 +251441,32 @@
       "content_hash": "9aafd037b723adaa892785ca750a981dcf3e405b9602f11a249feb6443a47755",
       "domain_letter": "G",
       "persisted_at": "2026-11-16T03:57:50.970Z"
+    },
+    "rule-8710": {
+      "learning_id": "rule-8710",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8710,
+      "title": "build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "afcac4f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T04:17:56.762Z"
+    },
+    "candidate_directive-build-deps-bump-org-bouncycastle-bc-jdk18on-bom-from-1-86-2-to-1-87": {
+      "item_id": "candidate_directive-build-deps-bump-org-bouncycastle-bc-jdk18on-bom-from-1-86-2-to-1-87",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6BR1-build-deps-bump-org-bouncycastle-bc-jdk18on-bom-from-1-86-2-to-1-87.md",
+      "title": "build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d4f7466505a71a31b147362fed54b8d1946c748706841edb78fe4c0fedc05b05",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T04:18:00.831Z"
     }
   },
   "ai-builder-brain": {

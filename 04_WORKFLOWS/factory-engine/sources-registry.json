@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-16T03:57:25.178Z",
-    "lastVerified": "2026-11-16T03:57:25.178Z",
+    "lastChecked": "2026-11-16T04:18:00.149Z",
+    "lastVerified": "2026-11-16T04:18:00.149Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -372,8 +372,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T03:23:26.132Z",
-    "lastVerified": "2026-11-16T03:23:26.132Z",
+    "lastChecked": "2026-11-16T04:17:58.294Z",
+    "lastVerified": "2026-11-16T04:17:58.294Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -2263,12 +2263,12 @@
     "revisionIdentifier": "0316bc90"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T22:46:48.421Z",
-    "lastVerified": "2026-11-15T22:46:48.421Z",
+    "lastChecked": "2026-11-16T04:17:53.168Z",
+    "lastVerified": "2026-11-16T04:17:53.168Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2277,7 +2277,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "db665f0c"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -6056,14 +6057,14 @@
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-14T21:38:24.956Z",
-    "lastVerified": "2026-11-14T21:38:24.956Z",
+    "lastChecked": "2026-11-16T04:17:55.642Z",
+    "lastVerified": "2026-11-16T04:17:55.642Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "d9cc59f05eafed22ea2fd4e78993cf3f2470337b96f4b8037378578600435484",
+    "contentHash": "27900d23b861f41d6cc25b4255d03d4b11829af10332d5389f6932bae3b09dc0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7358,9 +7359,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-14T19:59:37.294Z",
+    "lastChecked": "2026-11-16T04:17:55.750Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-14T19:59:37.294Z"
+    "lastVerified": "2026-11-16T04:17:55.750Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -8279,9 +8280,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-11-14T09:47:53.142Z",
+    "lastChecked": "2026-11-16T04:17:43.124Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-11-14T09:47:53.142Z"
+    "lastVerified": "2026-11-16T04:17:43.124Z"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",
@@ -10958,9 +10959,9 @@
   "manojahi-serpiq": {
     "name": "serpiq",
     "officialUrl": "https://github.com/manojahi/serpiq",
-    "lastChecked": "2026-11-11T14:16:33.316Z",
+    "lastChecked": "2026-11-16T04:17:45.909Z",
     "revisionIdentifier": "f3330d7e",
-    "lastVerified": "2026-11-11T14:16:33.316Z"
+    "lastVerified": "2026-11-16T04:17:45.909Z"
   },
   "prof18-feed-flow": {
     "name": "prof18/feed-flow",
@@ -11066,9 +11067,9 @@
   "touchlab-droidconkotlin": {
     "name": "DroidconKotlin",
     "officialUrl": "https://github.com/touchlab/DroidconKotlin",
-    "lastChecked": "2026-11-12T22:33:23.226Z",
+    "lastChecked": "2026-11-16T04:17:48.128Z",
     "revisionIdentifier": "27f3e87c",
-    "lastVerified": "2026-11-12T22:33:23.226Z"
+    "lastVerified": "2026-11-16T04:17:48.128Z"
   },
   "m0ntydad0n-pseo-engine-oss": {
     "name": "pseo-engine-oss",

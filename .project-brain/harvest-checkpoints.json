@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-16T03:57:22.209Z",
+  "last_updated": "2026-11-16T04:17:56.961Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "d9cc59f05eafed22ea2fd4e78993cf3f2470337b96f4b8037378578600435484",
-      "verified_at": "2026-11-14T21:38:25.787Z",
+      "content_hash": "27900d23b861f41d6cc25b4255d03d4b11829af10332d5389f6932bae3b09dc0",
+      "verified_at": "2026-11-16T04:17:56.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:38:25.787Z"
+      "last_updated": "2026-11-16T04:17:56.961Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",

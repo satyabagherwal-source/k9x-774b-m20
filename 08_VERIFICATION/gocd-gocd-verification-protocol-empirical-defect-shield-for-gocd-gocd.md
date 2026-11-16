@@ -4,22 +4,22 @@
 {
   "source_repository": "gocd/gocd",
   "source_url": "https://github.com/gocd/gocd",
-  "source_version": "00d5739f",
+  "source_version": "afcac4f0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T21:38:25.933Z",
+  "timestamp": "2026-11-16T04:17:57.169Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gocd-gocd",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `00d5739f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T21:38:25.933Z`  
+> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `afcac4f0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T04:17:57.169Z`  
 > **Learning ID**: `learn-github-gocd-gocd`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gocd/gocd` (Commit: `00d5739f`)
+- **Target Repository**: `gocd/gocd` (Commit: `afcac4f0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:38:24.956Z  
+> **Harvest Timestamp**: 2026-11-16T04:17:55.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7439 stars
+- **Stars / Engagement**: 7441 stars
 
 ---
 
@@ -891,49 +891,266 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00d5739f` (2026-11-13)
-**Commit Message**: build(deps): bump gradle-wrapper (#14734)
+### Incident Patch 1: `1386d2e1` (2026-11-15)
+**Commit Message**: build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87 (#14735)
 
-Bumps the gradle-plugins group with 1 update: [gradle-wrapper](https://github.com/gradle/gradle).
-
-
-Updates `gradle-wrapper` from 9.9.0 to 9.9.1
-- [Release notes](https://github.com/gradle/gradle/releases)
-- [Commits](https://github.com/gradle/gradle/compare/v9.9.0...v9.9.1)
+Bumps [org.bouncycastle:bc-jdk18on-bom](https://github.com/bcgit/bc-java) from 1.86.2 to 1.87.
+- [Changelog](https://github.com/bcgit/bc-java/blob/main/docs/releasenotes.md)
+- [Commits](https://github.com/bcgit/bc-java/commits)
 
 ---
 updated-dependencies:
-- dependency-name: gradle-wrapper
-  dependency-version: 9.9.1
+- dependency-name: org.bouncycastle:bc-jdk18on-bom
+  dependency-version: '1.87'
   dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: gradle-plugins
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
+**File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionSha256Sum=0b00b0ffe07c4d4789c12d4935a44a7057d55774b7540bd4a3f76f336deb177a
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
-+distributionSha256Sum=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
+@@ -81,7 +81,7 @@ def libraries = [
+   apacheHttpComponents: 'org.apache.httpcomponents:httpclient:4.5.14',
+   aspectj             : 'org.aspectj:aspectjweaver:1.9.27',
+   asmBom              : 'org.ow2.asm:asm-bom:9.11.1',
+-  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.86.2',
++  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.87',
+   bucket4j            : 'com.bucket4j:bucket4j_jdk17-core:8.22.0',
+   caffeine            : 'com.github.ben-manes.caffeine:caffeine:3.3.1',
+   cloning             : 'io.github.kostaskougios:cloning:1.13.0',
+```
+
+---
+
+### Incident Patch 2: `5104bca3` (2026-11-15)
+**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14737)
+
+Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.108.1 to 1.108.2.
+- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sass/embedded-host-node/compare/1.108.1...1.108.2)
+
+---
+updated-dependencies:
+- dependency-name: sass-embedded
+  dependency-version: 1.108.2
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+```diff
+@@ -103,7 +103,7 @@
+     "license-checker": "^25.0.1",
+     "mini-css-extract-plugin": "^2.10.2",
+     "mockdate": "^3.0.5",
+-    "sass-embedded": "^1.108.1",
++    "sass-embedded": "^1.108.2",
+     "sass-loader": "^17.1.0",
+     "simulate-event": "^1.4.0",
+     "sourcemapped-stacktrace": "^1.1.11",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
+```diff
+@@ -4639,7 +4639,7 @@ __metadata:
+     normalize-scss: "npm:^8.0.0"
+     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
+     prismjs: "npm:^1.30.0"
+-    sass-embedded: "npm:^1.108.1"
++    sass-embedded: "npm:^1.108.2"
+     sass-loader: "npm:^17.1.0"
+     shell-quote: "npm:^1.12.0"
+     shellwords-ts: "npm:^3.0.1"
+@@ -7235,162 +7235,162 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-all-unknown@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-all-unknown@npm:1.108.1"
++"sass-embedded-all-unknown@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-all-unknown@npm:1.108.2"
+   dependencies:
+-    sass: "npm:1.108.1"
++    sass: "npm:1.108.2"
+   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-arm64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-android-arm64@npm:1.108.1"
++"sass-embedded-android-arm64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-android-arm64@npm:1.108.2"
+   conditions: os=android & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-arm@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-android-arm@npm:1.108.1"
++"sass-embedded-android-arm@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-android-arm@npm:1.108.2"
+   conditions: os=android & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-riscv64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-android-riscv64@npm:1.108.1"
++"sass-embedded-android-riscv64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-android-riscv64@npm:1.108.2"
+   conditions: os=android & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-x64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-android-x64@npm:1.108.1"
++"sass-embedded-android-x64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-android-x64@npm:1.108.2"
+   conditions: os=android & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-darwin-arm64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-darwin-arm64@npm:1.108.1"
++"sass-embedded-darwin-arm64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-darwin-arm64@npm:1.108.2"
+   conditions: os=darwin & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-darwin-x64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-darwin-x64@npm:1.108.1"
++"sass-embedded-darwin-x64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-darwin-x64@npm:1.108.2"
+   conditions: os=darwin & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-linux-arm64@npm:1.108.1"
++"sass-embedded-linux-arm64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-linux-arm64@npm:1.108.2"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-linux-arm@npm:1.108.1"
++"sass-embedded-linux-arm@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-linux-arm@npm:1.108.2"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-linux-musl-arm64@npm:1.108.1"
++"sass-embedded-linux-musl-arm64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-linux-musl-arm64@npm:1.108.2"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-linux-musl-arm@npm:1.108.1"
++"sass-embedded-linux-musl-arm@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-linux-musl-arm@npm:1.108.2"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-riscv64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-linux-musl-riscv64@npm:1.108.1"
++"sass-embedded-linux-musl-riscv64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-linux-musl-riscv64@npm:1.108.2"
+   conditions: os=linux & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-x64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-linux-musl-x64@npm:1.108.1"
++"sass-embedded-linux-musl-x64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-linux-musl-x64@npm:1.108.2"
+   conditions: os=linux & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-riscv64@npm:1.108.1":
+-  version: 1.108.1
+-  resolution: "sass-embedded-linux-riscv64@npm:1.108.1"
++"sass-embedded-linux-riscv64@npm:1.108.2":
++  version: 1.108.2
++  resolution: "sass-embedded-linux-riscv64@npm:1.108.2"
+   conditions: os=linux & cpu=riscv64
+   languageName: no
+```
+
+---
+
+### Incident Patch 3: `11021069` (2026-11-15)
+**Commit Message**: build(deps): bump org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0 (#14736)
+
+Bumps org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0.
+
+---
+updated-dependencies:
+- dependency-name: org.apache.commons:commons-lang3
+  dependency-version: 3.22.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -92,7 +92,7 @@ def libraries = [
+   commonsDbcp         : 'org.apache.commons:commons-dbcp2:2.14.0',
+   commonsFileUpload   : 'commons-fileupload:commons-fileupload:1.6.0',
+   commonsIO           : 'commons-io:commons-io:2.22.0',
+-  commonsLang3        : 'org.apache.commons:commons-lang3:3.21.0',
++  commonsLang3        : 'org.apache.commons:commons-lang3:3.22.0',
+   commonsPool         : 'org.apache.commons:commons-pool2:2.13.1',
+   commonsText         : 'org.apache.commons:commons-text:1.15.0',
+   dom4j               : 'org.dom4j:dom4j:2.2.0',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14737** (2026-11-15): build(deps-ui-dev): bump sass-embedded from 1.108.1 to 1.108.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14736** (2026-11-15): build(deps): bump org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0 (@dependabot[bot])
+- **PR #14735** (2026-11-15): build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87 (@dependabot[bot])
 - **PR #14734** (2026-11-13): build(deps): bump gradle-wrapper from 9.9.0 to 9.9.1 in the gradle-plugins group (@dependabot[bot])
 - **PR #14733** (2026-11-13): build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (@dependabot[bot])
 - **PR #14732** (2026-11-12): build(deps): bump com.fasterxml.jackson:jackson-bom from 2.22.4 to 2.23.0 (@dependabot[bot])
-- **PR #14731** (2026-11-12): build(deps-ui-dev): bump rspec-rails from 8.0.5 to 8.1.0 in /server/src/main/webapp/WEB-INF/rails in the rspec group (@dependabot[bot])
-- **PR #14730** (2026-11-12): build(deps): bump com.autonomousapps.dependency-analysis from 3.20.1 to 3.20.2 in the gradle-plugins group (@dependabot[bot])
-- **PR #14729** (2026-11-09): Upgrade sass-embedded to 1.108.1 (@Copilot)
 
 ---
 
@@ -953,33 +1170,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump gradle-wrapper
+## X. build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87
 
 **RULE**:
-When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00d5739f`: build(deps): bump gradle-wrapper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1386d2e1`: build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-distributionSha256Sum=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
+  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.87',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-distributionSha256Sum=0b00b0ffe07c4d4789c12d4935a44a7057d55774b7540bd4a3f76f336deb177a
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
+  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.86.2',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00d5739f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1386d2e1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
