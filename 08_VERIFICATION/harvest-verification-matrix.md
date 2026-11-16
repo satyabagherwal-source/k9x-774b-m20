@@ -10333,3 +10333,7 @@
 | `CYCLE-20261116-J93R` | `2026-11-16T18:55:52.023Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8783` | Yes (`d47689e6...`) |
 | `CYCLE-20261116-X1E0` | `2026-11-16T20:02:34.440Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8776` | Yes (`98736740...`) |
 | `CYCLE-20261116-X72F` | `2026-11-16T20:02:41.799Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8784` | Yes (`c5a4d9b2...`) |
+| `CYCLE-20261116-81MT` | `2026-11-16T20:11:07.973Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8776` | Yes (`a3fc7d17...`) |
+| `CYCLE-20261116-83N7` | `2026-11-16T20:11:10.579Z` | `superhighfives/pika` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8785` | Yes (`ca7f7609...`) |
+| `CYCLE-20261116-89H8` | `2026-11-16T20:11:18.140Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8786` | Yes (`c41e775b...`) |
+| `CYCLE-2026-11-16-PROJ-EVOLVE` | `2026-11-16T20:11:46.441Z` | `cheeriojs-dom-serializer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2A843A13` [Domain H] | Yes (`9dd6700a...`) |

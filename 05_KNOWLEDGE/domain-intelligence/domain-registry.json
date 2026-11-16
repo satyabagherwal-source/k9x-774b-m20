@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T20:02:47.901Z",
-  "total_records": 1318,
+  "last_updated": "2026-11-16T20:11:48.865Z",
+  "total_records": 1323,
   "domains": {
     "A": {
       "total": 7,
@@ -647,7 +647,7 @@
       ]
     },
     "F": {
-      "total": 29,
+      "total": 31,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -677,7 +677,9 @@
         "DOM-F-925AEC0F",
         "domain_intelligence-design-intelligence-joreilly-confetti-learnings-core-invariants",
         "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants",
-        "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants",
+        "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants"
       ]
     },
     "G": {
@@ -924,7 +926,7 @@
       ]
     },
     "H": {
-      "total": 289,
+      "total": 292,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1214,7 +1216,10 @@
         "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants",
         "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-fb55-css-select-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants",
+        "DOM-H-2A843A13",
+        "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-learnings-core-inva"
       ]
     },
     "I": {
@@ -19812,8 +19817,8 @@
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "1b9a06dbbd43aa846c339e5fed29669f0f775dc8f4089cb8206490c46421a028",
-      "created_at": "2026-11-15T09:21:42.352Z"
+      "content_hash": "8608d3b5d6bafef98aa3881196e08669bb6cadeac3e04f9ea1be342702ca62f1",
+      "created_at": "2026-11-16T20:11:18.398Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",
@@ -19873,8 +19878,8 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-learnings-technical-construction-intelligence-lancedb-lancedb-le.md",
       "repository": "lancedb-lancedb-learnings",
-      "content_hash": "e6bf3705ac3345562f0b0680a771aa1884f12472d583e1052571acbb26f45f85",
-      "created_at": "2026-11-15T09:27:08.404Z"
+      "content_hash": "386e3053c6f17b78c40b724d048f24ed7ecd09c625ac72666e81f2337a7cc494",
+      "created_at": "2026-11-16T20:11:48.865Z"
     },
     "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants",
@@ -23767,6 +23772,84 @@
       "repository": "fb55-css-select-learnings",
       "content_hash": "5df396bbae5d49261a27b5c5e715dcab8e8e958ece2cfd75ad3df8aaff1de4b8",
       "created_at": "2026-11-16T20:02:46.091Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: cheeriojs/dom-serializer Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cheeriojs-dom-serializer-technical-construction-intelligence-cheeriojs-dom-seria.md",
+      "repository": "cheeriojs/dom-serializer",
+      "content_hash": "1e5e5473543be88984feb28e68498f92ec00ee02ba8e95e390b1caa85a37cbbc",
+      "created_at": "2026-11-16T20:11:08.238Z"
+    },
+    "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: superhighfives/pika Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-superhighfives-pika-design-intelligence-superhighfives-pika-core-invariants.md",
+      "repository": "superhighfives/pika",
+      "content_hash": "a54c088a17ee04a2cf0e3eec374daede6997d40a4c918b9ff5d14f9e80d0c083",
+      "created_at": "2026-11-16T20:11:10.853Z"
+    },
+    "DOM-H-2A843A13": {
+      "record_id": "DOM-H-2A843A13",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2",
+      "content": "When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheeriojs/dom-serializer. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "9dd6700af45505cc38af82cdd6c4a04cdd93f7a6cd04d21a0496d0f54bedbef5",
+      "summary": "Prevents defects observed in production commit `b81732f9`: build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2. Unvalidated execut -> When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory",
+      "provenance": {
+        "source_uri": "project://cheeriojs-dom-serializer/cheeriojs-dom-serializer-learnings.md",
+        "source_version": "b81732f9",
+        "observed_at": "2026-11-16T20:11:07.421Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (cheeriojs-dom-serializer)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of cheeriojs-dom-serializer"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-16T20:11:46.424Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-learnings-core-inva": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-learnings-core-inva",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: cheeriojs-dom-serializer-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cheeriojs-dom-serializer-learnings-technical-construction-intelligence-cheeriojs.md",
+      "repository": "cheeriojs-dom-serializer-learnings",
+      "content_hash": "496bb45b1c0a0216714b49912640ccb3921e6a843ac811c2cda16d289778b3e7",
+      "created_at": "2026-11-16T20:11:47.376Z"
+    },
+    "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: superhighfives-pika-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-superhighfives-pika-learnings-design-intelligence-superhighfives-pika-learnings-.md",
+      "repository": "superhighfives-pika-learnings",
+      "content_hash": "fd401bba2261c113dde7fcf9002da1bb84f00cf7ecf57c533c901f893dc41304",
+      "created_at": "2026-11-16T20:11:48.296Z"
     }
   }
 }

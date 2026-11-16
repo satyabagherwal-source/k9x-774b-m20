@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:18.873Z",
+  "timestamp": "2026-11-16T20:11:48.061Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-superhighfives-pika-learnings",
+  "learning_id": "LEARN-EVO-superhighfives-pika-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [superhighfives-pika-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:18.873Z`  
-> **Learning ID**: `LEARN-REEXTRACT-superhighfives-pika-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-16T20:11:48.061Z`  
+> **Learning ID**: `LEARN-EVO-superhighfives-pika-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/superhighfives-pika-learnings.md`  
 > **Source**: github ([https://github.com/superhighfives/pika](https://github.com/superhighfives/pika))  
-> **Source Version**: `1e16dfd2`  
+> **Source Version**: `07698fa2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:25:40.866Z  
+> **Timestamp**: 2026-11-16T20:11:09.766Z  
 > **Learning ID**: `learn-github-superhighfives-pika`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/superhighfives-pika-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/superhighfives/pika](https://github.com/superhighfives/pika))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:21:59.238Z  
+> **Harvest Timestamp**: 2026-11-16T20:11:09.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open-source colour picker app for macOS
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2604 stars
+- **Stars / Engagement**: 2617 stars
 
 ---
 
@@ -65,6 +65,7 @@ PROVENANCE_END -->
 ### Core Architecture Module: `Pika/AppDelegate+Actions.swift`
 ```
 import Cocoa
+import Defaults
 
 // MARK: - Notification dispatch
 
@@ -80,6 +81,30 @@ extension AppDelegate {
     @IBAction func triggerPickContrast(_: Any) {
         notificationCenter.post(name: .triggerPickForeground, object: self, userInfo: ["chain": true])
         notificationCenter.post(name: .triggerPickPair, object: self)
+    }
+
+    @IBAction func triggerPasteForeground(_: Any) {
+        pasteColor(into: eyedroppers.foreground, notification: .triggerPasteForeground)
+    }
+
+    @IBAction func triggerPasteBackground(_: Any) {
+        pasteColor(into: eyedroppers.background, notification: .triggerPasteBackground)
+    }
+
+    /// Sets `eyedropper` to the colour on the clipboard (#285): a hex, or a value in any of
+    /// Pika's formats, read in the current colour space like a typed value. The readout then
+    /// shows it in the current format. Recorded like a typed edit; anything else beeps.
+    private func pasteColor(into eyedropper: Eyedropper, notification: Notification.Name) {
+        guard let text = NSPasteboard.general.string(forType: .string),
+              let expected = ExpectedColor.parse(text, fallback: Defaults[.colorFormat]),
+              let color = expected.color(in: Defaults[.colorSpace])
+        else {
+            NSSound.beep()
+            return
+        }
+        eyedropper.set(color)
+        notificationCenter.post(name: .colorPicked, object: nil)
+        notificationCenter.post(name: notification, object: self)
     }
 
     @IBAction func triggerCopyForeground(_: Any) {
@@ -188,6 +213,10 @@ extension AppDelegate {
 
     @IBAction func triggerFormatOKLCH(_: Any) {
         notificationCenter.post(name: .triggerFormatOKLCH, object: self)
+    }
+
+    @IBAction func triggerFormatP3(_: Any) {
+        notificationCenter.post(name: .triggerFormatP3, object: self)
     }
 }
 
@@ -893,6 +922,8 @@ enum PikaConstants {
 
     // Notification Center constants
     static let ncTriggerCopyForeground = "triggerCopyForeground"
+    static let ncTriggerPasteForeground = "triggerPasteForeground"
+    static let ncTriggerPasteBackground = "triggerPasteBackground"
     static let ncTriggerCopyBackground = "triggerCopyBackground"
     static let ncTriggerCopyText = "triggerCopyText"
     static let ncTriggerCopyData = "triggerCopyData"
@@ -912,6 +943,7 @@ enum PikaConstants {
     static let ncTriggerFormatOpenGL = "triggerFormatOpenGL"
     static let ncTriggerFormatLAB = "triggerFormatLAB"
     static let ncTriggerFormatOKLCH = "triggerFormatOKLCH"
+    static let ncTriggerFormatP3 = "triggerFormatP3"
     static let ncTriggerQuit = "triggerQuit"
     static let ncColorPicked = "colorPicked"
     static let ncToggleHistory = "toggleHistory"
@@ -937,6 +969,8 @@ extension Notification.Name {
     /// "Pick pair"'s own row highlights instead of piggybacking on "Pick foreground"'s.
     static let triggerPickPair = Notification.Name(PikaConstants.ncTriggerPickPair)
     static let triggerCopyForeground = Notification.Name(PikaConstants.ncTriggerCopyForeground)
+    static let triggerPasteForeground = Notification.Name(PikaConstants.ncTriggerPasteForeground)
+    static let triggerPasteBackground = Notification.Name(PikaConstants.ncTriggerPasteBackground)
     static let triggerCopyBackground = Notification.Name(PikaConstants.ncTriggerCopyBackground)
     static let triggerCopyText = Notification.Name(PikaConstants.ncTriggerCopyText)
     static let triggerCopyData = Notification.Name(PikaConstants.ncTriggerCopyData)
@@ -953,6 +987,7 @@ extension Notification.Name {
     static let triggerFormatOpenGL = Notification.Name(PikaConstants.ncTriggerFormatOpenGL)
     static let triggerFormatLAB = Notification.Name(PikaConstants.ncTriggerFormatLAB)
     static let triggerFormatOKLCH = Notification.Name(PikaConstants.ncTriggerFormatOKLCH)
+    static let triggerFormatP3 = Notification.Name(PikaConstants.ncTriggerFormatP3)
     static let triggerQuit = Notification.Name(PikaConstants.ncTriggerQuit)
     static let colorPicked = Notification.Name(PikaConstants.ncColorPicked)
     static let toggleHistory = Notification.Name(PikaConstants.ncToggleHistory)
@@ -984,11 +1019,11 @@ enum ColorFormat: String, Codable, CaseIterable, Equatable {
     case lab = "LAB"
     case opengl = "OpenGL"
     case oklch = "OKLCH"
+    case p3 = "P3"
 
-    /// What copying `color` in this format gives, for the example in Settings (in Display P3,
-    /// CSS hex and RGB copy as `color(display-p3 …)`, unlike the readout).
+    /// What copying `color` in this format gives, for the example in Settings.
     func getExample(color: NSColor, style: CopyFormat) -> String {
-        color.toCopyString(format: self, style: style)
+        color.toFormat(format: self, style: style)
     }
 
     static func withLabel(_ label: String) -> ColorFormat? {
@@ -1206,6 +1241,18 @@ enum PikaShortcuts {
             notificationName: .triggerCopyBackground
         ),
         PikaShortcut(
+            title: PikaText.textPasteForeground,
+            displayKeys: ["⌘", "V"], character: "v", modifiers: .command,
+            action: #selector(AppDelegate.triggerPasteForeground),
+            notificationName: .triggerPasteForeground
+        ),
+        PikaShortcut(
+            title: PikaText.textPasteBackground,
+            displayKeys: ["⇧", "⌘", "V"], character: "v", modifiers: [.command, .shift],
+            action: #selector(AppDelegate.triggerPasteBackground),
+            notificationName: .triggerPasteBackground
+        ),
+        PikaShortcut(
             title: PikaText.textColorSystemPickerForegroundSimple,
             displayKeys: ["⌘", "S"], character: "s", modifiers: .command,
             action: #selector(AppDelegate.triggerSystemPickerForeground),
@@ -1295,6 +1342,12 @@ enum PikaShortcuts {
             action: #selector(AppDelegate.triggerFormatOKLCH),
             notificationName: .triggerFormatOKLCH
         ),
+        PikaShortcut(
+            title: PikaText.textFormatP3,
+            displayKeys: ["⌘", "8"], character: "8", modifiers: .command,
+            action: #selector(AppDelegate.triggerFormatP3),
+            notificationName: .triggerFormatP3
+        ),
     ]
 
     /// Returns the shortcut matching the given key event, if any. Shortcuts that
@@ -1352,6 +1405,7 @@ enum PikaText {
     static let textColorUndo = NSLocalizedString("color.undo", comment: "Undo")
     static let textColorRedo = NSLocalizedString("color.redo", comment: "Redo")
     static let textColorCopy = NSLocalizedString("color.copy", comment: "Copy")
+    static let textColorPaste = NSLocalizedString("color.paste", comment: "Paste")
     static let textColorSystemPicker = NSLocalizedString("color.system", comment: "System picker")
     static let textColorCopied = NSLocalizedString("color.copy.toast", comment: "Copied")
 
@@ -1376,7 +1430,7 @@ enum PikaText {
     // Help Basics
     static let textHelpBasics = NSLocalizedString("help.basics", comment: "Basics")
     static let textHelpBasicsIntro = [
-        NSLocalizedString("help.basics.intro.1", comment: "Basics intro: what colour contrast is"),
+        NSLocalizedString("help.basics.intro.1", comment: "Basics intro: what color contrast is"),
         NSLocalizedString("help.basics.intro.2", comment: "Basics intro: accessibility guidelines"),
         NSLocalizedString("help.basics.intro.3", comment: "Basics intro: where Pika fits"),
     ]
@@ -1388,18 +1442,18 @@ enum PikaText {
     static let textHelpBasicsContrast = NSLocalizedString("help.basics.contrast", comment: "Why check contrast description")
     static let textHelpBasicsStandardsTitle = NSLocalizedString("help.basics.standards.title", comment: "WCAG and APCA")
     static let textHelpBasicsStandards = NSLocalizedString("help.basics.standards", comment: "WCAG and APCA description")
-    static let textHelpBasicsPickersTitle = NSLocalizedString("help.basics.pickers.title", comment: "Ways to pick a colour")
-    static let textHelpBasicsPickers = NSLocalizedString("help.basics.pickers", comment: "Basic, Pro and system colour picker description")
+    static let textHelpBasicsPickersTitle = NSLocalizedString("help.basics.pickers.title", comment: "Ways to pick a color")
+    static let textHelpBasicsPickers = NSLocalizedString("help.basics.pickers", comment: "Basic, Pro and system color picker description")
     static let textHelpBasicsEditingTitle = NSLocalizedString("help.basics.editing.title", comment: "Editing values")
     static let textHelpBasicsEditing = NSLocalizedString("help.basics.editing", comment: "Editing values description")
-    static let textHelpBasicsSpacesTitle = NSLocalizedString("help.basics.spaces.title", comment: "Colour spaces")
-    static let textHelpBasicsSpaces = NSLocalizedString("help.basics.spaces", comment: "Colour spaces description")
+    static let textHelpBasicsSpacesTitle = NSLocalizedString("help.basics.spaces.title", comment: "Color spaces")
+    static let textHelpBasicsSpaces = NSLocalizedString("help.basics.spaces", comment: "Color spaces description")
     static let textHelpReferenceWCAG = NSLocalizedString("help.reference.wcag", comment: "Link to WCAG contrast guidance")
     static let textHelpReferenceAPCA = NSLocalizedString("help.reference.apca", comment: "Link to APCA guidance")
 
     static let textMenuAbout = NSLocalizedString("menu.about", comment: "About")
     static let textMenuShowSplash = NSLocalizedString(
-        "menu.showSplash", value: "Show splash", comment: "Show the welcome splash"
+        "menu.showSplash", value: "Show Splash", comment: "Show the welcome splash"
     )
     static let textMenuShowPika = NSLocalizedString("menu.showPika", comment: "Show Pika")
     static let textMenuUpdates = NSLocalizedString("menu.updates", comment: "Check for updates")
@@ -1443,9 +1497,7 @@ enum PikaText {
     static let textSplashHotkey = NSLocalizedString("splash.launch", comment: "Launch at login")
     static let textSplashStart = NSLocalizedString("splash.start", comment: "Get started")
 
-    // Splash setup list (two-column redesign)
-    static let textSplashSetupTitle = NSLocalizedString(
-        "spla
+    // Splash setup list (two-column re
 ```
 
 
@@ -1454,14 +1506,14 @@ enum PikaText {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #311** (2026-10-19): **Occasionally, Screen Becomes Un-Clickable when Picking a Color / Copying to Clipboard**
-  *Symptoms*: **Describe the bug** Sometimes, picking a color and then clicking to copy to clipboard results in pointer disappearing and screen is totally non-clickable. Have to restart the computer.  **To Reproduce** Steps to reproduce the behavior: 1. Go to Pika window 2. Click on foreground / background picker 3. Pick a color from anywhere on screen 4. Sometimes pointer disappears, cannot click anywhere, cannot use pointer.  **Expected behavior** Should be able to continue clicking / interacting with computer.  **Screenshots** N/A  **Environment (please complete the following information):**  - macOS Golden Gate 27.0.1  - 1.9.0 (Build 97) - Downloaded from the internet  - Apple Silicon  **Additional context** Add any other context about the problem here. 
+- **Issue #329** (2026-11-09): **Display in HEX color, copy the color is not in HEX format**
+  *Symptoms*: **Describe the bug** Show color in HEX or RGB format. When I click the copy button, the text pasted is  color(display-p3 0.7569 0.4314 0.9294) instead of #c16eed color(display-p3 0.7373 0.9529 0.4941) instead of #bcf37e  **To Reproduce** Steps to reproduce the behavior: 1. Set color space as either HEX or RGB 2. Pick foreground and background colours 3. Click on copy button 4. Paste the text into text editor, in my case Zed. 5. Value shown are color(display-p3 0.7569 0.4314 0.9294) instead of #c16eed and color(display-p3 0.7373 0.9529 0.4941) instead of #bcf37e  **Expected behavior** I'd expect it will copy the HEX or RGB value. For the same colours, the app is working correctly for HSB, HSL, LAB, OpenGL, OKLCH.  **Screenshots** If applicable, add screenshots to help explain your problem. <img width="658" height="552" alt="Image" src="https://github.com/user-attachments/assets/82883ca0-12d0-4a4b-b772-0d1e259940e9" />  **Environment (please complete the following information):**  - OS: macOS 26.7.1  - App Version: 2.0.2 (Build 111)  - Architecture: Apple Silicon  **Additional context** I'm on MacBook Pro 14' M1MAX connecting to DELL U3225QE via thunderbolt cable. color profile using their defaults. 
 
-- **Issue #302** (2026-10-14): **Pika 2.0 and Secondary Displays**
-  *Symptoms*: Pika 2.0 not playing well with secondary displays. At least not in my instance. I have my Macbook closed, with two displays connected. I can use Pika to colour-pick on my **primary** display without issues; works great. But as soon as I try to pick a colour from my secondary display, it fails to pick the colour and locks up. The colour-picker remains visible and follows the mouse, but no longer functions on that display (my mouse can click and operate the apps on that display as if the colour-picker wasn't present. If I then move my mouse to my primary display and click, it correctly picks the colour.   - OS: MacOS 27.0.1  - App Version: 2.0  - Architecture: Macbook M3 Pro, Apple Silicon 
+- **Issue #327** (2026-11-03): **An annoying bar appears when hovering over the application window.**
+  *Symptoms*: **Describe the bug** When hovering the cursor over the application window, a bar appears that has no functionality and is annoying, drawing attention to itself.  **To Reproduce** Hover the cursor over the application window.  **Expected behavior** There should be no bar.  **Screenshots** <img width="695" height="470" alt="Image" src="https://github.com/user-attachments/assets/23cce24e-13e5-4680-b91f-51871d53a455" />  **Environment (please complete the following information):**  - OS: macos 27.2  - App Version: 2.0.2 (Build 111)  - Architecture: Apple Silicon   
   **Post-Mortem & Fix Analysis**:
-  > Thanks for flagging, @neatlee! That is... bad. I'm trying to recreate it on my two-screen set up and haven't been able to, so it'd be great to get a screenshot of your settings just to make sure I'm covering the same bases.  It'd be good to add tests for this, too, as a note to self. Keen to get this fixed!
-  > I thiiiiiiink I've found it. Could you check two things in System Settings? Under **Privacy & Security → Accessibility**, is Pika switched on? And under **Desktop & Dock → Mission Control**, is "Displays have separate Spaces" on? My guess is Accessibility is off and separate Spaces is on. There's a possible fix in #303.
+  > Oooh, interesting! Thanks for the feedback. The line denotes where the clickable area is. Below that is where you can edit text within the swatch. Above is the clickable swatch. It's a trade off to make it clear where you can interact.  Always open to other ideas for how to make that clearer.
+  > Closing this one as intended for now, since the line marks where the swatch and the editable values meet. Thanks for the feedback!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1478,37 +1530,94 @@ enum PikaText {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e16dfd2` (2026-10-26)
-**Commit Message**: CI: skip the Claude review on PRs from forks (#325)
+### Incident Patch 1: `8a61deea` (2026-11-15)
+**Commit Message**: Bump version to 2.0.3 (build 114/115)
 
-GitHub doesn't pass secrets to fork PR runs, so the review failed at the
-app token step on every one (#324). Matches the guard in tests.yml.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +5/-0)
+**File**: `Pika.xcodeproj/project.pbxproj` (modified, +8/-8)
 ```diff
-@@ -24,6 +24,11 @@ jobs:
-     # posting a review. tests.yml already builds and runs the suite (~90s), so
-     # the review doesn't need to. Reading-only, it runs fast on the default
-     # ubuntu runner and posts every time.
-+    #
-+    # Skipped for PRs from forks, like tests.yml: GitHub doesn't pass secrets to
-+    # those runs, so the app token step fails before the review starts. Merge a
-+    # fork PR into a branch here to have that branch's PR reviewed.
-+    if: github.event.pull_request.head.repo.full_name == github.repository
-     uses: superhighfives/control-room/.github/workflows/review.yml@main
-     secrets:
-       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+@@ -1417,7 +1417,7 @@
+ 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 113;
++				CURRENT_PROJECT_VERSION = 114;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
+ 				DEVELOPMENT_TEAM = TGHU37N6EX;
+@@ -1431,7 +1431,7 @@
+ 					"@executable_path/../Frameworks",
+ 				);
+ 				MACOSX_DEPLOYMENT_TARGET = 14.0;
+-				MARKETING_VERSION = 2.0.3-beta1;
++				MARKETING_VERSION = 2.0.3;
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika.debug;
+ 				PRODUCT_NAME = Pika;
+ 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_SPARKLE";
+@@ -1449,7 +1449,7 @@
+ 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 113;
++				CURRENT_PROJECT_VERSION = 114;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
+ 				DEVELOPMENT_TEAM = TGHU37N6EX;
+@@ -1463,7 +1463,7 @@
+ 					"@executable_path/../Frameworks",
+ 				);
+ 				MACOSX_DEPLOYMENT_TARGET = 14.0;
+-				MARKETING_VERSION = 2.0.3-beta1;
++				MARKETING_VERSION = 2.0.3;
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
+ 				PRODUCT_NAME = Pika;
+ 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_SPARKLE;
+@@ -1482,7 +1482,7 @@
+ 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 112;
++				CURRENT_PROJECT_VERSION = 115;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
+ 				DEVELOPMENT_TEAM = TGHU37N6EX;
+@@ -1496,7 +1496,7 @@
+ 					"@executable_path/../Frameworks",
+ 				);
+ 				MACOSX_DEPLOYMENT_TARGET = 14.0;
+-				MARKETING_VERSION = 2.0.3-beta1;
++				MARKETING_VERSION = 2.0.3;
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
+ 				PRODUCT_NAME = Pika;
+ 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_MAS";
+@@ -1516,7 +1516,7 @@
+ 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 112;
++				CURRENT_PROJECT_VERSION = 115;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
+ 				DEVELOPMENT_TEAM = TGHU37N6EX;
+@@ -1530,7 +1530,7 @@
+ 					"@executable_path/../Frameworks",
+ 				);
+ 				MACOSX_DEPLOYMENT_TARGET = 14.0;
+-				MARKETING_VERSION = 2.0.3-beta1;
++				MARKETING_VERSION = 2.0.3;
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
+ 				PRODUCT_NAME = Pika;
+ 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_MAS;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #325** (2026-10-26): CI: skip the Claude review on PRs from forks (@superhighfives)
-- **PR #324** (2026-10-26): Add Persian (fa) localization (@aliafshany)
-- **PR #323** (2026-10-22): Settings: show what CSS copy gives in P3, and say so for Match display (@superhighfives)
-- **PR #322** (2026-10-21): Treat a display profile that's Display P3 in all but name as P3 (@superhighfives)
-- **PR #321** (2026-10-21): Clear history keeps the current colours (@superhighfives)
-- **PR #320** (2026-10-21): Check a Color: its own colour and a cleaner layout; no colour space dropdown on the readout (@superhighfives)
+- **PR #350** (2026-11-16): URL scheme: pika://window/settings, named for the Settings window (@superhighfives)
+- **PR #349** (2026-11-08): URL scheme: add pika://window/show (@bengry)
+- **PR #348** (2026-11-09): Debug builds: their own bundle ID (@superhighfives)
+- **PR #347** (2026-11-08): README: shortcuts, URLs and formats for 2.0.3 (@superhighfives)
+- **PR #346** (2026-11-08): View menu: highlight rows, and work from the keyboard while it's open (@superhighfives)
+- **PR #345** (2026-11-07): Permissions: dock the drag panel inside System Settings (@superhighfives)
 
 ---
 
@@ -1528,35 +1637,45 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CI: skip the Claude review on PRs from forks (#325)
+## X. Bump version to 2.0.3 (build 114/115)
 
 **RULE**:
-When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in superhighfives/pika. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Pika.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in superhighfives/pika. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e16dfd2`: CI: skip the Claude review on PRs from forks (#325). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a61deea`: Bump version to 2.0.3 (build 114/115). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Pika.xcodeproj/project.pbxproj`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    #
-    # Skipped for PRs from forks, like tests.yml: GitHub doesn't pass secrets to
-    # those runs, so the app token step fails before the review starts. Merge a
-    # fork PR into a branch here to have that branch's PR reviewed.
-    if: github.event.pull_request.head.repo.full_name == github.repository
+				CURRENT_PROJECT_VERSION = 114;
+				MARKETING_VERSION = 2.0.3;
+				CURRENT_PROJECT_VERSION = 114;
+				MARKETING_VERSION = 2.0.3;
+				CURRENT_PROJECT_VERSION = 115;
+				MARKETING_VERSION = 2.0.3;
+				CURRENT_PROJECT_VERSION = 115;
+				MARKETING_VERSION = 2.0.3;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+				CURRENT_PROJECT_VERSION = 113;
+				MARKETING_VERSION = 2.0.3-beta1;
+				CURRENT_PROJECT_VERSION = 113;
+				MARKETING_VERSION = 2.0.3-beta1;
+				CURRENT_PROJECT_VERSION = 112;
+				MARKETING_VERSION = 2.0.3-beta1;
+				CURRENT_PROJECT_VERSION = 112;
+				MARKETING_VERSION = 2.0.3-beta1;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e16dfd2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a61deea` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

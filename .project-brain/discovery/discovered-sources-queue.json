@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T18:55:56.685Z",
+  "updated_at": "2026-11-16T20:11:47.978Z",
   "stats": {
-    "total_discovered": 4386,
-    "approved_pending_harvest": 4122,
+    "total_discovered": 4411,
+    "approved_pending_harvest": 4147,
     "harvested_count": 0,
     "rejected_count": 264,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4127,
+      "COMMUNITY_AND_EXPERT": 4151,
       "OFFICIAL_DOCUMENTATION": 138,
-      "STANDARDS_AND_SPECIFICATIONS": 95,
+      "STANDARDS_AND_SPECIFICATIONS": 96,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 17,
       "LEGAL_AND_REGULATORY": 1,
@@ -94665,6 +94665,556 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
         "fileName": "wquguru-cicada-learnings.md"
+      }
+    },
+    "SRC-CF773D516446": {
+      "id": "SRC-CF773D516446",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13102",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13102",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.556Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-B57C0977A16F": {
+      "id": "SRC-B57C0977A16F",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13117",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13117",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-FEA7DFE94294": {
+      "id": "SRC-FEA7DFE94294",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13104",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13104",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.621Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-3C93B6E865C6": {
+      "id": "SRC-3C93B6E865C6",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/12994",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/12994",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.646Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-ABB05AD3155C": {
+      "id": "SRC-ABB05AD3155C",
+      "url": "https://github.com/StyleShit",
+      "title": "https://github.com/StyleShit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-8DAB516CBD13": {
+      "id": "SRC-8DAB516CBD13",
+      "url": "https://github.com/harshbhx",
+      "title": "https://github.com/harshbhx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-1AE43ABF5AC6": {
+      "id": "SRC-1AE43ABF5AC6",
+      "url": "https://redirect.github.com/biomejs/biome/pull/12887",
+      "title": "https://redirect.github.com/biomejs/biome/pull/12887",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-CE8A0719C57D": {
+      "id": "SRC-CE8A0719C57D",
+      "url": "https://github.com/biomejs/biome/commit/da0422e5201555239e49f81e5236068935b9445a",
+      "title": "https://github.com/biomejs/biome/commit/da0422e5201555239e49f81e5236068935b9445a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.792Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-3FE7F376FF8E": {
+      "id": "SRC-3FE7F376FF8E",
+      "url": "https://biomejs.dev/linter/rules/no-array-methods-on-arguments",
+      "title": "https://biomejs.dev/linter/rules/no-array-methods-on-arguments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.830Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-BC3B4EBB6790": {
+      "id": "SRC-BC3B4EBB6790",
+      "url": "https://redirect.github.com/biomejs/biome/pull/12877",
+      "title": "https://redirect.github.com/biomejs/biome/pull/12877",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-E2D3994493CE": {
+      "id": "SRC-E2D3994493CE",
+      "url": "https://github.com/biomejs/biome/commit/cd9e10f1510d043ee2b5148a5e069fee3638ad65",
+      "title": "https://github.com/biomejs/biome/commit/cd9e10f1510d043ee2b5148a5e069fee3638ad65",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.889Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-26F3382718C7": {
+      "id": "SRC-26F3382718C7",
+      "url": "https://biomejs.dev/linter/rules/no-constant-comparisons",
+      "title": "https://biomejs.dev/linter/rules/no-constant-comparisons",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:46.915Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-A959D3481008": {
+      "id": "SRC-A959D3481008",
+      "url": "https://github.com/superhighfives/pika",
+      "title": "https://github.com/superhighfives/pika",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.640Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-47F20878C089": {
+      "id": "SRC-47F20878C089",
+      "url": "https://superhighfives.com/releases/pika/betas",
+      "title": "https://superhighfives.com/releases/pika/betas",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-33BE4D627635": {
+      "id": "SRC-33BE4D627635",
+      "url": "https://superhighfives.com/releases/pika",
+      "title": "https://superhighfives.com/releases/pika",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-59EFF388AA8B": {
+      "id": "SRC-59EFF388AA8B",
+      "url": "https://superhighfives.com/pika",
+      "title": "https://superhighfives.com/pika",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-542FDAA365C1": {
+      "id": "SRC-542FDAA365C1",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+      "title": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-C637DC87A409": {
+      "id": "SRC-C637DC87A409",
+      "url": "https://git.apcacontrast.com/documentation/APCA_in_a_Nutshell",
+      "title": "https://git.apcacontrast.com/documentation/APCA_in_a_Nutshell",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.779Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-A360FCEBEAC9": {
+      "id": "SRC-A360FCEBEAC9",
+      "url": "https://github.com/superhighfives/pika/issues/new/choose",
+      "title": "https://github.com/superhighfives/pika/issues/new/choose",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.804Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-1FB274827A3F": {
+      "id": "SRC-1FB274827A3F",
+      "url": "https://charliegleason.com/",
+      "title": "https://charliegleason.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-419FB12E5767": {
+      "id": "SRC-419FB12E5767",
+      "url": "https://superhighfives.com/pika/help",
+      "title": "https://superhighfives.com/pika/help",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-2E338D63CD85": {
+      "id": "SRC-2E338D63CD85",
+      "url": "https://superhighfives.com/pika/changelog",
+      "title": "https://superhighfives.com/pika/changelog",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.892Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-ABC49A697CA3": {
+      "id": "SRC-ABC49A697CA3",
+      "url": "https://apps.apple.com/us/app/pika/id6739170421",
+      "title": "https://apps.apple.com/us/app/pika/id6739170421",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.917Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-DCD685C0E648": {
+      "id": "SRC-DCD685C0E648",
+      "url": "https://github.com/user-attachments/assets/82883ca0-12d0-4a4b-b772-0d1e259940e9",
+      "title": "https://github.com/user-attachments/assets/82883ca0-12d0-4a4b-b772-0d1e259940e9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
+      }
+    },
+    "SRC-D71A5B66CD46": {
+      "id": "SRC-D71A5B66CD46",
+      "url": "https://github.com/user-attachments/assets/23cce24e-13e5-4680-b91f-51871d53a455",
+      "title": "https://github.com/user-attachments/assets/23cce24e-13e5-4680-b91f-51871d53a455",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-16T20:11:47.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+        "fileName": "superhighfives-pika-learnings.md"
       }
     }
   }

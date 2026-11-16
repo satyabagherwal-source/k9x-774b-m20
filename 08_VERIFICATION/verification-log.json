@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-TN0V",
-    "timestamp": "2026-11-14T00:48:51.151Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "82f498f1198ffac06b9f940227110537dd076eba695186ba76f82feaefdd417a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-5UBR",
-    "timestamp": "2026-11-14T01:26:20.103Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "167b9d284c69a23e916cb6ead2dcbae5a24fa480b106c7ef89e5aca047a5b874",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-5UYU",
-    "timestamp": "2026-11-14T01:26:20.934Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "20b38ab38e9ac2f9f73eee0bbee5ded34e795122431f1d3d5e50847f820848fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-601Q",
     "timestamp": "2026-11-14T01:26:27.518Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7445,51 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "c5a4d9b250dff7d7ddc4de56fefffc09abbfedbd3f6aece5e80351bb55fc8030",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-81MT",
+    "timestamp": "2026-11-16T20:11:07.973Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "a3fc7d176929d5a947dbf0dce11949830fe1172387d3e97043b0457699ed9d54",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-83N7",
+    "timestamp": "2026-11-16T20:11:10.579Z",
+    "repository": "superhighfives/pika",
+    "learningId": "learn-github-superhighfives-pika",
+    "contentHash": "ca7f760915ce1aeda21a377f3e51e2877b3646d2f97af6ac31252575f56d08c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261116-89H8",
+    "timestamp": "2026-11-16T20:11:18.140Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "c41e775bb8292d2b59e10dade3be27161ea3f43bae5bc11e131b8a1e6fdd2bea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

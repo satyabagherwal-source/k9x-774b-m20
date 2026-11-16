@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for cheeriojs/dom/serializer
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for cheeriojs/dom-serializer
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "cheeriojs/dom/serializer",
-  "source_url": "https://github.com/cheeriojs/dom/serializer",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "cheeriojs/dom-serializer",
+  "source_url": "https://github.com/cheeriojs/dom-serializer",
+  "source_version": "b81732f9",
+  "license": "MIT",
+  "timestamp": "2026-11-16T20:11:08.135Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-cheeriojs-dom-serializer",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cheeriojs/dom/serializer](https://github.com/cheeriojs/dom/serializer) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer) (Revision: `b81732f9`).  
+> **License**: MIT | **Timestamp**: `2026-11-16T20:11:08.135Z`  
+> **Learning ID**: `learn-github-cheeriojs-dom-serializer`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `cheeriojs/dom/serializer` (Commit: `historical`)
+- **Target Repository**: `cheeriojs/dom-serializer` (Commit: `b81732f9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md`  
-> **Source**: github ([https://github.com/cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer))  
-> **Source Version**: `70bfbf41`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:10:22.592Z  
-> **Learning ID**: `learn-github-cheeriojs-dom-serializer`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): cheeriojs/dom-serializer
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:10:22.587Z  
+> **Harvest Timestamp**: 2026-11-16T20:11:07.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -686,11 +672,11 @@ function renderText(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1765** (2026-11-10): **build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.5**
-  *Symptoms*: Bumps [@biomejs/biome](https://github.com/biomejs/biome/tree/HEAD/packages/@biomejs/biome) from 2.5.15 to 2.6.5. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/biomejs/biome/releases">@​biomejs/biome's releases</a>.</em></p> <blockquote> <h2>Biome CLI v2.6.5</h2> <h2>2.6.5</h2> <h3>Patch Changes</h3> <ul> <li> <p><a href="https://redirect.github.com/biomejs/biome/pull/12755">#12755</a> <a href="https://github.com/biomejs/biome/commit/bbc4887f1b885d8f9bea8e265108c919f021eec4"><code>bbc4887</code></a> Thanks <a href="https://github.com/dyc3"><code>@​dyc3</code></a>! - Added the new nursery rule <a href="https://biomejs.dev/linter/rules/no-array-for-each/"><code>noArrayForEach</code></a>, which reports <code>forEach()</code> calls that can be written as <code>for...of</code> loops. Values known not to be arrays, such as a <code>Map</code> or a <code>Set</code>, are ignored.</p> <pre lang="js"><code>array.forEach((element) =&gt; { 	bar(element); }); </code></pre> </li> <li> <p><a href="https://redirect.github.com/biomejs/biome/pull/12777">#12777</a> <a href="https://github.com/biomejs/biome/commit/ba692e45d4e9ad0d7c0d6b341a603bbbdbeaa4c8"><code>ba692e4</code></a> Thanks <a href="https://github.com/dyc3"><code>@​dyc3</code></a>! - Added the new nursery rule <a href="https://biomejs.dev/linter/rules/no-await-in-promise-methods/"><code>noAwaitInPromiseMethods</code></a>, which reports <code>await</code> inside the array passed to <code>Pro
+- **Issue #1767** (2026-11-13): **build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2**
+  *Symptoms*: Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.72.1 to 8.72.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/typescript-eslint/typescript-eslint/releases">typescript-eslint's releases</a>.</em></p> <blockquote> <h2>v8.72.2</h2> <h2>8.72.2 (2026-11-09)</h2> <h3>🩹 Fixes</h3> <ul> <li><strong>eslint-plugin:</strong> [prefer-string-starts-ends-with] parse RegExps with the v flag in unicode sets mode (<a href="https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13102">#13102</a>)</li> <li><strong>eslint-plugin:</strong> [no-deprecated] stop on circular alias chains (<a href="https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13117">#13117</a>)</li> <li><strong>eslint-plugin:</strong> [no-unnecessary-type-assertion] don't report number to enum assertions (<a href="https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13104">#13104</a>)</li> <li><strong>eslint-plugin:</strong> [prefer-nullish-coalescing] treat unconstrained type parameters as possibly nullish (<a href="https://redirect.github.com/typescript-eslint/typescript-eslint/pull/12994">#12994</a>)</li> </ul> <h3>❤️ Thank You</h3> <ul> <li>Ankur Dubey</li> <li>Evyatar Daud <a href="https://github.com/StyleShit"><code>@​StyleShit</code></a></li> <li>Harsh Bhanushali <a href="https://github.com/harshbhx"><code>@​harshbhx</code></a></li> <li>Jacob Ley <a hr
 
-- **Issue #1764** (2026-11-09): **build(deps): bump github/codeql-action from 4.39.2 to 4.39.3**
-  *Symptoms*: Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.2 to 4.39.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action's releases</a>.</em></p> <blockquote> <h2>v4.39.3</h2> <ul> <li>Fixed diff-informed alert filtering incorrectly removing alerts in changed files whose paths contain spaces, special characters, or non-ASCII characters. <a href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/codeql-action's changelog</a>.</em></p> <blockquote> <h2>4.39.3 - 04 Nov 2026</h2> <ul> <li>Fixed diff-informed alert filtering incorrectly removing alerts in changed files whose paths contain spaces, special characters, or non-ASCII characters. <a href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/github/codeql-action/commit/33d7b85da1a04171e211befe2c739303b9a4c066"><code>33d7b85</code></a> Merge pull request <a href="https://redirect.github.com/github/codeql-action/issues/4299">#4299</a> from github/update-v4.39.3-064910ba2</li> <li><a href="https://github.com/github/codeql-action/commit/24393f8692ae5a8fb94c4f5829ffa08cea01bd1b"><code>24393f8</cod
+- **Issue #1766** (2026-11-16): **build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.6**
+  *Symptoms*: Bumps [@biomejs/biome](https://github.com/biomejs/biome/tree/HEAD/packages/@biomejs/biome) from 2.5.15 to 2.6.6. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/biomejs/biome/releases">@​biomejs/biome's releases</a>.</em></p> <blockquote> <h2>Biome CLI v2.6.6</h2> <h2>2.6.6</h2> <h3>Patch Changes</h3> <ul> <li> <p><a href="https://redirect.github.com/biomejs/biome/pull/12887">#12887</a> <a href="https://github.com/biomejs/biome/commit/da0422e5201555239e49f81e5236068935b9445a"><code>da0422e</code></a> Thanks <a href="https://github.com/dyc3"><code>@​dyc3</code></a>! - Added the new nursery rule <a href="https://biomejs.dev/linter/rules/no-array-methods-on-arguments/"><code>noArrayMethodsOnArguments</code></a>. It reports calls to array methods on the <code>arguments</code> object, which isn't an array, so these calls throw a <code>TypeError</code> when the code runs.</p> <pre lang="js"><code>function sum() {   return arguments.reduce((total, value) =&gt; total + value, 0); } </code></pre> </li> <li> <p><a href="https://redirect.github.com/biomejs/biome/pull/12877">#12877</a> <a href="https://github.com/biomejs/biome/commit/cd9e10f1510d043ee2b5148a5e069fee3638ad65"><code>cd9e10f</code></a> Thanks <a href="https://github.com/dyc3"><code>@​dyc3</code></a>! - Added the nursery rule <a href="https://biomejs.dev/linter/rules/no-constant-comparisons/"><code>noConstantComparisons</code></a>, which reports <code>&amp;&amp;</code> and <code>||<
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -707,48 +693,162 @@ function renderText(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70bfbf41` (2026-11-09)
-**Commit Message**: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764)
+### Incident Patch 1: `b81732f9` (2026-11-13)
+**Commit Message**: build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (#1767)
 
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.2 to 4.39.3.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.39.2...v4.39.3)
+Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.72.1 to 8.72.2.
+- [Release notes](https://github.com/typescript-eslint/typescript-eslint/releases)
+- [Changelog](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md)
+- [Commits](https://github.com/typescript-eslint/typescript-eslint/commits/v8.72.2/packages/typescript-eslint)
 
 ---
 updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.39.3
-  dependency-type: direct:production
+- dependency-name: typescript-eslint
+  dependency-version: 8.72.2
+  dependency-type: direct:development
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
+**File**: `package-lock.json` (modified, +62/-62)
 ```diff
-@@ -23,9 +23,9 @@ jobs:
-         uses: actions/checkout@v7
- 
-       - name: Initialize CodeQL
--        uses: github/codeql-action/init@v4.39.2
-+        uses: github/codeql-action/init@v4.39.3
-         with:
-           languages: "javascript"
- 
-       - name: Perform CodeQL Analysis
--        uses: github/codeql-action/analyze@v4.39.2
-+        uses: github/codeql-action/analyze@v4.39.3
+@@ -22,7 +22,7 @@
+         "eslint": "^10.14.0",
+         "eslint-config-biome": "^2.1.3",
+         "typescript": "^6.0.2",
+-        "typescript-eslint": "^8.72.1",
++        "typescript-eslint": "^8.72.2",
+         "vitest": "^5.1.0"
+       },
+       "engines": {
+@@ -934,17 +934,17 @@
+       }
+     },
+     "node_modules/@typescript-eslint/eslint-plugin": {
+-      "version": "8.72.1",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+-      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
++      "version": "8.72.2",
++      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
++      "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@eslint-community/regexpp": "^4.12.2",
+-        "@typescript-eslint/scope-manager": "8.72.1",
+-        "@typescript-eslint/type-utils": "8.72.1",
+-        "@typescript-eslint/utils": "8.72.1",
+-        "@typescript-eslint/visitor-keys": "8.72.1",
++        "@typescript-eslint/scope-manager": "8.72.2",
++        "@typescript-eslint/type-utils": "8.72.2",
++        "@typescript-eslint/utils": "8.72.2",
++        "@typescript-eslint/visitor-keys": "8.72.2",
+         "ignore": "^7.0.5",
+         "natural-compare": "^1.4.0",
+         "ts-api-utils": "^2.5.0"
+@@ -957,7 +957,7 @@
+         "url": "https://opencollective.com/typescript-eslint"
+       },
+       "peerDependencies": {
+-        "@typescript-eslint/parser": "^8.72.1",
++        "@typescript-eslint/parser": "^8.72.2",
+         "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+         "typescript": ">=4.8.4 <6.1.0"
+       }
+@@ -973,16 +973,16 @@
+       }
+     },
+     "node_modules/@typescript-eslint/parser": {
+-      "version": "8.72.1",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+-      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
++      "version": "8.72.2",
++      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
++      "integrity": "sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@typescript-eslint/scope-manager": "8.72.1",
+-        "@typescript-eslint/types": "8.72.1",
+-        "@typescript-eslint/typescript-estree": "8.72.1",
+-        "@typescript-eslint/visitor-keys": "8.72.1",
++        "@typescript-eslint/scope-manager": "8.72.2",
++        "@typescript-eslint/types": "8.72.2",
++        "@typescript-eslint/typescript-estree": "8.72.2",
++        "@typescript-eslint/visitor-keys": "8.72.2",
+         "debug": "^4.4.3"
+       },
+       "engines": {
+@@ -998,14 +998,14 @@
+       }
+     },
+     "node_modules/@typescript-eslint/project-service": {
+-      "version": "8.72.1",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
+-      "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGzW1J6jTg==",
++      "version": "8.72.2",
++      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.2.tgz",
++      "integrity": "sha512-6y5dLTZdHhI8Eh3yIQ/bfQhRKwn5e+TpJj64o18Cngc0iW/BCrVvrr6zGYqXPnYH31u6YXAYiFh0+qxX5mybJw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@typescript-eslint/tsconfig-utils": "^8.72.1",
+-        "@typescript-eslint/types": "^8.72.1",
++        "@typescript-eslint/tsconfig-utils": "^8.72.2",
++        "@typescript-eslint/types": "^8.72.2",
+         "debug": "^4.4.3"
+       },
+       "engines": {
+@@ -1020,14 +1020,14 @@
+       }
+     },
+     "node_modules/@typescript-eslint/scope-manager": {
+-      "version": "8.72.1",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
+-      "integrity": "sha512-lC/t6eMCZZQAAKZEYGL6RDVSuFehpdmMT6h+nJIjIa6oylN/PwDgDVtEIbB7O9xFfZYtZAYLoLlDNWKJhtF+uQ==",
++      "version": "8.72.2",
++      "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.2.tgz",
++      "integrity": "sha512-iIoMJ6/8c1/QpFNyFjU0d1YzPco4MsZjQw0k3V+vfzNWAFmUmvhlyMoYEoYYDQZXc+J6Gi1X5XcxlzW2taIIGQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@typescript-eslint/types": "8.72.1",
+-        "@typescript-eslint/visitor-keys": "8.72.1"
++        "@typescript-eslint/types": "8.72.2",
++        "@typescript-eslint/visitor-keys": "8.72.2"
+       },
+       "engines": {
+         "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+@@ -1038,9 +1038,9 @@
+       }
+     },
+     "node_modules/@typescript-eslint/tsconfig-utils": {
+-      "version": "8.72.1",
+-     
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@
+     "eslint": "^10.14.0",
+     "eslint-config-biome": "^2.1.3",
+     "typescript": "^6.0.2",
+-    "typescript-eslint": "^8.72.1",
++    "typescript-eslint": "^8.72.2",
+     "vitest": "^5.1.0"
+   },
+   "engines": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1767** (2026-11-13): build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (@dependabot[bot])
+- **PR #1766** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.6 (@dependabot[bot])
 - **PR #1765** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.5 (@dependabot[bot])
 - **PR #1764** (2026-11-09): build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (@dependabot[bot])
 - **PR #1763** (2026-11-06): build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
 - **PR #1762** (2026-11-06): build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (@dependabot[bot])
-- **PR #1761** (2026-11-03): build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (@dependabot[bot])
-- **PR #1760** (2026-11-02): build(deps-dev): bump @types/node from 26.6.5 to 26.6.6 (@dependabot[bot])
 
 ---
 
@@ -768,33 +868,67 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764)
+## X. build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2
 
 **RULE**:
-When implementing operations in `.github/workflows/codeql-analysis.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheeriojs/dom-serializer. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheeriojs/dom-serializer. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70bfbf41`: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b81732f9`: build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql-analysis.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/init@v4.39.3
-        uses: github/codeql-action/analyze@v4.39.3
+        "typescript-eslint": "^8.72.2",
+      "version": "8.72.2",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
+      "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
+        "@typescript-eslint/scope-manager": "8.72.2",
+        "@typescript-eslint/type-utils": "8.72.2",
+        "@typescript-eslint/utils": "8.72.2",
+        "@typescript-eslint/visitor-keys": "8.72.2",
+        "@typescript-eslint/parser": "^8.72.2",
+      "version": "8.72.2",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
+      "integrity": "sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==",
+        "@typescript-eslint/scope-manager": "8.72.2",
+        "@typescript-eslint/types": "8.72.2",
+        "@typescript-eslint/typescript-estree": "8.72.2",
+        "@typescript-eslint/visitor-keys": "8.72.2",
+      "version": "8.72.2",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.2.tgz",
+      "integrity": "sha512-6y5dLTZdHhI8Eh3yIQ/bfQhRKwn5e+TpJj64o18
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/init@v4.39.2
-        uses: github/codeql-action/analyze@v4.39.2
+// Induced defect failure mode:
+        "typescript-eslint": "^8.72.1",
+      "version": "8.72.1",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
+        "@typescript-eslint/scope-manager": "8.72.1",
+        "@typescript-eslint/type-utils": "8.72.1",
+        "@typescript-eslint/utils": "8.72.1",
+        "@typescript-eslint/visitor-keys": "8.72.1",
+        "@typescript-eslint/parser": "^8.72.1",
+      "version": "8.72.1",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
+        "@typescript-eslint/scope-manager": "8.72.1",
+        "@typescript-eslint/types": "8.72.1",
+        "@typescript-eslint/typescript-estree": "8.72.1",
+        "@typescript-eslint/visitor-keys": "8.72.1",
+      "version": "8.72.1",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
+      "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70bfbf41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b81732f9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -10366,3 +10366,7 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `886c258b` | Multi-dimensional audit evidence | 2026-11-16T18:55:52.026Z |
 | `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `84ec1620` | Multi-dimensional audit evidence | 2026-11-16T20:02:34.445Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `015103ec` | Multi-dimensional audit evidence | 2026-11-16T20:02:41.803Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `b81732f9` | Multi-dimensional audit evidence | 2026-11-16T20:11:07.976Z |
+| `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `07698fa2` | Multi-dimensional audit evidence | 2026-11-16T20:11:10.582Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `bf4d6c80` | Multi-dimensional audit evidence | 2026-11-16T20:11:18.143Z |
+| `learn-dom-h-2a843a13` | `project://cheeriojs-dom-serializer` | `b81732f9` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md` | 2026-11-16T20:11:46.441Z |

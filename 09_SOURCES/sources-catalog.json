@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "f17a07a2",
+    "sourceVersion": "bf4d6c80",
     "license": "Apache-2.0",
-    "contentHash": "b0d20128c906d99208e6e8c47d2c77d299ee5584655880a24ae838860335ea51",
-    "lastHarvestedAt": "2026-11-15T09:21:41.997Z",
+    "contentHash": "c41e775bb8292d2b59e10dade3be27161ea3f43bae5bc11e131b8a1e6fdd2bea",
+    "lastHarvestedAt": "2026-11-16T20:11:18.143Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "70bfbf41",
+    "sourceVersion": "b81732f9",
     "license": "MIT",
-    "contentHash": "e603f3d2ecc2cf52b9796fe26d4b51eba07fb4944b4e23d9b31d5bcd18b47535",
-    "lastHarvestedAt": "2026-11-12T03:10:31.535Z",
+    "contentHash": "a3fc7d176929d5a947dbf0dce11949830fe1172387d3e97043b0457699ed9d54",
+    "lastHarvestedAt": "2026-11-16T20:11:07.976Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {
@@ -9533,10 +9533,10 @@
     "repository": "superhighfives/pika",
     "platform": "github",
     "sourceUrl": "https://github.com/superhighfives/pika",
-    "sourceVersion": "1e16dfd2",
+    "sourceVersion": "07698fa2",
     "license": "MIT",
-    "contentHash": "afa835e5fb5f1c44852fcb8bd56687e973b3e3ba25d4d64a742758471df6dbd1",
-    "lastHarvestedAt": "2026-10-30T15:25:41.610Z",
+    "contentHash": "ca7f760915ce1aeda21a377f3e51e2877b3646d2f97af6ac31252575f56d08c3",
+    "lastHarvestedAt": "2026-11-16T20:11:10.582Z",
     "learningId": "learn-github-superhighfives-pika"
   },
   "wooorm-parse-entities": {

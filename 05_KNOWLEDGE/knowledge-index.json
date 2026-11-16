@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T20:02:48.057Z",
-  "total_verified_learnings": 8800,
+  "last_updated": "2026-11-16T20:11:48.994Z",
+  "total_verified_learnings": 8802,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19314,
+  "total_items": 19329,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216193,8 +216193,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "f17a07a2",
-      "content_hash": "b0d20128c906d99208e6e8c47d2c77d299ee5584655880a24ae838860335ea51",
+      "source_version": "bf4d6c80",
+      "content_hash": "c41e775bb8292d2b59e10dade3be27161ea3f43bae5bc11e131b8a1e6fdd2bea",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -216212,6 +216212,11 @@
           "number": 8601,
           "title": "Preserving Terminal Server Build Identity in Asynchronous Distributed Job Waits",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8786,
+          "title": "show Function registration progress and image details",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216219,7 +216224,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T09:21:41.854Z",
+      "verified_at": "2026-11-16T20:11:18.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216273,10 +216278,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "f17a07a2",
-      "content_hash": "09756c6967a94819a614f694e8bd4972ba5f2c8e25798ec30e65542dc6db1a4e",
+      "source_version": "bf4d6c80",
+      "content_hash": "d862a124dafa9b053641857b71b2a28314ecf04934781ffbcbcea3a0ced56228",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T09:21:42.546Z"
+      "persisted_at": "2026-11-16T20:11:18.496Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -242403,10 +242408,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "repository": "lancedb/lancedb",
-      "source_version": "f17a07a2",
-      "content_hash": "1b9a06dbbd43aa846c339e5fed29669f0f775dc8f4089cb8206490c46421a028",
+      "source_version": "bf4d6c80",
+      "content_hash": "8608d3b5d6bafef98aa3881196e08669bb6cadeac3e04f9ea1be342702ca62f1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T09:21:42.352Z"
+      "persisted_at": "2026-11-16T20:11:18.398Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb",
@@ -242597,9 +242602,9 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6bf3705ac3345562f0b0680a771aa1884f12472d583e1052571acbb26f45f85",
+      "content_hash": "386e3053c6f17b78c40b724d048f24ed7ecd09c625ac72666e81f2337a7cc494",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T09:27:08.404Z"
+      "persisted_at": "2026-11-16T20:11:48.865Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings",
@@ -242621,9 +242626,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lancedb-lancedb-learnings",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d2ce856012c078b77d2a5cdfbadce6c8311a5bc629a66a3a37dd0a55b8d75f3",
+      "content_hash": "7f5fec0b1b07478fcd43f81af05cbf4ad0d107911e19c377af1dcc6697a0f0ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T09:27:08.606Z"
+      "persisted_at": "2026-11-16T20:11:48.994Z"
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -256529,14 +256534,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8776,
       "title": "build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2",
-      "source_url": "https://github.com/fb55/css-select",
-      "source_version": "84ec1620",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "b81732f9",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-16T20:02:34.245Z"
+      "verified_at": "2026-11-16T20:11:07.833Z"
     },
     "candidate_directive-test-chrome-ext-fix-the-most-common-flaky-extension-tests": {
       "item_id": "candidate_directive-test-chrome-ext-fix-the-most-common-flaky-extension-tests",
@@ -256554,13 +256559,13 @@
       "item_id": "candidate_directive-build-deps-dev-bump-typescript-eslint-from-8-72-1-to-8-72-2",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XA9I-build-deps-dev-bump-typescript-eslint-from-8-72-1-to-8-72-2.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-8VY7-build-deps-dev-bump-typescript-eslint-from-8-72-1-to-8-72-2.md",
       "title": "build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2",
-      "repository": "fb55-css-select-learnings",
+      "repository": "cheeriojs-dom-serializer-learnings",
       "source_version": "HEAD",
-      "content_hash": "913c6ea331a97b95cda5683b992b11af754b888a937cd67b5d75ad5134fc3d14",
+      "content_hash": "0b4466347881bf979c4715d8b14205b9a003838144e4b3f4b8ad02b143545131",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T20:02:45.943Z"
+      "persisted_at": "2026-11-16T20:11:47.264Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants",
@@ -257189,6 +257194,232 @@
       "content_hash": "13f3e24d2db7ea53785ead87d7319cc256ebc83f485a059c94f4e12c2246cfc4",
       "domain_letter": "K",
       "persisted_at": "2026-11-16T20:02:46.242Z"
+    },
+    "learn-github-cheeriojs-dom-serializer": {
+      "learning_id": "learn-github-cheeriojs-dom-serializer",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cheeriojs/dom-serializer",
+      "repository": "cheeriojs/dom-serializer",
+      "slug": "cheeriojs-dom-serializer",
+      "platform": "github",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "b81732f9",
+      "content_hash": "a3fc7d176929d5a947dbf0dce11949830fe1172387d3e97043b0457699ed9d54",
+      "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8776,
+          "title": "build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T20:11:07.833Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cheeriojs-dom-serializer-technical-construction-intelligence-cheeriojs-dom-seria.md",
+      "title": "Technical Construction Intelligence: cheeriojs/dom-serializer Core Invariants",
+      "repository": "cheeriojs/dom-serializer",
+      "source_version": "b81732f9",
+      "content_hash": "1e5e5473543be88984feb28e68498f92ec00ee02ba8e95e390b1caa85a37cbbc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T20:11:08.238Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cheeriojs-dom-serializer-verification-protocol-empirical-defect-shield-for-cheer.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cheeriojs/dom-serializer",
+      "repository": "cheeriojs/dom-serializer",
+      "source_version": "b81732f9",
+      "content_hash": "662f2712fe7e9ef27c9f8abf7d5ef558792bad9cce148df825cca7991ca21994",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T20:11:08.338Z"
+    },
+    "learn-github-superhighfives-pika": {
+      "learning_id": "learn-github-superhighfives-pika",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "superhighfives/pika",
+      "repository": "superhighfives/pika",
+      "slug": "superhighfives-pika",
+      "platform": "github",
+      "source_url": "https://github.com/superhighfives/pika",
+      "source_version": "07698fa2",
+      "content_hash": "ca7f760915ce1aeda21a377f3e51e2877b3646d2f97af6ac31252575f56d08c3",
+      "dossier_path": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8785,
+          "title": "Bump version to 2.0.3 (build 114/115)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-16T20:11:10.434Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8785": {
+      "learning_id": "rule-8785",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8785,
+      "title": "Bump version to 2.0.3 (build 114/115)",
+      "source_url": "https://github.com/superhighfives/pika",
+      "source_version": "07698fa2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T20:11:10.434Z"
+    },
+    "candidate_directive-bump-version-to-2-0-3-build-114-115": {
+      "item_id": "candidate_directive-bump-version-to-2-0-3-build-114-115",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8WNG-bump-version-to-2-0-3-build-114-115.md",
+      "title": "Bump version to 2.0.3 (build 114/115)",
+      "repository": "superhighfives-pika-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b4b2870d71bec186f2ea67192ac19caa447e69a62e2802c4ba6a1fe014cd23a6",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T20:11:48.182Z"
+    },
+    "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-superhighfives-pika-design-intelligence-superhighfives-pika-core-invariants.md",
+      "title": "Design Intelligence: superhighfives/pika Core Invariants",
+      "repository": "superhighfives/pika",
+      "source_version": "07698fa2",
+      "content_hash": "a54c088a17ee04a2cf0e3eec374daede6997d40a4c918b9ff5d14f9e80d0c083",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T20:11:10.853Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-superhighfives-pika": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-superhighfives-pika",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/superhighfives-pika-verification-protocol-empirical-defect-shield-for-superhighf.md",
+      "title": "Verification Protocol: Empirical Defect Shield for superhighfives/pika",
+      "repository": "superhighfives/pika",
+      "source_version": "07698fa2",
+      "content_hash": "4d66be74c11ac10026224cf9cc3dd3e430ea96cc2311d240a6afc88fe9ab040c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T20:11:10.964Z"
+    },
+    "rule-8786": {
+      "learning_id": "rule-8786",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8786,
+      "title": "show Function registration progress and image details",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "bf4d6c80",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-16T20:11:18.005Z"
+    },
+    "candidate_directive-show-function-registration-progress-and-image-details": {
+      "item_id": "candidate_directive-show-function-registration-progress-and-image-details",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-89LL-show-function-registration-progress-and-image-details.md",
+      "title": "show Function registration progress and image details",
+      "repository": "lancedb/lancedb",
+      "source_version": "bf4d6c80",
+      "content_hash": "d827ca034bb35f04617596f443dea44ec446d43093cc30a5469575f5555a2674",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T20:11:18.299Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-learnings-core-inva": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cheeriojs-dom-serializer-learnings-technical-construction-intelligence-cheeriojs.md",
+      "title": "Technical Construction Intelligence: cheeriojs-dom-serializer-learnings Core Invariants",
+      "repository": "cheeriojs-dom-serializer-learnings",
+      "source_version": "HEAD",
+      "content_hash": "496bb45b1c0a0216714b49912640ccb3921e6a843ac811c2cda16d289778b3e7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T20:11:47.376Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer-learn": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer-learn",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cheeriojs-dom-serializer-learnings-verification-protocol-empirical-defect-shield.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cheeriojs-dom-serializer-learnings",
+      "repository": "cheeriojs-dom-serializer-learnings",
+      "source_version": "HEAD",
+      "content_hash": "449926c0d19b3d1537e7b6f7ec49ede803fec0f6c4282fb28e6c3f5307006778",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T20:11:47.498Z"
+    },
+    "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-superhighfives-pika-learnings-design-intelligence-superhighfives-pika-learnings-.md",
+      "title": "Design Intelligence: superhighfives-pika-learnings Core Invariants",
+      "repository": "superhighfives-pika-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fd401bba2261c113dde7fcf9002da1bb84f00cf7ecf57c533c901f893dc41304",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-16T20:11:48.296Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-superhighfives-pika-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-superhighfives-pika-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/superhighfives-pika-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for superhighfives-pika-learnings",
+      "repository": "superhighfives-pika-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da5542b04a629f01668048629851eb833afde631e543f4a3a5e6b0c63f00febf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-16T20:11:48.420Z"
+    },
+    "candidate_directive-python-show-function-registration-progress-and-image-details": {
+      "item_id": "candidate_directive-python-show-function-registration-progress-and-image-details",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8X38-python-show-function-registration-progress-and-image-details.md",
+      "title": "python): show Function registration progress and image details",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3d8d0b28906459447dc2907e26343d9493dedf681e1af87ba6d765f45f364029",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-16T20:11:48.750Z"
     }
   },
   "ai-builder-brain": {
