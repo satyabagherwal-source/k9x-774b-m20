@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T11:27:16.783Z",
+  "updated_at": "2026-11-17T11:40:47.166Z",
   "stats": {
-    "total_discovered": 4936,
-    "approved_pending_harvest": 4650,
+    "total_discovered": 4943,
+    "approved_pending_harvest": 4657,
     "harvested_count": 0,
     "rejected_count": 286,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4641,
+      "COMMUNITY_AND_EXPERT": 4648,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 103,
       "ENGINEERING_BLOGS": 3,
@@ -106611,6 +106611,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md",
         "fileName": "hf-maxwell-model-maxwell-v1-flash-learnings.md"
+      }
+    },
+    "SRC-11FACB0AB765": {
+      "id": "SRC-11FACB0AB765",
+      "url": "https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fresume-async-dependency-cleanup?q=has%3Asignificant_sys_time",
+      "title": "https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fresume-async-dependency-cleanup?q=has%3Asignificant_sys_time",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:40:46.959Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-DE033A267477": {
+      "id": "SRC-DE033A267477",
+      "url": "https://app.codspeed.io/fasta",
+      "title": "https://app.codspeed.io/fasta",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:40:46.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-367986206C13": {
+      "id": "SRC-367986206C13",
+      "url": "https://github.com/fastapi/fastapi/pull/16760",
+      "title": "https://github.com/fastapi/fastapi/pull/16760",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:40:47.049Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-0106BCDAF48C": {
+      "id": "SRC-0106BCDAF48C",
+      "url": "https://github.com/apps/pr-submit",
+      "title": "https://github.com/apps/pr-submit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:40:47.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-96D9C1A39086": {
+      "id": "SRC-96D9C1A39086",
+      "url": "https://github.com/fastapi/fastapi/pull/16772",
+      "title": "https://github.com/fastapi/fastapi/pull/16772",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:40:47.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-865D8BC6A7E2": {
+      "id": "SRC-865D8BC6A7E2",
+      "url": "https://github.com/fastapi/fastapi/pull/16771",
+      "title": "https://github.com/fastapi/fastapi/pull/16771",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:40:47.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-220363F0FFE4": {
+      "id": "SRC-220363F0FFE4",
+      "url": "https://github.com/fastapi/fastapi/pull/16773",
+      "title": "https://github.com/fastapi/fastapi/pull/16773",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:40:47.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
       }
     }
   }

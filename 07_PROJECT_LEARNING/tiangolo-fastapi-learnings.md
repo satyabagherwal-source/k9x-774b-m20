@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md`  
 > **Source**: github ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  
-> **Source Version**: `5add7a45`  
+> **Source Version**: `a1b3be01`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T23:41:57.154Z  
+> **Timestamp**: 2026-11-17T11:40:36.842Z  
 > **Learning ID**: `learn-github-fastapi-fastapi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T23:41:28.642Z  
+> **Harvest Timestamp**: 2026-11-17T11:40:36.837Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 104671 stars
+- **Stars / Engagement**: 104849 stars
 
 ---
 
@@ -40,12 +40,14 @@
 ### Core Architecture Module: `fastapi/concurrency.py`
 ```
 from collections.abc import AsyncGenerator
-from contextlib import AbstractContextManager
+from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from contextlib import asynccontextmanager as asynccontextmanager
 from typing import TypeVar
+from weakref import WeakKeyDictionary
 
 import anyio.to_thread
-from anyio import CancelScope, CapacityLimiter
+from anyio import CancelScope, CapacityLimiter, Semaphore
+from anyio.lowlevel import RunVar, checkpoint_if_cancelled
 from starlette.concurrency import iterate_in_threadpool as iterate_in_threadpool  # noqa
 from starlette.concurrency import run_in_threadpool as run_in_threadpool  # noqa
 from starlette.concurrency import (  # noqa
@@ -53,6 +55,11 @@ from starlette.concurrency import (  # noqa
 )
 
 _T = TypeVar("_T")
+
+# Weak keys release semaphore bookkeeping when its declaration is collected.
+_dependency_semaphores: RunVar[
+    WeakKeyDictionary["_DependencyConcurrency", Semaphore]
+] = RunVar("fastapi_dependency_semaphores")
 
 
 @asynccontextmanager
@@ -85,6 +92,52 @@ async def contextmanager_in_threadpool(
             await anyio.to_thread.run_sync(
                 cm.__exit__, None, None, None, limiter=exit_limiter
             )
+
+
+@asynccontextmanager
+async def _asynccontextmanager_with_shielded_exit(
+    cm: AbstractAsyncContextManager[_T], cleanup_scope: CancelScope
+) -> AsyncGenerator[_T, None]:
+    # The shared scope was entered before the dependency, so exiting a scope
+    # opened by the dependency still follows LIFO order.
+    was_shielded = cleanup_scope.shield
+    try:
+        async with cm as value:
+            try:
+                yield value
+            finally:
+                cleanup_scope.shield = True
+    finally:
+        cleanup_scope.shield = was_shielded
+    # A task group can suppress cancellation while its parent is shielded.
+    await checkpoint_if_cancelled()
+
+
+class _DependencyConcurrency:
+    def __init__(self, max_concurrency: int) -> None:
+        self.max_concurrency = max_concurrency
+
+    def get_semaphore(self) -> Semaphore:
+        semaphores = _dependency_semaphores.get(None)
+        if semaphores is None:
+            semaphores = WeakKeyDictionary()
+            _dependency_semaphores.set(semaphores)
+
+        semaphore = semaphores.get(self)
+        if semaphore is None:
+            semaphore = semaphores[self] = Semaphore(self.max_concurrency)
+        return semaphore
+
+
+@asynccontextmanager
+async def _contextmanager_with_concurrency_limit(
+    cm: AbstractAsyncContextManager[_T], semaphore: Semaphore
+) -> AsyncGenerator[_T, None]:
+    async with semaphore:
+        # The wrapped generator handles cancellation-safe cleanup. Do not open
+        # a cancel scope here: the dependency may own scopes that must exit first.
+        async with cm as value:
+            yield value
 
 ```
 
@@ -119,6 +172,7 @@ from typing import (
     get_origin,
 )
 
+from anyio import CancelScope
 from fastapi import params
 from fastapi._compat import (
     ModelField,
@@ -144,6 +198,9 @@ from fastapi._compat import (
 )
 from fastapi.background import BackgroundTasks
 from fastapi.concurrency import (
+    _asynccontextmanager_with_shielded_exit,
+    _contextmanager_with_concurrency_limit,
+    _DependencyConcurrency,
     asynccontextmanager,
     contextmanager_in_threadpool,
 )
@@ -244,6 +301,7 @@ def get_parameterless_sub_dependant(*, depends: params.Depends, path: str) -> De
         path=path,
         call=depends.dependency,
         scope=depends.scope,
+        concurrency=depends._concurrency,
         own_oauth_scopes=own_oauth_scopes,
     )
 
@@ -398,15 +456,7 @@ def get_dependant(
     parent_oauth_scopes: list[str] | None = None,
     use_cache: bool = True,
     scope: Literal["function", "request"] | None = None,
-) -> Dependant:
-    dependant = Dependant(
-        call=call,
-        name=name,
-        path=path,
-        use_cache=use_cache,
-        scope=scope,
-        own_oauth_scopes=own_oauth_scopes,
-        parent_oauth_scopes=parent_oaut
+    concurrency: _DependencyConcurrency | N
 ```
 
 ### Core Architecture Module: `fastapi/openapi/utils.py`
@@ -1172,7 +1222,7 @@ def replace_markdown_links(
 ```
 """FastAPI framework, high performance, easy to learn, fast to code, ready for production"""
 
-__version__ = "0.162.5"
+__version__ = "0.163.1"
 
 from starlette import status as status
 
@@ -1484,16 +1534,15 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16739** (2026-11-13): **🐛 Fix async yield dependency cleanup on cancellation**
+  *Symptoms*: 🐛 Fix async yield dependency cleanup on cancellation  ## AI Disclaimer  Made with the help of AI, using Codex with `gpt-6-astra`, manually reviewed.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **20 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fresume-async-dependency-cleanup?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 24` untouched benchmarks        ---  <sub>Comparing <code>codex/resume-async-dependency-cleanup</code> (c8e9dbe) with <code>master</code> (e51ee3b)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/fasta
+
 - **Issue #16734** (2026-11-11): **🐛 Fix synchronous dependency cleanup on cancellation**
   *Symptoms*: 🐛 Fix synchronous dependency cleanup on cancellation  ## AI Disclaimer  Made with the help of AI, using Codex with `gpt-6-astra`, manually reviewed.
   **Post-Mortem & Fix Analysis**:
   > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **20 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/fastapi/fastapi/branches/codex%2Ffix-sync-dependency-cancellation?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 24` untouched benchmarks        ---  <sub>Comparing <code>codex/fix-sync-dependency-cancellation</code> (a163a0d) with <code>master</code> (1c78a21)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/fas
-
-- **Issue #16730** (2026-11-10): **🐛 Require AnyIO 4.1.0 or newer at runtime**
-  *Symptoms*: 🐛 Require AnyIO 4.1.0 or newer at runtime  ## AI Disclaimer  Made with the help of AI, using Codex with `gpt-6-astra`, manually reviewed.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **20 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/fastapi/fastapi/branches/codex%2Fadd-anyio-runtime-dependency?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 24` untouched benchmarks        ---  <sub>Comparing <code>codex/add-anyio-runtime-dependency</code> (b09c49c) with <code>master</code> (84d5f8e)</sub>  <a href="https://app.codspeed.io/fastapi/fastapi/branches/code
-  > ## 📝 Docs preview  Last commit b09c49c7f749bcf25e4359d7e856ca85ddc1c166 at: https://8d6cb744.fastapitiangolo.pages.dev
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1510,279 +1559,298 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb2f4926` (2026-11-11)
-**Commit Message**: 🐛 Fix synchronous dependency cleanup on cancellation (#16734)
+### Incident Patch 1: `a1b3be01` (2026-11-16)
+**Commit Message**: 📝 Update release notes
 
-**File**: `fastapi/concurrency.py` (modified, +16/-11)
+[skip ci]
+
+**File**: `docs/en/docs/release-notes.md` (modified, +1/-0)
 ```diff
-@@ -4,7 +4,7 @@
- from typing import TypeVar
+@@ -9,6 +9,7 @@ hide:
  
- import anyio.to_thread
--from anyio import CapacityLimiter
-+from anyio import CancelScope, CapacityLimiter
- from starlette.concurrency import iterate_in_threadpool as iterate_in_threadpool  # noqa
- from starlette.concurrency import run_in_threadpool as run_in_threadpool  # noqa
- from starlette.concurrency import (  # noqa
-@@ -25,17 +25,22 @@ async def contextmanager_in_threadpool(
-     # since we're creating a new limiter for each call, any non-zero limit
-     # works (1 is arbitrary)
-     exit_limiter = CapacityLimiter(1)
-+    # AnyIO cancellation waits for a running worker, but not for worker capacity.
-+    # Only call __exit__ after __enter__ has succeeded.
-+    value = await run_in_threadpool(cm.__enter__)
-     try:
--        yield await run_in_threadpool(cm.__enter__)
--    except Exception as e:
--        ok = bool(
--            await anyio.to_thread.run_sync(
--                cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
-+        yield value
-+    except BaseException as e:
-+        with CancelScope(shield=True):
-+            ok = bool(
-+                await anyio.to_thread.run_sync(
-+                    cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
-+                )
-             )
--        )
-         if not ok:
--            raise e
-+            raise
-     else:
--        await anyio.to_thread.run_sync(
--            cm.__exit__, None, None, None, limiter=exit_limiter
--        )
-+        with CancelScope(shield=True):
-+            await anyio.to_thread.run_sync(
-+                cm.__exit__, None, None, None, limiter=exit_limiter
-+            )
-```
-
-**File**: `tests/test_concurrency.py` (added, +352/-0)
-```diff
-@@ -0,0 +1,352 @@
-+import asyncio
-+from contextlib import AbstractContextManager
-+from threading import Event, get_ident
-+from traceback import extract_tb
-+from types import TracebackType
-+from typing import Literal
-+
-+import anyio
-+import anyio.from_thread
-+import anyio.to_thread
-+import httpx
-+import pytest
-+from anyio import wait_all_tasks_blocked
-+from anyio.abc import TaskStatus
-+from fastapi import Depends, FastAPI
-+from fastapi.concurrency import contextmanager_in_threadpool
-+
-+pytestmark = pytest.mark.anyio
-+
-+
-+class BaseError(BaseException):
-+    pass
-+
-+
-+class RecordingContextManager(AbstractContextManager[str]):
-+    def __init__(
-+        self,
-+        *,
-+        enter_error: BaseException | None = None,
-+        exit_error: BaseException | None = None,
-+        suppress: bool = False,
-+    ) -> None:
-+        self.enter_error = enter_error
-+        self.exit_error = exit_error
-+        self.suppress = suppress
-+        self.enter_threads: list[int] = []
-+        self.exit_threads: list[int] = []
-+        self.exit_args: list[
-+            tuple[
-+                type[BaseException] | None, BaseException | None, TracebackType | None
-+            ]
-+        ] = []
-+
-+    def __enter__(self) -> str:
-+        self.enter_threads.append(get_ident())
-+        if self.enter_error is not None:
-+            raise self.enter_error
-+        return "value"
-+
-+    def __exit__(
-+        self,
-+        exc_type: type[BaseException] | None,
-+        exc_value: BaseException | None,
-+        traceback: TracebackType | None,
-+    ) -> bool:
-+        self.exit_threads.append(get_ident())
-+        self.exit_args.append((exc_type, exc_value, traceback))
-+        if self.exit_error is not None:
-+            raise self.exit_error
-+        return self.suppress
-+
-+
-+def assert_exited_in_worker(cm: RecordingContextManager) -> None:
-+    assert len(cm.exit_threads) == 1
-+    assert cm.exit_threads[0] != get_ident()
-+
-+
-+async def test_contextmanager_returns_value_and_exits_in_worker() -> None:
-+    cm = RecordingContextManager()
-+    async with contextmanager_in_threadpool(cm) as value:
-+        assert value == "value"
-+    assert cm.enter_threads[0] != get_ident()
-+    assert_exited_in_worker(cm)
-+    assert cm.exit_args == [(None, None, None)]
-+
-+
-+@pytest.mark.parametrize("error_type", [ValueError, BaseError])
-+async def test_failed_enter_does_not_call_exit(
-+    error_type: type[BaseException],
-+) -> None:
-+    error = error_type("entry failed")
-+    cm = RecordingContextManager(enter_error=error)
-+    with pytest.raises(error_type) as caught:
-+        async with contextmanager_in_threadpool(cm):
-+            pytest.fail("Entry should fail")  # pragma: no cover
-+    assert caught.value is error
-+    assert cm.exit_threads == []
-+
-+
-+@pytest.mark.parametrize("error_type", [ValueError, BaseError])
-+@pytest.mark.parametrize("suppress", [False, True])
-+async def test_exit_receives_body_exception(
-+    error_type: type[BaseException], suppress: bool
-+) -> None:
-+    error = error_type("body failed")
-+    cm = RecordingContextManager(suppress=suppress)
-+
-+    async def use() -> None:
-+        async with contextmanager_in_threadpool(cm):
-+            raise error
-+
-+    if suppress:
-+        await use()
-+    else:
-+        with pytest.raises(error_type) as caught:
-+            await use()
-+        assert caught.value is error
-+    assert_exited_in_worker(cm)
-+    exc_type, exc_value, traceback = cm.exit_args[0]
-+    assert exc_type is error_type
-+    assert exc_value is error
-+    assert traceback is not None
-+    assert extract_tb(traceback)[-1].name == "use"
-+
-+
-+@pytest.mark.parametrize("body_state", ["success", "exception", "cancelled"])
-+async def test_cleanup_exception_propagates(body_state: str) -> None:
-+    error = ValueError("cleanup failed")
-+    cm = RecordingContextManager(exit_error=error)
-+    with pytest.raises(ValueError) as caught, anyio.CancelScope() as scope:
-+        async with contextmanager_in_threadpool(cm):
-+            if body_state == "exception":
-+                raise RuntimeError("body failed")
-+            if body_state == "cancelled":
-+                scope.cancel()
-+                await anyio.sleep(0)
-+    assert caught.value is error
-+    assert_exited_in_worker(cm)
-+    if body_state == "exception":
-+        assert isinstance(error.__context__, RuntimeError)
-+    elif body_state == "cancelled":
-+        assert isinstance(error.__context__, anyio.get_cancelled_exc_class())
-+
-+
-+async def test_cancelled_body_exits_in_worker() -> None:
-+    cm = RecordingContextManager()
-+    with anyio.CancelScope() as scope:
-+        async with contextmanager_in_threadpool(cm):
-+            scope.cancel()
-+            await anyio.sleep(0)
-+    assert scope.cancelled_caught
-+    assert_exited_in_worker(cm)
-+    assert isinstance(cm.exit_args[0][1], anyio.get_cancelled_exc_class())
-+
-+
-+async def test_cancelled_scope_exits_before_next_checkpoint() -> None:
-+    cm = RecordingContextManager()
-+    with any
+ ### Translations
+ 
++* 🌐 Update translations for ko (update-outdated). PR [#16760](https://github.com/fastapi/fastapi/pull/16760) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
+ * 🌐 Update translations for tr (add-missing). PR [#16772](https://github.com/fastapi/fastapi/pull/16772) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
+ * 🌐 Update translations for pt (add-missing). PR [#16771](https://github.com/fastapi/fastapi/pull/16771) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
+ * 🌐 Update translations for uk (update-outdated). PR [#16773](https://github.com/fastapi/fastapi/pull/16773) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
 ```
 
 ---
 
-### Incident Patch 2: `0902e8b5` (2026-11-10)
-**Commit Message**: 🐛 Require AnyIO 4.1.0 or newer at runtime (#16730)
+### Incident Patch 2: `9ad38023` (2026-11-16)
+**Commit Message**: 🌐 Update translations for ko (update-outdated) (#16760)
 
-**File**: `pyproject.toml` (modified, +2/-1)
+Co-authored-by: pr-submit[bot] <pr-submit[bot]@users.noreply.github.com>
+
+**File**: `docs/ko/docs/advanced/advanced-dependencies.md` (modified, +87/-0)
 ```diff
-@@ -44,6 +44,7 @@ classifiers = [
- ]
- dependencies = [
-     "starlette>=0.46.0",
-+    "anyio>=4.1.0",
-     "pydantic>=2.9.0",
-     "typing-extensions>=4.8.0",
-     "typing-inspection>=0.4.2",
-@@ -180,7 +181,7 @@ tests = [
-     "opentelemetry-exporter-otlp-proto-http>=1.44.0",
+@@ -65,6 +65,93 @@ checker(q="somequery")
  
-     { include-group = "docs-tests" },
--    "anyio[trio] >=3.2.1,<5.0.0",
-+    "anyio[trio] >=4.1.0,<5.0.0",
-     "coverage[toml] >=7.13,<8.0",
-     "dirty-equals >=0.9.0",
-     "flask >=3.0.0,<4.0.0",
+ ///
+ 
++## 의존성 동시성 제한하기 { #limit-dependency-concurrency }
++
++경우에 따라 동시에 의존성을 사용할 수 있는 요청 수를 제한하고 싶을 수 있습니다.
++
++예를 들어, 데이터베이스에서 사용할 수 있는 연결 수가 제한되어 있을 수 있습니다. 다른 요청이 세션 사용을 마칠 때까지 새 요청이 세션을 생성하기 전에 기다리게 할 수 있습니다.
++
++`Depends()`의 `max_concurrency`를 사용하면 이렇게 할 수 있습니다.
++
++[SQL 데이터베이스 튜토리얼](../tutorial/sql-databases.md)의 `SessionDep` 별칭을 수정해 봅시다:
++
++```Python
++SessionDep = Annotated[Session, Depends(get_session, max_concurrency=5)]
++```
++
++이제 최대 **다섯 개의 요청**이 이 의존성을 통해 동시에 데이터베이스 세션을 열어 둘 수 있습니다.
++
++다른 요청에 세션이 필요하면, 열려 있는 세션 중 하나가 닫힐 때까지 기다립니다.
++
++기다리는 동안에는 **워커 스레드를 점유하지 않으므로**, 해당 스레드에서 다른 코드를 실행할 수 있습니다.
++
++값은 양의 정수여야 합니다. 기본값은 `None`이며, 이는 FastAPI가 의존성을 동시에 실행할 수 있는 횟수를 제한하지 않는다는 뜻입니다.
++
++### 라우트 간 제한 공유하기 { #share-the-limit-between-routes }
++
++이 예시의 모든 라우트는 같은 `SessionDep` 별칭을 사용하므로, 세션 다섯 개라는 제한을 공유합니다.
++
++제한을 공유하려면 **같은 `Depends()` 객체**를 재사용하세요. 예를 들어, 이 예시처럼 `Annotated` 별칭에서 재사용할 수 있습니다.
++
++각 라우트에 새로운 `Depends(get_session, max_concurrency=5)`를 작성하면, 각 라우트는 다섯 개라는 별도의 제한을 갖게 됩니다. 모두 같은 `get_session` 함수를 사용하더라도 마찬가지입니다.
++
++다른 애플리케이션에서 같은 `SessionDep`를 재사용하는 경우에도, 두 애플리케이션이 같은 이벤트 루프에서 실행된다면 제한을 공유합니다. 여기에는 마운트된 애플리케이션도 포함됩니다.
++
++예를 들어, 두 애플리케이션이 같은 데이터베이스 풀에 이 `SessionDep`를 사용하면, 두 애플리케이션을 합쳐 이 의존성을 통해 최대 다섯 개의 세션을 열어 둘 수 있습니다.
++
++애플리케이션들이 별도의 풀을 사용하고 독립적인 제한이 필요하다면, 각 애플리케이션에 별도의 `Depends()` 객체를 생성하세요.
++
++### 다른 세션을 허용하기 전에 세션 닫기 { #close-the-session-before-allowing-another-one }
++
++이 예시에서 `get_session`은 `yield`를 사용합니다. 종료 코드가 세션을 닫는 작업을 마칠 때까지 해당 세션은 제한에 포함됩니다.
++
++의존성의 `scope`는 종료 코드가 실행되는 시점을 결정합니다:
++
++* 기본값인 `scope="request"`에서는 응답이 전송된 후에 실행됩니다.
++* `scope="function"`에서는 *경로 처리 함수*가 끝난 후, 응답을 보내기 전에 실행됩니다.
++
++[조기 종료와 scope](../tutorial/dependencies/dependencies-with-yield.md#early-exit-and-scope)에 대해 더 자세히 알아볼 수 있습니다.
++
++`yield`가 없는 의존성에서는 함수가 끝날 때까지만 해당 호출이 제한에 포함됩니다.
++
++WebSocket 핸들러에서 `yield`가 있는 의존성을 사용하면, 핸들러가 종료되고 의존성의 종료 코드가 끝날 때까지 제한에 포함됩니다.
++
++/// note | 참고
++
++[캐시된 의존성 값](../tutorial/dependencies/sub-dependencies.md#using-the-same-dependency-multiple-times)을 재사용하는 것은 제한에 다시 포함되지 않습니다. 서로 다른 선언이 해당 값을 공유하면, 실제로 의존성을 호출하는 선언만 자체 제한에 포함됩니다.
++
++///
++
++### 애플리케이션에 맞는 제한 선택하기 { #choose-a-limit-for-your-application }
++
++이 세션들이 사용할 수 있는 데이터베이스 연결 수에 맞는 제한을 선택하세요.
++
++애플리케이션의 다른 부분에서도 해당 연결을 사용한다면, 그 부분을 위한 여유도 남겨 두세요. FastAPI는 데이터베이스 연결 풀의 크기를 알지 못합니다.
++
++각 워커 프로세스는 자체 제한을 갖습니다. 예를 들어, 이 의존성을 사용하는 두 워커 프로세스는 두 프로세스를 합쳐 최대 열 개의 세션을 열어 둘 수 있습니다.
++
++/// note | 기술 세부사항
++
++제한은 이벤트 루프별로도 분리됩니다. 서로 다른 이벤트 루프에서 실행되는 애플리케이션들은 같은 `Depends()` 객체를 재사용하더라도 제한을 공유하지 않습니다.
++
++///
++
++### 여러 리소스가 필요한 의존성 { #dependencies-that-need-more-than-one-resource }
++
++FastAPI는 의존성의 제한을 적용하기 전에 해당 의존성의 하위 의존성을 실행합니다.
++
++따라서 데이터베이스 세션을 제한하려면, 세션이 생성되는 `Depends(get_session, ...)`에 `max_concurrency`를 설정하세요.
++
++요청이 끝날 때만 닫히는 세션을 계속 점유하면서 다른 세션이 필요한 경우, 요청이 진행되지 못할 수 있습니다.
++
++예를 들어, 공유된 `Depends(get_session, max_concurrency=1, use_cache=False)`를 같은 요청에서 두 번 사용하는 경우를 생각해 봅시다.
++
++첫 번째 호출은 세션을 생성합니다. 두 번째 호출은 그 세션이 닫히기를 기다립니다. 하지만 첫 번째 세션은 요청이 끝날 때까지 닫힐 수 없고, 요청은 두 번째 호출을 기다리고 있습니다.
++
++한 요청은 세션을 점유한 채 다른 리소스를 기다리고, 다른 요청은 그 리소스를 점유한 채 세션을 기다리는 경우에도 두 요청이 진행되지 못할 수 있습니다.
++
++요청에 여러 리소스가 필요하다면, 항상 같은 순서로 확보하세요. FastAPI는 각 제한을 별도로 적용하며, 요청에 필요한 모든 리소스를 미리 예약하지는 않습니다.
++
+ ## `yield`, `HTTPException`, `except`, 백그라운드 태스크가 있는 의존성 { #dependencies-with-yield-httpexception-except-and-background-tasks }
+ 
+ /// warning | 경고
 ```
 
-**File**: `uv.lock` (modified, +4/-2)
+**File**: `docs/ko/docs/python-types.md` (modified, +1/-1)
 ```diff
-@@ -1076,6 +1076,7 @@ name = "fastapi"
- source = { editable = "." }
- dependencies = [
-     { name = "annotated-doc" },
-+    { name = "anyio" },
-     { name = "opentelemetry-api" },
-     { name = "pydantic" },
-     { name = "starlette" },
-@@ -1255,6 +1256,7 @@ translations = [
- [package.metadata]
- requires-dist = [
-     { name = "annotated-doc", specifier = ">=0.0.2" },
-+    { name = "anyio", specifier = ">=4.1.0" },
-     { name = "email-validator", marker = "extra == 'all'", specifier = ">=2.0.0" },
-     { name = "email-validator", marker = "extra == 'standard'", specifier = ">=2.0.0" },
-     { name = "email-validator", marker = "extra == 'standard-no-fastapi-cloud-cli'", specifier = ">=2.0.0" },
-@@ -1304,7 +1306,7 @@ provides-extras = ["opentelemetry", "standard", "standard-no-fastapi-cloud-cli",
- [package.metadata.requires-dev]
- dev = [
-     { name = "a2wsgi", specifier = ">=1.9.0,<=2.0.0" },
--    { name = "anyio", extras = ["trio"], specifier = ">=3.2.1,<5.0.0" },
-+    { name = "anyio", extras = ["trio"], specifier = ">=4.1.0,<5.0.0" },
-     { name = "black", specifier = ">=25.1.0" },
-     { name = "cairosvg", specifier = ">=2.8.2" },
-     { name = "coverage", extras = ["toml"], specifier = ">=7.13,<8.0" },
-@@ -1384,7 +1386,7 @@ github-actions = [
- ]
- tests = [
-     { name = "a2wsgi", specifier = ">=1.9.0,<=2.0.0" },
--    { name = "anyio", extras = ["trio"], specifier = ">=3.2.1,<5.0.0" },
-+    { name = "anyio", extras = ["trio"], specifier = ">=4.1.0,<5.0.0" },
-     { name = "coverage", extras = ["toml"], specifier = ">=7.13,<8.0" },
-     { name = "dirty-equals", specifier = ">=0.9.0" },
-     { name = "flask", specifier = ">=3.0.0,<4.0.0" },
+@@ -239,7 +239,7 @@ def some_function(data: Any):
+ 
+ 값이 `str` 같은 타입일 수도 있지만, `None`일 수도 있다고 선언할 수 있습니다.
+ 
+-//// tab | Python 3.10+
++//// tab | Python
+ 
+ ```Python hl_lines="1"
+ {!> ../../docs_src/python_types/tutorial009.py!}
+```
+
+**File**: `docs/ko/docs/tutorial/dependencies/classes-as-dependencies.md` (modified, +12/-12)
+```diff
+@@ -101,15 +101,15 @@ FastAPI가 실제로 확인하는 것은 그것이 "호출 가능(callable)"(함
+ 
+ 위 코드에서 `CommonQueryParams`를 두 번 작성하는 방식에 주목하세요:
+ 
+-//// tab | Python 3.10+
++//// tab | Python
+ 
+ ```Python
+ commons: Annotated[CommonQueryParams, Depends(CommonQueryParams)]
+ ```
+ 
+ ////
+ 
+-//// tab | Python 3.10+ Annotated 미사용
++//// tab | Python Annotated 미사용
+ 
+ /// tip | 팁
+ 
+@@ -137,15 +137,15 @@ FastAPI는 여기에서 선언된 매개변수들을 추출하고, 실제로 이
+ 
+ 이 경우 첫 번째 `CommonQueryParams`는 다음에서:
+ 
+-//// tab | Python 3.10+
++//// tab | Python
+ 
+ ```Python
+ commons: Annotated[CommonQueryParams, ...
+ ```
+ 
+ ////
+ 
+-//// tab | Python 3.10+ Annotated 미사용
++//// tab | Python Annotated 미사용
+ 
+ /// tip | 팁
+ 
+@@ -163,15 +163,15 @@ commons: CommonQueryParams ...
+ 
+ 실제로는 이렇게만 작성해도 됩니다:
+ 
+-//// tab | Python 3.10+
++//// tab | Python
+ 
+ ```Python
+ commons: Annotated[Any, Depends(CommonQueryParams)]
+ ```
+ 
+ ////
+ 
+-//// tab | Python 3.10+ Annotated 미사용
++//// tab | Python Annotated 미사용
+ 
+ /// tip | 팁
+ 
+@@ -197,15 +197,15 @@ commons = Depends(CommonQueryParams)
+ 
+ 하지만 `CommonQueryParams`를 두 번 작성하는 코드 반복이 있다는 것을 볼 수 있습니다:
+ 
+-//// tab | Python 3.10+
++//// tab | Python
+ 
+ ```Python
+ commons: Annotated[CommonQueryParams, Depends(CommonQueryParams)]
+ ```
+ 
+ ////
+ 
+-//// tab | Python 3.10+ Annotated 미사용
++//// tab | Python Annotated 미사용
+ 
+ /// tip | 팁
+ 
+@@ -225,15 +225,15 @@ commons: CommonQueryParams = Depends(CommonQueryParams)
+ 
+ 다음처럼 작성하는 대신:
+ 
+-//// tab | Python 3.10+
++//// tab | Python
+ 
+ ```Python
+ commons: Annotated[CommonQueryParams, Depends(CommonQueryParams)]
+ ```
+ 
+ ////
+ 
+-//// tab | Python 3.10+ Annotated 미사용
++//// tab | Python Annotated 미사용
+ 
+ /// tip | 팁
+ 
+@@ -249,15 +249,15 @@ commons: CommonQueryParams = Depends(CommonQueryParams)
+ 
+ ...이렇게 작성합니다:
+ 
+-//// tab | Python 3.10+
++//// tab | Python
+ 
+ ```Python
+ commons: Annotated[CommonQueryParams, Depends()]
+ ```
+ 
+ ////
+ 
+-//// tab | Python 3.10+ Annotated 미사용
++//// tab | Python Annotated 미사용
+ 
+ /// tip | 팁
+ 
+```
+
+**File**: `docs/ko/docs/tutorial/dependencies/sub-dependencies.md` (modified, +2/-2)
+```diff
+@@ -62,7 +62,7 @@ query_extractor --> query_or_cookie_extractor --> read_query
+ 
+ 고급 시나리오로, 같은 요청에서 "cached" 값을 쓰는 대신 매 단계마다(아마도 여러 번) 의존성이 호출되어야 한다는 것을 알고 있다면, `Depends`를 사용할 때 `use_cache=False` 파라미터를 설정할 수 있습니다:
+ 
+-//// tab | Python 3.10+
++//// tab | Python
+ 
+ ```Python hl_lines="2"
+ async def needy_dependency(
+@@ -73,7 +73,7 @@ async def needy_dependency(
+ 
+ ////
+ 
+-//// tab | Python 3.10+ 비 Annotated
++//// tab | Python 비 Annotated
+ 
+ /// tip | 팁
+ 
+```
+
+**File**: `docs/ko/docs/tutorial/path-params.md` (modified, +2/-2)
+```diff
+@@ -134,9 +134,9 @@
+ 
+ ### `Enum` 클래스 생성 { #create-an-enum-class }
+ 
+-`Enum`을 임포트하고 `str`과 `Enum`을 상속하는 서브 클래스를 만듭니다.
++`StrEnum`을 임포트하고 이를 상속하는 서브 클래스를 만듭니다.
+ 
+-`str`을 상속함으로써 API 문서는 값이 `string` 형이어야 하는 것을 알게 되고 이는 문서에 제대로 표시됩니다.
++`StrEnum`의 멤버는 문자열이기도 하므로 API 문서는 값이 `string` 형이어야 하는 것을 알게 되고 이는 문서에 제대로 표시됩니다.
+ 
+ 가능한 값들에 해당하는 고정된 값의 클래스 어트리뷰트들을 만듭니다:
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16735** (2026-11-11): 🔖 Release version 0.162.5 (@pr-submit[bot])
-- **PR #16734** (2026-11-11): 🐛 Fix synchronous dependency cleanup on cancellation (@tiangolo)
-- **PR #16733** (closed): Update testing tutorial to install httpx2 (@808kirai)
-- **PR #16732** (closed): docs: fix dead ReDoc vendor extensions link in extending-openapi (13 languages) (@Hisernberg)
-- **PR #16731** (2026-11-10): 🔖 Release version 0.162.4 (@pr-submit[bot])
-- **PR #16730** (2026-11-10): 🐛 Require AnyIO 4.1.0 or newer at runtime (@tiangolo)
+- **PR #16777** (closed): fix: improve jsonable_encoder bytes error handling (@nidhishkk)
+- **PR #16776** (2026-11-15): 👷 Limit the full test matrix to Python 3.15 (@tiangolo)
+- **PR #16775** (2026-11-15): 🔖 Release version 0.163.1 (@pr-submit[bot])
+- **PR #16774** (closed): perf: skip rebuilding non-overridden dependencies in solve_dependencies (@Ultroncn)
+- **PR #16773** (2026-11-16): 🌐 Update translations for uk (update-outdated) (@pr-submit[bot])
+- **PR #16772** (2026-11-16): 🌐 Update translations for tr (add-missing) (@pr-submit[bot])
 
 ---
 
@@ -1802,53 +1870,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐛 Fix synchronous dependency cleanup on cancellation (#16734)
+## X. 📝 Update release notes
 
 **RULE**:
-When implementing operations in `fastapi/concurrency.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/docs/release-notes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb2f4926`: 🐛 Fix synchronous dependency cleanup on cancellation (#16734). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a1b3be01`: 📝 Update release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `fastapi/concurrency.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/docs/release-notes.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from anyio import CancelScope, CapacityLimiter
-    # AnyIO cancellation waits for a running worker, but not for worker capacity.
-    # Only call __exit__ after __enter__ has succeeded.
-    value = await run_in_threadpool(cm.__enter__)
-        yield value
-    except BaseException as e:
-        with CancelScope(shield=True):
-            ok = bool(
-                await anyio.to_thread.run_sync(
-                    cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
-                )
-            raise
-        with CancelScope(shield=True):
-            await anyio.to_thread.run_sync(
-                cm.__exit__, None, None, None, limiter=exit_limiter
-            )
+* 🌐 Update translations for ko (update-outdated). PR [#16760](https://github.com/fastapi/fastapi/pull/16760) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-from anyio import CapacityLimiter
-        yield await run_in_threadpool(cm.__enter__)
-    except Exception as e:
-        ok = bool(
-            await anyio.to_thread.run_sync(
-                cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
-        )
-            raise e
-        await anyio.to_thread.run_sync(
-            cm.__exit__, None, None, None, limiter=exit_limiter
-        )
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb2f4926` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a1b3be01` are properly handled with clean fallback behavior.

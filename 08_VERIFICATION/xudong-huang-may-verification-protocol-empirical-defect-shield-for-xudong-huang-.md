@@ -4,22 +4,22 @@
 {
   "source_repository": "Xudong-Huang/may",
   "source_url": "https://github.com/Xudong-Huang/may",
-  "source_version": "bcbc907a",
+  "source_version": "9b1e3604",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T21:27:34.229Z",
+  "timestamp": "2026-11-17T11:40:33.591Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-xudong-huang-may",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Xudong-Huang/may](https://github.com/Xudong-Huang/may) (Revision: `bcbc907a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T21:27:34.229Z`  
+> **Provenance**: Harvested from [Xudong-Huang/may](https://github.com/Xudong-Huang/may) (Revision: `9b1e3604`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T11:40:33.591Z`  
 > **Learning ID**: `learn-github-xudong-huang-may`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Xudong-Huang/may` (Commit: `bcbc907a`)
+- **Target Repository**: `Xudong-Huang/may` (Commit: `9b1e3604`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T21:27:33.351Z  
+> **Harvest Timestamp**: 2026-11-17T11:40:32.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: rust stackful coroutine library
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2446 stars
+- **Stars / Engagement**: 2447 stars
 
 ---
 
@@ -291,12 +291,224 @@ impl<T> fmt::Debug for AtomicPtr<T> {
 
 ```
 
+### Core Architecture Module: `may_queue/src/atomic_option.rs`
+```
+use crossbeam_utils::atomic::AtomicCell;
+
+// the boxed fallback must itself be lock-free, otherwise it would serialize
+// through `AtomicCell`'s process-wide sharded lock just like the inline path
+const _: () = assert!(AtomicCell::<Option<Box<()>>>::is_lock_free());
+
+/// A minimal atomic `Option<T>`.
+///
+/// Used by `may`'s synchronization primitives as a single-slot hand-off, and
+/// by the mpsc list as the node value slot. When `Option<T>` fits
+/// `AtomicCell`'s atomic path the value is stored inline and the cell is
+/// lock-free. Otherwise the value is boxed, so the cell stores a pointer and
+/// is still lock-free instead of falling back to `AtomicCell`'s process-wide
+/// sharded lock. The boxed path pays one allocation per stored value; it is
+/// only reached by the instantiations whose value is too big for an atomic
+/// word (coroutine result packets, panic payloads and oversized queue values).
+///
+/// The operations carry the backing `AtomicCell`'s orderings: `store` is a
+/// release store and `swap`/`take` are acq-rel read-modify-writes. They are
+/// not sequentially consistent, so a two-sided handshake that must not let
+/// each side miss the other (the io `wait`/`io_flag` handshake, for example)
+/// pairs its operations with a `fence(SeqCst)` on both sides.
+pub struct AtomicOption<T> {
+    /// The inline, lock-free slot used when `Option<T>` fits an atomic word.
+    cell: AtomicCell<Option<T>>,
+    /// The pointer-sized fallback used otherwise; `Option<Box<T>>` is always
+    /// lock-free.
+    boxed: AtomicCell<Option<Box<T>>>,
+}
+
+impl<T> AtomicOption<T> {
+    /// Whether the inline `AtomicCell` path applies. When this is false the
+    /// value is boxed instead. It is a constant for a given `T`, so every
+    /// thread agrees on which representation a cell uses.
+    pub const DIRECT_ATOMIC: bool = AtomicCell::<Option<T>>::is_lock_free();
+
+    /// Create an empty slot.
+    pub const fn none() -> AtomicOption<T> {
+        AtomicOption {
+            cell: AtomicCell::new(None),
+            boxed: AtomicCell::new(None),
+        }
+    }
+
+    /// Create a slot containing `t`.
+    ///
+    /// Not a `const fn`: the boxed fallback allocates.
+    pub fn some(t: T) -> AtomicOption<T> {
+        let slot = AtomicOption::none();
+        slot.store(t);
+        slot
+    }
+
+    /// Store `t`, dropping any previous value.
+    #[inline]
+    pub fn store(&self, t: T) {
+        if Self::DIRECT_ATOMIC {
+            self.cell.store(Some(t));
+        } else {
+            self.boxed.store(Some(Box::new(t)));
+        }
+    }
+
+    /// Take the value out of the slot, leaving it empty.
+    #[inline]
+    pub fn take(&self) -> Option<T> {
+        if Self::DIRECT_ATOMIC {
+            self.cell.take()
+        } else {
+            self.boxed.take().map(|boxed| *boxed)
+        }
+    }
+
+    /// Replace the value in the slot, returning the previous value.
+    #[inline]
+    pub fn swap(&self, t: T) -> Option<T> {
+        if Self::DIRECT_ATOMIC {
+            self.cell.swap(Some(t))
+        } else {
+            self.boxed.swap(Some(Box::new(t))).map(|boxed| *boxed)
+        }
+    }
+
+    /// Empty the slot, dropping any value.
+    #[inline]
+    pub fn clear(&self) {
+        if Self::DIRECT_ATOMIC {
+            self.cell.store(None);
+        } else {
+            self.boxed.store(None);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::any::Any;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::sync::Arc;
+
+    fn assert_send_sync<T: Send + Sync>() {}
+
+    #[test]
+    fn hand_off() {
+        let slot = AtomicOption::none();
+        assert!(slot.take().is_none());
+        slot.store(1);
+        assert_eq!(slot.take(), Some(1));
+        assert!(slot.take().is_none());
+        assert_eq!(slot.swap(2), None);
+        assert_eq!(slot.swap(3), Some(2));
+        slot.clear();
+        assert!(slot.take().is_none());
+        assert_eq!(AtomicOption::some(4).take(), Some(4));
+    }
+
+    // a value too large for an atomic word takes the boxed fallback
+    #[test]
+    fn boxed_hand_off() {
+        const _: () = assert!(!AtomicOption::<[u64; 4]>::DIRECT_ATOMIC);
+        let slot = AtomicOption::none();
+        slot.store([1; 4]);
+        assert_eq!(slot.take(), Some([1; 4]));
+        assert_eq!(slot.swap([2; 4]), None);
+        assert_eq!(slot.swap([3; 4]), Some([2; 4]));
+        slot.clear();
+        assert_eq!(slot.take(), None);
+        assert_eq!(AtomicOption::some([4; 4]).take(), Some([4; 4]));
+    }
+
+    // the slot stays `Send + Sync` for a `Send` payload even when it is not
+    // `Sync`, and the boxed fallback moves ownership without constraining `T`
+    #[test]
+    fn non_sync_payload() {
+        assert_send_sync::<AtomicOption<Box<dyn Any + Send>>>();
+        // a fat pointer is two words, so it takes the boxed fallback on every
+        // pointer width
+        const _: () = assert!(!AtomicOption::<Box<dyn Any + Send>>::DIRECT_ATOMIC);
+        let slot = Arc::new(AtomicOption::none());
+        slot.store(Box::new(7u32) as Box<dyn Any + Send>);
+        assert_eq!(*slot.take().unwrap().downcast::<u32>().unwrap(), 7);
+        slot.store(Box::new(8u32) as Box<dyn Any + Send>);
+        assert_eq!(*slot.take().unwrap().downcast::<u32>().unwrap(), 8);
+    }
+
+    struct Tracked {
+        tag: usize,
+        drops: Arc<AtomicUsize>,
+        // keep the value too large for the inline atomic word on any target
+        _pad: u64,
+    }
+
+    impl Drop for Tracked {
+        fn drop(&mut self) {
+            self.drops.fetch_add(1, Ordering::Relaxed);
+        }
+    }
+
+    // concurrent swaps must hand every value to exactly one taker and drop
+    // each value exactly once
+    #[test]
+    fn boxed_concurrent_hand_off() {
+        const THREADS: usize = 4;
+        const ROUNDS: usize = 10_000;
+        let total = THREADS * ROUNDS;
+
+        const _: () = assert!(!AtomicOption::<Tracked>::DIRECT_ATOMIC);
+        let drops = Arc::new(AtomicUsize::new(0));
+        let slot = Arc::new(AtomicOption::none());
+        let threads: Vec<_> = (0..THREADS)
+            .map(|t| {
+                let slot = slot.clone();
+                let drops = drops.clone();
+                std::thread::spawn(move || {
+                    let mut taken = Vec::new();
+                    for i in 0..ROUNDS {
+                        let item = Tracked {
+                            tag: t * ROUNDS + i,
+                            drops: drops.clone(),
+                            _pad: 0,
+                        };
+                        if let Some(old) = slot.swap(item) {
+                            taken.push(old.tag);
+                        }
+                    }
+                    taken
+                })
+            })
+            .collect();
+
+        let mut seen = vec![false; total];
+        for thread in threads {
+            for tag in thread.join().unwrap() {
+                assert!(!seen[tag], "tag {tag} was handed out twice");
+                seen[tag] = true;
+            }
+        }
+        if let Some(last) = slot.take() {
+            assert!(!seen[last.tag], "tag {} was handed out twice", last.tag);
+            seen[last.tag] = true;
+        }
+        assert!(seen.iter().all(|&s| s), "a value was lost");
+        assert_eq!(drops.load(Ordering::Relaxed), total, "a value was leaked");
+    }
+}
+
+```
+
 ### Core Architecture Module: `may_queue/src/lib.rs`
 ```
 #![cfg_attr(all(nightly, test), feature(test))]
 
 mod atomic;
 
+pub mod atomic_option;
 pub mod mpsc;
 pub mod mpsc_list;
 pub mod mpsc_list_v1;
@@ -943,17 +1155,17 @@ use std::ptr;
 use std::sync::atomic::{AtomicPtr, AtomicUsize, Ordering};
 use std::sync::Arc;
 
-use crossbeam_utils::atomic::AtomicCell;
 use crossbeam_utils::{Backoff, CachePadded};
+
+use crate::atomic_option::AtomicOption;
 
 struct Node<T> {
     next: AtomicPtr<Node<T>>,
-    // The cell itself is the ownership token between the single consumer
-    // (`pop`/`pop_if`) and the `Entry` handles (`with_mut_data`/`remove`),
+    // The slot itself is the ownership token between the single consumer
+    // (`pop`/`pop_if`/`peek_with`) and the `Entry` handles (`remove`),
     // which may run on different threads: a value is taken out with an atomic
-    // swap, so only one of them can own it at a time. Taking the value out
-    // temporarily is also how `with_mut_data` gets exclusive access to it.
-    value: AtomicCell<Option<T>>,
+    // swap, so only one of them can own it at a time.
+    value: AtomicOption<T>,
     refs: AtomicUsize,
 }
 // linked bit is MSB, ref count is 2 for handle and list
@@ -962,9 +1174,13 @@ const REF_COUNT_MASK: usize = 0x0FFF_FFFF;
 
 impl<T> Node<T> {
     fn new(v: Option<T>) -> *mut Node<T> {
+        let value = match v {
+            Some(v) => AtomicOption::some(v),
+            None => AtomicOption::none(),
+        };
         Box::into_raw(Box::new(Node {
             next: AtomicPtr::new(ptr::null_mut()),
-            value: AtomicCell::new(v),
+            value,
             refs: AtomicUsize::new(REF_INIT),
         }))
     }
@@ -979,8 +1195,8 @@ impl<T> Node<T> {
     ///
     /// Returns `None` if the value is permanently gone (the node was popped or
     /// removed). A value that another thread holds transiently (a concurrent
-    /// `pop`, `with_mut_data` or `remove`) is waited for and taken once it is
-    /// put back.
+    /// `pop`, `peek_with` or `remove`) is waited for and taken once it is put
+    /// back.
     fn take_value(&self) -> Option<ValueGuard<'_, T>> {
         let backoff = Backoff::new();
         loop {
@@ -1021,65 +1237,25 @@ impl<T> Drop for ValueGuard<'_, T> {
     #[inline]
     fn drop(&mut self) {
         if let Some(value) = self.value.take() {
-            self.node.value.store(Some(value));
+            self.node.value.store(value);
         }
     }
 }
 
 pub struct Entry<T>(ptr::NonNull<Node<T>>);
 
-// like `Mutex<T>`, the handle grants exclusive access to the value through
-// `with_mut_data`, so the value only needs to be `Send` to share the handle
+// the handle is a reference-counted token: the value is reached by consuming
+// it in `remove`, which may run on any thread, so `T: Send` is enough to share
+// the handle
 unsafe impl<T: Send> Sync for Entry<T> {}
+unsafe impl<T: Send> Send for Entry<T> {}
 
 impl<T> Entry<T> {
-    /// get the internal data mut ref
-    ///
-    /// Returns `false` without calling `f` if the value has already been taken
-    /// by the consumer (the node was popped) or by `remove`. This is safe to
-    /// call while the consumer is popping the node: the value is moved out for
-    /// the duration of `f`, so a handle can disarm an entry that the consumer
-    /// may be taking at the same time.
-    ///
-    /// The value is put back when `f` returns or panics. `f` must not call back
-    /// into the queue, it would wait for the value that is currently taken out.
-    #[inline]
-    pub fn with_mut_data<F>(&self, f: F) -> bool
-    where
-        F: FnOnce(&mut T),
-    {
-        // SAFETY: `self` keeps the node alive, and `take_value` hands the value
-        // out to at most one caller at a time
-        match unsafe { self.0.as_ref() }.take_value() {
-            Some(mut guard) => {
-                f(guard.as_mut());
-                // the guard puts the value back
-                true
-            }
-            None => false,
-        }
-    }
-
     /// judge if the node is still linked in the list
     #[inline]
     pub fn is_link(&self) -> bool {
         // SAFETY: `self` keeps the node alive
         unsafe { self.0.as_ref() }.is_linked()
-    }
-
-    #[inline]
-    pub fn into_ptr(self) -> *mut Self {
-        let ret = self.0.as_ptr() as *mut Self;
-        ::std::mem::forget(self);
-        ret
-    }
-
-    #[inline]
-    /// # Safety
-    ///
-    /// Must use the ptr that from `Entry::into_ptr`
-    pub unsafe fn from_ptr(ptr: *mut Self) -> Self {
-        Entry(ptr::NonNull::new_unchecked(ptr as *mut Node<T>))
     }
 
     // remove the entry from it's list and return the contained value
@@ -1130,8 +1306,6 @@ impl<T> Drop for Entry<T> {
         }
     }
 }
-
-unsafe impl<T: Send> Send for Entry<T> {}
 
 /// Create a multi-producer single-consumer queue.
 ///
@@ -1238,7 +1412,41 @@ impl<T> Inner<T> {
 
     fn push(&self, t: T) -> (Entry<T>, bool) {
         let node = Node::new(Some(t));
-   
+        let prev = self.head.swap(node, Ordering::AcqRel);
+        // SAFETY: `prev` was the queue head until the swap, and the queue keeps
+        // it alive through its list reference until the consumer retires it
+        unsafe { (*prev).next.store(node, Ordering::Release) };
+        let tail = self.tail.load(Ordering::Relaxed);
+        let is_head = std::ptr::eq(tail, prev);
+        // SAFETY: `node` was just allocated, so the pointer is not null
+        (Entry(unsafe { ptr::NonNull::new_unchecked(node) }), is_head)
+    }
+
+    /// if the queue is empty
+    #[inline]
+    fn is_empty(&self) -> bool {
+        let tail = self.tail.load(Ordering::Relaxed);
+        // the list is empty
+        std::ptr::eq(self.head.load(Ordering::Acquire), tail)
+    }
+
+    /// call `f` with the head value
+    ///
+    /// Removed nodes (tombstones) are skipped, so this returns the first value
+    /// that is still queued instead of `None` for a node that `remove` already
+    /// claimed. The value is taken out while `f` runs, and put back afterwards.
+    #[inline]
+    fn peek_with<F, R>(&self, f: F) -> Option<R>
+    where
+        F: FnOnce(&T) -> R,
+    {
+        let backoff = Backoff::new();
+        let mut next;
+        // spin until tail next become non-null
+        loop {
+            let tail = self.tail.load(Ordering::Relaxed);
+            // the list is empty
+            if std::ptr::eq(self.head.load(Ordering::A
 ```
 
 ### Core Architecture Module: `may_queue/src/spmc.rs`
@@ -1844,295 +2052,6 @@ impl<T> Queue<T> {
         value
 ```
 
-### Core Architecture Module: `src/cqueue.rs`
-```
-//! A select-style event queue for scoped coroutines.
-//!
-//! [`scope`] creates a [`Cqueue`]. Each selector added with [`Cqueue::add`]
-//! (usually through the `cqueue_add!` / `cqueue_add_oneshot!` macros) runs as
-//! a coroutine: its *top half* runs until it calls [`EventSender::send`], which
-//! queues an event and suspends the selector. [`Cqueue::poll`] later resumes
-//! that selector's *bottom half* on the polling coroutine, so bottom halves
-//! run sequentially and only on the poller.
-//!
-//! # Constraints
-//!
-//! * Only one coroutine/thread may call [`Cqueue::poll`] on a given cqueue: the
-//!   event queue has a single consumer and `to_wake` holds a single waiter.
-//! * Selectors must all be registered before polling starts, and the cqueue
-//!   has a single owner: [`Cqueue::add`] must not run concurrently with
-//!   another `add` or with `poll`. Debug builds assert this.
-//! * An [`EventSender`] must only be used from the selector coroutine it was
-//!   passed to. It is `Send` because the selector closure captures it, but
-//!   `send` yields the *current* coroutine, so using it from another coroutine
-//!   would resume the wrong one.
-//! * A panic in a selector is re-raised by a later [`Cqueue::poll`], or by
-//!   `Drop` after every selector has been cancelled and drained; only the
-//!   first selector panic is propagated. If the thread is already unwinding,
-//!   the panic is dropped instead of aborting the process.
-
-use std::any::Any;
-use std::panic;
-use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-use std::sync::Arc;
-use std::time::{Duration, Instant};
-
-use crate::cancel::Cancel;
-use crate::coroutine_impl::{
-    current_cancel_data, run_coroutine, Coroutine, CoroutineImpl, EventSource,
-};
-use crate::join::JoinHandle;
-use crate::scoped::spawn_unsafe;
-use crate::sync::Mutex;
-use crate::sync::{AtomicOption, Blocker};
-use crate::yield_now::yield_with;
-
-use generator::Error;
-use may_queue::mpsc::Queue;
-
-/// The list of possible reasons that `poll` could not return an event.
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
-pub enum PollError {
-    /// The cqueue has no ready event and the timeout expired; an event may
-    /// become available in the future.
-    Timeout,
-
-    /// All select coroutines associated with this cqueue have finished, so no
-    /// more events can be received unless new select coroutines are added with
-    /// [`Cqueue::add`].
-    Finished,
-}
-
-/// This enumeration is the list of the possible reasons that an event
-/// is generated
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
-enum EventKind {
-    /// the select coroutine has successfully generated an event from its top
-    /// half, so its bottom half can be continued by `poll`
-    Normal,
-
-    /// indicates a select coroutine is finished
-    Done,
-}
-
-/// The event that `poll` returns. Events are generated when a select coroutine
-/// reaches [`EventSender::send`] in its top half.
-///
-/// Returned events never own the coroutine: the bottom half has already run by
-/// the time `poll` returns it.
-#[derive(Debug)]
-pub struct Event {
-    /// the token associated with the select coroutine
-    pub token: usize,
-    /// the select coroutine can use it to pass extra data with the caller
-    pub extra: usize,
-    /// id of the select coroutine, used internally to locate the JoinHandle
-    id: usize,
-    /// the event type
-    kind: EventKind,
-    // the suspended coroutine that will run the bottom half, if any
-    co: Option<CoroutineImpl>,
-}
-
-impl Event {
-    /// continue the select coroutine with its bottom half
-    /// when `poll` got a Normal event, should always call it first
-    fn continue_bottom(&mut self) {
-        if let Some(co) = self.co.take() {
-            run_coroutine(co);
-        }
-    }
-}
-
-/// A handle to a select coroutine.
-///
-/// Dropping the handle does not stop the coroutine: use [`Selector::remove`]
-/// to cancel it. Cancellation is asynchronous, so events already queued may
-/// still be delivered before the coroutine finishes.
-pub struct Selector {
-    co: Coroutine,
-}
-
-impl Selector {
-    /// Terminate the select coroutine.
-    ///
-    /// This cancels the coroutine; it is removed from the cqueue
-    /// asynchronously, once it reaches a cancellation point.
-    pub fn remove(self) {
-        unsafe { self.co.cancel() };
-    }
-}
-
-/// Per-selector handle used to communicate with the cqueue.
-///
-/// Created by [`Cqueue::add`] and passed to the selector closure. It must only
-/// be used by that selector coroutine.
-pub struct EventSender<'a> {
-    // index of the select coroutine
-    id: usize,
-    // associated token, passed from `add`
-    token: usize,
-    // the select coroutine can use it to pass extra data to the caller
-    extra: AtomicUsize,
-    // the mpsc event queue to collect the events
-    cqueue: &'a Cqueue,
-}
-
-unsafe impl Send for EventSender<'_> {}
-
-impl EventSender<'_> {
-    /// Get the token.
-    pub fn get_token(&self) -> usize {
-        self.token
-    }
-
-    /// Publish an event and suspend until `poll` has run the bottom half.
-    ///
-    /// # Panics
-    ///
-    /// Panics if called outside a coroutine context.
-    pub fn send(&self, extra: usize) {
-        let cancel = current_cancel_data();
-        cancel.check_cancel();
-        self.extra.store(extra, Ordering::Relaxed);
-        yield_with(self);
-    }
-}
-
-impl EventSource for EventSender<'_> {
-    fn subscribe(&mut self, co: CoroutineImpl) {
-        // Publish before waking: the poller re-checks the queue after
-        // registering its blocker, so either order is observed.
-        self.cqueue.ev_queue.push(Event {
-            id: self.id,
-            token: self.token,
-            extra: self.extra.load(Ordering::Relaxed),
-            kind: EventKind::Normal,
-            co: Some(co),
-        });
-        if let Some(w) = self.cqueue.to_wake.take() {
-            w.unpark();
-        }
-    }
-
-    fn yield_back(&self, _cancel: &'static Cancel) {
-        // ignore the cancel to let the bottom half get processed
-    }
-}
-
-impl Drop for EventSender<'_> {
-    // when the select coroutine finishes this drop is triggered
-    fn drop(&mut self) {
-        self.cqueue.ev_queue.push(Event {
-            id: self.id,
-            token: self.token,
-            extra: self.extra.load(Ordering::Relaxed),
-            kind: EventKind::Done,
-            co: None,
-        });
-        // Publish the done event before decrementing `cnt`: the polling side
-        // reads `cnt` with acquire ordering and re-checks the queue, so it
-        // cannot report `Finished` while this event is still invisible.
-        self.cqueue.cnt.fetch_sub(1, Ordering::Release);
-        if let Some(w) = self.cqueue.to_wake.take() {
-            w.unpark();
-        }
-    }
-}
-
-/// Debug-only guard asserting that a cqueue has a single owner: `add` and
-/// `poll` must not run concurrently.
-#[cfg(debug_assertions)]
-struct BusyGuard<'a>(&'a AtomicBool);
-
-#[cfg(debug_assertions)]
-impl<'a> BusyGuard<'a> {
-    fn acquire(flag: &'a AtomicBool, what: &str) -> Self {
-        if flag.swap(true, Ordering::SeqCst) {
-            panic!("Cqueue::{what} called concurrently with add/poll, which is not supported");
-        }
-        BusyGuard(flag)
-    }
-}
-
-#[cfg(debug_assertions)]
-impl Drop for BusyGuard<'_> {
-    fn drop(&mut self) {
-        self.0.store(false, Ordering::SeqCst);
-    }
-}
-
-/// The event queue for the select model.
-///
-/// Created by [`scope`]; a single coroutine/thread polls it while the select
-/// coroutines publish events.
-pub struct Cqueue {
-    // the mpsc queue that transfers events
-    ev_queue: Queue<Event>,
-    // thread/coroutine for wake up
-    to_wake: AtomicOption<Arc<Blocker>>,
-    // track how many coroutines are left
-    cnt: AtomicUsize,
-    // store the select coroutine handles
-    selectors: Mutex<Vec<Option<JoinHandle<()>>>>,
-    // total created select coroutines
-    total: AtomicUsize,
-    // set once a selector panic has escaped through `poll`; later panics are
-    // not re-raised
-    is_panicking: AtomicBool,
-    // set while `drop` cancels and drains the selectors; a selector panic is
-    // recorded in `panic_data` instead of unwinding in the middle of the drain
-    draining: AtomicBool,
-    // the first selector panic recorded during the drain
-    panic_data: AtomicOption<Box<dyn Any + Send>>,
-    // debug-only guard that `add`/`poll` are not used concurrently
-    #[cfg(debug_assertions)]
-    busy: AtomicBool,
-}
-
-impl Cqueue {
-    /// Register a select coroutine with the cqueue.
-    ///
-    /// The `cqueue_add!` and `cqueue_add_oneshot!` macros should be used to
-    /// create select coroutines correctly. All `add` calls must be sequential
-    /// and must not overlap with [`Cqueue::poll`]: debug builds assert this.
-    pub fn add<'a, F>(&self, token: usize, f: F) -> Selector
-    where
-        F: FnOnce(EventSender) + Send + 'a,
-    {
-        #[cfg(debug_assertions)]
-        let _busy = BusyGuard::acquire(&self.busy, "add");
-
-        let sender = EventSender {
-            id: self.total.load(Ordering::Relaxed),
-            token,
-            extra: 0.into(),
-            cqueue: self,
-        };
-        let h = unsafe { spawn_unsafe(move || f(sender)) };
-        let co = h.coroutine().clone();
-        self.cnt.fetch_add(1, Ordering::Release);
-
-        self.total.fetch_add(1, Ordering::Relaxed);
-        self.selectors.lock().unwrap().push(Some(h));
-        Selector { co }
-    }
-
-    // when the select coroutine is done, check the panic status
-    // if it's panicked, re throw the panic data
-    fn check_panic(&self, id: usize) {
-        if self.is_panicking.load(Ordering::Relaxed) {
-            return;
-        }
-
-        // Take the handle and release the `selectors` lock before joining:
-        // `join` can park, and the `resume_unwind` below must not run while
-        // the lock is held, otherwise the unwind poisons the mutex and a later
-        // `lock().unwrap()` (e.g. in `Drop` while unwinding) aborts.
-        let handle = {
-            let mut selectors = se
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2157,508 +2076,163 @@ impl Cqueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9ef8881` (2026-11-14)
-**Commit Message**: fix: raise the default coroutine stack size to 64KB
+### Incident Patch 1: `2e43c632` (2026-11-16)
+**Commit Message**: fix(sync): make the SyncBlocker hand-off one-shot and lock-free
 
-Cancellation is delivered by unwinding with a `Cancel` panic. On macOS
-arm64 in release builds the unwinder can spend roughly 43KB of coroutine
-stack when it has to parse the DWARF CFI of the io-wait frames: the 32KB
-default left no headroom, and the resulting guard-page fault abandoned
-the unwind without unwinding it, leaving the worker thread marked as
-panicking so later cancels on that worker hung.
+Replace the spin-lock/release-flag protocol with a single CAS claim
+word (0 -> UNPARKED / CANCELLED), and stop `park` from resetting it.
+A producer's hand-off can land after the waiter queued itself but
+before it parks; clearing the claim there lost the resource, which
+could deadlock Mutex/RwLock and drop Condvar/Semaphore signal
+forwarding.
 
-Raise DEFAULT_STACK_SIZE from 0x1000 to 0x2000 (64KB on 64-bit systems).
-The coroutine pool's virtual reservation grows from 48MB to 80MB, but
-resident memory for simple coroutines is unchanged: only the top and
-sentinel pages are touched.
+- document the one-shot claim protocol and update the condvar
+  retention note to use the CANCELLED state
+- add unit tests for hand-off-before-park, waiter-leaves-first, and
+  timed-out-park orderings
 
-Pin 0x2000 in the read-cancel stress test so it keeps the required
-headroom even if the default is tuned down later, and update the docs
-and the stale 32KB comments in the sync primitives.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-**File**: `docs/tune_stack_size.md` (modified, +3/-1)
+**File**: `src/sync/blocking.rs` (modified, +89/-69)
 ```diff
-@@ -1,6 +1,8 @@
- Because [MAY][may] doesn't support automatic stack increasing, you have to determine the stack size of the coroutine before running your application. Read [this][caveat] for more information.
+@@ -10,7 +10,7 @@
  
--When creating coroutines in [MAY][may], the library would alloc a chunk of memory from heap as the stack for each coroutine. The default stack size is 4k words, in 64bit system it is 32k bytes. For most of the cases, this stack size is big enough for simple coroutines. Buf if you have a very complicated coroutine that need more stack size, or you want to shrink the stack size to save some memory usage, you can set the stack size explicitly to a reasonable value.
-+When creating coroutines in [MAY][may], the library would alloc a chunk of memory from heap as the stack for each coroutine. The default stack size is 8k words, in 64bit system it is 64k bytes. For most of the cases, this stack size is big enough for simple coroutines. Buf if you have a very complicated coroutine that need more stack size, or you want to shrink the stack size to save some memory usage, you can set the stack size explicitly to a reasonable value.
-+
-+Keep in mind that cancelling a coroutine is delivered by unwinding a `Cancel` panic, and the unwinder itself needs stack. On some platforms (notably macOS arm64 in release builds) that can take tens of kilobytes. The default leaves room for cancelling a simple coroutine; if you shrink the stack, leave headroom for coroutines that may be cancelled.
+ use parking_lot::{Condvar, Mutex};
  
- ## Change default coroutine stack size
- You can config the default stack size at the initialization stage. when create a coroutine and you not specify the stack size for it, it will use this default stack size.
-```
-
-**File**: `src/config.rs` (modified, +7/-1)
-```diff
-@@ -7,7 +7,13 @@ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
- 
- // default stack size, in usize
- // windows has a minimal size as 0x4a8!!!!
--const DEFAULT_STACK_SIZE: usize = 0x1000;
-+// 0x2000 words = 64KB on 64-bit systems. Cancellation is delivered by
-+// unwinding with a `Cancel` panic, and on macOS arm64 a release build can
-+// spend roughly 43KB of the coroutine stack in the unwinder alone (libunwind
-+// falls back to parsing DWARF CFI with large frames for some io-wait frames).
-+// The previous 32KB default left no headroom there: the guard-page fault
-+// abandoned the unwind and left the worker thread marked as panicking.
-+const DEFAULT_STACK_SIZE: usize = 0x2000;
- const DEFAULT_POOL_CAPACITY: usize = 1000;
- 
- static WORKERS: AtomicUsize = AtomicUsize::new(0);
-```
-
-**File**: `src/sync/condvar.rs` (modified, +1/-1)
-```diff
-@@ -251,7 +251,7 @@ impl Condvar {
-         // canceled and won't take the lock), in which case the signal must
-         // be passed on to the next waiter. A cancel storm can queue many
-         // released blockers back to back, and a recursive call would
--        // overflow the (small, 32KB default) coroutine stack and abort
-+        // overflow the (small) default coroutine stack and abort
-         while let Some(w) = self.to_wake.pop() {
-             // `false` means the waiter had already left: pass the signal on
-             if w.try_hand_off() {
-```
-
-**File**: `src/sync/mutex.rs` (modified, +3/-3)
-```diff
-@@ -716,9 +716,9 @@ mod tests {
-         let m_holder = m.clone();
-         let (tx_held, rx_held) = channel();
-         let (tx_go, rx_go) = channel();
--        // the holder is a coroutine so the release-chain walk runs on a
--        // 32KB coroutine stack; it holds the lock until the test tells it
--        // to release, so the waiters can never acquire the lock
-+        // the holder is a coroutine so the release-chain walk runs on the
-+        // (small) default coroutine stack; it holds the lock until the test
-+        // tells it to release, so the waiters can never acquire the lock
-         let holder = go!(move || {
-             let _g = m_holder.lock().unwrap();
-             tx_held.send(()).unwrap(); // the lock is definitely held now
-```
-
-**File**: `src/sync/rwlock.rs` (modified, +4/-2)
-```diff
-@@ -1122,7 +1122,8 @@ mod tests {
-     /// Regression test for the hand-off chain: a cancel storm leaves many
-     /// released blockers queued, and unlocking must walk past all of them
-     /// iteratively. The old implementation recursed once per released
--    /// waiter and overflowed the 32KB coroutine stack on a chain this long.
-+    /// waiter and overflowed the coroutine stack (then 32KB by default) on a
-+    /// chain this long.
-     #[test]
-     fn test_rwlock_unlock_skips_canceled_waiters() {
-         const N: usize = 500;
-@@ -1161,7 +1162,8 @@ mod tests {
-             assert!(w.join().is_err());
-         }
- 
--        // dropping the guard now walks the released chain on a 32KB stack
-+        // dropping the guard now walks the released chain on the default
-+        // coroutine stack
-         release_tx.send(()).unwrap();
-         holder.join().unwrap();
- 
-```
-
-**File**: `src/sync/semphore.rs` (modified, +3/-3)
-```diff
-@@ -84,7 +84,7 @@ impl Semaphore {
-     ///
-     /// Iterative on purpose: a cancel storm can leave many released blockers
-     /// back to back in the queue, and recursing through `post` would overflow
--    /// the (small, 32KB default) coroutine stack and abort.
-+    /// the (small) default coroutine stack and abort.
-     #[inline]
-     fn wakeup_one(&self) {
-         while let Some(w) = self.to_wake.pop() {
-@@ -455,8 +455,8 @@ mod tests {
- 
-     /// Regression test for the wake-up chain: canceled waiters leave released
-     /// blockers queued, and a single `post` must walk past all of them. The
--    /// old recursive implementation overflowed the 32KB coroutine stack on a
--    /// chain this long.
-+    /// old recursive implementation overflowed the coroutine stack (then
-+    /// 32KB by default) on a chain this long.
-     #[test]
-     fn released_waiters_are_skipped_iteratively() {
-         use crate::sleep::sleep;
-```
-
-**File**: `src/sync/sync_flag.rs` (modified, +3/-2)
-```diff
-@@ -70,7 +70,7 @@ impl SyncFlag {
-     // there is no permit to forward past released blockers: just drain the
-     // queue. Iterative because a cancel storm can leave many released
-     // blockers queued, and re-entering `fire` recursively would overflow the
--    // (small, 32KB default) coroutine stack.
-+    // (small) default coroutine stack.
-     #[inline]
-     fn wakeup_all(&self) {
-         while let Some(w) = self.to_wake.pop() {
-@@ -279,7 +279,8 @@ mod tests {
-     /// Regression test for the release-forwarding chain: canceled waiters
-     /// leave released blockers queued, and a single `fire` must walk past all
-     /// of them. The old implementation re-entered `fire` recursively and
--    /// overflowed the 32KB coroutine stack on a chain this long.
-+    /// overflowed the coroutine stack (then 32KB by default) on a chain this
-+    /// long.
-     #[test]
-     fn released_waiters_are_woken_iteratively() {
-         use crate::sleep::sleep;
-```
-
-**File**: `tests/cancel_stress.rs` (modified, +11/-2)
-```diff
-@@ -195,13 +195,21 @@ fn cancel_accept() {
- 
- /// Cancel a coroutine blocked in `read()` while the peer sends data at the
- /// same time, racing a normal IO completion against the cancel.
-+///
-+/// The cancellation is delivered by unwinding with a `Cancel` panic. On
-+/// macOS arm64 in release builds the unwinder can need roughly 40KB of stack
-+/// to walk the io-read frames (libunwind parses the DWARF CFI with large
-+/// frames). Pin the size here rather than relying on the default, so the
-+/// stress test keeps working if the default is ever tuned down: a guard-page
-+/// fault would abandon the panic unwind without unwinding it and leave the
-+/// worker thread marked as panicking, hanging later cancel tests.
- #[cfg(feature = "io_cancel")]
- #[test]
- fn cancel_read_racing_completion() {
-     for i in 0..300 {
-         let (tx, rx) = channel();
-         let (accepted_tx, accepted_rx) = channel();
--        let j = go!(move || {
-+        let j = go!(coroutine::Builder::new().stack_size(0x2000), move || {
-             let listener = TcpListener::bind(("127.0.0.1", 0)).unwrap();
-             tx.send(listener.local_addr().unwrap()).unwrap();
-             let (mut s, _) = listener.accept().unwrap();
-@@ -211,7 +219,8 @@ fn cancel_read_racing_completion() {
-                 let _ = s.read(&mut buf);
-                 coroutine::yield_now();
-             }
--        });
-+        })
-+        .unwrap();
- 
-         let addr = rx.recv().unwrap();
-         let mut client = std::net::TcpStream::connect(addr).unwrap();
-```
-
----
-
-### Incident Patch 2: `5e24172a` (2026-11-15)
-**Commit Message**: fix: wake the selector that owns a deregistered fd
-
-del_fd pushed the Arc<EventData> into the shard's free queue but never woke
-its event loop. The queue is drained only at the end of that shard's select,
-and a deregistration raises no epoll/kqueue event, so an idle selector
-blocked in epoll_wait/kevent -- forever without io_timeout -- retained every
-closed fd's Arc until an unrelated event arrived.
-
-Wake the owning shard on the first push of a batch, coalesced with an atomic
-armed flag. The owner clears it with an RMW immediately before draining, so
-an arm ordered before the clear makes its push visible to the drain and one
-ordered after it sees false and issues a wakeup.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-**File**: `src/io/sys/unix/epoll.rs` (modified, +65/-2)
-```diff
-@@ -1,7 +1,7 @@
- use std::io;
- use std::os::fd::AsFd;
- use std::os::fd::BorrowedFd;
--use std::sync::atomic::Ordering;
-+use std::sync::atomic::{AtomicBool, Ordering};
+-use std::sync::atomic::{AtomicBool, Ordering};
++use std::sync::atomic::{AtomicUsize, Ordering};
  use std::sync::Arc;
- #[cfg(feature = "io_timeout")]
- use std::time::Duration;
-@@ -29,6 +29,11 @@ struct SingleSelector {
-     #[cfg(feature = "io_timeout")]
-     timer_list: TimerList,
-     free_ev: Queue<Arc<EventData>>,
-+    /// Set while a `free_ev` wakeup is in flight. Producers wake the owning
-+    /// selector only off the `false -> true` transition, so a burst of
-+    /// deregistrations costs at most one syscall; the owner clears it right
-+    /// before draining the queue.
-+    free_ev_armed: AtomicBool,
- }
+ use std::time::{Duration, Instant};
  
- impl SingleSelector {
-@@ -46,6 +51,7 @@ impl SingleSelector {
-             epoll,
-             evfd,
-             free_ev: Queue::new(),
-+            free_ev_armed: AtomicBool::new(false),
-             #[cfg(feature = "io_timeout")]
-             timer_list: TimerList::new(),
-         })
-@@ -290,13 +296,32 @@ impl Selector {
- 
-         // after EpollCtlDel push the unused event data
-         single_selector.free_ev.push((*io_data).clone());
-+        // The queue is drained only by the owning event loop, at the end of
-+        // its `select`, and a deregistration raises no epoll event. An idle
-+        // selector is blocked in `epoll_wait` (forever when the `io_timeout`
-+        // poll is off), so without this wakeup every closed fd's
-+        // `Arc<EventData>` would be retained until some unrelated event
-+        // happened to arrive. Wake the owner, coalescing per shard: only the
-+        // first push of a batch pays for the syscall.
-+        if !single_selector.free_ev_armed.swap(true, Ordering::AcqRel) {
-+            self.wakeup(id);
-+        }
-     }
- 
-     // we can't free the event data directly in the worker thread
-     // must free them before the next epoll_wait
-     #[inline]
-     fn free_unused_event_data(&self, id: usize) {
--        let free_ev = &self.vec[id].free_ev;
-+        let single_selector = &self.vec[id];
-+        let free_ev = &single_selector.free_ev;
-+        // Disarm with an RMW before draining, not a store. An arm ordered
-+        // before this swap is read by it (the arm is a release operation),
-+        // which makes the push preceding the arm visible to the drain below.
-+        // An arm ordered after it observes `false` and wakes the selector,
-+        // covering any push this drain misses. Clearing after the drain could
-+        // instead swallow the wakeup for a push that races with it and leave
-+        // the entry stranded.
-+        single_selector.free_ev_armed.swap(false, Ordering::AcqRel);
-         while !free_ev.bulk_pop().is_empty() {}
-     }
- 
-@@ -320,3 +345,41 @@ impl Selector {
-         io.timer.store(h);
+@@ -227,38 +227,44 @@ impl FastBlocker {
      }
  }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    /// A deregistration from another thread must wake the selector that owns
-+    /// the fd's shard. `free_ev` is drained only by that thread, at the end of
-+    /// its `select`; `epoll_ctl(DEL)` raises no event, and an idle selector
-+    /// blocks in `epoll_wait` with no timeout when the `io_timeout` poll is
-+    /// off. Without the wakeup every closed fd's `Arc<EventData>` would be
-+    /// retained until some unrelated event arrived.
-+    #[test]
-+    fn del_fd_wakes_the_owning_selector() {
-+        let selector = Selector::new(1).unwrap();
-+        let socket = std::net::UdpSocket::bind(("127.0.0.1", 0)).unwrap();
-+        // never registered, so its `Drop` does not touch the global scheduler
-+        let io_data = IoData::new(&socket);
-+
-+        std::thread::scope(|s| {
-+            s.spawn(|| selector.del_fd(&io_data));
-+        });
-+
-+        // the eventfd is the only registration in this selector, so a
-+        // delivered event can only be the free-queue wakeup (data 0)
-+        let mut events = [EpollEvent::new(EpollFlags::EPOLLIN, 0); 4];
-+        let n = selector.vec[0]
-+            .epoll
-+            .wait(&mut events, EpollTimeout::ZERO)
-+            .unwrap();
-+        assert_eq!(n, 1, "del_fd did not wake the owning selector");
-+        assert_eq!(events[0].data(), 0, "unexpected non-wakeup event");
-+
-+        assert_eq!(selector.vec[0].free_ev.len(), 1);
-+        selector.free_unused_event_data(0);
-+        assert!(selector.vec[0].free_ev.is_empty());
-+        assert!(!selector.vec[0].free_ev_armed.load(Ordering::Acquire));
-+    }
-+}
-```
-
-**File**: `src/io/sys/unix/kqueue.rs` (modified, +27/-2)
-```diff
-@@ -1,6 +1,6 @@
- use std::os::fd::{AsRawFd, FromRawFd, RawFd};
- use std::os::unix::io::OwnedFd;
--use std::sync::atomic::Ordering;
-+use std::sync::atomic::{AtomicBool, Ordering};
- use std::sync::Arc;
- use std::time::Duration;
- use std::{io, ptr};
-@@ -51,6 +51,11 @@ struct SingleSelector {
-     #[cfg(feature = "io_timeout")]
-     timer_list: TimerList,
-     free_ev: Queue<Arc<EventData>>,
-+    /// Set while a `free_ev` wakeup is in flight. Producers wake the owning
-+    /// selector only off the `false -> true` transition, so a burst of
-+    /// deregistrations costs at most one syscall; the owner clears it right
-+    /// before draining the queue.
-+    free_ev_armed: AtomicBool,
- }
  
- impl AsRawFd for SingleSelector {
-@@ -81,6 +86,7 @@ impl SingleSelector {
-         Ok(SingleSelector {
-             kqfd,
-             free_ev: Queue::new(),
-+            free_ev_armed: AtomicBool::new(false),
-             #[cfg(feature = "io_timeout")]
-             timer_list: TimerList::new(),
-         })
-@@ -366,13 +372,32 @@ impl Selector {
-         debug!("del fd from kqueue select, fd={:?}", fd);
-         // after EpollCtlDel push the unused event data
-         single_selector.free_ev.push((*io_data).clone());
-+        // The queue is drained only by the owning event loop, at the end of
-+        // its `select`, and a deregistration raises no kqueue event. An idle
-+        // selector is blocked in `kevent` (forever when the `io_timeout` poll
-+        // is off), so without this wakeup every closed fd's
-+        // `Arc<EventData>` would be retained until some unrelated event
-+        // happened to arrive. Wake the owner, coalescing per shard: only the
-+        // first push of a batch pays for the syscall.
-+        if !single_selector.free_ev_armed.swap(true, Ordering::AcqRel) {
-+            self.wakeup(id);
-+        }
-     }
- 
-     // we can't free the event data directly in the worker thread
-     // must free them before the next epoll_wait
-     #[inline]
-     fn free_unused_event_data(&self, id: usize) {
--        let free_ev = &&self.vec[id].free_ev;
-+        let single_selector = &self.vec[id];
-+        let free_ev = &single_selector.free_ev;
-+        // Disarm with an RMW before draining, not a store. An arm ordered
-+        // before this swap is read by it (the arm is a release operation),
-+        // which makes the push preceding the arm visible to the drain below.
-+        // An arm ordered after it observes `false` and wakes the selector,
-+        // covering any push this drain misses. Clearing after the drain could
-+        // instead swallow the wakeup for a push that races with it and leave
-+        // the entry stranded.
-+        single_selector.free_ev_armed.swap(false, Ordering::AcqRel);
-         while !free_ev.bulk_pop().is_empty() {}
-     }
- 
-```
-
----
-
-### Incident Patch 3: `822e8637` (2026-11-15)
-**Commit Message**: fix: address the io review's minor notes
-
-- Process the windows io timer list before the local drain, matching the
-  unix selectors, so overdue timers are not stuck behind up to a budget
-  of locally queued coroutines. Recompute the next expiry after the
-  drain so a timer that became due meanwhile fires immediately and the
-  next select wait stays relative to the current time.
-- Document that connect address resolution runs blocking in the calling
-  worker or thread: a hostname stalls that worker's event loop, so
-  pre-resolve a `SocketAddr` or use `connect_timeout`, which takes one.
-  Offloading would require a `Send + 'static` bound on the public
-  `ToSocketAddrs` API. Remove the stale TODO.
-- Document that the windows `CoIo` Read/Write path uses
-  `ReadFile`/`WriteFile` and therefore does not work on socket handles;
-  direct socket users to the `net` types.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-**File**: `src/io/sys/unix/net/tcp_stream_connect.rs` (modified, +4/-1)
-```diff
-@@ -30,7 +30,10 @@ impl TcpStreamConnect {
-     ) -> io::Result<Self> {
-         use socket2::{Domain, Type};
- 
--        // let err = io::Error::new(io::ErrorKind::Other, "no socket addresses resolved");
-+        // Address resolution is blocking. A hostname lookup runs here, in the
-+        // calling worker (or thread), before the connect is submitted, so it
-+        // can stall that worker's event loop. Pre-resolved `SocketAddr`s (and
-+        // `connect_timeout`, which takes one) do not invoke the resolver.
-         addr.to_socket_addrs()?
-             .next()
-             .ok_or_else(|| io::Error::other("no socket addresses resolved"))
-```
-
-**File**: `src/io/sys/windows/co_io.rs` (modified, +4/-0)
-```diff
-@@ -17,6 +17,10 @@ use crate::yield_now::yield_with_io;
- 
- /// Generic wrapper for any type that can be converted to raw `fd/HANDLE`
- /// this type can be used in coroutine context without blocking the thread
-+///
-+/// On Windows `Read`/`Write` go through `ReadFile`/`WriteFile`, which do not
-+/// work on socket handles. Use the [`crate::net`] types for sockets; this
-+/// wrapper is for files and pipes.
++const UNPARKED: usize = 1;
++const CANCELLED: usize = 2;
++
+ /// A one-shot blocker with an asynchronous release hand-off.
+ ///
+ /// The parker ignores cancellation; the caller checks it. When the wait ends
+ /// without consuming the resource (timeout or cancel), the waiter and a
+ /// producer that wants to hand the resource over must agree on which of them
+ /// forwards it, and exactly one of them must.
+ ///
+-/// Both halves of that handshake run under `spin_lock`, so the decision is
+-/// made with mutual exclusion:
++/// The decision is a single compare-exchange on `status`, so exactly one side
++/// wins without a lock:
+ ///
+-/// 1. `park` returns `Err`, so the waiter calls [`leave_wait`];
+-/// 2. `leave_wait` returns `true` if the resource arrived anyway and the
+-///    caller must forward it;
+-/// 3. a producer calls [`try_hand_off`], which returns `false` if the waiter
+-///    had already left and the caller must forward to the next waiter.
++/// * `0`: no decision yet — the wait is in progress;
++/// * `UNPARKED`: a producer claimed the hand-off; the waiter is (or is about
++///   to be) woken and must take the resource as its own;
++/// * `CANCELLED`: the waiter left without the resource, so a producer that
++///   pops this blocker must forward the resource to the next waiter.
+ ///
+-/// A lock-free version of this handshake cannot work here: it would require
+-/// both sides to publish their own flag before reading the other's, but the
+-/// producer has to read `release` before deciding whether to set `unparked`,
+-/// so both sides can miss each other and lose the resource.
++/// 1. A producer calls [`try_hand_off`], which CASes `0` -> `UNPARKED`. It
++///    returns `true` if the waiter took the resource (and has been unparked)
++///    and `false` if the waiter had already left — then the caller must
++///    forward the resource to the next waiter.
++/// 2. A waiter whose `park` returned an error calls [`leave_wait`], which
++///    CASes `0` -> `CANCELLED`. It returns `false` if the waiter left first
++///    and `true` if a producer had already claimed the hand-off — then the
++///    caller must forward the resource, because the waiter is unwinding and
++///    can no longer use it.
+ ///
+-/// A `SyncBlocker` is used for a single wait only; the flags are never reset.
++/// A `SyncBlocker` is used for a single wait only. The claim word starts at
++/// `0` and is set at most once; it must never be reset (in particular, `park`
++/// must not clear it), because a producer's CAS can land before the waiter
++/// parks.
  #[derive(Debug)]
- pub struct CoIo<T: AsRawHandle> {
-     inner: T,
-```
-
-**File**: `src/io/sys/windows/iocp.rs` (modified, +12/-1)
-```diff
-@@ -229,13 +229,24 @@ impl Selector {
-             crate::coroutine_impl::run_coroutine(co);
-         }
+ pub(crate) struct SyncBlocker {
+-    // set once by `unpark` and never reset: a SyncBlocker is used for a
+-    // single wait only, so the flag only ever needs to be checked once
+-    unparked: AtomicBool,
+-    // used to register the release action
+-    release: AtomicBool,
++    status: AtomicUsize,
++    // coroutine/thread blocker
+     blocker: Blocker,
+-    // a spin lock to protect cancellation handling and release flag updates
+-    spin_lock: AtomicBool,
+ }
  
-+        // Deal with the timer list before draining the local queue, matching
-+        // the unix selectors. The timeout handler only issues `CancelIoEx`
-+        // (the completion resumes the coroutine later), so it cannot enqueue
-+        // local work, but overdue timers should still not wait behind the
-+        // drain.
-+        let _ = single_selector
-+            .timer_list
-+            .schedule_timer(now(), &timeout_handler);
-+
-         // Run the local tasks. The drain is budgeted; if it stops with work
-         // left, `has_local_tasks` makes the event loop poll again with a zero
-         // timeout instead of blocking, so it must stay the last step before
-         // returning to `select`.
-         scheduler.run_queued_tasks(id);
+ impl SyncBlocker {
+@@ -268,43 +274,35 @@ impl SyncBlocker {
+         let blocker = Blocker::new(true);
  
--        // deal with the timer list
-+        // Recompute after the drain: this fires a timer that became due while
-+        // the local tasks were running, and reports the wait relative to the
-+        // current time instead of the start of the drain.
-         let next_expire = single_selector
-             .timer_list
-             .schedule_timer(now(), &timeout_handler);
-```
-
-**File**: `src/io/sys/windows/net/tcp_stream_connect.rs` (modified, +4/-3)
-```diff
-@@ -35,9 +35,10 @@ impl TcpStreamConnect {
-     ) -> io::Result<Self> {
-         use socket2::{Domain, Socket, Type};
- 
--        // TODO:
--        // resolve addr is a blocking operation!
--        // here we should use a thread to finish the resolve?
-+        // Address resolution is blocking. A hostname lookup runs here, in the
-+        // calling worker (or thread), before the connect is submitted, so it
-+        // can stall that worker's event loop. Pre-resolved `SocketAddr`s (and
-+        // `connect_timeout`, which takes one) do not invoke the resolver.
-         addr.to_socket_addrs()?
-             .next()
-             .ok_or_else(|| io::Error::other("no socket addresses resolved"))
-```
-
-**File**: `src/net/tcp.rs` (modified, +8/-0)
-```diff
-@@ -55,6 +55,14 @@ impl TcpStream {
-         &mut self.sys
+         Arc::new(SyncBlocker {
+-            unparked: AtomicBool::new(false),
+-            release: AtomicBool::new(false),
++            status: AtomicUsize::new(0),
+             blocker,
+-            spin_lock: AtomicBool::new(false),
+         })
      }
  
-+    /// Connect to a remote address.
+-    /// Whether [`unpark`](Self::unpark) has already been called.
++    /// Whether a producer has already claimed the hand-off and will wake this
++    /// waiter (see the type-level docs).
 +    ///
-+    /// Address resolution happens before the connect is submitted, in the
-+    /// calling context. A hostname therefore blocks the current worker (or OS
-+    /// thread) in the resolver, and on a worker that stalls its event loop
-+    /// until the lookup finishes. Pre-resolve and pass a `SocketAddr`, or use
-+    /// `connect_timeout`, which takes a resolved `&SocketAddr`, when that
-+    /// matters.
-     pub fn connect<A: ToSocketAddrs>(addr: A) -> io::Result<TcpStream> {
-         let mut c = net_impl::TcpStreamConnect::new(
-             addr,
++    /// Returns `false` once the waiter itself has left via [`leave_wait`].
+     #[inline]
+     pub fn is_unparked(&self) -> bool {
+-        self.unparked.load(Ordering::SeqCst)
+-    }
+-
+-    /// Record that the waiter is leaving without consuming the resource.
+-    #[inline]
+-    fn set_release(&self) {
+-        self.release.store(true, Ordering::SeqCst);
+-    }
+-
+-    /// Take the release flag. Returns true exactly once if it was set.
+-    #[inline]
+-    fn take_release(&self) -> bool {
+-        self.release.swap(false, Ordering::SeqCst)
++        self.status.load(Ordering::Acquire) == UNPARKED
+     }
+ 
+     #[inline]
+     pub fn park(&self, timeout: Option<Duration>) -> Result<(), ParkError> {
++        // the claim word must not be reset here: a producer's `try_hand_off`
++        // can land after the waiter queued itself but before it parks (see
++        // the type-level docs)
+         self.blocker.park(timeout)
+     }
+ 
+-    /// Wake the waiter.
++    /// Wake the waiter after the hand-off claim has been published.
+     ///
+-    /// `unparked` is stored *before* waking so that the woken waiter observes
+-    
+```
+
+**File**: `src/sync/condvar.rs` (modified, +4/-4)
+```diff
+@@ -38,10 +38,10 @@ impl WaitTimeoutResult {
+ pub struct Condvar {
+     // the waiting blocker list
+     // NOTE: a blocker that exits the wait via timeout/cancel without being
+-    // notified stays in the queue (with the release flag set) until a
+-    // notify pops it, so the signal can be forwarded to the next live
+-    // waiter. If a condvar is never notified again, those blockers are
+-    // retained for the lifetime of the condvar.
++    // notified stays in the queue (leave_wait has marked its status
++    // `CANCELLED`) until a notify pops it, so the signal can be forwarded to
++    // the next live waiter. If a condvar is never notified again, those
++    // blockers are retained for the lifetime of the condvar.
+     to_wake: SegQueue<Arc<SyncBlocker>>,
+     // used to verify the same mutex instance
+     mutex: AtomicUsize,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2687,33 +2261,71 @@ Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. raise the default coroutine stack size to 64KB
+## X. sync): make the SyncBlocker hand-off one-shot and lock-free
 
 **RULE**:
-When implementing operations in `docs/tune_stack_size.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/sync/blocking.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9ef8881`: raise the default coroutine stack size to 64KB. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2e43c632`: sync): make the SyncBlocker hand-off one-shot and lock-free. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tune_stack_size.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/blocking.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-When creating coroutines in [MAY][may], the library would alloc a chunk of memory from heap as the stack for each coroutine. The default stack size is 8k words, in 64bit system it is 64k bytes. For most of the cases, this stack size is big enough for simple coroutines. Buf if you have a very complicated coroutine that need more stack size, or you want to shrink the stack size to save some memory usage, you can set the stack size explicitly to a reasonable value.
+use std::sync::atomic::{AtomicUsize, Ordering};
+const UNPARKED: usize = 1;
+const CANCELLED: usize = 2;
 
-Keep in mind that cancelling a coroutine is delivered by unwinding a `Cancel` panic, and the unwinder itself needs stack. On some platforms (notably macOS arm64 in release builds) that can take tens of kilobytes. The default leaves room for cancelling a simple coroutine; if you shrink the stack, leave headroom for coroutines that may be cancelled.
+/// The decision is a single compare-exchange on `status`, so exactly one side
+/// wins without a lock:
+/// * `0`: no decision yet — the wait is in progress;
+/// * `UNPARKED`: a producer claimed the hand-off; the waiter is (or is about
+///   to be) woken and must take the resource as its own;
+/// * `CANCELLED`: the waiter left without the resource, so a producer that
+///   pops this blocker must forward the resource to the next waiter.
+/// 1. A producer calls [`try_hand_off`], which CASes `0` -> `UNPARKED`. It
+///    returns `true` if the waiter took the resource (and has been unparked)
+///    and `false` if the waiter had already left — then the caller must
+///    forward the resource to the next waiter.
+/// 2. A waiter whose `park` returned an error calls [`leave_wait`], which
+///    CASes `0` -> `CANCELLED`. It returns `false` if the waiter left first
+///    and `true` if a producer had already claimed the hand-off — then the
+///    caller must forward the resource, because the waiter is unwinding and
+///    can no longer use it.
+/// A `SyncBlocker` is used for a single wait o
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-When creating coroutines in [MAY][may], the library would alloc a chunk of memory from heap as the stack for each coroutine. The default stack size is 4k words, in 64bit system it is 32k bytes. For most of the cases, this stack size is big enough for simple coroutines. Buf if you have a very complicated coroutine that need more stack size, or you want to shrink the stack size to save some memory usage, you can set the stack size explicitly to a reasonable value.
+use std::sync::atomic::{AtomicBool, Ordering};
+/// Both halves of that handshake run under `spin_lock`, so the decision is
+/// made with mutual exclusion:
+/// 1. `park` returns `Err`, so the waiter calls [`leave_wait`];
+/// 2. `leave_wait` returns `true` if the resource arrived anyway and the
+///    caller must forward it;
+/// 3. a producer calls [`try_hand_off`], which returns `false` if the waiter
+///    had already left and the caller must forward to the next waiter.
+/// A lock-free version of this handshake cannot work here: it would require
+/// both sides to publish their own flag before reading the other's, but the
+/// producer has to read `release` before deciding whether to set `unparked`,
+/// so both sides can miss each other and lose the resource.
+/// A `SyncBlocker` is used for a single wait only; the flags are never reset.
+    // set once by `unpark` and never reset: a SyncBlocker is used for a
+    // single wait only, so the flag only ever needs to be checked once
+    unparked: AtomicBool,
+    // used to register the release action
+    release: AtomicBool,
+    // a spin lock to protect cancellation handling and release flag updates
+    spin_lock: AtomicBool,
+          
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9ef8881` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2e43c632` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

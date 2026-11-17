@@ -10538,3 +10538,8 @@
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:26:09.516Z` | `hf-meituan-longcat-longcat-video-avatar-1.6` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5CFF0AF4` [Domain D] | Yes (`033f9fd5...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:26:41.933Z` | `hf-nex-agi-nex-n2.6` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1453C5CA` [Domain D] | Yes (`3ae8db5e...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:27:16.768Z` | `hf-maxwell-model-maxwell-v1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4085BE40` [Domain D] | Yes (`bb235bd7...`) |
+| `CYCLE-20261117-FAIU` | `2026-11-17T11:40:33.414Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8959` | Yes (`738843af...`) |
+| `CYCLE-20261117-FDOD` | `2026-11-17T11:40:37.501Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4847` | Yes (`f735661e...`) |
+| `CYCLE-20261117-FETP` | `2026-11-17T11:40:38.989Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8960` | Yes (`1b927e3d...`) |
+| `CYCLE-20261117-FI6T` | `2026-11-17T11:40:43.349Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`a962139d...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:41:15.942Z` | `react-navigation-react-navigation` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F963174B` [Domain H] | Yes (`67b2268f...`) |

@@ -4,24 +4,24 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "911f5a91",
+  "source_version": "71959474",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T04:56:53.812Z",
+  "timestamp": "2026-11-17T11:40:43.529Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `911f5a91`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T04:56:53.812Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `71959474`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T11:40:43.529Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 87%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cilium/cilium:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:56:52.524Z  
+> **Harvest Timestamp**: 2026-11-17T11:40:42.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25854 stars
+- **Stars / Engagement**: 25858 stars
 
 ---
 
@@ -1273,13 +1273,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50063** (2026-11-17): **Prepare for release v1.20.5**
-  *Symptoms*:  See the included CHANGELOG.md for a full list of changes. 
+- **Issue #50065** (2026-11-17): **install: Update image digests for v1.18.17**
+  *Symptoms*: Generated from https://github.com/cilium/cilium/actions/runs/44054387724  ## Docker Manifests  ### cilium  `quay.io/cilium/cilium:v1.18.17@sha256:510ff1e3974c6bdd50919fed77082724f70f7d31f0f4b8d4885d757b95679c4e`  ### clustermesh-apiserver  `quay.io/cilium/clustermesh-apiserver:v1.18.17@sha256:9b96a713b1bf5befe7ebf25f06c832ca4afadbc28897e513762f96b990a5bc93`  ### docker-plugin  `quay.io/cilium/docker-plugin:v1.18.17@sha256:a86e19638d7dac5e2f49ae7ccaab57161c797f64d430f2fc9c2310d4805db65d`  ### hubble-relay  `quay.io/cilium/hubble-relay:v1.18.17@sha256:fa7143db5ecb22d9943f84742cd1236c0d853c198d71f6acd6d491881e8d8067`  ### operator-alibabacloud  `quay.io/cilium/operator-alibabacloud:v1.18.17@sha256:271f1668d77f8c9e8365184f91c660c0a69acd6ee6a0ebfaeb17af7c5d2cf094`  ### operator-aws  `quay.io/cilium/operator-aws:v1.18.17@sha256:01366414af64026d0e9d401b54b77538f45d77f3a3e4cedff07067572b005af9`  ### operator-azure  `quay.io/cilium/operator-azure:v1.18.17@sha256:8182c2769ba13ea3901a87c7852fa9fcbca99e4c754e779cc0c6acce19508f65`  ### operator-generic  `quay.io/cilium/operator-generic:v1.18.17@sha256:43f34439c9d847a02632e954aba3ded1293ed0d312dbf4b82ae74bd5659040d3`  ### operator  `quay.io/cilium/operator:v1.18.17@sha256:ab238b050f3d415503f609da72dc1238fcb7cb477a7c7867b871dfbb6f64babf`  Signed-off-by: Cilium Release Bot <noreply@cilium.io> 
   **Post-Mortem & Fix Analysis**:
   > /test
 
-- **Issue #50056** (2026-11-16): **bpf: Add doc for proto argument of `send_trace_notify`**
-  *Symptoms*: This comment update was missed when introducing the new argument.  Fixes: https://github.com/cilium/cilium/pull/39794.
+- **Issue #50063** (2026-11-17): **Prepare for release v1.20.5**
+  *Symptoms*:  See the included CHANGELOG.md for a full list of changes. 
   **Post-Mortem & Fix Analysis**:
   > /test
 
@@ -1298,51 +1298,109 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `911f5a91` (2026-11-05)
-**Commit Message**: docs(ztunnel): add built-in CA limitations
+### Incident Patch 1: `935b0fcc` (2026-10-20)
+**Commit Message**: build, ci: rely on default K8s ClusterNetworkPolicy in kind
 
-The built-in CA for ztunnel is not meant for production use. This commit
-adds an explicit warning about that to the docs.
+Remove manual K8s ClusterNetworkPolicy CRD installation and explicit
+k8sClusterNetworkPolicy.enabled overrides from Makefile.kind and the
+kind conformance workflow now that KCNP is enabled and installed by
+default.
 
-Signed-off-by: Robin Gögge <[REDACTED_EMAIL]>
+Signed-off-by: Blaz Zupan <[REDACTED_EMAIL]>
 
-**File**: `Documentation/security/network/encryption-ztunnel.rst` (modified, +12/-0)
+**File**: `.github/workflows/conformance-kind-proxy-embedded.yaml` (modified, +0/-7)
 ```diff
-@@ -29,6 +29,12 @@ authenticated using mutual TLS before being sent to the destination.
- Generating secrets for authentication
- =====================================
+@@ -89,7 +89,6 @@ jobs:
+           extra-helm-set: "--helm-set=envoy.xdsMode=delta-split"
+     env:
+       job_name: "Installation and Connectivity Test (${{ matrix.name }})"
+-      ENABLE_CLUSTERNETWORKPOLICY: "true"
+     steps:
+       - name: Collect Workflow Telemetry
+         uses: cilium/workflow-telemetry-action@b1a318f80a08acede58027afe1455d037379966f # v2.2.0
+@@ -170,7 +169,6 @@ jobs:
+             --helm-set=hubble.relay.enabled=true
+             --helm-set=cni.chainingMode=portmap \
+             --helm-set-string=kubeProxyReplacement=true \
+-            --helm-set=k8sClusterNetworkPolicy.enabled=${ENABLE_CLUSTERNETWORKPOLICY} \
+             --helm-set=loadBalancer.l7.backend=envoy \
+             --helm-set=envoy.httpRetryTimeout=1 \
+             --helm-set=envoy.httpUpstreamLingerTimeout=0 \
+@@ -227,10 +225,6 @@ jobs:
+           sparse-checkout: |
+             install/kubernetes/cilium
  
-+.. warning::
-+
-+   By default (``encryption.ztunnel.ca.type=internal``), Cilium uses a
-+   built-in CA to issue workload certificates. The built-in CA is intended
-+   for testing and evaluation only. Do not use it in production.
-+
- Cilium's ztunnel integration requires a set of private keys and accompanying
- to certificates be present via Kubernetes secrets. This follows the same pattern
- as IPsec key injections.
-@@ -229,6 +235,12 @@ Limitations
- Known Issues
- ============
- 
-+* The built-in CA (``encryption.ztunnel.ca.type=internal``) is for testing
-+  only and is not suitable for production. See
-+  `Generating secrets for authentication`_. Integration with SPIRE
-+  (``encryption.ztunnel.ca.type=spire``) is in progress and will be the
-+  recommended CA for production use.
-+
- * Cluster Mesh is not currently supported when ztunnel is enabled. Attempting
-   to enable both will result in a validation error.
+-      - name: Install KCNP CRD
+-        run: |
+-          make kind-install-kcnp-crd ENABLE_CLUSTERNETWORKPOLICY=${ENABLE_CLUSTERNETWORKPOLICY}
+-
+       - name: Install Cilium
+         id: install-cilium
+         run: |
+@@ -265,7 +259,6 @@ jobs:
+           helm upgrade cilium untrusted/install/kubernetes/cilium \
+             --namespace kube-system \
+             --reuse-values \
+-            --set=k8sClusterNetworkPolicy.enabled=${ENABLE_CLUSTERNETWORKPOLICY} \
+             --set=tls.readSecretsOnlyFromSecretsNamespace=false \
+             --set=tls.secretSync.enabled=false
  
 ```
 
+**File**: `Makefile.kind` (modified, +0/-16)
+```diff
+@@ -267,30 +267,16 @@ ifdef ADDITIONAL_KIND_VALUES_FILE
+ 	KIND_VALUES_FAST_FILES := $(KIND_VALUES_FAST_FILES) --helm-values=$(ROOT_DIR)/$(ADDITIONAL_KIND_VALUES_FILE)
+ endif
+ 
+-ENABLE_CLUSTERNETWORKPOLICY ?= false
+-
+-# Macro for installing k8s ClusterNetworkPolicy CRD.
+-# - $(1): argument to kubectl, used for specifying --context when needed
+-define KIND_INSTALL_KCNP_CRD
+-if [ "$(ENABLE_CLUSTERNETWORKPOLICY)" = "true" ]; then $(KUBECTL) $(1) get crd clusternetworkpolicies.policy.networking.k8s.io >/dev/null 2>&1 || $(KUBECTL) $(1) apply -f https://raw.githubusercontent.com/kubernetes-sigs/network-policy-api/refs/heads/release-0.2/config/crd/standard/policy.networking.k8s.io_clusternetworkpolicies.yaml; fi
+-endef
+-
+-.PHONY: kind-install-kcnp-crd
+-kind-install-kcnp-crd:
+-	$(QUIET)$(call KIND_INSTALL_KCNP_CRD,$(if $(KIND_CLUSTER_NAME),--context=kind-$(KIND_CLUSTER_NAME)))
+-
+ .PHONY: kind-install-cilium-fast
+ kind-install-cilium-fast: .SHELLFLAGS=-c
+ kind-install-cilium-fast: check_deps kind-ready kind-load-base-images ## "Fast" Install a local Cilium version using volume-mounted binaries into all clusters.
+ 	@echo "  INSTALL cilium"
+ 	$(QUIET)for cluster_name in $${KIND_CLUSTERS:-$(shell kind get clusters)}; do \
+ 		$(CILIUM_CLI) --context=kind-$$cluster_name uninstall >/dev/null 2>&1 || true; \
+ 		sleep 5; \
+-		$(call KIND_INSTALL_KCNP_CRD,--context=kind-$$cluster_name); \
+ 		$(CILIUM_CLI) install --context=kind-$$cluster_name \
+ 			--chart-directory=$(ROOT_DIR)/install/kubernetes/cilium \
+ 			$(KIND_VALUES_FAST_FILES) \
+-			--set=k8sClusterNetworkPolicy.enabled=$(ENABLE_CLUSTERNETWORKPOLICY) \
+ 			--version= >/dev/null ; \
+ 	done
+ 
+@@ -408,11 +394,9 @@ kind-install-cilium: check_deps kind-ready ## Install a local Cilium version int
+ 	# reinstall here. https://github.com/cilium/cilium-cli/issues/205
+ 	-@$(CILIUM_CLI) uninstall >/dev/null 2>&1 || true
+ 
+-	$(QUIET)$(call KIND_INSTALL_KCNP_CRD)
+ 	$(CILIUM_CLI) install \
+ 		--chart-directory=$(ROOT_DIR)/install/kubernetes/cilium \
+ 		$(KIND_VALUES_FILES) \
+-		--set=k8sClusterNetworkPolicy.enabled=$(ENABLE_CLUSTERNETWORKPOLICY) \
+ 		--version=
+ 
+ .PHONY: kind-install-cilium-datapath-plugin
+```
+
 #### Recent Merged Pull Requests:
+- **PR #50065** (2026-11-17): install: Update image digests for v1.18.17 (@cilium-release-bot[bot])
 - **PR #50063** (2026-11-17): Prepare for release v1.20.5 (@cilium-release-bot[bot])
 - **PR #50056** (2026-11-16): bpf: Add doc for proto argument of `send_trace_notify` (@pchaigno)
-- **PR #50047** (2026-11-16): [Backport v1.20] pkg/ipam: Bump default Cloud IP release delay to 30 minutes (@41ks)
-- **PR #50045** (2026-11-16): v1.20 Backports 2026-11-16 (@mhofstetter)
-- **PR #50042** (2026-11-16): v1.18 Backports 2026-11-16 (@mhofstetter)
-- **PR #50041** (2026-11-16): v1.19 Backports 2026-11-16 (@mhofstetter)
+- **PR #50055** (2026-11-17): Prepare for release v1.19.11 (@cilium-release-bot[bot])
+- **PR #50054** (2026-11-17): loader: Run privileged tests on a private bpffs (@aanm)
+- **PR #50050** (2026-11-17): Prepare for release v1.18.17 (@cilium-release-bot[bot])
 
 ---
 
@@ -1356,48 +1414,6 @@ Signed-off-by: Robin Gögge <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. docs(ztunnel): add built-in CA limitations
-
-**RULE**:
-When implementing operations in `Documentation/security/network/encryption-ztunnel.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `911f5a91`: docs(ztunnel): add built-in CA limitations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/security/network/encryption-ztunnel.rst`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-.. warning::
-
-   By default (``encryption.ztunnel.ca.type=internal``), Cilium uses a
-   built-in CA to issue workload certificates. The built-in CA is intended
-   for testing and evaluation only. Do not use it in production.
-
-* The built-in CA (``encryption.ztunnel.ca.type=internal``) is for testing
-  only and is not suitable for production. See
-  `Generating secrets for authentication`_. Integration with SPIRE
-  (``encryption.ztunnel.ca.type=spire``) is in progress and will be the
-  recommended CA for production use.
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `911f5a91` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

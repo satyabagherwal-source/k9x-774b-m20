@@ -10571,3 +10571,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-5cff0af4` | `project://hf-meituan-longcat-longcat-video-avatar-1.6` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md` | 2026-11-17T11:26:09.516Z |
 | `learn-dom-d-1453c5ca` | `project://hf-nex-agi-nex-n2.6` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md` | 2026-11-17T11:26:41.933Z |
 | `learn-dom-d-4085be40` | `project://hf-maxwell-model-maxwell-v1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md` | 2026-11-17T11:27:16.768Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `9b1e3604` | Multi-dimensional audit evidence | 2026-11-17T11:40:33.418Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `a1b3be01` | Multi-dimensional audit evidence | 2026-11-17T11:40:37.505Z |
+| `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `3820f31f` | Multi-dimensional audit evidence | 2026-11-17T11:40:38.993Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `71959474` | Multi-dimensional audit evidence | 2026-11-17T11:40:43.353Z |
+| `learn-dom-h-f963174b` | `project://react-navigation-react-navigation` | `3820f31f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md` | 2026-11-17T11:41:15.942Z |

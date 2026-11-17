@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T11:27:16.766Z",
+  "updated_at": "2026-11-17T11:41:15.940Z",
   "statistics": {
-    "total_nodes": 314,
+    "total_nodes": 315,
     "total_edges": 155,
     "domain_distribution": {
       "D": 226,
       "M": 1,
-      "H": 38,
+      "H": 39,
       "J": 12,
       "K": 17,
       "L": 4,
@@ -7033,6 +7033,28 @@
       ],
       "created_at": "2026-11-17T11:27:16.766Z",
       "updated_at": "2026-11-17T11:27:16.766Z"
+    },
+    "DOM-H-F963174B": {
+      "id": "DOM-H-F963174B",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "restore focused input after going back in stack",
+      "summary": "Prevents defects observed in production commit `cbd71f9b`: restore focused input after going back in stack. Unvalidated execution paths caus -> When implementing operations in `packages/stack/src/utils/__tests__/useKeyboardManager.test.tsx`, engineers MUST enforce rigorous boundary v",
+      "confidence": 0.69,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://react-navigation-react-navigation/react-navigation-react-navigation-learnings.md",
+        "source_version": "3820f31f",
+        "observed_at": "2026-11-17T11:40:38.107Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-navigation-react-navigation)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-17T11:41:15.940Z",
+      "updated_at": "2026-11-17T11:41:15.940Z"
     }
   },
   "edges": [

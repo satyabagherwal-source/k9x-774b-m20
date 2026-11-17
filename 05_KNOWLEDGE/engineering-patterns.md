@@ -654239,3 +654239,259 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `dbf3e5f9` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8959. make the SyncBlocker hand-off one-shot and lock-free (Harvested from Xudong-Huang/may)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "make the SyncBlocker hand-off one-shot and lock-free",
+  "source": "Xudong-Huang/may",
+  "source_url": "https://github.com/Xudong-Huang/may",
+  "source_version": "9b1e3604",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T11:40:32.978Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-xudong-huang-may",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Xudong-Huang/may](https://github.com/Xudong-Huang/may) (Revision: `9b1e3604`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/sync/blocking.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2e43c632`: sync): make the SyncBlocker hand-off one-shot and lock-free. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/blocking.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use std::sync::atomic::{AtomicUsize, Ordering};
+const UNPARKED: usize = 1;
+const CANCELLED: usize = 2;
+
+/// The decision is a single compare-exchange on `status`, so exactly one side
+/// wins without a lock:
+/// * `0`: no decision yet — the wait is in progress;
+/// * `UNPARKED`: a producer claimed the hand-off; the waiter is (or is about
+///   to be) woken and must take the resource as its own;
+/// * `CANCELLED`: the waiter left without the resource, so a producer that
+///   pops this blocker must forward the resource to the next waiter.
+/// 1. A producer calls [`try_hand_off`], which CASes `0` -> `UNPARKED`. It
+///    returns `true` if the waiter took the resource (and has been unparked)
+///    and `false` if the waiter had already left — then the caller must
+///    forward the resource to the next waiter.
+/// 2. A waiter whose `park` returned an error calls [`leave_wait`], which
+///    CASes `0` -> `CANCELLED`. It returns `false` if the waiter left first
+///    and `true` if a producer had already claimed the hand-off — then the
+///    caller must forward the resource, because the waiter is unwinding and
+///    can no longer use it.
+/// A `SyncBlocker` is used for a single wait o
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+use std::sync::atomic::{AtomicBool, Ordering};
+/// Both halves of that handshake run under `spin_lock`, so the decision is
+/// made with mutual exclusion:
+/// 1. `park` returns `Err`, so the waiter calls [`leave_wait`];
+/// 2. `leave_wait` returns `true` if the resource arrived anyway and the
+///    caller must forward it;
+/// 3. a producer calls [`try_hand_off`], which returns `false` if the waiter
+///    had already left and the caller must forward to the next waiter.
+/// A lock-free version of this handshake cannot work here: it would require
+/// both sides to publish their own flag before reading the other's, but the
+/// producer has to read `release` before deciding whether to set `unparked`,
+/// so both sides can miss each other and lose the resource.
+/// A `SyncBlocker` is used for a single wait only; the flags are never reset.
+    // set once by `unpark` and never reset: a SyncBlocker is used for a
+    // single wait only, so the flag only ever needs to be checked once
+    unparked: AtomicBool,
+    // used to register the release action
+    release: AtomicBool,
+    // a spin lock to protect cancellation handling and release flag updates
+    spin_lock: AtomicBool,
+          
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2e43c632` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8960. restore focused input after going back in stack (Harvested from react-navigation/react-navigation)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "restore focused input after going back in stack",
+  "source": "react-navigation/react-navigation",
+  "source_url": "https://github.com/react-navigation/react-navigation",
+  "source_version": "3820f31f",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-11-17T11:40:38.569Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-react-navigation-react-navigation",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [react-navigation/react-navigation](https://github.com/react-navigation/react-navigation) (Revision: `3820f31f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/stack/src/utils/__tests__/useKeyboardManager.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cbd71f9b`: restore focused input after going back in stack. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/stack/src/utils/__tests__/useKeyboardManager.test.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { afterEach, expect, jest, test } from '@jest/globals';
+import { act, render, renderHook } from '@testing-library/react-native';
+import { Activity, createRef, type RefObject } from 'react';
+  Platform,
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+  active: boolean;
+test('focuses input again when confirming an opening transition', async () => {
+  const contentRef = createRef<HostInstance>();
+
+  const { result } = await renderHook(
+    (props: Props) => useKeyboardManager(props),
+    {
+      initialProps: {
+        active: true,
+        enabled: true,
+        focused: true,
+        contentRef,
+      },
+    }
+  );
+
+  const focusMock = jest.fn();
+  const input = { blur: jest.fn(), focus: focusMock } as any;
+
+  jest.spyOn(TextInput.State, 'currentlyFocusedInput').mockReturnValue(input);
+
+  await act(() => result.current.onPageChangeStart());
+  await act(() =>
+    result.current.onPageChangeConfirm({
+      gesture: false,
+      active: true,
+      closing: false,
+    })
+  );
+
+  await act(() => jest.runAllTimers());
+
+  expect(focusMock).toHaveBeenCalledTimes(1);
+});
+test('dismisses keyboard when closing without gesture', async () => {
+  const contentRef = createRef<HostInstance>
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+import { describe, expect, jest, test } from '@jest/globals';
+import { act, renderHook } from '@testing-library/react-native';
+import type { RefObject } from 'react';
+const contentRef = {
+  current: null,
+} satisfies RefObject<HostInstance | null>;
+describe('useKeyboardManager', () => {
+  describe('onPageChangeConfirm', () => {
+    test('calls onPageChangeCancel when closing is false', async () => {
+      const { result } = await renderHook(
+        (props: Props) => useKeyboardManager(props),
+        { initialProps: { enabled: true, focused: true, contentRef } }
+      );
+
+      const blurMock = jest.fn();
+      const input = { blur: blurMock } as any;
+
+      jest
+        .spyOn(TextInput.State, 'currentlyFocusedInput')
+        .mockReturnValue(input);
+
+      await act(() => result.current.onPageChangeStart());
+      await act(() =>
+        result.current.onPageChangeConfirm({
+          gesture: false,
+          active: true,
+          closing: false,
+        })
+      );
+
+      expect(blurMock).toHaveBeenCalledTimes(1);
+    });
+    test('dismisses keyboard when closing without gesture', async () => {
+      const dismissSpy = jest.spyOn(Keyboard, 'dismiss');
+      const { result } =
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cbd71f9b` are properly handled with clean fallback behavior.

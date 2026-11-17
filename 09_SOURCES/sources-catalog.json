@@ -1983,10 +1983,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/tiangolo/fastapi",
-    "sourceVersion": "5add7a45",
+    "sourceVersion": "a1b3be01",
     "license": "MIT",
-    "contentHash": "f918b3270d2a4fd1b1d54de8a804aefdafdb5e630077f6da628e18448475bb8d",
-    "lastHarvestedAt": "2026-11-12T23:42:16.723Z",
+    "contentHash": "f735661edf851f08369be72bc68693cf64cfbe7b254c55605169a82bb2a56f9f",
+    "lastHarvestedAt": "2026-11-17T11:40:37.505Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "pallets-flask": {
@@ -2733,10 +2733,10 @@
     "repository": "react-navigation/react-navigation",
     "platform": "github",
     "sourceUrl": "https://github.com/react-navigation/react-navigation",
-    "sourceVersion": "5e31b0a0",
+    "sourceVersion": "3820f31f",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "57e23e45411d02cb3ccfd233b41ccce7a6bdf029fb6df575002f6fee4075503d",
-    "lastHarvestedAt": "2026-11-13T20:54:26.133Z",
+    "contentHash": "1b927e3d957e80155fd7f97e6b0cedd0fc89470b99cfaf1ffe6349c36990ffa9",
+    "lastHarvestedAt": "2026-11-17T11:40:38.993Z",
     "learningId": "learn-github-react-navigation-react-navigation"
   },
   "easegress-io-easegress": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "911f5a91",
+    "sourceVersion": "71959474",
     "license": "Apache-2.0",
-    "contentHash": "803b72102688fcd02f05a3224ef90425752d7b31bb94f83e669090297fe9f5d3",
-    "lastHarvestedAt": "2026-11-17T04:56:53.593Z",
+    "contentHash": "a962139db2e9d024469a20289c45223bd025247aad8279ceec815cbffe337e71",
+    "lastHarvestedAt": "2026-11-17T11:40:43.353Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5893,10 +5893,10 @@
     "repository": "Xudong-Huang/may",
     "platform": "github",
     "sourceUrl": "https://github.com/Xudong-Huang/may",
-    "sourceVersion": "bcbc907a",
+    "sourceVersion": "9b1e3604",
     "license": "Apache-2.0",
-    "contentHash": "1d64b1b9e997291487e42d3097e8324fd92b4979503d308a69e71c7b094cd27f",
-    "lastHarvestedAt": "2026-11-15T21:27:34.079Z",
+    "contentHash": "738843afbf4d489e8a78d74cff68fb57a42fd8260e4b1bfbaefd7dd7ab6bf840",
+    "lastHarvestedAt": "2026-11-17T11:40:33.418Z",
     "learningId": "learn-github-xudong-huang-may"
   },
   "rcbyr-keen-slider": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T11:27:16.988Z",
-  "total_records": 1534,
+  "last_updated": "2026-11-17T11:41:16.348Z",
+  "total_records": 1539,
   "domains": {
     "A": {
       "total": 11,
@@ -1028,7 +1028,7 @@
       ]
     },
     "H": {
-      "total": 364,
+      "total": 369,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1393,7 +1393,12 @@
         "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants",
         "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",
         "DOM-H-13452896",
-        "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fastapi-fastapi-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-core-invar",
+        "domain_intelligence-technical-construction-intelligence-tiangolo-fastapi-learnings-core-invariants",
+        "DOM-H-F963174B",
+        "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-"
       ]
     },
     "I": {
@@ -7277,8 +7282,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "b0f2838806f086813d5fc91e5e4e9890e71bde8172841f0b1ab4747b9a5176a3",
-      "created_at": "2026-11-17T04:56:53.962Z"
+      "content_hash": "a7dbbef3d9e289831bceb3e37f18aaa754a61ca81919e0ab04896a011fb3638a",
+      "created_at": "2026-11-17T11:40:43.531Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -10610,8 +10615,8 @@
       "title": "Architecture Intelligence: Xudong-Huang/may Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-architecture-intelligence-xudong-huang-may-core-invariants.md",
       "repository": "Xudong-Huang/may",
-      "content_hash": "847971c478ece5df84d27517780b726dff2111b99047508ba0cb93e3d48e8bc0",
-      "created_at": "2026-11-15T21:27:34.317Z"
+      "content_hash": "fdd50b191c897c079b9e70ce85d1a0c1258d42ac1cb4148ffd437f399f80e404",
+      "created_at": "2026-11-17T11:40:33.710Z"
     },
     "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva",
@@ -10646,8 +10651,8 @@
       "title": "Architecture Intelligence: xudong-huang-may-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-learnings-architecture-intelligence-xudong-huang-may-learnings-.md",
       "repository": "xudong-huang-may-learnings",
-      "content_hash": "c4d753749ca6ff26766b8ecf56b72a112abf2e2ca23f6f390d94ec26183d649c",
-      "created_at": "2026-11-15T21:27:43.746Z"
+      "content_hash": "ce3361f107c3ad6cfddfff9e453d9d3dd4aa43551f0b9365a5bea8842f546f38",
+      "created_at": "2026-11-17T11:40:46.610Z"
     },
     "DOM-D-6F87F39B": {
       "record_id": "DOM-D-6F87F39B",
@@ -26712,6 +26717,84 @@
       "repository": "hf-maxwell-model-maxwell-v1-flash-learnings",
       "content_hash": "63920ed04173dcd1c3ba91d1e5e595508b9a8da175deb0b4e192b2b7727cd146",
       "created_at": "2026-11-17T11:27:16.988Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fastapi-fastapi-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fastapi-fastapi-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fastapi/fastapi Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi-technical-construction-intelligence-fastapi-fastapi-core-invari.md",
+      "repository": "fastapi/fastapi",
+      "content_hash": "6c3bba83ef06cb2614c0e7cca97846c7dc675d82f727cc04eab000372a779a08",
+      "created_at": "2026-11-17T11:40:37.829Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react-navigation/react-navigation Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-navigation-react-navigation-technical-construction-intelligence-react-navi.md",
+      "repository": "react-navigation/react-navigation",
+      "content_hash": "02e764ea81c291585e09730f0d0bd0bb0877aa7e4760137c64fbc1244f9aa1d5",
+      "created_at": "2026-11-17T11:40:39.283Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tiangolo-fastapi-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tiangolo-fastapi-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tiangolo-fastapi-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi-learnings-technical-construction-intelligence-tiangolo-fastapi-.md",
+      "repository": "tiangolo-fastapi-learnings",
+      "content_hash": "a7fd8ceee6049ca5bd91739ecddd0bf6f0ec9ab4f30395bbfc5ad7375d955a54",
+      "created_at": "2026-11-17T11:40:47.454Z"
+    },
+    "DOM-H-F963174B": {
+      "record_id": "DOM-H-F963174B",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "restore focused input after going back in stack",
+      "content": "When implementing operations in `packages/stack/src/utils/__tests__/useKeyboardManager.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "67b2268f2f1f315ac8f7f93694ae6917719946a02e63ce27e311b7efe532c813",
+      "summary": "Prevents defects observed in production commit `cbd71f9b`: restore focused input after going back in stack. Unvalidated execution paths caus -> When implementing operations in `packages/stack/src/utils/__tests__/useKeyboardManager.test.tsx`, engineers MUST enforce rigorous boundary v",
+      "provenance": {
+        "source_uri": "project://react-navigation-react-navigation/react-navigation-react-navigation-learnings.md",
+        "source_version": "3820f31f",
+        "observed_at": "2026-11-17T11:40:38.107Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-navigation-react-navigation)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-navigation-react-navigation"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.69,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T11:41:15.922Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react-navigation-react-navigation-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-navigation-react-navigation-learnings-technical-construction-intelligence-.md",
+      "repository": "react-navigation-react-navigation-learnings",
+      "content_hash": "b8d82cb5fda7204ddf5e15fa782fea8d5421879f09a4a59e7794be21783bfadd",
+      "created_at": "2026-11-17T11:41:16.348Z"
     }
   }
 }

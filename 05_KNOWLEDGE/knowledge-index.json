@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T11:27:16.988Z",
-  "total_verified_learnings": 8879,
+  "last_updated": "2026-11-17T11:41:16.510Z",
+  "total_verified_learnings": 8880,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20122,
+  "total_items": 20135,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -78110,13 +78110,13 @@
       "rule_number": 4847,
       "title": "📝 Update release notes",
       "source_url": "https://github.com/tiangolo/fastapi",
-      "source_version": "5cb6272e",
+      "source_version": "a1b3be01",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T09:04:25.950Z"
+      "verified_at": "2026-11-17T11:40:37.321Z"
     },
     "rule-4848": {
       "learning_id": "rule-4848",
@@ -111973,10 +111973,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "911f5a91",
-      "content_hash": "b0f2838806f086813d5fc91e5e4e9890e71bde8172841f0b1ab4747b9a5176a3",
+      "source_version": "71959474",
+      "content_hash": "a7dbbef3d9e289831bceb3e37f18aaa754a61ca81919e0ab04896a011fb3638a",
       "domain_letter": "B",
-      "persisted_at": "2026-11-17T04:56:53.962Z"
+      "persisted_at": "2026-11-17T11:40:43.531Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -213975,8 +213975,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "911f5a91",
-      "content_hash": "803b72102688fcd02f05a3224ef90425752d7b31bb94f83e669090297fe9f5d3",
+      "source_version": "71959474",
+      "content_hash": "a962139db2e9d024469a20289c45223bd025247aad8279ceec815cbffe337e71",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214021,7 +214021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T04:56:53.396Z",
+      "verified_at": "2026-11-17T11:40:43.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215263,14 +215263,19 @@
       "slug": "react-navigation-react-navigation",
       "platform": "github",
       "source_url": "https://github.com/react-navigation/react-navigation",
-      "source_version": "5e31b0a0",
-      "content_hash": "57e23e45411d02cb3ccfd233b41ccce7a6bdf029fb6df575002f6fee4075503d",
+      "source_version": "3820f31f",
+      "content_hash": "1b927e3d957e80155fd7f97e6b0cedd0fc89470b99cfaf1ffe6349c36990ffa9",
       "dossier_path": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "promoted_rules": [
         {
           "number": 8379,
           "title": "keep underlying screens visible during overlapping transitions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8960,
+          "title": "restore focused input after going back in stack",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -215279,7 +215284,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:54:25.987Z",
+      "verified_at": "2026-11-17T11:40:38.827Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215334,9 +215339,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-navigation-react-navigation-learnings",
       "repository": "react-navigation-react-navigation-learnings",
       "source_version": "HEAD",
-      "content_hash": "f46172937874773ebcfe70f2a57fdc07357ef679f1063581c4f5bca80ba30ecf",
+      "content_hash": "c739900a75622686694cb25c037f87fc543bf178ebb57fb5512df0353ac61937",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:55:41.332Z"
+      "persisted_at": "2026-11-17T11:41:16.510Z"
     },
     "learn-github-envoyproxy-envoy": {
       "learning_id": "learn-github-envoyproxy-envoy",
@@ -217037,8 +217042,8 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "bcbc907a",
-      "content_hash": "1d64b1b9e997291487e42d3097e8324fd92b4979503d308a69e71c7b094cd27f",
+      "source_version": "9b1e3604",
+      "content_hash": "738843afbf4d489e8a78d74cff68fb57a42fd8260e4b1bfbaefd7dd7ab6bf840",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
@@ -217051,6 +217056,11 @@
           "number": 8655,
           "title": "raise the default coroutine stack size to 64KB",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8959,
+          "title": "make the SyncBlocker hand-off one-shot and lock-free",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217058,7 +217068,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T21:27:33.949Z",
+      "verified_at": "2026-11-17T11:40:33.244Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217100,10 +217110,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-architecture-intelligence-xudong-huang-may-core-invariants.md",
       "title": "Architecture Intelligence: Xudong-Huang/may Core Invariants",
       "repository": "Xudong-Huang/may",
-      "source_version": "bcbc907a",
-      "content_hash": "847971c478ece5df84d27517780b726dff2111b99047508ba0cb93e3d48e8bc0",
+      "source_version": "9b1e3604",
+      "content_hash": "fdd50b191c897c079b9e70ce85d1a0c1258d42ac1cb4148ffd437f399f80e404",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T21:27:34.317Z"
+      "persisted_at": "2026-11-17T11:40:33.710Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may",
@@ -217112,10 +217122,10 @@
       "relative_path": "08_VERIFICATION/xudong-huang-may-verification-protocol-empirical-defect-shield-for-xudong-huang-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Xudong-Huang/may",
       "repository": "Xudong-Huang/may",
-      "source_version": "bcbc907a",
-      "content_hash": "68b25adae09db9cdc194ebf9234de61d84692965af5a51742632eca9acddcb79",
+      "source_version": "9b1e3604",
+      "content_hash": "191a1594edc7841e83f700662522a2cf8169f99f0c9c08efc95e9235ae7f86c3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:27:34.413Z"
+      "persisted_at": "2026-11-17T11:40:33.838Z"
     },
     "learn-github-faridsafi-react-native-gifted-chat": {
       "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
@@ -217320,9 +217330,9 @@
       "title": "Architecture Intelligence: xudong-huang-may-learnings Core Invariants",
       "repository": "xudong-huang-may-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4d753749ca6ff26766b8ecf56b72a112abf2e2ca23f6f390d94ec26183d649c",
+      "content_hash": "ce3361f107c3ad6cfddfff9e453d9d3dd4aa43551f0b9365a5bea8842f546f38",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T21:27:43.746Z"
+      "persisted_at": "2026-11-17T11:40:46.610Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may-learnings",
@@ -217332,9 +217342,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for xudong-huang-may-learnings",
       "repository": "xudong-huang-may-learnings",
       "source_version": "HEAD",
-      "content_hash": "6af5c38a612b2d0b69af61c121b57733fbf902784b4ba0ba5b950095ddfe7220",
+      "content_hash": "865671d96c98024f6a40acbb3d3401e0a59dfa166ef8ec642c0513fa79c83b49",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:27:43.836Z"
+      "persisted_at": "2026-11-17T11:40:46.737Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants",
@@ -269354,6 +269364,187 @@
       "content_hash": "63920ed04173dcd1c3ba91d1e5e595508b9a8da175deb0b4e192b2b7727cd146",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T11:27:16.988Z"
+    },
+    "rule-8959": {
+      "learning_id": "rule-8959",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8959,
+      "title": "make the SyncBlocker hand-off one-shot and lock-free",
+      "source_url": "https://github.com/Xudong-Huang/may",
+      "source_version": "9b1e3604",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T11:40:33.244Z"
+    },
+    "candidate_directive-make-the-syncblocker-hand-off-one-shot-and-lock-free": {
+      "item_id": "candidate_directive-make-the-syncblocker-hand-off-one-shot-and-lock-free",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FANO-make-the-syncblocker-hand-off-one-shot-and-lock-free.md",
+      "title": "make the SyncBlocker hand-off one-shot and lock-free",
+      "repository": "Xudong-Huang/may",
+      "source_version": "9b1e3604",
+      "content_hash": "9645b5bd921e6aa936a3c99bb8ddf770d696a9e30ddacb2d327124fa0d390324",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T11:40:33.591Z"
+    },
+    "learn-github-fastapi-fastapi": {
+      "learning_id": "learn-github-fastapi-fastapi",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fastapi/fastapi",
+      "repository": "fastapi/fastapi",
+      "slug": "tiangolo-fastapi",
+      "platform": "github",
+      "source_url": "https://github.com/tiangolo/fastapi",
+      "source_version": "a1b3be01",
+      "content_hash": "f735661edf851f08369be72bc68693cf64cfbe7b254c55605169a82bb2a56f9f",
+      "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4847,
+          "title": "📝 Update release notes",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T11:40:37.321Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-update-release-notes": {
+      "item_id": "candidate_directive-update-release-notes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FL9K-update-release-notes.md",
+      "title": "📝 Update release notes",
+      "repository": "tiangolo-fastapi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "942fae9445eb8d5c26ad710b60fdc908ae26e966728760bd1ddd2d193575de10",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:40:47.339Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fastapi-fastapi-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-fastapi-fastapi-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi-technical-construction-intelligence-fastapi-fastapi-core-invari.md",
+      "title": "Technical Construction Intelligence: fastapi/fastapi Core Invariants",
+      "repository": "fastapi/fastapi",
+      "source_version": "a1b3be01",
+      "content_hash": "6c3bba83ef06cb2614c0e7cca97846c7dc675d82f727cc04eab000372a779a08",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:40:37.829Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fastapi-fastapi": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastapi-fastapi",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tiangolo-fastapi-verification-protocol-empirical-defect-shield-for-fastapi-fasta.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fastapi/fastapi",
+      "repository": "fastapi/fastapi",
+      "source_version": "a1b3be01",
+      "content_hash": "ccd82a879238c8e1e4d11cf4fdde3771a547d392ab0420b6374c814f02467133",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T11:40:37.965Z"
+    },
+    "rule-8960": {
+      "learning_id": "rule-8960",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8960,
+      "title": "restore focused input after going back in stack",
+      "source_url": "https://github.com/react-navigation/react-navigation",
+      "source_version": "3820f31f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T11:40:38.827Z"
+    },
+    "candidate_directive-restore-focused-input-after-going-back-in-stack": {
+      "item_id": "candidate_directive-restore-focused-input-after-going-back-in-stack",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G7JI-restore-focused-input-after-going-back-in-stack.md",
+      "title": "restore focused input after going back in stack",
+      "repository": "react-navigation-react-navigation-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ed77347c11e272a58f620a4ca9e9011bb58dc13b6304f35ef8a26e837d8543fe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:41:16.207Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-core-invar": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-navigation-react-navigation-technical-construction-intelligence-react-navi.md",
+      "title": "Technical Construction Intelligence: react-navigation/react-navigation Core Invariants",
+      "repository": "react-navigation/react-navigation",
+      "source_version": "3820f31f",
+      "content_hash": "02e764ea81c291585e09730f0d0bd0bb0877aa7e4760137c64fbc1244f9aa1d5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:40:39.283Z"
+    },
+    "candidate_directive-sync-make-the-syncblocker-hand-off-one-shot-and-lock-free": {
+      "item_id": "candidate_directive-sync-make-the-syncblocker-hand-off-one-shot-and-lock-free",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FKLW-sync-make-the-syncblocker-hand-off-one-shot-and-lock-free.md",
+      "title": "sync): make the SyncBlocker hand-off one-shot and lock-free",
+      "repository": "xudong-huang-may-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f841c51f9083150ca4b2f8d673378740615824069f918ed8c6d0804358de4bbf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T11:40:46.487Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tiangolo-fastapi-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tiangolo-fastapi-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi-learnings-technical-construction-intelligence-tiangolo-fastapi-.md",
+      "title": "Technical Construction Intelligence: tiangolo-fastapi-learnings Core Invariants",
+      "repository": "tiangolo-fastapi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a7fd8ceee6049ca5bd91739ecddd0bf6f0ec9ab4f30395bbfc5ad7375d955a54",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:40:47.454Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tiangolo-fastapi-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tiangolo-fastapi-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tiangolo-fastapi-learnings-verification-protocol-empirical-defect-shield-for-tia.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tiangolo-fastapi-learnings",
+      "repository": "tiangolo-fastapi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2bb146c84f7b9983abdba265f4642173654e0b6b49d842362caacfa0bcf1e88c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T11:40:47.576Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-navigation-react-navigation-learnings-technical-construction-intelligence-.md",
+      "title": "Technical Construction Intelligence: react-navigation-react-navigation-learnings Core Invariants",
+      "repository": "react-navigation-react-navigation-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b8d82cb5fda7204ddf5e15fa782fea8d5421879f09a4a59e7794be21783bfadd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:41:16.348Z"
     }
   },
   "ai-builder-brain": {
