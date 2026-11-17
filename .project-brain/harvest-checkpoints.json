@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T03:58:03.346Z",
+  "last_updated": "2026-11-17T04:05:44.919Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12771,14 +12771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tauri-apps-tauri",
-      "content_hash": "9df43c72ba753f71ea0ea9ede2d20f6e0f738b460759b223e9987af867155b5f",
-      "verified_at": "2026-11-13T14:34:00.190Z",
+      "content_hash": "13817b8a86cef06f858947f28599e749d52018dfe7eac2378a64f49aa33940bc",
+      "verified_at": "2026-11-17T04:05:43.462Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:34:00.190Z"
+      "last_updated": "2026-11-17T04:05:43.462Z"
     },
     "oliviertassinari/react-swipeable-views": {
       "repository": "oliviertassinari/react-swipeable-views",
@@ -15036,14 +15036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitejs-vite",
-      "content_hash": "52beee9c918e96e27d718431a04d0cbf1cd96f6a2375d142ce0678ac7ba09021",
-      "verified_at": "2026-11-12T12:32:51.893Z",
+      "content_hash": "8034c7907c13807ad38ccbdfe8c1157e888c057110e03df23162aff38e0495d6",
+      "verified_at": "2026-11-17T04:05:40.197Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T12:32:51.893Z"
+      "last_updated": "2026-11-17T04:05:40.197Z"
     },
     "KeyboardKit/KeyboardKit": {
       "repository": "KeyboardKit/KeyboardKit",
@@ -17211,14 +17211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
-      "content_hash": "3383144cd519e711126c2cc617322cb4431ea3f0bc0b0597a91059f07685a564",
-      "verified_at": "2026-11-15T22:14:50.540Z",
+      "content_hash": "1644f758a7746bb0fdc2f5bf84c270d8eb6c5df89e85eecbeb4dad5efcd251cf",
+      "verified_at": "2026-11-17T04:05:44.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T22:14:50.540Z"
+      "last_updated": "2026-11-17T04:05:44.918Z"
     },
     "LiquidAI/LFM3-VL-2B": {
       "repository": "LiquidAI/LFM3-VL-2B",

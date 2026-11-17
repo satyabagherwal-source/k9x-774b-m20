@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T03:58:07.904Z",
+  "updated_at": "2026-11-17T04:05:49.937Z",
   "stats": {
-    "total_discovered": 4693,
-    "approved_pending_harvest": 4421,
+    "total_discovered": 4708,
+    "approved_pending_harvest": 4427,
     "harvested_count": 0,
-    "rejected_count": 272,
+    "rejected_count": 281,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4417,
-      "OFFICIAL_DOCUMENTATION": 148,
-      "STANDARDS_AND_SPECIFICATIONS": 100,
+      "COMMUNITY_AND_EXPERT": 4430,
+      "OFFICIAL_DOCUMENTATION": 149,
+      "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 18,
       "LEGAL_AND_REGULATORY": 2,
@@ -101363,6 +101363,273 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
         "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-BE7702011825": {
+      "id": "SRC-BE7702011825",
+      "url": "https://github.com/tauri-apps/tauri/blob/dev/.github/CONTRIBUTING.md",
+      "title": "https://github.com/tauri-apps/tauri/blob/dev/.github/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T04:05:48.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-60FF1B5FA23F": {
+      "id": "SRC-60FF1B5FA23F",
+      "url": "https://github.com/tauri-apps/tauri/blob/dev/.changes/README.md",
+      "title": "https://github.com/tauri-apps/tauri/blob/dev/.changes/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T04:05:48.954Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-B33177AFA408": {
+      "id": "SRC-B33177AFA408",
+      "url": "https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits",
+      "title": "https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T04:05:48.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-51BA42E86AD5": {
+      "id": "SRC-51BA42E86AD5",
+      "url": "http://www.w3.org/ns/shacl",
+      "title": "http://www.w3.org/ns/shacl",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-17T04:05:49.599Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-7347CF26C03A": {
+      "id": "SRC-7347CF26C03A",
+      "url": "https://open-ontologies.org/provenance",
+      "title": "https://open-ontologies.org/provenance",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T04:05:49.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-B973F3684F3D": {
+      "id": "SRC-B973F3684F3D",
+      "url": "http://example.org/x",
+      "title": "http://example.org/x",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T04:05:49.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-791C94C06D8F": {
+      "id": "SRC-791C94C06D8F",
+      "url": "http://example.org/source",
+      "title": "http://example.org/source",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T04:05:49.694Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-E4B2CBA5DEBB": {
+      "id": "SRC-E4B2CBA5DEBB",
+      "url": "http://example.org/z",
+      "title": "http://example.org/z",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T04:05:49.721Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-346EAEC74678": {
+      "id": "SRC-346EAEC74678",
+      "url": "http://example.org/absent",
+      "title": "http://example.org/absent",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T04:05:49.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-6FD5602B84D0": {
+      "id": "SRC-6FD5602B84D0",
+      "url": "https://github.com/fabio-rovai/oxigraph.git",
+      "title": "https://github.com/fabio-rovai/oxigraph.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T04:05:49.792Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-785EE37B2630": {
+      "id": "SRC-785EE37B2630",
+      "url": "https://github.com/fabio-rovai/open-ontologies/pull/365",
+      "title": "https://github.com/fabio-rovai/open-ontologies/pull/365",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T04:05:49.821Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-A62AB32E9BD0": {
+      "id": "SRC-A62AB32E9BD0",
+      "url": "http://example.org/linksTo",
+      "title": "http://example.org/linksTo",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T04:05:49.849Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-7BE915DC52AF": {
+      "id": "SRC-7BE915DC52AF",
+      "url": "http://example.org/FORGED",
+      "title": "http://example.org/FORGED",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T04:05:49.883Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-3AE1C5664E06": {
+      "id": "SRC-3AE1C5664E06",
+      "url": "http://example.org/ghost",
+      "title": "http://example.org/ghost",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T04:05:49.910Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-6C7BD158DF06": {
+      "id": "SRC-6C7BD158DF06",
+      "url": "http://example.org/o",
+      "title": "http://example.org/o",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T04:05:49.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
       }
     }
   }

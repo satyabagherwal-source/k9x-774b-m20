@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T22:15:23.335Z",
+  "timestamp": "2026-11-17T04:05:50.006Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-fabio-rovai-open-ontologies-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fabio-rovai-open-ontologies-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T22:15:23.335Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T04:05:50.006Z`  
 > **Learning ID**: `LEARN-EVO-fabio-rovai-open-ontologies-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source**: github ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
-> **Source Version**: `214e948e`  
+> **Source Version**: `1ed99ac1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T22:14:49.647Z  
+> **Timestamp**: 2026-11-17T04:05:44.023Z  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T22:14:49.642Z  
+> **Harvest Timestamp**: 2026-11-17T04:05:44.018Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2905 stars
+- **Stars / Engagement**: 2913 stars
 
 ---
 
@@ -1751,11 +1751,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #406** (2026-11-16): **clinical and drift read language-tagged labels as Dog"@en: trim_matches('"') on the N-Triples form**
+  *Symptoms*: ## What happens  Two more places read `rdfs:label` values out of `sparql_select`'s JSON with `trim_matches('"')`. Language-tagged labels come out mangled there, the same defect `src/language.rs` describes for the alignment engine and #404 fixes for `onto_embed`.  - `src/clinical.rs:155`, `ClinicalCrosswalks::validate_clinical` - `src/drift.rs:259`, the label pass of the vocabulary snapshot  Both run:  ```rust label.trim_matches('"').split("^^").next().unwrap_or("").trim_matches('"') ```  on the N-Triples form of the literal. For a tagged literal there is no `^^` to split on, so the tag and the closing quote stay:  | Literal in the store | `sparql_select` renders | After the expression | | --- | --- | --- | | `"Myocardial infarction"@en` | `"Myocardial infarction"@en` | `Myocardial infarction"@en` | | `"Dog"@en-GB` | `"Dog"@en-GB` | `Dog"@en-GB` | | `"A \"quoted\" label"` | `"A \"quoted\" label"` | `A \"quoted\" label` (escapes kept) |  ## Expected  The literal's lexical value: `Myocardial infarction`, `Dog`, `A "quoted" label`.  ## Effect  `validate_clinical` searches the crosswalk for `Myocardial infarction"@en`, finds nothing, and reports every language-tagged class label as unmatched. The drift snapshot records the mangled string as the label, so any label comparison it feeds compares `Dog"@en` with whatever the other version holds.  ## Suggested fix  Parse with `crate::language::parse_literal`, which already handles tags, datatypes and escapes, or read terms rather than s
+
 - **Issue #398** (2026-11-13): **MCP handshake reports serverInfo as rmcp 3.9.0 instead of open-ontologies and its version**
   *Symptoms*: ## What happens  Over MCP the server introduces itself as `rmcp`, with rmcp's version, instead of as Open Ontologies. `ServerHandler::get_info` in `src/server.rs` builds its `ServerConfig` without setting the server's name and version, so rmcp fills in its own crate name and version.  ## Repro  Start `open-ontologies serve` and send over stdio:  ```json {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"1"}}} ```  ## Expected  `result.serverInfo` names this server and its release, for example `{"name":"open-ontologies","version":"2.1.0"}`.  ## Actual  On `fe1e32b8`, release build, default features:  ```json {"name":"rmcp","version":"3.9.0"} ```  ## Why it matters  Clients show this name in their server lists and logs, and a bug report that quotes the handshake carries the SDK's version, not the engine's. Nothing in `src/` or `tests/` mentions `serverInfo`, so nothing would catch a change either way.  ## Suggested fix  Set the implementation name to `open-ontologies` and the version to `env!("CARGO_PKG_VERSION")` in `get_info`, and add a handshake test that pins both. 
-
-- **Issue #395** (2026-11-13): **stats: individuals count includes property declarations, datatypes and axiom nodes**
-  *Symptoms*: ## What happens  `stats` / `onto_stats` reports `individuals` as the number of distinct subjects that have any `rdf:type` other than `owl:Class`, `rdfs:Class`, `owl:ObjectProperty`, `owl:DatatypeProperty` or `owl:Ontology` (`individual_query` in `GraphStore::get_stats`, `src/graph.rs`). The filter runs per type triple, so a subject with one excluded type and one other type still counts.  Property declarations, datatypes and axiom nodes are therefore counted as individuals.  ## Repro  `stats_repro.ttl`:  ```turtle @prefix ex: <https://example.org/> . @prefix owl: <http://www.w3.org/2002/07/owl#> . @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .  ex:Person a owl:Class ;     rdfs:subClassOf [ a owl:Restriction ;         owl:onProperty ex:partOf ;         owl:someValuesFrom ex:Org ] . ex:Org a owl:Class .  ex:partOf a owl:ObjectProperty, owl:TransitiveProperty . ex:hasId a owl:DatatypeProperty, owl:FunctionalProperty . ex:note a owl:AnnotationProperty . ex:Code a rdfs:Datatype .  [] a owl:AllDisjointClasses ;     owl:members ( ex:Person ex:Org ) .  [] a owl:Axiom ;     owl:annotatedSource ex:Person ;     owl:annotatedProperty rdfs:subClassOf ;     owl:annotatedTarget ex:Org ;     rdfs:comment "an annotated axiom" .  ex:Alice a owl:NamedIndividual, ex:Person . ```  ```sh printf 'load stats_repro.ttl\nstats\n' | open-ontologies batch --no-connect - ```  ## Expected  `"individuals": 1` (only `ex:Alice`).  ## Actual  On main `fe1e32b8`, release build:  ```json {"classes":2,"d
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1772,27 +1772,256 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d49478c` (2026-11-13)
-**Commit Message**: One changelog entry under Unreleased Fixed covers #382 and #402, including blank headers
+### Incident Patch 1: `df254aff` (2026-11-16)
+**Commit Message**: fix(shacl): hide provenance from scoped prebound union queries
 
-#402 added its entry under Added. Both changes are unreleased and
-describe one behaviour, so #382's entry now covers XLSX and the
-blank-header rule, and #402's line is gone from Added.
+Route AllGraphs prebound SELECTs through the existing filtered union
+query path, matching non-prebound scoped reads. A union default graph
+has no explicit graph list for hide_ledger to filter, which let internal
+provenance records reach SHACL-SPARQL constraints in tracked stores.
+Keep explicitly scoped datasets and per-focus variable substitution intact.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Add regressions for tracked and untracked SHACL validation, including
+unscoped and all-versions requests, a ledger probe and a positive control
+on inferred data. Cover default and named graph boundaries, explicit and
+variable GRAPH access to the ledger, and multiple prebound focus terms.
+Update the existing Unreleased changelog entry.
 
-**File**: `CHANGELOG.md` (modified, +9/-6)
+Both new regressions fail before the fix; the SHACL reproduction reports
+16 violations instead of the expected one. After the fix, 529 Rust tests
+and the Python source-citation guard pass. Linux CI and the full optional
+feature matrix were not run locally.
+Clippy --all-targets with warnings denied also passes.
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -6,8 +6,6 @@ All notable changes to Open Ontologies are documented here.
+@@ -211,7 +211,8 @@ All notable changes to Open Ontologies are documented here.
+   the Rust `sparql_update_with_retraction` API, or HTTP `/api/update` with
+   `retract_inferences: true` opt in to support-based retraction. Independent
+   proofs survive withdrawal; unsupported cycles do not. The reserved ledger
+-  stays outside query datasets, including `GRAPH ?g`. Dataset backups retain
++  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
++  constraints evaluated over all graphs. Dataset backups retain
+   it, and old single-literal backups migrate on restore or persistent open.
+   Provenance reports retain evidence, rule versions and withdrawal history;
+   proof forests remain exportable to the existing independent oo-cert checker.
+```
+
+**File**: `src/graph.rs` (modified, +4/-0)
+```diff
+@@ -1621,6 +1621,10 @@ impl GraphStore {
+         terms: &[Term],
+         scope: &ReadScope,
+     ) -> anyhow::Result<Vec<Vec<std::collections::HashMap<String, String>>>> {
++        if scope.is_all_graphs() {
++            // Match the non-prebound path: the union must exclude the ledger.
++            return self.sparql_select_union_prebound(query, var, terms);
++        }
+         let store = &self.store;
+         let mut prepared = SparqlEvaluator::new().parse_query(query)?;
+         scope.apply(prepared.dataset_mut())?;
+```
+
+**File**: `tests/shacl_provenance_isolation_test.rs` (added, +161/-0)
+```diff
+@@ -0,0 +1,161 @@
++// SPDX-FileCopyrightText: 2026 Fabio Rovai
++// SPDX-License-Identifier: MIT
++
++//! SHACL-SPARQL reads user data, including inferred facts, but not the ledger.
++
++use open_ontologies::graph::{GraphStore, ReadScope};
++use open_ontologies::reason::{InferenceTarget, Reasoner};
++use open_ontologies::shacl::ShaclValidator;
++use open_ontologies::temporal::ScopeRequest;
++use open_ontologies::truth_maintenance::LEDGER_GRAPH;
++use oxigraph::model::{NamedNode, Term};
++use std::sync::Arc;
++
++const DATA: &str = r#"
++    @prefix ex: <http://example.org/> .
++    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
++    ex:A rdfs:subClassOf ex:B .
++    ex:x a ex:A ; ex:p ex:y .
++"#;
++
++const SHAPES: &str = r#"
++    @prefix sh: <http://www.w3.org/ns/shacl#> .
++    @prefix ex: <http://example.org/> .
++    ex:LedgerProbe a sh:NodeShape ; sh:targetClass ex:A ;
++        sh:sparql [ sh:message "ledger is visible" ;
++            sh:select """SELECT $this ?p WHERE {
++                ?s ?p ?o .
++                FILTER(STRSTARTS(STR(?p), "https://open-ontologies.org/provenance#"))
++            }""" ] .
++    ex:Control a sh:NodeShape ; sh:targetClass ex:B ;
++        sh:sparql [ sh:message "control: ex:p is present" ;
++            sh:select "SELECT $this WHERE { $this <http://example.org/p> ?o }" ] .
++"#;
++
++fn store(tracked: bool) -> Arc<GraphStore> {
++    let graph = Arc::new(GraphStore::new());
++    graph.load_turtle(DATA, None).unwrap();
++    Reasoner::run_scoped_with_tracking(
++        &graph,
++        "rdfs",
++        true,
++        InferenceTarget::DefaultGraph,
++        None,
++        &ScopeRequest::Unscoped,
++        tracked,
++    )
++    .unwrap();
++    assert_eq!(graph.ledger().unwrap().is_some(), tracked);
++    graph
++}
++
++#[test]
++fn tracking_does_not_add_shacl_sparql_violations() {
++    for tracked in [false, true] {
++        let graph = store(tracked);
++        for request in [ScopeRequest::Unscoped, ScopeRequest::AllVersions] {
++            let report: serde_json::Value = serde_json::from_str(
++                &ShaclValidator::validate_scoped(&graph, SHAPES, &request).unwrap(),
++            )
++            .unwrap();
++            assert_eq!(report["conforms"], false, "tracked={tracked}: {report}");
++            assert_eq!(report["violation_count"], 1, "tracked={tracked}: {report}");
++            assert_eq!(
++                report["violations"][0]["message"],
++                "control: ex:p is present"
++            );
++            assert_eq!(
++                report["violations"][0]["focus_node"],
++                "http://example.org/x"
++            );
++            assert!(report["skipped_constraints"].is_null(), "{report}");
++        }
++    }
++}
++
++#[test]
++fn scoped_prebinding_hides_metadata_and_keeps_user_graph_boundaries() {
++    let graph = store(true);
++    graph
++        .sparql_update(
++            "INSERT DATA { GRAPH <http://example.org/source> {
++                <http://example.org/x> <http://example.org/p> <http://example.org/z>
++            } }",
++        )
++        .unwrap();
++    let terms: Vec<Term> = ["http://example.org/x", "http://example.org/absent"]
++        .into_iter()
++        .map(|iri| NamedNode::new(iri).unwrap().into())
++        .collect();
++    let source = "http://example.org/source".to_string();
++    let scopes = [
++        (ReadScope::AllGraphs, vec!["y", "z"]),
++        (
++            ReadScope::Graphs {
++                default_graph: true,
++                named: vec![],
++            },
++            vec!["y"],
++        ),
++        (
++            ReadScope::Graphs {
++                default_graph: false,
++                named: vec![source.clone()],
++            },
++            vec!["z"],
++        ),
++        (
++            ReadScope::Graphs {
++                default_graph: true,
++                named: vec![source, LEDGER_GRAPH.into()],
++            },
++            vec!["y", "z"],
++        ),
++        (
++            ReadScope::Graphs {
++                default_graph: false,
++                named: vec![LEDGER_GRAPH.into()],
++            },
++            vec![],
++        ),
++    ];
++    let probes = [
++        "SELECT $this WHERE { ?s ?p ?o FILTER(STRSTARTS(STR(?p), 'https://open-ontologies.org/provenance#')) }".to_string(),
++        format!("SELECT $this WHERE {{ GRAPH <{LEDGER_GRAPH}> {{ ?s ?p ?o }} }}"),
++        format!("SELECT $this WHERE {{ GRAPH ?g {{ ?s ?p ?o }} FILTER(?g = <{LEDGER_GRAPH}>) }}"),
++    ];
++    for (scope, expected) in scopes {
++        let rows = graph
++            .sparql_select_scoped_prebound(
++                "SELECT $this ?o WHERE { $this <http://example.org/p> ?o }",
++                "this",
++                &terms,
++                &scope,
++            )
++            .unwrap();
++        assert_eq!(rows.len(), terms.len());
++        assert!(
++            rows[1].is_empty(),
++            "the absent focus node must have no matches"
++        );
++        let mut actual: Vec<_> = rows[0].iter().map(|row| row["o"].clone()).collect();
++    
+```
+
+---
+
+### Incident Patch 2: `79ea65fe` (2026-11-16)
+**Commit Message**: Merge origin/main into fix/explicit-provenance-truth-maintenance
+
+Integrate upstream main at 214e948 after syncing the fork. Resolve the
+Unreleased changelog conflict by retaining all upstream fixes and the
+PR's opt-in durable provenance entry.
+
+Apply the existing ledger-free query dataset to the newly introduced
+RDF-term union query API. Preserve upstream label handling and user named
+graphs while preventing internal provenance records from leaking through
+union queries or explicit GRAPH selections. Add regression coverage for
+these cases.
+
+Keep the existing provenance, update and concurrent reasoning fixes.
+
+Validation: cargo check and clippy for all targets (-D warnings); 543 Rust
+tests and 13 Python checks passed using the existing Windows toolchain.
+Linux CI and the full optional-feature matrix were not run locally.
+
+**File**: `CHANGELOG.md` (modified, +31/-4)
+```diff
+@@ -189,6 +189,28 @@ All notable changes to Open Ontologies are documented here.
+   The CLI help and reasoning guide disclose tracking's time and storage costs,
+   including the maintainer's LUBM1 measurements.
  
- ### Added
- 
--- **XLSX ingestion rejects duplicate headers instead of silently overwriting earlier columns.**
--
- - **`serve-http` can accept Host names other than localhost on `/mcp`.**
-   rmcp's Host check, which blocks DNS rebinding, has refused every `Host`
-   header except `localhost`, `127.0.0.1` and `::1` with 403 since rmcp 1.4.
-@@ -231,10 +229,15 @@ All notable changes to Open Ontologies are documented here.
++- **`onto_embed` uses the lexical value of an RDF label** (#404). Language
++  tags and escaped quotes are no longer passed to the embedding model as part
++  of the label text.
++
++- **Loading an ontology and unloading another by name no longer race**
++  (#405). `unload_named` checked which ontology was active, released the
++  lock, then unloaded whatever was active by then, so a load landing in that
++  gap was cleared from the store while still marked active. Loads,
++  recompiles, reloads, eviction and unloads now take one lifecycle lock.
++
++- **`stats` counts individuals by their type vocabulary, in both engines**
++  (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
++  `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
++  Restrictions, property characteristics such as `owl:TransitiveProperty`,
++  annotation properties, datatypes, `owl:AllDisjointClasses` and `owl:Axiom`
++  nodes no longer inflate the count. The Rust engine and
++  `open-ontologies-lite` apply the same rule.
++
++- **The MCP `initialize` reply names the server** (#400, #398). `serverInfo`
++  reported rmcp's crate name and version (`rmcp`, `3.9.0`); it now reports
++  `open-ontologies` and the release version.
++
+ - **`onto_repo_list` reports cache and active status for the matching file**
+   (#386). Multiple repository directories can contain the same filename stem;
+   status flags now match the cached and active source paths instead of marking
+@@ -241,10 +263,15 @@ All notable changes to Open Ontologies are documented here.
    Names that were already valid local names, including non-ASCII letters and
    a leading digit, keep the IRIs they had.
  
@@ -1814,29 +2043,95 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
    (#376). The tableau never read negative property assertions, so a
 ```
 
----
-
-### Incident Patch 2: `d64e867d` (2026-11-15)
-**Commit Message**: Merge PR #404 (dajiaohuang): Fix embedded label extraction
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `funding.json` (modified, +1/-1)
 ```diff
-@@ -165,6 +165,10 @@ All notable changes to Open Ontologies are documented here.
- 
- ### Fixed
- 
-+- **`onto_embed` uses the lexical value of an RDF label.** Language tags and
-+  escaped quotes are no longer passed to the embedding model as part of the
-+  label text.
-+
- - **`stats` counts individuals by their type vocabulary, in both engines**
-   (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
-   `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
+@@ -14,7 +14,7 @@
+     {
+       "guid": "open-ontologies",
+       "name": "Open Ontologies",
+-      "description": "Open Ontologies is a Rust MCP (Model Context Protocol) server and desktop Studio for AI-native ontology engineering. It exposes 116 tools that let an LLM client build, validate, query, diff, lint, version, reason over, align, plan, certify and govern RDF/OWL ontologies against an in-memory Oxigraph triple store. All 116 ship in a default build, and 8 of them require an optional Cargo feature (embeddings, plugins, postgres or duckdb). It ships as a single binary with no JVM and no Protege dependency, and covers OWL 2 profile checking, SHACL validation, SPARQL, OWL-RL reasoning, ontology diffing, a marketplace of 33 standard ontologies, IES (Information Exchange Standard) support for UK defence and government data, semantic embeddings in builds compiled with the embeddings feature, PDDL planning, and a full lineage audit trail. The design is deliberately MCP-native: the server provides validation, scaffolding and proof, while the connected model supplies the intelligence. There are no embedded LLM clients, no API keys and no provider lock-in, so the same engine runs offline and in air-gapped environments. Open Ontologies is the verification engine behind a public programme of register-integrity audits, where every published finding is re-checked by an independent path before release. Funding supports maintenance, cross-platform release engineering, the reasoning and planner layers, and continued free distribution.",
++      "description": "Open Ontologies is a Rust MCP (Model Context Protocol) server and desktop Studio for AI-native ontology engineering. It exposes 116 tools that let an LLM client build, validate, query, diff, lint, version, reason over, align, plan, certify and govern RDF/OWL ontologies against an in-memory Oxigraph triple store. All 116 ship in a default build, and a further 8 require an optional Cargo feature (embeddings, plugins, postgres or duckdb). It ships as a single binary with no JVM and no Protege dependency, and covers OWL 2 profile checking, SHACL validation, SPARQL, OWL-RL reasoning, ontology diffing, a marketplace of 33 standard ontologies, IES (Information Exchange Standard) support for UK defence and government data, semantic embeddings in builds compiled with the embeddings feature, PDDL planning, and a full lineage audit trail. The design is deliberately MCP-native: the server provides validation, scaffolding and proof, while the connected model supplies the intelligence. There are no embedded LLM clients, no API keys and no provider lock-in, so the same engine runs offline and in air-gapped environments. Open Ontologies is the verification engine behind a public programme of register-integrity audits, where every published finding is re-checked by an independent path before release. Funding supports maintenance, cross-platform release engineering, the reasoning and planner layers, and continued free distribution.",
+       "webpageUrl": {
+         "url": "https://github.com/fabio-rovai/open-ontologies"
+       },
 ```
 
-**File**: `src/graph.rs` (modified, +34/-0)
+**File**: `python/src/open_ontologies_lite/engine.py` (modified, +14/-2)
 ```diff
-@@ -605,6 +605,40 @@ impl GraphStore {
+@@ -41,7 +41,18 @@
+     for name in ("ObjectProperty", "DatatypeProperty", "AnnotationProperty")
+ )
+ _PROPERTY_VALUES = " ".join(f"<{iri}>" for iri in _PROPERTY_TYPES)
+-_SCHEMA_TYPES = (OWL_CLASS, RDFS_CLASS) + _PROPERTY_TYPES
++# An individual has a type outside the RDF, RDFS and OWL vocabularies, or is
++# declared owl:NamedIndividual or owl:Thing. Everything else typed only from
++# those vocabularies (restrictions, property characteristics, datatypes, axiom
++# nodes) is part of the ontology's structure. Same rule as GraphStore::get_stats
++# in the Rust engine (#395).
++_INDIVIDUAL_TYPE_FILTER = (
++    "FILTER(?t IN (<http://www.w3.org/2002/07/owl#NamedIndividual>, "
++    "<http://www.w3.org/2002/07/owl#Thing>) || ("
++    '!STRSTARTS(STR(?t), "http://www.w3.org/1999/02/22-rdf-syntax-ns#") && '
++    '!STRSTARTS(STR(?t), "http://www.w3.org/2000/01/rdf-schema#") && '
++    '!STRSTARTS(STR(?t), "http://www.w3.org/2002/07/owl#")))'
++)
+ 
+ 
+ def resolve_format(name: str) -> ox.RdfFormat:
+@@ -122,7 +133,8 @@ def stats(self) -> dict[str, int]:
+             ),
+             "individuals": self._count(
+                 "SELECT (COUNT(DISTINCT ?i) AS ?n) WHERE { ?i a ?t "
+-                "FILTER(?t NOT IN (" + ", ".join(f"<{iri}>" for iri in _SCHEMA_TYPES) + ")) }"
++                + _INDIVIDUAL_TYPE_FILTER
++                + " }"
+             ),
+         }
+ 
+```
+
+**File**: `python/tests/test_engine.py` (modified, +28/-0)
+```diff
+@@ -35,6 +35,34 @@ def test_load_and_stats():
+     assert s["individuals"] == 1      # rex
+ 
+ 
++def test_stats_counts_individuals_by_type_vocabulary():
++    # The Rust engine's regression for #395, same file. Property
++    # characteristics, annotation properties, datatypes, restrictions and
++    # axiom nodes are vocabulary, not individuals: only ex:Alice counts.
++    e = OntologyEngine()
++    e.load("""
++        @prefix ex: <https://example.org/> .
++        @prefix owl: <http://www.w3.org/2002/07/owl#> .
++        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
++
++        ex:Person a owl:Class ;
++            rdfs:subClassOf [ a owl:Restriction ;
++                owl:onProperty ex:partOf ;
++                owl:someValuesFrom ex:Org ] .
++        ex:Org a owl:Class .
++        ex:partOf a owl:ObjectProperty, owl:TransitiveProperty .
++        ex:hasId a owl:DatatypeProperty, owl:FunctionalProperty .
++        ex:note a owl:AnnotationProperty .
++        ex:Code a rdfs:Datatype .
++        [] a owl:AllDisjointClasses ; owl:members ( ex:Person ex:Org ) .
++        [] a owl:Axiom ; owl:annotatedSource ex:Person ;
++            owl:annotatedProperty rdfs:subClassOf ;
++            owl:annotatedTarget ex:Org ; rdfs:comment "an annotated axiom" .
++        ex:Alice a owl:NamedIndividual, ex:Person .
++    """)
++    assert e.stats()["individuals"] == 1
++
++
+ def test_query_select():
+     e = OntologyEngine()
+     e.load(ONT)
+```
+
+**File**: `src/graph.rs` (modified, +42/-1)
+```diff
+@@ -974,6 +974,40 @@ impl GraphStore {
          self.select_with_dataset(query, true)
      }
  
@@ -1850,7 +2145,7 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
 +        let store = &self.store;
 +        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
-+        prepared.dataset_mut().set_default_graph_as_union();
++        self.union_without_ledger(prepared.dataset_mut())?;
 +        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
 +            anyhow::bail!("term selection needs a SELECT query");
 +        };
@@ -1877,11 +2172,247 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
      /// Run a SELECT once per term, with `var` pre-bound to that term, over the
      /// union dataset. Returns the solutions per term, in the order given.
      ///
+@@ -1279,7 +1313,14 @@ impl GraphStore {
+                 && !STRSTARTS(STR(?p), \"http://www.w3.org/2000/01/rdf-schema#\")
+                 && !STRSTARTS(STR(?p), \"http://www.w3.org/2002/07/owl#\"))
+         }";
+-        let individual_query = "SELECT (COUNT(DISTINCT ?i) AS ?count) WHERE { ?i a ?c . FILTER(?c != <http://www.w3.org/2002/07/owl#Class> && ?c != <http://www.w3.org/2000/01/rdf-schema#Class> && ?c != <http://www.w3.org/2002/07/owl#ObjectProperty> && ?c != <http://www.w3.org/2002/07/owl#DatatypeProperty> && ?c != <http://www.w3.org/2002/07/owl#Ontology> && ?c != <http://www.w3.org/2002/07/owl#Restriction>) }";
++        let individual_query = "SELECT (COUNT(DISTINCT ?i) AS ?count) WHERE {
++            ?i a ?c .
++            FILTER(?c = <http://www.w3.org/2002/07/owl#NamedIndividual>
++                || ?c = <http://www.w3.org/2002/07/owl#Thing>
++                || (!STRSTARTS(STR(?c), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")
++                    && !STRSTARTS(STR(?c), \"http://www.w3.org/2000/01/rdf-schema#\")
++                    && !STRSTARTS(STR(?c), \"http://www.w3.org/2002/07/owl#\")))
++        }";
+ 
+         let count_from_query = |q: &str| -> usize {
+             let Ok(prepared) = SparqlEvaluator::new().parse_query(q) else { return 0 };
 ```
 
-**File**: `src/server.rs` (modified, +20/-21)
+**File**: `src/ingest.rs` (modified, +56/-14)
 ```diff
-@@ -3,6 +3,8 @@
+@@ -51,28 +51,62 @@ impl DataIngester {
+             .map(|h| h.to_string())
+             .collect();
+ 
++        Self::check_headers("CSV", &headers)?;
++
++        let mut rows = Vec::new();
++        for result in reader.records() {
++            let record = result.context("Failed to read CSV record")?;
++            let mut row = HashMap::new();
++            for (i, value) in record.iter().enumerate() {
++                Self::put_cell(&mut row, "CSV", &headers, i, value.to_string())?;
++            }
++            rows.push(row);
++        }
++        Ok(rows)
++    }
++
++    /// A named column may appear once in a header row (#382, #402). A blank
++    /// header names nothing, so two blank headers are not a duplicate:
++    /// spreadsheet exports end lines with commas for columns that were
++    /// formatted but never filled, and those files have to load.
++    fn check_headers(kind: &str, headers: &[String]) -> Result<()> {
+         let mut unique_headers = HashSet::with_capacity(headers.len());
+         for (index, header) in headers.iter().enumerate() {
++            if header.trim().is_empty() {
++                continue;
++            }
+             if !unique_headers.insert(header) {
+                 anyhow::bail!(
+-                    "Duplicate CSV header {header:?} at column {}; CSV columns must be unique",
++                    "Duplicate {kind} header {header:?} at column {}; {kind} columns must be unique",
+                     index + 1
+                 );
+             }
+         }
++        Ok(())
++    }
+ 
+-        let mut rows = Vec::new();
+-        for result in reader.records() {
+-            let record = result.context("Failed to read CSV record")?;
+-            let mut row = HashMap::new();
+-            for (i, value) in record.iter().enumerate() {
+-                if let Some(key) = headers.get(i) {
+-                    row.insert(key.clone(), value.to_string());
+-                }
++    /// Put one cell into its row under its column's header. An empty cell
++    /// under a blank header is skipped. A value under a blank header has no
++    /// name to go under, so it is refused by column rather than stored under
++    /// an empty key, where a second unnamed column would overwrite it.
++    fn put_cell(
++        row: &mut HashMap<String, String>,
++        kind: &str,
++        headers: &[String],
++        index: usize,
++        value: String,
++    ) -> Result<()> {
++        match headers.get(index) {
++            Some(header) if !header.trim().is_empty() => {
++                row.insert(header.clone(), value);
+             }
+-            rows.push(row);
++            Some(_) if !value.trim().is_empty() => anyhow::bail!(
++                "{kind} column {} has a value ({value:?}) but no header; name the column or clear it",
++                index + 1
++            ),
++            _ => {}
+         }
+-        Ok(rows)
++        Ok(())
+     }
+ 
+     /// Parse a JSON string. Accepts a JSON array of objects or a single object.
+@@ -300,13 +334,13 @@ impl DataIngester {
+             .map(Self::calamine_cell_to_string)
+             .collect();
+ 
++        Self::check_headers("XLSX", &headers)?;
++
+         let mut rows = Vec::new();
+         for data_row in row_iter {
+             let mut row = HashMap::new();
+             for (i, cell) in data_row.iter().enumerate() {
+-                if let Some(key) = headers.get(i) {
+-                    row.insert(key.clone(), Self::calamine_cell_to_string(cell));
+-                }
++                Self::put_cell(&mut row, "XLSX", &headers, i, Self::calamine_cell_to_string(cell))?;
+             }
+             rows.push(row);
+         }
+@@ -536,6 +570,14 @@ impl DataIngester {
+             .ok(),
+             _ => None,
+         };
++        // A blank header names no column (see check_headers), so it is not a
++        // column here either; mapping generation would make it a property
++        // with an empty name.
++        let ordered = ordered.map(|h| {
++            h.into_iter()
++                .filter(|name| !name.trim().is_empty())
++                .collect::<Vec<_>>()
++        });
+         match ordered {
+             Some(h) if !h.is_empty() => {
+                 // The file's order for the columns it names, then any key a
+```
+
+**File**: `src/registry.rs` (modified, +29/-8)
+```diff
+@@ -70,8 +70,8 @@ pub struct OntologyRegistry {
+     /// `Mutex<Option<ActiveEntry>>` — at most one entry is "active" at a time
+     /// in this minimal model. Multi-slot extension is future work.
+     active: Mutex<Option<ActiveEntry>>,
+-    /// Per-name reload mutex to prevent thundering-herd reloads.
+-    reload_lock: Mutex<()>,
++    /// Serializes graph lifecycle operations with active-slot changes.
++    lifecycle_lock: Mutex<()>,
+ }
+ 
+ impl OntologyRegistry {
+@@ -83,7 +83,7 @@ impl OntologyRegistry {
+             cache,
+             config,
+             active: Mutex::new(None),
+-            reload_lock: Mutex::new(()),
++            lifecycle_lock: Mutex::new(()),
+         })
+     }
+ 
+@@ -97,6 +97,14 @@ impl OntologyRegistry {
+ 
+     /// Load an RDF file into the graph, using the compile cache when valid.
+     pub fn load_file(&self, path: &str, opts: LoadOptions) -> Result<LoadResult> {
++        // Keep graph replacement and the active-slot update atomic with respect
++        // to unload/reload operations. Otherwise an unload can clear the graph
++        // while a concurrent load is still waiting to publish its active slot.
++        let _lifecycle = self.lifecycle_lock.lock().unwrap();
++        self.load_file_locked(path, opts)
++    }
++
++    fn load_file_locked(&self, path: &str, opts: LoadOptions) -> Result<LoadResult> {
+         let path_obj = Path::new(path);
+         if !path_obj.exists() {
+             return Err(anyhow!("file not found: {}", path));
+@@ -186,8 +194,8 @@ impl OntologyRegistry {
+     /// If the store was evicted, reload from cache (or source on refresh).
+     /// No-op if no active entry exists.
+     pub fn ensure_loaded(&self) -> Result<()> {
+-        // Single-flight guard.
+-        let _g = self.reload_lock.lock().unwrap();
++        // Serialize graph reloads with loads, unloads and eviction.
++        let _lifecycle = self.lifecycle_lock.lock().unwrap();
+ 
+         // Snapshot needed fields (avoid holding the active lock across reload).
+         let needs_reload;
+@@ -272,6 +280,7 @@ impl OntologyRegistry {
+     /// Evict the active entry if idle longer than `idle_ttl_secs`.
+     /// Returns `true` when an eviction took place.
+     pub fn evictor_tick(&self) -> Result<bool> {
++        let _lifecycle = self.lifecycle_lock.lock().unwrap();
+         if !self.config.enabled || self.config.idle_ttl_secs == 0 {
+             return Ok(false);
+         }
+@@ -329,6 +338,11 @@ impl OntologyRegistry {
+     /// Manually unload the active ontology (clear graph + drop active slot).
+     /// The cache file is preserved unless `delete_cache` is true.
+     pub fn unload(&self, delete_cache: bool) -> Result<Option<String>> {
++        let _lifecycle = self.lifecycle_lock.lock().unwrap();
++        self.unload_active_locked(delete_cache)
++    }
++
++    fn unload_active_locked(&self, delete_cache: bool) -> Result<Option<String>> {
+         let mut active = self.active.lock().unwrap();
+         let Some(name) = active.as_ref().map(|entry| entry.name.clone()) else {
+             return Ok(None);
+@@ -352,9 +366,10 @@ impl OntologyRegistry {
+     ///
+     /// Returns `Ok(true)` if anything was actually changed.
+     pub fn unload_named(&self, name: &str, delete_cache: bool) -> Result<bool> {
++        let _lifecycle = self.lifecycle_lock.lock().unwrap();
+         let active_name = self.active.lock().unwrap().as_ref().map(|e| e.name.clone());
+         if active_name.as_deref() == Some(name) {
+-            return Ok(self.unload(delete_cache)?.is_some());
++            return Ok(self.unload_active_locked(delete_cache)?.is_some());
+         }
+         // Not active. The graph isn't holding it, so there's nothing to clear
+         // in memory. Touch the cache only if requested.
+@@ -375,14 +390,19 @@ impl OntologyRegistry {
+ 
+     /// Force recompile the active ontology from source (used by `onto_recompile`).
+     pub fn recompile(&self) -> Result<LoadResult> {
++        let _lifecycle = self.lifecycle_lock.lock().unwrap();
++        self.recompile_active_locked()
++    }
++
++    fn recompile_active_locked(&self) -> Result<LoadResult> {
+         let (path, name, auto_refresh) = {
+             let active = self.active.lock().unwrap();
+             let entry = active
+                 .as_ref()
+                 .ok_or_else(|| anyhow!("no active ontology to recompile"))?;
+             (entry.source_path.clone(), entry.name.clone(), entry.auto_refresh)
+         };
+-        self.load_file(
++        self.load_file_locked(
+             &path,
+             LoadOptions {
+                 name: Some(name),
+@@ -402,9 +422,10 @@ impl OntologyRegistry {
+     ///   left completely untouched. This makes it safe to refresh background
+     ///   ontologies without disturbing whatever is currently being queried.
+     pub fn recompile_named(&self, name: &str) -> Result<LoadResult> {
++        let _lifecycle = self.lifecycle_lock.lock().unwrap();
+         let active_name = self.active.lock().unwrap().as_ref().map(|e| e.name.clone());
+  
+```
+
+**File**: `src/server.rs` (modified, +25/-22)
+```diff
+@@ -3,12 +3,14 @@
  
  use std::sync::Arc;
  
@@ -1890,7 +2421,14 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
  use rmcp::{
      ServerHandler, tool, tool_handler, tool_router,
      prompt, prompt_handler, prompt_router,
-@@ -3196,31 +3198,28 @@ impl OpenOntologiesServer {
+     handler::server::{tool::ToolRouter, router::prompt::PromptRouter, wrapper::Parameters},
+     model::{
+-        ServerCapabilities, ServerConfig, Tool,
++        Implementation, ServerCapabilities, ServerConfig, Tool,
+         PromptMessage, Role, GetPromptResult, ProtocolVersion,
+     },
+ };
+@@ -3238,31 +3240,28 @@ impl OpenOntologiesServer {
  
          // Enumerating the store's classes is a question about the whole store,
          // so read the union of all graphs, not the default graph alone.
@@ -1940,221 +2478,222 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
          }
  
          let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
-```
-
-**File**: `tests/embedding_label_literal_test.rs` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+use open_ontologies::graph::GraphStore;
-+use oxigraph::model::Term;
-+
-+#[test]
-+fn union_term_query_keeps_label_lexical_value_and_language() {
-+    let graph = GraphStore::new();
-+    graph
-+        .load_turtle(
-+            r#"@prefix : <http://example.org/> .
-+               @prefix owl: <http://www.w3.org/2002/07/owl#> .
-+               @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+               :Canid a owl:Class ; rdfs:label "A \"quoted\" label"@en ."#,
-+            None,
-+        )
-+        .unwrap();
-+
-+    let rows = graph
-+        .sparql_select_union_terms(
-+            r#"SELECT DISTINCT ?class ?label WHERE {
-+                ?class a <http://www.w3.org/2002/07/owl#Class> .
-+                OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }
-+                FILTER(isIRI(?class))
-+            }"#,
-+        )
-+        .unwrap();
-+
-+    assert_eq!(rows.len(), 1);
-+    let label = match rows[0].get("label") {
-+        Some(Term::Literal(label)) => label,
-+        other => panic!("expected RDF literal, got {other:?}"),
-+    };
-+    assert_eq!(label.value(), "A \"quoted\" label");
-+    assert_eq!(label.language(), Some("en"));
-+}
+@@ -3687,6 +3686,10 @@ impl ServerHandler for OpenOntologiesServer {
+                  {advertised} tools and 6 workflow prompts for ontology engineering, validation, \
+                  comparison, alignment, data ingestion, and exploration.{tail}{profile_tail}"
+             ))
++            .with_server_info(Implementation::new(
++                "open-ontologies",
++                env!("CARGO_PKG_VERSION"),
++            ))
+     }
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `dd88f9b0` (2026-11-14)
-**Commit Message**: Fix embedded label extraction
+### Incident Patch 3: `1ed99ac1` (2026-11-16)
+**Commit Message**: Merge pull request #365 from Gqqqqgg/fix/explicit-provenance-truth-maintenance
 
-**File**: `CHANGELOG.md` (modified, +4/-0)
+Fix/explicit provenance truth maintenance
+
+**File**: `CHANGELOG.md` (modified, +25/-0)
 ```diff
-@@ -165,6 +165,10 @@ All notable changes to Open Ontologies are documented here.
+@@ -194,6 +194,31 @@ All notable changes to Open Ontologies are documented here.
+   reported rmcp's crate name and version (`rmcp`, `3.9.0`); it now reports
+   `open-ontologies` and the release version.
  
- ### Fixed
- 
-+- **`onto_embed` uses the lexical value of an RDF label.** Language tags and
-+  escaped quotes are no longer passed to the embedding model as part of the
-+  label text.
++- **Durable RDFS/OWL-RL provenance is opt-in** (#365). CLI and batch
++  `reason --track-derivations`, or MCP `track_derivations: true`, persist
++  evidence and rule instances in the existing materialisation transaction.
++  Incremental reasoning accepts the same MCP option. Ordinary reasoning keeps
++  its previous materialisation behaviour and does not capture derivations.
++  Evidence, derivations, output locations and changes now use separate RDF
++  records with dependency indexes, instead of one growing JSON literal.
++  Loads and updates reconcile the affected dependency component without
++  scanning or copying the dataset to track changes. Returned counts use actual
++  data deltas. Stores without a ledger use Oxigraph's native SPARQL UPDATE
++  executor, avoiding provenance journaling for ordinary bulk updates.
++  Tracked publication uses a constant-size generation guard; untracked
++  reasoning retains snapshot materialisation when a concurrent write occurs.
++  Ordinary SPARQL DELETE retains inferred RDF. Explicit assertion withdrawal,
++  the Rust `sparql_update_with_retraction` API, or HTTP `/api/update` with
++  `retract_inferences: true` opt in to support-based retraction. Independent
++  proofs survive withdrawal; unsupported cycles do not. The reserved ledger
++  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
++  constraints evaluated over all graphs. Dataset backups retain
++  it, and old single-literal backups migrate on restore or persistent open.
++  Provenance reports retain evidence, rule versions and withdrawal history;
++  proof forests remain exportable to the existing independent oo-cert checker.
++  The CLI help and reasoning guide disclose tracking's time and storage costs,
++  including the maintainer's LUBM1 measurements.
 +
- - **`stats` counts individuals by their type vocabulary, in both engines**
-   (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
-   `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
+ - **`onto_repo_list` reports cache and active status for the matching file**
+   (#386). Multiple repository directories can contain the same filename stem;
+   status flags now match the cached and active source paths instead of marking
 ```
 
-**File**: `src/graph.rs` (modified, +34/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -605,6 +605,40 @@ impl GraphStore {
-         self.select_with_dataset(query, true)
-     }
- 
-+    /// Run a SELECT over the union dataset and return its RDF terms without
-+    /// serialising them to display strings. Callers that consume lexical values
-+    /// (for example, labels used as embedding input) must not parse RDF syntax
-+    /// back out of `Term::to_string()`.
-+    pub fn sparql_select_union_terms(
-+        &self,
-+        query: &str,
-+    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
-+        let store = &self.store;
-+        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
-+        prepared.dataset_mut().set_default_graph_as_union();
-+        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
-+            anyhow::bail!("term selection needs a SELECT query");
-+        };
-+
-+        let vars: Vec<String> = solutions
-+            .variables()
-+            .iter()
-+            .map(|v| v.as_str().to_string())
-+            .collect();
-+        let mut rows = Vec::new();
-+        for solution in solutions {
-+            let solution = solution?;
-+            let mut row = std::collections::HashMap::new();
-+            for var in &vars {
-+                if let Some(term) = solution.get(var.as_str()) {
-+                    row.insert(var.clone(), term.clone());
-+                }
-+            }
-+            rows.push(row);
-+        }
-+        Ok(rows)
-+    }
-+
-     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
-     /// union dataset. Returns the solutions per term, in the order given.
-     ///
+@@ -2783,6 +2783,7 @@ dependencies = [
+  "serde_json",
+  "serde_yaml",
+  "sha2 0.10.9",
++ "spargebra",
+  "sqlx",
+  "tempfile",
+  "thiserror",
 ```
 
-**File**: `src/server.rs` (modified, +20/-21)
+**File**: `Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -3,6 +3,8 @@
- 
- use std::sync::Arc;
- 
-+#[cfg(feature = "embeddings")]
-+use oxigraph::model::Term;
- use rmcp::{
-     ServerHandler, tool, tool_handler, tool_router,
-     prompt, prompt_handler, prompt_router,
-@@ -3196,31 +3198,28 @@ impl OpenOntologiesServer {
- 
-         // Enumerating the store's classes is a question about the whole store,
-         // so read the union of all graphs, not the default graph alone.
--        let result = match self.graph.sparql_select_union(classes_query) {
--            Ok(r) => r,
--            Err(e) => return Self::err_json(e),
--        };
--
--        let parsed: serde_json::Value = match serde_json::from_str(&result) {
--            Ok(v) => v,
-+        let rows = match self.graph.sparql_select_union_terms(classes_query) {
-+            Ok(rows) => rows,
-             Err(e) => return Self::err_json(e),
-         };
- 
-         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
--        if let Some(rows) = parsed["results"].as_array() {
--            for row in rows {
--                if let Some(iri) = row["class"].as_str() {
--                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
--                    let label = row["label"].as_str()
--                        .map(|s| s.trim_matches('"').to_string())
--                        .unwrap_or_else(|| {
--                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
--                                .map(|(_, n)| n.to_string())
--                                .unwrap_or_else(|| iri.clone())
--                        });
--                    class_labels.insert(iri, label);
--                }
--            }
-+        for row in rows {
-+            let Some(Term::NamedNode(class)) = row.get("class") else {
-+                continue;
-+            };
-+            let iri = class.as_str().to_string();
-+            let fallback = || {
-+                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
-+                    .map(|(_, n)| n.to_string())
-+                    .unwrap_or_else(|| iri.clone())
-+            };
-+            let label = match row.get("label") {
-+                Some(Term::Literal(label)) => label.value().to_string(),
-+                Some(other) => other.to_string(),
-+                None => fallback(),
-+            };
-+            class_labels.insert(iri, label);
-         }
- 
-         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
+@@ -49,6 +49,8 @@ tower-http = { version = "0.6", features = ["cors"] }
+ tokio-util = "0.7"
+ tokio = { version = "1", features = ["full"] }
+ oxigraph = "0.5"
++# Reuse the parser already locked by Oxigraph to journal affected update quads.
++spargebra = { git = "https://github.com/fabio-rovai/oxigraph.git", rev = "37db8e1522585ed2f9aa994be6c5c716859af5c8" }
+ rusqlite = { version = "0.41", features = ["bundled"] }
+ reqwest = { version = "0.12", features = ["json"] }
+ schemars = "1"
 ```
 
-**File**: `tests/embedding_label_literal_test.rs` (added, +34/-0)
+**File**: `docs/reasoning.md` (modified, +22/-0)
 ```diff
-@@ -0,0 +1,34 @@
-+use open_ontologies::graph::GraphStore;
-+use oxigraph::model::Term;
+@@ -61,6 +61,28 @@ result as a statement about the whole ontology.
+ | `owl-rl-ext` | + someValuesFrom, allValuesFrom, hasValue, intersectionOf, unionOf. All 29 |
+ | `owl-dl` | SHIQ tableaux: satisfiability, classification, ABox reasoning. Nominals are not implemented and datatype ranges are skipped |
+ 
++## Durable derivation tracking
 +
-+#[test]
-+fn union_term_query_keeps_label_lexical_value_and_language() {
-+    let graph = GraphStore::new();
-+    graph
-+        .load_turtle(
-+            r#"@prefix : <http://example.org/> .
-+               @prefix owl: <http://www.w3.org/2002/07/owl#> .
-+               @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+               :Canid a owl:Class ; rdfs:label "A \"quoted\" label"@en ."#,
-+            None,
-+        )
-+        .unwrap();
++RDFS/OWL-RL materialisation can persist source evidence and rule instances with
++`reason --track-derivations` (CLI or batch), or `track_derivations: true` on the
++MCP reasoning tools. Tracking is disabled by default. Recorded dependencies
++support explicit assertion withdrawal and proof export; ordinary SPARQL DELETE
++does not automatically retract inferred triples.
 +
-+    let rows = graph
-+        .sparql_select_union_terms(
-+            r#"SELECT DISTINCT ?class ?label WHERE {
-+                ?class a <http://www.w3.org/2002/07/owl#Class> .
-+                OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }
-+                FILTER(isIRI(?class))
-+            }"#,
-+        )
-+        .unwrap();
++Tracking has a substantial cost in reasoning time and storage. In the
++maintainer's [PR #365 benchmark](https://github.com/fabio-rovai/open-ontologies/pull/365),
++release builds on LUBM1 (100,866 input triples, RDFS) took 4.4 to 6.7 seconds
++with tracking, compared with 0.41 seconds without it. The tracked store held
++694,543 metadata quads, about 5.5 per data triple after materialisation; its
++N-Quads dataset dump was about 328 MB for 126,760 data triples. These are
++workload-specific measurements, not fixed overhead ratios or performance
++guarantees. Rule applications and alternative supports determine ledger size.
 +
-+    assert_eq!(rows.len(), 1);
-+    let label = match rows[0].get("label") {
-+        Some(Term::Literal(label)) => label,
-+        other => panic!("expected RDF literal, got {other:?}"),
-+    };
-+    assert_eq!(label.value(), "A \"quoted\" label");
-+    assert_eq!(label.language(), Some("en"));
-+}
++A tracked run rejects publication if a concurrent write changes its source
++generation. Retry against the current dataset in that case. Untracked runs
++retain the original snapshot materialisation behaviour, and updates on stores
++without a ledger use Oxigraph's native SPARQL UPDATE executor.
++
+ ## Tools
+ 
+ | Tool | Purpose |
+```
+
+**File**: `python/src/open_ontologies_lite/horn/reason.py` (modified, +1/-1)
+```diff
+@@ -248,7 +248,7 @@ def _facts(store, graphs) -> tuple[list[Fact], list[str]]:
+     The default is the DEFAULT GRAPH ALONE, which is where `OntologyEngine.load()`
+     puts everything, so this package's own users lose nothing by it. The Rust
+     engine flattens every named graph here EXCEPT the inferred one
+-    (`src/reason.rs:3371`, `graph.triples_in_scope(&scope)`). Before
++    (`src/reason.rs:3423`, `graph.triples_in_scope(&scope)`). Before
+     15 September 2026 it excepted nothing, which was the defect above: a store
+     holding a prior materialisation turned derived triples into assertions.
+     """
+```
+
+**File**: `python/tests/test_horn_differential.py` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@
+ The assertion is SET EQUALITY OF DERIVED TRIPLES against the Rust `run_horn`, over
+ the same `builtin_rules.tsv`. Byte identity of the two `horn.tsv` files is NOT a
+ goal and must not be asserted: the Rust emitter sorts interned `u32` triples
+-(`src/reason.rs:3441`, `all.sort_unstable()` over `Vec<(u32,u32,u32)>`), so its
++(`src/reason.rs:3493`, `all.sort_unstable()` over `Vec<(u32,u32,u32)>`), so its
+ line order is first-appearance order in the store, not lexicographic order.
+ Reproducing it from Python would mean reimplementing the interner and betting on
+ identical store-iteration order across two bindings, to buy nothing the set
+```
+
+**File**: `python/tests/test_horn_fixpoint_and_scope.py` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@
+ ASSERTIONS. The checker could not detect it: the soundness theorem is conditional
+ on the assertions, and it is TOLD what they are, so the result was a green
+ absolute verdict about a graph nobody asserted. It now reads
+-`src/reason.rs:3371`, `graph.triples_in_scope(&scope)`, and the
++`src/reason.rs:3423`, `graph.triples_in_scope(&scope)`, and the
+ inferred graph is out of scope.
+ 
+ The two engines still differ in HOW, and the difference is deliberate. Rust
+```
+
+**File**: `python/tests/test_horn_three_way_differential.py` (modified, +21/-3)
+```diff
+@@ -148,6 +148,22 @@ def case_files(name):
+     return [str(f) for f in files]
+ 
+ 
++def test_relative_iris_resolve_from_an_escaped_file_uri(tmp_path):
++    import pyoxigraph as ox
++
++    folder = tmp_path / "folder with # and %"
++    folder.mkdir()
++    source = folder / "source.ttl"
++    source.write_text("<> <http://example.org/linksTo> <target.ttl> .", encoding="utf-8")
++    store = ox.Store()
++    store.load(
++        path=str(source), format=ox.RdfFormat.TURTLE, base_iri=tool().base_iri_for(source)
++    )
++    (quad,) = store
++    assert quad.subject.value == source.as_uri()
++    assert quad.object.value == (folder / "target.ttl").as_uri()
++
++
+ def run(module, name, patch=None):
+     """One case through all three implementations, optionally with the Python engine
+     sabotaged. The patch is applied to the module attribute rather than to the import in
+@@ -223,7 +239,8 @@ def dropping(store, **kwargs):
+             result = real(store, **kwargs)
+             horn = Path(kwargs["certificate_dir"]) / "horn.tsv"
+             lines = [line for line in horn.read_text("utf-8").split("\n") if line]
+-            horn.write_text("\n".join(lines[:-1]) + "\n", "utf-8")
++            # Remove only the final step; preserve LF bytes on Windows too.
++            horn.write_text("\n".join(lines[:-1]) + "\n", encoding="utf-8", newline="\n")
+             return result
+ 
+         return dropping
+@@ -249,7 +266,7 @@ def forging(store, **kwargs):
+             at = 2 + 2 * int(fields[1])
+             fields[at + 2] = "<http://example.org/FORGED>"
+             lines[0] = "\t".join(fields)
+-            horn.write_text("\n".join(lines) + "\n", "utf-8")
++            horn.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+             return result
+ 
+         return forging
+@@ -269,7 +286,8 @@ def ghosting(store, **kwargs):
+             asserted.write_text(
+                 asserted.read_text("utf-8")
+                 + "<http://example.org/ghost>\t<http://example.org/p>\t<http://example.org/o>\n",
+-                "utf-8",
++                encoding="utf-8",
++                newline="\n",
+             )
+             return result
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #408** (2026-11-16): Clinical validation and drift read a tagged label by its text (fixes #406) (@fabio-rovai)
 - **PR #407** (2026-11-15): Land #404 and #405 from @dajiaohuang (@fabio-rovai)
 - **PR #405** (2026-11-15): Serialize ontology load and unload transitions (@dajiaohuang)
 - **PR #404** (2026-11-15): Fix embedded label extraction (@dajiaohuang)
 - **PR #403** (2026-11-15): Land #402 from @dajiaohuang; blank headers are not duplicates (@fabio-rovai)
 - **PR #402** (2026-11-15): Reject duplicate XLSX headers (@dajiaohuang)
-- **PR #401** (2026-11-13): Land #399 and #400 from @dajiaohuang, and #397 (@fabio-rovai)
 
 ---
 
@@ -2174,13 +2713,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. One changelog entry under Unreleased Fixed covers #382 and #402, including blank
+## X. shacl): hide provenance from scoped prebound union queries
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d49478c`: One changelog entry under Unreleased Fixed covers #382 and #402, including blank headers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df254aff`: shacl): hide provenance from scoped prebound union queries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2188,30 +2727,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **CSV and XLSX ingestion reject a repeated header instead of dropping a
-  column** (#382, #402). Each row became a map keyed by header, so a later
-  column with the same header overwrote the earlier one. The error names the
-  header and its column number. A blank header names no column, so blank
-  headers are not duplicates: a file whose lines end in empty columns, as
-  spreadsheet exports such as `name,,` do, still loads, with the empty
-  columns skipped and left out of the column list that mapping generation
-  reads. A value under a blank header has no name to go under and is refused
-  with its column number.
+  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
+  constraints evaluated over all graphs. Dataset backups retain
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- **XLSX ingestion rejects duplicate headers instead of silently overwriting earlier columns.**
-
-- **CSV ingestion rejects a repeated header instead of dropping a column**
-  (#382). Each row became a map keyed by header, so a later column with the
-  same header overwrote the earlier one. The error names the header and its
-  column number.
+  stays outside query datasets, including `GRAPH ?g`. Dataset backups retain
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d49478c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df254aff` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

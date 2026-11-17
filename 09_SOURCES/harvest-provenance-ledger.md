@@ -10468,3 +10468,6 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `f3306074` | Multi-dimensional audit evidence | 2026-11-17T03:57:53.994Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `29b826e4` | Multi-dimensional audit evidence | 2026-11-17T03:58:00.092Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `69db4b16` | Multi-dimensional audit evidence | 2026-11-17T03:58:03.336Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `dbce0c67` | Multi-dimensional audit evidence | 2026-11-17T04:05:40.189Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `c42354b6` | Multi-dimensional audit evidence | 2026-11-17T04:05:43.455Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `1ed99ac1` | Multi-dimensional audit evidence | 2026-11-17T04:05:44.911Z |

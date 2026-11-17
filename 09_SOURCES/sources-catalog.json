@@ -8483,10 +8483,10 @@
     "repository": "tauri-apps/tauri",
     "platform": "github",
     "sourceUrl": "https://github.com/tauri-apps/tauri",
-    "sourceVersion": "5edd31c8",
+    "sourceVersion": "c42354b6",
     "license": "Apache-2.0",
-    "contentHash": "9df43c72ba753f71ea0ea9ede2d20f6e0f738b460759b223e9987af867155b5f",
-    "lastHarvestedAt": "2026-11-13T14:34:00.159Z",
+    "contentHash": "13817b8a86cef06f858947f28599e749d52018dfe7eac2378a64f49aa33940bc",
+    "lastHarvestedAt": "2026-11-17T04:05:43.455Z",
     "learningId": "learn-github-tauri-apps-tauri"
   },
   "oliviertassinari-react-swipeable-views": {
@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "3e1a86e6",
+    "sourceVersion": "dbce0c67",
     "license": "MIT",
-    "contentHash": "52beee9c918e96e27d718431a04d0cbf1cd96f6a2375d142ce0678ac7ba09021",
-    "lastHarvestedAt": "2026-11-12T12:32:51.840Z",
+    "contentHash": "8034c7907c13807ad38ccbdfe8c1157e888c057110e03df23162aff38e0495d6",
+    "lastHarvestedAt": "2026-11-17T04:05:40.189Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "214e948e",
+    "sourceVersion": "1ed99ac1",
     "license": "MIT",
-    "contentHash": "3383144cd519e711126c2cc617322cb4431ea3f0bc0b0597a91059f07685a564",
-    "lastHarvestedAt": "2026-11-15T22:14:50.531Z",
+    "contentHash": "1644f758a7746bb0fdc2f5bf84c270d8eb6c5df89e85eecbeb4dad5efcd251cf",
+    "lastHarvestedAt": "2026-11-17T04:05:44.911Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {

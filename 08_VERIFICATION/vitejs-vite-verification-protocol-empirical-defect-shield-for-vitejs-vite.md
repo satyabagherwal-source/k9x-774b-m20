@@ -4,45 +4,31 @@
 {
   "source_repository": "vitejs/vite",
   "source_url": "https://github.com/vitejs/vite",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "dbce0c67",
+  "license": "MIT",
+  "timestamp": "2026-11-17T04:05:40.363Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-vitejs-vite",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [vitejs/vite](https://github.com/vitejs/vite) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [vitejs/vite](https://github.com/vitejs/vite) (Revision: `dbce0c67`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T04:05:40.363Z`  
+> **Learning ID**: `learn-github-vitejs-vite`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `vitejs/vite` (Commit: `historical`)
+- **Target Repository**: `vitejs/vite` (Commit: `dbce0c67`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
-> **Source**: github ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
-> **Source Version**: `3e1a86e6`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T12:32:39.043Z  
-> **Learning ID**: `learn-github-vitejs-vite`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): vitejs/vite
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T12:32:38.713Z  
+> **Harvest Timestamp**: 2026-11-17T04:05:39.076Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Next generation frontend tooling. It's fast!
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 83885 stars
+- **Stars / Engagement**: 83943 stars
 
 ---
 
@@ -108,6 +94,7 @@ function encodePathChars(filepath: string) {
 
 export const posixDirname: (path: string) => string = pathe.dirname
 export const posixResolve: (...paths: string[]) => string = pathe.resolve
+export const posixJoin: (...paths: string[]) => string = pathe.join
 
 export function posixPathToFileHref(posixPath: string): string {
   let resolved = posixResolve(posixPath)
@@ -837,8 +824,10 @@ import { performance } from 'node:perf_hooks'
 import { fileURLToPath } from 'node:url'
 import remapping from '@jridgewell/remapping'
 import type { DecodedSourceMap, RawSourceMap } from '@jridgewell/remapping'
+import { decode, encode } from '@jridgewell/sourcemap-codec'
+import type { SourceMapSegment } from '@jridgewell/sourcemap-codec'
 import type { Equal } from '@type-challenges/utils'
-import type MagicString from 'magic-string'
+import MagicString from 'magic-string'
 import type { Debugger } from 'obug'
 import debug from 'obug'
 import colors from 'picocolors'
@@ -1148,11 +1137,7 @@ export const isInternalRequest = (url: string): boolean =>
 export function removeImportQuery(url: string): string {
   return url.replace(importQueryRE, '$1').replace(trailingSeparatorRE, '')
 }
-export function removeDirectQuery(url: string): string {
-  return url.replace(directRequestRE, '$1').replace(trailingSeparatorRE, '')
-}
-
-export const urlRE: RegExp = 
+export function removeDirectQuery(url: str
 ```
 
 ### Core Architecture Module: `packages/vite/src/shared/utils.ts`
@@ -1330,11 +1315,11 @@ self.onmessage = (e) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24080** (2026-11-12): **fix: escape imported name in `transformCjsImport`**
-  *Symptoms*: <!-- - What is this PR solving? Write a clear and concise description. - Reference the issues it solves (e.g. `fixes #123`). - What other alternatives have you explored? - Are there any parts you think require more attention from reviewers?  Also, please make sure you do the following:  - Read the Contributing Guidelines at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md. - Check that there isn't already a PR that solves the problem the same way. If you find a duplicate, please help us review it. If you've solved it in a different way, clarify what is different and link the other PRs in the PR description. - Update the corresponding documentation if needed. - Include relevant tests that fail without this PR but pass with it. If the tests are not included, explain why.  If you have used AI:  - Read the AI Policy at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md#ai-policy. - Keep the PR description and discussion concise. Use your own words, do not let AI write for you. - Disclose and describe how you have reviewed its code, e.g. the thought process and decisions that lead to the final code.  Thank you for contributing to Vite! --> To supplement the omissions in #24074.
+- **Issue #24119** (2026-11-17): **fix(optimizer): respect top-level tsconfig option when scanning deps (fix #24117)**
+  *Symptoms*: fixes #24117  The top-level `tsconfig` option is applied to the build (`resolveRolldownOptions` in `build.ts`) and to the oxc/resolve plugins, but the dep scanner only passed `optimizeDeps.rolldownOptions` to Rolldown's `scan`. So during scanning, Rolldown still discovered the nearest `tsconfig.json` per file, and a broken nested config failed the scan even though the selected one was valid.  The scanner now uses the same precedence as the build: `config.tsconfig ?? rolldownOptions.tsconfig`, and clears `resolve.tsconfigFilename` when the top-level option is set.  Alternative considered: only setting `tsconfig`. I kept the `resolve.tsconfigFilename` reset too so the scanner matches `build.ts` exactly.  Test: added a case to `scan.spec.ts` with a fixture where `src/tsconfig.json` extends a missing file and `tsconfig.selected.json` is valid. It fails on main with the same `[TSCONFIG_ERROR] ... Tsconfig not found` as the issue and passes with the change.  Assisted by Claude Opus 5.5; description drafted with AI, and then reviewed and edited by the author. 
 
-- **Issue #24079** (2026-11-12): **refactor: use `tinyexec` instead of `execa`**
-  *Symptoms*: <!-- - What is this PR solving? Write a clear and concise description. - Reference the issues it solves (e.g. `fixes #123`). - What other alternatives have you explored? - Are there any parts you think require more attention from reviewers?  Also, please make sure you do the following:  - Read the Contributing Guidelines at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md. - Check that there isn't already a PR that solves the problem the same way. If you find a duplicate, please help us review it. If you've solved it in a different way, clarify what is different and link the other PRs in the PR description. - Update the corresponding documentation if needed. - Include relevant tests that fail without this PR but pass with it. If the tests are not included, explain why.  If you have used AI:  - Read the AI Policy at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md#ai-policy. - Keep the PR description and discussion concise. Use your own words, do not let AI write for you. - Disclose and describe how you have reviewed its code, e.g. the thought process and decisions that lead to the final code.  Thank you for contributing to Vite! --> https://e18e.dev/docs/replacements/execa
+- **Issue #24118** (2026-11-16): **fix: respect top-level tsconfig during dependency scanning**
+  *Symptoms*: Fixes #24117.  The dependency scanner passes `optimizeDeps.rolldownOptions` to Rolldown but omits Vite's resolved top-level `tsconfig`. This lets a nearer per-directory config override the explicitly selected config during scanning, even though builds honor the top-level setting.  Pass the resolved top-level path to the scanner, with the optimizer-specific path as the fallback. Add a regression test where the selected root config is valid and a nested config extends a missing file.  Checks: `pnpm --filter vite build`; `pnpm exec vitest run src/node/__tests__/scan.spec.ts`; `pnpm exec oxfmt --check ...`; `git diff --check`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1351,444 +1336,875 @@ self.onmessage = (e) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dcd391e` (2026-11-11)
-**Commit Message**: fix(client): fallback to waiting on main thread for server start when trusted types are enforced (#21483)
+### Incident Patch 1: `dbce0c67` (2026-11-17)
+**Commit Message**: perf(build): shift source maps for preload rewrites instead of re-tracing them (#24049)
+
+**File**: `packages/vite/package.json` (modified, +1/-0)
+```diff
+@@ -78,6 +78,7 @@
+   "devDependencies": {
+     "@babel/parser": "^7.29.14",
+     "@jridgewell/remapping": "^2.3.5",
++    "@jridgewell/sourcemap-codec": "^1.6.0",
+     "@jridgewell/trace-mapping": "^0.3.31",
+     "@polka/compression": "^1.0.0-next.25",
+     "@rollup/plugin-alias": "^6.0.1",
+```
+
+**File**: `packages/vite/src/node/__tests__/utils.spec.ts` (modified, +178/-0)
+```diff
+@@ -3,12 +3,15 @@ import fs from 'node:fs'
+ import os, { type NetworkInterfaceInfoIPv4 } from 'node:os'
+ import path from 'node:path'
+ import type { DecodedSourceMap, RawSourceMap } from '@jridgewell/remapping'
++import { decode, encode } from '@jridgewell/sourcemap-codec'
++import { TraceMap, originalPositionFor } from '@jridgewell/trace-mapping'
+ import MagicString from 'magic-string'
+ import { fileURLToPath } from 'mlly'
+ import { describe, expect, test, vi, onTestFinished } from 'vitest'
+ import type { CommonServerOptions, ResolvedServerUrls } from '..'
+ import { isWindows } from '../../shared/utils'
+ import {
++  SourcemapEditor,
+   asyncFlatten,
+   bareImportRE,
+   combineSourcemaps,
+@@ -1067,6 +1070,181 @@ describe('combineSourcemaps', () => {
+   })
+ })
+ 
++describe('SourcemapEditor', () => {
++  test('reports whether the code has changed', () => {
++    const s = new SourcemapEditor('foo(bar)')
++    expect(s.hasChanged()).toBe(false)
++    s.update(4, 7, '[]')
++    expect(s.hasChanged()).toBe(true)
++  })
++
++  // segments are [generated column, original line, original column]
++  const chunkMap = (lines: [number, number, number][][]): RawSourceMap => ({
++    version: 3,
++    file: 'index.js',
++    sources: ['src/index.js'],
++    names: [],
++    mappings: encode(
++      lines.map((segments) =>
++        segments.map(([column, line, originalColumn]) => [
++          column,
++          0,
++          line,
++          originalColumn,
++        ]),
++      ),
++    ),
++  })
++
++  // Compares every position of the edited code against the chunk map traced
++  // through a character-level map of the edits.
++  const expectExactMapping = (
++    code: string,
++    map: RawSourceMap,
++    edit: (s: SourcemapEditor | MagicString) => void,
++  ) => {
++    const s = new SourcemapEditor(code)
++    const expected = new MagicString(code)
++    edit(s)
++    edit(expected)
++    expect(s.toString()).toBe(expected.toString())
++    const exact = new TraceMap(
++      combineSourcemaps('index.js', [
++        expected.generateDecodedMap({ source: 'index.js', hires: true }),
++        map,
++      ]),
++    )
++    const actual = new TraceMap(s.generateMap('index.js', map))
++
++    s.toString()
++      .split('\n')
++      .forEach((text, line) => {
++        for (let column = 0; column <= text.length; column++) {
++          const position = { line: line + 1, column }
++          expect(
++            originalPositionFor(actual, position),
++            `${line}:${column}`,
++          ).toStrictEqual(originalPositionFor(exact, position))
++        }
++      })
++  }
++
++  const marker = '__MARKER__'
++
++  test('replaces spans with longer and shorter content', () => {
++    const code = `a(${marker});b(${marker});c()`
++    expectExactMapping(
++      code,
++      chunkMap([
++        [
++          [0, 0, 0],
++          [2, 0, 4],
++          [12, 0, 20],
++          [14, 1, 0],
++          [16, 1, 4],
++          [26, 1, 20],
++          [28, 2, 0],
++        ],
++      ]),
++      (s) => {
++        s.update(2, 12, '__vite__mapDeps([0,1])')
++        s.update(16, 26, '[]')
++      },
++    )
++  })
++
++  test('maps the code after a replaced span like the segment inside it', () => {
++    const code = `a(${marker}, b)`
++    expectExactMapping(
++      code,
++      chunkMap([
++        [
++          [0, 0, 0],
++          [5, 3, 7],
++          [14, 4, 0],
++        ],
++      ]),
++      (s) => s.update(2, 12, 'void 0'),
++    )
++  })
++
++  test('keeps segments that share a column', () => {
++    const code = `a(${marker});parent?.x`
++    expectExactMapping(
++      code,
++      chunkMap([
++        [
++          [0, 0, 0],
++          [14, 1, 4],
++          [14, 2, 6],
++          [21, 2, 13],
++        ],
++      ]),
++      (s) => s.update(2, 12, '[]'),
++    )
++  })
++
++  test('moves lines down for inserted lines', () => {
++    const code = `#!/usr/bin/env node\nfoo(${marker})\nbar()`
++    expectExactMapping(
++      code,
++      chunkMap([
++        [[0, 0, 0]],
++        [
++          [0, 1, 0],
++          [4, 1, 4],
++        ],
++        [[0, 2, 0]],
++      ]),
++      (s) => {
++        s.prependLeft(20, 'const __vite__mapDeps=0;\n')
++        s.update(24, 34, '[]')
++      },
++    )
++  })
++
++  test('drops redundant segments and unused names', () => {
++    const map: RawSourceMap = {
++      version: 3,
++      file: 'index.js',
++      sources: ['src/index.js'],
++      names: ['unused', 'foo'],
++      mappings: encode([
++        [[0], [5, 0, 0, 0], [9, 0, 0, 0], [12], [14], [16, 0, 1, 0]],
++        [
++          [0, 0, 2, 0],
++          [7, 0, 2, 0],
++          [7, 0, 2, 0, 1],
++          [9, 0, 2, 0, 1],
++        ],
++      ]),
++    }
++    const s = new SourcemapEditor('x'.repeat(20) + '\n')
++    const result = s.generateMap('index.js', map)
++    expect(result.names).toStrictEqual(['foo'])
++    expect(decode(result.mappings)).toStrictEqual([
++      [[5, 0, 0, 0], [12], [16, 0, 1, 0]],
++      [
++        [0, 0, 2, 0],
++        [7, 0, 2, 0],
++        [7, 0, 2, 0, 0],
++      ],
++    ])
++  })
++
++  test('maps 
+```
+
+**File**: `packages/vite/src/node/plugins/importAnalysisBuild.ts` (modified, +10/-19)
+```diff
+@@ -1,9 +1,8 @@
+ import path from 'node:path'
+-import type { DecodedSourceMap, RawSourceMap } from '@jridgewell/remapping'
++import type { RawSourceMap } from '@jridgewell/remapping'
+ import convertSourceMap from 'convert-source-map'
+ import type { DynamicImport } from 'es-module-lexer'
+ import { init, parse as parseImports } from 'es-module-lexer'
+-import MagicString from 'magic-string'
+ import type { RenderedChunk, SourceMap } from 'rolldown'
+ import { viteBuildImportAnalysisPlugin as nativeBuildImportAnalysisPlugin } from 'rolldown/experimental'
+ import { cleanUrl } from '../../shared/utils'
+@@ -14,7 +13,7 @@ import { perEnvironmentState } from '../environment'
+ import { type Plugin, perEnvironmentPlugin } from '../plugin'
+ import { genSourceMapUrl } from '../server/sourcemap'
+ import {
+-  combineSourcemaps,
++  SourcemapEditor,
+   generateCodeFrame,
+   getFileStartIndex,
+   normalizePath,
+@@ -668,7 +667,7 @@ export function buildImportAnalysisPlugin(config: ResolvedConfig): Plugin[] {
+             })
+           }
+ 
+-          const s = new MagicString(code)
++          const s = new SourcemapEditor(code)
+           const rewroteMarkerStartPos = new Set() // position of the leading double quote
+ 
+           const fileDeps: FileDep[] = []
+@@ -847,11 +846,8 @@ export function buildImportAnalysisPlugin(config: ResolvedConfig): Plugin[] {
+             const mapDepsCode = `const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=${fileDepsCode})))=>i.map(i=>d[i]);\n`
+ 
+             // inject extra code at the top or next line of hashbang
+-            if (code.startsWith('#!')) {
+-              s.prependLeft(getFileStartIndex(code), mapDepsCode)
+-            } else {
+-              s.prepend(mapDepsCode)
+-            }
++            const fileStartIndex = getFileStartIndex(code)
++            s.prependLeft(fileStartIndex, mapDepsCode)
+           }
+ 
+           // there may still be markers due to inlined dynamic imports, remove
+@@ -872,19 +868,14 @@ export function buildImportAnalysisPlugin(config: ResolvedConfig): Plugin[] {
+           if (s.hasChanged()) {
+             chunk.code = s.toString()
+             if (buildSourcemap && chunk.map) {
+-              const nextMap = s.generateDecodedMap({
+-                source: chunk.fileName,
+-                hires: 'boundary',
+-              })
+               const originalFile = chunk.map.file
+-              const map = combineSourcemaps(chunk.fileName, [
+-                nextMap as DecodedSourceMap,
++              const map = s.generateMap(
++                chunk.fileName,
+                 chunk.map as RawSourceMap,
+-              ]) as SourceMap
++              ) as SourceMap
++              map.toString = () => JSON.stringify(map)
+               map.toUrl = () => genSourceMapUrl(map)
+-              if (originalFile) {
+-                map.file = originalFile
+-              }
++              map.file = originalFile || chunk.fileName
+ 
+               const originalDebugId = chunk.map.debugId
+               chunk.map = map
+```
+
+**File**: `packages/vite/src/node/utils.ts` (modified, +199/-1)
+```diff
+@@ -13,8 +13,10 @@ import { performance } from 'node:perf_hooks'
+ import { fileURLToPath } from 'node:url'
+ import remapping from '@jridgewell/remapping'
+ import type { DecodedSourceMap, RawSourceMap } from '@jridgewell/remapping'
++import { decode, encode } from '@jridgewell/sourcemap-codec'
++import type { SourceMapSegment } from '@jridgewell/sourcemap-codec'
+ import type { Equal } from '@type-challenges/utils'
+-import type MagicString from 'magic-string'
++import MagicString from 'magic-string'
+ import type { Debugger } from 'obug'
+ import debug from 'obug'
+ import colors from 'picocolors'
+@@ -973,6 +975,202 @@ export function combineSourcemaps(
+   return map as RawSourceMap
+ }
+ 
++/**
++ * Tracks edits through a limited MagicString API so sourcemaps can be shifted
++ * without generating and tracing a map of the edits when possible.
++ */
++export class SourcemapEditor {
++  private s: MagicString
++  private edits: SourceEdit[] = []
++
++  constructor(code: string) {
++    this.s = new MagicString(code)
++  }
++
++  update(start: number, end: number, content: string): this {
++    this.s.update(start, end, content)
++    this.edits.push({ start, end, content })
++    return this
++  }
++
++  prependLeft(index: number, content: string): this {
++    this.s.prependLeft(index, content)
++    this.edits.push({ start: index, end: index, content })
++    return this
++  }
++
++  hasChanged(): boolean {
++    return this.s.hasChanged()
++  }
++
++  toString(): string {
++    return this.s.toString()
++  }
++
++  generateMap(filename: string, map: RawSourceMap): RawSourceMap {
++    return (
++      shiftSourcemapForEdits(map, this.s.original, this.edits) ??
++      // For edits it can't shift, e.g. `Promise.resolve({})` replacing an
++      // import that spans lines.
++      combineSourcemaps(filename, [
++        this.s.generateDecodedMap({
++          source: filename,
++          hires: 'boundary',
++        }) as DecodedSourceMap,
++        map,
++      ])
++    )
++  }
++}
++
++export interface SourceEdit {
++  start: number
++  end: number
++  content: string
++}
++
++/**
++ * Returns `map` updated for `edits` to the code it maps, by moving its
++ * segments instead of tracing it through a map of the edits like
++ * `combineSourcemaps`. Supports edits that replace a span within one line and
++ * edits that insert whole lines at the start of a line. Returns `undefined` for
++ * any other edit.
++ */
++export function shiftSourcemapForEdits(
++  map: RawSourceMap,
++  code: string,
++  edits: SourceEdit[],
++): RawSourceMap | undefined {
++  // [start column, end column, added length] for each edit, by line
++  const columnEdits = new Map<number, [number, number, number][]>()
++  const insertedLines = new Map<number, number>()
++  let line = 0
++  let lineStart = 0
++  let nextNewline = code.indexOf('\n')
++  for (const { start, end, content } of [...edits].sort(
++    (a, b) => a.start - b.start,
++  )) {
++    while (nextNewline !== -1 && nextNewline < start) {
++      line++
++      lineStart = nextNewline + 1
++      nextNewline = code.indexOf('\n', lineStart)
++    }
++    if (nextNewline !== -1 && nextNewline < end) return
++
++    if (content.includes('\n')) {
++      if (start !== end || start !== lineStart || !content.endsWith('\n')) {
++        return
++      }
++      const count = content.split('\n').length - 1
++      insertedLines.set(line, (insertedLines.get(line) ?? 0) + count)
++      continue
++    }
++
++    let lineEdits = columnEdits.get(line)
++    if (!lineEdits) columnEdits.set(line, (lineEdits = []))
++    lineEdits.push([
++      start - lineStart,
++      end - lineStart,
++      content.length - (end - start),
++    ])
++  }
++
++  const lines: SourceMapSegment[][] = []
++  decode(map.mappings).forEach((segments, i) => {
++    for (let n = insertedLines.get(i) ?? 0; n > 0; n--) lines.push([])
++    const lineEdits = columnEdits.get(i)
++    lines.push(lineEdits ? shiftSegments(segments, lineEdits) : segments)
++  })
++  const names = removeRedundantSegments(lines, map.names)
++  return { ...map, names, mappings: encode(lines) }
++}
++
++/**
++ * Drops the segments `combineSourcemaps` would leave out (see gen-mapping's
++ * `maybeAddSegment`) and the names no segment uses. Lookups are unchanged.
++ */
++function removeRedundantSegments(
++  lines: SourceMapSegment[][],
++  names: string[],
++): string[] {
++  const usedNames: string[] = []
++  const newNameIndex = new Map<number, number>()
++  for (let i = 0; i < lines.length; i++) {
++    const kept: SourceMapSegment[] = []
++    const segments = lines[i]
++    for (let s = 0; s < segments.length; s++) {
++      const segment = segments[s]
++      // lookups use the first of several segments at one column, so dropping
++      // it would change what the column maps to
++      const sharesColumn = segments[s + 1]?.[0] === segment[0]
++      const previous = kept.at(-1)
++      if (segment.length === 1) {
++        if (sharesColumn || (previous && previous.length !== 1)) {
++          kept.push(segment)
++        }
++        continue
++      }
++      if (segment.l
+```
+
+**File**: `pnpm-lock.yaml` (modified, +3/-0)
+```diff
+@@ -410,6 +410,9 @@ importers:
+       '@jridgewell/remapping':
+         specifier: ^2.3.5
+         version: 2.3.5
++      '@jridgewell/sourcemap-codec':
++        specifier: ^1.6.0
++        version: 1.6.0
+       '@jridgewell/trace-mapping':
+         specifier: ^0.3.31
+         version: 0.3.31
+```
+
+---
+
+### Incident Patch 2: `c0d590d6` (2026-11-16)
+**Commit Message**: fix(build): keep `magicString` and `ast` in transform hook meta (#24067)
+
+Co-authored-by: btea <[REDACTED_EMAIL]>
+
+**File**: `packages/vite/rolldown.dts.config.ts` (modified, +1/-0)
+```diff
+@@ -83,6 +83,7 @@ const identifierReplacements: Record<string, Record<string, string>> = {
+   'rolldown/utils': {
+     TransformOptions: 'rolldown_utils_TransformOptions',
+     TransformResult: 'rolldown_utils_TransformResult',
++    ESTree: 'rolldown_utils_ESTree',
+   },
+   'node:http': {
+     Server: 'http.Server',
+```
+
+**File**: `packages/vite/src/node/__tests__/build.spec.ts` (modified, +46/-0)
+```diff
+@@ -94,6 +94,52 @@ describe('build', () => {
+     assertOutputHashContentChange(result[0], result[1])
+   })
+ 
++  test('transform hook meta keeps rolldown magicString and ast', async () => {
++    const metaTypes: Array<
++      [string | undefined, string | undefined, boolean | undefined]
++    > = []
++    const result = (await build({
++      root: resolve(dirname, 'packages/build-project'),
++      logLevel: 'silent',
++      build: {
++        write: false,
++        minify: false,
++      },
++      plugins: [
++        {
++          name: 'test',
++          resolveId(id) {
++            if (id === 'entry.js') {
++              return '\0' + id
++            }
++          },
++          load(id) {
++            if (id === '\0entry.js') {
++              return `console.log('foo')`
++            }
++          },
++          transform(_code, id, options) {
++            if (id === '\0entry.js') {
++              metaTypes.push([
++                typeof options?.magicString,
++                typeof options?.ast,
++                options?.ssr,
++              ])
++              const magicString = options!.magicString!
++              magicString.replaceAll(`'foo'`, `'bar'`)
++              return { code: magicString }
++            }
++          },
++        },
++      ],
++    })) as RolldownOutput
++    expect(metaTypes).toStrictEqual([['object', 'object', false]])
++    const [chunk] = result.output.filter(
++      (chunk): chunk is OutputChunk => chunk.type === 'chunk',
++    )
++    expect(chunk?.code).toContain(`console.log("bar")`)
++  })
++
+   test('file hash should change when renderBuiltUrl changes', async () => {
+     const createRenderBuiltUrl = (base: string) => (filename: string) =>
+       `${base}/${filename}`
+```
+
+**File**: `packages/vite/src/node/build.ts` (modified, +10/-3)
+```diff
+@@ -1545,9 +1545,16 @@ function injectSsrFlag<T extends Record<string, any>>(
+   pluginName: string,
+ ): T & { ssr?: boolean } {
+   let ssr = environment.config.consumer === 'server'
+-  const newOptions = { ...options, ssr } as T & {
+-    ssr?: boolean
+-  }
++  // spreading the options would drop non-enumerable properties (e.g. the lazy
++  // `magicString` and `ast` getters rolldown attaches to the transform meta),
++  // so copy the property descriptors instead
++  const newOptions = Object.defineProperties(
++    {},
++    {
++      ...(options ? Object.getOwnPropertyDescriptors(options) : {}),
++      ssr: { value: ssr, writable: true, enumerable: true, configurable: true },
++    },
++  ) as T & { ssr?: boolean }
+ 
+   if (
+     isFutureDeprecationEnabled(
+```
+
+**File**: `packages/vite/src/node/plugin.ts` (modified, +14/-0)
+```diff
+@@ -10,9 +10,11 @@ import type {
+   PluginContextMeta,
+   ResolveIdResult,
+   Plugin as RolldownPlugin,
++  RolldownMagicString,
+   TransformPluginContext,
+   TransformResult,
+ } from 'rolldown'
++import type { ESTree } from 'rolldown/utils'
+ import type { PartialEnvironment } from './baseEnvironment'
+ import type { BuildAppHook } from './build'
+ import type {
+@@ -167,6 +169,18 @@ export interface Plugin<A = any> extends RolldownPlugin<A> {
+       options?: {
+         moduleType: ModuleType
+         ssr?: boolean | undefined
++        /**
++         * A lazily-created MagicString instance for the module's code.
++         * Only available during build.
++         * @experimental
++         */
++        magicString?: RolldownMagicString | undefined
++        /**
++         * The lazily-parsed AST of the module's code.
++         * Only available during build.
++         * @experimental
++         */
++        ast?: ESTree.Program | undefined
+       },
+     ) => Promise<TransformResult> | TransformResult,
+     {
+```
+
+---
+
+### Incident Patch 3: `dda2a82c` (2026-11-16)
+**Commit Message**: test(hmr): fix two flaky hmr playground tests (#24092)
 
 Co-authored-by: sapphi-red <[REDACTED_EMAIL]>
 
-**File**: `packages/vite/src/client/client.ts` (modified, +17/-2)
+**File**: `playground/hmr/__tests__/hmr.spec.ts` (modified, +16/-9)
 ```diff
-@@ -352,7 +352,7 @@ function hasErrorOverlay() {
+@@ -19,6 +19,7 @@ import {
+   removeFile,
+   serverLogs,
+   untilBrowserLogAfter,
++  untilBrowserLogAfterNavigation,
+   viteTestUrl,
+ } from '~utils'
+ 
+@@ -536,7 +537,7 @@ if (!isBuild) {
+       let dep = 'dep0'
+ 
+       beforeAll(async () => {
+-        await untilBrowserLogAfter(
++        await untilBrowserLogAfterNavigation(
+           () => openPage(testDir),
+           [CONNECTED, />>>>>>/],
+           (logs) => {
+@@ -671,7 +672,7 @@ if (!isBuild) {
+       let dep = 'dep0'
+ 
+       beforeAll(async () => {
+-        await untilBrowserLogAfter(
++        await untilBrowserLogAfterNavigation(
+           () => openPage(testDir),
+           [CONNECTED, />>>>>>/],
+           (logs) => {
+@@ -734,7 +735,7 @@ if (!isBuild) {
+       const testDir = baseDir + '/side-effects'
+       const file = 'side-effects.ts'
+ 
+-      await untilBrowserLogAfter(
++      await untilBrowserLogAfterNavigation(
+         () => openPage(testDir),
+         [CONNECTED, />>>/],
+         (logs) => {
+@@ -765,7 +766,7 @@ if (!isBuild) {
+         const fileName = 'unused.ts'
+         const file = `${testDir}/${fileName}`
+ 
+-        await untilBrowserLogAfter(
++        await untilBrowserLogAfterNavigation(
+           () => openPage(testDir),
+           [CONNECTED, '-- unused --'],
+           (logs) => {
+@@ -791,7 +792,7 @@ if (!isBuild) {
+         const fileName = 'used.ts'
+         const file = `${testDir}/${fileName}`
+ 
+-        await untilBrowserLogAfter(
++        await untilBrowserLogAfterNavigation(
+           () => openPage(testDir),
+           [CONNECTED, '-- used --'],
+           (logs) => {
+@@ -828,7 +829,7 @@ if (!isBuild) {
+           const fileName = 'deps-all-accepted.ts'
+           const file = `${testDir}/${fileName}`
+ 
+-          await untilBrowserLogAfter(
++          await untilBrowserLogAfterNavigation(
+             () => openPage(testDir),
+             [CONNECTED, '>>> ready <<<'],
+             (logs) => {
+@@ -868,7 +869,7 @@ if (!isBuild) {
+           const fileName = 'deps-some-accepted.ts'
+           const file = `${testDir}/${fileName}`
+ 
+-          await untilBrowserLogAfter(
++          await untilBrowserLogAfterNavigation(
+             () => openPage(testDir),
+             [CONNECTED, '>>> ready <<<'],
+             (logs) => {
+@@ -1140,7 +1141,10 @@ if (!isBuild) {
+         .poll(() => page.textContent('.file-delete-restore'))
+         .toMatch('parent:not-child')
+ 
+-      // restore the file
++      // restore the file. The child's own update already renders
++      // `parent:child`, so also wait for the parent's: if it lands after the
++      // next test opens the page but before its HMR client connects, that page
++      // keeps the old parent
+       await untilBrowserLogAfter(() => {
+         addFile(childFile, originalChildFileCode)
+         editFile(parentFile, (code) =>
+@@ -1149,7 +1153,10 @@ if (!isBuild) {
+             "export { value as childValue } from './child'",
+           ),
+         )
+-      }, 'file-delete-restore/child.js hot data after prune: undefined')
++      }, [
++        'file-delete-restore/child.js hot data after prune: undefined',
++        hotUpdatedLog(parentFile),
++      ])
+       await expect
+         .poll(() => page.textContent('.file-delete-restore'))
+         .toMatch('parent:child')
+```
+
+**File**: `playground/hmr/__tests__/no-partial-accept/hmr-no-partial-accept.spec.ts` (modified, +3/-2)
+```diff
+@@ -6,6 +6,7 @@ import {
+   isBuild,
+   page,
+   untilBrowserLogAfter,
++  untilBrowserLogAfterNavigation,
+   viteTestUrl,
+ } from '~utils'
+ 
+@@ -19,7 +20,7 @@ describe.runIf(!isBuild)('acceptExports with hmrPartialAccept off', () => {
+     const file = `${testDir}/target.ts`
+ 
+     beforeAll(async () => {
+-      await untilBrowserLogAfter(
++      await untilBrowserLogAfterNavigation(
+         () => openPage(testDir),
+         [CONNECTED, />>>>>>/],
+         (logs) => {
+@@ -50,7 +51,7 @@ describe.runIf(!isBuild)('acceptExports with hmrPartialAccept off', () => {
+     const file = `${testDir}/deps-all-accepted.ts`
+ 
+     it('still accepts itself', async () => {
+-      await untilBrowserLogAfter(
++      await untilBrowserLogAfterNavigation(
+         () => openPage(testDir),
+         [CONNECTED, '>>> ready <<<'],
+         (logs) => {
+```
+
+**File**: `playground/proxy-hmr/__tests__/proxy-hmr.spec.ts` (modified, +2/-2)
+```diff
+@@ -3,12 +3,12 @@ import {
+   editFile,
+   isBuild,
+   page,
+-  untilBrowserLogAfter,
++  untilBrowserLogAfterNavigation,
+   viteTestUrl,
+ } from '~utils'
+ 
+ test.runIf(!isBuild)('proxy-hmr', async () => {
+-  await untilBrowserLogAfter(
++  await untilBrowserLogAfterNavigation(
+     () => page.goto(viteTestUrl),
+     // wait for both main and sub app HMR connection
+     [/connected/, /connected/],
+```
+
+**File**: `playground/test-utils.ts` (modified, +57/-20)
+```diff
+@@ -12,6 +12,7 @@ import colors from 'css-color-names'
+ import type {
+   ConsoleMessage,
+   ElementHandle,
++  Frame,
+   Locator,
+ } from 'playwright-chromium'
+ import { xSync, type Result as TinyExecResult } from 'tinyexec'
+@@ -357,47 +358,76 @@ export async function untilBrowserLogAfter(
+   return logs
  }
  
- function waitForSuccessfulPing(socketUrl: string) {
--  if (typeof SharedWorker === 'undefined') {
-+  const useMainThreadFallback = () => {
-     const visibilityManager: VisibilityManager = {
-       currentState: document.visibilityState,
-       listeners: new Set(),
-@@ -367,6 +367,10 @@ function waitForSuccessfulPing(socketUrl: string) {
-     return waitForSuccessfulPingInternal(socketUrl, visibilityManager)
-   }
- 
-+  if (typeof SharedWorker === 'undefined') {
-+    return useMainThreadFallback()
++/**
++ * Like `untilBrowserLogAfter`, for an `operation` that opens a page. Only logs
++ * from the page that ends up open count: the previous page can still log while
++ * it unloads, and in bundled dev a stale build is served as a fallback page
++ * that reloads into the real one. Either could otherwise end the wait before
++ * the real page's HMR client has connected.
++ */
++export async function untilBrowserLogAfterNavigation(
++  operation: () => any,
++  target: string | RegExp | Array<string | RegExp>,
++  callback?: UntilBrowserLogAfterCallback,
++): Promise<string[]> {
++  const promise = untilBrowserLog(target, false, true)
++  await operation()
++  const logs = await promise
++  if (callback) {
++    await callback(logs)
 +  }
++  return logs
++}
 +
-   // needs to be inlined to
-   //   - load the worker after the server is closed
-   //   - make it work with backend integrations
-@@ -380,7 +384,18 @@ function waitForSuccessfulPing(socketUrl: string) {
-     { type: 'application/javascript' },
-   )
-   const objURL = URL.createObjectURL(blob)
--  const sharedWorker = new SharedWorker(objURL)
-+
-+  let sharedWorker: SharedWorker
-+  try {
-+    sharedWorker = new SharedWorker(objURL)
-+  } catch (error) {
-+    URL.revokeObjectURL(objURL)
-+    // Trusted Types enforcement rejects string worker URLs.
-+    if (error instanceof TypeError) {
-+      return useMainThreadFallback()
-+    }
-+    throw error
+ async function untilBrowserLog(
+   target?: string | RegExp | Array<string | RegExp>,
+   expectOrder = true,
++  restartOnNavigation = false,
+ ): Promise<string[]> {
+   const { promise, resolve, reject } = promiseWithResolvers<void>()
+   let timeoutId: ReturnType<typeof setTimeout>
+ 
+   const logs = []
+ 
+-  try {
+-    const isMatch = (matcher: string | RegExp) => (text: string) =>
+-      typeof matcher === 'string' ? text === matcher : matcher.test(text)
++  const handleNavigation = (frame: Frame) => {
++    if (frame !== page.mainFrame()) return
++    logs.length = 0
++    processMsg = createProcessMsg()
 +  }
-   return new Promise<void>((resolve, reject) => {
-     const onVisibilityChange = () => {
-       sharedWorker.port.postMessage({ visibility: document.visibilityState })
-```
-
-**File**: `playground/csp/__tests__/csp.spec.ts` (modified, +23/-1)
-```diff
-@@ -1,5 +1,13 @@
- import { expect, test } from 'vitest'
--import { bundledDevTodo, getColor, page } from '~utils'
-+import {
-+  browserErrors,
-+  bundledDevTodo,
-+  getColor,
-+  isServe,
-+  page,
-+  untilBrowserLogAfter,
-+  viteServer,
-+} from '~utils'
  
- const transformIndexHtmlTodo = bundledDevTodo(
-   '`server.transformIndexHtml` currently returns HTML that points at the source files, not at the files bundled dev produces; how it should work in bundled dev is not decided yet, e.g. return the HTML that the build HTML plugin emits as `index.html` in `bundledDev.memoryFiles`',
-@@ -48,3 +56,17 @@ test('meta[property=csp-nonce] is injected', async () => {
-   const meta = await page.$('meta[property=csp-nonce]')
-   expect(await (await meta.getProperty('nonce')).jsonValue()).not.toBe('')
- })
-+
-+test.runIf(isServe)('reconnects after a server restart', async () => {
-+  browserErrors.length = 0
-+
-+  await untilBrowserLogAfter(
-+    () => viteServer.restart(),
-+    [
-+      '[vite] server connection lost. Polling for restart...',
-+      '[vite] connected.',
-+    ],
-+  )
-+
-+  expect(browserErrors).toStrictEqual([])
-+})
-```
-
-**File**: `playground/csp/vite.config.js` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ const createNonce = () => crypto.randomBytes(16).toString('base64')
- const setNonceHeader = (res, nonce) => {
-   res.setHeader(
-     'Content-Security-Policy',
--    `default-src 'nonce-${nonce}'; connect-src 'self'`,
-+    `default-src 'nonce-${nonce}'; connect-src 'self'; require-trusted-types-for 'script'; trusted-types 'none'; worker-src 'none'`,
-   )
- }
+-    let processMsg: (text: string) => boolean
++  const isMatch = (matcher: string | RegExp) => (text: string) =>
++    typeof matcher === 'string' ? text === matcher : matcher.test(text)
  
-```
-
----
-
-### Incident Patch 2: `2155e125` (2026-11-11)
-**Commit Message**: feat(build): support retrying failed CSS preloads (#23710)
-
-**File**: `packages/vite/src/node/__tests__/plugins/importAnalysisBuild.spec.ts` (modified, +14/-3)
-```diff
-@@ -252,18 +252,29 @@ describe('preloadOnce', () => {
-     expect(preloadCount).toBe(1)
-   })
- 
--  test('shares a preload rejection with every waiter', async () => {
-+  test('shares a preload rejection with every waiter and retries later', async () => {
-     const seen = {}
-     const { promise, reject } = promiseWithResolvers<void>()
-     const error = new Error('failed to preload')
-+    let preloadCount = 0
-+    const preload = () => {
-+      preloadCount++
-+      return preloadCount === 1 ? promise : Promise.resolve()
++  const createProcessMsg = (): ((text: string) => boolean) => {
+     if (!target) {
+-      processMsg = () => true
+-    } else if (Array.isArray(target)) {
++      return () => true
 +    }
- 
--    const first = preloadOnce(seen, 'style.css', () => promise)
--    const second = preloadOnce(seen, 'style.css', () => promise)
-+    const first = preloadOnce(seen, 'style.css', preload)
-+    const second = preloadOnce(seen, 'style.css', preload)
-     reject(error)
- 
-     expect(await Promise.allSettled([first, second])).toStrictEqual([
-       { status: 'rejected', reason: error },
-       { status: 'rejected', reason: error },
-     ])
-+    expect(preloadCount).toBe(1)
-+
-+    await expect(
-+      preloadOnce(seen, 'style.css', preload),
-+    ).resolves.toBeUndefined()
-+    expect(preloadCount).toBe(2)
-   })
- })
-```
-
-**File**: `packages/vite/src/node/plugins/importAnalysisBuild.ts` (modified, +14/-4)
-```diff
-@@ -230,7 +230,7 @@ export function preloadOnce(
-       seen[href] = undefined
-     },
-     (err) => {
--      seen[href] = undefined
-+      delete seen[href]
-       throw err
-     },
-   )
-@@ -240,6 +240,7 @@ export function preloadOnce(
- 
- declare const scriptRel: string
- declare const seen: PreloadSeen
-+declare const failedCssLinks: Record<string, HTMLLinkElement | undefined>
- function preload(
-   baseModule: () => Promise<unknown>,
-   deps?: string[],
-@@ -310,7 +311,8 @@ function preload(
-             const preloadedHrefSet = isCss
-               ? preloadedHrefs.styles
-               : preloadedHrefs.all
--            if (preloadedHrefSet.has(dep.href)) {
-+            const failedCssLink = isCss ? failedCssLinks[dep.href] : undefined
-+            if (!failedCssLink && preloadedHrefSet.has(dep.href)) {
-               return
-             }
- 
-@@ -324,13 +326,21 @@ function preload(
-             if (cspNonce) {
-               link.setAttribute('nonce', cspNonce)
-             }
--            document.head.appendChild(link)
-+            if (failedCssLink) {
-+              delete failedCssLinks[dep.href]
-+            }
-+            if (failedCssLink?.isConnected) {
-+              failedCssLink.replaceWith(link)
-+            } else {
-+              document.head.appendChild(link)
-+            }
-             if (isCss) {
-               return new Promise((res, rej) => {
-                 const handleSettle = (e: Event) => {
-                   link.removeEventListener('load', handleSettle)
-                   link.removeEventListener('error', handleSettle)
-                   if (e.type === 'error') {
-+                    failedCssLinks[dep.href] = link
-                     rej(new Error(`Unable to preload CSS for ${dep}`))
-                   } else {
-                     res(e)
-@@ -397,7 +407,7 @@ function getPreloadCode(
-         `function(dep) { return ${JSON.stringify(environment.config.base)}+dep }`
-   // replace `import` as a workaround for stackblitz: https://stackblitz.com/edit/node-vqfvv8dy?file=index.js
-   const preloadMethodCode = preload.toString().replaceAll('𝐢𝐦𝐩𝐨𝐫𝐭', 'import')
--  const preloadCode = `const scriptRel = ${scriptRel};const assetsURL = ${assetsURL};const seen = {};const isCssPreloadUrl = ${isCssPreloadUrl.toString()};const preloadOnce = ${preloadOnce.toString()};export const ${preloadMethod} = ${preloadMethodCode}`
-+  const preloadCode = `const scriptRel = ${scriptRel};const assetsURL = ${assetsURL};const seen = {};const failedCssLinks = {};const isCssPreloadUrl = ${isCssPreloadUrl.toString()};const preloadOnce = ${preloadOnce.toString()};export const ${preloadMethod} = ${preloadMethodCode}`
-   return preloadCode
- }
- 
-```
-
-**File**: `playground/js-sourcemap/__tests__/js-sourcemap.spec.ts` (modified, +2/-2)
-```diff
-@@ -365,7 +365,7 @@ describe.runIf(isBuild)('build tests', () => {
-         SourceMap {
-           content: {
-             "debugId": "00000000-0000-0000-0000-000000000000",
--            "mappings": ";gkDAAAA,MAAA,OAAO,qDAEP,QAAQ,IAAI,uBAAuB,E",
-+            "mappings": ";sqDAAAA,MAAA,OAAO,qDAEP,QAAQ,IAAI,uBAAuB,E",
-             "names": [
-               "__vitePreload",
-             ],
-@@ -380,7 +380,7 @@ describe.runIf(isBuild)('build tests', () => {
-             ],
-             "version": 3,
-           },
--          visualization: "https://evanw.github.io/source-map-visualization/#MTk3MQBjb25zdCBfX3ZpdGVfX21hcERlcHM9KGksbT1fX3ZpdGVfX21hcERlcHMsZD0obS5mfHwobS5mPVsiYXNzZXRzL2R5bmFtaWMtZm9vLUJ3aFpUa3RCLmpzIiwiYXNzZXRzL2R5bmFtaWMtZm9vLURzcUtSckV5LmNzcyJdKSkpPT5pLm1hcChpPT5kW2ldKTsKdmFyIGU9ZnVuY3Rpb24oZSl7cmV0dXJuYC9gK2V9LHQ9e30sbj1mdW5jdGlvbihlKXtyZXR1cm4gZS5wYXRobmFtZS5lbmRzV2l0aChgLmNzc2ApfSxyPWZ1bmN0aW9uKGUsdCxuKXtpZih0IGluIGUpcmV0dXJuIGVbdF07bGV0IHI9bigpO2lmKCFyKXtlW3RdPXZvaWQgMDtyZXR1cm59bGV0IGk9ci50aGVuKCgpPT57ZVt0XT12b2lkIDB9LG49Pnt0aHJvdyBlW3RdPXZvaWQgMCxufSk7cmV0dXJuIGVbdF09aSxpfSxpPWZ1bmN0aW9uKGksYSxvKXtsZXQgcz1Qcm9taXNlLnJlc29sdmUoKTtpZihhJiZhLmxlbmd0aD4wKXtsZXQgaSxjPWRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYG1ldGFbcHJvcGVydHk9Y3NwLW5vbmNlXWApLGw9Yz8ubm9uY2V8fGM/LmdldEF0dHJpYnV0ZShgbm9uY2VgKTtmdW5jdGlvbiB1KGUpe3JldHVybiBQcm9taXNlLmFsbChlLm1hcChlPT5Qcm9taXNlLnJlc29sdmUoZSkudGhlbihlPT4oe3N0YXR1czpgZnVsZmlsbGVkYCx2YWx1ZTplfSksZT0+KHtzdGF0dXM6YHJlamVjdGVkYCxyZWFzb246ZX0pKSkpfWZ1bmN0aW9uIGQoZSl7cmV0dXJuIGltcG9ydC5tZXRhLnJlc29sdmU/bmV3IFVSTChpbXBvcnQubWV0YS5yZXNvbHZlKGUpKTpuZXcgVVJMKGUsaW1wb3J0Lm1ldGEudXJsKX1zPXUoYS5tYXAoYT0+e2E9ZShhLG8pO2xldCBzPWQoYSksYz1uKHMpO3JldHVybiByKHQscy5ocmVmLCgpPT57aWYoaT09PXZvaWQgMCl7aT17YWxsOm5ldyBTZXQsc3R5bGVzOm5ldyBTZXR9O2xldCBlPWRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKGBsaW5rYCk7Zm9yKGxldCB0PWUubGVuZ3RoLTE7dD49MDt0LS0pe2xldCBuPWVbdF07aS5hbGwuYWRkKG4uaHJlZiksbi5yZWw9PT1gc3R5bGVzaGVldGAmJmkuc3R5bGVzLmFkZChuLmhyZWYpfX1pZigoYz9pLnN0eWxlczppLmFsbCkuaGFzKHMuaHJlZikpcmV0dXJuO2xldCBlPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoYGxpbmtgKTtpZihlLnJlbD1jP2BzdHlsZXNoZWV0YDpgbW9kdWxlcHJlbG9hZGAsY3x8KGUuYXM9YHNjcmlwdGApLGUuY3Jvc3NPcmlnaW49YGAsZS5ocmVmPXMuaHJlZixsJiZlLnNldEF0dHJpYnV0ZShgbm9uY2VgLGwpLGRvY3VtZW50LmhlYWQuYXBwZW5kQ2hpbGQoZSksYylyZXR1cm4gbmV3IFByb21pc2UoKHQsbik9PntsZXQgcj1pPT57ZS5yZW1vdmVFdmVudExpc3RlbmVyKGBsb2FkYCxyKSxlLnJlbW92ZUV2ZW50TGlzdGVuZXIoYGVycm9yYCxyKSxpLnR5cGU9PT1gZXJyb3JgP24oRXJyb3IoYFVuYWJsZSB0byBwcmVsb2FkIENTUyBmb3IgJHtzfWApKTp0KGkpfTtlLmFkZEV2ZW50TGlzdGVuZXIoYGxvYWRgLHIpLGUuYWRkRXZlbnRMaXN0ZW5lcihgZXJyb3JgLHIpfSl9KX0pLmZpbHRlcihlPT5lIT09dm9pZCAwKSl9ZnVuY3Rpb24gYyhlKXtsZXQgdD1uZXcgRXZlbnQoYHZpdGU6cHJlbG9hZEVycm9yYCx7Y2FuY2VsYWJsZTohMH0pO2lmKHQucGF5bG9hZD1lLHdpbmRvdy5kaXNwYXRjaEV2ZW50KHQpLCF0LmRlZmF1bHRQcmV2ZW50ZWQpdGhyb3cgZX1yZXR1cm4gcy50aGVuKGU9Pntmb3IobGV0IHQgb2YgZXx8W10pdC5zdGF0dXM9PT1gcmVqZWN0ZWRgJiZjKHQucmVhc29uKTtyZXR1cm4gaSgpLmNhdGNoKGMpfSl9O2koKCk9PmltcG9ydChgLi9keW5hbWljLWZvby1Cd2haVGt0Qi5qc2ApLF9fdml0ZV9fbWFwRGVwcyhbMCwxXSkpLGNvbnNvbGUubG9nKGBhZnRlciBwcmVsb2FkIGR5bmFtaWNgKTtleHBvcnR7aSBhcyB0fTsKLy8jIGRlYnVnSWQ9ZGQ4NDE1ZDItMGE1Ni00YzM3LWE3ZDItYmYxZDhiMjgxY2NjCi8vIyBzb3VyY2VNYXBwaW5nVVJMPWFmdGVyLXByZWxvYWQtZHluYW1pYy1EZGhCWFNDbC5qcy5tYXAyODUAeyJkZWJ1Z0lkIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwibWFwcGluZ3MiOiI7Z2tEQUFBQSxNQUFBLE9BQU8scURBRVAsUUFBUSxJQUFJLHVCQUF1QixFIiwibmFtZXMiOlsiX192aXRlUHJlbG9hZCJdLCJzb3VyY2VzIjpbIi4uLy4uL2FmdGVyLXByZWxvYWQtZHluYW1pYy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQoJy4vZHluYW1pYy9keW5hbWljLWZvbycpXG5cbmNvbnNvbGUubG9nKCdhZnRlciBwcmVsb2FkIGR5bmFtaWMnKVxuIl0sInZlcnNpb24iOjN9"
-+          visualization: "https://evanw.github.io/source-map-visualization/#MjA3MwBjb25zdCBfX3ZpdGVfX21hcERlcHM9KGksbT1fX3ZpdGVfX21hcERlcHMsZD0obS5mfHwobS5mPVsiYXNzZXRzL2R5bmFtaWMtZm9vLUJ3aFpUa3RCLmpzIiwiYXNzZXRzL2R5bmFtaWMtZm9vLURzcUtSckV5LmNzcyJdKSkpPT5pLm1hcChpPT5kW2ldKTsKdmFyIGU9ZnVuY3Rpb24oZSl7cmV0dXJuYC9gK2V9LHQ9e30sbj17fSxyPWZ1bmN0aW9uKGUpe3JldHVybiBlLnBhdGhuYW1lLmVuZHNXaXRoKGAuY3NzYCl9LGk9ZnVuY3Rpb24oZSx0LG4pe2lmKHQgaW4gZSlyZXR1cm4gZVt0XTtsZXQgcj1uKCk7aWYoIXIpe2VbdF09dm9pZCAwO3JldHVybn1sZXQgaT1yLnRoZW4oKCk9PntlW3RdPXZvaWQgMH0sbj0+e3Rocm93IGRlbGV0ZSBlW3RdLG59KTtyZXR1cm4gZVt0XT1pLGl9LGE9ZnVuY3Rpb24oYSxvLHMpe2xldCBjPVByb21pc2UucmVzb2x2ZSgpO2lmKG8mJm8ubGVuZ3RoPjApe2xldCBhLGw9ZG9jdW1lbnQucXVlcnlTZWxlY3RvcihgbWV0YVtwcm9wZXJ0eT1jc3Atbm9uY2VdYCksdT1sPy5ub25jZXx8bD8uZ2V0QXR0cmlidXRlKGBub25jZWApO2Z1bmN0aW9uIGQoZSl7cmV0dXJuIFByb21pc2UuYWxsKGUubWFwKGU9PlByb21pc2UucmVzb2x2ZShlKS50aGVuKGU9Pih7c3RhdHVzOmBmdWxmaWxsZWRgLHZhbHVlOmV9KSxlPT4oe3N0YXR1czpgcmVqZWN0ZWRgLHJlYXNvbjplfSkpKSl9ZnVuY3Rpb24gZihlKXtyZXR1cm4gaW1wb3J0Lm1ldGEucmVzb2x2ZT9uZXcgVVJMKGltcG9ydC5tZXRhLnJlc29sdmUoZSkpOm5ldyBVUkwoZSxpbXBvcnQubWV0YS51cmwpfWM9ZChvLm1hcChvPT57bz1lKG8scyk7bGV0IGM9ZihvKSxsPXIoYyk7cmV0dXJuIGkodCxjLmhyZWYsKCk9PntpZihhPT09dm9pZCAwKXthPXthbGw6bmV3IFNldCxzdHlsZXM6bmV3IFNldH07bGV0IGU9ZG9jdW1lbnQuZ2V0RWxlbWVudHNCeVRhZ05hbWUoYGxpbmtgKTtmb3IobGV0IHQ9ZS5sZW5ndGgtMTt0Pj0wO3QtLSl7bGV0IG49ZVt0XTthLm
-```
-
-**File**: `playground/preload/__tests__/preload.spec.ts` (modified, +50/-1)
-```diff
-@@ -1,5 +1,5 @@
- import { describe, expect, test } from 'vitest'
--import { browserLogs, isBuild, page } from '~utils'
-+import { browserLogs, getColor, isBuild, page } from '~utils'
- 
- test('should have no 404s', () => {
-   browserLogs.forEach((msg) => {
-@@ -13,6 +13,55 @@ describe.runIf(isBuild)('build', () => {
-     expect(await page.textContent('#done')).toBe('ran js')
-   })
- 
-+  test('retries a stylesheet preload in place after it fails', async () => {
-+    let requestCount = 0
-+    await page.route(/\/assets\/hello-.*\.css$/, async (route) => {
-+      requestCount++
-+      if (requestCount === 1) {
-+        await route.abort()
-+      } else {
-+        await route.continue()
-+      }
-+    })
-+    await page.evaluate(() => {
-+      window.addEventListener(
-+        'vite:preloadError',
-+        () => {
-+          document.documentElement.dataset.preloadError = 'true'
-+        },
-+        { once: true },
-+      )
-+    })
-+
-+    await page.click('#hello .load')
-+    await page.waitForFunction(
-+      () => document.documentElement.dataset.preloadError === 'true',
-+    )
-+
-+    const stylesheetSelector = 'link[rel="stylesheet"][href*="/assets/hello-"]'
-+    expect(await page.locator(stylesheetSelector).count()).toBe(1)
-+    await page.locator(stylesheetSelector).evaluate((failedLink) => {
-+      const marker = document.createElement('meta')
-+      marker.id = 'css-precedence-marker'
-+      failedLink.after(marker)
-+    })
-+
-+    await page.click('#hello .load')
-+    await page.waitForSelector('#hello output')
-+
-+    expect(requestCount).toBe(2)
-+    expect(await getColor('#hello .msg')).toBe('red')
-+    // make sure the link tag exists in the same place
-+    // so that the precedence of the CSS link is maintained
-+    expect(
-+      await page
-+        .locator(stylesheetSelector)
-+        .evaluate(
-+          (link) => link.nextElementSibling?.id === 'css-precedence-marker',
-+        ),
-+    ).toBe(true)
-+  })
-+
-   test('dynamic import with comments', async () => {
-     await page.click('#hello .load')
-     await page.waitForSelector('#hello output')
-```
-
----
-
-### Incident Patch 3: `c5be55f5` (2026-11-12)
-**Commit Message**: feat(css): skip emitting empty CSS files (#24059)
-
-**File**: `packages/vite/src/node/__tests__/build.spec.ts` (modified, +57/-0)
-```diff
-@@ -466,6 +466,63 @@ describe('build', () => {
-     ).rejects.toThrow('CSS files cannot be used as entry points')
-   })
- 
-+  describe('empty CSS assets', () => {
-+    async function buildProject(
-+      css: string,
-+      cssCodeSplit: boolean,
-+      input = 'entry.js',
-+    ) {
-+      return (await build({
-+        root: resolve(dirname, 'packages/build-project'),
-+        configFile: false,
-+        input,
-+        logLevel: 'silent',
-+        build: {
-+          write: false,
-+          cssCodeSplit,
-+        },
-+        plugins: [
-+          {
-+            name: 'test-empty-css',
-+            resolveId(id) {
-+              if (id === 'entry.js' || id === 'empty.css') {
-+                return '\0' + id
-+              }
-+            },
-+            load(id) {
-+              if (id === '\0entry.js') {
-+                return `import 'empty.css'; console.log('entry')`
-+              }
-+              if (id === '\0empty.css') return css
-+            },
-+          },
-+        ],
-+      })) as RolldownOutput
-+    }
-+
-+    for (const css of ['', '.empty {}']) {
-+      for (const cssCodeSplit of [true, false]) {
-+        test(`skips empty CSS ${JSON.stringify(css)} (cssCodeSplit: ${cssCodeSplit})`, async () => {
-+          const { output } = await buildProject(css, cssCodeSplit)
-+          expect(output.filter((file) => file.type === 'chunk')).toHaveLength(1)
-+          expect(
-+            output.filter((file) => file.fileName.endsWith('.css')),
-+          ).toHaveLength(0)
-+        })
-+      }
-+
-+      test(`preserves an empty CSS entrypoint (${JSON.stringify(css)})`, async () => {
-+        const { output } = await buildProject(css, true, 'empty.css')
-+        expect(output).toHaveLength(1)
-+        expect(output[0]).toMatchObject({
-+          type: 'asset',
-+          fileName: expect.stringMatching(/\.css$/),
-+          source: '',
-+        })
-+      })
-+    }
-+  })
-+
-   test('file hash should change when pure css chunk changes', async () => {
-     const buildProject = async (cssColor: string) => {
-       return (await build({
-```
-
-**File**: `packages/vite/src/node/plugins/css.ts` (modified, +23/-17)
-```diff
-@@ -972,22 +972,24 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
-                     return finalizeCss(chunkCSS!, config)
-                   })
- 
--                  // emit corresponding css file
--                  const referenceId = this.emitFile({
--                    type: 'asset',
--                    name: cssAssetName,
--                    originalFileName,
--                    source: chunkCSS,
--                  })
--                  chunkCssReferences.set(chunk.fileName, referenceId)
--                  if (isEntry) {
--                    cssEntriesMap
--                      .get(this.environment)!
--                      .set(chunk.fileName, { referenceId, name: chunk.name })
-+                  if (chunkCSS || isEntry) {
-+                    // emit corresponding css file
-+                    const referenceId = this.emitFile({
-+                      type: 'asset',
-+                      name: cssAssetName,
-+                      originalFileName,
-+                      source: chunkCSS,
-+                    })
-+                    chunkCssReferences.set(chunk.fileName, referenceId)
-+                    if (isEntry) {
-+                      cssEntriesMap
-+                        .get(this.environment)!
-+                        .set(chunk.fileName, { referenceId, name: chunk.name })
-+                    }
-+                    chunk.viteMetadata!.importedCss.add(
-+                      this.getFileName(referenceId),
-+                    )
-                   }
--                  chunk.viteMetadata!.importedCss.add(
--                    this.getFileName(referenceId),
--                  )
-                 } else if (this.environment.config.consumer === 'client') {
-                   // legacy build and inline css
- 
-@@ -1102,10 +1104,13 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
-           collect(bundle[chunkName])
++    if (Array.isArray(target)) {
+       if (expectOrder) {
+         const remainingTargets = [...target]
+-        processMsg = (text: string) => {
++        return (text: string) => {
+           const nextTarget = remainingTargets.shift()
+           expect(text).toMatch(nextTarget)
+           return remainingTargets.length === 0
          }
- 
--        // Finally, if there's any extracted CSS, we emit the asset
-         if (extractedCss) {
--          hasEmitted = true
-           extractedCss = await finalizeCss(extractedCss, config)
-+        }
+-      } else {
+-        const remainingMatchers = target.map(isMatch)
+-        processMsg = (text: string) => {
+-          const nextIndex = remainingMatchers.findIndex((matcher) =>
+-            matcher(text),
+-          )
+-          if (nextIndex >= 0) {
+-            remainingMatchers.splice(nextIndex, 1)
+-          }
+-          return remainingMatchers.length === 0
++      }
++      const remainingMatchers = target.map(isMatch)
++      return (text: string) => {
++        const nextIndex = remainingMatchers.findIndex((matcher) =>
++          matcher(text),
++        )
++        if (nextIndex >= 0) {
++          remainingMatchers.splice(nextIndex, 1)
+         }
++        return remainingMatchers.length === 0
+       }
+-    } else {
+-      processMsg = isMatch(target)
+     }
++    return isMatch(target)
++  }
 +
-+        // Emit the asset if CSS remains after finalization.
-+        if (extractedCss) {
-+          hasEmitted = true
-           this.emitFile({
-             name: getCssBundleName(),
-             type: 'asset',
-@@ -2046,6 +2051,7 @@ async function finalizeCss(css: string, config: ResolvedConfig) {
-   if (config.build.cssMinify) {
-     css = await minifyCSS(css, config, false)
++  let processMsg = createProcessMsg()
+ 
++  try {
+     const handleMsg = (msg: ConsoleMessage) => {
+       try {
+         const text = msg.text()
+@@ -426,11 +456,18 @@ async function untilBrowserLog(
+     }, 5000)
+ 
+     page.on('console', handleMsg)
++    if (restartOnNavigation) {
++      page.on('framenavigated', handleNavigation)
++    }
+   } catch (err) {
+     reject(err)
    }
-+  if (!css.trim()) return ''
-   // inject an additional string to generate a different hash for https://github.com/vitejs/vite/issues/18038
-   //
-   // pre-5.4.3, we generated CSS link tags without crossorigin attribute and generated an hash without
+ 
+-  await promise
++  try {
++    await promise
++  } finally {
++    page.off('framenavigated', handleNavigation)
++  }
+   clearTimeout(timeoutId)
+ 
+   return logs
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24080** (2026-11-12): fix: escape imported name in `transformCjsImport` (@btea)
-- **PR #24079** (2026-11-12): refactor: use `tinyexec` instead of `execa` (@btea)
-- **PR #24076** (2026-11-12): chore: exclude pnpm test fixture from workspace packages (@btea)
-- **PR #24074** (2026-11-12): fix: escape import specifiers (@sapphi-red)
-- **PR #24072** (closed): fix: preserve Windows device namespace prefix in normalizePath (fix #23986) (@TbhVishal)
-- **PR #24068** (2026-11-11): build: look up dts identifier replacements by imported name (@hyfdev)
+- **PR #24119** (closed): fix(optimizer): respect top-level tsconfig option when scanning deps (fix #24117) (@imryanthedev)
+- **PR #24118** (closed): fix: respect top-level tsconfig during dependency scanning (@Gorkem-Taha)
+- **PR #24112** (closed): fix(optimizer): skip post-scan optimization after close (fix #23752) (@sonofmagic)
+- **PR #24108** (2026-11-16): release: v8.4.0-beta.1 (@github-actions[bot])
+- **PR #24106** (2026-11-16): ci: exclude `maschwenk` from bot detection (@sapphi-red)
+- **PR #24105** (2026-11-16): fix(css): match pure css chunk imports by relative path (@shulaoda)
 
 ---
 
@@ -1808,48 +2224,31 @@ Co-authored-by: sapphi-red <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. client): fallback to waiting on main thread for server start when trusted types 
+## X. build): shift source maps for preload rewrites instead of re-tracing them
 
 **RULE**:
-When implementing operations in `packages/vite/src/client/client.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/vite/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2dcd391e`: client): fallback to waiting on main thread for server start when trusted types are enforced (#21483). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbce0c67`: build): shift source maps for preload rewrites instead of re-tracing them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vite/src/client/client.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vite/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  const useMainThreadFallback = () => {
-  if (typeof SharedWorker === 'undefined') {
-    return useMainThreadFallback()
-  }
-
-
-  let sharedWorker: SharedWorker
-  try {
-    sharedWorker = new SharedWorker(objURL)
-  } catch (error) {
-    URL.revokeObjectURL(objURL)
-    // Trusted Types enforcement rejects string worker URLs.
-    if (error instanceof TypeError) {
-      return useMainThreadFallback()
-    }
-    throw error
-  }
+    "@jridgewell/sourcemap-codec": "^1.6.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-  if (typeof SharedWorker === 'undefined') {
-  const sharedWorker = new SharedWorker(objURL)
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dcd391e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbce0c67` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

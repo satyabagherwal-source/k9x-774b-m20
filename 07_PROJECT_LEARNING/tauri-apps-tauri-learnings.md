@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
-> **Source Version**: `5edd31c8`  
+> **Source Version**: `c42354b6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T14:33:47.195Z  
+> **Timestamp**: 2026-11-17T04:05:42.561Z  
 > **Learning ID**: `learn-github-tauri-apps-tauri`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:33:47.190Z  
+> **Harvest Timestamp**: 2026-11-17T04:05:42.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 112881 stars
+- **Stars / Engagement**: 112934 stars
 
 ---
 
@@ -2262,13 +2262,11 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16512** (2026-11-12): **fix(macos): prevent scroll jump during RTL text input in WKWebView**
-  *Symptoms*: ## Summary  Fixes #15330  On certain macOS/WebKit versions, typing RTL text with spaces (triggering word wrap) in a `contenteditable` element causes ancestor scroll containers to jump on every keystroke. This happens because WebKit's native scroll-into-view uses incorrect caret geometry for wrapped RTL lines, and the scroll bypasses JavaScript event handlers entirely.  ## Approach  Injects an initialization script (macOS only) that temporarily freezes scrollable ancestor containers during RTL text input:  1. Listens for `beforeinput` events on contenteditable and textarea elements with RTL direction 2. Saves the scroll position of all scrollable ancestor elements 3. Sets `overflow: hidden` on those ancestors so WebKit's native scroll-into-view cannot move them 4. Restores overflow and scroll positions in `requestAnimationFrame` (before the next paint)  This is a zero-cost fix for non-RTL users (the listener exits early for LTR elements) and has no visual impact since the overflow change and restoration happen within a single animation frame.  ## Files changed  - `crates/tauri/src/webview/scripts/rtl-scroll-fix.js` — new initialization script - `crates/tauri/src/webview/plugin.rs` — include the script on macOS builds - `.changes/fix-rtl-scroll-jump.md` — changefile  ## Test plan  - [ ] On macOS: create a Tauri app with a scrollable container and a contenteditable element with `dir="auto"` or `dir="rtl"` - [ ] Scroll down to create an offset, then type Arabic text with spaces (
+- **Issue #16543** (2026-11-17): **docs(bundler): update the tauri.conf.json example to the v2 config**
+  *Symptoms*: <!-- Before submitting a PR, please read https://github.com/tauri-apps/tauri/blob/dev/.github/CONTRIBUTING.md#pull-request-guidelines  1. Give the PR a descriptive title.    Examples of good title:     - fix(windows): fix race condition in event loop     - docs: update example for `App::show`     - feat: add `Window::set_fullscreen`    Examples of bad title:     - fix #7123     - update docs     - fix bugs  2. If there is a related issue, reference it in the PR text, e.g. closes #123. 3. If this change requires a new version, then add a change file in `.changes` directory with the appropriate bump, see https://github.com/tauri-apps/tauri/blob/dev/.changes/README.md 4. Ensure that all your commits are signed https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits 5. Ensure `cargo test` and `cargo clippy` passes. 6. Propose your changes as a draft PR if your work is still in progress. -->  The `tauri.conf.json` example in `crates/tauri-bundler/README.md` still used two v1 locations: `bundle.deb` (now `bundle.linux.deb`) and `bundle.macOS.license` (now the general `bundle.licenseFile`). Validated against `crates/tauri-schema-generator/schemas/config.schema.json`, the old example is rejected and the updated one passes.  The macOS settings list also described a `license` field, but `MacOsSettings` has none. The DMG bundle reads `license_file` from the general settings, as NSIS and MSI do, so the bullet moved to the general list.  Found by v
 
-- **Issue #16510** (2026-11-12): **refactor: release `WryWebviewDispatcher::window_id` early**
-  *Symptoms*: Fix #16169 (I can't reproduce it, but this change should make multiple calls at once slightly more efficient)  
-  **Post-Mortem & Fix Analysis**:
-  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through 5e55d8459c8874217c5ed827baedcb5841a63b68 There are 9 changes which include @tauri-apps/api with patch, tauri-bundler with patch, tauri-cli with patch, @tauri-apps/cli with patch, tauri-codegen with patch, tauri-runtime with patch, tauri with patch, tauri-runtime-wry with patch, tauri-utils with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.4 | 2.12.5 |  tauri-utils | 2.10.2 | 2.10.3 |  tauri-bundler | 2.10.4 | 2.10.5 |  tauri-runtime | 2.12.2 | 2.12.3 |  tauri-runtime-wry | 2.12.3 | 2.12.4 |  tauri-codegen | 2.7.4 | 2.7.5 |  tauri-macros | 2.7.4 | 2.7.5 |  tauri-plugin | 2.7.2 | 2.7.3 |  tauri-build | 2.7.4 | 2.7.5 |  tauri | 2.12.5 | 2.12.6 |  @tauri-apps/cli | 2.12.4 | 2.12.5 |  tauri-cli | 2.12.4 | 2.12.5 |  </de
+- **Issue #16538** (2026-11-16): **[bug] macOS bundle fails on Xcode 27 with an Icon Composer `.icon`: actool "Bad file descriptor" (run with stdin closed)**
+  *Symptoms*: ### Describe the bug  With Xcode 27.0, `tauri build` fails at the bundling step for any macOS app whose `bundle.icon` lists an Icon Composer `.icon` file:  ``` failed to bundle project: Failed to create app Assets.car: `failed to run actool: /* com.apple.actool.errors */ /var/folders/…/T/.tmpcs7AON/Icon.icon: error: The operation couldn’t be completed. Bad file descriptor     Failure Reason: Bad file descriptor /var/folders/…/T/.tmpcs7AON/Icon.icon: error: Failed to create a catalog from the Icon Studio document: /var/folders/…/T/.tmpcs7AON/Icon.icon ```  The Rust build succeeds; only `create_assets_car_file` (`crates/tauri-bundler/src/bundle/macos/icon.rs`) fails.  The cause is that the CLI runs `actool` with file descriptor 0 closed. Xcode 27's `actool` starts its `ibtoold` daemon in that state, and the daemon then cannot compile a `.icon`. The same project and CLI version build fine with Xcode 26.6 (GitHub's `macos-26` runner).  What I verified:  - A stand-in `actool` placed first on `PATH` that logs its stdin reports it closed for both calls the bundler makes (`actool --version` and the compile). This is the case from an interactive terminal and with `tauri build < /dev/null` alike. - If the stand-in does nothing but `exec /usr/bin/actool "$@" < /dev/null`, the same `tauri build` succeeds and the bundle contains `Assets.car`. - The bundler's exact `actool` arguments work when run from a shell. - It reproduces without Tauri (below). - The `ibtoold` left behind by a failed 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2285,234 +2283,481 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7facf4f2` (2026-11-12)
-**Commit Message**: fix(cli): keep watching folders matched by .taurignore, filter entries and events (#16398)
+### Incident Patch 1: `7b568e9c` (2026-11-16)
+**Commit Message**: fix(cli): accept an inherited package version in the Cargo manifest (#16521)
 
-* fix(cli): don't ignore own directory in .taurignore
+`CargoManifestPackage::version` was a plain string, so a manifest with
+`version.workspace = true` failed to parse and `tauri migrate` stopped
+with "invalid type: map, expected a string". Read the version as
+optional and treat anything other than a string as unknown; it is only
+used to show the version of path dependencies.
 
-Closes #9163.
+Fixes #16519
 
-Prevents `IgnoreMatcher` from treating `.taurignore`'s root directory as ignored when using `/*`, matching standard `.gitignore` behavior. Includes unit tests.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(cli): keep watching folders matched by .taurignore, filter entries and events
-
-Walk every watch folder even when an ignore pattern such as `/*` matches the folder itself, and apply the ignore rules to its entries and to change events. This replaces the root special case in IgnoreMatcher::is_ignore.
-
----------
-
-Co-authored-by: ashokram-si <[REDACTED_EMAIL]>
-
-**File**: `.changes/fix-taurignore-root.md` (added, +6/-0)
+**File**: `.changes/cli-migrate-workspace-version.md` (added, +6/-0)
 ```diff
 @@ -0,0 +1,6 @@
 +---
-+"tauri-cli": "patch:bug"
-+"@tauri-apps/cli": "patch:bug"
++"tauri-cli": patch:bug
++"@tauri-apps/cli": patch:bug
 +---
 +
-+Fix `tauri dev` not watching the app at all when its `.taurignore` contains a pattern like `/*` that matches every entry at the top level, even if other entries are re-included with `!` negations. Watch folders are now always watched; ignore rules apply to their entries and to change events.
++Fix `tauri migrate` failing to parse the app's `Cargo.toml` when its package version is inherited from the workspace (`version.workspace = true`).
 ```
 
-**File**: `crates/tauri-cli/src/interface/rust.rs` (modified, +69/-17)
+**File**: `crates/tauri-cli/src/helpers/cargo_manifest.rs` (modified, +34/-2)
 ```diff
-@@ -402,6 +402,26 @@ fn lookup<F: FnMut(FileType, PathBuf)>(dir: &Path, mut f: F) {
-   }
- }
+@@ -42,7 +42,18 @@ pub enum CargoManifestDependency {
  
-+/// The paths the dev watcher watches: the entries of every watch folder that the ignore files
-+/// don't exclude. Every folder is walked, even when a pattern such as `/*` matches the folder
-+/// itself; ignore rules apply to its entries here and to every change event.
-+fn watch_targets(watch_folders: &[PathBuf]) -> Vec<(PathBuf, RecursiveMode)> {
-+  let mut targets = Vec::new();
-+  for path in watch_folders {
-+    lookup(path, |file_type, p| {
-+      if p != *path {
-+        let mode = if file_type.is_dir() {
-+          RecursiveMode::Recursive
-+        } else {
-+          RecursiveMode::NonRecursive
-+        };
-+        targets.push((p, mode));
-+      }
-+    });
-+  }
-+  targets
+ #[derive(Deserialize)]
+ pub struct CargoManifestPackage {
+-  pub version: String,
++  /// `None` when the version is inherited from the workspace (`version.workspace = true`).
++  #[serde(default, deserialize_with = "deserialize_package_version")]
++  pub version: Option<String>,
 +}
 +
- fn dev_options(
-   mobile: bool,
-   args: &mut Vec<String>,
-@@ -533,23 +553,12 @@ impl Rust {
-       }
-     })
-     .unwrap();
--    for path in watch_folders {
--      if !ignore_matcher.is_ignore(&path, true) {
--        log::info!("Watching {} for changes...", display_path(&path));
--        lookup(&path, |file_type, p| {
--          if p != path {
--            log::debug!("Watching {} for changes...", display_path(&p));
--            let _ = watcher.watch(
--              &p,
--              if file_type.is_dir() {
--                RecursiveMode::Recursive
--              } else {
--                RecursiveMode::NonRecursive
--              },
--            );
--          }
--        });
--      }
-+    for path in &watch_folders {
-+      log::info!("Watching {} for changes...", display_path(path));
-+    }
-+    for (path, mode) in watch_targets(&watch_folders) {
-+      log::debug!("Watching {} for changes...", display_path(&path));
-+      let _ = watcher.watch(&path, mode);
-     }
++fn deserialize_package_version<'de, D: serde::Deserializer<'de>>(
++  deserializer: D,
++) -> Result<Option<String>, D::Error> {
++  match toml::Value::deserialize(deserializer)? {
++    toml::Value::String(version) => Ok(Some(version)),
++    _ => Ok(None),
++  }
+ }
  
-     while let Ok(events) = rx.recv() {
-@@ -1792,6 +1801,49 @@ mod tests {
-     );
+ #[derive(Deserialize)]
+@@ -191,7 +202,7 @@ pub fn crate_version(
+             let v = fs::read_to_string(manifest_path)
+               .ok()
+               .and_then(|m| toml::from_str::<CargoManifest>(&m).ok())
+-              .map(|m| m.package.version);
++              .and_then(|m| m.package.version);
+             version.version = v;
+             version.path = Some(p);
+           } else if let Some(g) = p.git {
+@@ -232,6 +243,27 @@ mod tests {
+     }
    }
  
-+  fn taurignore_root_fixture() -> tempfile::TempDir {
-+    let temp_dir = tempfile::tempdir().unwrap();
-+    let dir = temp_dir.path();
-+    fs::create_dir_all(dir.join("src")).unwrap();
-+    fs::create_dir_all(dir.join("assets")).unwrap();
-+    fs::write(dir.join("src/main.rs"), "").unwrap();
-+    fs::write(dir.join("Cargo.toml"), "").unwrap();
-+    fs::write(dir.join("README.md"), "").unwrap();
-+    fs::write(dir.join(".taurignore"), "/*\n!/*.toml\n!/*.rs\n!/src\n").unwrap();
-+    temp_dir
-+  }
-+
 +  #[test]
-+  fn watch_targets_watch_a_folder_whose_taurignore_matches_it() {
-+    let temp_dir = taurignore_root_fixture();
-+    let dir = temp_dir.path();
++  fn parses_manifest_with_inherited_package_version() {
++    let manifest: CargoManifest = toml::from_str(
++      r#"
++        [package]
++        name = "app"
++        version.workspace = true
 +
-+    let mut watched: Vec<PathBuf> = watch_targets(&[dir.to_path_buf()])
-+      .into_iter()
-+      .map(|(path, _)| path.strip_prefix(dir).unwrap().to_path_buf())
-+      .collect();
-+    watched.sort();
++        [dependencies]
++        tauri = { workspace = true }
++      "#,
++    )
++    .unwrap();
 +
-+    assert_eq!(
-+      watched,
-+      vec![PathBuf::from("Cargo.toml"), PathBuf::from("src")]
-+    );
-+  }
-+
-+  #[test]
-+  fn ignore_matcher_filters_events_under_a_root_wide_pattern() {
-+    let temp_dir = taurignore_root_fixture();
-+    let dir = temp_dir.path();
-+
-+    let ignore_matcher = build_ignore_matcher(dir);
-+
-+    assert!(!ignore_matcher.is_ignore(&dir.join("src"), true));
-+    assert!(!ignore_matcher.is_ignore(&dir.join("src/main.rs"), false));
-+    assert!(!ignore_matcher.is_ignore(&dir.join("Cargo.toml"), false));
-+    assert!(ignore_matcher.is_ignore(&dir.join("README.md"), false));
-+    assert!(ignore_matcher.is_ignore(&dir.join("assets"), true));
++    let lock = CargoLock {
++      package: vec![lock_package("1.8.0")],
++    };
++    let version = crate_version(Path::new("."), Some(&manifest), Some(&lock), "tauri");
++    assert_eq!(version.version.as_deref(), Some("1.8.0"));
 +  }
 +
    #[test]
-   fn parse_cargo_option() {
-     let args = [
+   fn crate_version_lists_all_locked_versions() {
+     let lock = CargoLock {
 ```
 
 ---
 
-### Incident Patch 2: `5edd31c8` (2026-11-12)
-**Commit Message**: fix(bundler): don't re-create a deleted desktop shortcut on MSI upgrade (#16506)
+### Incident Patch 2: `a99dc0e8` (2026-11-16)
+**Commit Message**: fix(api): make mocked once and unlisten work with shouldMockEvents (#16522)
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `.changes/bundler-msi-desktop-shortcut-upgrade.md` (added, +7/-0)
+**File**: `.changes/api-mock-events-once-unlisten.md` (added, +5/-0)
 ```diff
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,5 @@
 +---
-+"tauri-bundler": "patch:bug"
-+"tauri-cli": "patch:bug"
-+"@tauri-apps/cli": "patch:bug"
++"@tauri-apps/api": patch:bug
 +---
 +
-+Fix the MSI installer re-creating the desktop shortcut on every update even after the user deleted it. The shortcut is now only re-created during an upgrade if it still exists, matching the NSIS installer.
++Fix `mockIPC` with `shouldMockEvents` so `once` listeners only run once and `unlisten` removes the mocked listener. The mocked event now carries the listener `id`, and `plugin:event|unlisten` reads `eventId`.
 ```
 
-**File**: `crates/tauri-bundler/src/bundle/windows/msi/main.wxs` (modified, +8/-0)
+**File**: `crates/tauri/scripts/bundle.global.js` (modified, +1/-1)
 ```diff
-@@ -83,6 +83,13 @@
-         </Property>
+@@ -1 +1 @@
+-var __TAURI_IIFE__=function(e){"use strict";function n(e,n,t,i){if("a"===t&&!i)throw new TypeError("Private accessor was defined without a getter");if("function"==typeof n?e!==n||!i:!n.has(e))throw new TypeError("Cannot read private member from an object whose class did not declare it");return"m"===t?i:"a"===t?i.call(e):i?i.value:n.get(e)}function t(e,n,t,i,r){if("m"===i)throw new TypeError("Private method is not writable");if("a"===i&&!r)throw new TypeError("Private accessor was defined without a setter");if("function"==typeof n?e!==n||!r:!n.has(e))throw new TypeError("Cannot write private member to an object whose class did not declare it");return"a"===i?r.call(e,t):r?r.value=t:n.set(e,t),t}var i,r,s,a,l,o,u;"function"==typeof SuppressedError&&SuppressedError;const c="__TAURI_TO_IPC_KEY__";function d(e,n=!1){return window.__TAURI_INTERNALS__.transformCallback(e,n)}class p{constructor(e){i.add(this),r.set(this,void 0),s.set(this,0),a.set(this,[]),l.set(this,void 0),t(this,r,e||(()=>{}),"f"),this.id=d(e=>{const r=e.index;if("end"in e)return void(r==n(this,s,"f")?this.cleanupCallback():t(this,l,r,"f"));const u=e.message;if(r==n(this,s,"f")){for(n(this,i,"m",o).call(this,u),t(this,s,n(this,s,"f")+1,"f");n(this,s,"f")in n(this,a,"f");){const e=n(this,a,"f")[n(this,s,"f")];n(this,i,"m",o).call(this,e),delete n(this,a,"f")[n(this,s,"f")],t(this,s,n(this,s,"f")+1,"f")}n(this,s,"f")===n(this,l,"f")&&this.cleanupCallback()}else n(this,a,"f")[r]=u})}cleanupCallback(){window.__TAURI_INTERNALS__.unregisterCallback(this.id)}set onmessage(e){t(this,r,e,"f")}get onmessage(){return n(this,r,"f")}[(r=new WeakMap,s=new WeakMap,a=new WeakMap,l=new WeakMap,i=new WeakSet,o=function(e){try{n(this,r,"f").call(this,e)}catch(e){queueMicrotask(()=>{throw e})}},c)](){return`__CHANNEL__:${this.id}`}toJSON(){return this[c]()}}class h{constructor(e,n,t){this.plugin=e,this.event=n,this.channelId=t}async unregister(){return _(`plugin:${this.plugin}|remove_listener`,{event:this.event,channelId:this.channelId})}}async function w(e,n,t){const i=new p(t);try{return await _(`plugin:${e}|register_listener`,{event:n,handler:i}),new h(e,n,i.id)}catch{return await _(`plugin:${e}|registerListener`,{event:n,handler:i}),new h(e,n,i.id)}}async function _(e,n={},t){return window.__TAURI_INTERNALS__.invoke(e,n,t)}class y{get rid(){return n(this,u,"f")}constructor(e){u.set(this,void 0),t(this,u,e,"f")}async close(){return _("plugin:resources|close",{rid:this.rid})}async[(u=new WeakMap,Symbol.asyncDispose)](){await this.close()}}var g=Object.freeze({__proto__:null,Channel:p,PluginListener:h,Resource:y,SERIALIZE_TO_IPC_FN:c,addPluginListener:w,checkPermissions:async function(e){return _(`plugin:${e}|check_permissions`)},convertFileSrc:function(e,n="asset"){return window.__TAURI_INTERNALS__.convertFileSrc(e,n)},invoke:_,isTauri:function(){return!!(globalThis||window).isTauri},requestPermissions:async function(e){return _(`plugin:${e}|request_permissions`)},transformCallback:d});class b extends y{constructor(e){super(e)}static async new(e,n,t){return _("plugin:image|new",{rgba:e,width:n,height:t}).then(e=>new b(e))}static async fromBytes(e){return _("plugin:image|from_bytes",{bytes:e}).then(e=>new b(e))}static async fromPath(e){return _("plugin:image|from_path",{path:e}).then(e=>new b(e))}async rgba(){return _("plugin:image|rgba",{rid:this.rid}).then(e=>new Uint8Array(e))}async size(){return _("plugin:image|size",{rid:this.rid})}}function m(e){return null==e?null:"string"==typeof e?e:e instanceof b?e.rid:e}var v,f=Object.freeze({__proto__:null,Image:b,transformImage:m});!function(e){e.Nsis="nsis",e.Msi="msi",e.Deb="deb",e.Rpm="rpm",e.AppImage="appimage",e.App="app"}(v||(v={}));var k=Object.freeze({__proto__:null,get BundleType(){return v},defaultWindowIcon:async function(){return _("plugin:app|default_window_icon").then(e=>e?new b(e):null)},exit:async function(e=0){return _("plugin:app|exit",{code:e})},fetchDataStoreIdentifiers:async function(){return _("plugin:app|fetch_data_store_identifiers")},getBundleType:async function(){return _("plugin:app|bundle_type")},getIdentifier:async function(){return _("plugin:app|identifier")},getName:async function(){return _("plugin:app|name")},getTauriVersion:async function(){return _("plugin:app|tauri_version")},getVersion:async function(){return _("plugin:app|version")},hide:async function(){return _("plugin:app|app_hide")},onBackButtonPress:async function(e){return w("app","back-button",e)},removeDataStore:async function(e){return _("plugin:app|remove_data_store",{uuid:e})},setDockVisibility:async function(e){return _("plugin:app|set_dock_visibility",{visible:e})},setTheme:async function(e){return _("plugin:app|set_app_theme",{theme:e})},show:async function(){return _("plugin:app|app_show")},supportsMultipleWindows:async function(){return _("plugin:app|supports_multiple_windows")}});class A{constructor(...e){this.type="Logical",1===e.length?"Logical"in e[0]?(this.width=e[0].Logical.width,this.height=e[0].
+```
+
+**File**: `packages/api/src/mocks.ts` (modified, +8/-5)
+```diff
+@@ -132,6 +132,7 @@ export interface MockIPCOptions {
+  *  emit('test-event', { foo: 'bar' });
+  *  expect(eventHandler).toHaveBeenCalledWith({
+  *    event: 'test-event',
++ *    id: expect.any(Number),
+  *    payload: { foo: 'bar' }
+  *  });
+  * })
+@@ -157,7 +158,9 @@ export function mockIPC(
+       case 'plugin:event|emit':
+         return handleEmit(args as { event: EventName; payload?: unknown })
+       case 'plugin:event|unlisten':
+-        return handleRemoveListener(args as { event: EventName; id: number })
++        return handleRemoveListener(
++          args as { event: EventName; eventId: number }
++        )
+     }
+   }
  
-         <!-- launch app checkbox -->
-+        <!-- Only re-create the desktop shortcut during a major upgrade if the user still has it -->
-+        <Property Id="DESKTOPSHORTCUTEXISTS" Secure="yes">
-+            <DirectorySearch Id="DesktopShortcutSearch" Path="[DesktopFolder]" Depth="0">
-+                <FileSearch Id="DesktopShortcutFile" Name="{{product_name}}.lnk" />
-+            </DirectorySearch>
-+        </Property>
-+
-         <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="!(loc.LaunchApp)" />
-         <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
-         <CustomAction Id="LaunchApplication" Impersonate="yes" FileKey="Path" ExeCommand="[LAUNCHAPPARGS]" Return="asyncNoWait" />
-@@ -113,6 +120,7 @@
-         <Directory Id="TARGETDIR" Name="SourceDir">
-             <Directory Id="DesktopFolder" Name="Desktop">
-                 <Component Id="ApplicationShortcutDesktop" Guid="*">
-+                    <Condition>NOT WIX_UPGRADE_DETECTED OR DESKTOPSHORTCUTEXISTS</Condition>
-                     <Shortcut Id="ApplicationDesktopShortcut" Name="{{product_name}}" Description="Runs {{product_name}}" Target="[!Path]" WorkingDirectory="INSTALLDIR" />
-                     <RemoveFolder Id="DesktopFolder" On="uninstall" />
-                     <RegistryValue Root="HKCU" Key="Software\\{{manufacturer}}\\{{product_name}}" Name="Desktop Shortcut" Type="integer" Value="1" KeyPath="yes" />
+@@ -172,15 +175,15 @@ export function mockIPC(
+ 
+   function handleEmit(args: { event: EventName; payload?: unknown }) {
+     const eventListeners = listeners.get(args.event) || []
+-    for (const handler of eventListeners) {
+-      runCallback(handler, args)
++    for (const handler of [...eventListeners]) {
++      runCallback(handler, { ...args, id: handler })
+     }
+     return null
+   }
+-  function handleRemoveListener(args: { event: EventName; id: number }) {
++  function handleRemoveListener(args: { event: EventName; eventId: number }) {
+     const eventListeners = listeners.get(args.event)
+     if (eventListeners) {
+-      const index = eventListeners.indexOf(args.id)
++      const index = eventListeners.indexOf(args.eventId)
+       if (index !== -1) {
+         eventListeners.splice(index, 1)
+       }
 ```
 
 ---
 
-### Incident Patch 3: `b0bd849c` (2026-11-12)
-**Commit Message**: fix(ci): `webkit2gtk-driver` is now `webkitgtk-webdriver` on ubuntu 26 (#16509)
+### Incident Patch 3: `3aac98b4` (2026-11-13)
+**Commit Message**: fix: clippy warnings from Rust 1.100 (#16524)
 
-* fix(ci): webkit2gtk-driver not on ubuntu 26
+* fix: clippy warnings from Rust 1.100
 
-* `webkit2gtk-driver` to `webkitgtk-webdriver`?
+also gets rid of udeps since cargo now checks unused dependencies
 
-* update readme
+* fmt
 
-**File**: `.github/workflows/test-api-e2e.yml` (modified, +1/-1)
+* which and tar on bundler is macos only
+
+* tar on linux too
+
+**File**: `.github/workflows/udeps.yml` (removed, +0/-140)
 ```diff
-@@ -76,7 +76,7 @@ jobs:
-           sudo apt-get update
-           sudo apt-get install -y \
-             libwebkit2gtk-4.1-dev \
--            webkit2gtk-driver \
-+            webkitgtk-webdriver \
-             libgtk-3-dev \
-             libayatana-appindicator3-dev \
-             librsvg2-dev \
+@@ -1,140 +0,0 @@
+-# Copyright 2019-2024 Tauri Programme within The Commons Conservancy
+-# SPDX-License-Identifier: Apache-2.0
+-# SPDX-License-Identifier: MIT
+-
+-name: Udeps
+-
+-on:
+-  push:
+-    branches:
+-      - dev
+-
+-env:
+-  RUST_BACKTRACE: 1
+-  CARGO_PROFILE_DEV_DEBUG: 0 # This would add unnecessary bloat to the target folder, decreasing cache efficiency.
+-
+-concurrency:
+-  group: ${{ github.workflow }}-${{ github.ref }}
+-  cancel-in-progress: true
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  changes:
+-    runs-on: ubuntu-latest
+-    outputs:
+-      tauri: ${{ steps.filter.outputs.tauri }}
+-      build: ${{ steps.filter.outputs.build }}
+-      codegen: ${{ steps.filter.outputs.codegen }}
+-      macros: ${{ steps.filter.outputs.macros }}
+-      runtime: ${{ steps.filter.outputs.runtime }}
+-      wry: ${{ steps.filter.outputs.wry }}
+-      utils: ${{ steps.filter.outputs.utils }}
+-      bundler: ${{ steps.filter.outputs.bundler }}
+-      cli: ${{ steps.filter.outputs.cli }}
+-    steps:
+-      - uses: actions/checkout@v7
+-      - uses: dorny/paths-filter@v3
+-        id: filter
+-        with:
+-          filters: |
+-            tauri:
+-              - 'crates/tauri/**'
+-              - '!crates/tauri/scripts/**'
+-            build:
+-              - 'crates/tauri-build/**'
+-            codegen:
+-              - 'crates/tauri-codegen/**'
+-            macros:
+-              - 'crates/tauri-macros/**'
+-            runtime:
+-              - 'crates/tauri-runtime/**'
+-            wry:
+-              - 'crates/tauri-runtime-wry/**'
+-            utils:
+-              - 'crates/tauri-utils/**'
+-            bundler:
+-              - 'crates/tauri-bundler/**'
+-            cli:
+-              - 'crates/tauri-cli/**'
+-            macossign:
+-              - 'crates/tauri-macos-sign/**'
+-
+-  setup:
+-    runs-on: ubuntu-latest
+-    needs: changes
+-    if: |
+-      needs.changes.outputs.tauri == 'true' ||
+-      needs.changes.outputs.build == 'true' ||
+-      needs.changes.outputs.codegen == 'true' ||
+-      needs.changes.outputs.macros == 'true' ||
+-      needs.changes.outputs.runtime == 'true' ||
+-      needs.changes.outputs.wry == 'true' ||
+-      needs.changes.outputs.utils == 'true' ||
+-      needs.changes.outputs.bundler == 'true' ||
+-      needs.changes.outputs.cli == 'true' ||
+-      needs.changes.outputs.macossign == 'true'
+-
+-    steps:
+-      - name: Create udeps matrix
+-        id: create-matrix
+-        env:
+-          TAURI: ${{ needs.changes.outputs.tauri == 'true' }}
+-          BUILD: ${{ needs.changes.outputs.build == 'true' }}
+-          CODEGEN: ${{ needs.changes.outputs.codegen == 'true' }}
+-          MACROS: ${{ needs.changes.outputs.macros == 'true' }}
+-          RUNTIME: ${{ needs.changes.outputs.runtime == 'true' }}
+-          WRY: ${{ needs.changes.outputs.wry == 'true' }}
+-          UTILS: ${{ needs.changes.outputs.utils == 'true' }}
+-          BUNDLER: ${{ needs.changes.outputs.bundler == 'true' }}
+-          CLI: ${{ needs.changes.outputs.cli == 'true' }}
+-          MACOSSIGN: ${{ needs.changes.outputs.macossign == 'true' }}
+-        run: |
+-          crates=()
+-          if [ "${TAURI}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri\""; fi
+-          if [ "${BUILD}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-build\""; fi
+-          if [ "${CODEGEN}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-codegen\""; fi
+-          if [ "${MACROS}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-macros\""; fi
+-          if [ "${RUNTIME}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-runtime\""; fi
+-          if [ "${WRY}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-runtime-wry\""; fi
+-          if [ "${UTILS}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-utils\""; fi
+-          if [ "${BUNDLER}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-bundler\""; fi
+-          if [ "${CLI}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-cli\""; fi
+-          if [ "${MACOSSIGN}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-macos-sign\""; fi
+-          echo "matrix=[$crates]" >> "$GITHUB_OUTPUT"
+-    outputs:
+-      matrix: ${{ steps.create-matrix.outputs.matrix }}
+-
+-  udeps:
+-    runs-on: ubuntu-latest
+-    needs: setup
+-    strategy:
+-      matrix:
+-        path: ${{ fromJson(needs.setup.outputs.matrix) }}
+-    steps:
+-      - uses: actions/checkout@v7
+-
+-      - name: Install Rust nightly
+-        uses: dtolnay/rust-toolchain@nightly
+-
+-      - name: install dependencies
+-        run: |
+-          sudo apt-get update
+-          sudo apt-get install -y libgtk-3-dev
+-
+-      # No rust-cache on purpose: this job only runs on `dev`, its target dir does not fit the
+-      # repository's 10 GB cache limit next to the entries pull requests restore, and an entry
+-      # evicted before the next push only costs upload time.
+-      - name: Install udeps
+-        uses: taiki-e/install-action@v2
+-        
 ```
 
-**File**: `packages/api-e2e/README.md` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +2/-18)
 ```diff
-@@ -58,7 +58,7 @@ Platform driver dependencies:
- | Platform | Requirement                                                                                                                                                                                                        |
- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
- | macOS    | `CN_API_KEY` env var (CrabNebula Cloud). The automation plugin and test-runner-backend are wired up already.                                                                                                       |
--| Linux    | `webkit2gtk-driver` package (provides `WebKitWebDriver`).                                                                                                                                                          |
-+| Linux    | `webkit2gtk-driver` / `webkitgtk-webdriver` (>= Ubuntu 26.04) package (provides `WebKitWebDriver`).                                                                                                                |
- | Windows  | `msedgedriver.exe` matching your Edge version, on `PATH`. Run the suite unelevated.                                                                                                                                |
- | Android  | The usual Tauri Android setup (`ANDROID_HOME`, `NDK_HOME`, a JDK), plus a running emulator or a connected device with USB debugging. Network access the first time, for the chromedriver download.                 |
- | iOS      | macOS with Xcode and an iOS simulator runtime. `tauri ios init` installs [xcodegen](https://github.com/yonaskolb/XcodeGen) through Homebrew if missing. The first session compiles WebDriverAgent (a few minutes). |
+@@ -2543,9 +2543,9 @@ checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
+ 
+ [[package]]
+ name = "futures-timer"
+-version = "3.0.3"
++version = "3.0.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f288b0a4f20f9a56b5d1da57e2227c661b7b16168e2f72365f57b63326e29b24"
++checksum = "af43fadb8a98512d547e37b4e92e0ced13e205c061b87b4623eff01d918d6968"
+ 
+ [[package]]
+ name = "futures-util"
+@@ -3840,20 +3840,6 @@ dependencies = [
+  "thiserror 2.0.21",
+ ]
+ 
+-[[package]]
+-name = "jsonrpsee-ws-client"
+-version = "0.26.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "06cd5b8daf2d7c0730731a97f96c0d1d0dd38def07001ff80df1cf6063442235"
+-dependencies = [
+- "http",
+- "jsonrpsee-client-transport",
+- "jsonrpsee-core",
+- "jsonrpsee-types",
+- "tower",
+- "url",
+-]
+-
+ [[package]]
+ name = "jsonschema"
+ version = "0.60.1"
+@@ -8450,7 +8436,6 @@ dependencies = [
+  "jsonrpsee",
+  "jsonrpsee-client-transport",
+  "jsonrpsee-core",
+- "jsonrpsee-ws-client",
+  "jsonschema",
+  "libc",
+  "local-ip-address",
+@@ -8542,7 +8527,6 @@ name = "tauri-driver"
+ version = "2.1.0"
+ dependencies = [
+  "anyhow",
+- "futures",
+  "futures-util",
+  "http-body-util",
+  "hyper",
+```
+
+**File**: `Cargo.toml` (modified, +3/-0)
+```diff
+@@ -91,3 +91,6 @@ collapsible_if = "allow"
+ redundant_clone = "warn"
+ assigning_clones = "warn"
+ or_fun_call = "warn"
++
++[workspace.lints.cargo]
++unused_dependencies = "deny"
+```
+
+**File**: `crates/tauri-bundler/Cargo.toml` (modified, +2/-3)
+```diff
+@@ -23,7 +23,6 @@ anyhow = "1"
+ serde_json = "1"
+ serde = { version = "1", features = ["derive"] }
+ strsim = "0.11"
+-tar = "0.4"
+ walkdir = "2"
+ bytesize = "2"
+ handlebars = "6"
+@@ -46,7 +45,6 @@ plist = "1"
+ glob = "0.3"
+ 
+ [target."cfg(target_os = \"windows\")".dependencies]
+-bitness = "0.4"
+ windows-registry = "0.6"
+ 
+ [target."cfg(target_os = \"windows\")".dependencies.windows-sys]
+@@ -57,6 +55,7 @@ features = ["Win32_System_SystemInformation", "Win32_System_Diagnostics_Debug"]
+ icns = { package = "tauri-icns", version = "0.1" }
+ time = { version = "0.3", features = ["formatting"] }
+ tauri-macos-sign = { workspace = true }
++which = "8"
+ 
+ [target."cfg(target_os = \"linux\")".dependencies]
+ heck = "0.5"
+@@ -65,7 +64,7 @@ md5 = "0.8"
+ rpm = { version = "0.30", features = ["bzip2-compression"] }
+ 
+ [target."cfg(unix)".dependencies]
+-which = "8"
++tar = "0.4"
+ 
+ [lib]
+ name = "tauri_bundler"
+```
+
+**File**: `crates/tauri-bundler/src/bundle/windows/nsis/mod.rs` (modified, +1/-2)
+```diff
+@@ -124,8 +124,7 @@ pub fn bundle_project(settings: &Settings, updater: bool) -> crate::Result<Vec<P
+         let out_path = nsis_toolset_path.join(path);
+         std::fs::create_dir_all(out_path.parent().context("output path has no parent")?)
+           .fs_context("failed to create file output directory", out_path.clone())?;
+-        fs::write(&out_path, data)
+-          .fs_context("failed to save NSIS downloaded file", out_path.clone())?;
++        fs::write(&out_path, data).fs_context("failed to save NSIS downloaded file", out_path)?;
+       }
+     }
+   }
+```
+
+**File**: `crates/tauri-cli/Cargo.toml` (modified, +1/-2)
+```diff
+@@ -40,9 +40,8 @@ cargo-mobile2 = { version = "0.22.5", default-features = false }
+ 
+ [dependencies]
+ jsonrpsee = { version = "0.26", features = ["server"] }
+-jsonrpsee-core = "0.26"
++jsonrpsee-core = { version = "0.26", features = ["async-client"] }
+ jsonrpsee-client-transport = { version = "0.26", features = ["ws"] }
+-jsonrpsee-ws-client = { version = "0.26", default-features = false }
+ tower = { version = "0.5", default-features = false }
+ sublime_fuzzy = "0.7"
+ clap_complete = "4"
+```
+
+**File**: `crates/tauri-cli/src/mobile/ios/xcode_script.rs` (modified, +1/-1)
+```diff
+@@ -305,7 +305,7 @@ pub fn command(options: Options) -> Result<()> {
+ 
+     std::fs::copy(&lib_path, externals_lib_dir.join(lib_output_file_name)).fs_context(
+       "failed to copy mobile lib file to Externals directory",
+-      lib_path.to_path_buf(),
++      lib_path,
+     )?;
+   }
+   Ok(())
+```
+
+**File**: `crates/tauri-driver/Cargo.toml` (modified, +3/-3)
+```diff
+@@ -10,9 +10,9 @@ description = "Webdriver server for Tauri applications"
+ edition = "2024"
+ rust-version = "1.90"
+ 
+-[dependencies]
++# tauri-driver only does something on Linux and Windows, everywhere else it is a stub
++[target.'cfg(any(target_os = "linux", windows))'.dependencies]
+ anyhow = "1"
+-futures = "0.3"
+ futures-util = "0.3"
+ http-body-util = "0.1"
+ hyper = { version = "1", features = ["client", "http1", "server"] }
+@@ -29,7 +29,7 @@ serde_json = "1"
+ tokio = { version = "1", features = ["macros"] }
+ which = "8"
+ 
+-[target."cfg(unix)".dependencies]
++[target.'cfg(target_os = "linux")'.dependencies]
+ signal-hook = "0.4"
+ signal-hook-tokio = { version = "0.4", features = ["futures-v0_3"] }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16543** (2026-11-17): docs(bundler): update the tauri.conf.json example to the v2 config (@rawsun007)
+- **PR #16524** (2026-11-13): fix: clippy warnings from Rust 1.100 (@lucasfernog)
+- **PR #16522** (2026-11-16): fix(api): make mocked once and unlisten work with shouldMockEvents (@lazerg)
+- **PR #16521** (2026-11-16): fix(cli): accept an inherited package version in tauri migrate (fix #16519) (@1AbdullahButt)
 - **PR #16512** (closed): fix(macos): prevent scroll jump during RTL text input in WKWebView (@sharmis-tp)
 - **PR #16510** (2026-11-12): refactor: release `WryWebviewDispatcher::window_id` early (@Legend-Master)
-- **PR #16509** (2026-11-12): fix(ci): `webkit2gtk-driver` is now `webkitgtk-webdriver` on ubuntu 26 (@Legend-Master)
-- **PR #16506** (2026-11-12): fix(bundler): don't re-create a deleted desktop shortcut on MSI upgrade (@TakahiroNago)
-- **PR #16504** (2026-11-10): fix(ci): e2e tests on unix platforms (@Legend-Master)
-- **PR #16502** (2026-11-10): chore(deps): update rust crate sha2 to 0.11 (@renovate[bot])
 
 ---
 
@@ -2532,33 +2777,33 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): keep watching folders matched by .taurignore, filter entries and events (#
+## X. cli): accept an inherited package version in the Cargo manifest
 
 **RULE**:
-When implementing operations in `.changes/fix-taurignore-root.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/cli-migrate-workspace-version.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7facf4f2`: cli): keep watching folders matched by .taurignore, filter entries and events (#16398). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b568e9c`: cli): accept an inherited package version in the Cargo manifest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/fix-taurignore-root.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/cli-migrate-workspace-version.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ---
-"tauri-cli": "patch:bug"
-"@tauri-apps/cli": "patch:bug"
+"tauri-cli": patch:bug
+"@tauri-apps/cli": patch:bug
 ---
 
-Fix `tauri dev` not watching the app at all when its `.taurignore` contains a pattern like `/*` that matches every entry at the top level, even if other entries are re-included with `!` negations. Watch folders are now always watched; ignore rules apply to their entries and to change events.
+Fix `tauri migrate` failing to parse the app's `Cargo.toml` when its package version is inherited from the workspace (`version.workspace = true`).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7facf4f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b568e9c` are properly handled with clean fallback behavior.

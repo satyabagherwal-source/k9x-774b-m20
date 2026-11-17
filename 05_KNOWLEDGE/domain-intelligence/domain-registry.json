@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T03:58:08.202Z",
-  "total_records": 1429,
+  "last_updated": "2026-11-17T04:05:50.225Z",
+  "total_records": 1435,
   "domains": {
     "A": {
       "total": 9,
@@ -44,7 +44,7 @@
       ]
     },
     "D": {
-      "total": 615,
+      "total": 617,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -660,7 +660,9 @@
         "domain_intelligence-research-knowledge-intelligence-microsoft-mage-vl-cowork-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-microsoft-mage-vl-cowork-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar"
       ]
     },
     "E": {
@@ -980,7 +982,7 @@
       ]
     },
     "H": {
-      "total": 323,
+      "total": 327,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1304,7 +1306,11 @@
         "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-core-i",
         "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants",
         "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-learni",
-        "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-vitejs-vite-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-learnings-core-invariants"
       ]
     },
     "I": {
@@ -25092,6 +25098,60 @@
       "repository": "koderover-zadig-learnings",
       "content_hash": "cf7201c432bb7c39f7f4c294c8cdab573cbc98da8dfaf31c3b4fea36e0c8b704",
       "created_at": "2026-11-17T03:58:08.202Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: vitejs/vite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vitejs-vite-technical-construction-intelligence-vitejs-vite-core-invariants.md",
+      "repository": "vitejs/vite",
+      "content_hash": "6d5389ea25082fba29a6b38ab937192fd96e951c14f0819f41fbc9f1c33ae1a7",
+      "created_at": "2026-11-17T04:05:40.476Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tauri-apps/tauri Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tauri-apps-tauri-technical-construction-intelligence-tauri-apps-tauri-core-invar.md",
+      "repository": "tauri-apps/tauri",
+      "content_hash": "4964c329e267654335cf6efd86b5ba1bef2cc63f6163db6a16e52154674d7631",
+      "created_at": "2026-11-17T04:05:43.753Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: fabio-rovai/open-ontologies Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-fabio-rovai-open-ontologies-research-knowledge-intelligence-fabio-rovai-open-ont.md",
+      "repository": "fabio-rovai/open-ontologies",
+      "content_hash": "27903c703fdbaa1fa05ffd5bc95dbd9e45e5fe9d5b9af5bd4d6b7898ee0cb9c7",
+      "created_at": "2026-11-17T04:05:45.209Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vitejs-vite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-vitejs-vite-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: vitejs-vite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vitejs-vite-learnings-technical-construction-intelligence-vitejs-vite-learnings-.md",
+      "repository": "vitejs-vite-learnings",
+      "content_hash": "6ed381722bfbbd681403f56ae39d821a31daf0cf599e06772a5c0a7f8ad2bfa6",
+      "created_at": "2026-11-17T04:05:48.401Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tauri-apps-tauri-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tauri-apps-tauri-learnings-technical-construction-intelligence-tauri-apps-tauri-.md",
+      "repository": "tauri-apps-tauri-learnings",
+      "content_hash": "2f84ab3dd5a21b10c04393b89833358b7b0fe960e0fc7ab74ef29f818804e650",
+      "created_at": "2026-11-17T04:05:49.280Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-fabio-rovai-open-ontologies-learnings-research-knowledge-intelligence-fabio-rova.md",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "content_hash": "8333e99e738ad24ea5e5d6bf105a777846c6705b39218774be52b8743f637388",
+      "created_at": "2026-11-17T04:05:50.225Z"
     }
   }
 }
