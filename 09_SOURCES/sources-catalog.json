@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "cfc3f365",
+    "sourceVersion": "46ad4538",
     "license": "BSD-3-Clause",
-    "contentHash": "d965a71dcfa986bce0ef69cab66986e52c3f019bae141492c6ade221660a2a75",
-    "lastHarvestedAt": "2026-11-17T00:10:52.902Z",
+    "contentHash": "deb816e5df5c030a37c086a907ccf2e8a67395885c930b691f1fc345609d80cd",
+    "lastHarvestedAt": "2026-11-17T05:58:15.077Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4013,10 +4013,10 @@
     "repository": "krakend/krakend-ce",
     "platform": "github",
     "sourceUrl": "https://github.com/krakend/krakend-ce",
-    "sourceVersion": "fd0eac09",
+    "sourceVersion": "b2187c50",
     "license": "Apache-2.0",
-    "contentHash": "3af1175a98fca7285c72c62af0f2d2aad0ec8ca86a020a8521217df39ef104d3",
-    "lastHarvestedAt": "2026-11-13T11:40:21.062Z",
+    "contentHash": "24eaddd6a0c3fc8511caf7fc624a7522b0aa7f1d414e22c8ea59277256a81748",
+    "lastHarvestedAt": "2026-11-17T05:58:12.427Z",
     "learningId": "learn-github-krakend-krakend-ce"
   },
   "trailbaseio-trailbase": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "a2e03dbc",
+    "sourceVersion": "34b99c69",
     "license": "MIT",
-    "contentHash": "52ddbaf2b4633ce4902cd23e0d9edb08e097e99888bfcabeb977dcc8601a1a4c",
-    "lastHarvestedAt": "2026-11-12T14:23:56.962Z",
+    "contentHash": "0f3806d2fa87331ddc88b0a73ab1f82a0686c93dbd2af4df922b00b7d3fb938e",
+    "lastHarvestedAt": "2026-11-17T05:58:07.898Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {

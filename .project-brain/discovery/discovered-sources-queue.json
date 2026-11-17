@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T05:37:20.462Z",
+  "updated_at": "2026-11-17T05:58:18.875Z",
   "stats": {
-    "total_discovered": 4759,
-    "approved_pending_harvest": 4478,
+    "total_discovered": 4760,
+    "approved_pending_harvest": 4479,
     "harvested_count": 0,
     "rejected_count": 281,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4480,
+      "COMMUNITY_AND_EXPERT": 4481,
       "OFFICIAL_DOCUMENTATION": 149,
       "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
@@ -102752,6 +102752,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
         "fileName": "gauthierpiarrette-highball-learnings.md"
+      }
+    },
+    "SRC-DE94F8AD18A1": {
+      "id": "SRC-DE94F8AD18A1",
+      "url": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.45.0...v1.47.0",
+      "title": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.45.0...v1.47.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T05:58:18.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
+        "fileName": "krakend-krakend-ce-learnings.md"
       }
     }
   }

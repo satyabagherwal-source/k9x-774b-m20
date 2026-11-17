@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-DCW0",
-    "timestamp": "2026-11-14T15:03:59.616Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "961c19e8a43bf7c6e0f934b6f6115066b900a84352fb905e49ca2df3ff295a68",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-JDGP",
-    "timestamp": "2026-11-14T15:08:40.297Z",
-    "repository": "higurashi-ai/Haru-4B",
-    "learningId": "learn-huggingface-higurashi-ai-haru-4b",
-    "contentHash": "acca69643d657c0b2a320b582772a2bfa946d0c2f5c610eba93f0e7b99d61bf0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-55T0",
-    "timestamp": "2026-11-14T15:25:36.804Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-    "contentHash": "e3a8951752a7b06470178298093b3b7fbd36a3a91445a999c581754a4eb0cd34",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-57HL",
     "timestamp": "2026-11-14T15:25:38.985Z",
     "repository": "biomejs/biome",
@@ -7490,6 +7445,51 @@
     "repository": "argoproj/argo-events",
     "learningId": "learn-github-argoproj-argo-events",
     "contentHash": "fea7c4fd7df0c7eb965392e5214176e78549d7c4485bcf2ce8311a504ddf3e3f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6XHZ",
+    "timestamp": "2026-11-17T05:58:07.895Z",
+    "repository": "preactjs/preact",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "0f3806d2fa87331ddc88b0a73ab1f82a0686c93dbd2af4df922b00b7d3fb938e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-70ZS",
+    "timestamp": "2026-11-17T05:58:12.424Z",
+    "repository": "krakend/krakend-ce",
+    "learningId": "learn-github-krakend-krakend-ce",
+    "contentHash": "24eaddd6a0c3fc8511caf7fc624a7522b0aa7f1d414e22c8ea59277256a81748",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-731D",
+    "timestamp": "2026-11-17T05:58:15.073Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "deb816e5df5c030a37c086a907ccf2e8a67395885c930b691f1fc345609d80cd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T05:37:20.663Z",
+  "last_updated": "2026-11-17T05:58:19.504Z",
   "directives": [
     {
       "id": "CD-001",
@@ -22240,6 +22240,66 @@
       "source_repo": "gauthierpiarrette-highball",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1D7BB4-wine-10-engines-r30-default-and-r31-d3dm.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-75NS",
+      "directive_title": "Empirical Invariant Guard in props.js",
+      "source_repo": "preactjs-preact-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-75NS-empirical-invariant-guard-in-props-js.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-7633",
+      "directive_title": "Empirical Invariant Guard in go.mod",
+      "source_repo": "krakend-krakend-ce-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7633-empirical-invariant-guard-in-go-mod.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-76GG",
+      "directive_title": "go.mod: bump 5 modules",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-76GG-go-mod-bump-5-modules.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-ECF045",
+      "directive_title": "Empirical Invariant Guard in props.js",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "preactjs-preact",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ECF045-empirical-invariant-guard-in-props-js.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-17FC90",
+      "directive_title": "Empirical Invariant Guard in go.mod",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "krakend-krakend-ce",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-17FC90-empirical-invariant-guard-in-go-mod.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-0B9DC9",
+      "directive_title": "go.mod: bump 5 modules",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0B9DC9-go-mod-bump-5-modules.md",
       "staged_date": "2026-11-17"
     }
   ]

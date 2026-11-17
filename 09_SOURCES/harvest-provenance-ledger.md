@@ -10486,3 +10486,6 @@ Every entry in this ledger must capture:
 | `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `d63a027c` | Multi-dimensional audit evidence | 2026-11-17T05:37:11.194Z |
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `4ebe4fe0` | Multi-dimensional audit evidence | 2026-11-17T05:37:13.379Z |
 | `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `5cda2887` | Multi-dimensional audit evidence | 2026-11-17T05:37:15.911Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `34b99c69` | Multi-dimensional audit evidence | 2026-11-17T05:58:07.898Z |
+| `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `b2187c50` | Multi-dimensional audit evidence | 2026-11-17T05:58:12.427Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `46ad4538` | Multi-dimensional audit evidence | 2026-11-17T05:58:15.077Z |

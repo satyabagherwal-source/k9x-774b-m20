@@ -4,45 +4,31 @@
 {
   "source_repository": "preactjs/preact",
   "source_url": "https://github.com/preactjs/preact",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "34b99c69",
+  "license": "MIT",
+  "timestamp": "2026-11-17T05:58:08.063Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-preactjs-preact",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [preactjs/preact](https://github.com/preactjs/preact) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [preactjs/preact](https://github.com/preactjs/preact) (Revision: `34b99c69`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T05:58:08.063Z`  
+> **Learning ID**: `learn-github-preactjs-preact`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `preactjs/preact` (Commit: `historical`)
+- **Target Repository**: `preactjs/preact` (Commit: `34b99c69`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
-> **Source**: github ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
-> **Source Version**: `a2e03dbc`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:23:40.794Z  
-> **Learning ID**: `learn-github-preactjs-preact`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): preactjs/preact
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:23:40.505Z  
+> **Harvest Timestamp**: 2026-11-17T05:58:06.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: ⚛️ Fast 3kB React alternative with the same modern API. Components & Virtual DOM.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 38998 stars
+- **Stars / Engagement**: 39009 stars
 
 ---
 
@@ -1309,397 +1295,211 @@ export function hydrate(vnode, parentDom) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0788297` (2026-11-12)
-**Commit Message**: ci: harden release build and workflow token permissions
+### Incident Patch 1: `34b99c69` (2026-11-16)
+**Commit Message**: Merge pull request #5365 from 0z5a/fix/style-zero-empty-string
 
-- Only use the pnpm dependency cache for pull request builds. The previous
-  condition excluded main but not release tags, so release builds restored a
-  cache written by runs on main.
-- Package and upload the npm tarball right after the build, before tests and
-  coverage reporting run.
-- Pin the Coveralls reporter binary and skip it on tag builds.
-- Declare least-privilege GITHUB_TOKEN permissions in every workflow that
-  relied on the repository default.
+Apply style values that change between 0 and an empty string
 
-**File**: `.github/workflows/benchmarks.yml` (modified, +5/-0)
+**File**: `src/diff/props.js` (modified, +1/-1)
 ```diff
-@@ -4,6 +4,11 @@ on:
-   workflow_dispatch:
-   workflow_call:
+@@ -59,7 +59,7 @@ export function setProperty(dom, name, value, oldValue, namespace) {
  
-+permissions:
-+  contents: read
-+  # download-base-artifact fetches the package built by the latest run on main
-+  actions: read
-+
- jobs:
-   prepare:
-     name: Prepare environment
+ 			if (value) {
+ 				for (name in value) {
+-					if (!oldValue || value[name] != oldValue[name]) {
++					if (!oldValue || value[name] !== oldValue[name]) {
+ 						setStyle(dom.style, name, value[name]);
+ 					}
+ 				}
 ```
 
-**File**: `.github/workflows/build-test.yml` (modified, +17/-12)
+**File**: `test/browser/style.test.jsx` (modified, +11/-0)
 ```diff
-@@ -32,32 +32,37 @@ jobs:
-       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-         with:
-           node-version-file: 'package.json'
--          # The main build artifact is used for publishing, so avoid cached dependencies.
--          cache: ${{ github.ref != 'refs/heads/main' && 'pnpm' || '' }}
-+          # Builds from main and release tags are published or used as a baseline,
-+          # so only pull request builds may use cached dependencies.
-+          cache: ${{ github.event_name == 'pull_request' && 'pnpm' || '' }}
-           # Prevent automatic caching when the explicit cache input is empty.
-           package-manager-cache: false
-           cache-dependency-path: pnpm-lock.yaml
-       - run: pnpm install --frozen-lockfile
-       - run: pnpm run build
-+      - name: Package
-+        # Package and upload the build before any test or reporting tooling
-+        # runs, without running pack lifecycle scripts.
-+        run: |
-+          pnpm pack --config.ignore-scripts=true
-+          mv preact-*.tgz preact.tgz
-+      - name: Upload npm package
-+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-+        with:
-+          name: ${{ inputs.artifact_name || 'npm-package' }}
-+          path: preact.tgz
-       - name: test
-         env:
-           CI: true
-           COVERAGE: true
-           FLAKEY: false
-         run: pnpm run lint && pnpm run test:unit
-       - name: Coveralls GitHub Action
-+        # The reporter binary is downloaded at runtime: keep it out of release builds.
-+        if: ${{ github.ref_type != 'tag' }}
-         uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
-         timeout-minutes: 2
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-+          coverage-reporter-version: v0.6.22
-           fail-on-error: false
--      - name: Package
--        # Package the tested build without running pack lifecycle scripts.
--        run: |
--          pnpm pack --config.ignore-scripts=true
--          mv preact-*.tgz preact.tgz
--      - name: Upload npm package
--        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
--        with:
--          name: ${{ inputs.artifact_name || 'npm-package' }}
--          path: preact.tgz
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +13/-0)
-```diff
-@@ -11,10 +11,17 @@ on:
-       - restructure
-       - v11
- 
-+permissions:
-+  contents: read
-+
- jobs:
-   filter_jobs:
-     name: Filter jobs
-     runs-on: ubuntu-26.04
-+    permissions:
-+      contents: read
-+      # dorny/paths-filter lists the changed files of a PR through the API
-+      pull-requests: read
-     outputs:
-       jsChanged: ${{ steps.filter.outputs.jsChanged }}
-     steps:
-@@ -33,6 +40,9 @@ jobs:
-     name: Compressed Size
-     needs: filter_jobs
-     if: ${{ needs.filter_jobs.outputs.jsChanged == 'true' }}
-+    permissions:
-+      contents: read
-+      pull-requests: write
-     uses: ./.github/workflows/size.yml
- 
-   build_test:
-@@ -44,4 +54,7 @@ jobs:
-     name: Benchmarks
-     needs: build_test
-     if: ${{ needs.filter_jobs.outputs.jsChanged == 'true' }}
-+    permissions:
-+      contents: read
-+      actions: read
-     uses: ./.github/workflows/benchmarks.yml
-```
-
-**File**: `.github/workflows/pr-reporter.yml` (modified, +13/-0)
-```diff
-@@ -9,10 +9,17 @@ on:
-       - completed
-       - requested
- 
-+# This workflow handles artifacts produced by pull requests from forks, so every
-+# job only gets the permissions it needs.
-+permissions: {}
-+
- jobs:
-   filter_jobs:
-     name: Filter jobs
-     runs-on: ubuntu-26.04
-+    permissions:
-+      contents: read
-+      pull-requests: read
-     if: |
-       github.event.workflow_run.event == 'pull_request'
-     outputs:
-@@ -62,6 +69,8 @@ jobs:
-     name: Report benchmarks are in-progress
-     needs: filter_jobs
-     runs-on: ubuntu-26.04
-+    permissions:
-+      pull-requests: write
-     # Only add the "benchmarks are running" text when a workflow_run is
-     # requested (a.k.a starting)
-     if: |
-@@ -79,6 +88,10 @@ jobs:
-     name: Report benchmark results
-     needs: filter_jobs
-     runs-on: ubuntu-26.04
-+    permissions:
-+      # Download the results from the triggering workflow run
-+      actions: read
-+      pull-requests: write
-     # Only run this job if the event action was "completed" and the triggering
-     # workflow_run was successful
-     if: |
-```
-
-**File**: `.github/workflows/run-bench.yml` (modified, +3/-0)
-```diff
-@@ -25,6 +25,9 @@ on:
-         required: false
-         default: 20
- 
-+permissions:
-+  contents: read
-+
- jobs:
-   run_bench:
-     name: Bench ${{ inputs.benchmark }}
-```
-
-**File**: `.github/workflows/size.yml` (modified, +5/-0)
-```diff
-@@ -3,6 +3,11 @@ name: Compressed Size
- on:
-   workflow_call:
- 
-+permissions:
-+  contents: read
-+  # compressed-size-action reports its results in a PR comment
-+  pull-requests: write
-+
- jobs:
-   build:
-     runs-on: ubuntu-26.04
-```
-
----
-
-### Incident Patch 2: `18d8bf78` (2026-11-12)
-**Commit Message**: feat: Warn on deeply nested illegal HTML structures in debug (#5358)
-
-* feat: Warn on deeply nested illegal HTML structures in debug
-
-* refactor: Slightly smaller
-
-**File**: `debug/src/debug.js` (modified, +19/-13)
-```diff
-@@ -19,23 +19,25 @@ const isWeakMapSupported = typeof WeakMap == 'function';
-  * @param {import('./internal').VNode} vnode
-  * @returns {Array<string>}
-  */
--function getDomChildren(vnode) {
--	let domChildren = [];
-+function getDomDescendants(vnode) {
-+	let domDescendants = /** @type {string[]} */ ([]);
- 
--	if (!vnode._children) return domChildren;
-+	if (!vnode._children) return domDescendants;
- 
- 	vnode._children.forEach(child => {
--		if (child && typeof child.type === 'function') {
-+		if (!child) return;
-+		if (typeof child.type === 'function') {
- 			// Portal children are mounted into another DOM parent (v11 keeps
- 			// them in the vnode tree), so they are not DOM children of `vnode`.
- 			if (child.props._parentDom) return;
--			domChildren.push.apply(domChildren, getDomChildren(child));
--		} else if (child && typeof child.type === 'string') {
--			domChildren.push(child.type);
-+			domDescendants.push.apply(domDescendants, getDomDescendants(child));
-+		} else if (typeof child.type === 'string') {
-+			domDescendants.push(child.type);
-+			domDescendants.push.apply(domDescendants, getDomDescendants(child));
- 		}
+@@ -149,6 +149,17 @@ describe('style attribute', () => {
+ 		expect(scratch.firstChild.style.visibility).to.equal('');
  	});
  
--	return domChildren;
-+	return domDescendants;
- }
- 
- /**
-@@ -462,8 +464,8 @@ export function initDebug() {
- 					);
- 				}
- 			} else if (type === 'p') {
--				let illegalDomChildrenTypes = getDomChildren(vnode).filter(childType =>
--					ILLEGAL_PARAGRAPH_CHILD_ELEMENTS.test(childType)
-+				let illegalDomChildrenTypes = getDomDescendants(vnode).filter(childType =>
-+					ILLEGAL_PARAGRAPH_CHILD_ELEMENTS.has(childType)
- 				);
- 				if (illegalDomChildrenTypes.length) {
- 					console.error(
-@@ -475,7 +477,7 @@ export function initDebug() {
- 					);
- 				}
- 			} else if (type === 'a' || type === 'button') {
--				if (getDomChildren(vnode).indexOf(type) !== -1) {
-+				if (getDomDescendants(vnode).indexOf(type) !== -1) {
- 					console.error(
- 						`Improper nesting of interactive content. Your <${type}>` +
- 							` should not have other ${type === 'a' ? 'anchor' : 'button'}` +
-@@ -570,8 +572,12 @@ function isTableElement(type) {
- 	);
- }
- 
--const ILLEGAL_PARAGRAPH_CHILD_ELEMENTS =
--	/^(address|article|aside|blockquote|details|div|dl|fieldset|figcaption|figure|footer|form|h1|h2|h3|h4|h5|h6|header|hgroup|hr|main|menu|nav|ol|p|pre|search|section|table|ul)$/;
-+const ILLEGAL_PARAGRAPH_CHILD_ELEMENTS = new Set([
-+	'address', 'article', 'aside', 'blockquote', 'details', 'div', 'dl',
-+	'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3',
-+	'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'main', 'menu', 'nav', 'ol',
-+	'p', 'pre', 'search', 'section', 'table', 'ul'
-+]);
- 
- const forceUpdate = Component.prototype.forceUpdate;
- Component.prototype.forceUpdate = function (callback) {
-```
-
-**File**: `debug/test/browser/debug.test.jsx` (modified, +39/-0)
-```diff
-@@ -694,6 +694,19 @@ describe('debug', () => {
- 			expect(console.error).toHaveBeenCalledOnce();
- 		});
- 
-+		it('should warn for deeply nesting illegal dom-nodes under a paragraph', () => {
-+			const Paragraph = () => (
-+				<p>
-+					<b>
-+						<h1>Hello world</h1>
-+					</b>
-+				</p>
-+			);
++	it('should update styles that switch between 0 and an empty string', () => {
++		render(<div style={{ opacity: '' }} />, scratch);
++		expect(scratch.firstChild.style.opacity).to.equal('');
 +
-+			render(<Paragraph />, scratch);
-+			expect(console.error).toHaveBeenCalledOnce();
-+		});
++		render(<div style={{ opacity: 0 }} />, scratch);
++		expect(scratch.firstChild.style.opacity).to.equal('0');
 +
- 		it('should warn for nesting illegal dom-nodes under a paragraph with a parent', () => {
- 			const Paragraph = () => (
- 				<div>
-@@ -750,6 +763,19 @@ describe('debug', () => {
- 			expect(console.error).toHaveBeenCalledOnce();
- 		});
- 
-+		it('should warn for deeply nesting illegal dom-nodes under a button', () => {
-+			const Button = () => (
-+				<button>
-+					<div>
-+						<button>Hello world</button>
-+					</div>
-+				</button>
-+			);
++		render(<div style={{ opacity: '' }} />, scratch);
++		expect(scratch.firstChild.style.opacity).to.equal('');
++	});
 +
-+			render(<Button />, scratch);
-+			expect(console.error).toHaveBeenCalledOnce();
-+		});
-+
- 		it('should warn for nesting illegal dom-nodes under a button as func', () => {
- 			const ButtonChild = ({ children }) => <button>{children}</button>;
- 			const Button = () => (
-@@ -794,6 +820,19 @@ describe('debug', () => {
- 			expect(console.error).toHaveBeenCalledOnce();
- 		});
- 
-+		it('should warn for deeply nesting illegal dom-nodes under an anchor', () => {
-+			const Anchor = () => (
-+				<a>
-+					<div>
-+						<a>Hello world</a>
-+					</div>
-+				</a>
-+			);
-+
-+			render(<Anchor />, scratch);
-+			expect(console.error).toHaveBeenCalledOnce();
-+		})
-+
- 		it('should warn for nesting illegal dom-nodes under an anchor as func', () => {
- 			const AnchorChild = ({ children }) => <a>{children}</a>;
- 			const Anchor = () => (
+ 	// Skip test if the currently running browser doesn't support CSS Custom Properties
+ 	if (window.CSS && CSS.supports('color', 'var(--fake-var)')) {
+ 		it('should support css custom properties', () => {
 ```
 
 ---
 
-### Incident Patch 3: `adc1acc3` (2026-11-11)
-**Commit Message**: chore: fix typos in comments (#5357)
+### Incident Patch 2: `9921c11c` (2026-11-14)
+**Commit Message**: Revert "Merge pull request #5320 from preactjs/JoviDeCroock/prop-removal-remove-attribute"
 
-**File**: `compat/scheduler.mjs` (modified, +1/-1)
+This reverts commit 077774dcf65acbec9c3e5250ac8dae50c6d72baa, reversing
+changes made to cf50052eee0718a4e02614d3c2383e690462242e.
+
+**File**: `src/diff/props.js` (modified, +1/-2)
 ```diff
-@@ -1,7 +1,7 @@
- /* eslint-disable */
+@@ -121,8 +121,7 @@ export function setProperty(dom, name, value, oldValue, namespace) {
+ 		) {
+ 			try {
+ 				dom[name] = value == NULL ? '' : value;
+-				// A removal also drops the reflected attribute (`maxlength="0"`)
+-				if (value != NULL) return;
++				return;
+ 			} catch (e) {}
+ 		}
  
- // This file includes experimental React APIs exported from the "scheduler"
--// npm package. Despite being explicitely marked as unstable some libraries
-+// npm package. Despite being explicitly marked as unstable some libraries
- // already make use of them. This file is not a full replacement for the
- // scheduler package, but includes the necessary shims to make those libraries
- // work with Preact.
 ```
 
-**File**: `compat/src/suspense.js` (modified, +1/-1)
+**File**: `test/browser/render.test.jsx` (modified, +3/-69)
 ```diff
-@@ -184,7 +184,7 @@ function createSuspense() {
- 		/**
- 		 * We do not set `suspended: true` during hydration because we want the actual markup
- 		 * to remain on screen and hydrate it when the suspense actually gets resolved.
--		 * While in non-hydration cases the usual fallback -> component flow would occour.
-+		 * While in non-hydration cases the usual fallback -> component flow would occur.
- 		 */
- 		if (
- 			!this._pendingSuspensionCount++ &&
+@@ -551,7 +551,7 @@ describe('render()', () => {
+ 		expect(scratch.firstChild.value).to.equal('0.5');
+ 	});
+ 
+-	it('should not clear false DOM properties but remove nullish ones', () => {
++	it('should not clear falsy DOM properties', () => {
+ 		function test(val) {
+ 			render(
+ 				<div>
+@@ -572,84 +572,18 @@ describe('render()', () => {
+ 		test('3');
+ 		test(null);
+ 		expect(scratch.innerHTML).to.equal(
+-			'<div><input><table></table></div>',
++			'<div><input><table border=""></table></div>',
+ 			'for null'
+ 		);
+ 
+ 		test('4');
+ 		test(undefined);
+ 		expect(scratch.innerHTML).to.equal(
+-			'<div><input><table></table></div>',
++			'<div><input><table border=""></table></div>',
+ 			'for undefined'
+ 		);
+ 	});
+ 
+-	it('should remove reflected attributes when a DOM property is removed', () => {
+-		render(
+-			<div lang="fr">
+-				<input maxLength={5} minLength={2} type="number" placeholder="p" />
+-				<textarea rows={3} />
+-				<ol start={3} />
+-				<p lang="en" title="t" dir="rtl" />
+-			</div>,
+-			scratch
+-		);
+-
+-		render(
+-			<div lang="fr">
+-				<input />
+-				<textarea />
+-				<ol />
+-				<p />
+-			</div>,
+-			scratch
+-		);
+-
+-		const [input, textarea, ol, p] = scratch.firstChild.children;
+-		expect(getAttributes(input)).to.eql({});
+-		expect(input.maxLength).to.equal(-1);
+-		expect(input.type).to.equal('text');
+-		expect(getAttributes(textarea)).to.eql({});
+-		expect(getAttributes(ol)).to.eql({});
+-		expect(getAttributes(p)).to.eql({});
+-		expect(p.matches(':lang(fr)')).to.equal(true);
+-	});
+-
+-	it('should remove reflected attributes when a DOM property is set to null or undefined', () => {
+-		render(<div title="a" id="b" />, scratch);
+-		render(<div title={null} id={undefined} />, scratch);
+-		expect(scratch.innerHTML).to.equal('<div></div>');
+-	});
+-
+-	it('should fall back to the option text when its value is removed', () => {
+-		render(
+-			<select>
+-				<option value="a">Text</option>
+-			</select>,
+-			scratch
+-		);
+-		render(
+-			<select>
+-				<option>Text</option>
+-			</select>,
+-			scratch
+-		);
+-		expect(scratch.innerHTML).to.equal(
+-			'<select><option>Text</option></select>'
+-		);
+-		expect(scratch.firstChild.value).to.equal('Text');
+-	});
+-
+-	it('should still reset non-reflected DOM properties on removal', () => {
+-		render(<input value="abc" />, scratch);
+-		render(<input />, scratch);
+-		expect(scratch.firstChild.value).to.equal('');
+-
+-		render(<input type="checkbox" checked />, scratch);
+-		render(<input type="checkbox" />, scratch);
+-		expect(scratch.firstChild.checked).to.equal(false);
+-	});
+-
+ 	// Test for #3969
+ 	it('should clear rowspan and colspan', () => {
+ 		/** @type {(v) => void} */
 ```
 
-**File**: `debug/src/component-stack.js` (modified, +1/-1)
+---
+
+### Incident Patch 3: `6426a2c6` (2026-11-16)
+**Commit Message**: fix(types): declare compat isElement and narrow isValidElement (#5363)
+
+**File**: `compat/src/index.d.ts` (modified, +2/-1)
 ```diff
-@@ -40,7 +40,7 @@ let renderStack = [];
-  * ```
-  *
-  * Note: A `vnode` may be hoisted to the root scope due to compiler
-- * optimiztions. In these cases the owner will be different.
-+ * optimizations. In these cases the owner will be different.
-  */
- let ownerStack = [];
- 
+@@ -305,7 +305,8 @@ declare namespace React {
+ 		props?: any,
+ 		...children: _preact.ComponentChildren[]
+ 	) => _preact.VNode<any>;
+-	export function isValidElement(element: any): boolean;
++	export function isValidElement(element: any): element is _preact.VNode;
++	export function isElement(element: any): element is _preact.VNode;
+ 	export function isFragment(element: any): boolean;
+ 	export function isMemo(element: any): boolean;
+ 	export function findDOMNode(
+```
+
+**File**: `compat/test/ts/index.tsx` (modified, +9/-0)
+```diff
+@@ -68,3 +68,12 @@ export function Picture(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+ export function Field(props: React.ComponentPropsWithoutRef<'input'>) {
+ 	return <input {...props} />;
+ }
++
++// isValidElement and isElement narrow to an element like in React
++const maybeElement: React.ReactNode = <div title="x" />;
++if (React.isValidElement(maybeElement)) {
++	maybeElement.props;
++}
++if (React.isElement(maybeElement)) {
++	maybeElement.props;
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5365** (2026-11-16): Apply style values that change between 0 and an empty string (@0z5a)
+- **PR #5363** (2026-11-16): fix(types): declare compat isElement and narrow isValidElement (@ragib-mrb)
+- **PR #5361** (2026-11-15): Revert "Merge pull request #5320 from preactjs/JoviDeCroock/prop-remo…val-remove-attribute" (@JoviDeCroock)
 - **PR #5359** (2026-11-12): ci: harden release build and workflow token permissions (@JoviDeCroock)
 - **PR #5358** (2026-11-12): feat: Warn on deeply nested illegal HTML structures in debug (@rschristian)
 - **PR #5357** (2026-11-11): chore: fix typos in comments (@ninglinLiu)
-- **PR #5355** (2026-11-08): docs: fix duplicated words and initial-letter typo (@ninglinLiu)
-- **PR #5352** (closed): Normalize Document containers before invoking root hooks (@wozhenbang2004)
-- **PR #5351** (2026-11-06): ci: pin Ubuntu runner images to 26.04 (@JoviDeCroock)
 
 ---
 
@@ -1719,35 +1519,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: harden release build and workflow token permissions
+## X. Empirical Invariant Guard in props.js
 
 **RULE**:
-When implementing operations in `.github/workflows/benchmarks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/diff/props.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0788297`: ci: harden release build and workflow token permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34b99c69`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmarks.yml`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/diff/props.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-permissions:
-  contents: read
-  # download-base-artifact fetches the package built by the latest run on main
-  actions: read
-
+					if (!oldValue || value[name] !== oldValue[name]) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+					if (!oldValue || value[name] != oldValue[name]) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0788297` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34b99c69` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

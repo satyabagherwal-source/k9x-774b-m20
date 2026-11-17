@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T05:37:20.995Z",
+  "last_updated": "2026-11-17T05:58:19.812Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T04:43:59.398Z",
@@ -118,7 +118,7 @@
       "staged_for_review": 1
     },
     "tailscale-tailscale-learnings.md": {
-      "processed_at": "2026-11-16T16:21:54.727Z",
+      "processed_at": "2026-11-17T05:58:19.345Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1163,7 +1163,7 @@
       "staged_for_review": 1
     },
     "preactjs-preact-learnings.md": {
-      "processed_at": "2026-11-12T14:24:13.083Z",
+      "processed_at": "2026-11-17T05:58:18.197Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1758,7 +1758,7 @@
       "staged_for_review": 1
     },
     "krakend-krakend-ce-learnings.md": {
-      "processed_at": "2026-11-13T11:40:43.468Z",
+      "processed_at": "2026-11-17T05:58:18.799Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3248,7 +3248,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1479,
+  "total_dossiers_evaluated": 1482,
   "total_canonical_promoted": 298,
-  "total_staged_for_review": 1166
+  "total_staged_for_review": 1169
 }

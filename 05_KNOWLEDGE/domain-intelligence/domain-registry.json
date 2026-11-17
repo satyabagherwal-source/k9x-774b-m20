@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T05:37:20.777Z",
-  "total_records": 1446,
+  "last_updated": "2026-11-17T05:58:19.611Z",
+  "total_records": 1450,
   "domains": {
     "A": {
       "total": 9,
@@ -715,7 +715,7 @@
       ]
     },
     "G": {
-      "total": 265,
+      "total": 269,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -981,7 +981,11 @@
         "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-core-invariants",
         "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
-        "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants",
+        "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
+        "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7333,8 +7337,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "743b038168b49f1e7df9602f347aad3731ac6e0aac6fba5ad1aed47de5d90cd9",
-      "created_at": "2026-11-17T00:10:53.070Z"
+      "content_hash": "b23644eb33b854fa9377aa54ebaf325f2483847daa6cacd5a354990f7fa40e26",
+      "created_at": "2026-11-17T05:58:15.353Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -12360,8 +12364,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "896baa9a1952cd855ca265bf151e39c73b08a565517f450b5ff682d048e836aa",
-      "created_at": "2026-11-16T16:21:54.990Z"
+      "content_hash": "edae8499ad48c947e72dd8dcfbdcb1bc138f4ecfbe6107fef0dd6df450b4dfc7",
+      "created_at": "2026-11-17T05:58:19.611Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -25295,6 +25299,42 @@
       "repository": "tanstack-query-learnings",
       "content_hash": "d61ada48cf184029839a8fb462fd5e6338f7fc5732caa4700ab442436feef596",
       "created_at": "2026-11-17T05:37:20.167Z"
+    },
+    "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: preactjs/preact Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-architecture-intelligence-preactjs-preact-core-invariants.md",
+      "repository": "preactjs/preact",
+      "content_hash": "1a72608dff52660ca4a9cf5a6635b72d8f4e07612bba7aaecc5a278492c5262f",
+      "created_at": "2026-11-17T05:58:08.177Z"
+    },
+    "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: krakend/krakend-ce Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-krakend-krakend-ce-architecture-intelligence-krakend-krakend-ce-core-invariants.md",
+      "repository": "krakend/krakend-ce",
+      "content_hash": "bb654acfc0bfaebf6147810712ba6ec701188f19f4a2947474729ebfbaee21f1",
+      "created_at": "2026-11-17T05:58:12.705Z"
+    },
+    "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: preactjs-preact-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-learnings-architecture-intelligence-preactjs-preact-learnings-co.md",
+      "repository": "preactjs-preact-learnings",
+      "content_hash": "e3ccc8c60b8af87f327e40d661b9077b18ae1c152375b5a8cd14f55852791cc8",
+      "created_at": "2026-11-17T05:58:18.586Z"
+    },
+    "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: krakend-krakend-ce-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-krakend-krakend-ce-learnings-architecture-intelligence-krakend-krakend-ce-learni.md",
+      "repository": "krakend-krakend-ce-learnings",
+      "content_hash": "b94284c17e2fec437ebec86189158837045829506841ff063a1e35905ff33600",
+      "created_at": "2026-11-17T05:58:19.132Z"
     }
   }
 }

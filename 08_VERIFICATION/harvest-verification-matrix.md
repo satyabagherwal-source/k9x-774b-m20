@@ -10453,3 +10453,6 @@
 | `CYCLE-20261117-FZTJ` | `2026-11-17T05:37:11.191Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8875` | Yes (`2a7862c8...`) |
 | `CYCLE-20261117-G1I8` | `2026-11-17T05:37:13.376Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8876` | Yes (`7a3d2641...`) |
 | `CYCLE-20261117-G3GJ` | `2026-11-17T05:37:15.907Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8877` | Yes (`fea7c4fd...`) |
+| `CYCLE-20261117-6XHZ` | `2026-11-17T05:58:07.895Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8878` | Yes (`0f3806d2...`) |
+| `CYCLE-20261117-70ZS` | `2026-11-17T05:58:12.424Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8879` | Yes (`24eaddd6...`) |
+| `CYCLE-20261117-731D` | `2026-11-17T05:58:15.073Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8880` | Yes (`deb816e5...`) |

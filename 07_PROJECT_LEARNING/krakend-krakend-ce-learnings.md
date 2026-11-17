@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source**: github ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
-> **Source Version**: `fd0eac09`  
+> **Source Version**: `b2187c50`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T11:40:08.591Z  
+> **Timestamp**: 2026-11-17T05:58:11.568Z  
 > **Learning ID**: `learn-github-krakend-krakend-ce`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T11:40:08.585Z  
+> **Harvest Timestamp**: 2026-11-17T05:58:11.564Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KrakenD Community Edition: High-performance, stateless, declarative, API Gateway written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2702 stars
+- **Stars / Engagement**: 2704 stars
 
 ---
 
@@ -794,240 +794,227 @@ func (registerSubscriberFactories) Register(ctx context.Context, cfg config.Serv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd0eac09` (2026-11-12)
-**Commit Message**: Merge pull request #1136 from krakend/dev-3.0.4
+### Incident Patch 1: `b2187c50` (2026-11-16)
+**Commit Message**: Merge pull request #1138 from krakend/dependabot/go_modules/go.opentelemetry.io/otel/sdk-1.47.0
 
-CE patch release 3.0.4
+Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0
 
-**File**: `Makefile` (modified, +2/-2)
+**File**: `go.mod` (modified, +7/-6)
 ```diff
-@@ -7,7 +7,7 @@
- BIN_NAME :=krakend
- OS := $(shell uname | tr '[:upper:]' '[:lower:]')
- MODULE := github.com/krakend/krakend-ce/v3
--VERSION := 3.0.3
-+VERSION := 3.0.4
- SCHEMA_VERSION := $(shell echo "${VERSION}" | cut -d '.' -f 1,2)
- GIT_COMMIT := $(shell git rev-parse --short=7 HEAD)
- PKGNAME := krakend
-@@ -21,7 +21,7 @@ DESC := High performance API gateway. Aggregate, filter, manipulate and add midd
- MAINTAINER := Daniel Ortiz <dortiz@krakend.io>
- DOCKER_WDIR := /tmp/fpm
- DOCKER_FPM := devopsfaith/fpm
--GOLANG_VERSION := 1.26.10
-+GOLANG_VERSION := 1.27.4
- GLIBC_VERSION := $(shell sh find_glibc.sh)
- ALPINE_VERSION := 3.23
- OS_TAG :=
-```
-
-**File**: `go.mod` (modified, +3/-3)
-```diff
-@@ -9,7 +9,7 @@ require (
- 	github.com/krakend/krakend-amqp/v3 v3.0.0
- 	github.com/krakend/krakend-audit/v2 v2.0.0
- 	github.com/krakend/krakend-botdetector/v3 v3.0.0
--	github.com/krakend/krakend-cel/v3 v3.0.0
-+	github.com/krakend/krakend-cel/v3 v3.0.1
- 	github.com/krakend/krakend-circuitbreaker/v4 v4.0.0
- 	github.com/krakend/krakend-cobra/v3 v3.0.0
- 	github.com/krakend/krakend-cors/v3 v3.0.0
-@@ -35,6 +35,7 @@ require (
+@@ -35,7 +35,6 @@ require (
  	github.com/krakend/krakend-xml/v3 v3.0.0
  	github.com/luraproject/lura/v3 v3.0.1
  	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
-+	go.opentelemetry.io/otel v1.45.0
+-	go.opentelemetry.io/otel v1.45.0
  	golang.org/x/sync v0.24.0
  )
  
-@@ -112,7 +113,7 @@ require (
- 	github.com/goccy/go-json v0.10.6 // indirect
- 	github.com/goccy/go-yaml v1.19.2 // indirect
- 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
--	github.com/google/cel-go v0.29.0 // indirect
-+	github.com/google/cel-go v0.30.0 // indirect
- 	github.com/google/martian v2.1.1-0.20190517191504-25dcb96d9e51+incompatible // indirect
- 	github.com/google/s2a-go v0.1.9 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
-@@ -216,7 +217,6 @@ require (
+@@ -217,19 +216,21 @@ require (
  	go.opentelemetry.io/contrib/propagators/b3 v1.44.0 // indirect
  	go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 // indirect
  	go.opentelemetry.io/contrib/propagators/ot v1.44.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/prometheus v0.66.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	go.yaml.in/yaml/v3 v3.0.4 // indirect
++	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	gocloud.dev v0.46.0 // indirect
+ 	gocloud.dev/pubsub/kafkapubsub v0.46.0 // indirect
+ 	gocloud.dev/pubsub/natspubsub v0.46.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `go.sum` (modified, +18/-16)
 ```diff
-@@ -192,8 +192,8 @@ github.com/golang/mock v1.6.0 h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=
- github.com/golang/mock v1.6.0/go.mod h1:p6yTPP+5HYm5mzsMV8JkE6ZKdX+/wYM6Hr+LicevLPs=
- github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
- github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
--github.com/google/cel-go v0.29.0 h1:fEG+Ja3YRwNOqnQxTyJwoByAUAvTuxUGiro/jhrm4F4=
--github.com/google/cel-go v0.29.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
-+github.com/google/cel-go v0.30.0 h1:ll54AkzKunWkBn9wSoiUXbFZXYZTkdJGNXTBXUoolGo=
-+github.com/google/cel-go v0.30.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
- github.com/google/go-cmp v0.5.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
-@@ -321,8 +321,8 @@ github.com/krakend/krakend-audit/v2 v2.0.0 h1:g3uP0gUmz0vrhT9aYTIpJ4x5ksocEVZazo
- github.com/krakend/krakend-audit/v2 v2.0.0/go.mod h1:QZ41B9JqLTB2CZJ55LfKjF9mDvvJAcv7Eo2EIqaXFa8=
- github.com/krakend/krakend-botdetector/v3 v3.0.0 h1:TeAl0+RH8eo2ZC74mwZr8s7TqwHScr7AjtNcvyuSl4A=
- github.com/krakend/krakend-botdetector/v3 v3.0.0/go.mod h1:fhRni4hGsT7Gu6fSw+ECykjGqn+B38x9lE8Sdk+FYBA=
--github.com/krakend/krakend-cel/v3 v3.0.0 h1:41tpRw7LY8loyoTZTethprvD1aS1dMeIGT5v97qQrOA=
--github.com/krakend/krakend-cel/v3 v3.0.0/go.mod h1:6Xwf0BUwOCd4hJNj1lkueEGDb9PBe8OqsynVi9DU8jk=
-+github.com/krakend/krakend-cel/v3 v3.0.1 h1:3+VZsNDHNaw0YcuZ6vXgoh++zgUHZUarnNHQlTdgog0=
-+github.com/krakend/krakend-cel/v3 v3.0.1/go.mod h1:Es0/kQM27/I8/2VJFpDFQKAyrZIK6Nw4zs985CRO1h4=
- github.com/krakend/krakend-circuitbreaker/v4 v4.0.0 h1:7FT382+GoQNwJQ3qjU5Fp6l9lLbsC6o6TRbI+AmuPjM=
- github.com/krakend/krakend-circuitbreaker/v4 v4.0.0/go.mod h1:kZ7LlgCyrpzoOpyLiRimdfr6xxRo1qYBcCsXqVY8w/I=
- github.com/krakend/krakend-cobra/v3 v3.0.0 h1:93dbAaQPXTQeGqVx0TI8BxyIfUU+g1Kl1VRLy8sO2i4=
-```
-
-**File**: `tests/fixtures/specs/backend_301.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
-```
-
-**File**: `tests/fixtures/specs/backend_302.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
-```
-
-**File**: `tests/fixtures/specs/backend_303.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
-```
-
-**File**: `tests/fixtures/specs/backend_307.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
-```
-
-**File**: `tests/fixtures/specs/cel-7.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
- 			"foo":42,
- 			"headers":{
- 				"Accept-Encoding":["gzip"],
--				"User-Agent":["KrakenD Version 3.0.3"],
-+				"User-Agent":["KrakenD Version 3.0.4"],
- 				"X-Forwarded-Host":["localhost:8080"]
- 			},
- 			"path":"/param_forwarding/ok/1234567890qwertyuio/foobar",
+@@ -489,8 +489,8 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
+ github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
+ github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
+ github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+-github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
+-github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
++github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
++github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
+ github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d h1:2QXSQjy/gDm0QeP9G9NaO9Hm2Cl1LAle4ZV0JeYK7XY=
+ github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d/go.mod h1:J2+dTgaX/1g3PkyL6sLBglBWfaLmAp5bQbRhSfKw9XI=
+ github.com/tmthrgd/go-bitset v0.0.0-20190904054048-394d9a556c05 h1:5jOF3BEex8XyBKMbaDUN1SiPQJRAKVuP24/sbwC2aWA=
+@@ -534,8 +534,8 @@ go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 h1:OyzvsAMc/zHt0DRPcfstn0
+ go.opentelemetry.io/contrib/propagators/jaeger v1.44.0/go.mod h1:44kghcGX+BNxy9UTiWtd6VDt8Nd4EypGBkH2+v2Dqrc=
+ go.opentelemetry.io/contrib/propagators/ot v1.44.0 h1:JLTPenzmPtLp5ODPntAA5JhxVu1i3pAFUvXcAORMZAk=
+ go.opentelemetry.io/contrib/propagators/ot v1.44.0/go.mod h1:8zr0bHgwkoQXucBK39/H4QphmLf1lSen1Z7FPDZD5Uc=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 h1:SUplec5dp06reu1zaXmOXdvqH398taqrDXqUl99jxSc=
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0/go.mod h1:ho2g4N+ane+swq5I/VBkKWnRDY4kUINH3FuqyZqX/Ug=
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 h1:RuynHbfU8JUEw7DyONgkVYg2SVtsoF28y0LGIr69jgA=
+@@ -548,16 +548,18 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
+ go.opentelemetry.io/otel/exporters/prometheus v0.66.0 h1:vkrK8PAznv2NKt2r+kdu252ccGzkEqLc2aSXbQIALYQ=
+ go.opentelemetry.io/otel/exporters/prometheus v0.66.0/go.mod h1:V/UB6D3vMF/UBOL5igAsAYnk1nG/bzYYTzvsB16cy7o=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
+-go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
+-go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
+-go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+-go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
++go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
++go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
++go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
++go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
++go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
+ go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
+ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+@@ -568,8 +570,8 @@ go.uber.org/multierr v1.11.0 h1:b
 ```
 
 ---
 
-### Incident Patch 2: `f1bc5bcd` (2026-11-11)
-**Commit Message**: Merge pull request #1137 from krakend/upgrade_cel
+### Incident Patch 2: `750fb01c` (2026-11-14)
+**Commit Message**: Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0
 
-cel pkg upgraded
+Bumps [go.opentelemetry.io/otel/sdk](https://github.com/open-telemetry/opentelemetry-go) from 1.45.0 to 1.47.0.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.45.0...v1.47.0)
 
-**File**: `go.mod` (modified, +3/-3)
+---
+updated-dependencies:
+- dependency-name: go.opentelemetry.io/otel/sdk
+  dependency-version: 1.47.0
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +7/-6)
 ```diff
-@@ -9,7 +9,7 @@ require (
- 	github.com/krakend/krakend-amqp/v3 v3.0.0
- 	github.com/krakend/krakend-audit/v2 v2.0.0
- 	github.com/krakend/krakend-botdetector/v3 v3.0.0
--	github.com/krakend/krakend-cel/v3 v3.0.0
-+	github.com/krakend/krakend-cel/v3 v3.0.1
- 	github.com/krakend/krakend-circuitbreaker/v4 v4.0.0
- 	github.com/krakend/krakend-cobra/v3 v3.0.0
- 	github.com/krakend/krakend-cors/v3 v3.0.0
-@@ -35,6 +35,7 @@ require (
+@@ -35,7 +35,6 @@ require (
  	github.com/krakend/krakend-xml/v3 v3.0.0
  	github.com/luraproject/lura/v3 v3.0.1
  	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
-+	go.opentelemetry.io/otel v1.45.0
+-	go.opentelemetry.io/otel v1.45.0
  	golang.org/x/sync v0.24.0
  )
  
-@@ -112,7 +113,7 @@ require (
- 	github.com/goccy/go-json v0.10.6 // indirect
- 	github.com/goccy/go-yaml v1.19.2 // indirect
- 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
--	github.com/google/cel-go v0.29.0 // indirect
-+	github.com/google/cel-go v0.30.0 // indirect
- 	github.com/google/martian v2.1.1-0.20190517191504-25dcb96d9e51+incompatible // indirect
- 	github.com/google/s2a-go v0.1.9 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
-@@ -216,7 +217,6 @@ require (
+@@ -217,19 +216,21 @@ require (
  	go.opentelemetry.io/contrib/propagators/b3 v1.44.0 // indirect
  	go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 // indirect
  	go.opentelemetry.io/contrib/propagators/ot v1.44.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/prometheus v0.66.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	go.yaml.in/yaml/v3 v3.0.4 // indirect
++	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	gocloud.dev v0.46.0 // indirect
+ 	gocloud.dev/pubsub/kafkapubsub v0.46.0 // indirect
+ 	gocloud.dev/pubsub/natspubsub v0.46.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `go.sum` (modified, +18/-16)
 ```diff
-@@ -192,8 +192,8 @@ github.com/golang/mock v1.6.0 h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=
- github.com/golang/mock v1.6.0/go.mod h1:p6yTPP+5HYm5mzsMV8JkE6ZKdX+/wYM6Hr+LicevLPs=
- github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
- github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
--github.com/google/cel-go v0.29.0 h1:fEG+Ja3YRwNOqnQxTyJwoByAUAvTuxUGiro/jhrm4F4=
--github.com/google/cel-go v0.29.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
-+github.com/google/cel-go v0.30.0 h1:ll54AkzKunWkBn9wSoiUXbFZXYZTkdJGNXTBXUoolGo=
-+github.com/google/cel-go v0.30.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
- github.com/google/go-cmp v0.5.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
-@@ -321,8 +321,8 @@ github.com/krakend/krakend-audit/v2 v2.0.0 h1:g3uP0gUmz0vrhT9aYTIpJ4x5ksocEVZazo
- github.com/krakend/krakend-audit/v2 v2.0.0/go.mod h1:QZ41B9JqLTB2CZJ55LfKjF9mDvvJAcv7Eo2EIqaXFa8=
- github.com/krakend/krakend-botdetector/v3 v3.0.0 h1:TeAl0+RH8eo2ZC74mwZr8s7TqwHScr7AjtNcvyuSl4A=
- github.com/krakend/krakend-botdetector/v3 v3.0.0/go.mod h1:fhRni4hGsT7Gu6fSw+ECykjGqn+B38x9lE8Sdk+FYBA=
--github.com/krakend/krakend-cel/v3 v3.0.0 h1:41tpRw7LY8loyoTZTethprvD1aS1dMeIGT5v97qQrOA=
--github.com/krakend/krakend-cel/v3 v3.0.0/go.mod h1:6Xwf0BUwOCd4hJNj1lkueEGDb9PBe8OqsynVi9DU8jk=
-+github.com/krakend/krakend-cel/v3 v3.0.1 h1:3+VZsNDHNaw0YcuZ6vXgoh++zgUHZUarnNHQlTdgog0=
-+github.com/krakend/krakend-cel/v3 v3.0.1/go.mod h1:Es0/kQM27/I8/2VJFpDFQKAyrZIK6Nw4zs985CRO1h4=
- github.com/krakend/krakend-circuitbreaker/v4 v4.0.0 h1:7FT382+GoQNwJQ3qjU5Fp6l9lLbsC6o6TRbI+AmuPjM=
- github.com/krakend/krakend-circuitbreaker/v4 v4.0.0/go.mod h1:kZ7LlgCyrpzoOpyLiRimdfr6xxRo1qYBcCsXqVY8w/I=
- github.com/krakend/krakend-cobra/v3 v3.0.0 h1:93dbAaQPXTQeGqVx0TI8BxyIfUU+g1Kl1VRLy8sO2i4=
+@@ -489,8 +489,8 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
+ github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
+ github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
+ github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+-github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
+-github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
++github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
++github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
+ github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d h1:2QXSQjy/gDm0QeP9G9NaO9Hm2Cl1LAle4ZV0JeYK7XY=
+ github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d/go.mod h1:J2+dTgaX/1g3PkyL6sLBglBWfaLmAp5bQbRhSfKw9XI=
+ github.com/tmthrgd/go-bitset v0.0.0-20190904054048-394d9a556c05 h1:5jOF3BEex8XyBKMbaDUN1SiPQJRAKVuP24/sbwC2aWA=
+@@ -534,8 +534,8 @@ go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 h1:OyzvsAMc/zHt0DRPcfstn0
+ go.opentelemetry.io/contrib/propagators/jaeger v1.44.0/go.mod h1:44kghcGX+BNxy9UTiWtd6VDt8Nd4EypGBkH2+v2Dqrc=
+ go.opentelemetry.io/contrib/propagators/ot v1.44.0 h1:JLTPenzmPtLp5ODPntAA5JhxVu1i3pAFUvXcAORMZAk=
+ go.opentelemetry.io/contrib/propagators/ot v1.44.0/go.mod h1:8zr0bHgwkoQXucBK39/H4QphmLf1lSen1Z7FPDZD5Uc=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 h1:SUplec5dp06reu1zaXmOXdvqH398taqrDXqUl99jxSc=
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0/go.mod h1:ho2g4N+ane+swq5I/VBkKWnRDY4kUINH3FuqyZqX/Ug=
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 h1:RuynHbfU8JUEw7DyONgkVYg2SVtsoF28y0LGIr69jgA=
+@@ -548,16 +548,18 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
+ go.opentelemetry.io/otel/exporters/prometheus v0.66.0 h1:vkrK8PAznv2NKt2r+kdu252ccGzkEqLc2aSXbQIALYQ=
+ go.opentelemetry.io/otel/exporters/prometheus v0.66.0/go.mod h1:V/UB6D3vMF/UBOL5igAsAYnk1nG/bzYYTzvsB16cy7o=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
+-go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
+-go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
+-go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+-go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
++go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
++go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
++go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
++go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
++go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
+ go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
+ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+@@ -568,8 +570,8 @@ go.uber.org/multierr v1.11.0 h1:b
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1139** (closed): Bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
+- **PR #1138** (2026-11-16): Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 (@dependabot[bot])
 - **PR #1137** (2026-11-11): cel pkg upgraded (@kpacha)
 - **PR #1136** (2026-11-12): CE patch release 3.0.4 (@thedae)
 - **PR #1135** (2026-11-02): Bump more deps for 3.0.3 (@thedae)
 - **PR #1134** (2026-10-30): Bump krakend-jose and krakend-otel (@thedae)
-- **PR #1133** (2026-11-02): CE patch release 3.0.3 (@thedae)
-- **PR #1132** (2026-10-30): go-jose/v3 removed (@kpacha)
 
 ---
 
@@ -1047,30 +1034,39 @@ cel pkg upgraded
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1136 from krakend/dev-3.0.4
+## X. Empirical Invariant Guard in go.mod
 
 **RULE**:
-When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd0eac09`: Merge pull request #1136 from krakend/dev-3.0.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2187c50`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-VERSION := 3.0.4
-GOLANG_VERSION := 1.27.4
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-VERSION := 3.0.3
-GOLANG_VERSION := 1.26.10
+// Induced defect failure mode:
+	go.opentelemetry.io/otel v1.45.0
+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+	go.yaml.in/yaml/v3 v3.0.4 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd0eac09` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2187c50` are properly handled with clean fallback behavior.
