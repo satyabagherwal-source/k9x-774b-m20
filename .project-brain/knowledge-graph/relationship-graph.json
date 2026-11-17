@@ -2,25 +2,25 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T02:51:31.186Z",
+  "updated_at": "2026-11-17T03:18:00.964Z",
   "statistics": {
-    "total_nodes": 290,
-    "total_edges": 149,
+    "total_nodes": 292,
+    "total_edges": 150,
     "domain_distribution": {
       "D": 221,
       "M": 1,
       "H": 28,
       "J": 12,
-      "K": 12,
+      "K": 13,
       "L": 4,
       "G": 1,
-      "F": 8,
+      "F": 9,
       "B": 1,
       "E": 1,
       "I": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 148,
+      "CONSTRAINED_BY_ARCHITECTURE": 149,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -6508,6 +6508,51 @@
       ],
       "created_at": "2026-11-17T02:51:31.186Z",
       "updated_at": "2026-11-17T02:51:31.186Z"
+    },
+    "DOM-F-3EF61085": {
+      "id": "DOM-F-3EF61085",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "GUI Asset Hashing Desynchronization Breaking UI Control-Plane Embedding (BUG-UI-HASH-02)",
+      "summary": "Partial asset bundling or out-of-sync chunk generation during upstream GUI release builds resulted in dangling chunk hashes. -> Embedded UI asset pipelines must regenerate all route chunks concurrently with the shared vendor index chunk and enforce cryptographic integ",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://kumahq-kuma/kumahq-kuma-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T03:17:03.530Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kumahq-kuma)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-17T03:17:29.188Z",
+      "updated_at": "2026-11-17T03:17:29.188Z"
+    },
+    "DOM-K-4B4C2E13": {
+      "id": "DOM-K-4B4C2E13",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Inaccurate Test Marker Tiering Causing CI Drift & Cost Spikes (BUG-CI-TIER-02)",
+      "summary": "Marker semantics combined reliability constraints with financial cost constraints into a single dimensional enum. -> CI markers must isolate risk dimensions independently: Cost $\\ne$ Hardware Footprint $\\ne$ Service Reliability.",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://pixeltable-pixeltable/pixeltable-pixeltable-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T03:17:30.006Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pixeltable-pixeltable)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-17T03:18:00.964Z",
+      "updated_at": "2026-11-17T03:18:00.964Z"
     }
   },
   "edges": [
@@ -8000,6 +8045,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-BCDF73E3 [D] with Domain M",
       "created_at": "2026-11-16T18:02:18.578Z"
+    },
+    {
+      "id": "EDGE-6F9890F6F5D2",
+      "sourceId": "DOM-K-4B4C2E13",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-4B4C2E13 [K] with Domain M",
+      "created_at": "2026-11-17T03:18:00.964Z"
     }
   ]
 }

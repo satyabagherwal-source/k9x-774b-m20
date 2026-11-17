@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "6b0edc20",
+    "sourceVersion": "8f730054",
     "license": "Apache-2.0",
-    "contentHash": "8487f964c05272ad0c3ccd7b8380ca153df19234d7e7e1371565516f13ef3b81",
-    "lastHarvestedAt": "2026-11-16T23:35:10.964Z",
+    "contentHash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
+    "lastHarvestedAt": "2026-11-17T03:16:04.772Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "e3849aea",
+    "sourceVersion": "a71f8a93",
     "license": "Apache-2.0",
-    "contentHash": "f04197cf8ca846a1be2bc99ab2b8b6152cdda0ce358b4c9d8a53d6a2e980014c",
-    "lastHarvestedAt": "2026-11-14T10:16:40.700Z",
+    "contentHash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
+    "lastHarvestedAt": "2026-11-17T03:16:54.241Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "890b85ab",
+    "sourceVersion": "9c30a9a6",
     "license": "Apache-2.0",
-    "contentHash": "f1663694eff71b1a65c9f77a74eac927fff0e872aee3d95ec3fe9da2a0ba9d66",
-    "lastHarvestedAt": "2026-11-15T19:32:16.459Z",
+    "contentHash": "34482e4587bbf435f05efc8a983a2d7f3c04df87be35d67055574e3adb060605",
+    "lastHarvestedAt": "2026-11-17T03:17:00.140Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {

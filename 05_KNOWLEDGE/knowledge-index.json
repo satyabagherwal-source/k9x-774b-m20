@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T03:08:07.478Z",
+  "last_updated": "2026-11-17T03:18:02.650Z",
   "total_verified_learnings": 8829,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19616,
+  "total_items": 19633,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224134,8 +224134,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "890b85ab",
-      "content_hash": "f1663694eff71b1a65c9f77a74eac927fff0e872aee3d95ec3fe9da2a0ba9d66",
+      "source_version": "9c30a9a6",
+      "content_hash": "34482e4587bbf435f05efc8a983a2d7f3c04df87be35d67055574e3adb060605",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -224148,6 +224148,21 @@
           "number": 8643,
           "title": "Add built-in web search and fetching through Parallel MCP",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8846,
+          "title": "Atomic Swapped Persistence for Multi-Process Shared Configurations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8847,
+          "title": "Python 3.14+ Deferred Annotation Recovery via Bytecode Const Inspection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8848,
+          "title": "CI/CD Marker-Based Test Orthogonalization Matrix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224155,7 +224170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T19:32:16.274Z",
+      "verified_at": "2026-11-17T03:16:59.996Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224197,10 +224212,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-technical-construction-intelligence-pixeltable-pixeltable-.md",
       "title": "Technical Construction Intelligence: pixeltable/pixeltable Core Invariants",
       "repository": "pixeltable/pixeltable",
-      "source_version": "941d38df",
-      "content_hash": "4398ad45e259bc79751b1facc6ea66849285b60f54cf4911b4c3381255a57e82",
+      "source_version": "9c30a9a6",
+      "content_hash": "5c51240aae5bdcae35fd39446ba1cd467b86a6c4c7aa6d3543e267b1dcf28fd9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T05:46:41.185Z"
+      "persisted_at": "2026-11-17T03:17:00.601Z"
     },
     "agent_contract-agent-contract-pixeltable-pixeltable-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-pixeltable-pixeltable-autonomous-specialist-persona",
@@ -224209,10 +224224,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/pixeltable-pixeltable-agent-contract-pixeltable-pixeltable-autonomous-specialist.md",
       "title": "Agent Contract: pixeltable/pixeltable Autonomous Specialist Persona",
       "repository": "pixeltable/pixeltable",
-      "source_version": "890b85ab",
-      "content_hash": "8e765d1e1da27fe2cf5a2e51a5652a8d840fd7d884dd30a6c1d7da6668ef12e7",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-15T19:32:16.951Z"
+      "source_version": "9c30a9a6",
+      "content_hash": "cece74cc6de22c63361cf115272ca75d9d2095952435c80d449d0a84ae51e753",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:17:00.705Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable",
@@ -224221,10 +224236,10 @@
       "relative_path": "08_VERIFICATION/pixeltable-pixeltable-verification-protocol-empirical-defect-shield-for-pixeltab.md",
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable/pixeltable",
       "repository": "pixeltable/pixeltable",
-      "source_version": "890b85ab",
-      "content_hash": "36b3b27765aa461e5063f79e8d73f44838e9b84e1d3ebe49d55b53f6fbfc79db",
+      "source_version": "9c30a9a6",
+      "content_hash": "3a51e34d1e0529e89cc54287a75f1498d85c7017e6d088356286b249eb7d7951",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T19:32:17.078Z"
+      "persisted_at": "2026-11-17T03:17:00.799Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian",
@@ -224270,9 +224285,9 @@
       "title": "Technical Construction Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e1c89922770b032b38ee7b81071600a58616116bc740a2d38fb2ea51a893cf9",
+      "content_hash": "8330ce0326b725eb69e49d5a7c0b2811cdd4e2a19167e1521f0f94932716f438",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T05:47:18.606Z"
+      "persisted_at": "2026-11-17T03:18:01.575Z"
     },
     "agent_contract-agent-contract-pixeltable-pixeltable-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-pixeltable-pixeltable-learnings-autonomous-specialist-persona",
@@ -224282,9 +224297,9 @@
       "title": "Agent Contract: pixeltable-pixeltable-learnings Autonomous Specialist Persona",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a60b07735e0edec1327000b8e7190fc34ade42c2f7dbee6d7fd56d3ea77370c",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-15T19:32:21.596Z"
+      "content_hash": "5a7d7c90297d51a2b5ef6f723c50563f6e128a6a88c71cf499cf1645d79208a8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:18:01.717Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning",
@@ -224294,9 +224309,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable-pixeltable-learnings",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "888c8969fc815c0fc90e1d296ef6573ba3f727fccfa2f2c2a917b4ae72fa2e7e",
+      "content_hash": "cf610ef3aa7f07ca6f5af661e793fd75927c38ce8f8d23be2472642787535c38",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T19:32:21.726Z"
+      "persisted_at": "2026-11-17T03:18:01.846Z"
     },
     "learn-huggingface-fermionresearch-phonon-2": {
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
@@ -227112,17 +227127,33 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "e3849aea",
-      "content_hash": "f04197cf8ca846a1be2bc99ab2b8b6152cdda0ce358b4c9d8a53d6a2e980014c",
+      "source_version": "a71f8a93",
+      "content_hash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 8843,
+          "title": "Strict Standard Stream Partitioning for Structured IPC Plugins",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8844,
+          "title": "Stream-Safety Clone Exclusion for Teed Network Interceptors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8845,
+          "title": "Explicit Ancestor Hook Propagation in Hierarchical CLI Trees",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T10:16:40.526Z",
+      "verified_at": "2026-11-17T03:16:54.095Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227162,10 +227193,10 @@
       "relative_path": "08_VERIFICATION/kumahq-kuma-verification-protocol-empirical-defect-shield-for-kumahq-kuma.md",
       "title": "Verification Protocol: Empirical Defect Shield for kumahq/kuma",
       "repository": "kumahq/kuma",
-      "source_version": "e3849aea",
-      "content_hash": "e98b11623647c7a93ecf6bd9639d714dcd5e3e12a58a45469c6b5039c9c2d5c0",
+      "source_version": "a71f8a93",
+      "content_hash": "5d28e85309fcff0ebbbdce15d6817d0395e2a57df5bde14bbd9da765bb523b7d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T10:16:41.175Z"
+      "persisted_at": "2026-11-17T03:16:54.827Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c",
@@ -227723,8 +227754,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "6b0edc20",
-      "content_hash": "8487f964c05272ad0c3ccd7b8380ca153df19234d7e7e1371565516f13ef3b81",
+      "source_version": "8f730054",
+      "content_hash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -227777,6 +227808,11 @@
           "number": 8818,
           "title": "Draft NUC 110 Python String Method Aliases",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8842,
+          "title": "Draft NUC 111 Reactive String Padding",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227784,7 +227820,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:35:10.784Z",
+      "verified_at": "2026-11-17T03:16:04.604Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227838,10 +227874,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "6b0edc20",
-      "content_hash": "3ef93d35e9d647cf83f24ea815573f33949d764ebb258be3e74014e05a49489b",
+      "source_version": "8f730054",
+      "content_hash": "1a11f2a90677767214d7a8ab82c4664e7b9662b84c42297d39a8c8ecc3090056",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:35:11.406Z"
+      "persisted_at": "2026-11-17T03:16:05.175Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -228810,9 +228846,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "156e97fc2749450dfddbf07a585ae8883c4fd91a261b7efd74e1fe8af89e579f",
+      "content_hash": "f2d8554d609b7bc4ba99d62a12456bf7f3311cfd15c7bd5f64792612061f173e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:04:07.578Z"
+      "persisted_at": "2026-11-17T03:18:02.650Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -229301,10 +229337,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "6b0edc20",
-      "content_hash": "a23c2e58a9840a4a39d093a50162a1fbf293621e65209bf02a0a7a85a8b6d3f3",
+      "source_version": "8f730054",
+      "content_hash": "995593c29188610bb5310066024bfe87f3e7dc5f26c51a7833a25488a0bcb725",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T23:35:11.279Z"
+      "persisted_at": "2026-11-17T03:16:05.060Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -229326,9 +229362,9 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "639248a3f39e1ccacc95083c138f2db1180e3dc4f737dc0e8dd6167df58a4343",
+      "content_hash": "0600ccdfed12ce77766ea7606d9cb3a5df349ef15cac31c784d080d326e94f7c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:04:07.465Z"
+      "persisted_at": "2026-11-17T03:18:02.506Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
@@ -261681,6 +261717,224 @@
       "content_hash": "2b827b302fefa55fd12bf3b0e91a501c3290feddfa61083aa822ca3e7b5163de",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T02:51:31.793Z"
+    },
+    "rule-8842": {
+      "learning_id": "rule-8842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8842,
+      "title": "Draft NUC 111 Reactive String Padding",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "8f730054",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:16:04.604Z"
+    },
+    "candidate_directive-draft-nuc-111-reactive-string-padding": {
+      "item_id": "candidate_directive-draft-nuc-111-reactive-string-padding",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H1TR-draft-nuc-111-reactive-string-padding.md",
+      "title": "Draft NUC 111 Reactive String Padding",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "26fee2c6fc7ed2a0cce4fa4825505f898ae5fe0a717bd084bd40bcfb5e81c97a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:18:02.383Z"
+    },
+    "rule-8843": {
+      "learning_id": "rule-8843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8843,
+      "title": "Strict Standard Stream Partitioning for Structured IPC Plugins",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "a71f8a93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:16:54.095Z"
+    },
+    "rule-8844": {
+      "learning_id": "rule-8844",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8844,
+      "title": "Stream-Safety Clone Exclusion for Teed Network Interceptors",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "a71f8a93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:16:54.095Z"
+    },
+    "rule-8845": {
+      "learning_id": "rule-8845",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8845,
+      "title": "Explicit Ancestor Hook Propagation in Hierarchical CLI Trees",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "a71f8a93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:16:54.095Z"
+    },
+    "candidate_directive-strict-standard-stream-partitioning-for-structured-ipc-plugins": {
+      "item_id": "candidate_directive-strict-standard-stream-partitioning-for-structured-ipc-plugins",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GCDF-strict-standard-stream-partitioning-for-structured-ipc-plugins.md",
+      "title": "Strict Standard Stream Partitioning for Structured IPC Plugins",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c46e618840c0efbe418eb62641c421f37f28b0152eaa2a4a60914a275f72669b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T03:17:29.381Z"
+    },
+    "candidate_directive-stream-safety-clone-exclusion-for-teed-network-interceptors": {
+      "item_id": "candidate_directive-stream-safety-clone-exclusion-for-teed-network-interceptors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GCDG-stream-safety-clone-exclusion-for-teed-network-interceptors.md",
+      "title": "Stream-Safety Clone Exclusion for Teed Network Interceptors",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d0ff0b972e2353539a0dcf2d314fdcfd6b44b6f8aa9f166229d5372d73c414e4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:17:29.505Z"
+    },
+    "candidate_directive-explicit-ancestor-hook-propagation-in-hierarchical-cli-trees": {
+      "item_id": "candidate_directive-explicit-ancestor-hook-propagation-in-hierarchical-cli-trees",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GCDG-explicit-ancestor-hook-propagation-in-hierarchical-cli-trees.md",
+      "title": "Explicit Ancestor Hook Propagation in Hierarchical CLI Trees",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4591d1c422022fc350e444f6ff1756e6b4e14964dd6be5460cca4113b074f9b8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:17:29.631Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kumahq-kuma-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kumahq-kuma-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-technical-construction-intelligence-kumahq-kuma-core-invariants.md",
+      "title": "Technical Construction Intelligence: kumahq/kuma Core Invariants",
+      "repository": "kumahq/kuma",
+      "source_version": "a71f8a93",
+      "content_hash": "fc6dd8340b876a315fa793a1ff9db88082f8242c822bf456c04eaa7cef1a450e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:16:54.720Z"
+    },
+    "rule-8846": {
+      "learning_id": "rule-8846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8846,
+      "title": "Atomic Swapped Persistence for Multi-Process Shared Configurations",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "9c30a9a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:16:59.996Z"
+    },
+    "rule-8847": {
+      "learning_id": "rule-8847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8847,
+      "title": "Python 3.14+ Deferred Annotation Recovery via Bytecode Const Inspection",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "9c30a9a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:16:59.996Z"
+    },
+    "rule-8848": {
+      "learning_id": "rule-8848",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8848,
+      "title": "CI/CD Marker-Based Test Orthogonalization Matrix",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "9c30a9a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:16:59.996Z"
+    },
+    "candidate_directive-atomic-swapped-persistence-for-multi-process-shared-configurations": {
+      "item_id": "candidate_directive-atomic-swapped-persistence-for-multi-process-shared-configurations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H0W6-atomic-swapped-persistence-for-multi-process-shared-configurations.md",
+      "title": "Atomic Swapped Persistence for Multi-Process Shared Configurations",
+      "repository": "pixeltable-pixeltable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eaf6a1c706630e2f104620d25553c5cb5112c951e068743fcbf4472e81525749",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:18:01.159Z"
+    },
+    "candidate_directive-python-3-14-deferred-annotation-recovery-via-bytecode-const-inspection": {
+      "item_id": "candidate_directive-python-3-14-deferred-annotation-recovery-via-bytecode-const-inspection",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H0W6-python-3-14-deferred-annotation-recovery-via-bytecode-const-inspection.md",
+      "title": "Python 3.14+ Deferred Annotation Recovery via Bytecode Const Inspection",
+      "repository": "pixeltable-pixeltable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c14fede2c23f11eb1fe103de1edbff504d181e748d069bd10e3d78b9f990cfbc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:18:01.302Z"
+    },
+    "candidate_directive-ci-cd-marker-based-test-orthogonalization-matrix": {
+      "item_id": "candidate_directive-ci-cd-marker-based-test-orthogonalization-matrix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H0W7-ci-cd-marker-based-test-orthogonalization-matrix.md",
+      "title": "CI/CD Marker-Based Test Orthogonalization Matrix",
+      "repository": "pixeltable-pixeltable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0b72ec8f9efb1789b4dfb74a502aedf52ec93a6365f39dbb64ba3afda10f11a7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:18:01.436Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kumahq-kuma-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kumahq-kuma-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-learnings-technical-construction-intelligence-kumahq-kuma-learnings-.md",
+      "title": "Technical Construction Intelligence: kumahq-kuma-learnings Core Invariants",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2f44981895e846f6c33f79a54942f106ae3451d1b86956e3ad588acf22b0242f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:17:29.757Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kumahq-kuma-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kumahq-kuma-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kumahq-kuma-learnings-verification-protocol-empirical-defect-shield-for-kumahq-k.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kumahq-kuma-learnings",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3cfdc825db312bb64d35025c4e3e09a244e3c313a94c5320fdd9cb27aa43065d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:17:29.886Z"
     }
   },
   "ai-builder-brain": {

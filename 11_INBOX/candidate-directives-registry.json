@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:08:06.980Z",
+  "last_updated": "2026-11-17T03:18:02.383Z",
   "directives": [
     {
       "id": "CD-001",
@@ -21492,6 +21492,101 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7A2C62-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-H1TR",
+      "directive_title": "Draft NUC 111 Reactive String Padding",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H1TR-draft-nuc-111-reactive-string-padding.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-GCDF",
+      "directive_title": "Strict Standard Stream Partitioning for Structured IPC Plugins",
+      "source_repo": "kumahq-kuma-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GCDF-strict-standard-stream-partitioning-for-structured-ipc-plugins.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-GCDG",
+      "directive_title": "Explicit Ancestor Hook Propagation in Hierarchical CLI Trees",
+      "source_repo": "kumahq-kuma-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GCDG-explicit-ancestor-hook-propagation-in-hierarchical-cli-trees.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-FLDV",
+      "directive_title": "Explicit Ancestor Hook Propagation in Hierarchical CLI Trees",
+      "source_repo": "kumahq/kuma",
+      "source_commit": "a71f8a93",
+      "staged_file": "11_INBOX/candidate-directives/CD-FLDV-explicit-ancestor-hook-propagation-in-hierarchical-cli-trees.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-H0W6",
+      "directive_title": "Python 3.14+ Deferred Annotation Recovery via Bytecode Const Inspection",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H0W6-python-3-14-deferred-annotation-recovery-via-bytecode-const-inspection.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-H0W7",
+      "directive_title": "CI/CD Marker-Based Test Orthogonalization Matrix",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H0W7-ci-cd-marker-based-test-orthogonalization-matrix.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-EFBEFE",
+      "directive_title": "Security Vulnerability Remediation in Core Daemon and Telemetry Dependencies (BUG-SEC-CVE-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kumahq-kuma",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EFBEFE-security-vulnerability-remediation-in-co.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-H0W6",
+      "directive_title": "Atomic Swapped Persistence for Multi-Process Shared Configurations",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H0W6-atomic-swapped-persistence-for-multi-process-shared-configurations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-E9A38E",
+      "directive_title": "Draft NUC 111 Reactive String Padding",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E9A38E-draft-nuc-111-reactive-string-padding.md",
       "staged_date": "2026-11-17"
     }
   ]

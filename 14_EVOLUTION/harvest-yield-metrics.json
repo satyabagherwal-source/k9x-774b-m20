@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T02:50:59.749Z",
-  "total_cycles_completed": 9995,
-  "total_learnings_persisted": 9995,
-  "total_rules_promoted": 9579,
+  "last_updated": "2026-11-17T03:17:00.145Z",
+  "total_cycles_completed": 9998,
+  "total_learnings_persisted": 9998,
+  "total_rules_promoted": 9586,
   "history": [
-    {
-      "timestamp": "2026-11-16T00:45:15.256Z",
-      "repository": "rainbow-me/rainbow",
-      "learningId": "learn-github-rainbow-me-rainbow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T00:56:42.289Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T00:56:51.812Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T01:21:20.736Z",
       "repository": "adobe/structured-data-validator",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T02:50:59.749Z",
       "repository": "GitoxideLabs/gitoxide",
       "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T03:16:04.776Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T03:16:54.246Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T03:17:00.145Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

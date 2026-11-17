@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T03:08:07.478Z",
-  "total_records": 1401,
+  "last_updated": "2026-11-17T03:18:02.506Z",
+  "total_records": 1405,
   "domains": {
     "A": {
       "total": 9,
@@ -663,7 +663,7 @@
       ]
     },
     "F": {
-      "total": 33,
+      "total": 34,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -697,7 +697,8 @@
         "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants",
         "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants",
         "domain_intelligence-design-intelligence-sharkdp-bat-core-invariants",
-        "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
+        "DOM-F-3EF61085"
       ]
     },
     "G": {
@@ -965,7 +966,7 @@
       ]
     },
     "H": {
-      "total": 311,
+      "total": 313,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1277,7 +1278,9 @@
         "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-core-invariants",
         "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-kumahq-kuma-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-kumahq-kuma-learnings-core-invariants"
       ]
     },
     "I": {
@@ -1385,7 +1388,7 @@
       ]
     },
     "K": {
-      "total": 57,
+      "total": 58,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1443,7 +1446,8 @@
         "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants",
         "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants",
+        "DOM-K-4B4C2E13"
       ]
     },
     "L": {
@@ -13100,8 +13104,8 @@
       "title": "Technical Construction Intelligence: pixeltable/pixeltable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-technical-construction-intelligence-pixeltable-pixeltable-.md",
       "repository": "pixeltable/pixeltable",
-      "content_hash": "4398ad45e259bc79751b1facc6ea66849285b60f54cf4911b4c3381255a57e82",
-      "created_at": "2026-11-14T05:46:41.185Z"
+      "content_hash": "5c51240aae5bdcae35fd39446ba1cd467b86a6c4c7aa6d3543e267b1dcf28fd9",
+      "created_at": "2026-11-17T03:17:00.601Z"
     },
     "DOM-D-2C3ED23B": {
       "record_id": "DOM-D-2C3ED23B",
@@ -13169,8 +13173,8 @@
       "title": "Technical Construction Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-learnings-technical-construction-intelligence-pixeltable-p.md",
       "repository": "pixeltable-pixeltable-learnings",
-      "content_hash": "9e1c89922770b032b38ee7b81071600a58616116bc740a2d38fb2ea51a893cf9",
-      "created_at": "2026-11-14T05:47:18.606Z"
+      "content_hash": "8330ce0326b725eb69e49d5a7c0b2811cdd4e2a19167e1521f0f94932716f438",
+      "created_at": "2026-11-17T03:18:01.575Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants",
@@ -15164,8 +15168,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "a23c2e58a9840a4a39d093a50162a1fbf293621e65209bf02a0a7a85a8b6d3f3",
-      "created_at": "2026-11-16T23:35:11.279Z"
+      "content_hash": "995593c29188610bb5310066024bfe87f3e7dc5f26c51a7833a25488a0bcb725",
+      "created_at": "2026-11-17T03:16:05.060Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -15224,8 +15228,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "639248a3f39e1ccacc95083c138f2db1180e3dc4f737dc0e8dd6167df58a4343",
-      "created_at": "2026-11-16T22:04:07.465Z"
+      "content_hash": "0600ccdfed12ce77766ea7606d9cb3a5df349ef15cac31c784d080d326e94f7c",
+      "created_at": "2026-11-17T03:18:02.506Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -24721,6 +24725,100 @@
       "repository": "gitoxidelabs-gitoxide-learnings",
       "content_hash": "2b827b302fefa55fd12bf3b0e91a501c3290feddfa61083aa822ca3e7b5163de",
       "created_at": "2026-11-17T02:51:31.793Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kumahq-kuma-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kumahq-kuma-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kumahq/kuma Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-technical-construction-intelligence-kumahq-kuma-core-invariants.md",
+      "repository": "kumahq/kuma",
+      "content_hash": "fc6dd8340b876a315fa793a1ff9db88082f8242c822bf456c04eaa7cef1a450e",
+      "created_at": "2026-11-17T03:16:54.720Z"
+    },
+    "DOM-F-3EF61085": {
+      "record_id": "DOM-F-3EF61085",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "GUI Asset Hashing Desynchronization Breaking UI Control-Plane Embedding (BUG-UI-HASH-02)",
+      "content": "Embedded UI asset pipelines must regenerate all route chunks concurrently with the shared vendor index chunk and enforce cryptographic integrity checks between manifests and asset files prior to committing into the Go source tree.",
+      "content_hash": "d1a9498b4b3216c6933f0e0bf45c321a60abcb44699f13251d6224e421f2af27",
+      "summary": "Partial asset bundling or out-of-sync chunk generation during upstream GUI release builds resulted in dangling chunk hashes. -> Embedded UI asset pipelines must regenerate all route chunks concurrently with the shared vendor index chunk and enforce cryptographic integ",
+      "provenance": {
+        "source_uri": "project://kumahq-kuma/kumahq-kuma-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T03:17:03.530Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kumahq-kuma)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `a71f8a93`, PR `#19422` (\"chore(deps): bump kumahq/kuma-gui to dec2bfb1c612217485aa9c36d9170ce580c22691\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T03:17:29.172Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kumahq-kuma-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kumahq-kuma-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kumahq-kuma-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-learnings-technical-construction-intelligence-kumahq-kuma-learnings-.md",
+      "repository": "kumahq-kuma-learnings",
+      "content_hash": "2f44981895e846f6c33f79a54942f106ae3451d1b86956e3ad588acf22b0242f",
+      "created_at": "2026-11-17T03:17:29.757Z"
+    },
+    "DOM-K-4B4C2E13": {
+      "record_id": "DOM-K-4B4C2E13",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Inaccurate Test Marker Tiering Causing CI Drift & Cost Spikes (BUG-CI-TIER-02)",
+      "content": "CI markers must isolate risk dimensions independently: Cost $\\ne$ Hardware Footprint $\\ne$ Service Reliability.",
+      "content_hash": "a23b8d24e90537ab557e970a9b6fef5a2c03a80bfab8267aa0a555fbccc144f4",
+      "summary": "Marker semantics combined reliability constraints with financial cost constraints into a single dimensional enum. -> CI markers must isolate risk dimensions independently: Cost $\\ne$ Hardware Footprint $\\ne$ Service Reliability.",
+      "provenance": {
+        "source_uri": "project://pixeltable-pixeltable/pixeltable-pixeltable-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T03:17:30.006Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pixeltable-pixeltable)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of pixeltable-pixeltable"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T03:18:00.949Z"
     }
   }
 }

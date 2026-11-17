@@ -10444,3 +10444,8 @@ Every entry in this ledger must capture:
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `7e1680a4` | Multi-dimensional audit evidence | 2026-11-17T02:32:23.418Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `ab7c5dc0` | Multi-dimensional audit evidence | 2026-11-17T02:50:59.744Z |
 | `learn-dom-j-abc3c562` | `project://gitoxidelabs-gitoxide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md` | 2026-11-17T02:51:31.188Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8f730054` | Multi-dimensional audit evidence | 2026-11-17T03:16:04.772Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `a71f8a93` | Multi-dimensional audit evidence | 2026-11-17T03:16:54.241Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `9c30a9a6` | Multi-dimensional audit evidence | 2026-11-17T03:17:00.140Z |
+| `learn-dom-f-3ef61085` | `project://kumahq-kuma` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | 2026-11-17T03:17:29.189Z |
+| `learn-dom-k-4b4c2e13` | `project://pixeltable-pixeltable` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md` | 2026-11-17T03:18:00.965Z |

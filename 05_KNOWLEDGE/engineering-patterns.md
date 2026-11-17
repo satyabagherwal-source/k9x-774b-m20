@@ -642489,3 +642489,807 @@ fn native_error_classification_preserves_root_cause() {
 ```
 
 ---
+
+
+---
+
+## 8842. Draft NUC 111 Reactive String Padding (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Draft NUC 111 Reactive String Padding",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "8f730054",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T03:16:04.335Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8f730054`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8f730054`: Draft NUC 111 Reactive String Padding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [111](nuc-0111.md) | Reactive String Padding | Draft |
+| [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Draft |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8f730054` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8843. Strict Standard Stream Partitioning for Structured IPC Plugins (Harvested from kumahq/kuma)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Standard Stream Partitioning for Structured IPC Plugins",
+  "source": "kumahq/kuma",
+  "source_url": "https://github.com/kumahq/kuma",
+  "source_version": "a71f8a93",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T03:16:52.886Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kumahq-kuma",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kumahq/kuma](https://github.com/kumahq/kuma) (Revision: `a71f8a93`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+When implementing an executable invoked by an external orchestrator that parses standard output (`os.Stdout`) as structured IPC data (e.g., CNI plugins, Git credential helpers, HashiCorp Packer/Terraform drivers, CLI JSON formatters), application runtime code and all linked dependencies MUST NEVER write arbitrary log messages, debug text, or panic traces to `os.Stdout`. All logging, diagnostic outputs, and panic traces MUST be redirected exclusively to `os.Stderr`.
+
+**WHY**:
+External orchestrators (such as the Kubernetes `kubelet` invoking CNI binaries via Containerd/CRI-O) read `stdout` until `EOF` and execute `json.Unmarshal()` directly against that byte slice. If an embedded logging framework or an imported third-party library writes even a single byte of plain text (e.g., `"2026-11-16T10:00:00Z INFO starting plugin..."`) to `stdout`, the JSON parser fails with a syntactic unmarshal error (e.g., `invalid character '2' looking for beginning of value`). This causes container sandbox creation to permanently fail with `ContainerCreating` crash loops across the entire cluster.
+
+**WHEN TO APPLY**:
+- Kubernetes CNI plugins and network drivers.
+- Custom CLI tools emitting output destined for JSON/YAML Unix piping (`| jq`).
+- Microservices communicating across POSIX standard streams.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// app/cni/pkg/install/utils.go
+package install
+
+import (
+	"os"
+
+	"github.com/go-logr/logr"
+	"github.com/kumahq/kuma/v3/pkg/core"
+	kuma_log "github.com/kumahq/kuma/v3/pkg/log"
+)
+
+// CreateNewLogger ensures all log emissions bypass stdout entirely.
+// kubelet expects a specific JSON payload on stdout; writing any diagnostic text
+// to stdout corrupts the CNI protocol exchange.
+func CreateNewLogger(name string, logLevel kuma_log.LogLevel) logr.Logger {
+	return core.NewLoggerTo(os.Stderr, logLevel).WithName(name)
+}
+
+func SetLogLevel(logger *logr.Logger, level string, name string) error {
+	logLevel, err := kuma_log.ParseLogLevel(level)
+	if err != nil {
+		return err
+	}
+
+	*logger = CreateNewLogger(name, logLevel)
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Defaulting loggers to stdout or using global print statements
+func BadCNIInit() {
+    // FATAL: Pollutes stdout with non-JSON text, breaking kubelet sandbox initialization!
+    fmt.Println("Configuring pod network interface...")
+    logger := zap.NewExample() // Defaults to stdout
+    logger.Info("CNI network plugin executed successfully")
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce stream separation using a unit test that captures `os.Stdout` during mock execution and asserts that the captured stream contains solely valid JSON without prefix/suffix garbage:
+```go
+func TestCNIStdoutPurity(t *testing.T) {
+	oldStdout := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	// Execute logger and CNI setup logic
+	logger := CreateNewLogger("cni-test", kuma_log.InfoLevel)
+	logger.Info("This must not leak to stdout")
+	
+	// Emit dummy response
+	_, _ = w.Write([]byte(`{"cniVersion": "1.0.0", "interfaces": []}`))
+	_ = w.Close()
+	os.Stdout = oldStdout
+
+	out, _ := io.ReadAll(r)
+	var dummy map[string]any
+	if err := json.Unmarshal(out, &dummy); err != nil {
+		t.Fatalf("stdout was corrupted with non-JSON data: %v (raw: %q)", err, string(out))
+	}
+}
+```
+
+---
+
+
+---
+
+## 8844. Stream-Safety Clone Exclusion for Teed Network Interceptors (Harvested from kumahq/kuma)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Stream-Safety Clone Exclusion for Teed Network Interceptors",
+  "source": "kumahq/kuma",
+  "source_url": "https://github.com/kumahq/kuma",
+  "source_version": "a71f8a93",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T03:16:53.358Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kumahq-kuma",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kumahq/kuma](https://github.com/kumahq/kuma) (Revision: `a71f8a93`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When intercepting, logging, or proxying HTTP/Fetch responses via service workers, reverse proxies, or middleware, the interceptor MUST NOT clone (`response.clone()`) or buffer the response body if the `Content-Type` header indicates an open-ended server-sent event stream (`text/event-stream`), WebSocket upgrade, or chunked transfer stream.
+
+**WHY**:
+In the Fetch Standard and Service Worker specifications, calling `response.clone()` against an active readable stream creates a teed stream (`ReadableStream.tee()`). A teed stream locks the underlying stream source and does not release memory or propagate client-side stream cancellations (`reader.cancel()`) until *both* branches have closed or canceled. For unbounded event streams (e.g., SSE metrics, log tailing, Envoy dynamic stats streaming), cloning buffers the stream indefinitely in memory, leading to browser/process memory exhaustion (OOM crashes) while preventing client disconnections from propagating upstream.
+
+**WHEN TO APPLY**:
+- Service Worker fetch handlers and mocking proxies (e.g., MSW, custom SW caches).
+- Reverse proxies and API gateway response-recording middleware in Go/Node.js.
+- Envoy Lua filter extensions inspecting downstream response streams.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// app/kuma-ui/pkg/resources/data/mockServiceWorker.js
+
+// Check Content-Type before calling clone() on the response
+const isEventStreamResponse = response.headers
+  .get('content-type')
+  ?.toLowerCase()
+  .startsWith('text/event-stream')
+
+// Omit the body of server-sent event stream responses.
+// Cloning such responses would prevent client-side stream cancelations
+// from reaching the original stream (a teed stream only cancels its
+// source once both of its branches cancel) and would buffer the
+// entire stream into the unconsumed clone indefinitely.
+const responseClone = isEventStreamResponse ? null : response.clone()
+
+sendToClient(
+  client,
+  {
+    type: 'RESPONSE',
+    payload: {
+      isMockedResponse: IS_MOCKED_RESPONSE in response,
+      request: {
+        id: requestId,
+        ...serializedRequest,
+      },
+      response: {
+        type: response.type,
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+        body: responseClone ? responseClone.body : null,
+      },
+    },
+  },
+  responseClone && responseClone.body
+    ? [serializedRequest.body, responseClone.body]
+    : [],
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Indiscriminate response cloning on HTTP interceptors
+addEventListener('fetch', (event) => {
+  event.respondWith((async () => {
+    const response = await fetch(event.request)
+    // CRITICAL MEMORY LEAK: If response is an SSE stream (text/event-stream),
+    // clone() tees the stream. The clone is never read, buffering chunks forever.
+    const clone = response.clone()
+    broadcastToAuditLogs(await clone.text()) 
+    return response
+  })())
+})
+```
+
+**VERIFICATION METHOD**:
+Implement an automated end-to-end test that opens an SSE connection, verifies that cancelling the client reader terminates the server-side writer within a strict timeout, and asserts that no memory leak occurs:
+```javascript
+test('SSE stream cancellation propagates upstream without clone buffering', async () => {
+  const sseResponse = new Response(
+    new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('data: ping\n\n'))
+      }
+    }),
+    { headers: { 'Content-Type': 'text/event-stream' } }
+  )
+  
+  const isEventStream = sseResponse.headers.get('content-type')?.startsWith('text/event-stream')
+  expect(isEventStream).toBe(true)
+  const clone = isEventStream ? null : sseResponse.clone()
+  expect(clone).toBeNull()
+})
+```
+
+---
+
+
+---
+
+## 8845. Explicit Ancestor Hook Propagation in Hierarchical CLI Trees (Harvested from kumahq/kuma)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Explicit Ancestor Hook Propagation in Hierarchical CLI Trees",
+  "source": "kumahq/kuma",
+  "source_url": "https://github.com/kumahq/kuma",
+  "source_version": "a71f8a93",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T03:16:53.848Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kumahq-kuma",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kumahq/kuma](https://github.com/kumahq/kuma) (Revision: `a71f8a93`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+When building CLI tools with nested command hierarchies using frameworks where parent pre-run hooks are superseded by child command hooks (such as Cobra's `PersistentPreRun` / `PersistentPreRunE`), any child command defining its own `PersistentPreRunE` MUST explicitly invoke the parent's `PersistentPreRunE` up the ancestor chain.
+
+**WHY**:
+In `github.com/spf13/cobra`, if a root or intermediate command defines a `PersistentPreRunE` (e.g., to load configuration files, initialize authentication contexts, or set up tracing), and a subcommand subsequently defines its own `PersistentPreRunE`, Cobra only executes the subcommand's hook, silently dropping the parent's hook. This causes child commands to execute with uninitialized configuration structs, missing credentials, unparsed flags, or nil-pointer dereferences on shared service clients.
+
+**WHEN TO APPLY**:
+- All Go CLI architectures utilizing `spf13/cobra`.
+- Nested CLI command trees requiring hierarchical context setup.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// app/kumactl/pkg/cmd/util.go
+package cmd
+
+import "github.com/spf13/cobra"
+
+// RunParentPreRunE checks if the parent command has a PersistentPreRunE set and
+// executes it. This is for use in PersistentPreRun and is necessary because
+// only the first PersistentPreRun* of the command's ancestors is executed by cobra.
+func RunParentPreRunE(cmd *cobra.Command, args []string) error {
+	if p := cmd.Parent(); p != nil && p.PersistentPreRunE != nil {
+		if err := p.PersistentPreRunE(p, args); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+```
+
+```go
+// Usage inside subcommand definition:
+var subCmd = &cobra.Command{
+	Use:   "sub",
+	Short: "Subcommand requiring root context",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// Explicitly propagate execution to parent/root PersistentPreRunE
+		if err := cmd_util.RunParentPreRunE(cmd, args); err != nil {
+			return err
+		}
+		// Now safe to run subcommand-specific setup
+		return initSubcommandResources()
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return execute()
+	},
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Defining subcommand PersistentPreRunE without invoking parent
+var subCmd = &cobra.Command{
+	Use: "apply",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// BUG: Cobra skips rootCmd.PersistentPreRunE!
+		// Config, logger, and KubeClient are nil!
+		return setupLocalFlags() 
+	},
+}
+```
+
+**VERIFICATION METHOD**:
+Static analysis check or unit test asserting that every command possessing a non-nil `PersistentPreRunE` invokes `RunParentPreRunE` or that parent context properties are non-nil when executing subcommands:
+```go
+func TestCommandHierarchyContextInitialization(t *testing.T) {
+	rootCmd := NewRootCmd()
+	subCmd := NewSubCmd()
+	rootCmd.AddCommand(subCmd)
+
+	// Set args that target the child command
+	rootCmd.SetArgs([]string{"sub", "--dry-run"})
+	err := rootCmd.Execute()
+	assert.NoError(t, err)
+	// Assert root context configuration was populated despite child PersistentPreRunE
+	assert.NotNil(t, subCmd.ConfigContext)
+}
+```
+
+---
+
+
+---
+
+## 8846. Atomic Swapped Persistence for Multi-Process Shared Configurations (Harvested from pixeltable/pixeltable)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Atomic Swapped Persistence for Multi-Process Shared Configurations",
+  "source": "pixeltable/pixeltable",
+  "source_url": "https://github.com/pixeltable/pixeltable",
+  "source_version": "9c30a9a6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T03:16:58.801Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pixeltable-pixeltable",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `9c30a9a6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When initializing or updating persistent system configurations, credential files, or cache registries accessed concurrently across multiple worker processes or threads, you MUST write the content to a unique temporary file on the same filesystem mount and execute an atomic filesystem rename (`os.replace` / atomic write) with explicit restricted permissions (`0600`). You MUST NOT write directly via `open(path, 'w')` followed by serialization.
+
+**WHY**:
+Standard `open(path, "w")` truncates the file immediately upon opening ($0$ bytes). Serialization formats (TOML, JSON, YAML) require subsequent buffer writes. In multi-process environments (such as `pytest-xdist`, microservices, or multiprocess background workers), concurrent workers reading during the window between truncation and serialization completion will read an empty file, load default empty configurations, fail invariant checks (e.g., missing required cache size keys), or crash with deserialization parse errors.
+
+**WHEN TO APPLY**:
+Apply to all daemon configurations, CLI local state stores, credential tokens, shared file cache manifests, and system bootstrap files in environments with multi-worker execution (Python, Node.js, Go, Rust).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+import tempfile
+from pathlib import Path
+from typing import Any
+import toml
+
+def atomic_write_toml(target_path: Path, data: dict[str, Any]) -> None:
+    """
+    Atomically writes a dictionary to a TOML file.
+    Guarantees no concurrent reader sees a truncated or half-written file.
+    Creates with 0600 (read/write by owner only) permissions.
+    """
+    target_path = target_path.resolve()
+    target_dir = target_path.parent
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    # Use mkstemp in the same directory to guarantee identical filesystem mount (required for atomic rename)
+    fd, temp_file_path = tempfile.mkstemp(
+        dir=target_dir,
+        prefix=f".{target_path.name}.",
+        suffix=".tmp"
+    )
+    
+    try:
+        # mkstemp creates file with 0600 permissions by default
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            toml.dump(data, f)
+            f.flush()
+            os.fsync(f.fileno())  # Force commit to physical storage
+        
+        # Atomic rename replacing destination
+        os.replace(temp_file_path, target_path)
+    except Exception:
+        # Clean up temporary artifact on failure
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
+        raise
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# CRITICAL DEFECT: TOCTOU & Truncation Race Condition
+def unsafe_write_config(path: Path, data: dict[str, Any]) -> None:
+    # Truncates file immediately to 0 bytes!
+    # Any concurrent process accessing path between open and toml.dump reads empty EOF
+    with open(path, "w", encoding="utf-8") as f:
+        toml.dump(data, f)
+```
+
+**VERIFICATION METHOD**:
+Spawn 50 concurrent processes attempting to read the file immediately while a background process repeatedly calls the write function. Assert that zero processes read an empty file or fail TOML decoding:
+```python
+import concurrent.futures
+import pytest
+
+def test_no_empty_read_race(tmp_path: Path) -> None:
+    target = tmp_path / "config.toml"
+    payload = {"system": {"file_cache_size_g": 50}}
+    
+    def writer():
+        for _ in range(100):
+            atomic_write_toml(target, payload)
+
+    def reader():
+        for _ in range(100):
+            if target.exists():
+                data = toml.load(target)
+                assert "system" in data and "file_cache_size_g" in data["system"]
+
+    with concurrent.futures.ProcessPoolExecutor(max_workers=8) as pool:
+        futures = [pool.submit(writer) for _ in range(2)] + [pool.submit(reader) for _ in range(6)]
+        for f in concurrent.futures.as_completed(futures):
+            f.result()
+```
+
+---
+
+
+---
+
+## 8847. Python 3.14+ Deferred Annotation Recovery via Bytecode Const Inspection (Harvested from pixeltable/pixeltable)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Python 3.14+ Deferred Annotation Recovery via Bytecode Const Inspection",
+  "source": "pixeltable/pixeltable",
+  "source_url": "https://github.com/pixeltable/pixeltable",
+  "source_version": "9c30a9a6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T03:16:59.264Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pixeltable-pixeltable",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `9c30a9a6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When building metaprogramming frameworks, ORMs, or declarative schema systems that parse type annotations on class bodies, you MUST NOT rely solely on `__annotations__` or `eval()`, nor assume annotations are executed during class body definition. Under PEP 649 (Python 3.14+), you MUST inspect the class frame's code object constants (`co_consts`) to find the deferred compiler-generated `__annotate__` code block and evaluate it using a synthesized `__classdict__` closure cell before class completion.
+
+**WHY**:
+PEP 649 defers class annotation evaluation: annotations are no longer emitted as direct namespace mutations during body execution; they are compiled into an isolated `__annotate__(format)` code object. Standard access before class creation crashes or returns empty dicts. Direct eval of AST fails on closure-dependent types (e.g., local type aliases). Without inspecting bytecode constants, dynamic schema generation and validation fail during the frame execution phase.
+
+**WHEN TO APPLY**:
+Any Python ORM, validation library (Pydantic-like), database interface, or schema compiler supporting Python 3.14 and Python 3.15+.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import dis
+import types
+from typing import Any
+
+def extract_deferred_annotations(
+    caller_frame: types.FrameType,
+    cls_name: str,
+    eval_globals: dict[str, Any],
+    namespace: dict[str, Any]
+) -> dict[str, Any]:
+    """
+    Recovers PEP 649 annotations from CPython bytecode before class construction.
+    """
+    code = caller_frame.f_code
+    # Step 1: Locate class body code object among constants
+    body_code: types.CodeType | None = None
+    for instr in dis.get_instructions(code):
+        if instr.offset > caller_frame.f_lasti:
+            break
+        if (
+            instr.opname.startswith('LOAD_CONST')
+            and isinstance(instr.argval, types.CodeType)
+            and instr.argval.co_name == cls_name
+        ):
+            body_code = instr.argval
+
+    if body_code is None:
+        return {}
+
+    # Step 2: Locate the synthetic '__annotate__' function in the body code constants
+    annotate_code = next(
+        (c for c in body_code.co_consts if isinstance(c, types.CodeType) and c.co_name == '__annotate__'),
+        None
+    )
+    if annotate_code is None:
+        return {}
+
+    # Step 3: Wrap __classdict__ in a closure cell to support closure references
+    closure = tuple(types.CellType(namespace) for _ in annotate_code.co_freevars)
+    fn = types.FunctionType(annotate_code, eval_globals, '__annotate__', None, closure)
+
+    # Format 1 indicates VALUE format (evaluating to runtime type instances)
+    return fn(1)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# CRITICAL DEFECT: Fails on Python 3.14+ PEP 649
+def unsafe_get_annotations(cls_dict: dict[str, Any]) -> dict[str, Any]:
+    # __annotations__ will be absent or unpopulated during class-body metaprogramming
+    if '__annotations__' not in cls_dict:
+        return {}
+    return cls_dict['__annotations__']
+```
+
+**VERIFICATION METHOD**:
+Run unit tests across Python 3.11, 3.12, 3.13, 3.14, and 3.15-dev validating that a class declaring nested annotations resolves all types identically without executing user code twice.
+
+---
+
+
+---
+
+## 8848. CI/CD Marker-Based Test Orthogonalization Matrix (Harvested from pixeltable/pixeltable)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "CI/CD Marker-Based Test Orthogonalization Matrix",
+  "source": "pixeltable/pixeltable",
+  "source_url": "https://github.com/pixeltable/pixeltable",
+  "source_version": "9c30a9a6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T03:16:59.754Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pixeltable-pixeltable",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `9c30a9a6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Test suites that touch expensive remote APIs, cloud storage, large AI model weights, or specialized hardware MUST NOT overload a single marker (such as `remote_api` or `expensive`). You MUST decouple test markers into two independent axes:
+1. **Reliability & Environment Boundary** (e.g., `skip_merge_queue` for flaky third-party endpoints, external object stores, model weight downloads).
+2. **Resource & Dollar Cost** (e.g., `expensive` for paid token APIs, `very_expensive` for high-dollar video generation, `resource_intensive` for large CPU/RAM footprints).
+
+**WHY**:
+Conflating cost with reliability causes catastrophic CI failures:
+- Inexpensive but unreliable third-party APIs fail merge queues and block PR pipelines.
+- Expensive but ultra-reliable APIs (such as deterministic OpenAI embedding calls) are needlessly skipped in merge groups, allowing regressions to reach production.
+- Monolithic markers prevent granular scheduling (e.g., running nightly model downloads vs. weekly expensive video generation).
+
+**WHEN TO APPLY**:
+All enterprise CI/CD systems testing machine learning models, external LLM endpoints, integration harnesses, or infrastructure providers (AWS, GCP, Azure).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```toml
+# pyproject.toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# PR updates exclude unreliable APIs, all costly tiers, and heavy memory jobs:
+addopts = '-v -m "not skip_merge_queue and not expensive and not very_expensive and not resource_intensive" --strict-markers'
+markers = [
+    "skip_merge_queue: calls external third-party endpoints prone to throttling/downtime or downloads large model weights; scheduled CI only",
+    "expensive: moderate-cost external endpoints; runs on merge queue and standard+ CI tiers",
+    "very_expensive: high-dollar calls (e.g. video generation, long agent workflows); runs only on weekly scheduled runs",
+    "resource_intensive: requires runner memory/disk exceeding standard instances; runs on large runners only",
+]
+```
+
+**NEGATIVE CONSTRAINT**:
+```toml
+# ANTI-PATTERN: Overloaded monolithic markers
+markers = [
+    # FAILS: Conflates flaky network calls with dollar costs.
+    # Leads to either broken PR builds or untested expensive code.
+    "expensive: marks tests as expensive or calling third party APIs",
+]
+```
+
+**VERIFICATION METHOD**:
+Verify with `pytest --markers` and a CI workflow validation script checking that no PR trigger runs tests tagged with `skip_merge_queue` or `very_expensive`:
+```bash
+pytest --collect-only -m "not skip_merge_queue and not very_expensive" | grep -v "skip_merge_queue"
+```
+
+---

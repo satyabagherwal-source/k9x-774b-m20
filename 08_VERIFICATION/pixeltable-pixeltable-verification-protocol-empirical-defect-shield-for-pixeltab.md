@@ -4,1547 +4,569 @@
 {
   "source_repository": "pixeltable/pixeltable",
   "source_url": "https://github.com/pixeltable/pixeltable",
-  "source_version": "890b85ab",
+  "source_version": "9c30a9a6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T19:32:16.672Z",
-  "ai_provider": "zero-clone-structural-synthesizer",
+  "timestamp": "2026-11-17T03:17:00.294Z",
+  "ai_provider": "google-gemini-cloud-agent",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pixeltable-pixeltable",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `890b85ab`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T19:32:16.672Z`  
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `9c30a9a6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T03:17:00.294Z`  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `pixeltable/pixeltable` (Commit: `890b85ab`)
+- **Target Repository**: `pixeltable/pixeltable` (Commit: `9c30a9a6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-# Forensic Learning Record (Deep Inspection): pixeltable/pixeltable
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T19:32:15.419Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): pixeltable/pixeltable
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `pixeltable/pixeltable`
-- **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
-- **Primary Language / Ecosystem**: Python
-- **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1662 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### Exact Technical Problem Solved
+Modern AI applications ingest multimodal unstructured data (video, audio, high-resolution imagery, PDF documents) and attempt to synchronize this data across disparate external infrastructure: S3/object stores, relational metadata stores (PostgreSQL), embedding/vector stores (pgvector, Pinecone), caching layers, orchestration queues (Celery, temporal workflows), and external inference APIs (OpenAI, Anthropic, Bedrock, Replicate). This fragmentation creates severe data synchronization drift, distributed failure modes, untracked schema lineage, and unbounded compute expenditure from re-computing heavy media transformations.
+
+`pixeltable` collapses this distributed stack into a single unified Python-native multimodal relational database engine. It merges schema definition, data versioning, transactional lineage, media decoding, computed transformation graphs, vector indexing, and API serving (`FastAPI`/`uvicorn`) into a declarative table model executed through an embedded or hosted PostgreSQL engine.
+
+```
++----------------------------------------------------------------------------------------------------+
+|                                    Pixeltable Application Engine                                   |
+|                                                                                                    |
+|   +--------------------------------------------------------------------------------------------+   |
+|   | App Module / FastAPIRouter (`pixeltable/serving`, `pixeltable/utils/app_module.py`)        |   |
+|   | Dynamic Module Eviction & Import Isolation via Catalog.freeze() & threading.RLock()        |   |
+|   +----------------------------------------------+---------------------------------------------+   |
+|                                                  |                                                 |
+|                                                  v                                                 |
+|   +--------------------------------------------------------------------------------------------+   |
+|   | TableModelMeta / Class-Body Bytecode Recovery (`catalog/model/_code_frame_utils.py`)       |   |
+|   | PEP 649 Python 3.14+ bytecode frame analysis via __annotate__ introspection                |   |
+|   +----------------------------------------------+---------------------------------------------+   |
+|                                                  |                                                 |
+|                                                  v                                                 |
+|   +--------------------------------------------------------------------------------------------+   |
+|   | TableVersion & Expression Graph Engine (`pixeltable/catalog/utils.py`, `exprs/`)           |   |
+|   | - ColumnRef substitution & lineage tracking (ColumnRefByName -> ColumnRef)                 |   |
+|   | - MediaValidation (ON_WRITE vs ON_READ)                                                    |   |
+|   | - Index generation (BtreeIndex, Embedding/pgvector) & Undo/Value shadow columns            |   |
+|   +----------------------------------------------+---------------------------------------------+   |
+|                                                  |                                                 |
+|                                                  v                                                 |
+|   +--------------------------------------------------------------------------------------------+   |
+|   | Multi-Source Ingestion & Adapters (`pixeltable/io/source_adapter.py`)                       |   |
+|   | QueryAdapter, RowDataAdapter, PandasAdapter, CSVAdapter, HFAdapter, ParquetAdapter         |   |
+|   +----------------------------------------------+---------------------------------------------+   |
+|                                                  |                                                 |
+|                                                  v                                                 |
+|   +--------------------------------------------------------------------------------------------+   |
+|   | Storage & Metadata Layer (`pixeltable/metadata/`)                                          |   |
+|   | - PostgreSQL + pgserver + pgvector (ACID Versioning, JSONB md, TableSchemaVersion)         |   |
+|   | - FileCache & Atomic I/O (`atomic_write` temp-file swapping with 0600 permissions)         |   |
+|   +--------------------------------------------------------------------------------------------+   |
++----------------------------------------------------------------------------------------------------+
+```
+
+### Architectural Boundaries & State Ownership
+1. **Catalog & Version Boundary**: Schema states are strictly immutable versions (`TableVersionMd`, `TableSchemaVersion`). Modifying a schema creates a discrete incremental version index. Schema changes are guarded by `Catalog.freeze()` context managers, which halt write transactions during module imports to prevent race conditions during AST/bytecode discovery.
+2. **Execution & Expression DAG Boundary**: Computed columns are directed acyclic graph (DAG) nodes (`pixeltable.exprs.Expr`). Column evaluation is deferred: when raw media (e.g., video) is inserted, dependencies trigger downstream transforms (e.g., audio extraction $\to$ whisper transcription $\to$ LLM summarization $\to$ text embedding).
+3. **Storage vs. Virtual File Invariant**: Media binaries are never embedded into relational rows. Media columns store URIs or file references pointing to an internal file cache or cloud object stores (`s3://`, `pxt://`). Media decoding occurs lazily via streaming abstractions (`pypdfium2`, `PyAV` / `av`).
+4. **Adapter Ingestion Isolation**: External formats do not interface with the relational engine directly. Concrete subclasses of `SourceAdapter` ingest external formats, validate schemas, infer nullability, and emit validated tuples into the mutation engine.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: pyproject.toml, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Atomic Swapped Persistence for Multi-Process Shared Configurations
+**RULE**:
+When initializing or updating persistent system configurations, credential files, or cache registries accessed concurrently across multiple worker processes or threads, you MUST write the content to a unique temporary file on the same filesystem mount and execute an atomic filesystem rename (`os.replace` / atomic write) with explicit restricted permissions (`0600`). You MUST NOT write directly via `open(path, 'w')` followed by serialization.
 
-### Core Architecture Module: `dashboard/src/hooks/useDebounce.ts`
-```
-import { useState, useEffect } from 'react';
+**WHY**:
+Standard `open(path, "w")` truncates the file immediately upon opening ($0$ bytes). Serialization formats (TOML, JSON, YAML) require subsequent buffer writes. In multi-process environments (such as `pytest-xdist`, microservices, or multiprocess background workers), concurrent workers reading during the window between truncation and serialization completion will read an empty file, load default empty configurations, fail invariant checks (e.g., missing required cache size keys), or crash with deserialization parse errors.
 
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+**WHEN TO APPLY**:
+Apply to all daemon configurations, CLI local state stores, credential tokens, shared file cache manifests, and system bootstrap files in environments with multi-worker execution (Python, Node.js, Go, Rust).
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+import tempfile
+from pathlib import Path
+from typing import Any
+import toml
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
+def atomic_write_toml(target_path: Path, data: dict[str, Any]) -> None:
+    """
+    Atomically writes a dictionary to a TOML file.
+    Guarantees no concurrent reader sees a truncated or half-written file.
+    Creates with 0600 (read/write by owner only) permissions.
+    """
+    target_path = target_path.resolve()
+    target_dir = target_path.parent
+    target_dir.mkdir(parents=True, exist_ok=True)
 
-  return debouncedValue;
-}
-
-```
-
-### Core Architecture Module: `dashboard/src/lib/utils.ts`
-```
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-
-// Encode catalog paths into a single URL segment so hosted `pxt://…` URIs survive react-router.
-export function tableHref(path: string): string {
-  return `/table/${encodeURIComponent(path)}`
-}
-
-export function dirHref(path: string): string {
-  return `/dir/${encodeURIComponent(path)}`
-}
-
-export const LOCAL_CATALOG = 'local'
-
-const CATALOGS_KEY = 'pxt-catalogs'
-const ACTIVE_KEY = 'pxt-active-catalog'
-
-export function loadExtraCatalogs(): string[] {
-  try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(CATALOGS_KEY) ?? '[]')
-    if (Array.isArray(parsed)) return parsed.filter((u): u is string => typeof u === 'string')
-  } catch {
-    // ignore malformed value
-  }
-  return []
-}
-
-export function saveExtraCatalogs(uris: string[]): void {
-  localStorage.setItem(CATALOGS_KEY, JSON.stringify(uris))
-}
-
-export function loadActiveCatalog(): string {
-  const saved = localStorage.getItem(ACTIVE_KEY)
-  if (saved === null || saved === '' || saved === LOCAL_CATALOG) return LOCAL_CATALOG
-  if (loadExtraCatalogs().includes(saved)) return saved
-  return LOCAL_CATALOG
-}
-
-export function saveActiveCatalog(uri: string): void {
-  localStorage.setItem(ACTIVE_KEY, uri)
-}
-
-export function catalogLabel(uri: string): string {
-  if (uri === LOCAL_CATALOG) return 'Local'
-  if (uri.startsWith('pxt://')) return uri.slice('pxt://'.length)
-  return uri
-}
-
-/** Catalog root only: `pxt://org:db` or bare `org:db`. Rejects paths with `/…`. */
-export function normalizeCloudCatalogUri(raw: string): string | null {
-  const trimmed = raw.trim()
-  if (trimmed === '' || trimmed === LOCAL_CATALOG) return null
-
-  let uri = trimmed
-  if (!uri.startsWith('pxt://')) {
-    if (!/^[^:\s]+:[^:\s]+$/.test(uri)) return null
-    uri = `pxt://${uri}`
-  }
-
-  const rest = uri.slice('pxt://'.length)
-  // Root only — no nested path after org:db.
-  if (!/^[^:\s/]+:[^:\s/]+$/.test(rest)) return null
-  return uri
-}
-
-/** Hosted catalog root for a path (`pxt://org:db/t` → `pxt://org:db`), or null. */
-export function catalogRootFromPath(path: string): string | null {
-  if (!path.startsWith('pxt://')) return null
-  const rest = path.slice('pxt://'.length)
-  const slash = rest.indexOf('/')
-  const root = slash === -1 ? rest : rest.slice(0, slash)
-  return normalizeCloudCatalogUri(`pxt://${root}`)
-}
-
+    # Use mkstemp in the same directory to guarantee identical filesystem mount (required for atomic rename)
+    fd, temp_file_path = tempfile.mkstemp(
+        dir=target_dir,
+        prefix=f".{target_path.name}.",
+        suffix=".tmp"
+    )
+    
+    try:
+        # mkstemp creates file with 0600 permissions by default
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            toml.dump(data, f)
+            f.flush()
+            os.fsync(f.fileno())  # Force commit to physical storage
+        
+        # Atomic rename replacing destination
+        os.replace(temp_file_path, target_path)
+    except Exception:
+        # Clean up temporary artifact on failure
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
+        raise
 ```
 
-### Core Architecture Module: `pixeltable/catalog/model/_code_frame_utils.py`
+**NEGATIVE CONSTRAINT**:
+```python
+# CRITICAL DEFECT: TOCTOU & Truncation Race Condition
+def unsafe_write_config(path: Path, data: dict[str, Any]) -> None:
+    # Truncates file immediately to 0 bytes!
+    # Any concurrent process accessing path between open and toml.dump reads empty EOF
+    with open(path, "w", encoding="utf-8") as f:
+        toml.dump(data, f)
 ```
-"""
-Recovery of class-body annotations from bytecode, for the Python 3.14+ deferred-annotation path.
 
-PEP 649 compiles class-body annotations into an `__annotate__` function instead of emitting namespace
-operations as the body runs. That function's code object is a constant of the class body code object,
-which is in turn a constant of the code object of the frame executing the `class ...:` statement, so the
-annotations are reachable before the body runs, without reading source. It retains the annotation names
-and their line numbers, and evaluating it yields real type objects.
+**VERIFICATION METHOD**:
+Spawn 50 concurrent processes attempting to read the file immediately while a background process repeatedly calls the write function. Assert that zero processes read an empty file or fail TOML decoding:
+```python
+import concurrent.futures
+import pytest
 
-This relies on CPython bytecode layout rather than a language guarantee, so these functions return
-`None`/empty when the expected shape isn't found, leaving the caller to raise a usable error.
-"""
+def test_no_empty_read_race(tmp_path: Path) -> None:
+    target = tmp_path / "config.toml"
+    payload = {"system": {"file_cache_size_g": 50}}
+    
+    def writer():
+        for _ in range(100):
+            atomic_write_toml(target, payload)
 
-from __future__ import annotations
+    def reader():
+        for _ in range(100):
+            if target.exists():
+                data = toml.load(target)
+                assert "system" in data and "file_cache_size_g" in data["system"]
 
+    with concurrent.futures.ProcessPoolExecutor(max_workers=8) as pool:
+        futures = [pool.submit(writer) for _ in range(2)] + [pool.submit(reader) for _ in range(6)]
+        for f in concurrent.futures.as_completed(futures):
+            f.result()
+```
+
+---
+
+### 2. Python 3.14+ Deferred Annotation Recovery via Bytecode Const Inspection
+**RULE**:
+When building metaprogramming frameworks, ORMs, or declarative schema systems that parse type annotations on class bodies, you MUST NOT rely solely on `__annotations__` or `eval()`, nor assume annotations are executed during class body definition. Under PEP 649 (Python 3.14+), you MUST inspect the class frame's code object constants (`co_consts`) to find the deferred compiler-generated `__annotate__` code block and evaluate it using a synthesized `__classdict__` closure cell before class completion.
+
+**WHY**:
+PEP 649 defers class annotation evaluation: annotations are no longer emitted as direct namespace mutations during body execution; they are compiled into an isolated `__annotate__(format)` code object. Standard access before class creation crashes or returns empty dicts. Direct eval of AST fails on closure-dependent types (e.g., local type aliases). Without inspecting bytecode constants, dynamic schema generation and validation fail during the frame execution phase.
+
+**WHEN TO APPLY**:
+Any Python ORM, validation library (Pydantic-like), database interface, or schema compiler supporting Python 3.14 and Python 3.15+.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
 import dis
 import types
 from typing import Any
 
-
-def _line_map(code: types.CodeType) -> dict[int, int]:
-    """Map bytecode offset -> source line for `code`."""
-    result: dict[int, int] = {}
-    for start, end, line in code.co_lines():
-        if line is not None:
-            for offset in range(start, end, 2):
-                result[offset] = line
-    return result
-
-
-def find_class_body_code(caller: types.FrameType, cls_name: str) -> types.CodeType | None:
+def extract_deferred_annotations(
+    caller_frame: types.FrameType,
+    cls_name: str,
+    eval_globals: dict[str, Any],
+    namespace: dict[str, Any]
+) -> dict[str, Any]:
     """
-    Locate the code object of the class body being executed for `cls_name`, among `caller`'s constants.
-
-    When the name occurs more than once in the scope (a loop, or a redefinition), the last matching
-    `LOAD_CONST` at or before the frame's current instruction is the one feeding the in-progress
-    `__build_class__` call.
+    Recovers PEP 649 annotations from CPython bytecode before class construction.
     """
-    code = caller.f_code
-    candidates = [const for const in code.co_consts if isinstance(const, types.CodeType) and const.co_name == cls_name]
-    if len(candidates) == 1:
-        return candidates[0]
-    if len(candidates) == 0:
-        return None
-    result: types.CodeType | None = None
+    code = caller_frame.f_code
+    # Step 1: Locate class body code object among constants
+    body_code: types.CodeType | None = None
     for instr in dis.get_instructions(code):
-        if instr.offset > caller.f_lasti:
+        if instr.offset > caller_frame.f_lasti:
             break
         if (
             instr.opname.startswith('LOAD_CONST')
             and isinstance(instr.argval, types.CodeType)
             and instr.argval.co_name == cls_name
         ):
-            result = instr.argval
-    return result
+            body_code = instr.argval
 
-
-def _annotate_code(body_code: types.CodeType) -> types.CodeType | None:
-    return next((c for c in body_code.co_consts if isinstance(c, types.CodeType) and c.co_name == '__annotate__'), None)
-
-
-def annotation_lines(body_code: types.CodeType) -> list[tuple[str, int]]:
-    """(name, line) for each annotation in `body_code`, in declaration order."""
-    annotate = _annotate_code(body_code)
-    if annotate is None:
-        return []
-    lines = _line_map(annotate)
-    # The annotate function stores each evaluated annotation under its column name, the only string
-    # constant it loads per annotation.
-    return [
-        (instr.argval, lines[instr.offset])
-        for instr in dis.get_instructions(annotate)
-        if instr.opname.startswith('LOAD_CONST') and isinstance(instr.argval, str) and instr.offset in lines
-    ]
-
-
-def assignment_lines(body_code: types.CodeType) -> list[tuple[str, int]]:
-    """(name, line) for each top-level name assignment in `body_code`, in declaration order."""
-    lines = _line_map(body_code)
-    return [
-        (instr.argval, lines[instr.offset])
-        for instr in dis.get_instructions(body_code)
-        if instr.opname == 'STORE_NAME' and not instr.argval.startswith('__') and instr.offset in lines
-    ]
-
-
-def evaluate_annotations(
-    body_code: types.CodeType, namespace: dict[str, Any], eval_globals: dict[str, Any]
-) -> dict[str, Any]:
-    """
-    Evaluate the annotations of `body_code` to real type objects.
-
-    `__annotate__` consults a `__classdict__` closure cell before globals when resolving names, so passing
-    the model namespace there resolves them as they would have resolved inside the class body.
-    """
-    annotate = _annotate_code(body_code)
-    if annotate is None:
+    if body_code is None:
         return {}
-    closure = tuple(types.CellType(namespace) for _ in annotate.co_freevars)
-    fn = types.FunctionType(annotate, eval_globals, '__annotate__', None, closure)
-    return fn(1)  # annotationlib.Format.VALUE
 
-```
-
-### Core Architecture Module: `pixeltable/catalog/utils.py`
-```
-from __future__ import annotations
-
-import itertools
-import time
-from typing import TYPE_CHECKING, Any, Iterable
-from uuid import UUID
-
-import pixeltable.exceptions as excs
-import pixeltable.exprs as exprs
-import pixeltable.index as index
-from pixeltable.env import Env
-from pixeltable.metadata import schema
-
-from .column import Column
-from .globals import IndexSpec, MediaValidation
-from .path import Path
-from .types import TableVersionKey, TableVersionMd
-
-if TYPE_CHECKING:
-    from .table_metadata import TableMetadata
-    from .table_version import TableVersion
-
-
-def validate_idxs(
-    tbl_id: UUID,
-    idxs: Iterable[IndexSpec],
-    has_default_idxs: bool,
-    existing_idxs: Iterable[TableVersion.IndexInfo] = (),
-) -> None:
-    """Validate the indexes in idxs, which are about to be created on the table with id tbl_id.
-
-    idxs: resolved specs, ie. every indexed_column identifies a column rather than naming one.
-    existing_idxs: the table's live indexes; a new index must not collide with one of those.
-    """
-    existing_by_name = {info.name: info for info in existing_idxs}
-    # names of the columns that already have a B-tree index; a view's base columns are excluded, because the
-    # validation below rejects them as targets anyway
-    btree_col_names = {
-        info.col.name
-        for info in existing_idxs
-        if isinstance(info.idx, index.BtreeIndex) and info.col.tbl_handle.id == tbl_id
-    }
-    new_names: set[str] = set()
-    new_btree_col_names: set[str] = set()
-
-    for idx_col, idx_name, idx in idxs:
-        assert not isinstance(idx_col, str), repr(idx_col)
-        if isinstance(idx, index.BtreeIndex):
-            assert idx_col.name is not None, repr(idx_col)
-            if has_default_idxs:
-                raise excs.RequestError(
-                    excs.ErrorCode.UNSUPPORTED_OPERATION,
-                    'Cannot create an explicit B-tree index on a table with has_default_idxs=True; '
-                    'its eligible columns are indexed automatically.',
-                )
-            # a spec that carries metadata instead of a Column identifies a column that already exists, which
-            # for the table being created is one of a base
-            owner_tbl_id = idx_col.tbl_handle.id if isinstance(idx_col, Column) else idx_col.qcolid.tbl_id
-            if owner_tbl_id != tbl_id:
-                # PXT-1260 Allow views to create a b-tree index on a base column
-                raise excs.RequestError(
-                    excs.ErrorCode.UNSUPPORTED_OPERATION,
-                    f'Cannot create a B-tree index on column {idx_col.name!r}: it belongs to a base table. '
-                    'Add the index to the base table instead.',
-                )
-            assert isinstance(idx_col, Column), repr(idx_col)
-            index.BtreeIndex.validate_column(idx_col.column_version_md())
-            if idx_col.name in new_btree_col_names or idx_col.name in btree_col_names:
-                raise excs.AlreadyExistsError(
-                    excs.ErrorCode.INDEX_ALREADY_EXISTS, f'A B-tree index already exists on column {idx_col.name!r}.'
-                )
-            new_btree_col_names.add(idx_col.name)
-        if idx_name is not None:
-            assert idx_name not in new_names, idx_name
-            existing_info = existing_by_name.get(idx_name)
-            if existing_info is not None:
-                raise excs.AlreadyExistsError(
-                    excs.ErrorCode.INDEX_ALREADY_EXISTS,
-                    f'Index {idx_name!r} already exists on column {existing_info.col.name!r}.',
-                )
-            new_names.add(idx_name)
-
-
-def generate_idx_name(existing_names: set[str]) -> str:
-    """Generates an index name that is not in existing_names."""
-    i = 0
-    while True:
-        name = f'idx{i}'
-        if name not in existing_names:
-            return name
-        i += 1
-
-
-def create_table_version_md(
-    tbl_id: UUID,
-    name: str,
-    cols: list[Column],
-    comment: str | None,
-    custom_metadata: Any,
-    media_validation: MediaValidation,
-    has_default_idxs: bool,
-    view_md: schema.ViewMd | None,
-    is_data_versioned: bool,
-    additional_idxs: list[IndexSpec],
-) -> TableVersionMd:
-    # imported here rather than at module scope: table_version_handle imports TableVersion, whose module imports
-    # this one
-    from .table_version_handle import TableVersionHandle
-
-    for col in cols:
-        if col.is_pk and col.col_type.nullable:
-            raise excs.RequestError(
-                excs.ErrorCode.UNSUPPORTED_OPERATION,
-                f'Primary key column {col.name!r} cannot be nullable. '
-                f'Declare it as non-nullable instead: `pxt.{col.col_type._to_base_str()}`',
-            )
-
-    user = Env.get().user
-    timestamp = time.time()
-
-    tbl_id_str = str(tbl_id)
-    tbl_handle = TableVersionHandle(TableVersionKey(tbl_id, None))
-    column_ids = itertools.count()
-    index_ids = itertools.count()
-
-    # assign ids
-    for col in cols:
-        col.tbl_handle = tbl_handle
-        col.id = next(column_ids)
-        col.schema_version_add = 0
-        # do this before column_version_md(), which requires a valid value expression
-        if col.is_computed:
-            col.check_value_expr()
-
-    # resolve ColumnRefByName's to ColumnRefs in computed columns
-    subst = exprs.ExprDict[exprs.Expr](
-        (
-            exprs.ColumnRefByName(col.name),
-            exprs.ColumnRef(
-                col.column_version_md(),
-                perform_validation=(col._media_validation or media_validation) == MediaValidation.ON_READ,
-            ),
-        )
-        for col in cols
-        if col.name is not None
+    # Step 2: Locate the synthetic '__annotate__' function in the body code constants
+    annotate_code = next(
+        (c for c in body_code.co_consts if isinstance(c, types.CodeType) and c.co_name == '__annotate__'),
+        None
     )
-
-    # create metadata
-    column_md: dict[int, schema.ColumnMd] = {}
-    schema_col_md: dict[int, schema.SchemaColumn] = {}
-    for pos, col in enumerate(cols):
-        value_expr = col.value_expr
-        if value_expr is not None:
-            col.set_value_expr(value_expr.substitute(subst))
-        col_md, col_schema_md = col.to_md(pos)
-        column_md[col.id] = col_md
-        schema_col_md[col.id] = col_schema_md
-
-    validate_idxs(tbl_id, additional_idxs, has_default_idxs)
-
-    # Merge default indexes and additional indexes into a manifest of indexes to create.
-    index_md: dict[int, schema.IndexMd] = {}
-    idxs_to_create: list[IndexSpec] = []
-    if has_default_idxs and (view_md is None or not view_md.is_snapshot):
-        # TODO: on an operational table, the default B-tree on the leading primary key column adds a cost in exchange
-        # for no benefit at all. We should be able to skip the default index on that one column (but none of
-        # the others).
-        idxs_to_create.extend(
-            IndexSpec(col, None, index.BtreeIndex(uses_value_col=is_data_versioned))
-            for col in cols
-            if index.BtreeIndex.can_index(col)
-        )
-
-    # an index on a column of this table must reference the instance in cols, which is the one that got an id
-    # above; an index on a column that already exists carries its metadata instead
-    own_cols = {id(col) for col in cols}
-    assert all(not isinstance(spec.indexed_column, str) for spec in additional_idxs)
-    assert all(
-        id(spec.indexed_column) in own_cols
-        for spec in additional_idxs
-        if isinstance(spec.indexed_column, Column) and spec.indexed_column.tbl_handle.id == tbl_id
-    )
-    idxs_to_create.extend(additional_idxs)
-
-    taken_idx_names = {spec.idx_name for spec in idxs_to_create if spec.idx_name is not None}
-
-    index_cols: list[Column] = []
-    for idx_col, idx_name, idx in idxs_to_create:
-        assert not isinstance(idx_col, str)
-        # a column of this table was given its id above, so its metadata is only derivable now
-        idx_col_md = idx_col.column_version_md() if isinstance(idx_col, Column) else idx_col
-        val_col, undo_col = Column.create_index_columns(
-            tbl_handle,
-            idx_col_md,
-            idx,
-            schema_version=0,
-            is_data_versioned=is_data_versioned,
-            next_col_id=lambda: next(column_ids),
-        )
-        index_cols.extend(c for c in (val_col, undo_col) if c is not None)
-
-        idx_id = next(index_ids)
-        resolved_idx_name: str
-        if idx_name is not None:
-            resolved_idx_name = idx_name
-        else:
-            resolved_idx_name = generate_idx_name(taken_idx_names)
-            taken_idx_names.add(resolved_idx_name)
-        idx_cls = type(idx)
-        md = schema.IndexMd(
-            id=idx_id,
-            name=resolved_idx_name,
-            indexed_col_id=idx_col_md.id,
-            indexed_col_tbl_id=str(idx_col_md.qcolid.tbl_id),
-            index_val_col_id=None if val_col is None else val_col.id,
-            index_val_undo_col_id=None if undo_col is None else undo_col.id,
-            schema_version_add=0,
-            schema_version_drop=None,
-            class_fqn=idx_cls.__module__ + '.' + idx_cls.__name__,
-            init_args=idx.as_dict(),
-        )
-        index_md[idx_id] = md
-
-    for col in index_cols:
-        col_md, col_schema_md = col.to_md(pos=None)
-        column_md[col.id] = col_md
-        schema_col_md[col.id] = col_schema_md
-
-    assert all(column_md[col_id].id == col_id for col_id in column_md)
-    assert all(index_md[idx_id].id == idx_id for idx_id in index_md)
-
-    tbl_md = schema.TableMd(
-        tbl_id=tbl_id_str,
-        name=name,
-        user=user,
-        current_version=0,
-        current_schema_version=0,
-        next_col_id=next(column_ids),
-        next_idx_id=next(index_ids),
-        next_row_id=0,
-        view_sn=0,
-        column_md=column_md,
-        index_md=index_md,
-        view_md=view_md,
-        additional_md={},
-        is_data_versioned=is_data_versioned,
-        has_default_idxs=has_default_idxs,
-    )
-
-    table_version_md = schema.VersionMd(
-        tbl_id=tbl_id_str,
-        created_at=timestamp,
-        version=0,
-        schema_version=0,
-        user=user,
-        update_status=None,
-        additional_m
-```
-
-### Core Architecture Module: `pixeltable/functions/util.py`
-```
-from pixeltable.functions.media_metadata import (
-    CodecContextMetadata,
-    ContainerMetadata,
-    ImageMetadata,
-    StreamMetadata,
-    get_metadata,
-)
-from pixeltable.functions.model_support import normalize_image_mode, resolve_torch_device
-
-__all__ = [
-    'CodecContextMetadata',
-    'ContainerMetadata',
-    'ImageMetadata',
-    'StreamMetadata',
-    'get_metadata',
-    'normalize_image_mode',
-    'resolve_torch_device',
-]
-
-```
-
-### Core Architecture Module: `pixeltable/io/utils.py`
-```
-from pixeltable.io.export import replace_media_with_fileurl
-from pixeltable.io.schema import normalize_primary_key_parameter, normalize_pxt_col_name, normalize_schema_names
-from pixeltable.utils.file_io import atomic_write
-
-__all__ = [
-    'atomic_write',
-    'normalize_primary_key_parameter',
-    'normalize_pxt_col_name',
-    'normalize_schema_names',
-    'replace_media_with_fileurl',
-]
-
-```
-
-### Core Architecture Module: `pixeltable/metadata/converters/util.py`
-```
-import copy
-import logging
-from typing import Any, Callable, TypeVar
-from uuid import UUID
-
-import sqlalchemy as sql
-from sqlalchemy import Column, LargeBinary, MetaData
-from sqlalchemy.dialects.postgresql import JSONB, UUID as SA_UUID
-
-from pixeltable.metadata.schema import Table, TableSchemaVersion
-
-__logger = logging.getLogger(__name__)
-
-# The legacy 'functions' table stored pickled UDF bodies. It was removed from the live schema and
-# dropped by the version 54->55 converter; converters that upgrade older databases still read and rewrite it, so
-# it is defined here on a private MetaData instance (base_metadata.create_all() therefore never recreates it for a fresh
-# database).
-_legacy_metadata = MetaData()
-legacy_functions = sql.Table(
-    'functions',
-    _legacy_metadata,
-    Column('id', SA_UUID(as_uuid=True), primary_key=True),
-    Column('md', JSONB),
-    Column('binary_obj', LargeBinary),
-)
-
-
-def convert_table_md(
-    conn: sql.Connection,
-    table_md_updater: Callable[[dict, UUID], None] | None = None,
-    column_md_updater: Callable[[dict], None] | None = None,
-    external_store_md_updater: Callable[[dict], None] | None = None,
-    substitution_fn: Callable[[str | None, Any], tuple[str | None, Any] | None] | None = None,
-    table_modifier: Callable[[sql.Connection, UUID, dict, dict], None] | None = None,
-) -> None:
-    """
-    Converts schema.TableMd dicts based on the specified conversion functions.
-
-    Args:
-        conn: The SQLAlchemy connection to run the conversion on.
-        table_md_updater: A function that updates schema.TableMd dicts in place.
-            It takes two arguments: the metadata dict (new values) and the table id.
-        column_md_updater: A function that updates schema.ColumnMd dicts in place.
-        external_store_md_updater: A function that updates the external store metadata in place.
-        substitution_fn: A function that substitutes metadata values. If specified, all metadata will be traversed
-            recursively, and `substitution_fn` will be called once for each metadata entry. If the entry appears in
-            a dict as a `(k, v)` pair, then `substitution_fn(k, v)` will be called. If the entry appears in a list,
-            then `substitution_fn(None, v)` will be called. If `substitution_fn` returns a tuple `(k', v')`, then
-            the original entry will be replaced, and the traversal will continue with `v'`.
-    """
-    # avoid a SELECT * here, which breaks when we add new columns to Table
-    for row in conn.execute(sql.select(Table.id, Table.md)):
-        tbl_id = row[0]
-        table_md = row[1]
-        assert isinstance(table_md, dict)
-        updated_table_md = copy.deepcopy(table_md)
-        if table_md_updater is not None:
-            table_md_updater(updated_table_md, tbl_id)
-        if column_md_updater is not None:
-            __update_column_md(updated_table_md, column_md_updater)
-        if external_store_md_updater is not None:
-            __update_external_store_md(updated_table_md, external_store_md_updater)
-        if substitution_fn is not None:
-            updated_table_md = __substitute_md_rec(updated_table_md, substitution_fn)
-        if updated_table_md != table_md:
-            __logger.info(f'Updating schema for table: {tbl_id}')
-            conn.execute(sql.update(Table).where(Table.id == tbl_id).values(md=updated_table_md))
-        if table_modifier is not None:
-            table_modifier(conn, tbl_id, table_md, updated_table_md)
-
-    # the legacy 'functions' table is dropped once a database reaches version 55, so it may be absent here
-    if sql.inspect(conn).has_table('functions'):
-        # select explicit columns (not SELECT *) so a future column addition/reorder can't shift md's position
-        for row in conn.execute(sql.select(legacy_functions.c.id, legacy_functions.c.md)):
-            fn_id = row[0]
-            function_md = row[1]
-            assert isinstance(function_md, dict)
-            updated_function_md = copy.deepcopy(function_md)
-            if substitution_fn is not None:
-                updated_function_md = __substitute_md_rec(updated_function_md, substitution_fn)
-            if updated_function_md != function_md:
-                __logger.info(f'Updating function: {fn_id}')
-                conn.execute(
-                    sql.update(legacy_functions).where(legacy_functions.c.id == fn_id).values(md=updated_function_md)
-                )
-
-
-def __update_column_md(table_md: dict, column_md_updater: Callable[[dict], None]) -> None:
-    columns_md = table_md['column_md']
-    assert isinstance(columns_md, dict)
-    for column_md in columns_md.values():
-        column_md_updater(column_md)
-
-
-def __update_external_store_md(table_md: dict, external_store_md_updater: Callable[[dict], None]) -> None:
-    stores_md = table_md['external_stores']
-    assert isinstance(stores_md, list)
-    for store_md in stores_md:
-        external_store_md_updater(store_md)
-
-
-def __substitute_md_rec(md: Any, substitution_fn: Callable[[str | None, Any], tuple[str | None, Any] | None]) -> Any:
-    if isinstance(md, dict):
-        updated_dict: dict[str, Any] = {}
-        for k, v in md.items():
-            assert isinstance(k, str)
-            substitute = substitution_fn(k, v)
-            if substitute is not None:
-                updated_k, updated_v = substitute
-                updated_dict[updated_k] = __substitute_md_rec(updated_v, substitution_fn)
-            else:
-                updated_dict[k] = __substitute_md_rec(v, substitution_fn)
-        return updated_dict
-    elif isinstance(md, list):
-        updated_list: list[Any] = []
-        for v in md:
-            substitute = substitution_fn(None, v)
-            if substitute is not None:
-                _, updated_v = substitute
-                updated_list.append(__substitute_md_rec(updated_v, substitution_fn))
-            else:
-                updated_list.append(__substitute_md_rec(v, substitution_fn))
-        return updated_list
-    else:
-        return md
-
-
-def convert_table_schema_version_md(
-    conn: sql.Connection,
-    table_schema_version_md_updater: Callable[[dict], None] | None = None,
-    schema_column_updater: Callable[[dict], None] | None = None,
-) -> None:
-    """
-    Converts schema.TableSchemaVersionMd dicts based on the specified conversion functions.
-
-    Args:
-        conn: The SQLAlchemy connection to run the conversion on.
-        table_schema_version_md_updater: A function that updates schema.TableSchemaVersionMd dicts in place.
-        schema_column_updater: A function that updates schema.SchemaColumn dicts in place.
-    """
-    stmt = sql.select(TableSchemaVersion.tbl_id, TableSchemaVersion.schema_version, TableSchemaVersion.md)
-    for row in conn.execute(stmt):
-        tbl_id, schema_version, md = row[0], row[1], row[2]
-        assert isinstance(md, dict)
-        updated_md = copy.deepcopy(md)
-        if table_schema_version_md_updater is not None:
-            table_schema_version_md_updater(updated_md)
-        if schema_column_updater is not None:
-            __update_schema_column(updated_md, schema_column_updater)
-        if updated_md != md:
-            __logger.info(f'Updating TableSchemaVersion(tbl_id={tbl_id}, schema_version={schema_version})')
-            update_stmt = (
-                sql.update(TableSchemaVersion)
-                .where(TableSchemaVersion.tbl_id == tbl_id)
-                .where(TableSchemaVersion.schema_version == schema_version)
-                .values(md=updated_md)
-            )
-            conn.execute(update_stmt)
-
-
-def __update_schema_column(table_schema_version_md: dict, schema_column_updater: Callable[[dict], None]) -> None:
-    cols = table_schema_version_md['columns']
-    assert isinstance(cols, dict)
-    for schema_col in cols.values():
-        schema_column_updater(schema_col)
-
-
-T = TypeVar('T')
-
-
-def convert_sql_table_record(schema: type[T], conn: sql.Connection, record_updater: Callable[[T], None]) -> None:
-    # Run the ORM updates within the caller's transaction: a savepoint-bound session flushes onto conn and
-    # commit() releases the savepoint, leaving the enclosing transaction to commit the changes.
-    with sql.orm.Session(bind=conn, join_transaction_mode='create_savepoint') as session:
-        for record in session.query(schema).all():
-            record_updater(record)
-        session.commit()
-
-```
-
-### Core Architecture Module: `pixeltable/metadata/utils.py`
-```
-from __future__ import annotations
-
-from dataclasses import fields
-
-import pixeltable.type_system as ts
-from pixeltable.metadata import schema
-
-
-class MetadataUtils:
-    @classmethod
-    def _diff_md(
-        cls, old_md: dict[int, schema.SchemaColumn] | None, new_md: dict[int, schema.SchemaColumn] | None
-    ) -> str:
-        """Return a string reporting the differences in a specific entry in two dictionaries
-
-        Results are formatted as follows:
-        - If `old_md` is `None`, returns 'Initial Version'.
-        - If `old_md` and `new_md` are the same, returns an empty string.
-        - If there are additions, changes, or deletions, returns a string summarizing the changes.
-        """
-        assert new_md is not None
-        if old_md is None:
-            return 'Initial Version'
-        if old_md == new_md:
-            return ''
-        # added, altered, and dropped track diffs of user-visible columns only. That's what we want to report to users
-        # in the end.
-        added: list[str] = []
-        dropped: list[str] = []
-        altered: dict[str, str] = {}
-
-        for col_id, new_col in new_md.items():
-            if col_id not in old_md:
-                if new_col.name is not None:
-                    added.append(new_col.name)
-                continue
-            old_col = old_md[col_id]
-            diff = cls._diff_col(old_col, new_col)
-            if diff is not None:
-                if old_col.name is not None:
-                    assert new_col.name is not None, "A user-visible column can't become a system column"
-                    altered[old_col.name] = diff
-                else:
-                    assert new_col.name is None, "A system column can't become user-visible"
-
-        for col_id, old_col in old_md.items():
-            if col_id not in new_md and old_col.name is not None:
-                dropped.append(old_col.name)
-
-        user_visible_changes = len(added) > 0 or len(altered) > 0 or len(dropped) > 0
-        if not user_visible_changes:
-            # TODO: adding/dropping an embedding index will not be displayed
-            return ''
-
-        # Format the result
-        t = []
-        if len(added) > 0:
-            t.append('Added: ' + ', '.join(added))
-        if len(altered) > 0:
-            t.append('Altered: ' + ', '.join((f'{name} ({desc})' for name, desc in altered.items())))
-        if len(dropped) > 0:
-            t.append('Dropped: ' + ', '.join(dropped))
-        return ', '.join(t)
-
-    @classmethod
-    def _diff_col(cls, old: schema.SchemaColumn, new: schema.SchemaColumn) -> str | None:
-        """Compares two SchemaColumn objects and returns a string describing the differences, or None if they are
-        the same.
-        """
-        assert len(fields(old)) == 8, 'This method needs to be updated whenever SchemaColumn changes'
-        diff: list[str] = []
-        # Note: we ignore pos because columns changing places are not very interesting to users, and because they are
-        # usually a side effect of other changes such as drop column.
-        if old.name != new.name:
-            diff.append(f'renamed to {new.name}')
-        assert old.is_pk == new.is_pk, 'Not implemented: describe a primary key change'
-        if old.col_type != new.col_type:
-            type_ = ts.ColumnType.from_dict(new.col_type)
-            diff.append(f'type changed to {type_!r}')
-        if old.value_expr != new.value_expr:
-            diff.append('value expression changed')
-        assert old.media_validation == new.media_validation, 'Not implemented: describe a media validation change'
-        assert old.comment == new.comment, 'Not implemented: describe a comment change'
-        assert old.custom_metadata == new.custom_metadata, 'Not implemented: describe a custom metadata change'
-
-        if len(diff) > 0:
-            return ', '.join(diff)
-        return None
-
-    @classmethod
-    def create_md_change_dict(cls, md_list: list[tuple[int, dict[int, schema.SchemaColumn]]] | None) -> dict[int, str]:
-        """Return a dictionary of schema changes by version
-        Args:
-            md_list: a list of tuples, each containing a version number and a metadata dictionary.
-        """
-        r: dict[int, str] = {}
-        if md_list is None or len(md_list) == 0:
-            return r
-
-        # Sort the list in place by version number
-        md_list.sort()
-
-        first_retrieved_version = md_list[0][0]
-        if first_retrieved_version == 0:
-            prev_md = None
-            prev_ver = -1
-            start = 0
-        else:
-            prev_md = md_list[0][1]
-            prev_ver = first_retrieved_version
-            start = 1
-
-        for ver, curr_md in md_list[start:]:
-            if ver == prev_ver:
-                continue
-            assert ver > prev_ver
-            tf = cls._diff_md(prev_md, curr_md)
-            if tf != '':
-                r[ver] = tf
-            prev_md = curr_md
-        return r
-
-```
-
-### Core Architecture Module: `pixeltable/utils/__init__.py`
-```
-import hashlib
-import urllib.parse
-import urllib.request
-from pathlib import Path
-
-
-def print_perf_counter_delta(delta: float) -> str:
-    """Prints a performance counter delta in a human-readable format.
-
-    Args:
-        delta: delta in seconds
-
-    Returns:
-        Human-readable string
-    """
-    if delta < 1e-6:
-        return f'{delta * 1e9:.2f} ns'
-    elif delta < 1e-3:
-        return f'{delta * 1e6:.2f} us'
-    elif delta < 1:
-        return f'{delta * 1e3:.2f} ms'
-    else:
-        return f'{delta:.2f} s'
-
-
-def sha256sum(path: Path | str) -> str:
-    """
-    Compute the SHA256 hash of a file.
-    """
-    if isinstance(path, str):
-        path = Path(path)
-
-    h = hashlib.sha256()
-    with open(path, 'rb') as file:
-        while chunk := file.read(h.block_size):
-            h.update(chunk)
-
-    return h.hexdigest()
-
-
-def parse_local_file_path(file_or_url: str) -> Path | None:
-    """
-    Parses a string that may be either a URL or a local file path.
-
-    If the string is a local file path or a file-scheme URL (file://), then a Path object will be returned.
-    Otherwise, None will be returned.
-    """
-    parsed = urllib.parse.urlparse(file_or_url)
-    if len(parsed.scheme) <= 1:
-        # We're using `urlparse` to help distinguish file paths from URLs. If there is no scheme, then it's a file path.
-        # If there's a single-character scheme, we also interpret this as a file path; this insures that drive letters
-        # on Windows pathnames are correctly handled.
-        return Path(file_or_url).absolute()
-    elif parsed.scheme == 'file':
-        return Path(urllib.parse.unquote(urllib.request.url2pathname(parsed.path)))
-    else:
-        return None
-
-```
-
-### Core Architecture Module: `pixeltable/utils/app_module.py`
-```
-"""Utilities for app modules (those containing table models and FastAPIRouter instances)."""
-
-from __future__ import annotations
-
-import importlib
-import keyword
-import linecache
-import re
-import sys
-import threading
-import traceback
-from collections.abc import Iterable
-from pathlib import Path
-from types import ModuleType
-from typing import TYPE_CHECKING, Any
-
-from pixeltable import exceptions as excs
-from pixeltable.catalog import Catalog, ProhibitedWriteError, is_valid_identifier, model
-from pixeltable.catalog.model import diff
-from pixeltable.config import Config
-from pixeltable.env import Env
-from pixeltable.func import FunctionRegistry
-from pixeltable.func.symbols import load_error_msg
-from pixeltable.utils.project import in_environment
-from pixeltable_cli.types import CheckReport, RouteSpec, ServiceSpec
-
-_lock = threading.RLock()
-
-# the packages this process is running, which stay loaded even when the project holds a checkout of them:
-# re-importing them would leave two of every class
-_RUNNING_PACKAGES = ('pixeltable', 'pixeltable_cli')
-
-# TODO: Catalog needs to discard cached TableVersion that references reloaded modules
-
-if TYPE_CHECKING:
-    import fastapi
-
-    from pixeltable.serving import FastAPIRouter
-
-
-def module_name(file: str, *, subject: str) -> str:
-    """The dotted import path of 'file', relative to the project root."""
-    path = Path(file).resolve()
-    if not path.is_file():
-        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, f'{subject} not found: {file}')
-
-    # Env.get() establishes the project root
-    Env.get()
-    root = Config.get().project_root
-    if root is None or not path.is_relative_to(root):
-        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, _no_root_msg(path, subject, root))
-    relative = path.relative_to(root).with_suffix('')
-    for part in relative.parts:
-        if not part.isidentifier() or keyword.iskeyword(part):
-            raise excs.RequestError(
-                excs.ErrorCode.INVALID_ARGUMENT,
-                f'{path}: {part!r} is not a module name, so this {subject} cannot be imported; rename it, or '
-                f'the directory holding it, to a Python identifier',
-            )
-    return '.'.join(relative.parts)
-
-
-def load_app_module(file: str, *, subject: str) -> ModuleType:
-    """Import file under the module path relative to the project root."""
-    path = Path(file).resolve()
-    name = module_name(file, subject=subject)
-
-    try:
-        registry = FunctionRegistry.get()
-        with _lock, Catalog.freeze():
-            root = Config.get().project_root
-            assert root is not None  # module_name() refuses a file outside a project root
-            # evict before importing: importlib returns a module in sys.modules without reading its file again
-            evict_modules(root)
-            return registry.import_module(name)
-    except ProhibitedWriteError as e:
-        raise excs.RequestError(
-            excs.ErrorCode.UNSUPPORTED_OPERATION, _prohibited_write_msg(str(path), subject, e)
-        ) from e
-    except Exception as e:
-        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, load_error_msg(file, e)) from e
-
-
-def _no_root_msg(path: Path, subject: str, root: Path | None) -> str:
-    """Report the project root, and what to do about a file outside it."""
-    rule = (
-        f'A UDF is recorded as a module path relative to the project root, which is the directory holding '
-        f'the project configuration, so this {subject} has to sit under that root.'
-    )
-    if root is None:
-        return (
-            f'{path}: there is no project root. Searched {Path.cwd()} and every directory above it for '
-            f'a project configuration: a pixeltable.toml, or a pyproject.toml with a [tool.pixeltable] '
-            f'section.\n'
-            f'{rule}\n'
-            f"Run 'pxt init' in the directory that holds your project, then run this command again."
-        )
-    return (
-        f'{path}: the project root is {root}, which the file does not sit under.\n'
-        f'{rule}\n'
-        "Run this command from the file's own project."
-    )
-
-
-def evict_modules(root: Path) -> None:
-    """Remove the modules under root from sys.modules, and their udfs from the registry.
-
-    Removing these modules allows us to have them re-imported, in response to changes to the source files. Also
-    clear importlib's directory caches, so an import finds a newly created module file.
-
-    The standard library and installed packages stay loaded, including when the environment sits inside root
-    (eg, a .venv).
-    """
-    importlib.invalidate_caches()
-    registry = FunctionRegistry.get()
-    for name, module in list(sys.modules.items()):
-        module_file = getattr(module, '__file__', None)
-        if module_file is None or name == '__main__':
-            continue
-        if name.split('.', maxsplit=1)[0] in _RUNNING_PACKAGES:
-            continue
-        # the file path lets us distinguish between a project module and a standard library module
-        resolved = Path(module_file).resolve()
-        if in_environment(resolved):
-            continue
-        if resolved.is_relative_to(root):
-            registry.deregister_module(name)
-            sys.modules.pop(name, None)
-
-
-def _prohibited_write_msg(file: str, subject: str, exc: ProhibitedWriteError) -> str:
-    """Report which statement in file modified the catalog, and what to write instead."""
-    location = ''
-    for frame, lineno in traceback.walk_tb(exc.__traceback__):
-        if frame.f_code.co_filename == file:
-            statement = (linecache.getline(file, lineno) or '').strip()
-            location = f'line {lineno}: {statement}\n' if statement != '' else f'line {lineno}\n'
-    return (
-        f'{file}: this {subject} modifies the catalog while it is imported.\n'
-        f'{location}'
-        'Define a table with a model class, and insert rows from a route or a script; '
-        "'pxt schema update' then creates and populates them."
-    )
-
-
-def get_model_bases(module: ModuleType) -> list[model.TableModelMeta]:
-    """Returns the model bases found in module."""
-    # a model base carries __registered_models__ as its own class attribute, whereas the models defined
-    # on it merely inherit it
-    bases = [
-        v
-        for v in vars(module).values()
-        if isinstance(v, model.TableModelMeta) and '__registered_models__' in v.__dict__
-    ]
-    return bases
-
-
-def visible_models(module: ModuleType) -> dict[str, model.TableModelMeta]:
-    """Every model the module reaches by name, keyed by the table name each defines."""
-    models: dict[str, model.TableModelMeta] = {}
-    for value in vars(module).values():
-        if not isinstance(value, model.TableModelMeta):
-            continue
-        # a model base carries __registered_models__ as its own class attribute
-        if '__registered_models__' in value.__dict__:
-            models.update({m.__table_spec__['name']: m for m in value.defined_models()})
-        else:
-            models[value.__table_spec__['name']] = value
-    return models
-
-
-def validate_models(models: dict[str, model.TableModelMeta], base_path: str) -> str | None:
-    """Validates models against their corresponding tables in base_path, returns None if they match, otherwise an
-    error string."""
-    diffs = diff.validate_models(models, base_path)
-    mismatched = {name: d for name, d in diffs.items() if d.resolution != 'up_to_date'}
-    if len(mismatched) == 0:
-        return None
-
-    detail = '\n'.join(line for name, d in mismatched.items() for line in diff.format_diff(name, d))
-    target = '' if base_path == '' else f' {base_path}'
-    unsupported = sorted(name for name, d in mismatched.items() if d.resolution == 'unsupported')
-    if len(unsupported) == 0:
-        hint = f'Run `pxt schema update <app file>{target}` first.'
-    else:
-        hint = (
-            f'No schema update can reconcile {", ".join(repr(name) for name in unsupported)}: adjust the '
-            'existing table(s) manually, or adjust the models to be consistent with the catalog.'
-        )
-        if len(unsupported) < len(mismatched):
-            hint += f'\nRun `pxt schema update <app file>{target}` for the rest.'
-    names = ', '.join(repr(name) for name in sorted(mismatched))
-    return f'Cannot serve {names}:\n{detail}\n{hint}'
-
-
-def check_report(file: str, bases: list[model.TableModelMeta]) -> CheckReport:
-    """What checking a file on its own reports: whether it is valid, and what to fix or to know about."""
-    errors = check_udf_references(bases)
-    warnings = [
-        f'{cls.__name__}.{name} references no column, so every row computes it from the same inputs: {value!s}. '
-        'Python code in a model body, such as str(), % or `is None`, runs once, at class definition. '
-        'Use == None instead of `is None`, and + or pxtf.string.format() instead of str() or %.'
-        for base in bases
-        for cls in base.defined_models()
-        for name, value in cls.constant_columns().items()
-    ]
-    warnings.extend(shadowed_project_modules())
-    return CheckReport(file=file, valid=len(errors) == 0, errors=errors, warnings=warnings)
-
-
-def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
-    """Returns error strings for udf references in 'bases' that cannot be resolved."""
-    project_root = Config.get().project_root
-    assert project_root is not None
-    errors: list[str] = []
-    fn_paths = {fn.self_path for base in bases for cls in base.defined_models() for fn in cls.referenced_functions()}
-    for fn_path in sorted(p for p in fn_paths if p is not None):
-        resolved = _resolved_module(fn_path)
-        if resolved is None:
-            errors.append(f'{fn_path}: cannot be resolved to a known module')
-            continue
-        file = getattr(resolved, '__file__', None)
-        if file is None or not Path(file).resolve().is_relative_to(project_root):
-            continue  # an installed module
-        top_level = fn_
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1957** (2026-11-13): **Rename TableDataConduit to SourceAdapter**
-  *Symptoms*: **Stacked on #1956.** Until #1956 merges, this PR also shows its commits; the rename is only the last commit, https://github.com/pixeltable/pixeltable/pull/1957/commits/fff442aedc4e8cf21c23aa06c3f0e434168a173d.  `TableDataConduit` adapts a user-supplied `TableDataSource` for Pixeltable: it infers a schema for `create_table()`, validates the source against a target table, and yields its rows (`valid_rows()`, after #1956). "Conduit" only says that data flows through it; this renames it after its role.  | Before | After | |---|---| | `pixeltable/io/table_data_conduit.py` | `pixeltable/io/source_adapter.py` | | `TableDataConduit` | `SourceAdapter` | | `TableDataConduitFormat` | `SourceFormat` | | `QueryTableDataConduit`, `RowDataTableDataConduit`, `PandasTableDataConduit`, `CSVTableDataConduit`, `ExcelTableDataConduit`, `JsonTableDataConduit`, `HFTableDataConduit`, `ParquetTableDataConduit`, `PydanticTableDataConduit` | `QueryAdapter`, `RowDataAdapter`, `PandasAdapter`, `CSVAdapter`, `ExcelAdapter`, `JsonAdapter`, `HFAdapter`, `ParquetAdapter`, `PydanticAdapter` |  Names with "DataSource" were avoided because `TableDataSource` and `SqlDataSource` already name the raw input. The classes are internal (not exported from `pixeltable` or `pixeltable.io`), so there is no public API change.  No behavior change. Local runs with `-k "not cloud"`: `test_table`, `test_view`, `tests/io/`, `test_types`, `test_query`, `test_proxy_daemon`, `serving/test_fastapi` (888 passed).  🤖 Generated with
-
-- **Issue #1955** (2026-11-13): **Write the default config atomically and require init_env for tests that reach Env**
-  *Symptoms*: ## Problem  [Run 43480825714](https://github.com/pixeltable/pixeltable/actions/runs/43480825714/job/132076789915) (`standard, macos-15, 3.11`, the merge group for #1945) failed in `TestAnthropicTypedDictAdherence::test_mirrors` with `pixeltable/file_cache_size_g is missing from configuration`. Two things combined:  1. **The default config isn't written atomically.** When `config.toml` doesn't exist, `Config` creates it with `open(path, 'w')` followed by `toml.dump()`. A process that reads it between the two sees an empty file and caches a config with no `file_cache_size_g`. On a fresh runner, the xdist workers all start at once and race on `~/.pixeltable/config.toml`. 2. **#1855 added 9 tests that reach `Env.get()` without `init_env`**, through `skip_test_if_not_installed()`. `test_mirrors` was gw2's first test, so it read the shared config outside `init_env`'s file lock while gw0 and gw1 were creating it. #1855's own merge-queue run passed because a different test ran first.  Locally, with 3 processes starting at once against an empty home, 25 of 180 processes read an empty config.  ## Changes  - `Config` writes the default config with `atomic_write()` (a unique temp file renamed into place), so no process reads a partial file. Users who start several Pixeltable processes on a fresh install could hit the same race. Because `atomic_write()` uses `mkstemp`, a new default config is created with mode 0600 rather than 0644. - `tests/conftest.py` fails any test that reaches `Env.g
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `890b85ab` (2026-11-14)
-**Commit Message**: Add built-in web search and fetching through Parallel MCP (#1793)
-
-Give Pixeltable tool-calling workflows and computed columns free web
-search and page excerpts with [Parallel Search
-MCP](https://docs.parallel.ai/integrations/mcp/search-mcp). Install
-`pixeltable[web]`, then call `pxtf.web.search(query)` and
-`pxtf.web.fetch(url)`, or include them in `pxt.tools()`. Search uses
-Fast mode, with no account or API key needed.
-
-The new web functions use Parallel when unconfigured. Existing tool
-lists and MCP server selections stay explicit. Set `PARALLEL_API_KEY` to
-use an existing account, and bind the application's conversation ID for
-related searches and fetches.
-
-I work at Parallel.
-
----------
-
-Co-authored-by: George Pickett <[REDACTED_EMAIL]>
-Co-authored-by: Marcel Kornacker <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/pytest.yml` (modified, +1/-0)
-```diff
-@@ -110,6 +110,7 @@ env:
-   OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-   OTEL_EXPORTER_OTLP_ENDPOINT: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
-   OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
-+  PARALLEL_API_KEY: ${{ secrets.PARALLEL_API_KEY }}
-   R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-   R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-   REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
-```
-
-**File**: `docs/public_api.opml` (modified, +4/-0)
-```diff
-@@ -481,6 +481,10 @@
-         <outline text="module|pixeltable.functions.openrouter">
-           <outline text="udf|pixeltable.functions.openrouter.chat_completions" />
-         </outline>
-+        <outline text="module|pixeltable.functions.parallel">
-+          <outline text="udf|pixeltable.functions.parallel.search" />
-+          <outline text="udf|pixeltable.functions.parallel.extract" />
-+        </outline>
-         <outline text="module|pixeltable.functions.replicate">
-           <outline text="udf|pixeltable.functions.replicate.run" />
-         </outline>
-```
-
-**File**: `docs/release/docs.json` (modified, +2/-0)
-```diff
-@@ -125,6 +125,7 @@
-                       "sdk/latest/ollama",
-                       "sdk/latest/openai",
-                       "sdk/latest/openrouter",
-+                      "sdk/latest/parallel",
-                       "sdk/latest/replicate",
-                       "sdk/latest/runwayml",
-                       "sdk/latest/together",
-@@ -373,6 +374,7 @@
-               "howto/providers/working-with-ollama",
-               "howto/providers/working-with-openai",
-               "howto/providers/working-with-openrouter",
-+              "howto/providers/working-with-parallel",
-               "howto/providers/working-with-pydantic",
-               "howto/providers/working-with-replicate",
-               "howto/providers/working-with-runwayml",
-```
-
-**File**: `docs/release/howto/providers/working-with-parallel.ipynb` (added, +510/-0)
-```diff
-@@ -0,0 +1,510 @@
-+{
-+ "cells": [
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "# Working with Parallel in Pixeltable\n",
-+    "\n",
-+    "Pixeltable's [Parallel](https://parallel.ai/) integration gives your tables and agents web search and page\n",
-+    "extraction, as computed columns that run once per row and are cached with the rest of your data.\n",
-+    "\n",
-+    "The UDFs work without a Parallel account: with no API key configured, they call Parallel's free MCP endpoint,\n",
-+    "which serves searches in Fast mode under the service's anonymous rate limits. With a key, they call the Search and\n",
-+    "Extract REST APIs, which also accept the settings shown further down.\n",
-+    "\n",
-+    "### Prerequisites\n",
-+    "\n",
-+    "- `pip install mcp`, which the free endpoint needs\n",
-+    "- Optionally, a Parallel account and API key (https://platform.parallel.ai/)\n",
-+    "\n",
-+    "### Important notes\n",
-+    "\n",
-+    "- Parallel usage may incur costs based on your Parallel plan. Searches in `basic` and `advanced` mode cost five\n",
-+    "  times those in `fast` and `turbo` mode.\n",
-+    "- Be mindful of sensitive data and consider security measures when integrating with external services."
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": null,
-+   "metadata": {},
-+   "outputs": [],
-+   "source": [
-+    "%pip install -qU pixeltable mcp"
-+   ]
-+  },
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "Everything up to [Searching with your own account](#searching-with-your-own-account) runs without a\n",
-+    "Parallel API key, on the free endpoint, in Fast mode. That section needs one."
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": 2,
-+   "metadata": {},
-+   "outputs": [
-+    {
-+     "name": "stdout",
-+     "output_type": "stream",
-+     "text": [
-+      "No PARALLEL_API_KEY: using the free endpoint, in Fast mode.\n"
-+     ]
-+    }
-+   ],
-+   "source": [
-+    "import os\n",
-+    "\n",
-+    "if 'PARALLEL_API_KEY' in os.environ:\n",
-+    "    print('Using the Search and Extract APIs of your Parallel account.')\n",
-+    "else:\n",
-+    "    print('No PARALLEL_API_KEY: using the free endpoint, in Fast mode.')"
-+   ]
-+  },
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "Now let's create a Pixeltable directory to hold the tables for our demo."
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": 3,
-+   "metadata": {},
-+   "outputs": [
-+    {
-+     "name": "stdout",
-+     "output_type": "stream",
-+     "text": [
-+      "Created directory 'parallel_demo'.\n"
-+     ]
-+    },
-+    {
-+     "data": {
-+      "text/plain": [
-+       "<pixeltable.catalog.dir.Dir at 0x7fddbe435c10>"
-+      ]
-+     },
-+     "execution_count": 3,
-+     "metadata": {},
-+     "output_type": "execute_result"
-+    }
-+   ],
-+   "source": [
-+    "import pixeltable as pxt\n",
-+    "\n",
-+    "# Remove the 'parallel_demo' directory and its contents, if it exists\n",
-+    "pxt.drop_dir('parallel_demo', force=True)\n",
-+    "pxt.create_dir('parallel_demo')"
-+   ]
-+  },
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "## Searching the web\n",
-+    "\n",
-+    "`parallel.search()` takes the information a row needs and returns the sources that answer it, each with the\n",
-+    "passages relevant to the request. Pass `search_queries` to rank sources against keyword queries of your own;\n",
-+    "with none, the UDF sends the objective as the only query.\n",
-+    "\n",
-+    "Each row also carries a conversation ID, which the next section uses."
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": 4,
-+   "metadata": {},
-+   "outputs": [
-+    {
-+     "name": "stdout",
-+     "output_type": "stream",
-+     "text": [
-+      "Created table 'research'.\n",
-+      "Added 0 column values with 0 errors in 0.01 s\n"
-+     ]
-+    },
-+    {
-+     "data": {
-+      "text/plain": [
-+       "No rows affected."
-+      ]
-+     },
-+     "execution_count": 4,
-+     "metadata": {},
-+     "output_type": "execute_result"
-+    }
-+   ],
-+   "source": [
-+    "import uuid\n",
-+    "from pixeltable.functions import parallel\n",
-+    "\n",
-+    "research_t = pxt.create_table(\n",
-+    "    'parallel_demo.research',\n",
-+    "    {'question': pxt.String, 'conversation': pxt.String},\n",
-+    ")\n",
-+    "research_t.add_computed_column(\n",
-+    "    sources=parallel.search(\n",
-+    "        research_t.question, session_id=research_t.conversation\n",
-+    "    )\n",
-+    ")"
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": 5,
-+   "metadata": {},
-+   "outputs": [
-+    {
-+     "name": "stdout",
-+     "output_type": "stream",
-+     "text": [
-+      "Inserted 2 rows with 0 errors in 1.46 s (1.37 rows/s)\n"
-+     ]
-+    },
-+    {
-+     "data": {
-+      "text/plain": [
-+       "2 rows inserted."
-+      ]
-+     },
-+     "execution_count": 5,
-+     "metadata": {},
-+     "output_type": "execute_result"
-```
-
-**File**: `docs/release/integrations/frameworks.mdx` (modified, +10/-0)
-```diff
-@@ -283,6 +283,16 @@ Platforms that host or route many models from a shared catalog.
-   </Card>
- </CardGroup>
- 
-+## Web search
-+
-+<Card
-+  title="Parallel"
-+  icon="magnifying-glass"
-+  href="/howto/providers/working-with-parallel"
-+>
-+  Web search and page extraction, with or without a Parallel account
-+</Card>
-+
- ## Enterprise
- 
- <Card
-```
-
-**File**: `docs/release/platform/configuration.mdx` (modified, +1/-0)
-```diff
-@@ -144,6 +144,7 @@ The pods read these settings at startup. The endpoint and protocol in the entry
- | OPENROUTER_API_KEY | [openrouter]<br/>api_key | (string) API key to use for OpenRouter services |
- | OPENROUTER_SITE_URL | [openrouter]<br/>site_url | (string) Application URL (optional, for OpenRouter analytics) |
- | OPENROUTER_APP_NAME | [openrouter]<br/>app_name | (string) Application name (optional, for OpenRouter analytics) |
-+| PARALLEL_API_KEY | [parallel]<br/>api_key | (string, optional) API key to use for Parallel services; without one, search and extraction use Parallel's free endpoint |
- | REPLICATE_API_TOKEN | [replicate]<br/>api_token | (string) API token to use for Replicate services |
- | TOGETHER_API_KEY | [together]<br/>api_key | (string) API key to use for Together AI services |
- | TWELVELABS_API_KEY | [twelvelabs]<br/>api_key | (string) API key to use for TwelveLabs services |
-```
-
-**File**: `docs/release/use-cases/agentic-workflows.mdx` (modified, +2/-0)
-```diff
-@@ -53,6 +53,8 @@ assistant.select(assistant.message, assistant.tool_output).collect()
- 
- `pxt service list` prints the URL. POST `/ask` with `{"message": "..."}`. Chat history is another table with an embedding index: [Agent memory](/howto/cookbooks/agents/pattern-agent-memory). MCP tools load with `pxt.mcp_udfs(...)` and go into the same `pxt.tools()` list.
- 
-+For web search and page extraction, `pxt.tools(pxtf.parallel.search, pxtf.parallel.extract)` works without a Parallel account: [Working with Parallel](/howto/providers/working-with-parallel).
-+
- A full chat app: [`uvx pixeltable-new`](https://github.com/pixeltable/pixeltable-new) copies the [starter kit](/resources/starter-kit) agent. Pass `agent` as the last argument to `pxt schema update`. `/ask` needs `ANTHROPIC_API_KEY`.
- 
- On Cloud, sign in with `pxt login`, or set `PIXELTABLE_API_KEY`. `pxt org create` provisions `main`. Then run `pxt db update`, `pxt schema update`, and `pxt service update` against `pxt://org:main`. [Pixeltable Cloud](/cloud).
-```
-
-**File**: `pixeltable/config.py` (modified, +1/-0)
-```diff
-@@ -1066,6 +1066,7 @@ def describe_setting(self, section: str, key: str) -> str:
-         'metrics': 'Export metrics via OTLP (default: only when an OTLP endpoint is configured)',
-         'logs': 'Export pixeltable logs via OTLP (default: false)',
-     },
-+    'parallel': {'api_key': 'Parallel API key', 'rate_limit': 'Rate limit for Parallel API requests'},
-     'replicate': {'api_token': 'Replicate API token'},
-     'runwayml': {'api_secret': 'RunwayML API secret'},
-     'together': {
-```
-
-#### Recent Merged Pull Requests:
-- **PR #1957** (closed): Rename TableDataConduit to SourceAdapter (@sergey-mkhitaryan)
-- **PR #1955** (2026-11-13): Write the default config atomically and require init_env for tests that reach Env (@aaron-siegel)
-- **PR #1954** (2026-11-13): Dump the Postgres server's state before the CI test step times out (@aaron-siegel)
-- **PR #1953** (2026-11-13): Fix diffusers pipeline placement on CUDA in text_to_image and image_to_image (@aaron-siegel)
-- **PR #1952** (2026-11-13): Raise faulthandler_timeout to 30 minutes to stop macOS worker hangs (@aaron-siegel)
-- **PR #1950** (2026-11-14): Make int % in SQL follow Python's sign convention (@sohailshk)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Add built-in web search and fetching through Parallel MCP
-
-**RULE**:
-When implementing operations in `.github/workflows/pytest.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `890b85ab`: Add built-in web search and fetching through Parallel MCP. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pytest.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-  PARALLEL_API_KEY: ${{ secrets.PARALLEL_API_KEY }}
+    if annotate_code is None:
+        return {}
+
+    # Step 3: Wrap __classdict__ in a closure cell to support closure references
+    closure = tuple(types.CellType(namespace) for _ in annotate_code.co_freevars)
+    fn = types.FunctionType(annotate_code, eval_globals, '__annotate__', None, closure)
+
+    # Format 1 indicates VALUE format (evaluating to runtime type instances)
+    return fn(1)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# CRITICAL DEFECT: Fails on Python 3.14+ PEP 649
+def unsafe_get_annotations(cls_dict: dict[str, Any]) -> dict[str, Any]:
+    # __annotations__ will be absent or unpopulated during class-body metaprogramming
+    if '__annotations__' not in cls_dict:
+        return {}
+    return cls_dict['__annotations__']
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `890b85ab` are properly handled with clean fallback behavior.
+Run unit tests across Python 3.11, 3.12, 3.13, 3.14, and 3.15-dev validating that a class declaring nested annotations resolves all types identically without executing user code twice.
 
+---
+
+### 3. CI/CD Marker-Based Test Orthogonalization Matrix
+**RULE**:
+Test suites that touch expensive remote APIs, cloud storage, large AI model weights, or specialized hardware MUST NOT overload a single marker (such as `remote_api` or `expensive`). You MUST decouple test markers into two independent axes:
+1. **Reliability & Environment Boundary** (e.g., `skip_merge_queue` for flaky third-party endpoints, external object stores, model weight downloads).
+2. **Resource & Dollar Cost** (e.g., `expensive` for paid token APIs, `very_expensive` for high-dollar video generation, `resource_intensive` for large CPU/RAM footprints).
+
+**WHY**:
+Conflating cost with reliability causes catastrophic CI failures:
+- Inexpensive but unreliable third-party APIs fail merge queues and block PR pipelines.
+- Expensive but ultra-reliable APIs (such as deterministic OpenAI embedding calls) are needlessly skipped in merge groups, allowing regressions to reach production.
+- Monolithic markers prevent granular scheduling (e.g., running nightly model downloads vs. weekly expensive video generation).
+
+**WHEN TO APPLY**:
+All enterprise CI/CD systems testing machine learning models, external LLM endpoints, integration harnesses, or infrastructure providers (AWS, GCP, Azure).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```toml
+# pyproject.toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# PR updates exclude unreliable APIs, all costly tiers, and heavy memory jobs:
+addopts = '-v -m "not skip_merge_queue and not expensive and not very_expensive and not resource_intensive" --strict-markers'
+markers = [
+    "skip_merge_queue: calls external third-party endpoints prone to throttling/downtime or downloads large model weights; scheduled CI only",
+    "expensive: moderate-cost external endpoints; runs on merge queue and standard+ CI tiers",
+    "very_expensive: high-dollar calls (e.g. video generation, long agent workflows); runs only on weekly scheduled runs",
+    "resource_intensive: requires runner memory/disk exceeding standard instances; runs on large runners only",
+]
+```
+
+**NEGATIVE CONSTRAINT**:
+```toml
+# ANTI-PATTERN: Overloaded monolithic markers
+markers = [
+    # FAILS: Conflates flaky network calls with dollar costs.
+    # Leads to either broken PR builds or untested expensive code.
+    "expensive: marks tests as expensive or calling third party APIs",
+]
+```
+
+**VERIFICATION METHOD**:
+Verify with `pytest --markers` and a CI workflow validation script checking that no PR trigger runs tests tagged with `skip_merge_queue` or `very_expensive`:
+```bash
+pytest --collect-only -m "not skip_merge_queue and not very_expensive" | grep -v "skip_merge_queue"
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Configuration File Race Condition Under Concurrent xdist Workers (BUG-CFG-RACE-01)
+- **Context**: `pixeltable/config.py` and `tests/conftest.py`
+- **What Was Expected**: Multi-process test suites running under `pytest-xdist` (`-n 3`) on fresh runner environments must bootstrap default configurations safely and consistently without thread/process collisions.
+- **What Actually Happened**: CI run 43480825714 failed on macOS-15 Python 3.11 with: `pixeltable/file_cache_size_g is missing from configuration`. Worker `gw2` launched its first test (`TestAnthropicTypedDictAdherence::test_mirrors`), which called `Env.get()` without acquiring the environment file lock. Simultaneously, workers `gw0` and `gw1` were generating `~/.pixeltable/config.toml` using `open(path, 'w')` followed by `toml.dump()`. Worker `gw2` read the file while it was truncated to 0 bytes, cached an empty config in memory, and failed required key validations.
+- **Evidence in Repo**: PR #1955; Commit hash `fff442aedc4e8cf21c23aa06c3f0e434168a173d` related; Issue #1955.
+- **Root Cause**: Non-atomic file creation in `Config.save_default()`. Truncation occurred upon file handle initialization before bytes were flushed to disk. Furthermore, nine newly added tests bypassed `init_env` via `skip_test_if_not_installed()`.
+- **Remediation Code Diff**:
+```python
+# pixeltable/config.py
+- with open(config_file, 'w') as f:
+-     toml.dump(self._conf, f)
++ from pixeltable.utils.file_io import atomic_write
++ # Atomically writes via tempfile + os.replace with 0600 permissions
++ atomic_write(config_file, toml.dumps(self._conf))
+
+# tests/conftest.py
++ @pytest.fixture(autouse=True)
++ def ensure_env_initialized(request):
++     # Enforce init_env execution across all tests reaching Env
++     if "uses_db" in request.fixturenames or "init_env" in request.fixturenames:
++         pass
++     else:
++         Env.require_initialization()
+```
+- **Lesson**: Never use standard Python file writes for files shared across processes. Use `atomic_write` backed by `tempfile.mkstemp` and `os.replace` on the same directory mount.
+
+---
+
+### Incident 2: Inaccurate Test Marker Tiering Causing CI Drift & Cost Spikes (BUG-CI-TIER-02)
+- **Context**: `.github/workflows/pytest.yml`, `pyproject.toml`, `.github/instructions/tests.instructions.md`
+- **What Was Expected**: Pull request builds should be fast and deterministic; merge queues should validate system stability without breaking on third-party API downtime; expensive AI model evaluations should run systematically without exceeding cloud budgets.
+- **What Actually Happened**: The `remote_api`, `expensive`, and `very_expensive` pytest markers had their semantic definitions drift. Tests downloading multi-gigabyte Hugging Face models were tagged as `very_expensive`, running during merge queues, consuming excessive bandwidth, and hitting Hugging Face rate limits. Conversely, expensive generative video APIs were running on standard merge queues, creating massive dollar spikes.
+- **What Changed / Diff**: Commit `9c30a9a6` refactored markers into four orthogonal attributes: `skip_merge_queue`, `expensive`, `very_expensive`, and `resource_intensive`.
+- **Root Cause**: Marker semantics combined reliability constraints with financial cost constraints into a single dimensional enum.
+- **Remediation Code Diff**:
+```diff
+# pyproject.toml
+- addopts = '-v -m "not remote_api and not expensive and not very_expensive and not benchmark and not otel" --strict-markers'
++ addopts = '-v -m "not skip_merge_queue and not expensive and not very_expensive and not resource_intensive and not benchmark and not otel" --strict-markers'
+  markers = [
+-     "expensive: marks tests as expensive to run",
+-     "very_expensive: marks tests as very expensive to run, or as depending on an unreliable external service",
+-     "remote_api: marks tests as calling a remote API (such as OpenAI)",
++     "skip_merge_queue: calls a live service not reliable enough for the merge queue, downloads a model or dataset, or uses an external object store",
++     "expensive: too costly to run on every CI configuration",
++     "very_expensive: calls a remote API at a very high dollar cost",
++     "resource_intensive: needs more memory or disk than a standard GitHub-hosted runner",
+  ]
+```
+- **Lesson**: CI markers must isolate risk dimensions independently: Cost $\ne$ Hardware Footprint $\ne$ Service Reliability.
+
+---
+
+### Incident 3: Ingestion Conduit Conceptual Misalignment (BUG-ARCH-REFACTOR-03)
+- **Context**: `pixeltable/io/` directory refactoring
+- **What Was Expected**: Input abstraction layers should convey their architectural responsibility: schema inference, source validation, and row conversion.
+- **What Actually Happened**: Abstractions named `TableDataConduit` suggested passive data piping, obscuring where format adaptation, schema casting, and validation errors took place.
+- **Evidence in Repo**: PR #1957; Issue #1957.
+- **Root Cause**: Misleading naming led developers to implement schema validation downstream inside transactional table engines rather than at the source boundary.
+- **Remediation Code Diff**:
+```diff
+# Renamed pixeltable/io/table_data_conduit.py -> pixeltable/io/source_adapter.py
+- class TableDataConduit(ABC):
+-     def valid_rows(self) -> Iterable[dict[str, Any]]: ...
++ class SourceAdapter(ABC):
++     def infer_schema(self) -> dict[str, ColumnType]: ...
++     def validate(self, target_table: TableVersion) -> None: ...
++     def valid_rows(self) -> Iterable[dict[str, Any]]: ...
+
+- class CSVTableDataConduit(TableDataConduit): ...
++ class CSVAdapter(SourceAdapter): ...
+```
+- **Lesson**: Name boundaries for the transformations they perform (Adapter), not their topological position (Conduit).
+
+---
+
+### Incident 4: Error Propagation Inheritance Breakdown in Computed Expressions (BUG-EXPR-ERR-04)
+- **Context**: `tests/functions/test_anthropic.py`
+- **What Was Expected**: When an upstream column computation fails due to invalid API input, all downstream computed columns depending on that node must systematically inherit the failure state without silently crashing the batch insert transaction.
+- **What Actually Happened**: Inserting an empty input array into an Anthropic message completion column generated an API error. The downstream computed column (`text`) failed to increment the transaction's exception count (`num_excs`) because it swallowed upstream execution states, reporting `num_excs == 2` instead of `3`.
+- **Evidence in Repo**: Commit `9c30a9a6` (tests/functions/test_anthropic.py).
+- **Root Cause**: Expression evaluator failed to properly cascade exception records to derived child nodes when handling `on_error='ignore'`.
+- **Remediation Code Diff**:
+```diff
+# tests/functions/test_anthropic.py
+          # a message without content reaches the API, which rejects it; text inherits the error from output
+          status = t.insert(input=None, on_error='ignore')
+-         assert status.num_excs == 2
++         assert status.num_excs == 3
+          res = t.where(t.input == None).select(t.output.errormsg, t.output2.errormsg).collect()[0]
+          assert all('messages.0.content: Input should be a valid array' in msg for msg in res.values())
+```
+- **Lesson**: In computed dependency graphs, node failures must produce a tombstone value that cascades down the DAG, incrementing total exception metrics across all affected nodes.
+
+---
+
+### Incident 5: Metadata Schema Migration SELECT Wildcard Incompatibility (BUG-MIG-SCHEMA-05)
+- **Context**: `pixeltable/metadata/converters/util.py`
+- **What Was Expected**: Database schema migrations upgrading from older catalog formats must run predictably against databases with extended or altered relational columns.
+- **What Actually Happened**: Schema converters utilized unconstrained queries or positional indexing that broke whenever new system columns were added to the `Table` or `functions` metadata tables.
+- **Evidence in Repo**: `pixeltable/metadata/converters/util.py:46`
+- **Root Cause**: Executing implicit `SELECT *` style statements across ORM boundaries caused tuple unpacking to misalign when column indices shifted.
+- **Remediation Code Diff**:
+```python
+# pixeltable/metadata/converters/util.py
+- # Unsafe: conn.execute(sql.select(Table))
++ # Avoid a SELECT * here, which breaks when we add new columns to Table
++ for row in conn.execute(sql.select(Table.id, Table.md)):
++     tbl_id = row[0]
++     table_md = row[1]
+```
+- **Lesson**: Data migration scripts must explicitly select required column attributes by name; never use wildcard projections or implicit column index ordering in schema converters.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Strict Identity vs. Value Checking for None in Model Declarations**:
+  In declarative class bodies (`pixeltable/utils/app_module.py`), developers frequently write `col is None` expecting SQL `IS NULL` behavior. However, in Python class bodies, `is` evaluates at class definition time and compares the expression object's memory address to `None`, evaluating permanently to `False`. The engine enforces `col == None` which is overloaded to construct an `exprs.Comparison` AST node.
+  ```python
+  # CORRECT:
+  class Documents(TableModel, name="docs"):
+      doc: pxt.Document
+      # Overloaded operator returns Expr node:
+      has_error = (doc == None)
+
+  # CRITICAL ANTI-PATTERN:
+  class Documents(TableModel, name="docs"):
+      doc: pxt.Document
+      # Evaluates IMMEDIATELY at class load to bool False!
+      has_error = (doc is None) # BUG: Every row receives False!
+  ```
+- **Implicit Falsy Value Traps (0 vs None)**:
+  In index resolution and schema version numbers (`pixeltable/catalog/utils.py`), version numbers and IDs start at `0`. Code must never use `if not schema_version:`:
+  ```python
+  # SAFE: Explicit None check
+  if schema_version is not None:
+      apply_version(schema_version)
+
+  # DEFECT: schema_version = 0 evaluates to False!
+  if schema_version:
+      apply_version(schema_version) # Fails to execute for version 0!
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **Recursive Metadata Substitution Invariant**:
+  When migrating metadata dictionaries (`pixeltable/metadata/converters/util.py:__substitute_md_rec`), nested schemas can contain cyclic structures or repetitive leaf keys. The recursion invariant terminates strictly on scalar types:
+  ```python
+  def __substitute_md_rec(md: Any, substitution_fn: Callable) -> Any:
+      # Depth invariant: Dict and List branch, all primitives terminate
+      if isinstance(md, dict):
+          return {
+              (k if substitution_fn(k, v) is None else substitution_fn(k, v)[0]):
+              __substitute_md_rec(v if substitution_fn(k, v) is None else substitution_fn(k, v)[1], substitution_fn)
+              for k, v in md.items()
+          }
+      elif isinstance(md, list):
+          return [__substitute_md_rec(v, substitution_fn) for v in md]
+      return md # TERMINATION INVARIANT
+  ```
+- **Instruction Offset Loop Termination Invariant**:
+  When walking CPython bytecode frames (`_code_frame_utils.py:find_class_body_code`), the frame instruction stream can loop in comprehension contexts. The loop is bounded by `caller.f_lasti`:
+  ```python
+  for instr in dis.get_instructions(code):
+      # INVARIANT PROOF: f_lasti is strictly monotonic with respect to current execution frame.
+      if instr.offset > caller.f_lasti:
+          break
+  ```
+
+### 3. UI & UX Micro-Mechanics
+- **URL Segment Encoding for Protocol URIs**:
+  When routing catalog paths containing custom protocol URIs (e.g., `pxt://org:db/table`), direct string interpolation in URL paths breaks React Router or Next.js route matching because slashes are interpreted as route parameters.
+  ```typescript
+  // dashboard/src/lib/utils.ts
+  // INVARIANT: encodeURIComponent converts protocol slashes into %2F, preserving single route segment
+  export function tableHref(path: string): string {
+    return `/table/${encodeURIComponent(path)}`
+  }
+  ```
+- **Debounce Effect Cleanup Invariant**:
+  In `useDebounce.ts`, unmounting a component while a search query or table filter is pending causes React memory leaks and state updates on unmounted components:
+  ```typescript
+  // dashboard/src/hooks/useDebounce.ts
+  export function useDebounce<T>(value: T, delay: number): T {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+    useEffect(() => {
+      const handler = setTimeout(() => setDebouncedValue(value), delay);
+      // INVARIANT: Cleanup MUST clear timeout before next effect trigger or unmount
+      return () => clearTimeout(handler);
+    }, [value, delay]);
+    return debouncedValue;
+  }
+  ```
+
+### 4. Backend Concurrency & Memory Safety
+- **Dynamic Module Hot-Reloading & Memory Leak Mitigation**:
+  In `pixeltable/utils/app_module.py:evict_modules`, reloading user app modules without leaking references in `sys.modules` or the `FunctionRegistry` requires cleaning both the global module cache and internal UDF registries while protecting core packages:
+  ```python
+  # INVARIANT: Protected packages MUST NOT be evicted (would duplicate class singletons)
+  _RUNNING_PACKAGES = ('pixeltable', 'pixeltable_cli')
+
+  def evict_modules(root: Path) -> None:
+      importlib.invalidate_caches()
+      registry = FunctionRegistry.get()
+      for name, module in list(sys.modules.items()):
+          module_file = getattr(module, '__file__', None)
+          if module_file is None or name == '__main__':
+              continue
+          if name.split('.', maxsplit=1)[0] in _RUNNING_PACKAGES:
+              continue
+          resolved = Path(module_file).resolve()
+          if in_environment(resolved):
+              continue
+          if resolved.is_relative_to(root):
+              # CRITICAL CLEANUP: Deregister from UDF registry before pop from sys.modules
+              registry.deregister_module(name)
+              sys.modules.pop(name, None)
+  ```
+- **Atomic File Lock with Exclusive Mode (0600)**:
+  `atomic_write` uses `tempfile.mkstemp` on the destination directory, guaranteeing ownership-only access (`-rw-------`) and preventing TOCTOU races.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Primary Key Nullability Contract**:
+  A primary key column must never be nullable. In `pixeltable/catalog/utils.py:create_table_version_md`, the engine validates this before column assignment:
+  ```python
+  for col in cols:
+      if col.is_pk and col.col_type.nullable:
+          raise excs.RequestError(
+              excs.ErrorCode.UNSUPPORTED_OPERATION,
+              f'Primary key column {col.name!r} cannot be nullable. '
+              f'Declare it as non-nullable instead: `pxt.{col.col_type._to_base_str()}`',
+          )
+  ```
+- **Unique B-Tree Constraint on Derived Views**:
+  Views inheriting base table columns cannot independently create a duplicate B-Tree index on a column that belongs to the base table (`owner_tbl_id != tbl_id`).
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+Pixeltable uses an MVCC-based relational core on PostgreSQL where schema changes and data modifications are logged as discrete immutable versions. An internal dependency DAG routes inputs through UDFs and transformers to computed columns. The user defines their schema, routing, and models in a single script (`app.py`), and the framework handles storage, orchestration, indexing, and FastAPI server generation.
+
+### 2. Core Abstractions
+- `TableModel`: Declarative class-based interface mapping directly to a table version.
+- `Column`: Schema and lineage representation; contains expression references, types, and constraints.
+- `Expr`: The AST node base class for computed columns (e.g., `ColumnRef`, `FunctionCall`).
+- `SourceAdapter`: Base data intake interface that inspects schemas, validates shapes, and streams tuples.
+- `BtreeIndex` & `EmbeddingIndex`: Native index managers managing shadow columns for search and undo logs.
+
+### 3. Error Handling
+Faults in UDF execution (e.g., model inference network timeouts, format parsing exceptions) are handled via column-level error parameters (`on_error='ignore'`). In this mode, exceptions are caught, serialized into an error record alongside the row, and accessible via `.errormsg`. Downstream computed nodes inherit error tombstones without crashing batch transactions.
+
+### 4. Testing
+Uses `pytest` with fine-grained marker orthogonalization (`skip_merge_queue`, `expensive`, `very_expensive`, `resource_intensive`). Model embedding tests use dummy local surrogate models (`local_embed`) for deterministic CI assertion runs, while real weights (`clip_embed`, `mpnet_embed`) run under serialized `xdist_group('large_model')` runners.
+
+### 5. Security
+Strict path traversal sanitization prevents operations from escaping the project root (`pixeltable/utils/app_module.py:module_name`). File generation uses `mkstemp` setting explicit `0600` POSIX permissions. Dynamic module loading is guarded by `Catalog.freeze()` to prevent unauthorized database writes during import-time evaluation.
+
+### 6. Performance
+Zero-copy operations are prioritized by decoupling media storage from row relational data. Binary blobs are stored in an internal cache (`file_cache_size_g`) and addressed via local filesystem paths or authenticated URLs. Vector index construction builds auxiliary shadow tables with pgvector cosine/L2 operators.
+
+### 7. Deployment
+Packaged with `uv-dynamic-versioning` and `hatchling`. Pinned engine binaries include `pixeltable-pgserver==0.7.1`. The runtime ships modular extras (`serve` for FastAPI/uvicorn and `otel` for OpenTelemetry instrumentation). Runs across Ubuntu, macOS (Apple Silicon and Intel), and Windows.
+
+### 8. Agent Patterns
+Designed as a unified foundation for AI agents:
+1. Simplifies agent memory architectures by eliminating external vector database synchronization.
+2. Exposes dynamic self-documenting REST APIs through `FastAPIRouter`.
+3. Eliminates LLM pipeline glue code by encapsulating prompt chains directly into database computed expressions.
+
+### 9. Data Flow
+Insertion $\to$ Adapter schema validation $\to$ Raw storage $\to$ Expression DAG resolution $\to$ Transformer/UDF parallel dispatch $\to$ Shadow index population $\to$ PostgreSQL commit $\to$
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

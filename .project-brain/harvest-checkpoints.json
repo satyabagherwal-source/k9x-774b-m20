@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T02:50:59.752Z",
+  "last_updated": "2026-11-17T03:17:00.147Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "8487f964c05272ad0c3ccd7b8380ca153df19234d7e7e1371565516f13ef3b81",
-      "verified_at": "2026-11-16T23:35:10.972Z",
+      "content_hash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
+      "verified_at": "2026-11-17T03:16:04.779Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:35:10.972Z"
+      "last_updated": "2026-11-17T03:16:04.779Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "f04197cf8ca846a1be2bc99ab2b8b6152cdda0ce358b4c9d8a53d6a2e980014c",
-      "verified_at": "2026-11-14T10:16:40.734Z",
+      "content_hash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
+      "verified_at": "2026-11-17T03:16:54.249Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T10:16:40.734Z"
+      "last_updated": "2026-11-17T03:16:54.249Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "f1663694eff71b1a65c9f77a74eac927fff0e872aee3d95ec3fe9da2a0ba9d66",
-      "verified_at": "2026-11-15T19:32:16.469Z",
+      "content_hash": "34482e4587bbf435f05efc8a983a2d7f3c04df87be35d67055574e3adb060605",
+      "verified_at": "2026-11-17T03:17:00.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T19:32:16.469Z"
+      "last_updated": "2026-11-17T03:17:00.147Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",

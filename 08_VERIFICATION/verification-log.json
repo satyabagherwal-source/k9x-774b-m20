@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-9CHN",
-    "timestamp": "2026-11-14T09:52:56.699Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "1c8c1b55fa8f3f0cca7039753627796ca968d1749bf9563744ef9b51aa4c55e6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-3ME5",
-    "timestamp": "2026-11-14T10:16:29.213Z",
-    "repository": "onehumanbeing/esp32-iphone-agent",
-    "learningId": "learn-github-onehumanbeing-esp32-iphone-agent",
-    "contentHash": "1996f210080579bd3fe7e6c40bed85f74ab1f8e120128f6637a362621e92a6f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-3O16",
-    "timestamp": "2026-11-14T10:16:31.338Z",
-    "repository": "adventists-ai/Sophon-Realtime-v1",
-    "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
-    "contentHash": "b341513ce2f8c9a693175b7f06d075bede692503bbef50ff19bfa9137a133469",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-3TEI",
     "timestamp": "2026-11-14T10:16:38.298Z",
     "repository": "software-mansion/react-native-gesture-handler",
@@ -7490,6 +7445,51 @@
     "repository": "GitoxideLabs/gitoxide",
     "learningId": "learn-github-gitoxidelabs-gitoxide",
     "contentHash": "559ecc8d64813df2fb55dbabf7c2655dc5f5471a26e77352f565013f0aa72f8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-EJ34",
+    "timestamp": "2026-11-17T03:16:04.768Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-FL9A",
+    "timestamp": "2026-11-17T03:16:54.238Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-FPT4",
+    "timestamp": "2026-11-17T03:17:00.136Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "34482e4587bbf435f05efc8a983a2d7f3c04df87be35d67055574e3adb060605",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

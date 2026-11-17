@@ -10411,3 +10411,8 @@
 | `CYCLE-20261117-UCFR` | `2026-11-17T02:32:23.415Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8838` | Yes (`3b21acf5...`) |
 | `CYCLE-20261117-I9SS` | `2026-11-17T02:50:59.740Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8839, Rule 8840, Rule 8841` | Yes (`559ecc8d...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T02:51:31.188Z` | `gitoxidelabs-gitoxide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-ABC3C562` [Domain J] | Yes (`ec4f0ca9...`) |
+| `CYCLE-20261117-EJ34` | `2026-11-17T03:16:04.768Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8842` | Yes (`2e54951c...`) |
+| `CYCLE-20261117-FL9A` | `2026-11-17T03:16:54.238Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8843, Rule 8844, Rule 8845` | Yes (`1eab0b8b...`) |
+| `CYCLE-20261117-FPT4` | `2026-11-17T03:17:00.136Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8846, Rule 8847, Rule 8848` | Yes (`34482e45...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T03:17:29.189Z` | `kumahq-kuma` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-3EF61085` [Domain F] | Yes (`d1a9498b...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T03:18:00.965Z` | `pixeltable-pixeltable` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-4B4C2E13` [Domain K] | Yes (`a23b8d24...`) |

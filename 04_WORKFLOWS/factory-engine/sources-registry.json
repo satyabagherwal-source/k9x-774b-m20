@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T03:08:05.654Z",
-    "lastVerified": "2026-11-17T03:08:05.654Z",
+    "lastChecked": "2026-11-17T03:17:03.419Z",
+    "lastVerified": "2026-11-17T03:17:03.419Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -467,22 +467,21 @@
     "revisionIdentifier": "99d7433f"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T02:24:52.795Z",
-    "lastVerified": "2026-11-17T02:24:52.795Z",
+    "lastChecked": "2026-11-17T03:16:03.789Z",
+    "lastVerified": "2026-11-17T03:16:03.789Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "8487f964c05272ad0c3ccd7b8380ca153df19234d7e7e1371565516f13ef3b81",
+    "contentHash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6b0edc20"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1128,9 +1127,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-16T21:23:20.262Z",
+    "lastChecked": "2026-11-17T03:15:55.234Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-16T21:23:20.262Z"
+    "lastVerified": "2026-11-17T03:15:55.234Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -3641,22 +3640,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kumahq-kuma": {
-    "name": "kuma",
+    "name": "kumahq/kuma",
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T21:06:33.416Z",
-    "lastVerified": "2026-11-15T21:06:33.416Z",
+    "lastChecked": "2026-11-17T03:15:56.457Z",
+    "lastVerified": "2026-11-17T03:15:56.457Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "f04197cf8ca846a1be2bc99ab2b8b6152cdda0ce358b4c9d8a53d6a2e980014c",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e3849aea"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -3668,9 +3666,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-15T09:49:45.190Z",
+    "lastChecked": "2026-11-17T03:15:45.235Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-15T09:49:45.190Z"
+    "lastVerified": "2026-11-17T03:15:45.235Z"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
     "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -4486,14 +4484,14 @@
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T19:32:15.419Z",
-    "lastVerified": "2026-11-15T19:32:15.419Z",
+    "lastChecked": "2026-11-17T03:16:01.510Z",
+    "lastVerified": "2026-11-17T03:16:01.510Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "f1663694eff71b1a65c9f77a74eac927fff0e872aee3d95ec3fe9da2a0ba9d66",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "34482e4587bbf435f05efc8a983a2d7f3c04df87be35d67055574e3adb060605",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12289,9 +12287,9 @@
   "miso-belica-justext": {
     "name": "justext",
     "officialUrl": "https://github.com/miso-belica/justext",
-    "lastChecked": "2026-11-12T10:52:25.611Z",
+    "lastChecked": "2026-11-17T03:15:47.717Z",
     "revisionIdentifier": "5fadda90",
-    "lastVerified": "2026-11-12T10:52:25.611Z"
+    "lastVerified": "2026-11-17T03:15:47.717Z"
   },
   "alexdrone-render": {
     "name": "Render",
@@ -12786,9 +12784,9 @@
   "alyssaxuu-later": {
     "name": "later",
     "officialUrl": "https://github.com/alyssaxuu/later",
-    "lastChecked": "2026-11-13T13:34:24.472Z",
+    "lastChecked": "2026-11-17T03:15:50.221Z",
     "revisionIdentifier": "26e79369",
-    "lastVerified": "2026-11-13T13:34:24.472Z"
+    "lastVerified": "2026-11-17T03:15:50.221Z"
   },
   "testing-library-react-testing-library": {
     "name": "react-testing-library",

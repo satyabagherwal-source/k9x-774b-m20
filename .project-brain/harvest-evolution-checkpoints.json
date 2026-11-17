@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:08:07.601Z",
+  "last_updated": "2026-11-17T03:18:02.783Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T03:08:05.768Z",
@@ -718,8 +718,8 @@
       "staged_for_review": 1
     },
     "kumahq-kuma-learnings.md": {
-      "processed_at": "2026-11-13T07:47:42.770Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-17T03:17:29.189Z",
+      "promoted_canonical": 1,
       "staged_for_review": 1
     },
     "vi-websocat-learnings.md": {
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-16T22:04:07.053Z",
+      "processed_at": "2026-11-17T03:18:01.985Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1523,9 +1523,9 @@
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
-      "processed_at": "2026-11-15T19:32:20.935Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-17T03:18:00.966Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-orcarouter-orcacyber-nano-1.0-learnings.md": {
       "processed_at": "2026-11-13T04:31:52.288Z",
@@ -3233,7 +3233,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1440,
-  "total_canonical_promoted": 294,
-  "total_staged_for_review": 1132
+  "total_dossiers_evaluated": 1443,
+  "total_canonical_promoted": 296,
+  "total_staged_for_review": 1134
 }
