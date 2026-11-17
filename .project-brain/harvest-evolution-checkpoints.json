@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T04:05:50.451Z",
+  "last_updated": "2026-11-17T04:14:01.797Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T03:08:05.768Z",
@@ -1113,9 +1113,9 @@
       "staged_for_review": 1
     },
     "webpack-webpack-learnings.md": {
-      "processed_at": "2026-11-12T12:50:51.248Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-17T04:14:00.154Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "touchlab-xcode-kotlin-learnings.md": {
       "processed_at": "2026-11-12T12:50:51.297Z",
@@ -1913,7 +1913,7 @@
       "staged_for_review": 0
     },
     "electron-electron-learnings.md": {
-      "processed_at": "2026-11-13T15:19:16.621Z",
+      "processed_at": "2026-11-17T04:14:00.829Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2978,9 +2978,9 @@
       "staged_for_review": 1
     },
     "fujiapple852-trippy-learnings.md": {
-      "processed_at": "2026-11-15T13:09:09.777Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-17T04:13:59.662Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-liquidai-lfm3-vl-2b-learnings.md": {
       "processed_at": "2026-11-15T13:27:57.286Z",
@@ -3248,7 +3248,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1461,
-  "total_canonical_promoted": 297,
-  "total_staged_for_review": 1150
+  "total_dossiers_evaluated": 1464,
+  "total_canonical_promoted": 298,
+  "total_staged_for_review": 1152
 }

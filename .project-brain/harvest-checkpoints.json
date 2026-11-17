@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T04:05:44.919Z",
+  "last_updated": "2026-11-17T04:13:25.535Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2976,14 +2976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webpack-webpack",
-      "content_hash": "e4e2dc2708de500861458c06a43de149cb9b542639ae762dad3b4d520c371266",
-      "verified_at": "2026-11-12T12:50:32.106Z",
+      "content_hash": "118b98a3505d434a443b9ca9b7f67fa0e4d07c00063be19b1f6264b056f74f76",
+      "verified_at": "2026-11-17T04:13:24.626Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T12:50:32.106Z"
+      "last_updated": "2026-11-17T04:13:24.626Z"
     },
     "rollup/rollup": {
       "repository": "rollup/rollup",
@@ -6861,14 +6861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fujiapple852-trippy",
-      "content_hash": "ef6b98551c1aace4ac9c5906f029a5585d68c99c383d15dcecf371c54ad32cc5",
-      "verified_at": "2026-11-15T13:08:57.218Z",
+      "content_hash": "73432a9b46f68d257d167511b5358cce7c6e923736e1d930493df56e891b9b8f",
+      "verified_at": "2026-11-17T04:13:18.404Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T13:08:57.218Z"
+      "last_updated": "2026-11-17T04:13:18.404Z"
     },
     "BuilderIO/builder": {
       "repository": "BuilderIO/builder",
@@ -12711,14 +12711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-electron-electron",
-      "content_hash": "f557062aca9923d45328ba84b33a84467648eb87f629f770219736edfb7c9f02",
-      "verified_at": "2026-11-13T15:18:32.584Z",
+      "content_hash": "f1d9f1fd930105489bfea33e157a716c8dab03ca5227a659e13b4ba79a52c0bc",
+      "verified_at": "2026-11-17T04:13:25.534Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:18:32.584Z"
+      "last_updated": "2026-11-17T04:13:25.534Z"
     },
     "mistralai/Timestral-209M": {
       "repository": "mistralai/Timestral-209M",

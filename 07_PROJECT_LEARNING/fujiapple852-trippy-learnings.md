@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  
 > **Source**: github ([https://github.com/fujiapple852/trippy](https://github.com/fujiapple852/trippy))  
-> **Source Version**: `2dd303a1`  
+> **Source Version**: `6adca02f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T13:08:56.377Z  
+> **Timestamp**: 2026-11-17T04:13:18.001Z  
 > **Learning ID**: `learn-github-fujiapple852-trippy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fujiapple852/trippy](https://github.com/fujiapple852/trippy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T13:08:51.577Z  
+> **Harvest Timestamp**: 2026-11-17T04:13:17.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -447,6 +447,7 @@ pub enum IoOperation {
     SetNonBlocking,
     Select,
     RecvFrom,
+    PeekSender,
     Read,
     Shutdown,
     LocalAddr,
@@ -478,6 +479,7 @@ impl Display for IoOperation {
             Self::SetNonBlocking => write!(f, "set non-blocking"),
             Self::Select => write!(f, "select"),
             Self::RecvFrom => write!(f, "recv from"),
+            Self::PeekSender => write!(f, "peek sender"),
             Self::Read => write!(f, "read"),
             Self::Shutdown => write!(f, "shutdown"),
             Self::LocalAddr => write!(f, "local addr"),
@@ -1703,258 +1705,459 @@ impl Ipv4 {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dd303a1` (2026-11-14)
-**Commit Message**: chore: update dependencies to latest semver compatible version
+### Incident Patch 1: `6adca02f` (2026-11-14)
+**Commit Message**: chore: remove all ignored `hickory` advisories
 
-**File**: `Cargo.lock` (modified, +171/-135)
+**File**: `deny.toml` (modified, +0/-12)
 ```diff
-@@ -104,6 +104,15 @@ dependencies = [
-  "num-traits",
+@@ -11,16 +11,4 @@ db-urls = ["https://github.com/rustsec/advisory-db"]
+ ignore = [
+   # allow unmaintained paste crate
+   { id = "RUSTSEC-2024-0436" },
+-  # Allow Hickory advisories which are not exploitable
+-  { id = "RUSTSEC-2026-0119" },
+-  { id = "RUSTSEC-2026-0487" },
+-  { id = "RUSTSEC-2026-0489" },
+-  { id = "RUSTSEC-2026-0490" },
+-  { id = "RUSTSEC-2026-0491" },
+-  { id = "RUSTSEC-2026-0505" },
+-  { id = "RUSTSEC-2026-0511" },
+-  { id = "RUSTSEC-2026-0512" },
+-  { id = "RUSTSEC-2026-0514" },
+-  { id = "RUSTSEC-2026-0530" },
+-  { id = "RUSTSEC-2026-0531" },
  ]
- 
-+[[package]]
-+name = "ar_archive_writer"
-+version = "0.5.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "523e5e187fff36fcb8d1d19ccf0ca4ca43ec3d158316057f66dc6f72716bc5ec"
-+dependencies = [
-+ "object",
-+]
-+
- [[package]]
- name = "arrayvec"
- version = "0.7.8"
-@@ -136,7 +145,7 @@ checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -217,9 +226,9 @@ dependencies = [
- 
- [[package]]
- name = "bumpalo"
--version = "3.20.3"
-+version = "3.20.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
-+checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
- 
- [[package]]
- name = "by_address"
-@@ -259,9 +268,9 @@ dependencies = [
- 
- [[package]]
- name = "cc"
--version = "1.8.0"
-+version = "1.11.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
-+checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
- dependencies = [
-  "find-msvc-tools",
-  "shlex",
-@@ -324,9 +333,9 @@ dependencies = [
- 
- [[package]]
- name = "clap-cargo"
--version = "0.19.0"
-+version = "0.19.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ac0fb996b5acdd543c8b8ff723c719715d437fdce607ac1fda01c977f568020d"
-+checksum = "304ac95d4e2bb9bb63e3dfb55c1f744c599140d7992b756288dc440f1dea1a55"
- dependencies = [
-  "anstyle",
-  "clap",
-@@ -363,7 +372,7 @@ dependencies = [
-  "heck",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -631,7 +640,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "strsim",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -642,7 +651,7 @@ checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
- dependencies = [
-  "darling_core",
-  "quote",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -659,9 +668,9 @@ checksum = "5729f5117e208430e437df2f4843f5e5952997175992d1414f94c57d61e270b4"
- 
- [[package]]
- name = "deranged"
--version = "0.5.8"
-+version = "0.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
-+checksum = "9e9de72ce2ad1f90dc62fa25f0f430ef85eb4b0d8fa0be4f30373bc40a21d28e"
- 
- [[package]]
- name = "derive_more"
-@@ -709,7 +718,7 @@ checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -753,9 +762,9 @@ checksum = "34aa73646ffb006b8f5147f3dc182bd4bcb190227ce861fc4a4844bf8e3cb2c0"
- 
- [[package]]
- name = "encoding_rs"
--version = "0.8.42"
-+version = "0.8.44"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
-+checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
- dependencies = [
-  "cfg-if",
-  "core_detect",
-@@ -788,15 +797,15 @@ dependencies = [
- 
- [[package]]
- name = "equivalent"
--version = "1.0.2"
-+version = "1.0.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
-+checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
- 
- [[package]]
- name = "errno"
--version = "0.3.14"
-+version = "0.3.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
-+checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
- dependencies = [
-  "libc",
-  "windows-sys",
-@@ -873,15 +882,15 @@ dependencies = [
- 
- [[package]]
- name = "find-msvc-tools"
--version = "0.1.14"
-+version = "0.1.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
-+checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
- 
- [[package]]
- name = "finl_unicode"
--version = "1.5.0"
-+version = "1.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "80bb028c8b4148c9ee0cca68fcd9add6044e81d3619f48577ddf13a263d047a2"
-+checksum = "09ded33109e99472f809cb7495544506eea45e366725dacf2a383e184f660456"
- 
- [[package]]
- name = "fixedbitset"
-@@ -891,9 +900,9 @@ checksum = "0ce7134b9999ecaf8bcd65542e436736ef32ddca1b3e06094cb6ec5755203b80"
- 
- [[package]]
- name = "fixedbitset"
--version = "0.5.7"
-+version = "0.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99"
-+checksum = "5905ec755cc8386d7928353e4d356d2be3e89e81e5ca01fe630a1ca4d08dc175"
- 
- [[package]]
- name = "flume"
-@@ -958,7 +967,7 @@ version = "
 ```
 
 ---
 
-### Incident Patch 2: `14490828` (2026-11-14)
-**Commit Message**: chore: upgrade `comfy-table` to `8.0.1`
+### Incident Patch 2: `687d2b12` (2026-11-14)
+**Commit Message**: chore: major upgrade of `hickory-resolver` to `0.26`
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `.config/trippy.dic` (modified, +1/-0)
 ```diff
-@@ -390,9 +390,9 @@ checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
+@@ -45,6 +45,7 @@ accessor
+ addr
+ addrs
+ asn
++async
+ boolean
+ calc
+ checksum
+```
+
+**File**: `Cargo.lock` (modified, +332/-87)
+```diff
+@@ -75,7 +75,7 @@ version = "1.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
+ dependencies = [
+- "windows-sys",
++ "windows-sys 0.61.2",
+ ]
  
  [[package]]
- name = "comfy-table"
--version = "7.2.2"
-+version = "8.0.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "958c5d6ecf1f214b4c2bbbbf6ab9523a864bd136dcf71a7e8904799acfe1ad47"
-+checksum = "b96a46ad395a5e00676eddaca4a45ed78b29c08be5a878d35e4b071c625637dd"
+@@ -86,7 +86,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
  dependencies = [
+  "anstyle",
+  "once_cell_polyfill",
+- "windows-sys",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -397,6 +397,16 @@ version = "1.0.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
+ 
++[[package]]
++name = "combine"
++version = "4.6.9"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "4356eba6976435498d05a311ee9fc486da3bc81c200d3f0d7dd9703b41913f92"
++dependencies = [
++ "bytes",
++ "memchr",
++]
++
+ [[package]]
+ name = "comfy-table"
+ version = "8.0.1"
+@@ -438,7 +448,7 @@ checksum = "e96a4956774c13c126a8b5af4daa79384f4d826534c95a02d76afb39e2ab64e3"
+ dependencies = [
+  "encode_unicode",
+  "libc",
+- "windows-sys",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -450,6 +460,16 @@ dependencies = [
   "unicode-segmentation",
-  "unicode-width",
+ ]
+ 
++[[package]]
++name = "core-foundation"
++version = "0.9.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "91e195e091a93c46f7102ec7818a2aa394e1e1771c3ab4825963fa03e45afb8f"
++dependencies = [
++ "core-foundation-sys",
++ "libc",
++]
++
+ [[package]]
+ name = "core-foundation"
+ version = "0.10.1"
+@@ -730,7 +750,7 @@ dependencies = [
+  "cfg-if",
+  "libc",
+  "socket2",
+- "windows-sys",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -783,18 +803,6 @@ dependencies = [
+  "encoding_rs",
+ ]
+ 
+-[[package]]
+-name = "enum-as-inner"
+-version = "0.6.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a1e6a265c649f3f5979b601d26f1d05ada116434c87741c9493cb56218f76cbc"
+-dependencies = [
+- "heck",
+- "proc-macro2",
+- "quote",
+- "syn 2.0.119",
+-]
+-
+ [[package]]
+ name = "equivalent"
+ version = "1.0.3"
+@@ -808,7 +816,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
+ dependencies = [
+  "libc",
+- "windows-sys",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -818,7 +826,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "de48cc4d1c1d97a20fd819def54b890cadde72ed3ad0c614822a0a433361be96"
+ dependencies = [
+  "cfg-if",
+- "windows-sys",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -999,6 +1007,17 @@ dependencies = [
+  "pin-project-lite",
+ ]
+ 
++[[package]]
++name = "futures-macro"
++version = "0.3.34"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn 3.0.10",
++]
++
+ [[package]]
+ name = "futures-sink"
+ version = "0.3.34"
+@@ -1018,6 +1037,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
+ dependencies = [
+  "futures-core",
++ "futures-macro",
+  "futures-task",
+  "pin-project-lite",
+  "slab",
+@@ -1041,7 +1061,7 @@ checksum = "a542e1b7ac1f3d62c5777d430d66eca9cb59e813c46b86e29fa9ce94ff9a4810"
+ dependencies = [
+  "bitflags 2.13.2",
+  "libc",
+- "windows-sys",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -1128,46 +1148,71 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e712f64ec3850b98572bffac52e2c6f282b29fe6c5fa6d42334b30be438d95c1"
+ 
+ [[package]]
+-name = "hickory-proto"
+-version = "0.24.4"
++name = "hickory-net"
++version = "0.26.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "92652067c9ce6f66ce53cc38d1169daa36e6e7eb7dd3b63b5103bd9d97117248"
++checksum = "c480823ed7c2c5d0f09c41020cb6b7c28029ce60ec42dc942158dcf22f8e0a4d"
+ dependencies = [
+  "async-trait",
+  "cfg-if",
+  "data-encoding",
+- "enum-as-inner",
+  "futures-channel",
+  "futures-io",
+  "futures-util",
++ "hickory-proto",
+  "idna",
+  "ipnet",
+- "once_cell",
+- "rand 0.8.8",
+- "thiserror 1.0.69",
++ "jni",
++ "rand 0.10.3",
++ "thiserror 2.0.21",
+  "tinyvec",
+  "tokio",
+  "tracing",
+  "url",
+ ]
+ 
++[[package]]
++name = "hickory-proto"
++version = "0.26.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "12b92608f679a6fa515dd1d15c1ff89443026e391200a2c840c7afcba482893d"
++dependencies = [
++ "data-encoding",
++ "idna",
++ "ipnet",
++ "jni",
++ "once_cell",
++ "prefix-trie",
++ "rand 0.10.3",
++ "ring",
++ "thiserror 2.0.21",
++ "tinyvec",
++ "tracing",
++ "url",
++]
++
+ [[package]]
+ name = "hickory-resolver"
+-version = "0.24.4"
++version = "0.26.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cbb117a1ca520e111743ab2f6688eddee69db4e0ea242545a604dce8a66fd22e"
++checksum = "3f3da5255c95d5a716857d54b5b8f4e8d67c3484d3beaaaae2ce25063b3ba981"
+ dependencies = [
+  "cfg-if",
+  "futures-
 ```
 
 **File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -39,7 +39,7 @@ clap = { version = "4.5.60", default-features = false }
- clap-cargo = "0.19.0"
- clap_complete = "4.6.0"
- clap_mangen = "0.3.0"
--comfy-table = { version = "7.1.4", default-features = false }
-+comfy-table = { version = "8.0.1", default-features = false }
- crossbeam = "0.8.4"
- crossterm = { version = "0.29.0", default-features = false }
- csv = "1.4.0"
+@@ -49,7 +49,7 @@ encoding_rs_io = "0.1.7"
+ etcetera = "0.11.0"
+ futures-concurrency = "7.6.3"
+ hex-literal = "1.1.0"
+-hickory-resolver = "0.24.4"
++hickory-resolver = "0.26.3"
+ humantime = "2.3.0"
+ indexmap = { version = "2.14.0", default-features = false }
+ insta = "1.47.2"
 ```
 
-**File**: `crates/trippy-tui/src/report/table.rs` (modified, +3/-3)
+**File**: `crates/trippy-dns/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -1,6 +1,6 @@
- use crate::app::TraceInfo;
- use comfy_table::presets::{ASCII_MARKDOWN, UTF8_FULL};
--use comfy_table::{ContentArrangement, Table};
-+use comfy_table::{ContentArrangement, Table, TableStyle};
- use itertools::Itertools;
- use tracing::instrument;
- use trippy_dns::Resolver;
-@@ -29,15 +29,15 @@ fn run_report_table<R: Resolver>(
-     info: &TraceInfo,
-     report_cycles: usize,
-     resolver: &R,
--    preset: &str,
-+    preset: TableStyle,
- ) -> anyhow::Result<()> {
-     let trace = super::wait_for_round(&info.data, report_cycles)?;
-     let columns = vec![
-         "Hop", "IPs", "Addrs", "Loss%", "Snt", "Recv", "Last", "Avg", "Best", "Wrst", "StdDev",
-     ];
-     let mut table = Table::new();
-     table
--        .load_preset(preset)
-+        .load_style(preset)
-         .set_content_arrangement(ContentArrangement::Dynamic)
-         .set_header(columns);
-     for hop in trace.hops() {
+@@ -19,6 +19,7 @@ hickory-resolver.workspace = true
+ itertools.workspace = true
+ parking_lot.workspace = true
+ thiserror.workspace = true
++tokio = { workspace = true, features = ["rt", "net", "time"] }
+ 
+ [dev-dependencies]
+ anyhow.workspace = true
+```
+
+**File**: `crates/trippy-dns/src/adapter.rs` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++use hickory_resolver::TokioResolver;
++use hickory_resolver::config::{ResolverConfig, ResolverOpts};
++use hickory_resolver::lookup::Lookup;
++use hickory_resolver::lookup_ip::LookupIp;
++use hickory_resolver::net::NetError;
++use hickory_resolver::net::runtime::TokioRuntimeProvider;
++use hickory_resolver::proto::rr::{Name, RecordType};
++use std::net::IpAddr;
++use tokio::runtime::{Builder, Runtime};
++
++/// Synchronous wrapper to Hickory's async resolver implementation.
++pub struct Resolver {
++    runtime: Runtime,
++    async_resolver: TokioResolver,
++}
++
++impl Resolver {
++    pub fn new(config: ResolverConfig, options: ResolverOpts) -> std::io::Result<Self> {
++        let runtime = Builder::new_current_thread().enable_all().build()?;
++        let mut builder =
++            TokioResolver::builder_with_config(config, TokioRuntimeProvider::default());
++        *builder.options_mut() = options;
++        let async_resolver = builder.build().map_err(std::io::Error::other)?;
++        Ok(Self {
++            runtime,
++            async_resolver,
++        })
++    }
++
++    pub fn lookup_ip(&self, host: &str) -> Result<LookupIp, NetError> {
++        let lookup = self.async_resolver.lookup_ip(host);
++        self.runtime.block_on(lookup)
++    }
++
++    pub fn reverse_lookup(&self, addr: IpAddr) -> Result<Lookup, NetError> {
++        let lookup = self.async_resolver.reverse_lookup(Name::from(addr));
++        self.runtime.block_on(lookup)
++    }
++
++    pub fn lookup(&self, name: Name, record_type: RecordType) -> Result<Lookup, NetError> {
++        let lookup = self.async_resolver.lookup(name, record_type);
++        self.runtime.block_on(lookup)
++    }
++}
+```
+
+**File**: `crates/trippy-dns/src/lazy_resolver.rs` (modified, +46/-33)
+```diff
+@@ -92,14 +92,16 @@ impl Resolver for DnsResolver {
+ /// Private impl of resolver.
+ mod inner {
+     use super::{Config, IpAddrFamily, ResolveMethod};
++    use crate::adapter::Resolver;
+     use crate::resolver::{AsInfo, DnsEntry, Error, Resolved, ResolvedIpAddrs, Result, Unresolved};
+     use crossbeam::channel::{Receiver, Sender, bounded};
+-    use hickory_resolver::config::{LookupIpStrategy, ResolverConfig, ResolverOpts};
+-    use hickory_resolver::error::{ResolveError, ResolveErrorKind};
+-    use hickory_resolver::proto::error::ProtoError;
+-    use hickory_resolver::proto::rr::RecordType;
++    use hickory_resolver::config::{
++        CLOUDFLARE, GOOGLE, LookupIpStrategy, ResolverConfig, ResolverOpts,
++    };
++    use hickory_resolver::net::{DnsError, NetError};
++    use hickory_resolver::proto::ProtoError;
++    use hickory_resolver::proto::rr::{Name, RData, RecordType};
+     use hickory_resolver::system_conf::read_system_conf;
+-    use hickory_resolver::{Name, Resolver};
+     use itertools::{Either, Itertools};
+     use parking_lot::RwLock;
+     use std::collections::HashMap;
+@@ -180,14 +182,17 @@ mod inner {
+                 options.ip_strategy = ip_strategy;
+                 let res = match config.resolve_method {
+                     ResolveMethod::Resolv => {
+-                        let (resolver_cfg, mut options) = read_system_conf()?;
++                        let (resolver_cfg, mut options) =
++                            read_system_conf().map_err(std::io::Error::other)?;
+                         options.timeout = config.timeout;
+                         options.ip_strategy = ip_strategy;
+                         Resolver::new(resolver_cfg, options)
+                     }
+-                    ResolveMethod::Google => Resolver::new(ResolverConfig::google(), options),
++                    ResolveMethod::Google => {
++                        Resolver::new(ResolverConfig::udp_and_tcp(&GOOGLE), options)
++                    }
+                     ResolveMethod::Cloudflare => {
+-                        Resolver::new(ResolverConfig::cloudflare(), options)
++                        Resolver::new(ResolverConfig::udp_and_tcp(&CLOUDFLARE), options)
+                     }
+                     ResolveMethod::System => unreachable!(),
+                 }?;
+@@ -377,7 +382,12 @@ mod inner {
+             DnsProvider::TrustDns(resolver) => match resolver.reverse_lookup(addr) {
+                 Ok(name) => {
+                     let hostnames = name
+-                        .into_iter()
++                        .answers()
++                        .iter()
++                        .filter_map(|record| match &record.data {
++                            RData::PTR(ptr) => Some(ptr.clone()),
++                            _ => None,
++                        })
+                         .map(|mut s| {
+                             s.0.set_fqdn(false);
+                             s
+@@ -394,8 +404,8 @@ mod inner {
+                         CacheEntry::new(DnsEntry::Resolved(Resolved::Normal(addr, hostnames)), now)
+                     }
+                 }
+-                Err(err) => match err.kind() {
+-                    ResolveErrorKind::NoRecordsFound { .. } => {
++                Err(err) => match err {
++                    NetError::Dns(DnsError::NoRecordsFound(_) | DnsError::ResponseCode(_)) => {
+                         if with_asinfo {
+                             let as_info = lookup_asinfo(resolver, addr).unwrap_or_default();
+                             CacheEntry::new(
+@@ -406,7 +416,7 @@ mod inner {
+                             CacheEntry::new(DnsEntry::NotFound(Unresolved::Normal(addr)), now)
+                         }
+                     }
+-                    ResolveErrorKind::Timeout => CacheEntry::new(DnsEntry::Timeout(addr), now),
++                    NetError::Timeout => CacheEntry::new(DnsEntry::Timeout(addr), now),
+                     _ => CacheEntry::new(DnsEntry::Failed(addr), now),
+                 },
+             },
+@@ -439,14 +449,15 @@ mod inner {
+             addr.octets().iter().rev().join(".")
+         );
+         let name = Name::from_str(query.as_str()).map_err(proto_error)?;
+-        let response = resolver
+-            .lookup(name, RecordType::TXT)
+-            .map_err(resolve_error)?;
+-        let data = response
++        let response = resolver.lookup(name, RecordType::TXT).map_err(net_error)?;
++        let bytes = response
++            .answers()
+             .iter()
+-            .next()
++            .find_map(|record| match &record.data {
++                RData::TXT(bytes) => Some(bytes),
++                _ => None,
++            })
+             .ok_or_else(|| Error::QueryAsnOriginFailed)?;
+-        let bytes = data.as_txt().ok_or_else(|| Error::QueryAsnOriginFailed)?;
+         Ok(bytes.to_string())
+     }
+ 
+@@ -461,29 +472,31 @@ mod inner {
+                 .format(".")
+         );
+         let name = Name::from_str(query.as_str()).map_err(proto_error)?;
+-        let response = resolver
+-
+```
+
+**File**: `crates/trippy-dns/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -71,6 +71,7 @@
+ //! ```
+ #![forbid(unsafe_code)]
+ 
++mod adapter;
+ mod config;
+ mod lazy_resolver;
+ mod resolver;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1925** (2026-11-15): Ci pin GitHub actions (@fujiapple852)
+- **PR #1923** (2026-11-15): ci: run simulation tests on FreeBSD, NetBSD and OpenBSD (@fujiapple852)
+- **PR #1920** (2026-11-15): refactor(core): remove unsafe `recv_from_info_buf` (@fujiapple852)
 - **PR #1919** (2026-11-14): Chore upgrade deps (@fujiapple852)
 - **PR #1918** (2026-11-14): chore: bump MSRV to 1.92 (#1917) (@fujiapple852)
-- **PR #1915** (2026-11-14): Clippy lints rust 1.100 and allow `hickory` advisories (@fujiapple852)
-- **PR #1914** (2026-11-14): chore: bump toml from 1.1.8+spec-1.1.0 to 1.2.1+spec-1.1.0 (@dependabot[bot])
-- **PR #1913** (closed): chore: bump toml from 1.1.8+spec-1.1.0 to 1.2.0+spec-1.1.0 (@dependabot[bot])
-- **PR #1912** (2026-11-14): chore: bump tun-rs from 2.8.13 to 2.8.18 (@dependabot[bot])
+- **PR #1916** (2026-11-15): chore: major upgrade of `hickory-resolver` to `0.26` (@fujiapple852)
 
 ---
 
@@ -1968,91 +2171,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. update dependencies to latest semver compatible version
-
-**RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fujiapple852/trippy. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `2dd303a1`: update dependencies to latest semver compatible version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-[[package]]
-name = "ar_archive_writer"
-version = "0.5.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "523e5e187fff36fcb8d1d19ccf0ca4ca43ec3d158316057f66dc6f72716bc5ec"
-dependencies = [
- "object",
-]
-
- "syn 3.0.10",
-version = "3.20.4"
-checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
-version = "1.11.2"
-checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
-version = "0.19.1"
-checksum = "304ac95d4e2bb9bb63e3dfb55c1f744c599140d7992b756288dc440f1dea1a55"
- "syn 3.0.10",
- "syn 3.0.10",
- "syn 3.0.10",
-version = "0.5.9"
-checksum = "9e9de72ce2ad1f90dc62fa25f0f430ef85eb4b0d8fa0be4f30373bc40a21d28e"
- "syn 3.0.10",
-version = "0.8.44"
-checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
-version = "1.0.3"
-checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
-version = "0.3.15"
-checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
-version = "0.1.15"
-checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
-version = "1.5.1"
-checksum = "09ded33109e99472f809cb7495544506eea45e366725dacf2a383e184f660456"
-version = "0.5.9"
-checks
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
- "syn 3.0.8",
-version = "3.20.3"
-checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
-version = "1.8.0"
-checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
-version = "0.19.0"
-checksum = "ac0fb996b5acdd543c8b8ff723c719715d437fdce607ac1fda01c977f568020d"
- "syn 3.0.8",
- "syn 3.0.8",
- "syn 3.0.8",
-version = "0.5.8"
-checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
- "syn 3.0.8",
-version = "0.8.42"
-checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
-version = "1.0.2"
-checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
-version = "0.3.14"
-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
-version = "0.1.14"
-checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
-version = "1.5.0"
-checksum = "80bb028c8b4148c9ee0cca68fcd9add6044e81d3619f48577ddf13a263d047a2"
-version = "0.5.7"
-checksum = "1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99"
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dd303a1` are properly handled with clean fallback behavior.

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T04:05:50.345Z",
-  "total_verified_learnings": 8840,
+  "last_updated": "2026-11-17T04:14:01.669Z",
+  "total_verified_learnings": 8842,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19739,
+  "total_items": 19753,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112321,10 +112321,10 @@
       "relative_path": "08_VERIFICATION/electron-electron-verification-protocol-empirical-defect-shield-for-electron-ele.md",
       "title": "Verification Protocol: Empirical Defect Shield for electron/electron",
       "repository": "electron/electron",
-      "source_version": "cb318e5a",
-      "content_hash": "75bab693f3e83fd8511bf3bb5845f5981cf5ef2e1b7ca11b3d54fdd21a4a73b5",
+      "source_version": "8c1db351",
+      "content_hash": "d5d86e1d17bb72e007c5aee6ee445a667bf80e9b1176b9958a854befd395b72d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:18:32.870Z"
+      "persisted_at": "2026-11-17T04:13:25.943Z"
     },
     "candidate_directive-runtimes-finish-internal-call-request-on-validation-error": {
       "item_id": "candidate_directive-runtimes-finish-internal-call-request-on-validation-error",
@@ -112478,9 +112478,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for electron-electron-learnings",
       "repository": "electron-electron-learnings",
       "source_version": "HEAD",
-      "content_hash": "4a444276be899da5ae0a3d52b588f91374786a52914de37c6ffab8f3bcce0f6e",
+      "content_hash": "bd27b00a12d40df5156a86e88d48f35b60491cc6154a034f96f80151f661b122",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:19:17.008Z"
+      "persisted_at": "2026-11-17T04:14:01.669Z"
     },
     "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants",
@@ -243973,8 +243973,8 @@
       "slug": "fujiapple852-trippy",
       "platform": "github",
       "source_url": "https://github.com/fujiapple852/trippy",
-      "source_version": "2dd303a1",
-      "content_hash": "ef6b98551c1aace4ac9c5906f029a5585d68c99c383d15dcecf371c54ad32cc5",
+      "source_version": "6adca02f",
+      "content_hash": "73432a9b46f68d257d167511b5358cce7c6e923736e1d930493df56e891b9b8f",
       "dossier_path": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
       "promoted_rules": [
@@ -243989,7 +243989,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T13:08:57.063Z",
+      "verified_at": "2026-11-17T04:13:18.240Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244031,10 +244031,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-quality-verification-intelligence-fujiapple852-trippy-core-i.md",
       "title": "Quality & Verification Intelligence: fujiapple852/trippy Core Invariants",
       "repository": "fujiapple852/trippy",
-      "source_version": "2dd303a1",
-      "content_hash": "c894e9379456a7ae301137b9a15d39a75c63be9753ac68931b4b4d1595279dfd",
+      "source_version": "6adca02f",
+      "content_hash": "2d94a3b0e05bb8e8e698031856d9e7f6eac6e81da30a01f9adf4cba52696eff1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:08:57.474Z"
+      "persisted_at": "2026-11-17T04:13:18.571Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy",
@@ -244108,9 +244108,9 @@
       "title": "Quality & Verification Intelligence: fujiapple852-trippy-learnings Core Invariants",
       "repository": "fujiapple852-trippy-learnings",
       "source_version": "HEAD",
-      "content_hash": "6501cdb1f8ea33dcea57f6d3c4902212556db439ee6080e0e9a610a5b53d9be9",
+      "content_hash": "28838a8f72eba3ffd12977c6811fdb9d58bf57cc5605db00501c58514e4a6a08",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:09:10.169Z"
+      "persisted_at": "2026-11-17T04:14:00.008Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy-learnings",
@@ -263507,6 +263507,220 @@
       "content_hash": "8333e99e738ad24ea5e5d6bf105a777846c6705b39218774be52b8743f637388",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T04:05:50.225Z"
+    },
+    "learn-github-webpack-webpack": {
+      "learning_id": "learn-github-webpack-webpack",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "webpack/webpack",
+      "repository": "webpack/webpack",
+      "slug": "webpack-webpack",
+      "platform": "github",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "82b8a937",
+      "content_hash": "118b98a3505d434a443b9ca9b7f67fa0e4d07c00063be19b1f6264b056f74f76",
+      "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8867,
+          "title": "hold syntax fixtures to scaling, async and module behavior, mangling, resi",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T04:13:24.431Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8867": {
+      "learning_id": "rule-8867",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8867,
+      "title": "hold syntax fixtures to scaling, async and module behavior, mangling, resi",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "82b8a937",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T04:13:24.431Z"
+    },
+    "candidate_directive-hold-syntax-fixtures-to-scaling-async-and-module-behavior-mangling-resi": {
+      "item_id": "candidate_directive-hold-syntax-fixtures-to-scaling-async-and-module-behavior-mangling-resi",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G9GK-hold-syntax-fixtures-to-scaling-async-and-module-behavior-mangling-resi.md",
+      "title": "hold syntax fixtures to scaling, async and module behavior, mangling, resi",
+      "repository": "webpack/webpack",
+      "source_version": "82b8a937",
+      "content_hash": "a6882df44da022c18b08772ef06b3517aa287d33496f6fbcbb1cfa5bf2f805dc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:13:24.840Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webpack-webpack-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-webpack-webpack-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webpack-webpack-technical-construction-intelligence-webpack-webpack-core-invaria.md",
+      "title": "Technical Construction Intelligence: webpack/webpack Core Invariants",
+      "repository": "webpack/webpack",
+      "source_version": "82b8a937",
+      "content_hash": "d97d35108e171f0388c8d0473dbca80bb865f8d461d8e9617a6daa601e5124d0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:13:24.986Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-webpack-webpack": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webpack-webpack",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/webpack-webpack-verification-protocol-empirical-defect-shield-for-webpack-webpac.md",
+      "title": "Verification Protocol: Empirical Defect Shield for webpack/webpack",
+      "repository": "webpack/webpack",
+      "source_version": "82b8a937",
+      "content_hash": "6f0ecda646e8b01c149cf0b3756c60a326eb04ef4e0e417278fc3680bf6fea31",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T04:13:25.116Z"
+    },
+    "learn-github-electron-electron": {
+      "learning_id": "learn-github-electron-electron",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "electron/electron",
+      "repository": "electron/electron",
+      "slug": "electron-electron",
+      "platform": "github",
+      "source_url": "https://github.com/electron/electron",
+      "source_version": "8c1db351",
+      "content_hash": "f1d9f1fd930105489bfea33e157a716c8dab03ca5227a659e13b4ba79a52c0bc",
+      "dossier_path": "07_PROJECT_LEARNING/electron-electron-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/electron-electron-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8868,
+          "title": "make natives code cache generation deterministic",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T04:13:25.361Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8868": {
+      "learning_id": "rule-8868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8868,
+      "title": "make natives code cache generation deterministic",
+      "source_url": "https://github.com/electron/electron",
+      "source_version": "8c1db351",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T04:13:25.361Z"
+    },
+    "candidate_directive-make-natives-code-cache-generation-deterministic": {
+      "item_id": "candidate_directive-make-natives-code-cache-generation-deterministic",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GA4L-make-natives-code-cache-generation-deterministic.md",
+      "title": "make natives code cache generation deterministic",
+      "repository": "electron/electron",
+      "source_version": "8c1db351",
+      "content_hash": "b56fc0006e0e824af878a94613c0b0ad9748d3bc912ec429ed825c354a380d74",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:13:25.702Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-electron-electron-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-electron-electron-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-electron-electron-technical-construction-intelligence-electron-electron-core-inv.md",
+      "title": "Technical Construction Intelligence: electron/electron Core Invariants",
+      "repository": "electron/electron",
+      "source_version": "8c1db351",
+      "content_hash": "b495ed5e9964ff0e90e760f3d9a677707619a430a6baaba0985faea30d3705e8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:13:25.822Z"
+    },
+    "candidate_directive-test-hold-syntax-fixtures-to-scaling-async-and-module-behavior-mangling-resi": {
+      "item_id": "candidate_directive-test-hold-syntax-fixtures-to-scaling-async-and-module-behavior-mangling-resi",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H0XH-test-hold-syntax-fixtures-to-scaling-async-and-module-behavior-mangling-resi.md",
+      "title": "test: hold syntax fixtures to scaling, async and module behavior, mangling, resi",
+      "repository": "webpack-webpack-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61b86907ee7b02c02a9aa0ccbf2586568dcaf8046ec05abef54f2f3e87112cc7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:14:00.449Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webpack-webpack-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-webpack-webpack-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webpack-webpack-learnings-technical-construction-intelligence-webpack-webpack-le.md",
+      "title": "Technical Construction Intelligence: webpack-webpack-learnings Core Invariants",
+      "repository": "webpack-webpack-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c7f009ca26c387b0a008e2724b3d448ea936bd98b41027baef58a3b158da5abc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:14:00.570Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-webpack-webpack-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webpack-webpack-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/webpack-webpack-learnings-verification-protocol-empirical-defect-shield-for-webp.md",
+      "title": "Verification Protocol: Empirical Defect Shield for webpack-webpack-learnings",
+      "repository": "webpack-webpack-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b67c662d0eee1903b7b405553c9ff00e83fbe31169e821f2967b124930161065",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T04:14:00.702Z"
+    },
+    "candidate_directive-build-make-natives-code-cache-generation-deterministic": {
+      "item_id": "candidate_directive-build-make-natives-code-cache-generation-deterministic",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H1O8-build-make-natives-code-cache-generation-deterministic.md",
+      "title": "build: make natives code cache generation deterministic",
+      "repository": "electron-electron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "130dabc85b2b89ff03c638453d4b62406242c163786fe1ac941ab399e2a2992a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:14:01.412Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-electron-electron-learnings-technical-construction-intelligence-electron-electro.md",
+      "title": "Technical Construction Intelligence: electron-electron-learnings Core Invariants",
+      "repository": "electron-electron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "796dc78d54e045b23eecab38ebeeb9af8a240217a379e11d159ae35443a4f4ae",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:14:01.534Z"
     }
   },
   "ai-builder-brain": {

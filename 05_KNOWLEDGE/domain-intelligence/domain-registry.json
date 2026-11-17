@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T04:05:50.225Z",
-  "total_records": 1435,
+  "last_updated": "2026-11-17T04:14:01.534Z",
+  "total_records": 1440,
   "domains": {
     "A": {
       "total": 9,
@@ -44,7 +44,7 @@
       ]
     },
     "D": {
-      "total": 617,
+      "total": 618,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -662,7 +662,8 @@
         "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar",
+        "DOM-D-2B088993"
       ]
     },
     "E": {
@@ -982,7 +983,7 @@
       ]
     },
     "H": {
-      "total": 327,
+      "total": 331,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1310,7 +1311,11 @@
         "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-core-invariants",
         "domain_intelligence-technical-construction-intelligence-vitejs-vite-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-webpack-webpack-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-electron-electron-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-webpack-webpack-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants"
       ]
     },
     "I": {
@@ -20527,8 +20532,8 @@
       "title": "Quality & Verification Intelligence: fujiapple852/trippy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-quality-verification-intelligence-fujiapple852-trippy-core-i.md",
       "repository": "fujiapple852/trippy",
-      "content_hash": "c894e9379456a7ae301137b9a15d39a75c63be9753ac68931b4b4d1595279dfd",
-      "created_at": "2026-11-15T13:08:57.474Z"
+      "content_hash": "2d94a3b0e05bb8e8e698031856d9e7f6eac6e81da30a01f9adf4cba52696eff1",
+      "created_at": "2026-11-17T04:13:18.571Z"
     },
     "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants",
@@ -20536,8 +20541,8 @@
       "title": "Quality & Verification Intelligence: fujiapple852-trippy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-learnings-quality-verification-intelligence-fujiapple852-tri.md",
       "repository": "fujiapple852-trippy-learnings",
-      "content_hash": "6501cdb1f8ea33dcea57f6d3c4902212556db439ee6080e0e9a610a5b53d9be9",
-      "created_at": "2026-11-15T13:09:10.169Z"
+      "content_hash": "28838a8f72eba3ffd12977c6811fdb9d58bf57cc5605db00501c58514e4a6a08",
+      "created_at": "2026-11-17T04:14:00.008Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants",
@@ -25152,6 +25157,84 @@
       "repository": "fabio-rovai-open-ontologies-learnings",
       "content_hash": "8333e99e738ad24ea5e5d6bf105a777846c6705b39218774be52b8743f637388",
       "created_at": "2026-11-17T04:05:50.225Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webpack-webpack-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-webpack-webpack-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: webpack/webpack Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webpack-webpack-technical-construction-intelligence-webpack-webpack-core-invaria.md",
+      "repository": "webpack/webpack",
+      "content_hash": "d97d35108e171f0388c8d0473dbca80bb865f8d461d8e9617a6daa601e5124d0",
+      "created_at": "2026-11-17T04:13:24.986Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-electron-electron-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-electron-electron-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: electron/electron Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-electron-electron-technical-construction-intelligence-electron-electron-core-inv.md",
+      "repository": "electron/electron",
+      "content_hash": "b495ed5e9964ff0e90e760f3d9a677707619a430a6baaba0985faea30d3705e8",
+      "created_at": "2026-11-17T04:13:25.822Z"
+    },
+    "DOM-D-2B088993": {
+      "record_id": "DOM-D-2B088993",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): fujiapple852/trippy",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  \n> **Source**: github ([https://github.com/fujiapple852/trippy](https://github.com/fujiapple852/trippy))  \n> **Source Version**: `6adca02f`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "155d8c307230a3b8bd48c27e5e652ca340c2d7e1328fc7aaa354a408d2b714e4",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  \n> **Source**: github ([https://github.com/fujiap -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  \n> **Source**: github ([https://github.com/fujiap",
+      "provenance": {
+        "source_uri": "project://fujiapple852-trippy/fujiapple852-trippy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T04:13:29.999Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (fujiapple852-trippy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of fujiapple852-trippy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T04:13:59.644Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webpack-webpack-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-webpack-webpack-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: webpack-webpack-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webpack-webpack-learnings-technical-construction-intelligence-webpack-webpack-le.md",
+      "repository": "webpack-webpack-learnings",
+      "content_hash": "c7f009ca26c387b0a008e2724b3d448ea936bd98b41027baef58a3b158da5abc",
+      "created_at": "2026-11-17T04:14:00.570Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: electron-electron-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-electron-electron-learnings-technical-construction-intelligence-electron-electro.md",
+      "repository": "electron-electron-learnings",
+      "content_hash": "796dc78d54e045b23eecab38ebeeb9af8a240217a379e11d159ae35443a4f4ae",
+      "created_at": "2026-11-17T04:14:01.534Z"
     }
   }
 }

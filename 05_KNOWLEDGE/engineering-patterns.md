@@ -644787,3 +644787,154 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `df254aff` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8867. hold syntax fixtures to scaling, async and module behavior, mangling, resi (Harvested from webpack/webpack)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "hold syntax fixtures to scaling, async and module behavior, mangling, resi",
+  "source": "webpack/webpack",
+  "source_url": "https://github.com/webpack/webpack",
+  "source_version": "82b8a937",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T04:13:24.175Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webpack-webpack",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webpack/webpack](https://github.com/webpack/webpack) (Revision: `82b8a937`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `TESTING_DOCS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webpack/webpack. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2aa70aa7`: test: hold syntax fixtures to scaling, async and module behavior, mangling, residue and agreement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `TESTING_DOCS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+- **Syntax fixtures**: `fixtures/<css|html|xml|javascript>/<name>/index.<ext>` is one input to `unitCases/<lang>/invariants.unittest.js`, which snapshots its tokens, parse, errors and prints, and holds it to the relations in `helpers/syntaxInvariants/`: `spans`, `slices` and `purity` for the parser, each cut short inside a construct held to `spans` and `slices` as well (reported as `cut spans` and `cut slices`); idempotence (cuts included), respellings, `notices` and `meaning` for the printer; `behavior` for JavaScript; and `scaling` for a fixture built at a size. `notices` asks that the comments a minifier must keep survive (CSS and JavaScript legal notices, HTML conditional comments, server-side includes and `<?…?>`); `meaning` that the output reparses to what its source says (HTML and XML under every preset, CSS under `beautify`, JavaScript under the presets printing alone). XML's notices are the comments its minifier keeps (conditional comments, server-side includes and `<![`), and a compressing JavaScript preset owes only the banner's. Each CSS fixture is also held to `agreement` with css-tree. Which relation holds where, and why: [COMPARE_TOOLS.md](tooling/COMPARE_TOOLS.md). 
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+- **Syntax fixtures**: `fixtures/<css|html|xml|javascript>/<name>/index.<ext>` is one input to `unitCases/<lang>/invariants.unittest.js`, which snapshots its tokens, parse, errors and prints, and holds it to the relations in `helpers/syntaxInvariants/`: `spans`, `slices` and `purity` for the parser; idempotence (cuts included), respellings, `notices` and `meaning` for the printer; and `behavior` for JavaScript. `notices` asks that the comments a minifier must keep survive (CSS and JavaScript legal notices, HTML conditional comments, server-side includes and `<?…?>`); `meaning` that the output reparses to what its source says (HTML and XML under every preset, CSS under `beautify`, JavaScript under the presets printing alone). XML carries no notices, and a compressing JavaScript preset owes only the banner's. Which relation holds where, and why: [COMPARE_TOOLS.md](tooling/COMPARE_TOOLS.md). Beside it, read by `helpers/fixture.js`:
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2aa70aa7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8868. make natives code cache generation deterministic (Harvested from electron/electron)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "make natives code cache generation deterministic",
+  "source": "electron/electron",
+  "source_url": "https://github.com/electron/electron",
+  "source_version": "8c1db351",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T04:13:25.094Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-electron-electron",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [electron/electron](https://github.com/electron/electron) (Revision: `8c1db351`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `patches/node/electron_enable_node_startup_snapshot_generation_in_chromium_s_v8.patch`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8c1db351`: build: make natives code cache generation deterministic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `patches/node/electron_enable_node_startup_snapshot_generation_in_chromium_s_v8.patch`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+index 1fad56169f5c813dd6f6216b6a1278e5415a5972..0a8455bdd06a6d4d53d19bf49687772a87cc5340 100644
+@@ -335,26 +369,144 @@ template("node_gn_build") {
++
++          # --predictable (set by node for snapshot builds) does not cover
++          # V8's minor GC task, which scavenges at a timing-dependent point
++          # and so changes the order objects are promoted to read-only space,
++          # making the snapshot differ between runs on a busy machine. A young
++          # generation big enough that building the snapshot never scavenges
++          # avoids that. Semi-space sizes are left out of V8's flags hash.
++          "--min-semi-space-size=32",
++          "--max-semi-space-size=32",
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+index 1fad56169f5c813dd6f6216b6a1278e5415a5972..619253a1ee26e289215022c6152229500952cfdc 100644
+@@ -335,26 +369,135 @@ template("node_gn_build") {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8c1db351` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-UZ39",
-    "timestamp": "2026-11-14T12:57:43.461Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "5ad6a3fb093a824e03a87d8d0ae390eb8305dad382be63d4f294141791fb3ac6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-Z6VV",
-    "timestamp": "2026-11-14T13:28:59.803Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "e2ab85eb99f87c7cb7e6d06a8e333f2bf11747f7edfb5513efff42ca7db3c02b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-ZDJL",
-    "timestamp": "2026-11-14T13:29:08.433Z",
-    "repository": "dosco/graphjin",
-    "learningId": "learn-github-dosco-graphjin",
-    "contentHash": "a8f2e5192cef221c735fc79cfa514ae0b7a2131779085265958c90a6f48e115d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-BOYC",
     "timestamp": "2026-11-14T13:38:43.092Z",
     "repository": "react/metro",
@@ -7490,6 +7445,51 @@
     "repository": "fabio-rovai/open-ontologies",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
     "contentHash": "1644f758a7746bb0fdc2f5bf84c270d8eb6c5df89e85eecbeb4dad5efcd251cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-G4HK",
+    "timestamp": "2026-11-17T04:13:18.392Z",
+    "repository": "fujiapple852/trippy",
+    "learningId": "learn-github-fujiapple852-trippy",
+    "contentHash": "73432a9b46f68d257d167511b5358cce7c6e923736e1d930493df56e891b9b8f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-G9AC",
+    "timestamp": "2026-11-17T04:13:24.612Z",
+    "repository": "webpack/webpack",
+    "learningId": "learn-github-webpack-webpack",
+    "contentHash": "118b98a3505d434a443b9ca9b7f67fa0e4d07c00063be19b1f6264b056f74f76",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-G9ZM",
+    "timestamp": "2026-11-17T04:13:25.522Z",
+    "repository": "electron/electron",
+    "learningId": "learn-github-electron-electron",
+    "contentHash": "f1d9f1fd930105489bfea33e157a716c8dab03ca5227a659e13b4ba79a52c0bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -10438,3 +10438,7 @@
 | `CYCLE-20261117-6AXL` | `2026-11-17T04:05:40.185Z` | `vitejs/vite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8864` | Yes (`8034c790...`) |
 | `CYCLE-20261117-6DGB` | `2026-11-17T04:05:43.451Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8865` | Yes (`13817b8a...`) |
 | `CYCLE-20261117-6EKR` | `2026-11-17T04:05:44.907Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8866` | Yes (`1644f758...`) |
+| `CYCLE-20261117-G4HK` | `2026-11-17T04:13:18.392Z` | `fujiapple852/trippy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md` | Yes (`73432a9b...`) |
+| `CYCLE-20261117-G9AC` | `2026-11-17T04:13:24.612Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8867` | Yes (`118b98a3...`) |
+| `CYCLE-20261117-G9ZM` | `2026-11-17T04:13:25.522Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8868` | Yes (`f1d9f1fd...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T04:13:59.662Z` | `fujiapple852-trippy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2B088993` [Domain D] | Yes (`155d8c30...`) |

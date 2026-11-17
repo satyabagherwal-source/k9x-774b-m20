@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "39b7c8a8",
+    "sourceVersion": "82b8a937",
     "license": "MIT",
-    "contentHash": "e4e2dc2708de500861458c06a43de149cb9b542639ae762dad3b4d520c371266",
-    "lastHarvestedAt": "2026-11-12T12:50:32.086Z",
+    "contentHash": "118b98a3505d434a443b9ca9b7f67fa0e4d07c00063be19b1f6264b056f74f76",
+    "lastHarvestedAt": "2026-11-17T04:13:24.617Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -4493,10 +4493,10 @@
     "repository": "fujiapple852/trippy",
     "platform": "github",
     "sourceUrl": "https://github.com/fujiapple852/trippy",
-    "sourceVersion": "2dd303a1",
+    "sourceVersion": "6adca02f",
     "license": "Apache-2.0",
-    "contentHash": "ef6b98551c1aace4ac9c5906f029a5585d68c99c383d15dcecf371c54ad32cc5",
-    "lastHarvestedAt": "2026-11-15T13:08:57.210Z",
+    "contentHash": "73432a9b46f68d257d167511b5358cce7c6e923736e1d930493df56e891b9b8f",
+    "lastHarvestedAt": "2026-11-17T04:13:18.396Z",
     "learningId": "learn-github-fujiapple852-trippy"
   },
   "builderio-builder": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "cb318e5a",
+    "sourceVersion": "8c1db351",
     "license": "MIT",
-    "contentHash": "f557062aca9923d45328ba84b33a84467648eb87f629f770219736edfb7c9f02",
-    "lastHarvestedAt": "2026-11-13T15:18:32.564Z",
+    "contentHash": "f1d9f1fd930105489bfea33e157a716c8dab03ca5227a659e13b4ba79a52c0bc",
+    "lastHarvestedAt": "2026-11-17T04:13:25.526Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {
