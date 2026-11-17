@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T09:56:56.683Z",
+  "last_updated": "2026-11-17T10:11:15.069Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T09:56:54.443Z",
@@ -808,9 +808,9 @@
       "staged_for_review": 1
     },
     "apache-pinot-learnings.md": {
-      "processed_at": "2026-11-13T11:56:17.762Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-17T10:11:14.373Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md": {
       "processed_at": "2026-11-16T22:19:34.768Z",
@@ -1003,7 +1003,7 @@
       "staged_for_review": 1
     },
     "nvidia-cuda-rust-learnings.md": {
-      "processed_at": "2026-11-15T20:42:09.419Z",
+      "processed_at": "2026-11-17T10:11:13.038Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2128,7 +2128,7 @@
       "staged_for_review": 1
     },
     "karakeep-app-karakeep-learnings.md": {
-      "processed_at": "2026-11-13T20:16:27.523Z",
+      "processed_at": "2026-11-17T10:11:13.705Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3278,7 +3278,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1536,
+  "total_dossiers_evaluated": 1539,
   "total_canonical_promoted": 314,
-  "total_staged_for_review": 1211
+  "total_staged_for_review": 1214
 }

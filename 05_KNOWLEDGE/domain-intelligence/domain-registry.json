@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T09:56:56.546Z",
-  "total_records": 1516,
+  "last_updated": "2026-11-17T10:11:14.807Z",
+  "total_records": 1517,
   "domains": {
     "A": {
       "total": 9,
@@ -1381,7 +1381,7 @@
       ]
     },
     "I": {
-      "total": 76,
+      "total": 77,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1458,7 +1458,8 @@
         "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
         "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
         "DOM-I-6DA6494F",
-        "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i"
+        "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i",
+        "domain_intelligence-content-information-intelligence-apache-pinot-learnings-core-invariants"
       ]
     },
     "J": {
@@ -9635,8 +9636,8 @@
       "title": "Technical Construction Intelligence: karakeep-app/karakeep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-technical-construction-intelligence-karakeep-app-karakeep-.md",
       "repository": "karakeep-app/karakeep",
-      "content_hash": "6ed3aead8f3e6b3975026f5ae0461002c0a8a141511435a3f0d29a63c2b4a0b6",
-      "created_at": "2026-11-13T20:16:23.580Z"
+      "content_hash": "22d6f9c5aa424d4f9272cbfec1de0241b8c1ace9549becba50274c8b44eec39f",
+      "created_at": "2026-11-17T10:11:02.288Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7",
@@ -9653,8 +9654,8 @@
       "title": "Technical Construction Intelligence: karakeep-app-karakeep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-learnings-technical-construction-intelligence-karakeep-app.md",
       "repository": "karakeep-app-karakeep-learnings",
-      "content_hash": "f41ea576b333e7c4d9ced66d30b441ed71330206d45866053ac877043ed2c494",
-      "created_at": "2026-11-13T20:16:28.017Z"
+      "content_hash": "e197dbe9b94fbb5e719a7861ce04ade73a1189091692f9bff8bd092fb0de3b6c",
+      "created_at": "2026-11-17T10:11:14.104Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants",
@@ -10244,8 +10245,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "5c60825589c1b6306ff2c35e0f1a7a4826be13eb1a67a0fd255ed7c4b2220b14",
-      "created_at": "2026-11-15T20:41:53.435Z"
+      "content_hash": "34f5012ce3fc4cf153a5109c28cc9b829504b3bae71158980cb211da07acfb51",
+      "created_at": "2026-11-17T10:10:57.292Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -10280,8 +10281,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "2021af56462fcae8da283e235aae62dda305516635836f4251c232b480004a36",
-      "created_at": "2026-11-15T20:42:09.839Z"
+      "content_hash": "8c06511cb1f37e9764b14a4506e6e315acf618fe7d74775792cf7b22743b168f",
+      "created_at": "2026-11-17T10:11:13.421Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -16311,8 +16312,8 @@
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "repository": "apache/pinot",
-      "content_hash": "9f494ba012f434e341ad4cd44d50bb220d796a443f3e21752e9b5042447dd309",
-      "created_at": "2026-11-14T17:24:59.705Z"
+      "content_hash": "21e6a330e2a5c058f529fdc8a057bb4e0fa3f6d5edd07355bb42dc9351aaa764",
+      "created_at": "2026-11-17T10:11:10.096Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -26433,6 +26434,15 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-17T09:48:06.342Z"
+    },
+    "domain_intelligence-content-information-intelligence-apache-pinot-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-apache-pinot-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-learnings-content-information-intelligence-apache-pinot-learnings-c.md",
+      "repository": "apache-pinot-learnings",
+      "content_hash": "5d43d428c00abdcc2f1c3ff736397172a51de56b174d91a21ba2d7e8a6e244dd",
+      "created_at": "2026-11-17T10:11:14.807Z"
     }
   }
 }

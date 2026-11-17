@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T09:27:28.575Z",
+  "updated_at": "2026-11-17T10:11:14.499Z",
   "stats": {
-    "total_discovered": 4918,
-    "approved_pending_harvest": 4633,
+    "total_discovered": 4922,
+    "approved_pending_harvest": 4636,
     "harvested_count": 0,
-    "rejected_count": 285,
+    "rejected_count": 286,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4627,
+      "COMMUNITY_AND_EXPERT": 4631,
       "OFFICIAL_DOCUMENTATION": 160,
       "STANDARDS_AND_SPECIFICATIONS": 102,
       "ENGINEERING_BLOGS": 3,
@@ -106222,6 +106222,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
         "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-135FB46FAEDB": {
+      "id": "SRC-135FB46FAEDB",
+      "url": "http://ollama.test/",
+      "title": "http://ollama.test/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T10:11:13.791Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-03CA4B428C7F": {
+      "id": "SRC-03CA4B428C7F",
+      "url": "https://github.com/apache/pinot/actions/runs/43964887136/job/133641751411",
+      "title": "https://github.com/apache/pinot/actions/runs/43964887136/job/133641751411",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T10:11:14.425Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-BADA223BC947": {
+      "id": "SRC-BADA223BC947",
+      "url": "https://github.com/testcontainers/testcontainers-java/issues/11682",
+      "title": "https://github.com/testcontainers/testcontainers-java/issues/11682",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T10:11:14.463Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-DC1490487E15": {
+      "id": "SRC-DC1490487E15",
+      "url": "https://github.com/apache/pinot/actions/runs/43862186385/job/133281534547?pr=20268",
+      "title": "https://github.com/apache/pinot/actions/runs/43862186385/job/133281534547?pr=20268",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T10:11:14.499Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
       }
     }
   }

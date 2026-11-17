@@ -10518,3 +10518,6 @@
 | `CYCLE-20261117-O1CM` | `2026-11-17T09:27:23.350Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8945` | Yes (`0f8fd127...`) |
 | `CYCLE-20261117-DYZ8` | `2026-11-17T09:47:33.332Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8946, Rule 8947, Rule 8948` | Yes (`8de6e941...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T09:48:06.368Z` | `starrocks-starrocks` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-13452896` [Domain H] | Yes (`f60b6597...`) |
+| `CYCLE-20261117-81ZI` | `2026-11-17T10:10:56.910Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8949` | Yes (`f467f04b...`) |
+| `CYCLE-20261117-85VS` | `2026-11-17T10:11:01.960Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8950` | Yes (`2b9de76c...`) |
+| `CYCLE-20261117-8BVG` | `2026-11-17T10:11:09.724Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8951` | Yes (`48263a6d...`) |

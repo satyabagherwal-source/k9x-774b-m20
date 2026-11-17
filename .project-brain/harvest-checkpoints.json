@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T09:47:33.344Z",
+  "last_updated": "2026-11-17T10:11:09.738Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "f20023e860cf93bf0c820b3709409764f10c30425fe79c333c055ab38bed7a81",
-      "verified_at": "2026-11-13T20:16:23.262Z",
+      "content_hash": "2b9de76c881575bc0d4ab248309170576ffb5054b39465c3ee3a1e65f444b84f",
+      "verified_at": "2026-11-17T10:11:01.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:16:23.262Z"
+      "last_updated": "2026-11-17T10:11:01.972Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "5cf71739e5225697a324f0122805dddc6e9187d86e8dd928a5d4c4ceb70df743",
-      "verified_at": "2026-11-15T20:41:53.084Z",
+      "content_hash": "f467f04b39512e38aba9c4255d7ef1f7f64d2ad3cfbdad8b8e028dc3359f60bf",
+      "verified_at": "2026-11-17T10:10:56.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T20:41:53.084Z"
+      "last_updated": "2026-11-17T10:10:56.923Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "c0e309c3bad79191411b62dc1985922f4a8bdd90e44bc2d9312d082c45d05dac",
-      "verified_at": "2026-11-14T17:24:59.512Z",
+      "content_hash": "48263a6dd89c0f2b747b976764daf9a3826bed5057073def9c34bc5656109612",
+      "verified_at": "2026-11-17T10:11:09.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T17:24:59.512Z"
+      "last_updated": "2026-11-17T10:11:09.737Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

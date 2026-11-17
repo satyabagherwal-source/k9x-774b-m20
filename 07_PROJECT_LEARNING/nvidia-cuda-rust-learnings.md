@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `348895e4`  
+> **Source Version**: `f13e7dfc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T20:41:52.019Z  
+> **Timestamp**: 2026-11-17T10:10:55.918Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:41:51.748Z  
+> **Harvest Timestamp**: 2026-11-17T10:10:55.689Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4049 stars
+- **Stars / Engagement**: 4064 stars
 
 ---
 
@@ -2276,347 +2276,519 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07814e2d` (2026-11-14)
-**Commit Message**: fix(cutile-rs): reject overflowing section lengths and varints in bytecode decoder (#1448)
+### Incident Patch 1: `f13e7dfc` (2026-11-16)
+**Commit Message**: ci: test against CUDA 13.5.0 as well as the baseline toolkit (#1813)
 
-Transplanted from NVlabs/cutile-rs#322, which was closed when the
-repository moved here. Closes #1443.
+Run the CUDA toolkit CI lanes against CUDA 13.5.0 as well as the baseline,
+run the cutile tile-library GPU tests on 13.5, and build the test tile
+library from its .mlir sources in CI instead of using checked-in bytecode.
 
-Fixes two input-validation bugs in `cutile-ir`'s bytecode `Reader`:
+- unit-tests and examples-compile: the CUDA image is a matrix axis (the
+  baseline plus nvcr.io/nvidia/cuda:13.5.0-devel-ubuntu24.04).
+- cutile-rs: the two Tile IR jobs become one tile-ir job with lanes
+  tile-ir-cuda13-2 and tile-ir-cuda13-5 (was tile-ir-cuda13-4). The newest
+  lane runs the 13.5 assemble tests with CUTILE_REQUIRE_TILELIB=1. A
+  required-checks list that names tile-ir-cuda13-4 needs updating.
+- New cuda-tile-translate job builds the translator with cuda-tile-rs and
+  caches it on the cuda-tile submodule commit and build.rs.
+- gpu-tests runs on 13.3.0 and 13.5.0; the 13.5.0 lane fails instead of
+  skipping static_tilelib tests.
+- cutile: static_tilelib assembles its library from the .mlir sources with
+  cuda-tile-translate; the prebuilt .tilebc files are removed. A new
+  cutile-ir test reads a 13.5 preview$call back with tileirdisasm.
+- setup action: new cache-key input so matri
 
-- `read_bytes` checked `self.pos + n > len`, which overflows for a huge
-section length. Debug builds panic on the overflow. In release builds
-the
-  sum wraps, the check passes, and the slice then panics. It now checks
-  `n > self.remaining()`.
-- `read_varint` accepted a 10th byte with payload > 1. The extra high
-bits
-  were shifted out, so the value was silently truncated. For example, a
-section length could wrap to 1 and be accepted. It now rejects a 10th
-byte
-  other than `0x00`/`0x01`.
-
-Tests:
-- `decode_rejection.rs`: `reject_section_length_overflow` and
-`reject_section_length_varint_overflow` both fail on `main` and pass
-with
-  this change.
-- `decoder.rs`: `varint_u64_boundaries` round-trips 0, 127, 128, 2^63
-and
-  `u64::MAX`.
-
-`cargo test -p cutile-ir`, `cargo fmt --check` and `cargo clippy
---all-targets -- -D warnings` pass under `cutile-rs/` with the pinned
-1.98.0 toolchain. The change is identical to #322, where `
-
-**File**: `cutile-rs/cutile-ir/src/bytecode/decoder.rs` (modified, +16/-1)
+**File**: `.github/workflows/cutile-rs.yml` (modified, +170/-36)
 ```diff
-@@ -183,7 +183,7 @@ impl<'a> Reader<'a> {
-     }
+@@ -6,6 +6,8 @@
+ # Checkout does not init submodules. cuda-tile-rs is outside default-members,
+ # and these CUDA images have no git until the setup action, so
+ # `submodules: recursive` makes actions/checkout reject the REST API fallback.
++# Only the cuda-tile-translate job needs the cuda-tile submodule; it fetches it
++# itself.
+ name: cutile-rs-pr
  
-     fn read_bytes(&mut self, n: usize) -> Result<&'a [u8]> {
--        if self.pos + n > self.data.len() {
-+        if n > self.remaining() {
-             return Err(err("unexpected end of data"));
-         }
-         let slice = &self.data[self.pos..self.pos + n];
-@@ -196,6 +196,10 @@ impl<'a> Reader<'a> {
-         let mut shift: u32 = 0;
-         loop {
-             let b = self.read_byte()?;
-+            // The tenth byte can contribute only bit 63 and cannot continue.
-+            if shift == 63 && b > 1 {
-+                return Err(err("varint overflow"));
-+            }
-             result |= ((b & 0x7F) as u64) << shift;
-             if b & 0x80 == 0 {
-                 break;
-@@ -979,6 +983,17 @@ mod tests {
-         assert!(decode_bytecode(&data).is_err());
-     }
+ on:
+@@ -94,62 +96,85 @@ jobs:
+       - name: Check Tile dependencies including optional reference examples
+         run: cargo deny --workspace --all-features --locked check
  
-+    #[test]
-+    fn varint_u64_boundaries() {
-+        for value in [0, 127, 128, 1 << 63, u64::MAX] {
-+            let mut writer = EncodingWriter::new();
-+            writer.write_varint(value);
-+            let mut reader = Reader::new(writer.as_bytes());
-+            assert_eq!(reader.read_varint().unwrap(), value);
-+            assert_eq!(reader.remaining(), 0);
-+        }
-+    }
-+
-     #[test]
-     fn roundtrip_string_section() {
-         // Build a bytecode with just a string section.
+-  # Exercise the oldest Tile IR assembler, including its lack of
+-  # --list-versions. The separate 13.0 lane only checks shared host crates.
+-  tile-ir-cuda13-2:
++  # Tile IR assembler lanes. The base lane exercises the oldest assembler,
++  # including its lack of --list-versions; the newest lane needs an assembler
++  # that lists bytecode 13.5, which the Tile IR 13.5 gates in the compiler and
++  # encoder depend on. The separate 13.0 lane only checks shared host crates.
++  # The job names are tile-ir-cuda13-2 and tile-ir-cuda13-5.
++  #
++  # Tests that need the 13.5 toolkit skip, and pass, without it. The newest lane
++  # sets CUTILE_REQUIRE_TILELIB=1, and then such a skip is a failure: the
++  # cutile-ir test that reads a preview$call back with the toolkit's tileirdisasm
++  # must run there.
++  tile-ir:
++    name: ${{ matrix.lane.name }}
+     needs: changes
+     if: >-
+       github.event_name == 'workflow_dispatch' ||
+       needs.changes.outputs.tile == 'true' ||
+       needs.changes.outputs.any_changed != 'true'
+     runs-on: linux-amd64-cpu16
+     container:
+-      image: nvidia/cuda:13.2.0-devel-ubuntu24.04
++      image: ${{ matrix.lane.image }}
+       env:
+         DEBIAN_FRONTEND: noninteractive
+     env:
+       CUDA_TOOLKIT_PATH: /usr/local/cuda
+-      CUTILE_TILEIRAS_PATH: /usr/local/cuda/bin/tileiras
++      CUTILE_REQUIRE_TILELIB: ${{ matrix.lane.newest && '1' || '' }}
+     timeout-minutes: 30
++    strategy:
++      fail-fast: false
++      matrix:
++        lane:
++          - name: tile-ir-cuda13-2
++            image: nvidia/cuda:13.2.0-devel-ubuntu24.04
++            newest: false
++          # Same image digest as Docker Hub's nvidia/cuda:13.5.0-devel-ubuntu24.04;
++          # nvcr.io has no anonymous pull limit.
++          - name: tile-ir-cuda13-5
++            image: nvcr.io/nvidia/cuda:13.5.0-devel-ubuntu24.04
++            newest: true
+     steps:
+       - uses: actions/checkout@v7
++      # The lanes share github.job, so the lane name keeps their caches apart.
+       - uses: ./cutile-rs/.github/actions/setup
++        with:
++          cache-key: ${{ matrix.lane.name }}
++      # The tests test whether CUTILE_TILEIRAS_PATH is set, so only the base lane
++      # exports it, for the steps below.
+       - name: Verify assembler
++        if: ${{ !matrix.lane.newest }}
+         run: |
+-          "$CUTILE_TILEIRAS_PATH" --version
+-          "$CUTILE_TILEIRAS_PATH" --help | grep -q 'sm_120'
+-      - name: CPU and assembler tests
+-        run: ./scripts/run_cpu_tests.sh
+-      - name: Standalone bytecode example
+-        run: cargo run -p cutile-ir --example build_basic
+-
+-  # Newest Tile IR assembler: the 13.4 gates in the compiler and encoder must
+-  # pass here and refuse correctly on the 13.2 lane above. The dev image may
+-  # ship the toolkit without the assembler package; install it when missing.
+-  tile-ir-cuda13-4:
+-    needs: changes
+-    if: >-
+-      github.event_name == 'workflow_dispatch' ||
+-      needs.changes.outputs.tile == 'true' ||
+-      needs.changes.outputs.any_changed != 'true'
+-    runs-on: linux-amd64-cpu16
+-    container:
+-      image: nvidia/cuda:13.4.1-devel-ubuntu24.04
+-      env:
+-        DEBIAN_FRONTEND: noninteractive
+-    env:
+-      CUDA_TOOLKIT_PATH: /usr/local/cuda
+-    timeout-minutes: 30
+-    steps:
+-      - uses: actions/checkout@v7
+-      - uses: ./cutile-rs/.github/actions/setup
++          echo "CUTILE_TILEIRAS_PATH=/usr/local/cuda/bin/tileiras" >> "$GITHUB_ENV"
++          /usr/local/cuda/bin/tileiras --version
++          /usr/local/cuda/bin/tileiras --help | grep -q 'sm_120'
++      # The dev image may ship the toolkit without the assembler package;
++      # install it when missing. The package also holds tileirdisasm.
+       - name: Verify assembler version
++        if: ${{ matrix.lane.newest }}
+         run: |
+-          command -v tileiras || apt-get install -y -qq --no-install-recommends cuda-tileiras-13-4
++          command -v tileiras || apt-get install -y -qq --no-install-recommends cuda-tileiras-13-5
+           tileiras --version
+-          tileiras --list-versions | grep -q '13.4'
++          tileiras --list-versions | grep -qF '13.5'
++          "$(dirname "$(command -v tileiras)")/tileirdisasm" --version
+       - name: CPU and assembler tests
+         run: ./scripts/run_cpu_tests.sh
++      # The assemble_* tests need a 13.5 assembler, not a GPU, so they are
++      # #[ignore]d and the default run skips them. They call the real tileiras
+
 ```
 
-**File**: `cutile-rs/cutile-ir/tests/decode_rejection.rs` (modified, +39/-0)
+**File**: `.github/workflows/examples-compile.yml` (modified, +19/-6)
 ```diff
-@@ -10,6 +10,7 @@
- //! on valid minimal modules.
+@@ -69,13 +69,13 @@ jobs:
+   examples-compile:
+     needs: changes
+     if: ${{ !cancelled() && (github.event_name != 'push' || needs.changes.outputs.relevant == 'true' || needs.changes.outputs.any_changed != 'true') }}
+-    name: compile all examples (device pipeline, GPU-less)
++    name: compile all examples (device pipeline, GPU-less)${{ matrix.cuda.suffix }}
+     runs-on: linux-amd64-cpu4
+-    # CUDA 13.3.1 devel image: nvcc, cudart, libcurand, and libnvJitLink.
+-    # The materialization gate below needs nvJitLink, which the devel image
+-    # ships. rustup is installed in the container.
++    # CUDA devel image (see the matrix): nvcc, cudart, libcurand, and
++    # libnvJitLink. The materialization gate below needs nvJitLink, which the
++    # devel image ships. rustup is installed in the container.
+     container:
+-      image: nvidia/cuda:13.3.1-devel-ubuntu24.04
++      image: ${{ matrix.cuda.image }}
+       env:
+         DEBIAN_FRONTEND: noninteractive
+     env:
+@@ -86,6 +86,17 @@ jobs:
+     # Leave job-level headroom around the 50-minute full compile and the
+     # focused 10-minute materialization gate, plus toolkit/LLVM setup.
+     timeout-minutes: 75
++    strategy:
++      fail-fast: false
++      # The baseline lane keeps its existing job name (empty suffix); the newer
++      # image is a separate lane. The nvcr.io image has the same digest as Docker
++      # Hub's nvidia/cuda:13.5.0-devel-ubuntu24.04 and no anonymous pull limit.
++      matrix:
++        cuda:
++          - image: nvidia/cuda:13.3.1-devel-ubuntu24.04
++            suffix: ""
++          - image: nvcr.io/nvidia/cuda:13.5.0-devel-ubuntu24.04
++            suffix: " (CUDA 13.5.0)"
+     steps:
+       # $/ installs git before checkout. The CUDA image has no git; without
+       # it checkout stores a tarball. The same step installs python3 for
+@@ -320,7 +331,9 @@ jobs:
+         if: failure()
+         uses: actions/upload-artifact@v4
+         with:
+-          name: smoketest-compile-logs
++          # Artifact names are unique per run; the baseline lane keeps its name
++          # (empty suffix) and the newer lane adds its suffix.
++          name: smoketest-compile-logs${{ matrix.cuda.suffix }}
+           # One glob per log the artifact-modes step writes. `iket-trace-*`
+           # matched neither of the other two, so the one assertion that
+           # exercises the full libNVVM + nvJitLink path -- and the only one
+```
+
+**File**: `.github/workflows/unit-tests.yml` (modified, +15/-5)
+```diff
+@@ -143,19 +143,29 @@ jobs:
+   # cuda.h crates. A container is chosen per job, so these cannot share the
+   # rust image above without also handing cargo-oxide a toolkit.
+   rust-unit-tests-cuda:
+-    name: cargo test -p ${{ matrix.package }}
++    name: cargo test -p ${{ matrix.test.package }}${{ matrix.cuda.suffix }}
+     runs-on: linux-amd64-cpu4
+     container:
+-      image: nvidia/cuda:13.3.1-devel-ubuntu24.04
++      image: ${{ matrix.cuda.image }}
+       env:
+         DEBIAN_FRONTEND: noninteractive
+     env:
+       CUDA_TOOLKIT_PATH: /usr/local/cuda
+     timeout-minutes: 30
+     strategy:
+       fail-fast: false
++      # Every crate below runs against each toolkit image. The baseline keeps its
++      # existing job names (empty suffix); the newer image is a separate lane.
+       matrix:
+-        include:
++        cuda:
++          - image: nvidia/cuda:13.3.1-devel-ubuntu24.04
++            suffix: ""
++          # Same image digest as Docker Hub's nvidia/cuda:13.5.0-devel-ubuntu24.04;
++          # nvcr.io has no anonymous pull limit. Pinned to the newest CUDA
++          # release published as of 2026-11-09.
++          - image: nvcr.io/nvidia/cuda:13.5.0-devel-ubuntu24.04
++            suffix: " (CUDA 13.5.0)"
++        test:
+           # Includes a real llc -> ptxas spine-kernel validation.
+           - package: cuda-oxide-codegen
+           # Facade macro tests compile host metadata through cuda-host.
+@@ -178,7 +188,7 @@ jobs:
+         uses: actions/checkout@v4
  
- use cutile_ir::builder::{append_op, build_single_block_region, OpBuilder};
-+use cutile_ir::bytecode::encoding::EncodingWriter;
- use cutile_ir::bytecode::{BytecodeVersion, Opcode, Section, MAGIC};
- use cutile_ir::ir::*;
- use cutile_ir::{decode_bytecode, write_bytecode};
-@@ -124,6 +125,44 @@ fn reject_invalid_section_marker() {
+       - name: Install LLVM 21 (llc/opt for the NVPTX backend)
+-        if: matrix.package == 'cuda-oxide-codegen'
++        if: matrix.test.package == 'cuda-oxide-codegen'
+         run: |
+           set -euo pipefail
+           source /etc/os-release
+@@ -198,7 +208,7 @@ jobs:
+           sysroot="$(rustc --print sysroot)"
+           export LIBRARY_PATH="${sysroot}/lib:${LIBRARY_PATH:-}"
+           export LD_LIBRARY_PATH="${sysroot}/lib:${LD_LIBRARY_PATH:-}"
+-          cargo test -p ${{ matrix.package }} ${{ matrix.test_args || '--all-targets' }}
++          cargo test -p ${{ matrix.test.package }} ${{ matrix.test.test_args || '--all-targets' }}
+ 
+   rustc-codegen-cuda-unit-tests:
+     name: cargo test --lib (rustc-codegen-cuda)
+```
+
+**File**: `cutile-rs/.github/actions/setup/action.yml` (modified, +11/-3)
+```diff
+@@ -14,6 +14,12 @@ inputs:
+   cache:
+     description: Restore and save the Rust build cache for this job.
+     default: "true"
++  cache-key:
++    description: >-
++      Extra cache key, appended to the job id. A matrix job passes a value that
++      tells its lanes apart (for example the lane name), because every lane has
++      the same job id.
++    default: ""
+ 
+ runs:
+   using: composite
+@@ -71,8 +77,10 @@ runs:
+       if: inputs.cache == 'true'
+       uses: swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6  # v2.9.2
+       with:
+-        # One cache per job: the CUDA image differs per lane and bindgen output
+-        # with it, so artifacts are not interchangeable across lanes.
++        # One cache per job and lane: the CUDA image differs per lane and
++        # bindgen output with it, so artifacts are not interchangeable across
++        # lanes. The lanes of a matrix job share github.job; they tell them apart
++        # with cache-key.
+         workspaces: cutile-rs
+-        key: ${{ github.job }}
++        key: ${{ github.job }}${{ inputs.cache-key != '' && format('-{0}', inputs.cache-key) || '' }}
+         cache-on-failure: true
+```
+
+**File**: `cutile-rs/CHANGELOG.md` (modified, +7/-0)
+```diff
+@@ -47,6 +47,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+   KV-scatter kernel, with a correctness example and opt-in CUDA graph benchmark
+   sweep. The initial schedule is not B200-tuned (#1746).
+ 
++### Changed
++
++- The static tile-library GPU tests always assemble their library from its
++  `.mlir` sources; the checked-in bytecode is removed. They take
++  `cuda-tile-translate` from `CUTILE_TILE_TRANSLATE`, or from next to
++  `tileiras`.
++
+ ### Documentation
+ 
+ - Link the Tile library provider catalog and CUDA Oxide export workflow;
+```
+
+**File**: `cutile-rs/cuda-tile-rs/README.md` (modified, +10/-0)
+```diff
+@@ -167,3 +167,13 @@ CUTILE_REFERENCE_TRANSLATE=$HOME/.cargo/bin/cuda-tile-translate \
+ 
+ An explicitly configured translator must pass; an incompatible version is a
+ test failure rather than a skipped check.
++
++The `cutile` static tile-library GPU tests (`cutile/tests/gpu/static_tilelib.rs`)
++assemble their library from `.mlir` sources with `cuda-tile-translate`, which
++the CUDA toolkit does not ship. Name the installed translator with
++`CUTILE_TILE_TRANSLATE`; without one those tests skip:
++
++```bash
++CUTILE_TILE_TRANSLATE=$HOME/.cargo/bin/cuda-tile-translate \
++    cargo test -p cutile --test gpu static_tilelib
++```
+```
+
+**File**: `cutile-rs/cutile-ir/tests/bytecode_13_5.rs` (modified, +69/-0)
+```diff
+@@ -9,6 +9,8 @@
+ //!
+ //! The translator checks use `CUTILE_REFERENCE_TRANSLATE` when configured,
+ //! otherwise a `cuda-tile-translate` next to the selected 13.5 `tileiras`.
++//! The disassembler check uses `tileirdisasm`, which the toolkit installs next
++//! to `tileiras`; with `CUTILE_REQUIRE_TILELIB=1` it fails instead of skipping.
+ //! They never need a GPU.
+ 
+ use std::path::{Path, PathBuf};
+@@ -666,3 +668,70 @@ fn official_translator_reads_13_5_preview_calls() {
      );
+     assert!(mlir.contains("!cuda_tile.token"), "{mlir}");
  }
- 
-+#[test]
-+fn reject_section_length_overflow() {
-+    let mut buf = minimal_bytecode();
-+    buf.pop();
-+    buf.push(Section::String as u8);
-+    let mut length = EncodingWriter::new();
-+    length.write_varint(usize::MAX as u64);
-+    buf.extend_from_slice(length.as_bytes());
-+    buf.push(Section::EndOfBytecode as u8);
 +
++/// `tileirdisasm` next to the selected `tileiras`, when that assembler
++/// accepts Tile IR 13.5; the toolkit installs the two together. Without one
++/// the caller skips, and with `CUTILE_REQUIRE_TILELIB=1` this panics instead.
++fn disassembler() -> Option<PathBuf> {
++    let tileiras = cutile_ir::toolchain::tileiras_from_env();
++    let tileiras = if tileiras.components().count() == 1 {
++        which(&tileiras).unwrap_or(tileiras)
++    } else {
++        tileiras
++    };
++    let disassembler = tileiras
++        .parent()
++        .map(|bin| bin.join("tileirdisasm"))
++        .filter(|path| path.is_file());
++    let accepts_13_5 =
++        cutile_ir::toolchain::negotiate_bytecode_version(&tileiras, Some("13.5".as_ref())).is_ok();
++    if let (Some(disassembler), true) = (disassembler, accepts_13_5) {
++        return Some(disassembler);
++    }
++    let reason = format!("no tileirdisasm accepting Tile IR 13.5 next to {tileiras:?}");
++    if std::env::var("CUTILE_REQUIRE_TILELIB").as_deref() == Ok("1") {
++        panic!("CUTILE_REQUIRE_TILELIB=1 but the disassembler check cannot run: {reason}");
++    }
++    eprintln!("skipped: {reason}");
++    None
++}
++
++/// The disassembly of `bytes`, which may contain public-preview operations.
++fn disassemble(disassembler: &Path, bytes: &[u8]) -> String {
++    let dir = std::env::temp_dir().join(format!("cutile-13-5-disasm-{}", uuid_like()));
++    std::fs::create_dir_all(&dir).unwrap();
++    let file = dir.join("module.tilebc");
++    std::fs::write(&file, bytes).unwrap();
++    let output = Command::new(disassembler)
++        .arg("--preview=simt")
++        .arg(&file)
++        .output()
++        .unwrap();
++    std::fs::remove_dir_all(&dir).ok();
 +    assert!(
-+        decode_bytecode(&buf).is_err(),
-+        "an oversized section length should return an error"
++        output.status.success(),
++        "{}",
++        String::from_utf8_lossy(&output.stderr)
 +    );
++    String::from_utf8(output.stdout).unwrap()
 +}
 +
++/// The toolkit's own reader accepts the `preview$call` this crate writes and
++/// prints the callee, its constant arguments and the token it threads. Unlike
++/// the translator, the disassembler is in every CUDA 13.5 toolkit.
 +#[test]
-+fn reject_section_length_varint_overflow() {
-+    // The tenth byte has only one payload bit available in a u64 varint.
-+    // Without an overflow check, each of these lengths wraps to 1 and the
-+    // empty string table below appears to be a valid section.
-+    for last_byte in [0x02, 0x04, 0x7e] {
-+        let mut buf = minimal_bytecode();
-+        buf.pop();
-+        buf.push(Section::String as u8);
-+        buf.push(0x81);
-+        buf.extend_from_slice(&[0x80; 8]);
-+        buf.push(last_byte);
-+        buf.push(0); // Empty string table.
-+        buf.push(Section::EndOfBytecode as u8);
-+
-+        assert!(
-+            decode_bytecode(&buf).is_err(),
-+            "an overflowing varint ending in {last_byte:#04x} should be rejected"
-+        );
-+    }
++fn toolkit_disassembler_reads_13_5_preview_calls() {
++    let Some(disassembler) = disassembler() else {
++        return;
++    };
++    let module = cholesky_module();
++    let text = disassemble(
++        &disassembler,
++        &write(&module, BytecodeVersion::V13_5).unwrap(),
++    );
++    assert!(
++        text.contains(r#"preview$call @cholesky<["potrf", "lower", 1, 32, f64]>"#),
++        "{text}"
++    );
++    assert!(text.contains("!cuda_tile.token"), "{text}");
 +}
-+
- #[test]
- fn reject_truncated_type_section() {
-     // Build a valid module so we get correct bytecode, then find and truncate
 ```
 
----
-
-### Incident Patch 2: `348895e4` (2026-11-14)
-**Commit Message**: fix(cuda-async): preserve device state on duplicate registration (#1754)
-
-## What
-- Keep an existing device context when the same device is initialized
-again.
-
-## Why
-- `HashMap::insert` replaced the current context before the duplicate
-error was returned.
-
-## Implementation
-- Check for the device before creating streams or inserting a new
-context.
-- This covers per-device map inserts;
-[#176](https://github.com/NVIDIA/cuda-rust/pull/176) fixed the separate
-thread-local map reset.
-
-Signed-off-by: Minh Vu <[REDACTED_EMAIL]>
-
-**File**: `cuda-async/src/device_context.rs` (modified, +47/-14)
+**File**: `cutile-rs/cutile/tests/gpu/static_tilelib.rs` (modified, +81/-40)
 ```diff
-@@ -222,6 +222,19 @@ pub fn new_device_context(
-     })
+@@ -4,18 +4,22 @@
+  */
+ 
+ //! Foreign tile-library calls executed on the GPU, against a static test
+-//! tile library built from `gpu/tilelib/` with the toolkit's own tools:
++//! tile library built from the sources in `gpu/tilelib/`:
+ //! `cuda-tile-translate` assembles the interface and the implementation
+ //! catalog, `nvcc` compiles the SIMT code to LTO-IR, and `tileiras
+-//! --preview-create-tile-lib` packages them. Skipped without a Tile IR 13.5
+-//! `tileiras` or without `nvcc` next to it.
++//! --preview-create-tile-lib` packages them.
++//!
++//! `nvcc` and `tileiras` come from the toolkit. The public toolkit has no
++//! `cuda-tile-translate`: `CUTILE_TILE_TRANSLATE` names the executable, and
++//! without it the one next to `tileiras` is used. `cargo build --release -p
++//! cuda-tile-rs` builds one (see that crate's README).
++//!
++//! Skipped without a Tile IR 13.5 `tileiras`, without `nvcc` next to it, or
++//! without `cuda-tile-translate`. With `CUTILE_REQUIRE_TILELIB=1` a skip is a
++//! failure.
+ //!
+ //! A static tile library carries precompiled SIMT code and needs no
+-//! implementation-provider shared library. When the toolkit has no
+-//! `cuda-tile-translate`, `gpu/tilelib/prebuilt/` is used instead; after
+-//! editing a `.mlir` file, regenerate it with
+-//! `cuda-tile-translate <name>.mlir --mlir-to-cudatilebc --preview=simt
+-//! --bytecode-version=13.5 -o prebuilt/<name>.tilebc`.
++//! implementation-provider shared library.
+ 
+ use crate::common::supports_tile_ir as supports;
+ use cutile::prelude::*;
+@@ -30,6 +34,9 @@ use std::sync::OnceLock;
+ /// The built `test_lib.tilelib`, once [`test_tilelib_available`] built it.
+ static TILELIB: OnceLock<PathBuf> = OnceLock::new();
+ 
++/// The `cuda-tile-translate` that built it (see [`tile_translate`]).
++static TRANSLATE: OnceLock<PathBuf> = OnceLock::new();
++
+ /// The test library, as the host configures it.
+ fn tilelib() -> TileLibrarySpec {
+     TileLibrarySpec::new(TILELIB.get().expect("test library built"))
+@@ -245,35 +252,44 @@ fn tilelib_sources() -> PathBuf {
+     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/gpu/tilelib")
  }
  
-+/// Reject duplicate registrations before creating streams or replacing live state.
-+fn insert_device_context_once<T>(
-+    hashmap: &mut HashMap<usize, T>,
-+    device_id: usize,
-+    create: impl FnOnce() -> Result<T, DeviceError>,
-+) -> Result<(), DeviceError> {
-+    if hashmap.contains_key(&device_id) {
-+        return Err(device_error(device_id, "Context is already initialized."));
-+    }
-+    hashmap.insert(device_id, create()?);
-+    Ok(())
-+}
-+
- /// Add a device with a specific scheduling policy to the context map.
- ///
- /// # Example: Using 8 streams instead of the default 4
-@@ -241,26 +254,24 @@ pub fn init_device(
-     device_id: usize,
-     policy: Arc<dyn SchedulingPolicy>,
- ) -> Result<(), DeviceError> {
--    let device_context = new_device_context(device_id, policy)?;
--    let pred = hashmap.insert(device_id, device_context).is_none();
--    device_assert(device_id, pred, "Context is already initialized.")
-+    insert_device_context_once(hashmap, device_id, || new_device_context(device_id, policy))
- }
- 
- pub fn init_with_default_policy(
-     hashmap: &mut HashMap<usize, AsyncDeviceContext>,
-     device_id: usize,
- ) -> Result<(), DeviceError> {
--    let device = get_or_init_device(device_id)?;
--    let policy = StreamPoolRoundRobin::new(&device, DEFAULT_ROUND_ROBIN_STREAM_POOL_SIZE)?;
--    let deallocator_stream = device.new_stream()?;
--    let device_context = AsyncDeviceContext {
--        device_id,
--        deallocator_stream,
--        policy: Arc::new(policy),
--        pool: None,
--    };
--    let pred = hashmap.insert(device_id, device_context).is_none();
--    device_assert(device_id, pred, "Context is already initialized.")
-+    insert_device_context_once(hashmap, device_id, || {
-+        let device = get_or_init_device(device_id)?;
-+        let policy = StreamPoolRoundRobin::new(&device, DEFAULT_ROUND_ROBIN_STREAM_POOL_SIZE)?;
-+        let deallocator_stream = device.new_stream()?;
-+        Ok(AsyncDeviceContext {
-+            device_id,
-+            deallocator_stream,
-+            policy: Arc::new(policy),
-+            pool: None,
-+        })
-+    })
- }
- 
- /// Holds the thread's context map while a closure runs against it, and puts it
-@@ -552,6 +563,28 @@ mod context_map_tests {
-         std::thread::spawn(f).join().expect("test thread panicked");
-     }
- 
-+    #[test]
-+    fn duplicate_device_registration_preserves_entry() {
-+        let mut map = HashMap::from([(3, "existing")]);
-+        let err = insert_device_context_once(&mut map, 3, || -> Result<&str, DeviceError> {
-+            panic!("duplicate must not create a replacement")
-+        })
-+        .unwrap_err();
-+        assert!(matches!(err, DeviceError::Context { device_id: 3, .. }));
-+        assert_eq!(map.get(&3), Some(&"existing"));
-+    }
-+
-+    #[test]
-+    fn failed_device_registration_does_not_insert() {
-+        let mut map = HashMap::<usize, usize>::new();
-+        let result = insert_device_context_once(&mut map, 7, || Err(device_error(7, "failed")));
-+        assert!(result.is_err());
-+        assert!(map.is_empty());
-+
-+        insert_device_context_once(&mut map, 7, || Ok(42)).unwrap();
-+        assert_eq!(map.get(&7), Some(&42));
-+    }
-+
-     /// A second `init_device_contexts` is rejected *and* the first map stays
-     /// alive. The old `replace(None).is_none()` check consumed the live map
-     /// while reporting the error.
-```
-
----
-
-### Incident Patch 3: `bbe38427` (2026-11-14)
-**Commit Message**: fix: suppress host-only cuTile lints (#1389)
-
-## Summary
-
-`#[cutile::module]` emits host-side Rust for device kernels, where lints
-such as unused variables and unreachable statements do not reflect
-device execution. Allow these lints within generated modules so strict
-host builds do not fail on device-only code.
-
-## Changes
-
-- Add the host-only lint allowances to both generated module forms.
-- Add a strict-lint integration regression case for a print followed by
-device code.
-
-## Testing
-
-- `cargo fmt --all --check`
-- `git diff --check`
-- `cargo test -p cutile --test basics_and_inlining --no-run` could not
-reach compilation: `cuda-bindings` requires a CUDA 13.0+ toolkit, which
-is not installed here.
-
-## Checklist
-
-- [x] All commits signed off (`git commit -s`)
-- [x] SPDX headers on new source files (no new source files added)
-
-Co-authored-by: GiGiKoneti <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Efe Gökdemir <[REDACTED_EMAIL]>
-
-**File**: `cutile-rs/cutile-macro/src/_module.rs` (modified, +3/-1)
-```diff
-@@ -394,7 +394,7 @@ fn module_inner(
-             pub mod #name {
-                 #![allow(nonstandard_style)]
-                 #![allow(dead_code)]
--                #![allow(unused_variables)]
-+                #![allow(unused_variables, unreachable_code, unused_mut)]
-                 // Kernel source is a Rust subset with its own idioms (`a = a + b`,
-                 // explicit closures for reduce regions, trailing `return`); clippy's
-                 // host-Rust style lints do not apply to it.
-@@ -410,7 +410,9 @@ fn module_inner(
-     } else {
-         quote! {
-             pub mod #name {
-+                #![allow(nonstandard_style)]
-                 #![allow(dead_code)]
-+                #![allow(unused_variables, unreachable_code, unused_mut)]
-                 // Kernel source is a Rust subset with its own idioms; see above.
-                 #![allow(clippy::all)]
-                 // Entry point dependencies.
-```
-
-**File**: `cutile-rs/cutile/tests/basics_and_inlining.rs` (modified, +17/-0)
-```diff
-@@ -6,6 +6,23 @@ use cutile_compiler::compiler::utils::CompileOptions;
- 
- mod common;
- 
-+#[deny(nonstandard_style, unused_variables, unreachable_code)]
-+mod host_lint_regression {
-+    #[test]
-+    fn generated_host_code_allows_device_only_lints() {}
-+
-+    #[cutile::module]
-+    mod generated {
-+        use cutile::core::*;
-+
-+        #[cutile::entry]
-+        fn printThenContinue(value: i32, unused: i32) {
-+            cuda_tile_print!("value={}\n", value);
-+            let _after_print = value;
++/// The `cuda-tile-translate` that assembles the library's `.mlir` sources:
++/// `CUTILE_TILE_TRANSLATE` when it is set, otherwise the one next to
++/// `tileiras` in `bin`, if there is one.
++fn tile_translate(bin: &Path) -> Option<PathBuf> {
++    match std::env::var_os("CUTILE_TILE_TRANSLATE").filter(|path| !path.is_empty()) {
++        Some(path) => {
++            let path = PathBuf::from(path);
++            assert!(
++                path.is_file(),
++                "CUTILE_TILE_TRANSLATE names {path:?}, which is not a file"
++            );
++            Some(path)
 +        }
++        None => Some(bin.join("cuda-tile-translate")).filter(|path| path.is_file()),
 +    }
 +}
 +
- #[cutile::module]
- mod basics_and_inlining_module {
- 
+ /// Builds `test_lib.tilelib` for the device's architecture into `dir`, with
+-/// the SIMT implementation in `simt_source`. Intermediate files go to a
+-/// per-process directory, and the library is renamed into place, so
+-/// concurrent test processes never see a partial file.
+-fn build_test_tilelib(bin: &Path, sm: &str, simt_source: &Path, dir: &Path) {
++/// the SIMT implementation in `simt_source`. `translate` assembles the
++/// `.mlir` sources; `nvcc` and `tileiras` are taken from `bin`. Intermediate
++/// files go to a per-process directory, and the library is renamed into
++/// place, so concurrent test processes never see a partial file.
++fn build_test_tilelib(translate: &Path, bin: &Path, sm: &str, simt_source: &Path, dir: &Path) {
+     let src = tilelib_sources();
+     let work = dir.join(format!("build-{}", std::process::id()));
+     std::fs::create_dir_all(&work).expect("create the test tile-library directory");
+-    let translate = bin.join("cuda-tile-translate");
+     for name in ["interface", "implementation"] {
+-        let out = work.join(format!("{name}.tilebc"));
+-        if translate.is_file() {
+-            run(
+-                &translate,
+-                &[
+-                    src.join(format!("{name}.mlir")).as_os_str(),
+-                    "--mlir-to-cudatilebc".as_ref(),
+-                    "--preview=simt".as_ref(),
+-                    "--bytecode-version=13.5".as_ref(),
+-                    "-o".as_ref(),
+-                    out.as_os_str(),
+-                ],
+-            );
+-        } else {
+-            // Some toolkits do not ship cuda-tile-translate; the prebuilt
+-            // bytecode is assembled from the same .mlir files.
+-            std::fs::copy(src.join(format!("prebuilt/{name}.tilebc")), &out)
+-                .expect("copy prebuilt tile bytecode");
+-        }
++        run(
++            translate,
++            &[
++                src.join(format!("{name}.mlir")).as_os_str(),
++                "--mlir-to-cudatilebc".as_ref(),
++                "--preview=simt".as_ref(),
++                "--bytecode-version=13.5".as_ref(),
++                "-o".as_ref(),
++                work.join(format!("{name}.tilebc")).as_
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1813** (2026-11-16): ci: test against CUDA 13.5.0 as well as the baseline toolkit (@roivanov)
 - **PR #1807** (closed): docs(cuda-core): link nvls_all_reduce example in tests (@Code4me2)
 - **PR #1806** (2026-11-14): docs(cuda-core): locate the NVLS all-reduce example (@elibol)
 - **PR #1799** (2026-11-13): docs(cutile): clarify versioned API compatibility (@elibol)
 - **PR #1798** (2026-11-13): fix(cutile-examples): add explicit B200 profiles and safe QKV tail loads (@elibol)
 - **PR #1790** (closed): fix(mir-importer,codegen): lower ConstantMemory::{get_ref,get} at opt-level 0 (@ssoj13)
-- **PR #1789** (2026-11-12): fix(cuda-oxide): omit NVVM-only --arch on compile-only code-shape prebuild (@nihalpasham)
 
 ---
 
@@ -2636,43 +2808,82 @@ Signed-off-by: Efe Gökdemir <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cutile-rs): reject overflowing section lengths and varints in bytecode decoder
+## X. ci: test against CUDA 13.5.0 as well as the baseline toolkit
 
 **RULE**:
-When implementing operations in `cutile-rs/cutile-ir/src/bytecode/decoder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/cutile-rs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07814e2d`: cutile-rs): reject overflowing section lengths and varints in bytecode decoder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f13e7dfc`: ci: test against CUDA 13.5.0 as well as the baseline toolkit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/cutile-ir/src/bytecode/decoder.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cutile-rs.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if n > self.remaining() {
-            // The tenth byte can contribute only bit 63 and cannot continue.
-            if shift == 63 && b > 1 {
-                return Err(err("varint overflow"));
-            }
-    #[test]
-    fn varint_u64_boundaries() {
-        for value in [0, 127, 128, 1 << 63, u64::MAX] {
-            let mut writer = EncodingWriter::new();
-            writer.write_varint(value);
-            let mut reader = Reader::new(writer.as_bytes());
-            assert_eq!(reader.read_varint().unwrap(), value);
-            assert_eq!(reader.remaining(), 0);
-        }
-    }
-
+# Only the cuda-tile-translate job needs the cuda-tile submodule; it fetches it
+# itself.
+  # Tile IR assembler lanes. The base lane exercises the oldest assembler,
+  # including its lack of --list-versions; the newest lane needs an assembler
+  # that lists bytecode 13.5, which the Tile IR 13.5 gates in the compiler and
+  # encoder depend on. The separate 13.0 lane only checks shared host crates.
+  # The job names are tile-ir-cuda13-2 and tile-ir-cuda13-5.
+  #
+  # Tests that need the 13.5 toolkit skip, and pass, without it. The newest lane
+  # sets CUTILE_REQUIRE_TILELIB=1, and then such a skip is a failure: the
+  # cutile-ir test that reads a preview$call back with the toolkit's tileirdisasm
+  # must run there.
+  tile-ir:
+    name: ${{ matrix.lane.name }}
+      image: ${{ matrix.lane.image }}
+      CUTILE_REQUIRE_TILELIB: ${{ matrix.lane.newest && '1' || '' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        lane:
+          - name: tile-ir-cuda13-2
+            image: nvidia/cuda:13.2.0-devel-ubuntu24.04
+            newest: false
+          # Same image digest as Docker Hub's nvidia/cuda:13.5.0-devel-ubuntu24.04;
+          # nvcr.io has no anonymous pull limit.
+          -
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        if self.pos + n > self.data.len() {
+  # Exercise the oldest Tile IR assembler, including its lack of
+  # --list-versions. The separate 13.0 lane only checks shared host crates.
+  tile-ir-cuda13-2:
+      image: nvidia/cuda:13.2.0-devel-ubuntu24.04
+      CUTILE_TILEIRAS_PATH: /usr/local/cuda/bin/tileiras
+          "$CUTILE_TILEIRAS_PATH" --version
+          "$CUTILE_TILEIRAS_PATH" --help | grep -q 'sm_120'
+      - name: CPU and assembler tests
+        run: ./scripts/run_cpu_tests.sh
+      - name: Standalone bytecode example
+        run: cargo run -p cutile-ir --example build_basic
+
+  # Newest Tile IR assembler: the 13.4 gates in the compiler and encoder must
+  # pass here and refuse correctly on the 13.2 lane above. The dev image may
+  # ship the toolkit without the assembler package; install it when missing.
+  tile-ir-cuda13-4:
+    needs: changes
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      needs.changes.outputs.tile == 'true' ||
+      needs.changes.outputs.any_changed != 'true'
+    runs-on: linux-amd64-cpu16
+    container:
+      image: nvidia/cuda:13.4.1-devel-ubuntu24.04
+      env:
+        DEBIAN_FRONTEND: noninteractive
+    env:
+      CUDA_TOOLKIT_PATH: /usr/local/cuda
+    timeout-minutes: 30
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07814e2d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f13e7dfc` are properly handled with clean fallback behavior.

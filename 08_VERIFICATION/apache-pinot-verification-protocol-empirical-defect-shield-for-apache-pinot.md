@@ -4,22 +4,22 @@
 {
   "source_repository": "apache/pinot",
   "source_url": "https://github.com/apache/pinot",
-  "source_version": "c31a588a",
+  "source_version": "5edf0f12",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T17:24:59.637Z",
+  "timestamp": "2026-11-17T10:11:09.928Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-pinot",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `c31a588a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T17:24:59.637Z`  
+> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `5edf0f12`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T10:11:09.928Z`  
 > **Learning ID**: `learn-github-apache-pinot`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apache/pinot` (Commit: `c31a588a`)
+- **Target Repository**: `apache/pinot` (Commit: `5edf0f12`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T17:24:58.873Z  
+> **Harvest Timestamp**: 2026-11-17T10:11:08.745Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1983,13 +1983,11 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20228** (2026-11-13): **Fix sketch accumulator initialization, tuple sizing, and KLL null handling**
-  *Symptoms*: Fix the tuple sketch failure exposed by #20227, related sketch lifecycle bugs, an underestimated tuple serialization bound, and KLL deserialization of null or unused rows.  - Require query configuration when constructing tuple, CPC, and Theta accumulators. Remove no-argument constructors, parameter setters, and repeated configuration restoration during merge and final-result extraction. Configuration fields and the accumulation threshold are final. - Seed deserialized accumulators directly with the received sketch, preserving its bytes even when the threshold is one. Return a single pending sketch before initializing a union; subsequent merges use the receiving query's configuration. Serialized formats are unchanged. - Correct the integer tuple sketch size bound to include the summary's mode byte and round nominal entries as DataSketches does. This prevents under-allocation in raw index writers. - Deserialize KLL BYTES only for included, non-null rows, once per row for MV group-by. Null placeholders and unused backing-array entries are no longer passed to DataSketches. - Simplify accumulator lifecycle comments, document thread safety, and remove the unsupported claim that tuple union supports Theta's ordered-sketch early-stop optimization.  The dependency stays at 9.0.0 so these fixes can merge independently of #20227.  Release note: tables using integer tuple sketch aggregation with `aggregateMetrics` reserve more space per tuple value in the real-time raw forward index. At 
+- **Issue #20281** (2026-11-17): **Fix Kafka startup script race in schema registry tests**
+  *Symptoms*: The schema-registry integration test can fail before Kafka starts with `Text file busy` and exit code 126. Testcontainers waits for `/tmp/testcontainers_start.sh` to exist, but Docker can still have the file open for writing when the container executes it. This caused [the integration failure on PR #20278](https://github.com/apache/pinot/actions/runs/43964887136/job/133641751411) and matches [Testcontainers issue #11682](https://github.com/testcontainers/testcontainers-java/issues/11682).  Make the fixture wait for a separate readiness marker. Publish the marker only after the superclass startup hook finishes uploading the script, then execute the completed script. This preserves the existing Confluent 7.2.0/ZooKeeper fixture.  Validation:  - A deterministic Linux/Docker probe held the script open for writing: the original command failed with exit 126; the new command waited for the marker and then exited successfully. Synchronization used a blocking handshake rather than timing-based assertions. - Started the actual compiled `SchemaRegistryStarter` with the cached Kafka and Schema Registry images; `GET /subjects` returned HTTP 200 with `[]`, then both containers were stopped. - `./mvnw -pl pinot-integration-tests -am -Ppinot-fastdev -DskipTests -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test-compile` passed. - `./mvnw -pl pinot-integration-tests spotless:apply checkstyle:check license:format license:check` passed.  The full shared Kafka realtime
 
-- **Issue #20218** (2026-11-11): **Fix port reuse in ServerTableSizeReaderTest**
-  *Symptoms*: ServerTableSizeReaderTest chose the unavailable server's port before starting all mock HTTP servers. Since findUnusedPort() releases its socket, a later mock server could receive the same port, causing testServerSizesErrors to fail in HashBiMap.put() with a duplicate endpoint before invoking the reader.  Choose the unused port after all mock servers are bound so their endpoints remain distinct. This preserves the existing connection-refused coverage.  Observed in [Pinot Unit Test Set 2](https://github.com/apache/pinot/actions/runs/42871682370/job/130024242709) on #19448; the affected test is unchanged by that PR.  Validation (JDK 25): - ServerTableSizeReaderTest: both tests passed using `./mvnw -pl pinot-controller -am -Ppinot-fastdev -Dtest=ServerTableSizeReaderTest -Dsurefire.failIfNoSpecifiedTests=false -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test`. - Controller `spotless:apply`, `checkstyle:check`, `license:format`, and `license:check` passed. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20218?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 70.51%. Comparing base ([`45feee7`](https://app.codecov.io/gh/apache/pinot/commit/45feee7d2d0932e94e19d2488d7a50aafcfdafd6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`70283d5`](https://app.codecov.io/gh/apache/pinot/commit/70283d5b3d2ecae23df1b0b2d9ad69dd9048be15?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##             master   #20218      +/-   ## ================================
+- **Issue #20278** (2026-11-17): **Fix flaky latency assertions in QueryRoutingTest**
+  *Symptoms*: `QueryRoutingTest` can fail for a valid 0 ms response: the latency EWMA starts at 1 ms, so the first update produces 0.334 ms, violating the assertion that it must not exceed the response latency. Observed in [this CI job](https://github.com/apache/pinot/actions/runs/43862186385/job/133281534547?pr=20268).  Check the expected EWMA using the previous or initial average in all four latency tests, and disable automatic decay in the fixture so it cannot change the average between the snapshot and assertion. Server errors still use the timeout penalty; successful responses and client errors use measured latency.  Validation on JDK 25:  - All 32 `QueryRoutingTest` tests passed with `./mvnw -pl pinot-core -am -Dtest=QueryRoutingTest -Dsurefire.failIfNoSpecifiedTests=false -Ppinot-fastdev -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test`. - `./mvnw -pl pinot-core spotless:apply checkstyle:check license:format license:check` passed. - A deterministic probe using the CI commit's compiled EWMA implementation confirmed that a zero-latency sample fails the original assertion. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2006,207 +2004,300 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c31a588a` (2026-11-14)
-**Commit Message**: Fix controller authorization for logical table queries (#20167)
+### Incident Patch 1: `a9192dc3` (2026-11-17)
+**Commit Message**: Fix Kafka startup script race in schema registry tests (#20281)
 
-**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java` (modified, +16/-5)
+**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/kafka/schemaregistry/SchemaRegistryStarter.java` (modified, +23/-1)
 ```diff
-@@ -710,12 +710,23 @@ private StreamingOutput getQueryResponse(String query, SqlNodeAndOptions sqlNode
-         throw QueryErrorCode.SQL_PARSING.asException(e);
-       }
-     }
--    String rawTableName = TableNameBuilder.extractRawTableName(tableName);
--
--    // Validate data access
-+    TableCache tableCache = _pinotHelixResourceManager.getTableCache();
-+    String logicalTableName = tableCache.getActualLogicalTableName(tableName);
-+    LogicalTableConfig logicalTableConfig =
-+        logicalTableName != null ? tableCache.getLogicalTableConfig(logicalTableName) : null;
-+    String rawTableName = TableNameBuilder.extractRawTableName(
-+        logicalTableConfig != null ? logicalTableName : tableName);
-+
-+    // Authorize every physical table of a logical query, matching the broker's table-level check.
-+    Set<String> tablesToAuthorize = logicalTableConfig != null
-+        ? logicalTableConfig.getPhysicalTableConfigMap().keySet()
-+        : Set.of(rawTableName);
-     AccessControl accessControl = _accessControlFactory.create();
--    if (!accessControl.hasAccess(rawTableName, AccessType.READ, httpHeaders, Actions.Table.QUERY)) {
--      throw QueryErrorCode.ACCESS_DENIED.asException();
-+    for (String tableToAuthorize : tablesToAuthorize) {
-+      if (!accessControl.hasAccess(TableNameBuilder.extractRawTableName(tableToAuthorize), AccessType.READ,
-+          httpHeaders, Actions.Table.QUERY)) {
-+        throw QueryErrorCode.ACCESS_DENIED.asException();
-+      }
-     }
+@@ -18,6 +18,7 @@
+  */
+ package org.apache.pinot.integration.tests.kafka.schemaregistry;
  
-     // Get brokers for the resource table.
-```
-
-**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/api/resources/PinotQueryResourceTest.java` (modified, +149/-1)
-```diff
-@@ -21,6 +21,7 @@
- import com.fasterxml.jackson.databind.node.ObjectNode;
- import java.io.ByteArrayOutputStream;
- import java.util.ArrayList;
-+import java.util.LinkedHashMap;
- import java.util.List;
++import com.github.dockerjava.api.command.InspectContainerResponse;
+ import java.util.HashMap;
  import java.util.Map;
- import javax.annotation.Nullable;
-@@ -44,6 +45,8 @@
- import org.apache.pinot.core.auth.Actions;
- import org.apache.pinot.core.auth.TargetType;
- import org.apache.pinot.core.query.executor.sql.SqlQueryExecutor;
-+import org.apache.pinot.spi.data.LogicalTableConfig;
-+import org.apache.pinot.spi.data.PhysicalTableConfig;
- import org.apache.pinot.spi.data.Schema;
- import org.apache.pinot.spi.env.PinotConfiguration;
- import org.apache.pinot.spi.exception.QueryErrorCode;
-@@ -628,10 +631,15 @@ private void unauthenticatedAccessControl() {
-   /// Installs the controller's basic auth, as an operator configures it, with a single principal scoped to table `t`
-   /// (`BASIC_AUTH_PRINCIPAL` with `BASIC_AUTH_PASSWORD`) and the given comma-separated permissions.
-   private void tableScopedBasicAuth(String permissions) {
-+    tableScopedBasicAuth(permissions, "t");
-+  }
-+
-+  /// Installs basic auth with the given comma-separated permissions and table grants.
-+  private void tableScopedBasicAuth(String permissions, String tables) {
-     String principal = BASIC_AUTH_PRINCIPALS_PREFIX + "." + BASIC_AUTH_PRINCIPAL;
-     BasicAuthAccessControlFactory factory = new BasicAuthAccessControlFactory();
-     factory.init(new PinotConfiguration(Map.of(BASIC_AUTH_PRINCIPALS_PREFIX, BASIC_AUTH_PRINCIPAL,
--        principal + ".password", BASIC_AUTH_PASSWORD, principal + ".tables", "t",
-+        principal + ".password", BASIC_AUTH_PASSWORD, principal + ".tables", tables,
-         principal + ".permissions", permissions)));
-     when(_accessControlFactory.create()).thenReturn(factory.create());
-   }
-@@ -778,6 +786,146 @@ public void testRejectedSqlOptionsFailBeforeRouting() {
-     Assert.assertTrue(response.contains("useMultistageEngine"), response);
-   }
+ import org.slf4j.Logger;
+@@ -26,6 +27,7 @@
+ import org.testcontainers.containers.KafkaContainer;
+ import org.testcontainers.containers.Network;
+ import org.testcontainers.containers.wait.strategy.Wait;
++import org.testcontainers.images.builder.Transferable;
+ import org.testcontainers.utility.DockerImageName;
  
-+  @DataProvider
-+  public Object[][] logicalTablePhysicalTables() {
-+    return new Object[][]{
-+        {Map.of("t_OFFLINE", new PhysicalTableConfig())},
-+        {Map.of("t_REALTIME", new PhysicalTableConfig())},
-+        {Map.of("t_OFFLINE", new PhysicalTableConfig(), "t_REALTIME", new PhysicalTableConfig())}
-+    };
-+  }
+ 
+@@ -82,7 +84,7 @@ public void start() {
+ 
+       _network = Network.newNetwork();
+ 
+-      _kafkaContainer = new KafkaContainer(KAFKA_DOCKER_IMAGE_NAME)
++      _kafkaContainer = new KafkaContainerWithStartupBarrier()
+           .withNetwork(_network).withNetworkAliases("kafka")
+           .withCreateContainerCmdModifier(it -> it.withHostName("kafka")).waitingFor(Wait.forListeningPort());
+       _kafkaContainer.start();
+@@ -147,4 +149,24 @@ private static Throwable appendCleanupFailure(Throwable cleanupFailure, Throwabl
+       return cleanupFailure;
+     }
+   }
 +
-+  @Test(dataProvider = "logicalTablePhysicalTables")
-+  public void testLogicalQueryAllowsReadAccessToPhysicalTables(Map<String, PhysicalTableConfig> physicalTables) {
-+    tableScopedBasicAuth("read");
-+    mockLogicalTable("lt", physicalTables);
++  /// Waits for the startup script upload to complete before executing it. Used by a single fixture startup thread.
++  // Keep the existing ZooKeeper-based Confluent fixture while working around Testcontainers' startup race.
++  @SuppressWarnings("deprecation")
++  private static class KafkaContainerWithStartupBarrier extends KafkaContainer {
++    private static final String STARTUP_READY_FILE = "/tmp/pinot_kafka_startup_ready";
 +
-+    String response = postSql("SELECT COUNT(*) FROM lt", null, basicAuthHeaders(BASIC_AUTH_PASSWORD));
-+
-+    // No broker is registered by this unit test. Reaching broker selection proves that the physical-table grant
-+    // passed authorization even though the principal is not granted the logical name.
-+    assertTrue(response.contains(String.valueOf(QueryErrorCode.BROKER_RESOURCE_MISSING.getId())), response);
-+    verify(_resourceManager).getBrokerInstancesFor("lt");
-+  }
-+
-+  @DataProvider
-+  public Object[][] multiTableLogicalQueryPermissions() {
-+    Object[][] permissionCases = {
-+        {"table1,table2", true},
-+        {"table1", false},
-+        {"table2", false},
-+        {"unrelated", false},
-+        {"lt", false},
-+        {"lt,table1", false},
-+        {"lt,table2", false}
-+    };
-+    List<Object[]> cases = new ArrayList<>();
-+    for (Map<String, PhysicalTableConfig> physicalTables : List.of(
-+        Map.of("table1_OFFLINE", new PhysicalTableConfig(), "table2_OFFLINE", new PhysicalTableConfig()),
-+        Map.of("table1_REALTIME", new PhysicalTableConfig(), "table2_REALTIME", new PhysicalTableConfig()),
-+        Map.of("table1_OFFLINE", new PhysicalTableConfig(), "table2_REALTIME", new PhysicalTableConfig()))) {
-+      for (Object[] permissionCase : permissionCases) {
-+        cases.add(new Object[]{physicalTables, permissionCase[0], permissionCase[1]});
-+      }
++    private KafkaContainerWithStartupBarrier() {
++      super(KAFKA_DOCKER_IMAGE_NAME);
++      withCommand("-c", "while [ ! -f " + STARTUP_READY_FILE
++          + " ]; do sleep 0.1; done; exec /tmp/testcontainers_start.sh");
 +    }
 +
-+    // Keep the order stable to test denials at the first, middle, and last physical table.
-+    Map<String, PhysicalTableConfig> threePhysicalTables = new LinkedHashMap<>();
-+    threePhysicalTables.put("table1_OFFLINE", new PhysicalTableConfig());
-+    threePhysicalTables.put("table2_OFFLINE", new PhysicalTableConfig());
-+    threePhysicalTables.put("table3_OFFLINE", new PhysicalTableConfig());
-+    cases.add(new Object[]{threePhysicalTables, "table1,table2,table3", true});
-+    cases.add(new Object[]{threePhysicalTables, "table2,table3", false});
-+    cases.add(new Object[]{threePhysicalTables, "table1,table3", false});
-+    cases.add(new Object[]{threePhysicalTables, "table1,table2", false});
-+    return cases.toArray(Object[][]::new);
++    @Override
++    protected void containerIsStarting(InspectContainerResponse containerInfo) {
++      // The script becomes visible before Docker closes its write handle. Executing it then can fail with ETXTBSY.
++      super.containerIsStarting(containerInfo);
++      copyFileToContainer(Transferable.of(new byte[0]), STARTUP_READY_FILE);
++    }
++  }
+ }
+```
+
+---
+
+### Incident Patch 2: `73878da7` (2026-11-17)
+**Commit Message**: Fix flaky latency assertions in QueryRoutingTest (#20278)
+
+**File**: `pinot-core/src/test/java/org/apache/pinot/core/transport/QueryRoutingTest.java` (modified, +20/-46)
+```diff
+@@ -54,6 +54,7 @@
+ import java.util.concurrent.Future;
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.atomic.AtomicReference;
++import javax.annotation.Nullable;
+ import org.apache.pinot.common.datatable.DataTable;
+ import org.apache.pinot.common.datatable.DataTable.MetadataKey;
+ import org.apache.pinot.common.metrics.BrokerMeter;
+@@ -77,6 +78,7 @@
+ import org.apache.pinot.spi.metrics.PinotMetricsRegistry;
+ import org.apache.pinot.spi.utils.ByteArray;
+ import org.apache.pinot.spi.utils.CommonConstants;
++import org.apache.pinot.spi.utils.CommonConstants.Broker.AdaptiveServerSelector;
+ import org.apache.pinot.sql.parsers.CalciteSqlCompiler;
+ import org.apache.pinot.util.TestUtils;
+ import org.apache.thrift.TDeserializer;
+@@ -113,6 +115,8 @@ public class QueryRoutingTest {
+   public void setUp() {
+     Map<String, Object> properties = new HashMap<>();
+     properties.put(CommonConstants.Broker.AdaptiveServerSelector.CONFIG_OF_ENABLE_STATS_COLLECTION, true);
++    // Keep the latency average stable between taking its snapshot and checking the update.
++    properties.put(AdaptiveServerSelector.CONFIG_OF_AUTODECAY_WINDOW_MS, 0L);
+     PinotConfiguration cfg = new PinotConfiguration(properties);
+     _serverRoutingStatsManager = new ServerRoutingStatsManager(cfg, mock(BrokerMetrics.class));
+     _serverRoutingStatsManager.init();
+@@ -378,20 +382,7 @@ public void testLatencyForQueryServerException()
+ 
+     _requestCount += 2;
+     waitForStatsUpdate(_requestCount);
+-    Double latencyAfter = _serverRoutingStatsManager.fetchEMALatencyForServer(serverId);
+-
+-    if (latencyBefore == null) {
+-      // This means that no queries were run before this test. So we can just make sure that latencyAfter is equal to
+-      //666.334.
+-      // This corresponds to the EWMA value when a latency timeout value of 1000 is set. Latency set to timeout value
+-      //when server side exception occurs.
+-      double serverEWMALatency = 666.334;
+-      // Leaving an error budget of 2%
+-      double delta = 13.32;
+-      assertEquals(latencyAfter, serverEWMALatency, delta);
+-    } else {
+-      assertTrue(latencyAfter > latencyBefore, latencyAfter + " should be greater than " + latencyBefore);
+-    }
++    assertLatencyUpdate(serverId, latencyBefore, 1_000L);
+   }
+ 
+   @Test
+@@ -419,17 +410,7 @@ public void testLatencyForClientException()
+ 
+     _requestCount += 2;
+     waitForStatsUpdate(_requestCount);
+-
+-    Double latencyAfter = _serverRoutingStatsManager.fetchEMALatencyForServer(serverId);
+-
+-    if (latencyBefore == null) {
+-      // Latency for the server with client side exception is assigned as serverResponse.getResponseDelayMs() and the
+-      //calculated
+-      // EWMLatency for the server will be less than serverResponse.getResponseDelayMs()
+-      assertTrue(latencyAfter <= serverResponse.getResponseDelayMs());
+-    } else {
+-      assertTrue(latencyAfter < latencyBefore, latencyAfter + " should be lesser than " + latencyBefore);
+-    }
++    assertLatencyUpdate(serverId, latencyBefore, serverResponse.getResponseDelayMs());
+   }
+ 
+   @Test
+@@ -457,19 +438,7 @@ public void testLatencyForMultipleExceptions()
+ 
+     _requestCount += 2;
+     waitForStatsUpdate(_requestCount);
+-    Double latencyAfter = _serverRoutingStatsManager.fetchEMALatencyForServer(serverId);
+-
+-    if (latencyBefore == null) {
+-      // This means that no queries where run before this test. So we can just make sure that latencyAfter is equal
+-      //to 666.334.
+-      // This corresponds to the EWMA value when a latency timeout value of 1000 is set.
+-      double serverEWMALatency = 666.334;
+-      // Leaving an error budget of 2%
+-      double delta = 13.32;
+-      assertEquals(latencyAfter, serverEWMALatency, delta);
+-    } else {
+-      assertTrue(latencyAfter > latencyBefore, latencyAfter + " should be greater than " + latencyBefore);
+-    }
++    assertLatencyUpdate(serverId, latencyBefore, 1_000L);
+   }
+ 
+   @Test
+@@ -495,15 +464,20 @@ public void testLatencyForNoException()
+ 
+     _requestCount += 2;
+     waitForStatsUpdate(_requestCount);
+-    Double latencyAfter = _serverRoutingStatsManager.fetchEMALatencyForServer(serverId);
++    assertLatencyUpdate(serverId, latencyBefore, serverResponse.getResponseDelayMs());
++  }
+ 
+-    if (latencyBefore == null) {
+-      // Latency for the server with no exceptions is assigned as serverResponse.getResponseDelayMs() and the calculated
+-      // EWMLatency for the server will be less than serverResponse.getResponseDelayMs()
+-      assertTrue(latencyAfter <= serverResponse.getResponseDelayMs());
+-    } else {
+-      assertTrue(latencyAfter < latencyBefore, latencyAfter + " should be lesser than " + latencyBefore);
+-    }
++  private void assertLatencyUpdate(String serverId, @Nullable Double latencyBefore, long latencyMs) {
++    double previousAverage =
++        latencyBefore != null ? latencyBefore : AdaptiveServerSelector.DEFAULT_AVG_INITIALIZATION_VAL;
++    double alpha = AdaptiveServerSelect
+```
+
+---
+
+### Incident Patch 3: `1b7c1f3c` (2026-11-17)
+**Commit Message**: Keep FORCE_OVERWRITE partial-upsert columns null when the update is null (#20261)
+
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/upsert/merger/PartialUpsertColumnarMerger.java` (modified, +5/-3)
+```diff
+@@ -70,9 +70,11 @@ public void merge(LazyRow previousRow, GenericRow newRow, Map<String, Object> re
+       PartialUpsertColumnMerger merger = _column2Mergers.getOrDefault(column, _defaultColumnValueMerger);
+       if (merger instanceof ForceOverwriteMerger) {
+         // Force Overwrite mergers
+-        // If the merge strategy is Force Overwrite merger and prevValue is always overwritten by newValue
+-        Object prevValue = previousRow.getValue(column);
+-        resultHolder.put(column, merger.merge(prevValue, newRow.getValue(column)));
++        // The new row already holds the result: the new value, or for a null value the placeholder that ingestion
++        // put in the row together with its null marker. Leave the column untouched so both are kept; putting a
++        // value in the result holder would clear the null marker or replace an ingestion-normalized placeholder
++        // (e.g. a time column's default) with the schema default.
++        continue;
+       } else if (!(merger instanceof OverwriteMerger)) {
+         // Non-overwrite mergers
+         // (1) If the value of the previous is null value, skip merging and use the new value
+```
+
+**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/upsert/PartialUpsertHandlerTest.java` (modified, +65/-4)
+```diff
+@@ -49,6 +49,7 @@
+ import static org.testng.Assert.assertEquals;
+ import static org.testng.Assert.assertFalse;
+ import static org.testng.Assert.assertNotNull;
++import static org.testng.Assert.assertTrue;
+ 
+ 
+ public class PartialUpsertHandlerTest {
+@@ -63,12 +64,60 @@ public void testOverwrite() {
+ 
+   @Test
+   public void testForceOverwrite() {
+-    testMerge(true, 0, true, 0, "field4", 0, true);
++    testMerge(true, 0, true, 0L, "field4", 0L, true);
+     testMerge(true, 0, false, 1, "field4", 1, false);
+-    testMerge(false, 0, true, 1, "field4", 1, true);
++    // A null new value stays null (with the schema default) instead of overwriting with the default value
++    testMerge(false, 3, true, 0L, "field4", 0L, true);
+     testMerge(false, 3, false, 5, "field4", 5, false);
+   }
+ 
++  @Test
++  public void testForceOverwriteStringAndMultiValue() {
++    // STRING: a null new value keeps the column null with the "null" default
++    testMerge(false, "a", true, "null", "field5", "null", true);
++    testMerge(false, "a", false, "b", "field5", "b", false);
++    // Multi-value: a null new value keeps the column null with the Object[]{default} default
++    testMerge(false, new Object[]{1}, true, new Object[]{Integer.MIN_VALUE}, "field6",
++        new Object[]{Integer.MIN_VALUE}, true);
++    testMerge(false, new Object[]{1}, false, new Object[]{2}, "field6", new Object[]{2}, false);
 +  }
 +
-+  @Test(dataProvider = "multiTableLogicalQueryPermissions")
-+  public void testLogicalQueryRequiresReadAccessToAllPhysicalTables(Map<String, PhysicalTableConfig> physicalTables,
-+      String grantedTables, boolean allowed)
-+      throws Exception {
-+    tableScope
-```
-
----
-
-### Incident Patch 2: `40b3c1b7` (2026-11-13)
-**Commit Message**: Spy a plain RetentionManager in the table-level hybrid retention test so subclass suites can reuse it (#20236)
-
-**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/helix/core/retention/RetentionManagerTest.java` (modified, +5/-2)
-```diff
-@@ -603,8 +603,11 @@ public void testTableLevelHybridRetentionStrategyOverridesClusterConfig(@Nullabl
-     ControllerConf conf = new ControllerConf();
-     conf.setProperty(ControllerConf.ENABLE_HYBRID_TABLE_RETENTION_STRATEGY, clusterLevel);
++  @Test
++  public void testForceOverwriteAsDefaultStrategy() {
++    // field2 has no per-column strategy, so it takes FORCE_OVERWRITE from the default strategy
++    testMerge(UpsertConfig.Strategy.FORCE_OVERWRITE, false, 3, true, 0L, "field2", 0L, true);
++    testMerge(UpsertConfig.Strategy.FORCE_OVERWRITE, false, 3, false, 5, "field2", 5, false);
++  }
++
++  @Test
++  public void testForceOverwriteKeepsNormalizedTimePlaceholder() {
++    // The comparison column is not the time column, so the time column takes FORCE_OVERWRITE from the default
++    // strategy. For a missing time value, realtime ingestion puts a valid timestamp in the row and marks it null;
++    // the merge must keep both instead of replacing the timestamp with the schema default ("null").
++    Schema schema = new Schema.SchemaBuilder().setSchemaName("testTable")
++        .addSingleValueDimension("pk", FieldSpec.DataType.STRING).addMetric("version", FieldSpec.DataType.LONG)
++        .addDateTime("day", FieldSpec.DataType.STRING, "1:DAYS:SIMPLE_DATE_FORMAT:yyyyMMdd", "1:DAYS")
++        .setPrimaryKeyColumns(List.of("pk")).build();
++    UpsertConfig upsertConfig = new UpsertConfig(UpsertConfig.Mode.PARTIAL);
++    upsertConfig.setDefaultPartialUpsertStrategy(UpsertConfig.Strategy.FORCE_OVERWRITE);
++    upsertConfig.setComparisonColumns(List.of("version"));
++    TableConfig tableConfig = new TableConfigBuilder(TableType.REALTIME).setTableName("testTable")
++        .setTimeColumnName("day").setNullHandlingEnabled(true).setUpsertConfig(upsertConfig).build();
++    PartialUpsertHandler handler = new PartialUpsertHandler(tableConfig, schema, List.of("version"), upsertConfig);
++    LazyRow prevRecord = mockLazyRow(mock(LazyRow.class), Map.of("pk", "pk1", "version", 1L, "day", "20261101"));
++
++    GenericRow missingDay = initGenericRow(new GenericRow(), Map.of("pk", "pk1", "version", 2L));
++    missingDay.putDefaultNullValue("day", "20261113");
++    handler.merge(prevRecord, missingDay, new HashMap<>());
++    assertEquals(missingDay.getValue("day"), "20261113");
++    assertTrue(missingDay.isNullValue("day"));
++
++    GenericRow newDay = initGenericRow(new GenericRow(), Map.of("pk", "pk1", "version", 2L, "day", "20261112"));
++    handler.merge(prevRecord, newDay, new HashMap<>());
++    assertEquals(newDay.getValue("day"), "20261112");
++    assertFalse(newDay.isNullValue("day"));
++  }
++
+   @Test
+   public void testNonOverwrite() {
+     testMerge(true, 2, true, 2, "field2", 2, true);
+@@ -173,13 +222,24 @@ public void testPostUpsertTransformRunsAfterMerge() {
  
--    RetentionManager retentionManager = spy(createSizeRetentionManager(realtimeTableConfig, List.of(), resourceManager,
--        mock(ControllerMetrics.class), conf, mock(BrokerServiceHelper.class)));
-+    // Spy a plain RetentionManager rather than going through createRetentionManager(...), so the package-private
-+    // methods stubbed below stay interceptable when a subclass suite overrides that factory
-+    stubSizeRetentionResourceManager(realtimeTableConfig, List.of(), resourceManager, conf);
-+    RetentionManager retentionManager = spy(new RetentionManager(resourceManager, mock(LeadControllerManager.class),
-+        conf, mock(ControllerMetrics.class), mock(BrokerServiceHelper.class)));
- 
-     // Only the retention strategy selection is under test, so stub out both branches
-     doNothing().when(retentionManager).manageRetentionForHybridTable(any(), any());
-```
-
----
-
-### Incident Patch 3: `75c2fdfc` (2026-11-13)
-**Commit Message**: Bump org.codehaus.mojo:build-helper-maven-plugin from 3.7.0 to 3.8.0 (#20255)
-
-Bumps [org.codehaus.mojo:build-helper-maven-plugin](https://github.com/mojohaus/build-helper-maven-plugin) from 3.7.0 to 3.8.0.
-- [Release notes](https://github.com/mojohaus/build-helper-maven-plugin/releases)
-- [Commits](https://github.com/mojohaus/build-helper-maven-plugin/compare/3.7.0...3.8.0)
-
----
-updated-dependencies:
-- dependency-name: org.codehaus.mojo:build-helper-maven-plugin
-  dependency-version: 3.8.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `pom.xml` (modified, +1/-1)
-```diff
-@@ -2502,7 +2502,7 @@
-         <plugin>
-           <groupId>org.codehaus.mojo</groupId>
-           <artifactId>build-helper-maven-plugin</artifactId>
--          <version>3.7.0</version>
-+          <version>3.8.0</version>
-         </plugin>
-         <plugin>
-           <groupId>com.github.eirslett</groupId>
+   public void testMerge(boolean isPreviousNull, Object previousValue, boolean isNewNull, Object newValue,
+       String columnName, Object expectedValue, boolean isExpectedNull) {
++    testMerge(UpsertConfig.Strategy.IGNORE, isPreviousNull, previousValue, isNewNull, newValue, columnName,
++        expectedValue, isExpectedNull);
++  }
++
++  private void testMerge(UpsertConfig.Strategy defaultStrategy, boolean isPreviousNull, Object previousValue,
++      boolean isNewNull, Object newValue, String columnName, Object expectedValue, boolean isExpectedNull) {
+     Schema schema = new Schema.SchemaBuilder().addSingleValueDimension("pk", FieldSpec.DataType.STRING)
+         .addSingleValueDimension("field1", FieldSpec.DataType.LONG).addMetric("field2", FieldSpec.DataType.LONG)
++        .addMetric("field4", FieldSpec.DataType.LONG)
++        .addSingleValueDimension("field5", FieldSpec.DataType.STRING)
++        .addMultiValueDimension("field6", FieldSpec.DataType.INT)
+         .addDateTime("hoursSinceEpoch", FieldSpec.DataType.LONG, "1:HO
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20259** (2026-11-13): Bump org.codehaus.mojo:exec-maven-plugin from 3.6.4 to 3.7.0 (@dependabot[bot])
-- **PR #20258** (2026-11-13): Bump org.codehaus.mojo:javacc-maven-plugin from 3.2.1 to 3.3.0 (@dependabot[bot])
-- **PR #20257** (2026-11-13): Bump software.amazon.awssdk:bom from 2.57.11 to 2.57.12 (@dependabot[bot])
-- **PR #20256** (2026-11-13): Bump com.mchange:mchange-commons-java from 0.7.0 to 0.7.1 (@dependabot[bot])
-- **PR #20255** (2026-11-13): Bump org.codehaus.mojo:build-helper-maven-plugin from 3.7.0 to 3.8.0 (@dependabot[bot])
-- **PR #20254** (2026-11-13): Bump org.codehaus.mojo:animal-sniffer-annotations from 1.29 to 1.29.1 (@dependabot[bot])
+- **PR #20281** (2026-11-17): Fix Kafka startup script race in schema registry tests (@Jackie-Jiang)
+- **PR #20278** (2026-11-17): Fix flaky latency assertions in QueryRoutingTest (@Jackie-Jiang)
+- **PR #20274** (2026-11-16): Bump software.amazon.awssdk:bom from 2.57.12 to 2.59.0 (@dependabot[bot])
+- **PR #20273** (2026-11-16): Bump com.azure:azure-sdk-bom from 1.3.9 to 1.3.10 (@dependabot[bot])
+- **PR #20272** (2026-11-16): Bump org.apache.fory:fory-json from 1.7.7 to 1.7.8 (@dependabot[bot])
+- **PR #20271** (2026-11-16): Bump org.apache.maven:maven-core from 3.10.0 to 3.10.1 (@dependabot[bot])
 
 ---
 
@@ -2226,50 +2317,53 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. controller authorization for logical table queries
+## X. Kafka startup script race in schema registry tests
 
 **RULE**:
-When implementing operations in `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/kafka/schemaregistry/SchemaRegistryStarter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c31a588a`: controller authorization for logical table queries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a9192dc3`: Kafka startup script race in schema registry tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/kafka/schemaregistry/SchemaRegistryStarter.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    TableCache tableCache = _pinotHelixResourceManager.getTableCache();
-    String logicalTableName = tableCache.getActualLogicalTableName(tableName);
-    LogicalTableConfig logicalTableConfig =
-        logicalTableName != null ? tableCache.getLogicalTableConfig(logicalTableName) : null;
-    String rawTableName = TableNameBuilder.extractRawTableName(
-        logicalTableConfig != null ? logicalTableName : tableName);
+import com.github.dockerjava.api.command.InspectContainerResponse;
+import org.testcontainers.images.builder.Transferable;
+      _kafkaContainer = new KafkaContainerWithStartupBarrier()
 
-    // Authorize every physical table of a logical query, matching the broker's table-level check.
-    Set<String> tablesToAuthorize = logicalTableConfig != null
-        ? logicalTableConfig.getPhysicalTableConfigMap().keySet()
-        : Set.of(rawTableName);
-    for (String tableToAuthorize : tablesToAuthorize) {
-      if (!accessControl.hasAccess(TableNameBuilder.extractRawTableName(tableToAuthorize), AccessType.READ,
-          httpHeaders, Actions.Table.QUERY)) {
-        throw QueryErrorCode.ACCESS_DENIED.asException();
-      }
+  /// Waits for the startup script upload to complete before executing it. Used by a single fixture startup thread.
+  // Keep the existing ZooKeeper-based Confluent fixture while working around Testcontainers' startup race.
+  @SuppressWarnings("deprecation")
+  private static class KafkaContainerWithStartupBarrier extends KafkaContainer {
+    private static final String STARTUP_READY_FILE = "/tmp/pinot_kafka_startup_ready";
+
+    private KafkaContainerWithStartupBarrier() {
+      super(KAFKA_DOCKER_IMAGE_NAME);
+      withCommand("-c", "while [ ! -f " + STARTUP_READY_FILE
+          + " ]; do sleep 0.1; done; exec /tmp/testcontainers_start.sh");
+    }
+
+    @Override
+    protected void containerIsStarting(InspectContainerResponse containerInfo) {
+      // The script becomes visible before Docker closes its write handle. Executing it then can fail with ETXTBSY.
+      super.containerIsStarting(containerInfo);
+      copyFileToContainer(Transferable.of(new byte[0]), STARTUP_READY_FILE);
+    }
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    String rawTableName = TableNameBuilder.extractRawTableName(tableName);
-
-    // Validate data access
-    if (!accessControl.hasAccess(rawTableName, AccessType.READ, httpHeaders, Actions.Table.QUERY)) {
-      throw QueryErrorCode.ACCESS_DENIED.asException();
+      _kafkaContainer = new KafkaContainer(KAFKA_DOCKER_IMAGE_NAME)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c31a588a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a9192dc3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

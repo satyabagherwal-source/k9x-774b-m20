@@ -10551,3 +10551,6 @@ Every entry in this ledger must capture:
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `b6eaa4ef` | Multi-dimensional audit evidence | 2026-11-17T09:27:23.354Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `7dd4de40` | Multi-dimensional audit evidence | 2026-11-17T09:47:33.336Z |
 | `learn-dom-h-13452896` | `project://starrocks-starrocks` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md` | 2026-11-17T09:48:06.368Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `f13e7dfc` | Multi-dimensional audit evidence | 2026-11-17T10:10:56.914Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `bcc4b90a` | Multi-dimensional audit evidence | 2026-11-17T10:11:01.963Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `5edf0f12` | Multi-dimensional audit evidence | 2026-11-17T10:11:09.728Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T09:56:55.943Z",
+  "last_updated": "2026-11-17T10:11:14.684Z",
   "directives": [
     {
       "id": "CD-001",
@@ -23486,6 +23486,70 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6192FD-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-8258",
+      "directive_title": "test against CUDA 13.5.0 as well as the baseline toolkit",
+      "source_repo": "NVIDIA/cuda-rust",
+      "source_commit": "f13e7dfc",
+      "staged_file": "11_INBOX/candidate-directives/CD-8258-test-against-cuda-13-5-0-as-well-as-the-baseline-toolkit.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-861D",
+      "directive_title": "parse PDFs with pdf.js in a subprocess",
+      "source_repo": "karakeep-app/karakeep",
+      "source_commit": "bcc4b90a",
+      "staged_file": "11_INBOX/candidate-directives/CD-861D-parse-pdfs-with-pdf-js-in-a-subprocess.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-8FP4",
+      "directive_title": "Kafka startup script race in schema registry tests",
+      "source_repo": "apache-pinot-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8FP4-kafka-startup-script-race-in-schema-registry-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-8EMJ",
+      "directive_title": "ci: test against CUDA 13.5.0 as well as the baseline toolkit",
+      "source_repo": "nvidia-cuda-rust-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8EMJ-ci-test-against-cuda-13-5-0-as-well-as-the-baseline-toolkit.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-8F5I",
+      "directive_title": "workers): parse PDFs with pdf.js in a subprocess",
+      "source_repo": "karakeep-app-karakeep-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8F5I-workers-parse-pdfs-with-pdf-js-in-a-subprocess.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-41B18E",
+      "directive_title": "Kafka startup script race in schema registry tests",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-pinot",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-41B18E-kafka-startup-script-race-in-schema-regi.md",
       "staged_date": "2026-11-17"
     }
   ]

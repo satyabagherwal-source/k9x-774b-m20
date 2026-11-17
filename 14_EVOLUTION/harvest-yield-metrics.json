@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T09:47:33.341Z",
-  "total_cycles_completed": 10082,
-  "total_learnings_persisted": 10082,
-  "total_rules_promoted": 9685,
+  "last_updated": "2026-11-17T10:11:09.734Z",
+  "total_cycles_completed": 10085,
+  "total_learnings_persisted": 10085,
+  "total_rules_promoted": 9688,
   "history": [
-    {
-      "timestamp": "2026-11-16T15:51:12.619Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T15:51:14.455Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T16:00:09.319Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T16:00:10.930Z",
       "repository": "prometheus/prometheus",
@@ -1403,6 +1382,27 @@
       "repository": "StarRocks/starrocks",
       "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:10:56.919Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:11:01.969Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:11:09.734Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

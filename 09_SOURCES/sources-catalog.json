@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "f7119ca0",
+    "sourceVersion": "bcc4b90a",
     "license": "AGPL-3.0",
-    "contentHash": "f20023e860cf93bf0c820b3709409764f10c30425fe79c333c055ab38bed7a81",
-    "lastHarvestedAt": "2026-11-13T20:16:23.253Z",
+    "contentHash": "2b9de76c881575bc0d4ab248309170576ffb5054b39465c3ee3a1e65f444b84f",
+    "lastHarvestedAt": "2026-11-17T10:11:01.963Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "348895e4",
+    "sourceVersion": "f13e7dfc",
     "license": "Apache-2.0",
-    "contentHash": "5cf71739e5225697a324f0122805dddc6e9187d86e8dd928a5d4c4ceb70df743",
-    "lastHarvestedAt": "2026-11-15T20:41:53.073Z",
+    "contentHash": "f467f04b39512e38aba9c4255d7ef1f7f64d2ad3cfbdad8b8e028dc3359f60bf",
+    "lastHarvestedAt": "2026-11-17T10:10:56.914Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "c31a588a",
+    "sourceVersion": "5edf0f12",
     "license": "Apache-2.0",
-    "contentHash": "c0e309c3bad79191411b62dc1985922f4a8bdd90e44bc2d9312d082c45d05dac",
-    "lastHarvestedAt": "2026-11-14T17:24:59.505Z",
+    "contentHash": "48263a6dd89c0f2b747b976764daf9a3826bed5057073def9c34bc5656109612",
+    "lastHarvestedAt": "2026-11-17T10:11:09.728Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {
